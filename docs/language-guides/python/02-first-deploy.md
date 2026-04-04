@@ -67,7 +67,7 @@ To retrieve the URL via CLI:
 az webapp show \
   --resource-group $RG \
   --name $APP_NAME \
-  --query defaultHostName -o tsv
+  --query defaultHostName --output tsv
 ```
 
 In the **Azure Portal**: navigate to your App Service → **Overview** → **Default domain**.

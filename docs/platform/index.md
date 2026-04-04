@@ -14,6 +14,8 @@ This section explains Azure App Service platform behavior in a language-agnostic
 | [Scaling](./scaling.md) | Scale up/out strategies, autoscale rules, stateless design |
 | [Networking](./networking.md) | Inbound and outbound controls, private networking, DNS patterns |
 | [Resource Relationships](./resource-relationships.md) | Identity, data, storage, secrets, monitoring integration map |
+| [Authentication Architecture](./authentication-architecture.md) | EasyAuth flow, token handling, identity provider integration |
+| [Security Architecture](./security-architecture.md) | Network perimeter, TLS, managed identity, secret management |
 
 ```mermaid
 graph LR
@@ -22,6 +24,8 @@ graph LR
     C --> D[Scaling]
     D --> E[Networking]
     E --> F[Resource Relationships]
+    F --> G[Authentication Architecture]
+    G --> H[Security Architecture]
 ```
 
 ### Recommended reading order

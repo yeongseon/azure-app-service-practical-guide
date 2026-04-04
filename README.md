@@ -12,6 +12,7 @@ Comprehensive guide for running web applications on Azure App Service — from f
 | [Language Guides](https://yeongseon.github.io/azure-app-service-practical-guide/language-guides/) | Step-by-step tutorials for Python, Node.js, Java, and .NET |
 | [Operations](https://yeongseon.github.io/azure-app-service-practical-guide/operations/) | Deployment slots, health checks, security, cost optimization |
 | [Troubleshooting](https://yeongseon.github.io/azure-app-service-practical-guide/troubleshooting/) | 16 playbooks, 10 hands-on labs, KQL query packs, decision tree, evidence map |
+| [Reference](https://yeongseon.github.io/azure-app-service-practical-guide/reference/) | CLI cheatsheet, KQL queries, platform limits, diagnostics reference |
 
 ## Language Guides
 

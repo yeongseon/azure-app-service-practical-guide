@@ -91,7 +91,7 @@ az storage share create \
 STORAGE_KEY=$(az storage account keys list \
   --resource-group "$RG" \
   --account-name "${BASE_NAME}storage" \
-  --query "[0].value" -o tsv)
+  --query "[0].value" --output tsv)
 ```
 
 ## Step 3 — Mount the Storage

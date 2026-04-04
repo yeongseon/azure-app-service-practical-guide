@@ -436,7 +436,7 @@ az group delete --name "$RG" --yes --no-wait
 
 This section is derived from actual sanitized lab artifacts:
 
-`/root/Github/azure-appservice/labs/snat-exhaustion/artifacts-sanitized/`
+`labs/snat-exhaustion/artifacts-sanitized/`
 
 ### 4.1 Artifact inventory used
 

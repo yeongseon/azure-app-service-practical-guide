@@ -71,7 +71,7 @@ The documentation is organized by intent and lifecycle stage:
 |---|---|---|
 | **Start Here** | Entry points, learning paths, repository map | 3 |
 | **Platform** | Architecture, design decisions — WHAT and HOW it works | 9 |
-| **Best Practices** | Production patterns — HOW to use the platform well | 7 |
+| **Best Practices** | Production patterns — HOW to use the platform well | 8 |
 | **Language Guides** | Per-language step-by-step tutorials and recipes | 79 |
 | **Operations** | Day-2 execution — HOW to run in production | 8 |
 | **Troubleshooting** | Diagnosis and resolution — hypothesis-driven | 53 |

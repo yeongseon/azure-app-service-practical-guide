@@ -400,7 +400,7 @@ az group delete --name "$RG" --yes --no-wait
 
 This section uses real files from:
 
-`/root/Github/azure-appservice/labs/failed-to-forward-request/artifacts-sanitized/`
+`labs/failed-to-forward-request/artifacts-sanitized/`
 
 ### 4.1 Artifact inventory used
 

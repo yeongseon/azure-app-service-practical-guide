@@ -318,7 +318,7 @@ Example output (sanitized):
 ```bash
 az deployment group create \
   --resource-group "$RG" \
-  --template-file "/root/Github/azure-app-service-practical-guide/labs/memory-pressure/main.bicep" \
+  --template-file "labs/memory-pressure/main.bicep" \
   --parameters baseName="$BASE_NAME" location="$LOCATION"
 ```
 
@@ -343,7 +343,7 @@ export APP_URL="https://${APP_HOSTNAME}"
 ### 3.5 Package and deploy the lab app code
 
 ```bash
-cd "/root/Github/azure-app-service-practical-guide/labs/memory-pressure/app"
+cd "labs/memory-pressure/app"
 zip --recurse-paths "$APP_PACKAGE_PATH" .
 
 az webapp deploy \
@@ -395,7 +395,7 @@ Look specifically for:
 ### 3.8 Trigger memory pressure (actual trigger script)
 
 ```bash
-bash "/root/Github/azure-app-service-practical-guide/labs/memory-pressure/trigger.sh" "$APP_URL"
+bash "labs/memory-pressure/trigger.sh" "$APP_URL"
 ```
 
 Script behavior:
@@ -511,7 +511,7 @@ Use this checklist to determine whether the lab produced useful memory-pressure 
 
 | Pitfall | Symptom | Fix |
 |---|---|---|
-| Wrong template path | Deployment fails | Use `/root/Github/azure-app-service-practical-guide/labs/memory-pressure/main.bicep` |
+| Wrong template path | Deployment fails | Use `labs/memory-pressure/main.bicep` |
 | App not deployed | `/leak` returns 404 | Re-run `az webapp deploy` and restart |
 | Workspace query empty | No logs returned | Confirm diagnostic settings attached to web app |
 | Trigger URL includes trailing slash mismatch | malformed URL | Script already normalizes trailing slash |
@@ -537,7 +537,7 @@ flowchart TD
 
 All values below are taken directly from sanitized artifacts:
 
-`/root/Github/azure-app-service-practical-guide/labs/memory-pressure/artifacts-sanitized/`
+`labs/memory-pressure/artifacts-sanitized/`
 
 | Category | Files used |
 |---|---|

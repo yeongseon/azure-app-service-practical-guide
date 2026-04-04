@@ -476,7 +476,7 @@ az group delete \
 
 All data below is sourced from:
 
-`/root/Github/azure-appservice/labs/slot-swap-config-drift/artifacts-sanitized/`
+`labs/slot-swap-config-drift/artifacts-sanitized/`
 
 ### 4.1 Artifact inventory
 

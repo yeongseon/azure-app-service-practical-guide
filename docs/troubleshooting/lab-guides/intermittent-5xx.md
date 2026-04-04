@@ -287,7 +287,7 @@ az group create --name "$RG" --location "$LOCATION"
 ```bash
 az deployment group create \
   --resource-group "$RG" \
-  --template-file "/root/Github/azure-app-service-practical-guide/labs/intermittent-5xx/main.bicep" \
+  --template-file "labs/intermittent-5xx/main.bicep" \
   --parameters baseName="$BASE_NAME" location="$LOCATION"
 ```
 
@@ -312,7 +312,7 @@ export APP_URL="https://${APP_HOSTNAME}"
 ### 3.5 Deploy application package
 
 ```bash
-cd "/root/Github/azure-app-service-practical-guide/labs/intermittent-5xx/app"
+cd "labs/intermittent-5xx/app"
 zip --recurse-paths "$APP_PACKAGE_PATH" .
 
 az webapp deploy \
@@ -347,7 +347,7 @@ Baseline artifact values from this run:
 ### 3.7 Trigger starvation workload (actual trigger script)
 
 ```bash
-bash "/root/Github/azure-app-service-practical-guide/labs/intermittent-5xx/trigger.sh" "$APP_URL"
+bash "labs/intermittent-5xx/trigger.sh" "$APP_URL"
 ```
 
 Script behavior:
@@ -466,7 +466,7 @@ AppServicePlatformLogs
 
 | Pitfall | Symptom | Fix |
 |---|---|---|
-| Wrong Bicep path | Deployment error | Use `/root/Github/azure-app-service-practical-guide/labs/intermittent-5xx/main.bicep` |
+| Wrong Bicep path | Deployment error | Use `labs/intermittent-5xx/main.bicep` |
 | Trigger against wrong app URL | No expected pattern | Re-resolve `APP_URL` from deployment outputs |
 | Missing diagnostics linkage | Empty KQL tables | Verify diagnostic setting on web app |
 | Running trigger repeatedly without waiting | Mixed windows hard to interpret | Label each run and time-bound KQL queries |
@@ -492,7 +492,7 @@ flowchart TD
 
 All values below come from:
 
-`/root/Github/azure-app-service-practical-guide/labs/intermittent-5xx/artifacts-sanitized/`
+`labs/intermittent-5xx/artifacts-sanitized/`
 
 | Category | Files used |
 |---|---|

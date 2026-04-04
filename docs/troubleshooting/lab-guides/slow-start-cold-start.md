@@ -449,7 +449,7 @@ az group delete \
 
 This section uses only captured data under:
 
-`/root/Github/azure-appservice/labs/slow-start-cold-start/artifacts-sanitized/`
+`labs/slow-start-cold-start/artifacts-sanitized/`
 
 ### 4.1 Artifact inventory
 
