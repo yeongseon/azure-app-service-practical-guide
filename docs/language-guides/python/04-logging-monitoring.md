@@ -645,9 +645,9 @@ az webapp log tail --resource-group $RG --name $APP_NAME
 2026-04-02T14:14:17.4792528Z Azure Monitor OpenTelemetry SDK detected in app. Autoinstrumentation backing off in favor of manual instrumentation.
 2026-04-02T14:14:17.8128300Z [2026-04-02 14:14:17 +0000] [1914] [INFO] Starting gunicorn 23.0.0
 2026-04-02T14:19:24.4189120Z {"timestamp": "2026-04-02T14:19:24.410756+00:00", "level": "info", "message": "Advanced telemetry initialized", "service": "azure-appservice-python-guide", "environment": "production", "telemetryMode": "advanced", "appInsightsEnabled": true}
-2026-04-02T14:21:33.2603988Z {"timestamp": "2026-04-02T14:21:33.260131+00:00", "level": "info", "message": "Info level log - normal operational message", "service": "azure-appservice-python-guide", "correlationId": "d9654f7a-5ac0-4cfa-be09-f3523421105e", "userId": "verify-py-1"}
-2026-04-02T14:21:33.2611025Z {"timestamp": "2026-04-02T14:21:33.260919+00:00", "level": "warning", "message": "Warn level log - potential issue detected", "correlationId": "d9654f7a-5ac0-4cfa-be09-f3523421105e", "userId": "verify-py-1"}
-2026-04-02T14:21:33.2613245Z {"timestamp": "2026-04-02T14:21:33.261255+00:00", "level": "error", "message": "Error level log - application error", "correlationId": "d9654f7a-5ac0-4cfa-be09-f3523421105e", "errorCode": "DEMO_ERROR"}
+2026-04-02T14:21:33.2603988Z {"timestamp": "2026-04-02T14:21:33.260131+00:00", "level": "info", "message": "Info level log - normal operational message", "service": "azure-appservice-python-guide", "correlationId": "b2c3d4e5-f6a7-8901-bcde-f23456789012", "userId": "verify-py-1"}
+2026-04-02T14:21:33.2611025Z {"timestamp": "2026-04-02T14:21:33.260919+00:00", "level": "warning", "message": "Warn level log - potential issue detected", "correlationId": "b2c3d4e5-f6a7-8901-bcde-f23456789012", "userId": "verify-py-1"}
+2026-04-02T14:21:33.2613245Z {"timestamp": "2026-04-02T14:21:33.261255+00:00", "level": "error", "message": "Error level log - application error", "correlationId": "b2c3d4e5-f6a7-8901-bcde-f23456789012", "errorCode": "DEMO_ERROR"}
 ```
 
 !!! success "What you see"
@@ -720,7 +720,7 @@ Every request gets an auto-generated `correlationId` via the `CorrelationMiddlew
 AppTraces
 | where TimeGenerated > ago(10m)
 | extend cid = tostring(Properties["correlation_id"])
-| where cid == "d9654f7a-5ac0-4cfa-be09-f3523421105e"
+| where cid == "b2c3d4e5-f6a7-8901-bcde-f23456789012"
 | project TimeGenerated, SeverityLevel, Message, cid
 | order by TimeGenerated asc
 ```
@@ -729,10 +729,10 @@ AppTraces
 ```
 TimeGenerated              SeverityLevel  Message                              cid
 ─────────────────────────  ─────────────  ───────────────────────────────────  ──────────────────────────────────────
-2026-04-02T14:21:33.260Z   1              Info level log - normal operational  d9654f7a-5ac0-4cfa-be09-f3523421105e
-2026-04-02T14:21:33.260Z   2              Warn level log - potential issue     d9654f7a-5ac0-4cfa-be09-f3523421105e
-2026-04-02T14:21:33.261Z   3              Error level log - application error  d9654f7a-5ac0-4cfa-be09-f3523421105e
-2026-04-02T14:21:33.261Z   1              HTTP Request                         d9654f7a-5ac0-4cfa-be09-f3523421105e
+2026-04-02T14:21:33.260Z   1              Info level log - normal operational  b2c3d4e5-f6a7-8901-bcde-f23456789012
+2026-04-02T14:21:33.260Z   2              Warn level log - potential issue     b2c3d4e5-f6a7-8901-bcde-f23456789012
+2026-04-02T14:21:33.261Z   3              Error level log - application error  b2c3d4e5-f6a7-8901-bcde-f23456789012
+2026-04-02T14:21:33.261Z   1              HTTP Request                         b2c3d4e5-f6a7-8901-bcde-f23456789012
 ```
 
 !!! success "All four log levels confirmed"

@@ -1,4 +1,4 @@
-# Azure App Service Field Guide
+# Azure App Service Practical Guide
 
 Comprehensive guide for running web applications on Azure App Service — from first deployment to production troubleshooting.
 
@@ -11,7 +11,7 @@ Comprehensive guide for running web applications on Azure App Service — from f
 | [Best Practices](https://yeongseon.github.io/azure-app-service-practical-guide/best-practices/) | Production baseline, security, networking, deployment, scaling, reliability |
 | [Language Guides](https://yeongseon.github.io/azure-app-service-practical-guide/language-guides/) | Step-by-step tutorials for Python, Node.js, Java, and .NET |
 | [Operations](https://yeongseon.github.io/azure-app-service-practical-guide/operations/) | Deployment slots, health checks, security, cost optimization |
-| [Troubleshooting](https://yeongseon.github.io/azure-app-service-practical-guide/troubleshooting/) | 14 playbooks, KQL queries, checklists, and hands-on labs |
+| [Troubleshooting](https://yeongseon.github.io/azure-app-service-practical-guide/troubleshooting/) | 16 playbooks, 10 hands-on labs, KQL query packs, decision tree, evidence map |
 
 ## Language Guides
 
@@ -48,7 +48,12 @@ Minimal reference applications demonstrating Azure App Service patterns:
 
 ## Troubleshooting Labs
 
-Hands-on labs in `labs/` with Bicep templates that reproduce real-world App Service issues.
+10 hands-on labs in `labs/` with Bicep templates that reproduce real-world App Service issues. Each lab includes:
+
+- Falsifiable hypothesis and step-by-step runbook
+- Real Azure deployment data (KQL logs, CLI output, diagnostic endpoints)
+- Expected Evidence sections (Before / During / After with falsification logic)
+- Cross-links to corresponding playbooks
 
 ## Contributing
 

@@ -771,7 +771,7 @@ az group delete --name "$RG" --yes --no-wait
 ## See Also
 
 - [Memory Pressure and Worker Degradation Lab](./memory-pressure.md)
-- [First 10 Minutes: App Service Troubleshooting](../first-10-minutes.md)
+- [First 10 Minutes: App Service Troubleshooting](../first-10-minutes/index.md)
 
 ---
 

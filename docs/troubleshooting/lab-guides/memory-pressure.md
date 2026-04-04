@@ -834,7 +834,7 @@ az group delete --name "$RG" --yes --no-wait
 ## See Also
 
 - [Intermittent 5xx Under Load Lab](./intermittent-5xx.md)
-- [First 10 Minutes: App Service Troubleshooting](../first-10-minutes.md)
+- [First 10 Minutes: App Service Troubleshooting](../first-10-minutes/index.md)
 
 ---
 

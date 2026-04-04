@@ -749,4 +749,4 @@ graph LR
 ## See Also
 
 - [SNAT or Application Issue? (Playbook)](../playbooks/outbound-network/snat-or-application-issue.md)
-- [First 10 Minutes: App Service Linux Troubleshooting](../first-10-minutes.md)
+- [First 10 Minutes: App Service Linux Troubleshooting](../first-10-minutes/index.md)

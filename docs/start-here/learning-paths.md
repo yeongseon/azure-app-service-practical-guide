@@ -31,10 +31,10 @@ Read in order:
     - [Java (Spring Boot)](../language-guides/java/index.md)
     - [.NET (ASP.NET Core)](../language-guides/dotnet/index.md)
 6. Continue with stack recipes:
-    - [Python Recipes](../language-guides/python/recipes/)
-    - [Node.js Recipes](../language-guides/nodejs/recipes/)
-    - [Java Recipes](../language-guides/java/recipes/)
-    - [.NET Recipes](../language-guides/dotnet/recipes/)
+    - [Python Recipes](../language-guides/python/recipes/index.md)
+    - [Node.js Recipes](../language-guides/nodejs/recipes/index.md)
+    - [Java Recipes](../language-guides/java/recipes/index.md)
+    - [.NET Recipes](../language-guides/dotnet/recipes/index.md)
 
 ## Operator Path
 
@@ -88,13 +88,13 @@ Read in order:
 
 ## See Also
 
-- [Azure App Service Field Guide](./overview.md)
+- [Azure App Service Practical Guide](./overview.md)
 - [Repository Map](./repository-map.md)
-- [Platform](../platform/)
-- [Language Guides](../language-guides/)
-- [Best Practices](../best-practices/)
-- [Operations](../operations/)
-- [Troubleshooting](../troubleshooting/)
+- [Platform](../platform/index.md)
+- [Language Guides](../language-guides/index.md)
+- [Best Practices](../best-practices/index.md)
+- [Operations](../operations/index.md)
+- [Troubleshooting](../troubleshooting/index.md)
 
 ## References
 

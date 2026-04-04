@@ -298,9 +298,9 @@ az webapp identity assign --name "$APP_NAME" --resource-group "$RG"
 
 # Grant Storage Blob Data Contributor role
 az role assignment create \
-  --assignee "$(az webapp identity show --name $APP_NAME --resource-group $RG --query principalId -o tsv)" \
+  --assignee "$(az webapp identity show --name $APP_NAME --resource-group $RG --query principalId --output tsv)" \
   --role "Storage Blob Data Contributor" \
-  --scope "$(az storage account show --name ${BASE_NAME}storage --resource-group $RG --query id -o tsv)"
+  --scope "$(az storage account show --name ${BASE_NAME}storage --resource-group $RG --query id --output tsv)"
 ```
 
 ```python

@@ -73,7 +73,7 @@ az group create --name rg-lab-<name> --location koreacentral
 # 2. Deploy infrastructure
 az deployment group create \
   --resource-group rg-lab-<name> \
-  --template-file lab-guides/<name>/main.bicep \
+  --template-file labs/<name>/main.bicep \
   --parameters baseName=lab<short>
 
 # 3. Deploy app code (zip deploy or local git)

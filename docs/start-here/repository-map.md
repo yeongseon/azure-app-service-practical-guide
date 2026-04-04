@@ -23,7 +23,7 @@ azure-app-service-practical-guide/
 │   ├── nodejs/                              # Node.js reference application
 │   ├── java-springboot/                     # Java reference application
 │   └── dotnet-aspnetcore/                   # .NET reference application
-└── lab-guides/                                    # Troubleshooting lab infrastructure and scenarios (Bicep-based)
+└── labs/                                    # Troubleshooting lab infrastructure and scenarios (Bicep-based)
 ```
 
 ## Section Responsibilities
@@ -35,7 +35,7 @@ azure-app-service-practical-guide/
 - `docs/troubleshooting/` — Playbooks, checklists, KQL, methodology, lab guides
 - `docs/reference/` — CLI cheatsheet, KQL queries, platform limits
 - `apps/` — Reference applications (python-flask, nodejs, java-springboot, dotnet-aspnetcore)
-- `lab-guides/` — Hands-on troubleshooting labs with Bicep templates
+- `labs/` — Hands-on troubleshooting labs with Bicep templates
 
 ```mermaid
 graph TD
@@ -55,19 +55,19 @@ graph TD
 ## Navigation Guidance
 
 1. Start in [Start Here](../index.md) to choose role-based learning flow.
-2. Use [Platform](../platform/), [Best Practices](../best-practices/), and [Language Guides](../language-guides/) for implementation design.
-3. Use [Operations](../operations/) and [Troubleshooting](../troubleshooting/) for production execution.
-4. Use [Reference](../reference/) for quick command and query lookups.
+2. Use [Platform](../platform/index.md), [Best Practices](../best-practices/index.md), and [Language Guides](../language-guides/index.md) for implementation design.
+3. Use [Operations](../operations/index.md) and [Troubleshooting](../troubleshooting/index.md) for production execution.
+4. Use [Reference](../reference/index.md) for quick command and query lookups.
 
 ## See Also
 
-- [Azure App Service Field Guide](./overview.md)
+- [Azure App Service Practical Guide](./overview.md)
 - [Learning Paths](./learning-paths.md)
-- [Platform](../platform/)
-- [Best Practices](../best-practices/)
-- [Operations](../operations/)
-- [Troubleshooting](../troubleshooting/)
-- [Reference](../reference/)
+- [Platform](../platform/index.md)
+- [Best Practices](../best-practices/index.md)
+- [Operations](../operations/index.md)
+- [Troubleshooting](../troubleshooting/index.md)
+- [Reference](../reference/index.md)
 
 ## References
 

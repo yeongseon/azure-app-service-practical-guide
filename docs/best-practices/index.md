@@ -33,7 +33,7 @@ Use this table as your decision map for the Best Practices section.
 | [Deployment](./deployment.md) | Choose safe release patterns and rollback strategy. | Lower deployment risk and faster recovery. |
 | [Scaling](./scaling.md) | Match scale settings to workload characteristics. | Better performance stability and cost efficiency. |
 | [Reliability](./reliability.md) | Build resilience for transient failures and outages. | Improved availability and clearer failure handling. |
-| [Anti-Patterns](./anti-patterns.md) | Identify common App Service design mistakes early. | Fewer avoidable incidents and refactoring cycles. |
+| [Anti-Patterns](./common-anti-patterns.md) | Identify common App Service design mistakes early. | Fewer avoidable incidents and refactoring cycles. |
 
 ### How to use this section
 

@@ -224,7 +224,7 @@ AppServiceAuthenticationLogs
 
 - [Slot Swap Config Drift](slot-swap-config-drift.md)
 - [Deployment Succeeded, Startup Failed](deployment-succeeded-startup-failed.md)
-- [Troubleshooting KQL Queries](../../kql/)
+- [Troubleshooting KQL Queries](../../kql/index.md)
 
 ## Sample Log Patterns
 

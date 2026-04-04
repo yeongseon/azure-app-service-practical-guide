@@ -162,8 +162,8 @@ curl --silent --show-error --fail "https://$APP_NAME.azurewebsites.net/health"
 At minimum, production workloads should have:
 
 - `AppServiceHTTPLogs` for request-level traceability
-- `ConsoleLogs` for application runtime diagnostics
-- `PlatformLogs` for infrastructure-level events
+- `AppServiceConsoleLogs` for application runtime diagnostics
+- `AppServicePlatformLogs` for infrastructure-level events
 
 Enable web server and application logging where relevant:
 

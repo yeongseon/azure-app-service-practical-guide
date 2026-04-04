@@ -75,7 +75,7 @@ In the **Azure Portal**: navigate to your App Service → **Overview** → **Def
 #### 2. Check Health Endpoint
 
 ```bash
-WEB_APP_URL="https://$(az webapp show --resource-group $RG --name $APP_NAME --query defaultHostName -o tsv)"
+WEB_APP_URL="https://$(az webapp show --resource-group $RG --name $APP_NAME --query defaultHostName --output tsv)"
 curl $WEB_APP_URL/health
 ```
 

@@ -1,4 +1,4 @@
-# Azure App Service Field Guide
+# Azure App Service Practical Guide
 
 Comprehensive, practical documentation for building, deploying, operating, and troubleshooting web applications on Azure App Service.
 
@@ -8,7 +8,9 @@ This site is organized as a learning and operations guide so you can move from f
 
 | Section | Purpose |
 |---|---|
+| [Start Here](start-here/overview.md) | Orientation, learning paths, and repository map. |
 | [Platform](platform/index.md) | Understand core App Service architecture, lifecycle, scaling, and networking. |
+| [Best Practices](best-practices/index.md) | Apply production patterns for security, networking, deployment, scaling, and reliability. |
 | [Language Guides](language-guides/index.md) | Follow end-to-end implementation tracks for Python, Node.js, Java, and .NET. |
 | [Operations](operations/index.md) | Run production workloads with scaling, security, health, and cost practices. |
 | [Troubleshooting](troubleshooting/index.md) | Diagnose startup, performance, outbound network, and reliability issues quickly. |
@@ -21,10 +23,11 @@ For orientation and study order, start with [Start Here](start-here/overview.md)
 ```mermaid
 flowchart LR
     A[Start Here] --> B[Platform]
-    B --> C[Language Guides]
-    C --> D[Operations]
-    D --> E[Troubleshooting]
-    E --> F[Reference]
+    B --> C[Best Practices]
+    C --> D[Language Guides]
+    D --> E[Operations]
+    E --> F[Troubleshooting]
+    F --> G[Reference]
 ```
 
 ## Scope and disclaimer

@@ -42,5 +42,9 @@ For language-specific operational guidance, see:
 ## See Also
 
 - [Concepts](../platform/index.md)
+- [Best Practices](../best-practices/index.md)
 - [Reference](../reference/index.md)
+
+## References
+
 - [Azure App Service documentation (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/)

@@ -49,6 +49,10 @@ For language-specific implementation details, see:
 
 ## See Also
 
-- [Azure App Service documentation (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/)
 - [Operations](../operations/index.md)
+- [Best Practices](../best-practices/index.md)
 - [Reference](../reference/index.md)
+
+## References
+
+- [Azure App Service documentation (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/)

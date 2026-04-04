@@ -25,7 +25,7 @@ All language tracks follow the same 7-chapter structure so teams can learn and o
 
 Each guide also includes language-specific recipes for common integration and production scenarios.
 
-For shared platform concepts, see [Platform](../platform/).
+For shared platform concepts, see [Platform](../platform/index.md).
 
 ## See Also
 

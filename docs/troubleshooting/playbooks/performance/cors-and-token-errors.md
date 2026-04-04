@@ -226,7 +226,7 @@ AppServiceAuthenticationLogs
 
 - [Intermittent 5xx Under Load](intermittent-5xx-under-load.md)
 - [Slow Response but Low CPU](slow-response-but-low-cpu.md)
-- [Troubleshooting KQL Queries](../../kql/)
+- [Troubleshooting KQL Queries](../../kql/index.md)
 
 ## Sample Log Patterns
 

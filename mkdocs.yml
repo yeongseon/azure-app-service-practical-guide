@@ -1,4 +1,4 @@
-site_name: Azure App Service Field Guide
+site_name: Azure App Service Practical Guide
 site_url: https://yeongseon.github.io/azure-app-service-practical-guide/
 site_description: Comprehensive guide for running web applications on Azure App Service
 site_author: yeongseon
@@ -69,12 +69,12 @@ markdown_extensions:
 
 validation:
   nav:
-    omitted_files: ignore
+    omitted_files: warn
   links:
-    not_found: ignore
-    anchors: ignore
-    absolute_links: ignore
-    unrecognized_links: ignore
+    not_found: warn
+    anchors: warn
+    absolute_links: warn
+    unrecognized_links: warn
 
 extra:
   social:
@@ -82,6 +82,7 @@ extra:
       link: https://github.com/yeongseon/azure-app-service-practical-guide
 
 nav:
+  - Home: index.md
   - Start Here:
     - start-here/overview.md
     - start-here/learning-paths.md

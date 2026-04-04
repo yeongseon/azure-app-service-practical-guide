@@ -717,4 +717,4 @@ graph LR
 ## See Also
 
 - [Playbook: Failed to Forward Request](../playbooks/startup-availability/failed-to-forward-request.md)
-- [Troubleshooting: First 10 Minutes](../first-10-minutes.md)
+- [Troubleshooting: First 10 Minutes](../first-10-minutes/index.md)
