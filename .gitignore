@@ -40,6 +40,12 @@ obj/
 .DS_Store
 Thumbs.db
 
+# Azure
+.azure/
+
+# Lab artifacts (raw data, charts - generated locally)
+labs/*/artifacts/
+
 # Environment
 .env
 .env.local
