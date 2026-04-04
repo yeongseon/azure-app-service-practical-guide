@@ -4,7 +4,35 @@ Comprehensive, practical documentation for building, deploying, operating, and t
 
 This site is organized as a learning and operations guide so you can move from fundamentals to production troubleshooting with clear, repeatable workflows.
 
-## Navigate the guide
+<div class="grid cards" markdown>
+
+-   :material-rocket-launch:{ .lg .middle } **New to App Service?**
+
+    ---
+
+    Start with platform fundamentals and deploy your first app in under 30 minutes.
+
+    [:octicons-arrow-right-24: Start Here](start-here/overview.md)
+
+-   :material-server:{ .lg .middle } **Running Production Apps?**
+
+    ---
+
+    Apply battle-tested patterns for security, scaling, deployment, and reliability.
+
+    [:octicons-arrow-right-24: Best Practices](best-practices/index.md)
+
+-   :material-fire:{ .lg .middle } **Investigating an Incident?**
+
+    ---
+
+    Jump straight to hypothesis-driven playbooks with real KQL queries and evidence patterns.
+
+    [:octicons-arrow-right-24: Troubleshooting](troubleshooting/index.md)
+
+</div>
+
+## Navigate the Guide
 
 | Section | Purpose |
 |---|---|

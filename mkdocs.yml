@@ -63,6 +63,9 @@ markdown_extensions:
   - pymdownx.mark
   - attr_list
   - md_in_html
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - tables
   - toc:
       permalink: true
@@ -205,6 +208,7 @@ nav:
     - operations/cost-optimization.md
   - Troubleshooting:
     - troubleshooting/index.md
+    - troubleshooting/quick-diagnosis-cards.md
     - troubleshooting/architecture-overview.md
     - troubleshooting/decision-tree.md
     - troubleshooting/mental-model.md

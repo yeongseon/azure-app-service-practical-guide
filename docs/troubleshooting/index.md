@@ -36,6 +36,7 @@ Every playbook follows this flow:
 |---|---|
 | First incident, no idea where to start | [Architecture Overview](architecture-overview.md) |
 | Need to identify the failure category | [Decision Tree](decision-tree.md) |
+| Want 60-second symptom-to-playbook cards | [Quick Diagnosis Cards](quick-diagnosis-cards.md) |
 | Want to understand what evidence to collect | [Evidence Map](evidence-map.md) |
 | Need a mental framework for diagnosis | [Mental Model](mental-model.md) |
 | Already know the symptom category | Jump to [Playbooks](#topics) below |
@@ -76,6 +77,31 @@ graph TD
     style E fill:#f9a825,color:#000
     style F fill:#1565c0,color:#fff
 ```
+
+## Hosting Mode: Where to Look First
+
+Different hosting modes have different observation points. Use this table to prioritize your investigation:
+
+| Symptom | Linux Code | Linux Container | Windows Code |
+|---|---|---|---|
+| **Startup fails** | `AppServiceConsoleLogs` — Oryx build output, runtime startup | `AppServiceConsoleLogs` — Docker logs, `ENTRYPOINT`/`CMD` output | Application Event Logs, `WEBSITE_RUN_FROM_PACKAGE` extraction |
+| **Wrong port/binding** | Check `--bind` in startup command (Gunicorn, etc.) | Check `WEBSITES_PORT`, `PORT` env var, `EXPOSE` in Dockerfile | Typically auto-configured; check `web.config` for IIS settings |
+| **Missing dependencies** | Oryx build logs, `requirements.txt` / `package.json` | Image build logs; dependencies baked into image | NuGet restore logs, MSBuild output |
+| **Slow cold start** | Module import time, lazy loading patterns | Image pull time (check image size), container init | Assembly loading, JIT compilation |
+| **Memory pressure** | `MemoryWorkingSet` metric, OOM in platform logs | `MemoryWorkingSet`, container memory limits | `MemoryWorkingSet`, w3wp process memory |
+| **Outbound timeouts** | SNAT metrics, `AppServiceConsoleLogs` connection errors | Same as Linux Code | SNAT metrics, outbound connection tracking |
+| **Config drift after swap** | App Settings sticky slot config | Same as Linux Code | `web.config` transforms, connection strings |
+| **Filesystem issues** | `/home` (persistent) vs `/tmp` (ephemeral), `df -h` via SSH | Container filesystem (ephemeral by default), mounted volumes | `D:\home` (persistent) vs `D:\local` (ephemeral) |
+
+!!! tip "Hosting Mode Detection"
+    Use `az webapp show --query "kind"` to check hosting mode:
+    
+    - `app,linux` → Linux Code
+    - `app,linux,container` → Linux Container  
+    - `app` → Windows Code
+
+!!! warning "Windows-Specific Gaps"
+    This guide focuses on Linux workloads. Windows-specific playbooks (IIS configuration, `web.config` issues, Windows containers) are referenced but not exhaustively covered.
 
 ## Representative Log Patterns
 
