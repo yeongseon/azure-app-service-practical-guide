@@ -1,190 +1,172 @@
 # How App Service Works
 
-Azure App Service is a managed application hosting platform that runs your web application without requiring you to manage virtual machines, operating system patching, or load balancer infrastructure. This guide explains the platform internals that affect reliability, performance, and day-2 operations.
+Azure App Service is a managed hosting platform for web apps and APIs. You focus on application behavior, while Microsoft operates fleet management, patching, frontend routing, and worker lifecycle. This page builds the mental model you need for design reviews, deployment decisions, and production troubleshooting.
+
+!!! info "Scope of this page"
+    This page explains the **common mental model** for Azure App Service — architecture, deployment, storage, startup, and diagnostics. Some operational details lean toward **Linux and container** hosting. Where behavior differs by hosting mode (Windows code, Linux built-in, Linux custom container), the text calls it out explicitly. For isolated environments (ASE), see [Microsoft Learn: App Service Environment overview](https://learn.microsoft.com/azure/app-service/environment/overview).
+
+!!! note "Community guide disclaimer"
+    This field guide is a community-maintained learning resource. For authoritative platform behavior, always confirm with Microsoft Learn and Azure product documentation before production changes.
 
 ## Prerequisites
 
-- Basic familiarity with Azure resources (resource groups, plans, apps)
-- Azure CLI installed (`az --version`)
-- Permissions to read App Service resources in your subscription
+### Reading prerequisites
 
-## Main Content
+- Basic Azure concepts: subscription, resource group, region, identity
+- Basic understanding of HTTP request/response lifecycle
+- Familiarity with the difference between control configuration and runtime execution
 
-### Platform architecture at a glance
+### Hands-on prerequisites
 
-App Service separates **control plane** and **data plane** responsibilities:
+- Azure CLI installed and authenticated (`az --version`, `az login`)
+- Permission to read and update App Service resources in your subscription
+- One test app and one test plan for experiments (non-production)
 
-- **Control plane**: configuration, deployments, scaling, certificates, access rules
-- **Data plane**: request handling on frontend and worker infrastructure
+---
+
+## [Beginner] Platform architecture at a glance
+
+The most useful mental model for App Service is **three planes**, not two:
+
+1. **Management plane**
+2. **Runtime plane**
+3. **SCM plane**
+
+Each plane has different APIs, responsibilities, and failure modes.
+
+### Three-plane model
+
+| Plane | What it is | Typical operations | Typical tools |
+|---|---|---|---|
+| Management plane | Azure Resource Manager + App Service resource provider | App settings, scaling, certificates, networking config, slot config, identity | Azure Portal, ARM/Bicep, Azure CLI, REST |
+| Runtime plane | Frontend gateways + worker instances that run your app | Request routing, app startup, health checks, process execution, log streaming path | Browser/API clients, platform probes, runtime logs |
+| SCM plane | Companion management surface (Kudu + deployment engine) | ZIP deploy API, deployment logs, selected diagnostics, environment metadata | `https://<app-name>.scm.azurewebsites.net`, Kudu APIs |
+
+!!! note
+    A single management-plane change (for example, changing an app setting) can trigger runtime recycle. Treat any config mutation as potentially restart-impacting.
+
+### Core request path (single-region, single-app)
+
+For a normal single-app flow, keep the model simple:
+
+`Client → App Service Frontend → Worker Instance`
+
+Do not assume a global load balancer in this baseline diagram. Multi-region routing with Front Door or Traffic Manager is a separate architecture topic.
+
+```mermaid
+graph LR
+    C[Client] --> FE[App Service Frontend]
+    FE --> W[Worker Instance]
+    W --> APP[App Process]
+```
+
+### Management, runtime, and SCM interactions
 
 ```mermaid
 graph TD
-    Client[Client Request] --> GLB[Azure Global Load Balancer]
-    GLB --> FE[App Service Frontend]
-    FE --> Worker[Worker Instance]
-    subgraph Worker [Worker Instance]
-        Sandbox[Sandbox Environment]
-        subgraph Sandbox
-            App[Application Process]
-            Temp[Ephemeral Disk /tmp]
-        end
-        Home[Persistent Storage /home]
-    end
+    OP[Operator / CI] --> MGMT[Management Plane\nARM + RP]
+    USER[End User] --> FE[Runtime Frontend]
+    FE --> WK[Worker Instance]
+    WK --> APP[Main App Sandbox]
+
+    OP --> SCM[SCM Plane\nKudu Site]
+    SCM --> DEPLOY[Deployment Engine]
+    SCM --> META[Diagnostics/Metadata]
+
+    MGMT --> FE
+    MGMT --> WK
+    DEPLOY --> CONTENT[/App Content/]
+    CONTENT --> APP
 ```
 
-### Control plane and data plane responsibilities
+!!! important "Main app vs SCM app are separate contexts"
+    The main app and the SCM/Kudu site run in different sandbox contexts. They are related operationally, but not identical runtime contexts. Diagnostic visibility differs by hosting mode.
 
-| Plane | Examples | Common Operations |
-|---|---|---|
-| Control plane | ARM, App Service resource provider | Deploy app, set app settings, change plan, scale rules |
-| Data plane | Frontend gateways, workers | Serve requests, route traffic, stream logs |
+Microsoft Learn references:
+
+- [App Service overview](https://learn.microsoft.com/azure/app-service/overview)
+- [Kudu service overview](https://learn.microsoft.com/azure/app-service/resources-kudu)
+- [App Service Environment overview](https://learn.microsoft.com/azure/app-service/environment/overview)
+
+---
+
+## [Beginner] Hosting modes and what changes
+
+App Service behavior is not identical across hosting modes. Most confusion comes from applying Linux custom container assumptions to built-in stacks, or vice versa.
+
+### Hosting mode comparison
+
+| Aspect | Windows Code | Linux Built-in | Linux Custom Container |
+|---|---|---|---|
+| Startup model | Platform launches stack runtime on worker | Platform launches built-in language image and startup command | Platform pulls your image and starts container |
+| Port contract | Platform-managed internal port/named pipe behavior | App typically reads `PORT` (or `WEBSITES_PORT` when applicable) | App Service must know listening port via `WEBSITES_PORT` |
+| Persistent storage path | Durable app content/log paths (Windows filesystem model) | `/home` persistent shared storage by default | `/home` persistence depends on `WEBSITES_ENABLE_APP_SERVICE_STORAGE` setting |
+| Diagnostic entry point | Kudu/SCM provides rich diagnostics | Kudu/SCM provides rich diagnostics | SSH into app container is primary; Kudu diagnostics are limited |
+| Common pitfall | Assuming local temp files are durable | Binding wrong port or slow startup | Expecting SCM container to see app container filesystem/processes |
+
+!!! warning "Port and storage are mode-specific"
+    Do not apply one universal rule for every mode. Your app must satisfy the correct contract for **its** hosting mode.
+
+### Port contract by hosting mode
+
+- **Windows code**
+  - App Service integrates with IIS/httpPlatform/ASP.NET hosting model.
+  - Binding is platform-managed (named pipe or platform-assigned port behavior depending on stack).
+- **Linux built-in image**
+  - App typically binds to `PORT` (and in some cases `WEBSITES_PORT`).
+  - Validate startup command and framework binding behavior.
+- **Linux custom container**
+  - App Service needs container port metadata, typically via `WEBSITES_PORT`.
+  - Ensure your container listens on the configured port.
+
+### Storage behavior by hosting mode
+
+- **Built-in images**: `/home` is typically persistent and shared.
+- **Custom containers**: persistence behavior depends on `WEBSITES_ENABLE_APP_SERVICE_STORAGE`.
 
 !!! note
-    A control plane operation (for example, changing app settings) can trigger a data plane recycle of your application process. Plan for restart-safe behavior.
+    Microsoft documentation and historical behavior around custom-container storage defaults can vary by scenario. Verify your actual settings and observed behavior rather than assuming `/home` persistence.
 
-### Sandbox and workload isolation
+Learn references:
 
-Your application runs in a hardened sandbox on shared infrastructure (except dedicated isolation offerings). Isolation boundaries include:
+- [Configure a custom container for App Service](https://learn.microsoft.com/azure/app-service/configure-custom-container)
+- [App Service operating system functionality](https://learn.microsoft.com/azure/app-service/operating-system-functionality)
 
-- Process isolation from other tenants
-- Filesystem isolation at the app scope
-- Network policy boundaries controlled by platform configuration
-- Resource governance (CPU, memory, file handles, process limits)
+---
 
-The sandbox model means you should treat the environment as **replaceable compute**:
+## [Beginner] Management plane: what you configure
 
-- Instances can restart
-- Scale-out adds new instances dynamically
-- Local ephemeral state can disappear at any restart
+The management plane is where desired state is declared.
 
-### Build and deployment flow
+Typical objects and settings:
 
-For code-based deployments, App Service uses a platform build pipeline (commonly Oryx) to:
+- App Service Plan SKU and instance count
+- App settings and connection strings
+- Deployment slots and slot settings
+- Custom domains and TLS certificates
+- Access restrictions
+- Identity settings (system/user-assigned managed identity)
+- Backup and restore configuration
 
-1. Detect the application stack
-2. Resolve and install dependencies
-3. Prepare startup artifacts
-4. Stage output into the app content directory
+### Why management-plane changes can restart runtime
 
-For container-based deployments, App Service pulls and starts your image, then applies platform startup contracts (ports, health probes, environment variables).
+Many settings are consumed at process/container start. When changed, App Service recycles processes to enforce consistency.
 
-```mermaid
-flowchart LR
-    Source[Source Deploy or Package] --> Detect[Platform Build Detection]
-    Detect --> Build[Dependency Restore and Build]
-    Build --> Stage[Stage to /home/site/wwwroot]
-    Stage --> Start[Start Application Process]
-```
+Common recycle triggers:
 
-### Filesystem model: ephemeral vs persistent
+- App settings change
+- Startup command change
+- Stack/runtime configuration change
+- Slot swap
+- Scale up/down or scale in/out
 
-Understanding storage semantics is mandatory for reliable behavior.
-
-#### Ephemeral instance disk
-
-- Fast local storage
-- Wiped when instance is replaced or restarted
-- Not shared across scaled-out instances
-- Suitable for temp files, short-lived caches, and transient processing
-
-#### Persistent shared storage (`/home`)
-
-- Backed by network-attached storage
-- Persists across restarts
-- Shared among all instances of the same app
-- Slower latency than local ephemeral disk
-
-Key paths:
-
-| Path | Purpose |
-|---|---|
-| `/home/site/wwwroot` | Deployed app content |
-| `/home/LogFiles` | Platform/application logs |
-| `/home/data` | General persistent area |
-
-!!! warning "Storage design rule"
-    Do not treat local ephemeral disk as durable storage. Put durable user data in managed data stores (database, object storage, queue, or file share service).
-
-### Bring Your Own Storage (BYOS)
-
-You can mount external storage at custom paths for large assets or shared content patterns.
-
-Typical use cases:
-
-- Shared read assets across instances
-- Shared writable content with file-share-backed mounts
-- Externalized artifacts that should not be bundled in deployment packages
-
-Important constraints:
-
-- Feature availability depends on plan tier and OS/runtime mode
-- Mount count limits apply per app
-- Throughput and latency depend on backing storage and networking path
-
-### Runtime startup contract
-
-At startup, the platform injects environment configuration and expects your app to:
-
-- Bind to the platform-provided port
-- Become healthy within startup limits
-- Handle process termination signals gracefully
-
-If startup fails repeatedly, App Service may cycle the process and surface startup errors in logs.
-
-### Restart and recycle triggers
-
-Common triggers include:
-
-- Platform maintenance events
-- Configuration changes (app settings, startup config)
-- Scale actions
-- Manual restart actions
-- Process crashes or health-check failures
-
-Design implications:
-
-- Keep the app stateless where possible
-- Use idempotent startup behavior
-- Persist durable state externally
-
-### Kudu (SCM site) for diagnostics
-
-Every app includes a companion SCM site:
-
-`https://<app-name>.scm.azurewebsites.net`
-
-Kudu helps with runtime inspection and operational diagnostics.
-
-```mermaid
-flowchart LR
-    Engineer[Engineer] --> SCM[SCM Site]
-    SCM --> VFS[Virtual File System]
-    SCM --> Proc[Process Explorer]
-    SCM --> Console[Web Console]
-    SCM --> Deploy[Deployment APIs]
-    SCM --> Env[Environment Inspector]
-```
-
-Useful endpoints:
-
-| Capability | Endpoint |
-|---|---|
-| File browsing | `/api/vfs/` |
-| Process inventory | `/api/processes` |
-| Environment dump | `/api/environment` |
-| Zip deployment | `/api/zipdeploy` |
-| Log stream | `/api/logstream` |
-
-!!! note
-    SCM diagnostics share the same plan resources as your app. Heavy diagnostics activity can impact performance on small SKUs.
-
-### Inspecting platform state with Azure CLI
+### Example: inspect current app state with CLI
 
 ```bash
 az webapp show \
     --resource-group "$RG" \
     --name "$APP_NAME" \
-    --query "{state:state, defaultHostName:defaultHostName, enabledHostNames:enabledHostNames}" \
+    --query "{state:state, hostNames:hostNames, httpsOnly:httpsOnly, serverFarmId:serverFarmId}" \
     --output json
 ```
 
@@ -192,48 +174,501 @@ Example output (PII masked):
 
 ```json
 {
-  "defaultHostName": "app-<masked>.azurewebsites.net",
-  "enabledHostNames": [
+  "hostNames": [
     "app-<masked>.azurewebsites.net",
     "www.example.com"
   ],
+  "httpsOnly": true,
+  "serverFarmId": "/subscriptions/<subscription-id>/resourceGroups/<rg>/providers/Microsoft.Web/serverfarms/<plan>",
   "state": "Running"
 }
 ```
 
-## Advanced Topics
+### Example: inspect key app settings safely
 
-### Availability zones and fault domains
+```bash
+az webapp config appsettings list \
+    --resource-group "$RG" \
+    --name "$APP_NAME" \
+    --query "[?name=='WEBSITES_PORT' || name=='PORT' || name=='WEBSITES_ENABLE_APP_SERVICE_STORAGE' || name=='SCM_DO_BUILD_DURING_DEPLOYMENT']"
+```
 
-Plan-level redundancy characteristics vary by SKU family and region capabilities. For mission-critical systems, evaluate zone redundancy, regional failover strategy, and data-tier resilience together.
+Learn references:
 
-### Warm-up and deployment safety
+- [Manage an App Service app in Azure CLI](https://learn.microsoft.com/azure/app-service/scripts/cli-web-app)
+- [Configure app settings](https://learn.microsoft.com/azure/app-service/configure-common)
 
-Use health checks and deployment slots to reduce failed rollouts:
+---
 
-- Deploy to slot
-- Validate warm-up and probes
-- Swap into production after readiness confirmation
+## [Beginner] Runtime plane: how requests are served
 
-### Shared plan contention
+At runtime, App Service frontends terminate inbound connections and route traffic to healthy worker instances.
 
-Multiple apps in the same App Service Plan share compute resources. Noisy-neighbor behavior can happen at the plan scope even when app-level isolation is strong.
+### Runtime path and warm instance selection
 
-### Operational baseline checklist
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant FE as App Service Frontend
+    participant W as Worker Instance
+    participant A as App Process
+    U->>FE: HTTPS request
+    FE->>W: Route to healthy instance
+    W->>A: Invoke app listener
+    A-->>W: Response
+    W-->>FE: Response
+    FE-->>U: HTTPS response
+```
 
-- Health endpoint configured
-- Structured logs enabled
-- Alert rules for restarts and HTTP failure rates
-- Backup strategy for external data stores
-- Rollback path using deployment slots
+### Instance lifecycle realities
+
+- Instances can recycle during platform maintenance.
+- Scale-out adds new instances that must warm up.
+- Scale-in removes instances and in-flight behavior must tolerate it.
+
+Design implications:
+
+- Prefer stateless app nodes.
+- Keep startup idempotent.
+- Externalize durable state.
+- Ensure graceful shutdown behavior.
+
+### Runtime observability basics
+
+- Request failures (HTTP 5xx, latency spikes) are runtime symptoms.
+- Management-plane metrics alone are insufficient.
+- Log correlation should include timestamp, instance, and request identifiers.
+
+Learn references:
+
+- [Monitor App Service](https://learn.microsoft.com/azure/app-service/troubleshoot-diagnostic-logs)
+- [Reliability in App Service](https://learn.microsoft.com/azure/reliability/reliability-app-service)
+
+---
+
+## [Operator] SCM plane (Kudu): deployment and diagnostics companion
+
+The SCM site (`<app-name>.scm.azurewebsites.net`) is a companion management surface.
+
+Reframe it correctly:
+
+- Kudu is **not** always equivalent to your runtime environment.
+- Diagnostic depth varies by hosting model.
+- Deployment APIs are still valuable even when UI features differ.
+
+### What Kudu typically provides
+
+| Capability | Endpoint or surface |
+|---|---|
+| ZIP deployment API | `/api/zipdeploy` |
+| Deployment history | `/api/deployments` |
+| Environment metadata | `/api/environment` |
+| Log stream | `/api/logstream` |
+| File APIs | `/api/vfs/` |
+
+### Critical caveats by hosting model
+
+1. **Linux custom container**
+   - SCM site runs in a **separate container** from your app container.
+   - SCM cannot directly inspect app container filesystem/processes.
+   - Use app-container SSH/logs as primary diagnostic path.
+
+2. **SCM access restrictions can differ from main app**
+   - Main site may be reachable while SCM is blocked.
+   - Troubleshoot SCM access rules separately.
+
+3. **Linux Kudu ZIP deploy UI limitations**
+   - UI behavior is not universal across Linux scenarios.
+   - Prefer API/CLI deployment commands for reliability.
+
+!!! warning "Common confusion"
+    "My app works, but Kudu will not open" is often an SCM access-restriction configuration issue, not an app runtime issue.
+
+### Access restrictions for main site vs SCM site
+
+```mermaid
+graph TD
+    OP[Operator IP] --> MAIN[Main Site Access Rules]
+    OP --> SCMR[SCM Site Access Rules]
+    MAIN --> APP[app.azurewebsites.net]
+    SCMR --> KUDU[app.scm.azurewebsites.net]
+```
+
+### CLI check: SCM and app access restrictions
+
+```bash
+az webapp config access-restriction show \
+    --resource-group "$RG" \
+    --name "$APP_NAME" \
+    --output json
+```
+
+Learn references:
+
+- [Kudu service overview](https://learn.microsoft.com/azure/app-service/resources-kudu)
+- [Set up Azure App Service access restrictions](https://learn.microsoft.com/azure/app-service/app-service-ip-restrictions)
+- [Configure a custom container](https://learn.microsoft.com/azure/app-service/configure-custom-container)
+
+---
+
+## [Operator] Build and deployment flow (accurate model)
+
+App Service supports multiple deployment sources and mechanisms. **Oryx is one build automation path**, not a universal default for every deployment style.
+
+### Correct framing
+
+- You can build in CI and deploy artifacts.
+- You can trigger server-side build for selected flows.
+- You can deploy prebuilt containers.
+- ZIP deploy does **not** auto-build unless you explicitly enable it.
+
+### Deployment method vs build behavior
+
+| Deployment method | Typical build location | Build behavior notes |
+|---|---|---|
+| GitHub Actions (recommended for compiled stacks) | CI pipeline | Build/test/package in CI, then deploy artifact or container |
+| ZIP deploy | Usually prebuilt artifact | No server-side build unless `SCM_DO_BUILD_DURING_DEPLOYMENT=true` |
+| Local Git / external Git integration | Can use server-side build path | May use build automation depending on stack and configuration |
+| Container image deploy | Container build pipeline | App Service pulls image; no App Service source build step |
+
+### Deployment flow map
+
+```mermaid
+flowchart LR
+    SRC[Source Code] --> CI[CI Build/Test]
+    CI --> ART[Artifact or Image]
+    ART --> DEPLOY[Deployment Mechanism]
+    DEPLOY --> APP[Runtime Startup]
+
+    SRC --> KUDUDEPLOY[Kudu/Oryx Path]
+    KUDUDEPLOY --> APP
+```
+
+### ZIP deploy with explicit server-side build setting
+
+```bash
+az webapp config appsettings set \
+    --resource-group "$RG" \
+    --name "$APP_NAME" \
+    --settings SCM_DO_BUILD_DURING_DEPLOYMENT=true
+
+az webapp deploy \
+    --resource-group "$RG" \
+    --name "$APP_NAME" \
+    --src-path "./build-output.zip" \
+    --type zip
+```
+
+### GitHub Actions pattern (high-level)
+
+1. Build and test in CI.
+2. Produce immutable artifact (or container image digest).
+3. Deploy artifact/image to App Service.
+4. Validate health endpoint before full traffic confidence.
+
+!!! tip
+    For Java, .NET, and Node builds with compile steps, CI-built artifacts improve reproducibility and rollback simplicity.
+
+Learn references:
+
+- [Deploy to App Service with GitHub Actions](https://learn.microsoft.com/azure/app-service/deploy-github-actions)
+- [Deploy ZIP package](https://learn.microsoft.com/azure/app-service/deploy-zip)
+- [Oryx build system](https://learn.microsoft.com/azure/app-service/configure-language-nodejs#build-automation)
+
+---
+
+## [Beginner] Filesystem model: ephemeral vs persistent
+
+Storage behavior drives many production incidents. Separate storage into two classes:
+
+1. Ephemeral instance-local storage
+2. Persistent shared storage
+
+### Ephemeral storage
+
+Characteristics:
+
+- Fast local I/O
+- Instance-scoped
+- Lost on recycle/replacement
+- Not shared across scaled-out instances
+
+Good uses:
+
+- Temporary upload staging
+- Transient cache files
+- Intermediate processing artifacts
+
+Bad uses:
+
+- User data requiring durability
+- Cross-instance coordination files
+- Any state you need after restart
+
+### Persistent storage (`/home` on Linux)
+
+Characteristics:
+
+- Network-backed
+- Persists across restarts
+- Shared between instances of same app
+- Higher latency than local temporary storage
+
+Key Linux paths:
+
+| Path | Typical purpose |
+|---|---|
+| `/home/site/wwwroot` | Deployed app content |
+| `/home/LogFiles` | Application/platform logs |
+| `/home/data` | App-specific persistent files |
+
+!!! warning "Verify hosting mode defaults"
+    For built-in Linux images, `/home` is generally persistent and shared. For custom containers, persistence depends on `WEBSITES_ENABLE_APP_SERVICE_STORAGE`. Verify your actual app settings and runtime behavior.
+
+### Mistake example: file-based database on `/home`
+
+Do **not** assume `/home` is suitable for SQLite or other file-based databases in production multi-instance scenarios.
+
+Why this is risky:
+
+- Shared network filesystem characteristics can introduce lock contention.
+- Latency variance affects transaction behavior.
+- Multi-instance concurrency increases corruption/timeout risk.
+
+Preferred approach:
+
+- Use managed database services (Azure SQL, Azure Database for PostgreSQL, Cosmos DB, etc.).
+
+Learn references:
+
+- [Operating system functionality in App Service](https://learn.microsoft.com/azure/app-service/operating-system-functionality)
+- [Best practices for App Service](https://learn.microsoft.com/azure/app-service/app-service-best-practices)
+
+---
+
+## [Operator] Startup contracts and health
+
+Startup success is a contract between your app and the platform:
+
+- App listens on expected port model
+- App initializes within limits
+- Health endpoint reflects readiness truthfully
+- App handles termination gracefully
+
+### Health Check behavior details
+
+Health Check is more than a monitoring toggle; it is part of runtime traffic safety.
+
+Important behaviors:
+
+- Health endpoint should return **200 only when fully warmed**.
+- If endpoint responds with **302 redirect**, Health Check does **not** follow redirect as success.
+- A **1-minute timeout** generally counts as unhealthy.
+- Most effective with **2+ instances** (single instance has limited failover value).
+- Used as a readiness gate during scale-out and recovery flows.
+
+```mermaid
+flowchart TD
+    P[Platform Probe] --> H{Health endpoint result}
+    H -->|200 and ready| IN[Instance kept in rotation]
+    H -->|Timeout or non-healthy| OUT[Instance marked unhealthy]
+    OUT --> REC[Recovery/replace actions]
+```
+
+### Example health endpoint design rules
+
+- Avoid expensive deep checks on every probe call.
+- Confirm critical dependencies needed for serving traffic.
+- Return explicit non-200 when app is not ready.
+- Keep response fast and deterministic.
+
+Learn references:
+
+- [Monitor App Service instances by using Health Check](https://learn.microsoft.com/azure/app-service/monitor-instances-health-check)
+- [Reliability in App Service](https://learn.microsoft.com/azure/reliability/reliability-app-service)
+
+---
+
+## [Operator] Warm-up and deployment safety
+
+Deployment safety is about controlling user impact while new code starts.
+
+### Slot swap mechanics
+
+When using deployment slots:
+
+1. Deploy to source slot.
+2. Source slot warms up.
+3. Target (production) stays online during warm-up.
+4. Swap happens after readiness checks.
+
+```mermaid
+sequenceDiagram
+    participant Dev as CI/CD
+    participant Slot as Staging Slot
+    participant Prod as Production Slot
+    Dev->>Slot: Deploy new version
+    Slot->>Slot: Warm-up and validate
+    Note over Prod: Remains online
+    Dev->>Prod: Execute swap
+    Prod-->>Dev: New version active
+```
+
+### Custom swap warm-up settings
+
+- `WEBSITE_SWAP_WARMUP_PING_PATH`
+- `WEBSITE_SWAP_WARMUP_PING_STATUSES`
+
+Use these to align swap readiness with your app’s real warm-up endpoint and expected status codes.
+
+### Important slot constraints
+
+- Deployment slots require **Standard tier or higher**.
+- Auto swap is **not supported** on Linux web apps / Web App for Containers.
+
+### If slots are not available
+
+Use one or more alternatives:
+
+- Artifact rollback (redeploy previous known-good package)
+- Run-from-package with previous package version
+- Blue-green traffic strategy in CI/CD workflow (external routing/control)
+
+!!! tip "Baseline should be tier-aware"
+    Do not assume slot-based rollback is universally available. Your operational baseline must include a rollback method that matches your SKU and hosting mode.
+
+Learn references:
+
+- [Set up staging environments in App Service](https://learn.microsoft.com/azure/app-service/deploy-staging-slots)
+- [Run your app from a ZIP package](https://learn.microsoft.com/azure/app-service/deploy-run-package)
+
+---
+
+## [Advanced] Zone redundancy and regional resiliency
+
+Zone resilience in App Service depends on SKU, instance count, and regional capability.
+
+### Conditions and boundaries
+
+- Zone redundancy is available on supported Premium tiers (for example Premium v2/v3/v4 where supported).
+- You generally need **2+ instances** for meaningful zonal distribution.
+- Region must support the relevant zonal capability.
+- Fault domains are platform-managed; they are not directly user-controlled in App Service.
+
+### What this means operationally
+
+- Validate zone support before committing architecture decisions.
+- Pair zonal design with data-tier resiliency.
+- Add regional failover strategy for true regional outage tolerance.
+
+```mermaid
+graph LR
+    U[User Traffic] --> FE[Regional Frontends]
+    FE --> Z1[Workers in Zone 1]
+    FE --> Z2[Workers in Zone 2]
+    FE --> Z3[Workers in Zone 3]
+```
+
+Learn references:
+
+- [Reliability in App Service](https://learn.microsoft.com/azure/reliability/reliability-app-service)
+- [About availability zones](https://learn.microsoft.com/azure/reliability/availability-zones-overview)
+
+---
+
+## [Operator] Shared plan contention and capacity behavior
+
+An App Service Plan is the compute boundary. Apps in the same plan compete for shared CPU, memory, and I/O capacity.
+
+### What shares plan resources
+
+Within one plan, shared compute can be consumed by:
+
+- Multiple web apps
+- Deployment slots
+- Diagnostic workloads and log generation
+- Backup operations
+- WebJobs
+
+This is why app-only metrics can hide root cause. Plan-level visibility is mandatory.
+
+### Monitoring strategy: app and plan together
+
+Track at least:
+
+- Plan CPU percentage
+- Plan memory working set pressure
+- HTTP queue/latency signals at app level
+- Restart count and instance health
+
+### Example: inspect plan for an app
+
+```bash
+az webapp show \
+    --resource-group "$RG" \
+    --name "$APP_NAME" \
+    --query "{planId:serverFarmId, state:state}" \
+    --output json
+```
+
+Use the `planId` to correlate app incidents with plan-level metrics in Azure Monitor.
+
+Learn references:
+
+- [Scale an app in Azure App Service](https://learn.microsoft.com/azure/app-service/manage-scale-up)
+- [Monitor App Service](https://learn.microsoft.com/azure/app-service/troubleshoot-diagnostic-logs)
+
+---
+
+## [Beginner] Operational baseline checklist
+
+Use this as a minimum baseline before production go-live.
+
+### Reliability baseline
+
+- Health endpoint implemented and tested
+- Health check configured in App Service
+- At least two instances for meaningful health-based routing (where workload requires availability)
+- Startup path measured and within acceptable threshold
+
+### Deployment safety baseline
+
+- CI build/test pipeline produces immutable artifacts
+- Rollback method documented and tested
+  - If Standard+ with slots: slot swap/rollback runbook
+  - If no slots: previous artifact redeploy or run-from-package fallback
+- Deployment identity/credentials minimized
+
+### Observability baseline
+
+- Application logging enabled with structured format
+- Log retention and export path documented
+- Alerting defined for error rate, restart spikes, and latency regressions
+
+### Configuration baseline
+
+- Port contract validated for hosting mode
+- Storage behavior validated (`/home` persistence expectation verified)
+- Secrets stored in secure settings/Key Vault references where applicable
+
+### Capacity baseline
+
+- Plan-level metrics dashboard in place
+- App-level and plan-level alerts linked in incident workflow
+- Scale policy reviewed against real traffic profile
+
+---
 
 ## Language-Specific Details
 
 For language-specific implementation details, see:
-- [Node.js Guide](https://yeongseon.github.io/azure-appservice-nodejs-guide/)
-- [Python Guide](https://yeongseon.github.io/azure-appservice-python-guide/)
-- [Java Guide](https://yeongseon.github.io/azure-appservice-java-guide/)
-- [.NET Guide](https://yeongseon.github.io/azure-appservice-dotnet-guide/)
+
+- [Python Guide](../language-guides/python/index.md)
+- [Node.js Guide](../language-guides/nodejs/index.md)
+- [Java Guide](../language-guides/java/index.md)
+- [.NET Guide](../language-guides/dotnet/index.md)
+
+---
 
 ## See Also
 
@@ -242,5 +677,25 @@ For language-specific implementation details, see:
 - [Scaling](./scaling.md)
 - [Networking](./networking.md)
 - [Resource Relationships](./resource-relationships.md)
-- [Azure App Service overview (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview)
-- [Kudu service overview (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/resources-kudu)
+- [Authentication Architecture](./authentication-architecture.md)
+- [Security Architecture](./security-architecture.md)
+
+## Reference
+
+- [Azure App Service overview](https://learn.microsoft.com/azure/app-service/overview)
+- [App Service Environment overview](https://learn.microsoft.com/azure/app-service/environment/overview)
+- [Kudu service overview](https://learn.microsoft.com/azure/app-service/resources-kudu)
+- [Configure a custom container for App Service](https://learn.microsoft.com/azure/app-service/configure-custom-container)
+- [Operating system functionality in App Service](https://learn.microsoft.com/azure/app-service/operating-system-functionality)
+- [Deploy ZIP package to App Service](https://learn.microsoft.com/azure/app-service/deploy-zip)
+- [Deploy to App Service by using GitHub Actions](https://learn.microsoft.com/azure/app-service/deploy-github-actions)
+- [Set up staging environments in App Service](https://learn.microsoft.com/azure/app-service/deploy-staging-slots)
+- [Run your app from a ZIP package](https://learn.microsoft.com/azure/app-service/deploy-run-package)
+- [Monitor App Service instances by using Health Check](https://learn.microsoft.com/azure/app-service/monitor-instances-health-check)
+- [Set up App Service access restrictions](https://learn.microsoft.com/azure/app-service/app-service-ip-restrictions)
+- [Reliability in App Service](https://learn.microsoft.com/azure/reliability/reliability-app-service)
+- [About availability zones](https://learn.microsoft.com/azure/reliability/availability-zones-overview)
+- [Troubleshoot diagnostic logs in App Service](https://learn.microsoft.com/azure/app-service/troubleshoot-diagnostic-logs)
+- [Best practices for Azure App Service](https://learn.microsoft.com/azure/app-service/app-service-best-practices)
+- [Configure app settings](https://learn.microsoft.com/azure/app-service/configure-common)
+- [Scale an app in Azure App Service](https://learn.microsoft.com/azure/app-service/manage-scale-up)
