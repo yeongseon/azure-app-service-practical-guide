@@ -316,6 +316,162 @@ What to verify:
 
 When deployment is green but the app is down, treat build success and runtime success as separate checkpoints. Correlate startup command, artifact layout, build mode, port binding, and runtime compatibility to identify why the process never became probe-ready.
 
+## Sample Log Patterns
+
+### AppServicePlatformLogs (startup timeout signature)
+
+```text
+[AppServicePlatformLogs]
+2026-04-04T11:22:47Z  Informational  Site startup probe failed after 43.8646689 seconds.
+2026-04-04T11:22:47Z  Error          State: Stopping, Action: StoppingSiteContainers, LastError: ContainerTimeout
+2026-04-04T11:22:47Z  Error          Failed to start site. Revert by stopping site.
+2026-04-04T11:22:47Z  Error          State: Stopping, Action: CancellingStartup, LastError: ContainerTimeout
+2026-04-04T11:22:47Z  Error          Site container: <app-name> terminated during site startup.
+2026-04-04T11:22:47Z  Informational  Site: <app-name> stopped.
+```
+
+### AppServiceHTTPLogs (platform serves only 503 during startup failure)
+
+```text
+[AppServiceHTTPLogs]
+2026-04-04T11:22:48Z  GET  /  503  49751
+2026-04-04T11:22:48Z  GET  /  503  49751
+2026-04-04T11:22:48Z  GET  /  503  49762
+2026-04-04T11:22:48Z  GET  /  503  49753
+2026-04-04T11:22:48Z  GET  /  503  49765
+```
+
+### AppServiceConsoleLogs (no rows)
+
+```text
+[AppServiceConsoleLogs]
+0 rows returned for incident window.
+```
+
+!!! tip "How to Read This"
+    The combination of repeated `503` responses near ~50 seconds and `ContainerTimeout` in platform logs means the platform waited for startup readiness and never got it. Zero console rows is a strong signal that the container process never reached a usable boot/logging state.
+
+## KQL Queries with Example Output
+
+### Query 1: Startup timeout and cancellation sequence
+
+```kusto
+// Startup timeout sequence in platform logs
+AppServicePlatformLogs
+| where TimeGenerated between (datetime(2026-04-04 11:22:40) .. datetime(2026-04-04 11:22:50))
+| where Message has_any ("ContainerTimeout", "startup probe failed", "Failed to start site", "terminated during site startup")
+| project TimeGenerated, Level, Message
+| order by TimeGenerated asc
+```
+
+**Example Output:**
+
+| TimeGenerated | Level | Message |
+|---|---|---|
+| 2026-04-04 11:22:47 | Informational | Site startup probe failed after 43.8646689 seconds. |
+| 2026-04-04 11:22:47 | Error | State: Stopping, Action: StoppingSiteContainers, LastError: ContainerTimeout |
+| 2026-04-04 11:22:47 | Error | Failed to start site. Revert by stopping site. |
+| 2026-04-04 11:22:47 | Error | State: Stopping, Action: CancellingStartup, LastError: ContainerTimeout |
+| 2026-04-04 11:22:47 | Error | Site container: <app-name> terminated during site startup. |
+
+!!! tip "How to Read This"
+    These rows prove a startup lifecycle failure, not a post-start runtime issue. The platform explicitly cancels startup because probe readiness was not achieved in time.
+
+### Query 2: HTTP behavior during failed startup window
+
+```kusto
+// HTTP status and latency during startup-failed incident
+AppServiceHTTPLogs
+| where TimeGenerated between (datetime(2026-04-04 11:22:45) .. datetime(2026-04-04 11:22:50))
+| project TimeGenerated, CsMethod, CsUriStem, ScStatus, TimeTaken
+| order by TimeGenerated asc
+```
+
+**Example Output:**
+
+| TimeGenerated | CsMethod | CsUriStem | ScStatus | TimeTaken |
+|---|---|---|---|---|
+| 2026-04-04 11:22:48 | GET | / | 503 | 49751 |
+| 2026-04-04 11:22:48 | GET | / | 503 | 49751 |
+| 2026-04-04 11:22:48 | GET | / | 503 | 49762 |
+| 2026-04-04 11:22:48 | GET | / | 503 | 49753 |
+| 2026-04-04 11:22:48 | GET | / | 503 | 49765 |
+
+!!! tip "How to Read This"
+    `503` across all requests plus nearly identical ~50,000 ms `TimeTaken` indicates platform timeout behavior, not normal app-generated failures.
+
+### Query 3: Console log absence check
+
+```kusto
+// Verify whether app emitted startup stdout/stderr
+AppServiceConsoleLogs
+| where TimeGenerated between (datetime(2026-04-04 11:22:40) .. datetime(2026-04-04 11:22:50))
+| project TimeGenerated, Level, ResultDescription
+| order by TimeGenerated asc
+```
+
+**Example Output:**
+
+| TimeGenerated | Level | ResultDescription |
+|---|---|---|
+| _No rows_ |  |  |
+
+!!! tip "How to Read This"
+    No console output during incident strengthens hypotheses H1/H2/H4 where process startup never reaches logging/serve loop.
+
+## CLI Investigation Commands
+
+```bash
+# Confirm app runtime state and enablement
+az webapp show --resource-group <resource-group> --name <app-name> --query "{state:state,enabled:enabled,hostNames:hostNames}" --output table
+
+# Inspect startup command and Linux runtime stack
+az webapp config show --resource-group <resource-group> --name <app-name> --query "{linuxFxVersion:linuxFxVersion,appCommandLine:appCommandLine,alwaysOn:alwaysOn}" --output table
+
+# Inspect startup-critical settings
+az webapp config appsettings list --resource-group <resource-group> --name <app-name> --query "[?name=='SCM_DO_BUILD_DURING_DEPLOYMENT' || name=='WEBSITES_PORT' || name=='WEBSITES_CONTAINER_START_TIME_LIMIT' || name=='PYTHON_VERSION'].{name:name,value:value}" --output table
+
+# Pull deployment history to prove build/deploy success
+az webapp log deployment show --resource-group <resource-group> --name <app-name> --output table
+```
+
+**Example Output:**
+
+```text
+State    Enabled    HostNames
+-------  ---------  -------------------------------------------
+Running  True       <app-name>.azurewebsites.net
+
+LinuxFxVersion    AppCommandLine                               AlwaysOn
+----------------  -------------------------------------------  --------
+PYTHON|3.11       gunicorn --bind 0.0.0.0:8000 src.app:app    True
+
+Name                                   Value
+-------------------------------------  ------
+SCM_DO_BUILD_DURING_DEPLOYMENT         true
+WEBSITES_PORT                          8000
+WEBSITES_CONTAINER_START_TIME_LIMIT    230
+PYTHON_VERSION                         3.11
+```
+
+!!! tip "How to Read This"
+    If control-plane settings look healthy but logs show startup timeout, focus on runtime artifact/startup-command mismatch and dependency/runtime compatibility, not deployment transport.
+
+## Normal vs Abnormal Comparison
+
+| Signal | Normal Startup | Deployment Succeeded, Startup Failed |
+|---|---|---|
+| Platform lifecycle log | `Site started` after warm-up | `Failed to start site`, `CancellingStartup`, `ContainerTimeout` |
+| HTTP status during startup window | First requests become 200/302 quickly | Repeated 503 responses only |
+| HTTP TimeTaken | Mixed low latency after readiness | Repeated near-timeout values (~49-50 seconds) |
+| Console logs | Boot line + listener line visible | No rows or early fatal output only |
+| Availability after deployment | Stable | Immediate outage after deployment success |
+| Interpretation | Runtime became probe-ready | Build/deploy completed, runtime never became probe-ready |
+
+## Related Labs
+
+- [Lab: Deployment Succeeded but Startup Failed](../../lab-guides/deployment-succeeded-startup-failed.md)
+
 ## References
 
 - [Configure a Linux Python app for Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/configure-language-python)

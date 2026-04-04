@@ -6,11 +6,12 @@ Comprehensive guide for running web applications on Azure App Service — from f
 
 | Section | Description |
 |---------|-------------|
-| [Start Here](https://yeongseon.github.io/azure-appservice/) | Overview, learning paths, and repository map |
-| [Platform](https://yeongseon.github.io/azure-appservice/platform/) | Architecture, hosting models, networking, scaling |
-| [Language Guides](https://yeongseon.github.io/azure-appservice/language-guides/) | Step-by-step tutorials for Python, Node.js, Java, and .NET |
-| [Operations](https://yeongseon.github.io/azure-appservice/operations/) | Deployment slots, health checks, security, cost optimization |
-| [Troubleshooting](https://yeongseon.github.io/azure-appservice/troubleshooting/) | 14 playbooks, KQL queries, checklists, and hands-on labs |
+| [Start Here](https://yeongseon.github.io/azure-app-service-practical-guide/) | Overview, learning paths, and repository map |
+| [Platform](https://yeongseon.github.io/azure-app-service-practical-guide/platform/) | Architecture, hosting models, networking, scaling |
+| [Best Practices](https://yeongseon.github.io/azure-app-service-practical-guide/best-practices/) | Production baseline, security, networking, deployment, scaling, reliability |
+| [Language Guides](https://yeongseon.github.io/azure-app-service-practical-guide/language-guides/) | Step-by-step tutorials for Python, Node.js, Java, and .NET |
+| [Operations](https://yeongseon.github.io/azure-app-service-practical-guide/operations/) | Deployment slots, health checks, security, cost optimization |
+| [Troubleshooting](https://yeongseon.github.io/azure-app-service-practical-guide/troubleshooting/) | 14 playbooks, KQL queries, checklists, and hands-on labs |
 
 ## Language Guides
 
@@ -25,7 +26,7 @@ Each guide covers: local development, first deploy, configuration, logging, infr
 
 ```bash
 # Clone the repository
-git clone https://github.com/yeongseon/azure-appservice.git
+git clone https://github.com/yeongseon/azure-app-service-practical-guide.git
 
 # Install MkDocs dependencies
 pip install mkdocs-material mkdocs-minify-plugin

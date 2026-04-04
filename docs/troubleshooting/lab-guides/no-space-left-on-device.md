@@ -842,6 +842,60 @@ not only endpoint-level liveness.
 
 ---
 
+## Expected Evidence
+
+This section defines what you SHOULD observe at each phase of the lab. Use it to validate your investigation is on track.
+
+### Before Trigger (Baseline)
+
+| Evidence Source | Expected State | What to Capture |
+|---|---|---|
+| AppServiceHTTPLogs | All 200s with low latency | Baseline query snapshot for `/health`, `/disk-status`, and diagnostics |
+| AppServiceConsoleLogs | Normal Gunicorn startup | Worker startup lines and no `Errno 28` entries |
+| AppServicePlatformLogs | Normal site lifecycle events | Site start records without storage-related restarts |
+| `/disk-status` | Low persistent and tmp utilization | Baseline `/home` and `/tmp` usage percentages |
+
+### During Incident
+
+| Evidence Source | Expected State | Key Indicator |
+|---|---|---|
+| `/fill-home` + `/fill-tmp` responses | 100 MB write operations complete but slow | Fill operations show `TimeTaken` in `6131-11360 ms` range |
+| `/disk-status` | Utilization rises measurably | `/home` `5.65%` used and `/tmp` `58.76%` used in captured phase |
+| AppServiceHTTPLogs | Mixed healthy and write-stress behavior | `/health` stays 200 while fill endpoints absorb write cost |
+| Console logs | Disk-write pressure signatures appear as usage grows | Watch for `No space left on device` when threshold is crossed |
+
+### After Recovery
+
+| Evidence Source | Expected State | Key Indicator |
+|---|---|---|
+| `/disk-status` and app behavior | Files remain until explicit cleanup or recycle | Persistent files under `/home` continue consuming quota |
+| Restart behavior | `/tmp` clears on restart, `/home` persists | Confirms ephemeral vs persistent storage semantics |
+| AppServiceHTTPLogs | Health endpoint may remain 200 through partial degradation | Availability checks alone can miss storage incidents |
+| Operational remediation | Manual cleanup required for persistent path | Use `/cleanup` or file removal workflow to reclaim `/home` |
+
+```mermaid
+graph LR
+    A[Baseline Capture] --> B[Trigger Fault]
+    B --> C[During: Collect Evidence]
+    C --> D[After: Compare to Baseline]
+    D --> E[Verdict: Confirmed/Falsified]
+```
+
+### Evidence Chain: Why This Proves the Hypothesis
+
+!!! success "Falsification Logic"
+    If you observe rising `/home` and `/tmp` usage during fill operations, slower write endpoints, and persistence differences after restart (`/tmp` clears, `/home` persists), the hypothesis is CONFIRMED because the incident is storage-surface behavior, not generic app unavailability.
+    
+    If you do NOT observe usage growth or persistence differences across restart boundaries, the hypothesis is FALSIFIED — consider non-storage latency sources or incorrect write-path targeting.
+
+---
+
+## Related Playbook
+
+- [No Space Left on Device / Ephemeral Storage Pressure](../playbooks/performance/no-space-left-on-device.md)
+
+---
+
 ## References
 
 - [Operating system functionality on Azure App Service](https://learn.microsoft.com/azure/app-service/operating-system-functionality)

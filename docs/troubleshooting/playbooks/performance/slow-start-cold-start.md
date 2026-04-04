@@ -221,7 +221,7 @@ sequenceDiagram
 - [`../../first-10-minutes/performance.md`](../../first-10-minutes/performance.md)
 
 ## 13. Related Labs
-- No dedicated lab document is currently published for this scenario.
+- [Lab: Slow Start / Cold Start](../../lab-guides/slow-start-cold-start.md)
 
 ## 14. Limitations
 - This playbook is Linux App Service focused and excludes Windows/IIS behavior.
@@ -230,6 +230,149 @@ sequenceDiagram
 
 ## 15. Quick Conclusion
 If latency spikes occur immediately after scale/deploy/idle events and then normalize, treat them as cold start behavior first and validate with platform-event correlation. Call it a real regression only when elevated latency remains under warm steady-state traffic across time.
+
+## Sample Log Patterns
+
+### AppServiceHTTPLogs (cold-start lab)
+
+```text
+2026-04-04T11:23:04Z  GET  /diag/env    200  24
+2026-04-04T11:23:03Z  GET  /diag/stats  200  41
+2026-04-04T11:22:32Z  GET  /timing      200  11
+```
+
+### AppServiceConsoleLogs (startup worker sequence)
+
+```text
+2026-04-04T11:14:11Z  [2026-04-04 11:14:11 +0000] [1895] [INFO] Starting gunicorn 22.0.0
+2026-04-04T11:14:11Z  [2026-04-04 11:14:11 +0000] [1895] [INFO] Listening at: http://0.0.0.0:8000 (1895)
+2026-04-04T11:14:11Z  [2026-04-04 11:14:11 +0000] [1895] [INFO] Using worker: sync
+2026-04-04T11:14:11Z  [2026-04-04 11:14:11 +0000] [1897] [INFO] Booting worker with pid: 1897
+2026-04-04T11:14:11Z  [2026-04-04 11:14:11 +0000] [1898] [INFO] Booting worker with pid: 1898
+```
+
+### AppServicePlatformLogs (timeout/stop sequence)
+
+```text
+2026-04-04T11:15:03Z  Informational  State: Stopping, Action: StoppingSiteContainers, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 10:53:07
+2026-04-04T11:15:09Z  Informational  Container is terminated. Total time elapsed: 5996 ms.
+2026-04-04T11:15:09Z  Informational  Site: <app-name> stopped.
+```
+
+!!! tip "How to Read This"
+    The key signal in this lab is not endpoint failure but startup duration. `/diag/stats` confirms `startup_duration=31.499s`, which is long for B1 under cold-start conditions and can trigger perceived slowness after restart/scale events.
+
+## KQL Queries with Example Output
+
+### Query 1: Cold-start request window profile
+
+```kusto
+AppServiceHTTPLogs
+| where TimeGenerated between (datetime(2026-04-04 11:22:30) .. datetime(2026-04-04 11:23:05))
+| project TimeGenerated, CsMethod, CsUriStem, ScStatus, TimeTaken
+| order by TimeGenerated desc
+```
+
+**Example Output**
+
+| TimeGenerated | CsMethod | CsUriStem | ScStatus | TimeTaken |
+|---|---|---|---|---|
+| 2026-04-04 11:23:04 | GET | /diag/env | 200 | 24 |
+| 2026-04-04 11:23:03 | GET | /diag/stats | 200 | 41 |
+| 2026-04-04 11:22:32 | GET | /timing | 200 | 11 |
+
+!!! tip "How to Read This"
+    This narrow sample alone does not prove regression. Use it with startup metadata (`startup_duration`) and platform lifecycle events to decide whether this is expected cold-start cost.
+
+### Query 2: Startup sequence from console logs
+
+```kusto
+AppServiceConsoleLogs
+| where TimeGenerated between (datetime(2026-04-04 11:14:10) .. datetime(2026-04-04 11:14:12))
+| project TimeGenerated, Level, ResultDescription
+| order by TimeGenerated desc
+```
+
+**Example Output**
+
+| TimeGenerated | Level | ResultDescription |
+|---|---|---|
+| 2026-04-04 11:14:11 | Error | [2026-04-04 11:14:11 +0000] [1898] [INFO] Booting worker with pid: 1898 |
+| 2026-04-04 11:14:11 | Error | [2026-04-04 11:14:11 +0000] [1897] [INFO] Booting worker with pid: 1897 |
+| 2026-04-04 11:14:11 | Error | [2026-04-04 11:14:11 +0000] [1895] [INFO] Using worker: sync |
+| 2026-04-04 11:14:11 | Error | [2026-04-04 11:14:11 +0000] [1895] [INFO] Listening at: http://0.0.0.0:8000 (1895) |
+| 2026-04-04 11:14:11 | Error | [2026-04-04 11:14:11 +0000] [1895] [INFO] Starting gunicorn 22.0.0 |
+
+!!! tip "How to Read This"
+    Only two sync workers are booted in this sample. If startup and first-hit work include heavy initialization, user-facing latency spikes can occur even before CPU appears stressed.
+
+### Query 3: Platform timeout correlation
+
+```kusto
+AppServicePlatformLogs
+| where TimeGenerated between (datetime(2026-04-04 11:15:00) .. datetime(2026-04-04 11:15:10))
+| project TimeGenerated, Level, Message
+| order by TimeGenerated desc
+```
+
+**Example Output**
+
+| TimeGenerated | Level | Message |
+|---|---|---|
+| 2026-04-04 11:15:09 | Informational | Site: <app-name> stopped. |
+| 2026-04-04 11:15:09 | Informational | Container is terminated. Total time elapsed: 5996 ms. |
+| 2026-04-04 11:15:03 | Informational | State: Stopping, Action: StoppingSiteContainers, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 10:53:07 |
+
+!!! tip "How to Read This"
+    A `ContainerTimeout` near startup windows means startup readiness did not complete in time. Do not treat this as warm-path regression without verifying sustained warm traffic behavior.
+
+## CLI Investigation Commands
+
+```bash
+az webapp show --resource-group <resource-group> --name <app-name> --query "siteConfig.alwaysOn"
+az webapp config appsettings list --resource-group <resource-group> --name <app-name>
+az webapp deployment list --resource-group <resource-group> --name <app-name>
+az webapp log tail --resource-group <resource-group> --name <app-name>
+```
+
+**Example Output (sanitized)**
+
+```text
+$ az webapp show --resource-group <resource-group> --name <app-name> --query "siteConfig.alwaysOn"
+false
+
+$ az webapp config appsettings list --resource-group <resource-group> --name <app-name>
+[
+  {"name": "WEBSITES_CONTAINER_START_TIME_LIMIT", "value": "230"},
+  {"name": "WEBSITE_WARMUP_PATH", "value": "/timing"}
+]
+
+$ az webapp deployment list --resource-group <resource-group> --name <app-name>
+[
+  {
+    "id": "<deployment-id>",
+    "status": 4,
+    "received_time": "2026-04-04T11:13:52Z"
+  }
+]
+```
+
+!!! tip "How to Read This"
+    `AlwaysOn=false` plus a small SKU increases cold-start exposure. Deployment timing close to first-user latency spikes is expected; this should not be auto-classified as code regression.
+
+## Normal vs Abnormal Comparison
+
+| Signal | Normal Cold Start | Abnormal Regression |
+|---|---|---|
+| Latency shape | First-hit spike then normalization | Elevated latency persists after warm-up |
+| Startup metrics | `startup_duration` elevated but bounded (for example ~31.499s) | Startup normal, but warm endpoints remain slow |
+| Platform logs | Restart/scale/deploy events align with spike | No event correlation with sustained slowdown |
+| Console logs | Worker boot sequence visible, no repeated runtime faults | Repeated timeouts/errors under warm traffic |
+| Health endpoints | Recover quickly after warm-up | Also degrade over longer windows |
+
+## Related Labs (Evidence Drills)
+
+- [Lab: Slow Start / Cold Start](../../lab-guides/slow-start-cold-start.md)
 
 ## References
 - [Configure an App Service app](https://learn.microsoft.com/en-us/azure/app-service/configure-common)

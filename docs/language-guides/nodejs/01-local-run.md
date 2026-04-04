@@ -110,7 +110,7 @@ curl http://localhost:3000/info
 Expected response:
 ```json
 {
-  "name": "azure-appservice",
+  "name": "azure-app-service-practical-guide",
   "version": "1.0.0",
   "node": "v20.20.0",
   "environment": "development",
@@ -166,7 +166,7 @@ Once local development works, proceed to:
 !!! info "Coming Soon"
     - Containerizing for local development
     - Mocking Azure dependencies locally
-- [Contribute](https://github.com/yeongseon/azure-appservice/issues)
+- [Contribute](https://github.com/yeongseon/azure-app-service-practical-guide/issues)
 
 ## See Also
 - [02. First Deploy](./02-first-deploy.md)

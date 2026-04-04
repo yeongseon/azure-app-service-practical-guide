@@ -1,10 +1,10 @@
 site_name: Azure App Service Field Guide
-site_url: https://yeongseon.github.io/azure-appservice/
+site_url: https://yeongseon.github.io/azure-app-service-practical-guide/
 site_description: Comprehensive guide for running web applications on Azure App Service
 site_author: yeongseon
 
-repo_name: yeongseon/azure-appservice
-repo_url: https://github.com/yeongseon/azure-appservice
+repo_name: yeongseon/azure-app-service-practical-guide
+repo_url: https://github.com/yeongseon/azure-app-service-practical-guide
 
 theme:
   name: material
@@ -79,7 +79,7 @@ validation:
 extra:
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/yeongseon/azure-appservice
+      link: https://github.com/yeongseon/azure-app-service-practical-guide
 
 nav:
   - Start Here:
@@ -96,6 +96,15 @@ nav:
     - platform/resource-relationships.md
     - platform/authentication-architecture.md
     - platform/security-architecture.md
+  - Best Practices:
+    - best-practices/index.md
+    - best-practices/production-baseline.md
+    - best-practices/networking.md
+    - best-practices/security.md
+    - best-practices/deployment.md
+    - best-practices/scaling.md
+    - best-practices/reliability.md
+    - best-practices/common-anti-patterns.md
   - Language Guides:
     - language-guides/index.md
     - Python:
@@ -195,6 +204,10 @@ nav:
     - operations/cost-optimization.md
   - Troubleshooting:
     - troubleshooting/index.md
+    - troubleshooting/architecture-overview.md
+    - troubleshooting/decision-tree.md
+    - troubleshooting/mental-model.md
+    - troubleshooting/evidence-map.md
     - First 10 Minutes:
       - troubleshooting/first-10-minutes/index.md
       - troubleshooting/first-10-minutes/startup-availability.md

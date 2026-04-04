@@ -168,7 +168,7 @@ Cold starts occur when an app scales out or starts after being idle.
 !!! info "Coming Soon"
     - [Custom Node.js versions]
     - [Bun/Deno support]
-- [Contribute](https://github.com/yeongseon/azure-appservice/issues)
+- [Contribute](https://github.com/yeongseon/azure-app-service-practical-guide/issues)
 
 ## See Also
 - [Platform Limits](../../reference/platform-limits.md)

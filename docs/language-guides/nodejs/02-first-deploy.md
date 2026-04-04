@@ -207,7 +207,7 @@ Note: For standard ZIP/Git deployments, rollback is typically managed by re-depl
 !!! info "Coming Soon"
     - Blue-Green deployments with Slots
     - Docker container deployments
-- [Contribute](https://github.com/yeongseon/azure-appservice/issues)
+- [Contribute](https://github.com/yeongseon/azure-app-service-practical-guide/issues)
 
 ## See Also
 - [06. CI/CD](./06-ci-cd.md)

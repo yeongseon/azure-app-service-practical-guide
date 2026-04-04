@@ -234,6 +234,167 @@ graph TD
 ## 15. Quick Conclusion
 When App Service Linux response times degrade over uptime and improve after restart, treat memory pressure and worker degradation as primary hypotheses early. Correlate `AppServiceHTTPLogs`, `AppServiceConsoleLogs`, `AppServicePlatformLogs`, `AppServiceAppLogs`, and plan metrics in one timeline to separate leak patterns, plan contention, worker overcommit, and dependency-amplified pressure. Stabilize with low-risk mitigations, then implement durable memory budgeting, isolation, and workload design changes to prevent recurrence.
 
+## Sample Log Patterns
+
+### AppServiceHTTPLogs (memory-pressure lab)
+
+```text
+2026-04-04T11:23:04Z  GET  /diag/env    200  4
+2026-04-04T11:23:03Z  GET  /diag/stats  200  18
+2026-04-04T11:21:50Z  GET  /heavy       200  1384
+2026-04-04T11:21:49Z  GET  /heavy       200  1153
+2026-04-04T11:21:49Z  GET  /heavy       200  1019
+2026-04-04T11:21:49Z  GET  /heavy       200  950
+2026-04-04T11:21:49Z  GET  /heavy       200  920
+2026-04-04T11:21:48Z  GET  /leak        200  4808
+```
+
+### AppServiceConsoleLogs (worker model clues)
+
+```text
+2026-04-04T11:14:07Z  [2026-04-04 11:14:07 +0000] [1891] [INFO] Starting gunicorn 24.1.1
+2026-04-04T11:14:07Z  [2026-04-04 11:14:07 +0000] [1891] [INFO] Listening at: http://0.0.0.0:8000 (1891)
+2026-04-04T11:14:07Z  [2026-04-04 11:14:07 +0000] [1891] [INFO] Using worker: sync
+2026-04-04T11:14:07Z  [2026-04-04 11:14:07 +0000] [1892] [INFO] Booting worker with pid: 1892
+2026-04-04T11:14:07Z  [2026-04-04 11:14:07 +0000] [1893] [INFO] Booting worker with pid: 1893
+2026-04-04T11:14:07Z  [2026-04-04 11:14:07 +0000] [1894] [INFO] Booting worker with pid: 1894
+2026-04-04T11:14:07Z  [2026-04-04 11:14:07 +0000] [1895] [INFO] Booting worker with pid: 1895
+```
+
+### AppServicePlatformLogs (recycle sequence)
+
+```text
+2026-04-04T11:14:30Z  Informational  Container is terminating. Grace period: 5 seconds.
+2026-04-04T11:14:30Z  Informational  Stopping container: f19d98813a89_<app-name>.
+2026-04-04T11:14:36Z  Informational  Container is terminated. Total time elapsed: 5545 ms.
+2026-04-04T11:14:36Z  Informational  Site: <app-name> stopped.
+```
+
+!!! tip "How to Read This"
+    `/heavy` requests are consistently ~920-1384 ms while `/leak` is 4808 ms, even with HTTP 200 responses. That is a degradation signature, not an availability-only incident. Combined with `sync` workers and only four workers, a few long-running calls can saturate worker slots and amplify queue delay.
+
+## KQL Queries with Example Output
+
+### Query 1: Endpoint latency fingerprint during incident window
+
+```kusto
+AppServiceHTTPLogs
+| where TimeGenerated between (datetime(2026-04-04 11:21:45) .. datetime(2026-04-04 11:23:05))
+| project TimeGenerated, CsMethod, CsUriStem, ScStatus, TimeTaken
+| order by TimeGenerated desc
+```
+
+**Example Output**
+
+| TimeGenerated | CsMethod | CsUriStem | ScStatus | TimeTaken |
+|---|---|---|---|---|
+| 2026-04-04 11:23:04 | GET | /diag/env | 200 | 4 |
+| 2026-04-04 11:23:03 | GET | /diag/stats | 200 | 18 |
+| 2026-04-04 11:21:50 | GET | /heavy | 200 | 1384 |
+| 2026-04-04 11:21:49 | GET | /heavy | 200 | 1153 |
+| 2026-04-04 11:21:49 | GET | /heavy | 200 | 1019 |
+| 2026-04-04 11:21:49 | GET | /heavy | 200 | 950 |
+| 2026-04-04 11:21:49 | GET | /heavy | 200 | 920 |
+| 2026-04-04 11:21:48 | GET | /leak | 200 | 4808 |
+
+!!! tip "How to Read This"
+    Health endpoints (`/diag/env`, `/diag/stats`) remain fast while workload endpoints degrade. This weakens global network outage hypotheses and strengthens endpoint-specific pressure hypotheses (memory growth, heavy compute, queueing).
+
+### Query 2: Worker model and boot evidence from console logs
+
+```kusto
+AppServiceConsoleLogs
+| where TimeGenerated between (datetime(2026-04-04 11:14:00) .. datetime(2026-04-04 11:14:10))
+| project TimeGenerated, Level, ResultDescription
+| order by TimeGenerated desc
+```
+
+**Example Output**
+
+| TimeGenerated | Level | ResultDescription |
+|---|---|---|
+| 2026-04-04 11:14:07 | Error | [2026-04-04 11:14:07 +0000] [1895] [INFO] Booting worker with pid: 1895 |
+| 2026-04-04 11:14:07 | Error | [2026-04-04 11:14:07 +0000] [1894] [INFO] Booting worker with pid: 1894 |
+| 2026-04-04 11:14:07 | Error | [2026-04-04 11:14:07 +0000] [1893] [INFO] Booting worker with pid: 1893 |
+| 2026-04-04 11:14:07 | Error | [2026-04-04 11:14:07 +0000] [1892] [INFO] Booting worker with pid: 1892 |
+| 2026-04-04 11:14:07 | Error | [2026-04-04 11:14:07 +0000] [1891] [INFO] Using worker: sync |
+| 2026-04-04 11:14:07 | Error | [2026-04-04 11:14:07 +0000] [1891] [INFO] Listening at: http://0.0.0.0:8000 (1891) |
+| 2026-04-04 11:14:07 | Error | [2026-04-04 11:14:07 +0000] [1891] [INFO] Starting gunicorn 24.1.1 |
+
+!!! tip "How to Read This"
+    `sync` plus a small worker count means each worker handles one blocking request at a time. Long `/heavy` and `/leak` calls can consume all workers quickly even when CPU is not pegged.
+
+### Query 3: Platform recycle timeline around pressure event
+
+```kusto
+AppServicePlatformLogs
+| where TimeGenerated between (datetime(2026-04-04 11:14:25) .. datetime(2026-04-04 11:14:40))
+| project TimeGenerated, Level, Message
+| order by TimeGenerated desc
+```
+
+**Example Output**
+
+| TimeGenerated | Level | Message |
+|---|---|---|
+| 2026-04-04 11:14:36 | Informational | Site: <app-name> stopped. |
+| 2026-04-04 11:14:36 | Informational | Container is terminated. Total time elapsed: 5545 ms. |
+| 2026-04-04 11:14:30 | Informational | Stopping container: f19d98813a89_<app-name>. |
+| 2026-04-04 11:14:30 | Informational | Container is terminating. Grace period: 5 seconds. |
+
+!!! tip "How to Read This"
+    These rows confirm lifecycle churn. If latency improves immediately after this stop/start cycle and then degrades again with uptime, treat memory/worker degradation as primary until disproven.
+
+## CLI Investigation Commands
+
+```bash
+az webapp config show --resource-group <resource-group> --name <app-name>
+az webapp config appsettings list --resource-group <resource-group> --name <app-name>
+az webapp log tail --resource-group <resource-group> --name <app-name>
+az monitor metrics list --resource <app-service-plan-resource-id> --metric "CpuPercentage,MemoryPercentage" --interval PT1M --aggregation Average
+```
+
+**Example Output (sanitized)**
+
+```text
+$ az webapp config show --resource-group <resource-group> --name <app-name>
+{
+  "linuxFxVersion": "PYTHON|3.12",
+  "alwaysOn": true,
+  "http20Enabled": true
+}
+
+$ az webapp config appsettings list --resource-group <resource-group> --name <app-name>
+[
+  {"name": "WEBSITES_PORT", "value": "8000"},
+  {"name": "SCM_DO_BUILD_DURING_DEPLOYMENT", "value": "false"}
+]
+
+$ az monitor metrics list --resource <app-service-plan-resource-id> --metric "CpuPercentage,MemoryPercentage" --interval PT1M --aggregation Average
+timestamp                  CpuPercentage_Average   MemoryPercentage_Average
+-------------------------  ----------------------  ------------------------
+2026-04-04T11:21:00Z       36.2                    83.7
+2026-04-04T11:22:00Z       39.8                    86.4
+```
+
+!!! tip "How to Read This"
+    If memory remains high while CPU is moderate and HTTP latency climbs, scaling by CPU signal alone will miss the failure mode. Revisit worker count, memory profile, and endpoint behavior.
+
+## Normal vs Abnormal Comparison
+
+| Signal | Normal (Healthy) | Abnormal (Memory/Worker Degradation) |
+|---|---|---|
+| `/heavy` latency | Mostly sub-second, stable tail | Repeated 920-1384 ms spikes under moderate load |
+| `/leak` latency | Rare and bounded | Multi-second outlier (for example 4808 ms) |
+| Health endpoint latency | Low and stable | Still low (can remain deceptively healthy) |
+| Gunicorn worker mode | Matches workload profile and capacity | `sync` workers saturated by long-running calls |
+| Platform lifecycle | Infrequent stop/start events | Recurrent container termination/restart correlation |
+| CPU vs memory trend | CPU and memory proportional to load | CPU moderate, memory elevated and climbing |
+
+## Related Labs (Evidence Drills)
+
+- [Lab: Memory Pressure and Worker Degradation](../../lab-guides/memory-pressure.md)
+
 ## References
 - [Monitor Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/monitor-app-service)
 - [Azure App Service plan overview](https://learn.microsoft.com/en-us/azure/app-service/overview-hosting-plans)

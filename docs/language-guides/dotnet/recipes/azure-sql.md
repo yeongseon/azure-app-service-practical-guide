@@ -157,4 +157,4 @@ Capture query plans and add indexes; review `dependencies` telemetry for high-du
 
 - [Managed Identity](managed-identity.md)
 - [Key Vault References](key-vault-reference.md)
-- For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-appservice/)
+- For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-app-service-practical-guide/)

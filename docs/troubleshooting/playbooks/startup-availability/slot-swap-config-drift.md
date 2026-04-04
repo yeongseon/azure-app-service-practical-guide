@@ -215,6 +215,237 @@ az webapp config connection-string list --resource-group <resource-group> --name
 
 When a slot swap succeeds but production degrades, focus on post-swap behavior: restart triggers, slot-setting drift, readiness race conditions, and dependency context differences. Reliable swaps require explicit warm-up contracts, deterministic config parity, and identity/connection validation in the production slot context.
 
+## Sample Log Patterns
+
+### AppServiceHTTPLogs (post-swap config endpoint still returns 200)
+
+```text
+[AppServiceHTTPLogs]
+2026-04-04T11:21:57Z  GET  /config    200  63
+2026-04-04T11:23:03Z  GET  /diag/env  200  9
+```
+
+### AppServiceConsoleLogs (listener healthy even with drift)
+
+```text
+[AppServiceConsoleLogs]
+2026-04-04T11:14:20Z  Error  [2026-04-04 11:14:20 +0000] [1894] [INFO] Listening at: http://0.0.0.0:8000
+2026-04-04T11:14:21Z  Error  [2026-04-04 11:14:21 +0000] [1894] [INFO] Control socket listening
+```
+
+### Swap-related drift signal (application-level config mismatch)
+
+```text
+[Application behavior around swap]
+Before swap (expected production): DB_CONNECTION_STRING=Server=tcp:prod-db.database.windows.net;Database=appdb;
+After swap (unexpected production): DB_CONNECTION_STRING=Server=tcp:staging-db.database.windows.net;Database=appdb-staging;
+```
+
+!!! tip "How to Read This"
+    In config-drift incidents, transport health can look normal (`200`, low latency, valid listener), while business behavior fails due to wrong effective settings after slot switch.
+
+## KQL Queries with Example Output
+
+### Query 1: Post-swap request health does not rule out drift
+
+```kusto
+// Observe request success on diagnostic endpoints around swap window
+AppServiceHTTPLogs
+| where TimeGenerated between (datetime(2026-04-04 11:21:50) .. datetime(2026-04-04 11:23:10))
+| project TimeGenerated, CsMethod, CsUriStem, ScStatus, TimeTaken
+| order by TimeGenerated asc
+```
+
+**Example Output:**
+
+| TimeGenerated | CsMethod | CsUriStem | ScStatus | TimeTaken |
+|---|---|---|---|---|
+| 2026-04-04 11:21:57 | GET | /config | 200 | 63 |
+| 2026-04-04 11:23:03 | GET | /diag/env | 200 | 9 |
+
+!!! tip "How to Read This"
+    `200` on `/config` and `/diag/env` means the app is alive, not that configuration values are correct for production.
+
+### Query 2: Confirm listener health to separate runtime boot from config drift
+
+```kusto
+// Confirm process startup/listen behavior from console output
+AppServiceConsoleLogs
+| where TimeGenerated between (datetime(2026-04-04 11:14:15) .. datetime(2026-04-04 11:14:25))
+| where ResultDescription has_any ("Listening at", "Control socket listening", "0.0.0.0")
+| project TimeGenerated, Level, ResultDescription
+| order by TimeGenerated asc
+```
+
+**Example Output:**
+
+| TimeGenerated | Level | ResultDescription |
+|---|---|---|
+| 2026-04-04 11:14:20 | Error | [2026-04-04 11:14:20 +0000] [1894] [INFO] Listening at: http://0.0.0.0:8000 |
+| 2026-04-04 11:14:21 | Error | [2026-04-04 11:14:21 +0000] [1894] [INFO] Control socket listening |
+
+!!! tip "How to Read This"
+    Healthy bind/listener lines reduce likelihood of startup transport issues and push investigation toward H1/H2/H4 config-context drift.
+
+### Query 3: Compare config endpoint values before and after swap timestamp
+
+```kusto
+// Parse /config payload snapshots to detect effective-setting drift
+AppServiceHTTPLogs
+| where CsUriStem == "/config"
+| where TimeGenerated between (datetime(2026-04-04 11:20:00) .. datetime(2026-04-04 11:30:00))
+| project TimeGenerated, ScStatus, TimeTaken
+| order by TimeGenerated asc
+```
+
+**Example Output:**
+
+| TimeGenerated | ScStatus | TimeTaken |
+|---|---|---|
+| 2026-04-04 11:21:57 | 200 | 63 |
+
+**Companion value snapshot (from app response body):**
+
+| SnapshotTime | SlotContext | DB_CONNECTION_STRING |
+|---|---|---|
+| 2026-04-04 11:21:56 | production (before swap) | Server=tcp:prod-db.database.windows.net;Database=appdb; |
+| 2026-04-04 11:21:57 | production (after swap) | Server=tcp:staging-db.database.windows.net;Database=appdb-staging; |
+
+!!! tip "How to Read This"
+    The endpoint is healthy (`200`) but value changes at swap boundary show configuration drift. This is the decisive signal for this playbook.
+
+## CLI Investigation Commands
+
+```bash
+# Capture app setting parity across production and staging slots
+az webapp config appsettings list --resource-group <resource-group> --name <app-name> --slot production --output table
+az webapp config appsettings list --resource-group <resource-group> --name <app-name> --slot <staging-slot> --output table
+
+# Capture connection string parity across slots
+az webapp config connection-string list --resource-group <resource-group> --name <app-name> --slot production --output table
+az webapp config connection-string list --resource-group <resource-group> --name <app-name> --slot <staging-slot> --output table
+
+# Validate swap warm-up settings on staging slot
+az webapp config appsettings list --resource-group <resource-group> --name <app-name> --slot <staging-slot> --query "[?name=='WEBSITE_SWAP_WARMUP_PING_PATH' || name=='WEBSITE_SWAP_WARMUP_PING_STATUSES' || name=='WEBSITES_CONTAINER_START_TIME_LIMIT'].{name:name,value:value}" --output table
+
+# Show slot summary and host state
+az webapp show --resource-group <resource-group> --name <app-name> --query "{state:state,enabled:enabled,hostNames:hostNames}" --output table
+```
+
+**Example Output:**
+
+```text
+Name                    Value                                                SlotSetting
+----------------------  ---------------------------------------------------  -----------
+DB_CONNECTION_STRING    Server=tcp:prod-db.database.windows.net;...         False
+FEATURE_FLAG_X          true                                                 True
+
+Name                    Value                                                SlotSetting
+----------------------  ---------------------------------------------------  -----------
+DB_CONNECTION_STRING    Server=tcp:staging-db.database.windows.net;...      False
+FEATURE_FLAG_X          true                                                 True
+
+Name                               Value
+---------------------------------  -------------------------------
+WEBSITE_SWAP_WARMUP_PING_PATH      /diag/env
+WEBSITE_SWAP_WARMUP_PING_STATUSES  200
+WEBSITES_CONTAINER_START_TIME_LIMIT 600
+
+State    Enabled    HostNames
+-------  ---------  -------------------------------------------
+Running  True       <app-name>.azurewebsites.net
+```
+
+!!! tip "How to Read This"
+    Non-sticky (`SlotSetting=False`) startup-critical values that differ across slots can flip during swap and cause production drift even when warm-up technically succeeds.
+
+## Normal vs Abnormal Comparison
+
+| Signal | Normal Slot Swap | Slot Swap Config Drift |
+|---|---|---|
+| `/config` HTTP status | `200` | `200` (can still be drifted) |
+| `/config` effective values | Production values remain expected | Values switch to staging or unintended target |
+| Console listener logs | `0.0.0.0:<port>` and stable | Same (often healthy), so transport looks normal |
+| Post-swap functional behavior | Dependency calls succeed | DB/auth/external dependency failures start immediately |
+| App settings parity | Startup-critical keys intentionally sticky/non-sticky | Critical key slot-setting intent incorrect or drifted |
+| Operational conclusion | Swap is both control-plane and runtime healthy | Swap control-plane succeeded, runtime config context is wrong |
+
+## Related Labs
+
+- [Lab: Slot Swap Config Drift](../../lab-guides/slot-swap-config-drift.md)
+
+## Slot Drift Diff Checklist
+
+| Category | Production Slot (Expected) | Staging Slot (Expected) | Drift Risk if Different and Non-sticky |
+|---|---|---|---|
+| `DB_CONNECTION_STRING` | Production database endpoint | Staging database endpoint | High (traffic can hit wrong data source after swap) |
+| `REDIS_CONNECTION_STRING` | Production cache | Staging cache | Medium-High (cache poisoning/stale reads) |
+| `FEATURE_FLAG_*` | Controlled by release policy | Pre-validation values | Medium (feature set mismatch) |
+| `KEY_VAULT_URI` | Production vault URI | Staging vault URI | High (secret lookup failures) |
+| `API_BASE_URL` | Production downstream URL | Staging downstream URL | High (cross-environment API calls) |
+
+### Drift decision rules
+
+| Rule | Action |
+|---|---|
+| Startup-critical key differs and `SlotSetting=False` | Treat as release blocker before swap |
+| Startup-critical key differs and `SlotSetting=True` with explicit intent | Document and allow |
+| Swap warm-up path validates only shallow route | Add dependency-aware warm-up endpoint |
+| Identity context differs across slots without documented reason | Validate RBAC and block swap until resolved |
+
+!!! tip "How to Read This"
+    The goal is not full key parity. The goal is intentional parity: every difference must be either sticky-by-design or safe to swap.
+
+## CLI Investigation Commands (Focused Drift Diff)
+
+```bash
+# Export critical app settings for both slots (table view for rapid review)
+az webapp config appsettings list --resource-group <resource-group> --name <app-name> --slot production --query "[?name=='DB_CONNECTION_STRING' || name=='REDIS_CONNECTION_STRING' || name=='KEY_VAULT_URI' || name=='API_BASE_URL' || name=='WEBSITE_SWAP_WARMUP_PING_PATH' || name=='WEBSITE_SWAP_WARMUP_PING_STATUSES'].{name:name,value:value,slotSetting:slotSetting}" --output table
+
+az webapp config appsettings list --resource-group <resource-group> --name <app-name> --slot <staging-slot> --query "[?name=='DB_CONNECTION_STRING' || name=='REDIS_CONNECTION_STRING' || name=='KEY_VAULT_URI' || name=='API_BASE_URL' || name=='WEBSITE_SWAP_WARMUP_PING_PATH' || name=='WEBSITE_SWAP_WARMUP_PING_STATUSES'].{name:name,value:value,slotSetting:slotSetting}" --output table
+
+# Validate identity used by app
+az webapp identity show --resource-group <resource-group> --name <app-name> --output table
+
+# Validate role assignments for production-scoped dependencies
+az role assignment list --assignee <object-id> --scope /subscriptions/<subscription-id>/resourceGroups/<resource-group> --all --output table
+```
+
+**Example Output:**
+
+```text
+Name                             Value                                           SlotSetting
+-------------------------------  ----------------------------------------------  -----------
+DB_CONNECTION_STRING             Server=tcp:prod-db.database.windows.net;...    False
+KEY_VAULT_URI                    https://kv-prod.vault.azure.net/               True
+WEBSITE_SWAP_WARMUP_PING_PATH    /diag/env                                      True
+WEBSITE_SWAP_WARMUP_PING_STATUSES 200                                            True
+
+Name                             Value                                           SlotSetting
+-------------------------------  ----------------------------------------------  -----------
+DB_CONNECTION_STRING             Server=tcp:staging-db.database.windows.net;... False
+KEY_VAULT_URI                    https://kv-staging.vault.azure.net/            True
+WEBSITE_SWAP_WARMUP_PING_PATH    /diag/env                                      True
+WEBSITE_SWAP_WARMUP_PING_STATUSES 200                                            True
+```
+
+!!! tip "How to Read This"
+    In this sample, `DB_CONNECTION_STRING` differs but is non-sticky (`False`), which can cause production context to drift on swap. That should be corrected or explicitly justified before release.
+
+## Normal vs Abnormal Swap Timeline
+
+| Phase | Normal Swap | Swap with Config Drift |
+|---|---|---|
+| Warm-up | Staging endpoint returns expected readiness | Staging warm-up passes but does not validate effective prod config |
+| Swap complete event | No immediate error spike | Error spike within 1-10 minutes |
+| `/config` endpoint | `200` and expected production values | `200` but unexpected values |
+| Dependency behavior | Stable DB/auth calls | Authentication or connection failures begin |
+| Recovery action | Continue rollout | Correct slot settings and recycle/reswap |
+
+## Related Labs
+
+- [Lab: Slot Swap Config Drift](../../lab-guides/slot-swap-config-drift.md)
+
 ## References
 
 - [Set up staging environments in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots)

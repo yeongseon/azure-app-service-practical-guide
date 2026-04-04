@@ -71,7 +71,7 @@ Typical `/info` response:
 
 ```json
 {
-  "name": "azure-appservice",
+  "name": "azure-app-service-practical-guide",
   "version": "1.0.0",
   "java": "17",
   "framework": "Spring Boot 3.2",

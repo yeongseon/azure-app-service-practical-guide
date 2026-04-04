@@ -740,6 +740,55 @@ It does not attempt to benchmark multi-slot, multi-instance, or multi-region swa
 
 ---
 
+## Expected Evidence
+
+This section defines what you SHOULD observe at each phase of the lab. Use it to validate your investigation is on track.
+
+### Before Trigger (Baseline)
+
+| Evidence Source | Expected State | What to Capture |
+|---|---|---|
+| Slot configuration endpoint (`/config`) | Production and staging show different values before swap | Production: `DB_CONNECTION_STRING=prod-server...`, Staging: `DB_CONNECTION_STRING=staging-server...` |
+| App settings metadata | Sticky classification is explicitly configured | `DB_CONNECTION_STRING` has `slotSetting=true`; `FEATURE_FLAG` has `slotSetting=false` |
+| Baseline slot snapshots | Pre-swap state recorded for both slots | `config-prod-before`, `config-staging-before`, `diag-slots` artifacts |
+
+### During Incident
+
+| Evidence Source | Expected State | Key Indicator |
+|---|---|---|
+| `/config` after swap | App stays healthy but values shift by sticky rules | Production `/config` returns 200 in ~63 ms while showing swapped/non-swapped mix |
+| AppServiceConsoleLogs | Runtime boot appears normal during swap window | Gunicorn startup lines and `Listening at: http://0.0.0.0:8000` |
+| AppServicePlatformLogs | Swap lifecycle includes startup churn without direct app crash | `LastError: ContainerTimeout` visible from deployment/startup lifecycle context |
+
+### After Recovery
+
+| Evidence Source | Expected State | Key Indicator |
+|---|---|---|
+| Post-swap config comparison | Non-sticky moved, sticky remained slot-bound | `FEATURE_FLAG` exchanged, `DB_CONNECTION_STRING` stayed with each slot |
+| Slot behavior interpretation | Swap operation itself is healthy | Endpoints remain 200 while data-plane config differs by slot policy |
+| Operational conclusion | Root cause is config governance, not swap failure | Missing/incorrect sticky setting design explains perceived drift |
+
+### Evidence Timeline
+
+```mermaid
+graph LR
+    A[Baseline Capture] --> B[Trigger Fault]
+    B --> C[During: Collect Evidence]
+    C --> D[After: Compare to Baseline]
+    D --> E[Verdict: Confirmed/Falsified]
+```
+
+### Evidence Chain: Why This Proves the Hypothesis
+
+!!! success "Falsification Logic"
+    If you observe healthy HTTP 200 behavior with post-swap configuration values that follow sticky/non-sticky rules (`FEATURE_FLAG` swapped, `DB_CONNECTION_STRING` remained slot-bound), the hypothesis is CONFIRMED because the platform executed swap correctly and the perceived drift comes from slot-setting semantics.
+    
+    If you do NOT observe this pattern (for example sticky values swap unexpectedly or swap fails operationally), the hypothesis is FALSIFIED — consider alternatives such as missing `slotConfigNames`, manual config mutation, or incomplete swap execution.
+
+## Related Playbook
+
+- [Slot Swap Restart / Config Drift / Warm-up Race](../playbooks/startup-availability/slot-swap-config-drift.md)
+
 ## References
 
 - [Set up staging environments in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots)

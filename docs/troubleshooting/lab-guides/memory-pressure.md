@@ -318,7 +318,7 @@ Example output (sanitized):
 ```bash
 az deployment group create \
   --resource-group "$RG" \
-  --template-file "/root/Github/azure-appservice/labs/memory-pressure/main.bicep" \
+  --template-file "/root/Github/azure-app-service-practical-guide/labs/memory-pressure/main.bicep" \
   --parameters baseName="$BASE_NAME" location="$LOCATION"
 ```
 
@@ -343,7 +343,7 @@ export APP_URL="https://${APP_HOSTNAME}"
 ### 3.5 Package and deploy the lab app code
 
 ```bash
-cd "/root/Github/azure-appservice/labs/memory-pressure/app"
+cd "/root/Github/azure-app-service-practical-guide/labs/memory-pressure/app"
 zip --recurse-paths "$APP_PACKAGE_PATH" .
 
 az webapp deploy \
@@ -395,7 +395,7 @@ Look specifically for:
 ### 3.8 Trigger memory pressure (actual trigger script)
 
 ```bash
-bash "/root/Github/azure-appservice/labs/memory-pressure/trigger.sh" "$APP_URL"
+bash "/root/Github/azure-app-service-practical-guide/labs/memory-pressure/trigger.sh" "$APP_URL"
 ```
 
 Script behavior:
@@ -511,7 +511,7 @@ Use this checklist to determine whether the lab produced useful memory-pressure 
 
 | Pitfall | Symptom | Fix |
 |---|---|---|
-| Wrong template path | Deployment fails | Use `/root/Github/azure-appservice/labs/memory-pressure/main.bicep` |
+| Wrong template path | Deployment fails | Use `/root/Github/azure-app-service-practical-guide/labs/memory-pressure/main.bicep` |
 | App not deployed | `/leak` returns 404 | Re-run `az webapp deploy` and restart |
 | Workspace query empty | No logs returned | Confirm diagnostic settings attached to web app |
 | Trigger URL includes trailing slash mismatch | malformed URL | Script already normalizes trailing slash |
@@ -537,7 +537,7 @@ flowchart TD
 
 All values below are taken directly from sanitized artifacts:
 
-`/root/Github/azure-appservice/labs/memory-pressure/artifacts-sanitized/`
+`/root/Github/azure-app-service-practical-guide/labs/memory-pressure/artifacts-sanitized/`
 
 | Category | Files used |
 |---|---|
@@ -766,6 +766,54 @@ This run captured a **high-risk intermediate state** where memory pressure and r
 - Trigger volume and timing are deterministic in script structure but still subject to worker scheduling variance.
 - HTTP log windows can include extra baseline requests; always correlate by endpoint and timestamp.
 - For strict phase accounting, export logs immediately after each phase boundary.
+
+---
+
+## Expected Evidence
+
+This section defines what you SHOULD observe at each phase of the lab. Use it to validate your investigation is on track.
+
+### Before Trigger (Baseline)
+
+| Evidence Source | Expected State | What to Capture |
+|---|---|---|
+| AppServiceHTTPLogs | All 200s, low `TimeTaken` | Baseline query snapshot for `/health`, `/diag/stats`, and light traffic |
+| AppServiceConsoleLogs | Normal Gunicorn boot lines with 4 workers | Worker PIDs `1892-1895` and startup timestamps |
+| AppServicePlatformLogs | Site startup lifecycle only | "Site started" sequence and probe timing |
+| `/diag/stats` | Low request volume and low leak counters | Baseline `leak_block_count`, endpoint counts, process counters |
+
+### During Incident
+
+| Evidence Source | Expected State | Key Indicator |
+|---|---|---|
+| `/leak` responses | HTTP 200 with steadily increasing block count | Leak progression confirms retained allocations are accumulating |
+| AppServiceHTTPLogs (`/heavy`) | HTTP 200 with elevated `TimeTaken` | `920-1384 ms` baseline heavy tail, with outliers into multi-second range |
+| `/diag/proc` | RSS growth across workers and lower memory headroom | `MemAvailable` falls while per-worker RSS rises |
+| `/diag/proc` vmstat counters | Reclaim pressure rises | `pgscan_*` and `allocstall_*` counters increase materially |
+
+### After Recovery
+
+| Evidence Source | Expected State | Key Indicator |
+|---|---|---|
+| AppServiceHTTPLogs | No 5xx required for hypothesis support | Pressure evidence can exist even with 200-dominant responses |
+| `/diag/stats` | Leak counters remain elevated until recycle/reset | Accumulated leak state persists after trigger burst |
+| `/diag/proc` | Pressure can ease, but counters remain advanced | Reclaim counters do not roll back, proving pressure occurred |
+| Console/Platform logs | No mandatory crash signatures in this run | Absence of restart does not disprove memory pressure |
+
+```mermaid
+graph LR
+    A[Baseline Capture] --> B[Trigger Fault]
+    B --> C[During: Collect Evidence]
+    C --> D[After: Compare to Baseline]
+    D --> E[Verdict: Confirmed/Falsified]
+```
+
+### Evidence Chain: Why This Proves the Hypothesis
+
+!!! success "Falsification Logic"
+    If you observe rising `/leak` block counts, falling `MemAvailable`, and increasing `pgscan/allocstall` counters while `/heavy` latency expands, the hypothesis is CONFIRMED because memory pressure is demonstrably active before hard failure.
+    
+    If you do NOT observe memory-headroom collapse or reclaim-counter growth under the same trigger volume, the hypothesis is FALSIFIED — consider CPU-only saturation, dependency latency, or trigger-shape mismatch.
 
 ---
 

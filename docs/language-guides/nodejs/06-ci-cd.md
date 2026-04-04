@@ -41,7 +41,7 @@ OIDC eliminates the need for long-lived secrets in GitHub. You'll create a trust
 ```bash
 # Set variables
 GITHUB_ORG="your-github-username"
-GITHUB_REPO="azure-appservice"
+GITHUB_REPO="azure-app-service-practical-guide"
 AAD_APP_NAME="github-actions-$GITHUB_REPO"
 
 # Create app registration
@@ -168,7 +168,7 @@ Proceed to **[07-custom-domain-ssl.md](./07-custom-domain-ssl.md)** (Optional) t
     - Multi-environment pipelines (Dev, Staging, Prod)
     - Manual approval gates in GitHub Actions
     - Integration with Azure Pipelines (ADO)
-- [Contribute](https://github.com/yeongseon/azure-appservice/issues)
+- [Contribute](https://github.com/yeongseon/azure-app-service-practical-guide/issues)
 
 ## See Also
 - [Operations Deployment Slots](../../operations/deployment-slots.md)

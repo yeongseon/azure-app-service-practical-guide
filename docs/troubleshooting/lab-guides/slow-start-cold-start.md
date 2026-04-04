@@ -645,6 +645,55 @@ Final verdict: **Hypothesis supported**, with nuanced interpretation that startu
 
 ---
 
+## Expected Evidence
+
+This section defines what you SHOULD observe at each phase of the lab. Use it to validate your investigation is on track.
+
+### Before Trigger (Baseline)
+
+| Evidence Source | Expected State | What to Capture |
+|---|---|---|
+| Site runtime state | App is stopped, restarted, or otherwise cold before first measurement | Resource state and trigger/restart timestamp |
+| Baseline endpoints (`/health`, `/diag/stats`) | App becomes healthy when started | Baseline health and startup telemetry snapshots |
+| Plan/runtime context | Cold-start-prone configuration is present | B1 Linux context and `AlwaysOn=false` for this lab |
+
+### During Incident
+
+| Evidence Source | Expected State | Key Indicator |
+|---|---|---|
+| App timing endpoint (`/timing`) | First post-cold-start measurement reflects startup burden | `startup_duration` around `31.499s` |
+| AppServicePlatformLogs | Startup probe lifecycle explicitly recorded | `Site startup probe succeeded` after startup window |
+| AppServiceHTTPLogs | Requests return 200 while warm-state calls are much faster | `/timing` 200 with `TimeTaken=11ms` after warmup |
+
+### After Recovery
+
+| Evidence Source | Expected State | Key Indicator |
+|---|---|---|
+| Subsequent request timings | Warm requests remain low-latency | Repeated calls in ~`11-41ms` band |
+| Worker/process telemetry | Startup cost is no longer paid per request | Stable PID/uptime and normal `/diag/stats` progression |
+| Incident conclusion | Cold start explains initial delay, not steady-state regression | Warm traffic remains healthy and fast |
+
+### Evidence Timeline
+
+```mermaid
+graph LR
+    A[Baseline Capture] --> B[Trigger Fault]
+    B --> C[During: Collect Evidence]
+    C --> D[After: Compare to Baseline]
+    D --> E[Verdict: Confirmed/Falsified]
+```
+
+### Evidence Chain: Why This Proves the Hypothesis
+
+!!! success "Falsification Logic"
+    If you observe a long startup duration (~31.499s) during cold start, platform startup-probe success events, and then rapid warm-path request timings (for example 11-41ms), the hypothesis is CONFIRMED because initialization cost is front-loaded into container/runtime startup rather than persistent request execution.
+    
+    If you do NOT observe warm-path recovery (for example requests remain slow after startup stabilizes), the hypothesis is FALSIFIED — consider alternatives such as real app regression, dependency latency, CPU pressure, or plan capacity limits.
+
+## Related Playbook
+
+- [Slow Start (Cold Start)](../playbooks/performance/slow-start-cold-start.md)
+
 ## References
 
 - [Set up staging environments in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots)

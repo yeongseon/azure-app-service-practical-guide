@@ -287,7 +287,7 @@ az group create --name "$RG" --location "$LOCATION"
 ```bash
 az deployment group create \
   --resource-group "$RG" \
-  --template-file "/root/Github/azure-appservice/labs/intermittent-5xx/main.bicep" \
+  --template-file "/root/Github/azure-app-service-practical-guide/labs/intermittent-5xx/main.bicep" \
   --parameters baseName="$BASE_NAME" location="$LOCATION"
 ```
 
@@ -312,7 +312,7 @@ export APP_URL="https://${APP_HOSTNAME}"
 ### 3.5 Deploy application package
 
 ```bash
-cd "/root/Github/azure-appservice/labs/intermittent-5xx/app"
+cd "/root/Github/azure-app-service-practical-guide/labs/intermittent-5xx/app"
 zip --recurse-paths "$APP_PACKAGE_PATH" .
 
 az webapp deploy \
@@ -347,7 +347,7 @@ Baseline artifact values from this run:
 ### 3.7 Trigger starvation workload (actual trigger script)
 
 ```bash
-bash "/root/Github/azure-appservice/labs/intermittent-5xx/trigger.sh" "$APP_URL"
+bash "/root/Github/azure-app-service-practical-guide/labs/intermittent-5xx/trigger.sh" "$APP_URL"
 ```
 
 Script behavior:
@@ -466,7 +466,7 @@ AppServicePlatformLogs
 
 | Pitfall | Symptom | Fix |
 |---|---|---|
-| Wrong Bicep path | Deployment error | Use `/root/Github/azure-appservice/labs/intermittent-5xx/main.bicep` |
+| Wrong Bicep path | Deployment error | Use `/root/Github/azure-app-service-practical-guide/labs/intermittent-5xx/main.bicep` |
 | Trigger against wrong app URL | No expected pattern | Re-resolve `APP_URL` from deployment outputs |
 | Missing diagnostics linkage | Empty KQL tables | Verify diagnostic setting on web app |
 | Running trigger repeatedly without waiting | Mixed windows hard to interpret | Label each run and time-bound KQL queries |
@@ -492,7 +492,7 @@ flowchart TD
 
 All values below come from:
 
-`/root/Github/azure-appservice/labs/intermittent-5xx/artifacts-sanitized/`
+`/root/Github/azure-app-service-practical-guide/labs/intermittent-5xx/artifacts-sanitized/`
 
 | Category | Files used |
 |---|---|
@@ -703,6 +703,54 @@ These are optional corroborators, not mandatory if timing/status pattern already
 | Worker class change | `sync` → `gthread` or async worker | Better tolerance to mixed slow/fast traffic |
 | Slow concurrency reduction | 20 → 8 | Lower timeout ratios |
 | Timeout tuning | Increase client timeout, evaluate tail | Fewer client-abort events but longer waits |
+
+---
+
+## Expected Evidence
+
+This section defines what you SHOULD observe at each phase of the lab. Use it to validate your investigation is on track.
+
+### Before Trigger (Baseline)
+
+| Evidence Source | Expected State | What to Capture |
+|---|---|---|
+| AppServiceHTTPLogs | All 200s with low latency | Baseline query snapshot for `/fast`, `/slow`, `/diag/stats` |
+| AppServiceConsoleLogs | Normal Gunicorn startup with sync workers | Boot line showing 3 sync workers and timeout settings |
+| AppServicePlatformLogs | Normal startup sequence only | "Site started" and no restart loop |
+| `/diag/stats` | Balanced counters, no queue stress | Baseline endpoint counters and process info |
+
+### During Incident
+
+| Evidence Source | Expected State | Key Indicator |
+|---|---|---|
+| AppServiceHTTPLogs (`/slow`) | Predominant `499` near timeout edge | `TimeTaken ~4877-4918 ms` on timed-out slow requests |
+| Trigger CSV + HTTP logs | Mixed success and timeout pattern | Concurrent burst yields 200+499 in same window |
+| Worker model evidence | Sync workers blocked by long CPU-bound work | `/fast` waits behind occupied workers |
+| Client-side observations | Caller sees intermittent unavailability | `499` indicates client disconnect before completion |
+
+### After Recovery
+
+| Evidence Source | Expected State | Key Indicator |
+|---|---|---|
+| AppServiceHTTPLogs | 200 responses return to normal after burst ends | Fast-path latency normalizes when slow load stops |
+| `/diag/stats` | Queue-pressure behavior subsides | Request handling resumes without timeout-like clustering |
+| Platform/Console logs | No mandatory platform crash required | Recovery can occur without restart |
+| Incident interpretation | 499 treated as timeout symptom, not server 5xx | Confirms worker exhaustion pattern rather than random platform failure |
+
+```mermaid
+graph LR
+    A[Baseline Capture] --> B[Trigger Fault]
+    B --> C[During: Collect Evidence]
+    C --> D[After: Compare to Baseline]
+    D --> E[Verdict: Confirmed/Falsified]
+```
+
+### Evidence Chain: Why This Proves the Hypothesis
+
+!!! success "Falsification Logic"
+    If you observe `/slow` requests clustering near timeout with `499`, plus concurrent degradation of `/fast` while sync workers are occupied, the hypothesis is CONFIRMED because queueing and worker starvation explain the intermittent failures.
+    
+    If you do NOT observe timeout clustering during slow-request bursts, the hypothesis is FALSIFIED — consider dependency failures, platform restarts, or non-worker bottlenecks.
 
 ---
 

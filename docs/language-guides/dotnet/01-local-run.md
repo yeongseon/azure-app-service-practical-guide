@@ -5,7 +5,7 @@ Run the ASP.NET Core 8 reference API locally using the same port and environment
 ## Prerequisites
 
 - .NET 8 SDK installed (`dotnet --info`)
-- Local clone of `azure-appservice`
+- Local clone of `azure-app-service-practical-guide`
 - Terminal with access to `app/GuideApi`
 
 ## What you'll learn
@@ -146,4 +146,4 @@ Console.WriteLine($"ASPNETCORE_ENVIRONMENT={builder.Environment.EnvironmentName}
 
 - [02. First Deploy](./02-first-deploy.md)
 - [03. Configuration](./03-configuration.md)
-- For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-appservice/)
+- For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-app-service-practical-guide/)

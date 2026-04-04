@@ -5,10 +5,11 @@ This page maps the unified repository layout so you can quickly locate architect
 ## Repository Layout
 
 ```text
-azure-appservice/
+azure-app-service-practical-guide/
 ├── docs/
 │   ├── start-here/                          # Entry point, orientation, and learning paths
 │   ├── platform/                            # Platform architecture and design decisions
+│   ├── best-practices/                      # Production patterns and anti-patterns
 │   ├── operations/                          # Day-2 operational execution guides
 │   ├── language-guides/
 │   │   ├── python/                          # Python (Flask) tutorial and recipes
@@ -28,6 +29,7 @@ azure-appservice/
 ## Section Responsibilities
 
 - `docs/platform/` — Platform architecture (design decisions)
+- `docs/best-practices/` — Production patterns, anti-patterns, and practical guidance
 - `docs/operations/` — Day-2 operations (operational execution)
 - `docs/language-guides/{python,nodejs,java,dotnet}/` — Language-specific tutorials + recipes
 - `docs/troubleshooting/` — Playbooks, checklists, KQL, methodology, lab guides
@@ -38,10 +40,12 @@ azure-appservice/
 ```mermaid
 graph TD
     A[docs/start-here] --> B[docs/platform]
+    A --> BP[docs/best-practices]
     A --> C[docs/language-guides]
     A --> D[docs/operations]
     A --> E[docs/troubleshooting]
     B --> F[docs/reference]
+    BP --> F
     C --> G[apps]
     E --> H[labs]
     D --> F
@@ -51,7 +55,7 @@ graph TD
 ## Navigation Guidance
 
 1. Start in [Start Here](../index.md) to choose role-based learning flow.
-2. Use [Platform](../platform/) and [Language Guides](../language-guides/) for implementation design.
+2. Use [Platform](../platform/), [Best Practices](../best-practices/), and [Language Guides](../language-guides/) for implementation design.
 3. Use [Operations](../operations/) and [Troubleshooting](../troubleshooting/) for production execution.
 4. Use [Reference](../reference/) for quick command and query lookups.
 
@@ -60,6 +64,7 @@ graph TD
 - [Azure App Service Field Guide](./overview.md)
 - [Learning Paths](./learning-paths.md)
 - [Platform](../platform/)
+- [Best Practices](../best-practices/)
 - [Operations](../operations/)
 - [Troubleshooting](../troubleshooting/)
 - [Reference](../reference/)

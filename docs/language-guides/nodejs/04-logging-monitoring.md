@@ -120,10 +120,10 @@ router.post('/user-login', (req, res) => {
 **stdout — one JSON line per call:**
 
 ```json
-{"timestamp":"2025-01-02T10:30:34.100Z","level":"debug","message":"Cache lookup","service":"azure-appservice-reference","environment":"production","correlationId":"a1b2c3d4","userId":"demo-user-123","cacheStatus":"miss"}
-{"timestamp":"2025-01-02T10:30:34.101Z","level":"info","message":"Request processed","service":"azure-appservice-reference","environment":"production","correlationId":"a1b2c3d4","userId":"demo-user-123","action":"log-levels-demo"}
-{"timestamp":"2025-01-02T10:30:34.102Z","level":"warn","message":"Rate limit approaching","service":"azure-appservice-reference","environment":"production","correlationId":"a1b2c3d4","userId":"demo-user-123","remaining":3}
-{"timestamp":"2025-01-02T10:30:34.103Z","level":"error","message":"Quota exceeded","service":"azure-appservice-reference","environment":"production","correlationId":"a1b2c3d4","userId":"demo-user-123","errorCode":"QUOTA_EXCEEDED"}
+{"timestamp":"2025-01-02T10:30:34.100Z","level":"debug","message":"Cache lookup","service":"app-service-reference","environment":"production","correlationId":"a1b2c3d4","userId":"demo-user-123","cacheStatus":"miss"}
+{"timestamp":"2025-01-02T10:30:34.101Z","level":"info","message":"Request processed","service":"app-service-reference","environment":"production","correlationId":"a1b2c3d4","userId":"demo-user-123","action":"log-levels-demo"}
+{"timestamp":"2025-01-02T10:30:34.102Z","level":"warn","message":"Rate limit approaching","service":"app-service-reference","environment":"production","correlationId":"a1b2c3d4","userId":"demo-user-123","remaining":3}
+{"timestamp":"2025-01-02T10:30:34.103Z","level":"error","message":"Quota exceeded","service":"app-service-reference","environment":"production","correlationId":"a1b2c3d4","userId":"demo-user-123","errorCode":"QUOTA_EXCEEDED"}
 ```
 
 ### Pattern 2 — External Dependency Tracking
@@ -167,7 +167,7 @@ router.get('/external', async (req, res) => {
   "timestamp": "2025-01-02T10:30:44.234Z",
   "level": "error",
   "message": "External API call failed",
-  "service": "azure-appservice-reference",
+  "service": "app-service-reference",
   "environment": "production",
   "correlationId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
   "url": "https://jsonplaceholder.typicode.com/posts/1",
@@ -773,7 +773,7 @@ TimeGenerated              Name  Target                              DurationMs 
     - Custom log processing with Azure Functions
     - Log-based alerting and action groups
     - Integration with external log aggregators (Elastic, Splunk, Datadog)
-- [Contribute](https://github.com/yeongseon/azure-appservice/issues)
+- [Contribute](https://github.com/yeongseon/azure-app-service-practical-guide/issues)
 
 ## See Also
 - [KQL Queries Reference](../../reference/kql-queries.md)

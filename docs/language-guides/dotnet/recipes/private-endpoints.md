@@ -137,4 +137,4 @@ Use resilient retry settings (`EnableRetryOnFailure`, Redis reconnect behavior) 
 
 - [Azure SQL](azure-sql.md)
 - [Redis Cache](redis.md)
-- For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-appservice/)
+- For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-app-service-practical-guide/)

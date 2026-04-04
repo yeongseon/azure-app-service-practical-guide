@@ -151,4 +151,4 @@ Normalize claim type mapping and case sensitivity in one place.
 
 - [Managed Identity](managed-identity.md)
 - [Deployment Slots Validation](deployment-slots-validation.md)
-- For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-appservice/)
+- For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-app-service-practical-guide/)

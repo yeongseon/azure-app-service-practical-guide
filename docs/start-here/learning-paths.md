@@ -24,23 +24,25 @@ Read in order:
 1. [Overview](./overview.md)
 2. [How App Service Works](../platform/how-app-service-works.md)
 3. [Hosting Models](../platform/hosting-models.md)
-4. Choose one language guide:
-   - [Python (Flask)](../language-guides/python/index.md)
-   - [Node.js (Express)](../language-guides/nodejs/index.md)
-   - [Java (Spring Boot)](../language-guides/java/index.md)
-   - [.NET (ASP.NET Core)](../language-guides/dotnet/index.md)
-5. Continue with stack recipes:
-   - [Python Recipes](../language-guides/python/recipes/)
-   - [Node.js Recipes](../language-guides/nodejs/recipes/)
-   - [Java Recipes](../language-guides/java/recipes/)
-   - [.NET Recipes](../language-guides/dotnet/recipes/)
+4. [Best Practices: Production Baseline](../best-practices/production-baseline.md)
+5. Choose one language guide:
+    - [Python (Flask)](../language-guides/python/index.md)
+    - [Node.js (Express)](../language-guides/nodejs/index.md)
+    - [Java (Spring Boot)](../language-guides/java/index.md)
+    - [.NET (ASP.NET Core)](../language-guides/dotnet/index.md)
+6. Continue with stack recipes:
+    - [Python Recipes](../language-guides/python/recipes/)
+    - [Node.js Recipes](../language-guides/nodejs/recipes/)
+    - [Java Recipes](../language-guides/java/recipes/)
+    - [.NET Recipes](../language-guides/dotnet/recipes/)
 
 ## Operator Path
 
 ```mermaid
 graph LR
     A[Start Here] --> B[Platform Deep-Dive]
-    B --> C[Operations]
+    B --> BP[Best Practices]
+    BP --> C[Operations]
     C --> D[Troubleshooting Methodology]
 ```
 
@@ -48,34 +50,41 @@ Read in order:
 
 1. [Overview](./overview.md)
 2. Platform deep-dive sequence:
-   - [Request Lifecycle](../platform/request-lifecycle.md)
-   - [Scaling](../platform/scaling.md)
-   - [Networking](../platform/networking.md)
-   - [Resource Relationships](../platform/resource-relationships.md)
-3. Operations sequence:
-   - [Operations Index](../operations/index.md)
-   - [Scaling Operations](../operations/scaling.md)
-   - [Health and Recovery](../operations/health-recovery.md)
-   - [Security](../operations/security.md)
-4. [Troubleshooting Methodology](../troubleshooting/methodology/troubleshooting-method.md)
+    - [Request Lifecycle](../platform/request-lifecycle.md)
+    - [Scaling](../platform/scaling.md)
+    - [Networking](../platform/networking.md)
+    - [Resource Relationships](../platform/resource-relationships.md)
+3. Best Practices sequence:
+   - [Production Baseline](../best-practices/production-baseline.md)
+   - [Scaling](../best-practices/scaling.md)
+   - [Reliability](../best-practices/reliability.md)
+   - [Common Anti-Patterns](../best-practices/common-anti-patterns.md)
+4. Operations sequence:
+    - [Operations Index](../operations/index.md)
+    - [Scaling Operations](../operations/scaling.md)
+    - [Health and Recovery](../operations/health-recovery.md)
+    - [Security](../operations/security.md)
+5. [Troubleshooting Methodology](../troubleshooting/methodology/troubleshooting-method.md)
 
 ## Troubleshooter Path
 
 ```mermaid
 graph LR
-    A[Start Here] --> B[First 10 Minutes]
-    B --> C[Playbooks]
-    C --> D[KQL]
-    D --> E[Labs]
+    A[Start Here] --> B[Architecture Overview]
+    B --> C[First 10 Minutes]
+    C --> D[Playbooks]
+    D --> E[KQL]
+    E --> F[Labs]
 ```
 
 Read in order:
 
 1. [Overview](./overview.md)
-2. [First 10 Minutes](../troubleshooting/first-10-minutes/index.md)
-3. [Playbooks](../troubleshooting/playbooks/index.md)
-4. [KQL Query Packs](../troubleshooting/kql/index.md)
-5. [Hands-on Lab Guides](../troubleshooting/lab-guides/index.md)
+2. [Architecture Overview](../troubleshooting/architecture-overview.md)
+3. [First 10 Minutes](../troubleshooting/first-10-minutes/index.md)
+4. [Playbooks](../troubleshooting/playbooks/index.md)
+5. [KQL Query Packs](../troubleshooting/kql/index.md)
+6. [Hands-on Lab Guides](../troubleshooting/lab-guides/index.md)
 
 ## See Also
 
@@ -83,6 +92,7 @@ Read in order:
 - [Repository Map](./repository-map.md)
 - [Platform](../platform/)
 - [Language Guides](../language-guides/)
+- [Best Practices](../best-practices/)
 - [Operations](../operations/)
 - [Troubleshooting](../troubleshooting/)
 

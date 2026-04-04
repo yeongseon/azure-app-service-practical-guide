@@ -166,4 +166,4 @@ Disable auto-swap and enforce manual approval stage in Azure DevOps for high-ris
 
 - [Tutorial: 06. CI/CD](../06-ci-cd.md)
 - [Tutorial: 03. Configuration](../03-configuration.md)
-- For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-appservice/)
+- For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-app-service-practical-guide/)

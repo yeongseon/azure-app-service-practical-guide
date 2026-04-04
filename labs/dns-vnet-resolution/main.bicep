@@ -16,7 +16,8 @@ var integrationSubnetName = 'snet-${baseName}-int'
 var privateEndpointSubnetName = 'snet-${baseName}-pep'
 var privateEndpointName = 'pep-${baseName}-${uniqueSuffix}'
 var privateDnsZoneName = 'privatelink.blob.core.windows.net'
-var storageAccountName = toLower('st${baseName}${uniqueSuffix}')
+var cleanBase = replace(baseName, '-', '')
+var storageAccountName = toLower(take('st${cleanBase}${uniqueSuffix}', 24))
 
 resource appServicePlan 'Microsoft.Web/serverfarms@2023-12-01' = {
   name: serverFarmName

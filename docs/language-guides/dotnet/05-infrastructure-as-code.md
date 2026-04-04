@@ -173,4 +173,4 @@ Split resources into modules and expose explicit outputs/inputs to avoid implici
 
 - [06. CI/CD](./06-ci-cd.md)
 - [02. First Deploy](./02-first-deploy.md)
-- For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-appservice/)
+- For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-app-service-practical-guide/)

@@ -120,7 +120,7 @@ az webapp config appsettings set \
 !!! info "Coming Soon"
     - Key Vault Integration for secrets
     - App Configuration service for dynamic settings
-- [Contribute](https://github.com/yeongseon/azure-appservice/issues)
+- [Contribute](https://github.com/yeongseon/azure-app-service-practical-guide/issues)
 
 ## See Also
 - [Security Operations](../../operations/security.md)

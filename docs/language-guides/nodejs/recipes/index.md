@@ -42,9 +42,9 @@ Each recipe follows this structure:
 ## Advanced Topics
 
 !!! info "Coming Soon"
-    - [Writing your own recipes](https://github.com/yeongseon/azure-appservice/issues)
-    - [Community-contributed integrations](https://github.com/yeongseon/azure-appservice/issues)
-    - [Contribute](https://github.com/yeongseon/azure-appservice/issues)
+    - [Writing your own recipes](https://github.com/yeongseon/azure-app-service-practical-guide/issues)
+    - [Community-contributed integrations](https://github.com/yeongseon/azure-app-service-practical-guide/issues)
+    - [Contribute](https://github.com/yeongseon/azure-app-service-practical-guide/issues)
 
 ## See Also
 - [Local Development](../01-local-run.md)

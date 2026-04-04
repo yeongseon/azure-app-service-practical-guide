@@ -159,4 +159,4 @@ Align CLR naming and JSON policy; use explicit attributes when integrating with 
 
 - [Managed Identity](managed-identity.md)
 - [Private Endpoints](private-endpoints.md)
-- For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-appservice/)
+- For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-app-service-practical-guide/)

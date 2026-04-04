@@ -776,7 +776,7 @@ TimeGenerated              Name         Target                              Dura
     - Custom log processing with Azure Functions
     - Log-based alerting and action groups
     - Integration with external log aggregators (Elastic, Splunk, Datadog)
-- [Contribute](https://github.com/yeongseon/azure-appservice/issues)
+- [Contribute](https://github.com/yeongseon/azure-app-service-practical-guide/issues)
 
 ## See Also
 - [KQL Queries Reference](../../reference/kql-queries.md)

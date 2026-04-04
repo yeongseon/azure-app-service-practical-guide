@@ -240,6 +240,216 @@ graph TD
 
 Treat this error as a startup reachability workflow, not a single failure mode. First align expected port and bind address (`WEBSITES_PORT`/`PORT`, `0.0.0.0`), then correlate platform timeout events with console startup logs to separate timeout from crash conditions. Once the immediate issue is mitigated, harden startup commands and initialization behavior so every deployment responds to HTTP pings within the configured startup window.
 
+## Sample Log Patterns
+
+### AppServiceConsoleLogs (container process did start)
+
+```text
+[AppServiceConsoleLogs]
+2026-04-04T11:14:04Z  Informational  WARNING: Could not find package directory /home/site/wwwroot/__oryx_packages__.
+2026-04-04T11:14:08Z  Error          [2026-04-04 11:14:08 +0000] [1891] [INFO] Starting gunicorn 24.1.1
+2026-04-04T11:14:08Z  Error          [2026-04-04 11:14:08 +0000] [1891] [INFO] Listening at: http://0.0.0.0:8000 (1891)
+2026-04-04T11:14:08Z  Error          [2026-04-04 11:14:08 +0000] [1892] [INFO] Booting worker with pid: 1892
+```
+
+### AppServiceHTTPLogs (app became reachable when healthy)
+
+```text
+[AppServiceHTTPLogs]
+2026-04-04T11:21:55Z  GET  /           200  20
+2026-04-04T11:23:03Z  GET  /diag/env   200  6
+2026-04-04T11:23:03Z  GET  /diag/stats 200  23
+```
+
+### AppServicePlatformLogs (lifecycle stop sequence)
+
+```text
+[AppServicePlatformLogs]
+2026-04-04T11:14:31Z  Informational  State: Stopping, Action: StoppingSiteContainers
+2026-04-04T11:14:36Z  Informational  Container is terminated. Total time elapsed: 5469 ms.
+2026-04-04T11:14:36Z  Informational  Site: <app-name> stopped.
+```
+
+!!! tip "How to Read This"
+    This pattern shows the process can start and respond (`200` responses exist), so this incident class is usually intermittent startup reachability/configuration drift, not a permanent app boot failure.
+
+## KQL Queries with Example Output
+
+### Query 1: Confirm the app process bound to an externally reachable address
+
+```kusto
+// Look for bind/listen signatures from the app process
+AppServiceConsoleLogs
+| where TimeGenerated between (datetime(2026-04-04 11:14:00) .. datetime(2026-04-04 11:14:10))
+| where ResultDescription has_any ("Starting gunicorn", "Listening at", "Booting worker", "127.0.0.1", "0.0.0.0")
+| project TimeGenerated, Level, ResultDescription
+| order by TimeGenerated asc
+```
+
+**Example Output:**
+
+| TimeGenerated | Level | ResultDescription |
+|---|---|---|
+| 2026-04-04 11:14:08 | Error | [2026-04-04 11:14:08 +0000] [1891] [INFO] Starting gunicorn 24.1.1 |
+| 2026-04-04 11:14:08 | Error | [2026-04-04 11:14:08 +0000] [1891] [INFO] Listening at: http://0.0.0.0:8000 (1891) |
+| 2026-04-04 11:14:08 | Error | [2026-04-04 11:14:08 +0000] [1892] [INFO] Booting worker with pid: 1892 |
+
+!!! tip "How to Read This"
+    `0.0.0.0:8000` means bind-address itself is correct in this sample. If the same query shows `127.0.0.1`, prioritize H2 immediately.
+
+### Query 2: Validate endpoint responses and latency once startup succeeds
+
+```kusto
+// Validate post-start endpoint health and latency
+AppServiceHTTPLogs
+| where TimeGenerated between (datetime(2026-04-04 11:21:50) .. datetime(2026-04-04 11:23:10))
+| project TimeGenerated, CsMethod, CsUriStem, ScStatus, TimeTaken
+| order by TimeGenerated asc
+```
+
+**Example Output:**
+
+| TimeGenerated | CsMethod | CsUriStem | ScStatus | TimeTaken |
+|---|---|---|---|---|
+| 2026-04-04 11:21:55 | GET | / | 200 | 20 |
+| 2026-04-04 11:23:03 | GET | /diag/env | 200 | 6 |
+| 2026-04-04 11:23:03 | GET | /diag/stats | 200 | 23 |
+
+!!! tip "How to Read This"
+    Low-latency `200` responses indicate successful readiness after startup. If incident windows show no rows or repeated `503`, compare to startup timeout signatures from platform logs.
+
+### Query 3: Platform stop timeline around startup investigation
+
+```kusto
+// Correlate stop actions and container termination timing
+AppServicePlatformLogs
+| where TimeGenerated between (datetime(2026-04-04 11:14:30) .. datetime(2026-04-04 11:14:40))
+| where Message has_any ("StoppingSiteContainers", "Container is terminated", "Site:")
+| project TimeGenerated, Level, Message
+| order by TimeGenerated asc
+```
+
+**Example Output:**
+
+| TimeGenerated | Level | Message |
+|---|---|---|
+| 2026-04-04 11:14:31 | Informational | State: Stopping, Action: StoppingSiteContainers |
+| 2026-04-04 11:14:36 | Informational | Container is terminated. Total time elapsed: 5469 ms. |
+| 2026-04-04 11:14:36 | Informational | Site: <app-name> stopped. |
+
+!!! tip "How to Read This"
+    Use this timeline to separate operator/platform restarts from startup probe failures. A short terminate window usually indicates a controlled stop, not a long startup timeout.
+
+## CLI Investigation Commands
+
+```bash
+# Check overall app state
+az webapp show --resource-group <resource-group> --name <app-name> --query "{state:state,enabled:enabled,defaultHostName:defaultHostName}" --output table
+
+# Verify startup-critical settings
+az webapp config appsettings list --resource-group <resource-group> --name <app-name> --query "[?name=='WEBSITES_PORT' || name=='WEBSITES_CONTAINER_START_TIME_LIMIT' || name=='WEBSITE_WARMUP_PATH' || name=='WEBSITE_WARMUP_STATUSES'].{name:name,value:value}" --output table
+
+# Inspect startup command/runtime
+az webapp config show --resource-group <resource-group> --name <app-name> --query "{linuxFxVersion:linuxFxVersion,appCommandLine:appCommandLine,http20Enabled:http20Enabled}" --output table
+
+# Stream live logs while reproducing ping failures
+az webapp log tail --resource-group <resource-group> --name <app-name>
+```
+
+**Example Output:**
+
+```text
+State    Enabled    DefaultHostName
+-------  ---------  -------------------------------------------
+Running  True       <app-name>.azurewebsites.net
+
+Name                                   Value
+-------------------------------------  ------
+WEBSITES_PORT                          8000
+WEBSITES_CONTAINER_START_TIME_LIMIT    230
+WEBSITE_WARMUP_PATH                    /diag/env
+WEBSITE_WARMUP_STATUSES                200
+
+LinuxFxVersion    AppCommandLine                               Http20Enabled
+----------------  -------------------------------------------  -------------
+PYTHON|3.11       gunicorn --bind 0.0.0.0:8000 src.app:app    True
+```
+
+!!! tip "How to Read This"
+    If settings and bind are aligned but startup pings still fail intermittently, investigate startup duration variance, heavy initialization, and recycle timing rather than port/address first.
+
+## Normal vs Abnormal Comparison
+
+| Signal | Normal | Container Didn't Respond to HTTP Pings |
+|---|---|---|
+| Console bind line | `Listening at: http://0.0.0.0:<port>` appears quickly | Missing bind line, wrong bind (`127.0.0.1`), or very delayed bind |
+| HTTP logs during startup window | Early `200` on warm-up or `/` | No responses before timeout or repeated startup-phase failures |
+| Platform logs | `Site started`/steady run | Timeout/stop cycle or repeated startup retries |
+| TimeTaken pattern | Low to moderate, variable by route | Near timeout limit if probe waits then fails |
+| Operational impact | Availability restored after deploy/restart | App remains unavailable until port/bind/startup issue fixed |
+
+## Related Labs
+
+- [Lab: Container HTTP Pings](../../lab-guides/container-http-pings.md)
+
+## Extended Triage Matrix
+
+| Observation in Incident Window | Most Likely Hypothesis | Next Command / Query | Immediate Action |
+|---|---|---|---|
+| `Listening at: http://127.0.0.1:<port>` | H2 (localhost bind) | `AppServiceConsoleLogs` bind query | Change bind host to `0.0.0.0` and restart |
+| `WEBSITES_PORT=8080`, logs show `:8000` | H1 (port mismatch) | `az webapp config appsettings list ...` | Align port in app and setting |
+| No listen line before timeout | H3 or H5 | Console + platform startup sequence | Increase timeout temporarily and verify command path |
+| Traceback before listener | H4 | Console error query | Fix startup exception and redeploy |
+| Healthy bind + healthy settings + intermittent failures | H3 (startup variance) | Latency trend around restarts | Reduce initialization work on startup |
+
+### Incident timeline template (copy into case notes)
+
+| Timestamp (UTC) | Source | Signal | Interpretation |
+|---|---|---|---|
+| 2026-04-04 11:14:08 | AppServiceConsoleLogs | `Listening at: http://0.0.0.0:8000` | Process reached listener state |
+| 2026-04-04 11:14:31 | AppServicePlatformLogs | `StoppingSiteContainers` | Platform/operator initiated stop |
+| 2026-04-04 11:14:36 | AppServicePlatformLogs | `Container is terminated. Total time elapsed: 5469 ms.` | Controlled stop completed |
+| 2026-04-04 11:21:55 | AppServiceHTTPLogs | `GET / 200` | App reachable post-restart |
+| 2026-04-04 11:23:03 | AppServiceHTTPLogs | `GET /diag/env 200` | Diagnostics endpoint healthy |
+
+!!! tip "How to Read This"
+    Build the timeline first, then classify by hypothesis. Misclassification usually happens when teams inspect only one data source (for example, just console logs without platform lifecycle context).
+
+## Normal vs Abnormal Endpoint Examples
+
+| Endpoint | Healthy Startup Example | Startup Ping Failure Example |
+|---|---|---|
+| `/` | `200`, TimeTaken 20-150 ms | Missing row or `503` near startup timeout |
+| `/diag/env` | `200`, TimeTaken <20 ms | Missing row or delayed first success |
+| `/diag/stats` | `200`, TimeTaken <50 ms | Missing row during startup/restart loop |
+| Warm-up path (`WEBSITE_WARMUP_PATH`) | Responds with approved status (`200` or `202`) | Returns non-approved status or not served in time |
+
+## Related Labs
+
+- [Lab: Container HTTP Pings](../../lab-guides/container-http-pings.md)
+
+## Fast Verification Query (Post-fix)
+
+```kusto
+// Verify that startup window now returns successful responses
+AppServiceHTTPLogs
+| where TimeGenerated > ago(15m)
+| where CsUriStem in ("/", "/diag/env", "/diag/stats")
+| summarize Requests=count(), Errors=countif(ScStatus >= 500), P95=percentile(TimeTaken, 95) by CsUriStem
+| order by CsUriStem asc
+```
+
+**Example Output:**
+
+| CsUriStem | Requests | Errors | P95 |
+|---|---|---|---|
+| / | 42 | 0 | 38 |
+| /diag/env | 42 | 0 | 16 |
+| /diag/stats | 42 | 0 | 44 |
+
+!!! tip "How to Read This"
+    This confirms remediation only when `Errors` stays at zero during fresh restarts and P95 remains below your startup SLO.
+
 ## References
 
 - [Configure a custom container for Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container)

@@ -135,9 +135,9 @@ az webapp config container set --name $APP_NAME --resource-group $RG \
 ## Advanced Topics
 
 !!! info "Coming Soon"
-    - [Multi-stage builds](https://github.com/yeongseon/azure-appservice/issues)
-    - [Sidecar containers](https://github.com/yeongseon/azure-appservice/issues)
-    - [Contribute](https://github.com/yeongseon/azure-appservice/issues)
+    - [Multi-stage builds](https://github.com/yeongseon/azure-app-service-practical-guide/issues)
+    - [Sidecar containers](https://github.com/yeongseon/azure-app-service-practical-guide/issues)
+    - [Contribute](https://github.com/yeongseon/azure-app-service-practical-guide/issues)
 
 ## See Also
 - [Native Dependencies](./native-dependencies.md)

@@ -657,6 +657,55 @@ Before each deployment to Linux App Service:
 
 ---
 
+## Expected Evidence
+
+This section defines what you SHOULD observe at each phase of the lab. Use it to validate your investigation is on track.
+
+### Before Trigger (Baseline)
+
+| Evidence Source | Expected State | What to Capture |
+|---|---|---|
+| Deployment APIs (`/api/zipdeploy`, deployment status) | Deployment path succeeds (200/202) before runtime symptom appears | Deployment status responses and timestamps |
+| Startup command config | Gunicorn is configured with loopback bind | `gunicorn --bind=127.0.0.1:8000 --timeout=120 --workers=2 app:app` |
+| Baseline app config artifacts | App configuration shows intended runtime but bad bind target | `baseline/startup-command.txt` and `baseline/app-config.json` |
+
+### During Incident
+
+| Evidence Source | Expected State | Key Indicator |
+|---|---|---|
+| AppServiceHTTPLogs | User traffic is not successfully forwarded | Only SCM/Kudu traffic appears or user-path requests fail/timeout |
+| AppServiceConsoleLogs | App process starts but listens on localhost only | `Listening at: http://127.0.0.1:8000` |
+| AppServicePlatformLogs | Platform treats startup as failed due to unreachable warmup path | `CancellingStartup, LastError: ContainerTimeout` and probe-timeout messages |
+
+### After Recovery
+
+| Evidence Source | Expected State | Key Indicator |
+|---|---|---|
+| Startup command config | Bind address corrected for platform reachability | `--bind=0.0.0.0:8000` |
+| `/health` and diagnostics endpoints | Endpoint reachability restored | HTTP `200` responses resume |
+| Postfix bind evidence | Runtime cmdline reflects corrected bind | `gunicorn_bind_from_cmdline: 0.0.0.0:8000` |
+
+### Evidence Timeline
+
+```mermaid
+graph LR
+    A[Baseline Capture] --> B[Trigger Fault]
+    B --> C[During: Collect Evidence]
+    C --> D[After: Compare to Baseline]
+    D --> E[Verdict: Confirmed/Falsified]
+```
+
+### Evidence Chain: Why This Proves the Hypothesis
+
+!!! success "Falsification Logic"
+    If you observe deployment success, console logs showing Gunicorn listening on `127.0.0.1:8000`, and platform startup timeout/cancellation signals, the hypothesis is CONFIRMED because the app process is running but unreachable to the App Service forwarding/warmup path.
+    
+    If you do NOT observe localhost-only bind evidence (for example bind is already `0.0.0.0`), the hypothesis is FALSIFIED — consider alternatives such as wrong startup module, port mismatch, or image/runtime startup failure.
+
+## Related Playbook
+
+- [Failed to Forward Request](../playbooks/startup-availability/failed-to-forward-request.md)
+
 ## References
 
 - [Configure a custom container for Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container)

@@ -692,6 +692,60 @@ az group delete --name "$RG" --yes --no-wait
 
 ---
 
+## Expected Evidence
+
+This section defines what you SHOULD observe at each phase of the lab. Use it to validate your investigation is on track.
+
+### Before Trigger (Baseline)
+
+| Evidence Source | Expected State | What to Capture |
+|---|---|---|
+| AppServiceHTTPLogs | All 200s with low `TimeTaken` | Baseline query snapshot and per-endpoint latency |
+| AppServiceConsoleLogs | Normal Gunicorn startup with 2 workers | Worker boot lines and bind target |
+| AppServicePlatformLogs | Startup lifecycle succeeds | Site start events without repeated failure loops |
+| Probe CSV + `/diag/stats` | Stable healthy responses | Baseline probe sequence and runtime counters |
+
+### During Incident
+
+| Evidence Source | Expected State | Key Indicator |
+|---|---|---|
+| AppServiceHTTPLogs | Still all 200s with low latency | `TimeTaken` remains in healthy low range (`10-32 ms`) |
+| Probe CSV | Repeated successful ping responses | No non-200 startup probe failures in this dataset |
+| Console logs | App continues serving on runtime port | Bind/listen lines remain consistent with healthy traffic |
+| Interpretation context | This is a healthy baseline lab, not a failure run | Use as comparison control for startup-failed and forward-request labs |
+
+### After Recovery
+
+| Evidence Source | Expected State | Key Indicator |
+|---|---|---|
+| AppServiceHTTPLogs | Remains healthy | No degradation trend after trigger window |
+| `/diag/stats` | Stable counters and request handling | No pressure signatures emerge |
+| Platform logs | No forced restart requirement | Lifecycle remains stable |
+| Comparative analysis | Establishes what NORMAL looks like | Baseline profile to contrast with startup-availability failure labs |
+
+```mermaid
+graph LR
+    A[Baseline Capture] --> B[Trigger Fault]
+    B --> C[During: Collect Evidence]
+    C --> D[After: Compare to Baseline]
+    D --> E[Verdict: Confirmed/Falsified]
+```
+
+### Evidence Chain: Why This Proves the Hypothesis
+
+!!! success "Falsification Logic"
+    If you observe sustained 200 responses with low `TimeTaken` (`10-32 ms`) before, during, and after the test window, the hypothesis is CONFIRMED because this run demonstrates a healthy startup/ping baseline rather than a port-mismatch failure.
+    
+    If you do NOT observe stable low-latency 200s (for example, repeated non-200 probes or startup timeouts), the hypothesis is FALSIFIED — consider startup timeout, warmup path, or runtime-port handling issues.
+
+---
+
+## Related Playbook
+
+- [Container Didn’t Respond to HTTP Pings](../playbooks/startup-availability/container-didnt-respond-to-http-pings.md)
+
+---
+
 ## References
 
 - [Configure a custom container for Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container)

@@ -26,8 +26,8 @@ Each example includes:
 
 ```bash
 # 1. Clone this repository
-git clone https://github.com/yeongseon/azure-appservice-python-guide.git
-cd azure-appservice-python-guide
+git clone https://github.com/yeongseon/azure-app-service-practical-guide.git
+cd azure-app-service-practical-guide
 
 # 2. Navigate to desired example
 cd examples/with-cosmosdb

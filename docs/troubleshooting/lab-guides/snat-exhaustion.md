@@ -684,6 +684,60 @@ Suggested comparison table:
 
 ---
 
+## Expected Evidence
+
+This section defines what you SHOULD observe at each phase of the lab. Use it to validate your investigation is on track.
+
+### Before Trigger (Baseline)
+
+| Evidence Source | Expected State | What to Capture |
+|---|---|---|
+| AppServiceHTTPLogs | All 200s with low latency | Baseline query snapshot for `/health`, `/diag/stats`, `/diag/net` |
+| AppServiceConsoleLogs | Normal Gunicorn startup behavior | Boot lines showing 4 sync workers |
+| AppServicePlatformLogs | Standard startup lifecycle | Site start sequence without churn |
+| `/diag/stats` + `/diag/net` | Low outbound churn and stable socket counts | Baseline `connection_count`, sockstat, and endpoint counters |
+
+### During Incident
+
+| Evidence Source | Expected State | Key Indicator |
+|---|---|---|
+| AppServiceHTTPLogs (`/outbound`) | `499` dominates during burst | `TimeTaken ~29786-29840 ms` on timed-out outbound calls |
+| AppServiceHTTPLogs (`/diag/stats`) | Diagnostic endpoint can also time out | `499` with `TimeTaken 59709 ms` indicates full stall |
+| Trigger CSV + app payloads | Mixed `000`/`499`/`503` and timeout text | Connection churn exceeds available SNAT mappings |
+| Console logs | Worker timeout and kill churn | `WORKER TIMEOUT` and `SIGKILL` align with outbound pressure window |
+
+### After Recovery
+
+| Evidence Source | Expected State | Key Indicator |
+|---|---|---|
+| AppServiceHTTPLogs | Timeout ratio drops when pressure is reduced | Fewer long-tail `499` events after concurrency reduction |
+| `/diag/net` + `/diag/stats` | Endpoints become reachable again | Diagnostic JSON resumes after stall period |
+| Mitigation test | Connection pooling/reduced fan-out improves stability | Recovery requires reducing concurrent outbound calls or using service endpoints/private connectivity patterns |
+| Incident interpretation | `499` remains key symptom | Front-end timeout waiting on blocked worker path, not immediate app-side 5xx |
+
+```mermaid
+graph LR
+    A[Baseline Capture] --> B[Trigger Fault]
+    B --> C[During: Collect Evidence]
+    C --> D[After: Compare to Baseline]
+    D --> E[Verdict: Confirmed/Falsified]
+```
+
+### Evidence Chain: Why This Proves the Hypothesis
+
+!!! success "Falsification Logic"
+    If you observe long `TimeTaken` `499` patterns on `/outbound` and even `/diag/stats`, plus worker timeout/kill churn in the same window, the hypothesis is CONFIRMED because outbound connection churn is stalling request processing in a SNAT-pressure cascade.
+    
+    If you do NOT observe timeout clustering, diagnostic endpoint stall, or worker churn under equivalent outbound concurrency, the hypothesis is FALSIFIED — consider upstream dependency outages or non-SNAT network constraints.
+
+---
+
+## Related Playbook
+
+- [SNAT or Application Issue?](../playbooks/outbound-network/snat-or-application-issue.md)
+
+---
+
 ## References
 
 - [Troubleshoot intermittent outbound connection errors in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-intermittent-outbound-connection-errors)

@@ -799,6 +799,55 @@ AppServicePlatformLogs
 
 ---
 
+## Expected Evidence
+
+This section defines what you SHOULD observe at each phase of the lab. Use it to validate your investigation is on track.
+
+### Before Trigger (Baseline)
+
+| Evidence Source | Expected State | What to Capture |
+|---|---|---|
+| Deployment APIs (`/api/zipdeploy`, deployment status) | Deployment workflow returns success/accepted (200/202) | Successful deployment response and timestamp |
+| App startup command config | Startup command contains wrong module reference | `gunicorn --bind=0.0.0.0:8000 --timeout=120 wrong_module:app` |
+| Baseline app config snapshot | Runtime configuration exists but app is not yet validated healthy | `app-config.json` and `startup-command.txt` artifacts |
+
+### During Incident
+
+| Evidence Source | Expected State | Key Indicator |
+|---|---|---|
+| AppServiceHTTPLogs | User-facing paths fail with 503 and long request duration | Repeated `503` with `TimeTaken` around `49751-49765 ms` |
+| AppServiceConsoleLogs | No application boot output because app never reaches runnable code path | `0` rows in console export during failure window |
+| AppServicePlatformLogs | Startup probe/cancellation/termination sequence appears | `Site startup probe failed after 43.86s`, `CancellingStartup, LastError: ContainerTimeout`, `Site container terminated during site startup`, `Failed to start site. Revert by stopping site.` |
+
+### After Recovery
+
+| Evidence Source | Expected State | Key Indicator |
+|---|---|---|
+| Startup command config | Module reference corrected | `gunicorn --bind=0.0.0.0:8000 --timeout=120 app:app` |
+| Health and diagnostics endpoints | App starts and serves normally | `/health` returns `200` and diagnostics endpoints respond |
+| AppServiceHTTPLogs | Availability restored | 200 responses resume for user-facing requests |
+
+### Evidence Timeline
+
+```mermaid
+graph LR
+    A[Baseline Capture] --> B[Trigger Fault]
+    B --> C[During: Collect Evidence]
+    C --> D[After: Compare to Baseline]
+    D --> E[Verdict: Confirmed/Falsified]
+```
+
+### Evidence Chain: Why This Proves the Hypothesis
+
+!!! success "Falsification Logic"
+    If you observe deployment success signals (200/202), concurrent 503s with long request times, zero console rows, and platform startup-probe timeout/cancellation messages, the hypothesis is CONFIRMED because code deployment succeeded but runtime never became healthy due to a bad WSGI entrypoint.
+    
+    If you do NOT observe this pattern (for example console shows normal app boot and request handling), the hypothesis is FALSIFIED — consider alternatives such as port binding mismatch, dependency startup failure, or networking path issues.
+
+## Related Playbook
+
+- [Deployment Succeeded but Startup Failed](../playbooks/startup-availability/deployment-succeeded-startup-failed.md)
+
 ## References
 
 - [Configure a Linux Python app for Azure App Service](https://learn.microsoft.com/azure/app-service/configure-language-python)

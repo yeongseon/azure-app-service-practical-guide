@@ -244,6 +244,161 @@ graph TD
 ## 15. Quick Conclusion
 For intermittent 5xx under load on App Service Linux, avoid single-cause assumptions. Validate H1-H4 against aligned evidence from `AppServiceHTTPLogs`, `AppServiceConsoleLogs`, and `AppServicePlatformLogs`, then apply low-risk stabilizers first (timeouts, retries, connection reuse, burst headroom). Durable resolution usually requires concurrency model tuning, dependency resilience, and startup/health-check hardening.
 
+## Sample Log Patterns
+
+### AppServiceHTTPLogs (intermittent-5xx lab)
+
+```text
+[AppServiceHTTPLogs]
+2026-04-04T11:23:25Z  GET  /diag/env    200  7
+2026-04-04T11:23:25Z  GET  /diag/stats  200  21735
+2026-04-04T11:21:55Z  GET  /slow        499  4918
+2026-04-04T11:21:55Z  GET  /slow        499  4913
+2026-04-04T11:21:55Z  GET  /slow        499  4908
+2026-04-04T11:21:55Z  GET  /slow        499  4890
+2026-04-04T11:21:55Z  GET  /slow        499  4886
+2026-04-04T11:21:55Z  GET  /slow        499  4877
+```
+
+### AppServiceConsoleLogs (intermittent-5xx lab)
+
+```text
+[AppServiceConsoleLogs]
+2026-04-04T11:14:18Z  Error  [2026-04-04 11:14:18 +0000] [1891] [INFO] Starting gunicorn 24.1.1
+2026-04-04T11:14:18Z  Error  [2026-04-04 11:14:18 +0000] [1891] [INFO] Listening at: http://0.0.0.0:8000 (1891)
+2026-04-04T11:14:18Z  Error  [2026-04-04 11:14:18 +0000] [1891] [INFO] Using worker: sync
+2026-04-04T11:14:18Z  Error  [2026-04-04 11:14:18 +0000] [1892] [INFO] Booting worker with pid: 1892
+2026-04-04T11:14:18Z  Error  [2026-04-04 11:14:18 +0000] [1893] [INFO] Booting worker with pid: 1893
+```
+
+!!! tip "How to Read This"
+    `499` responses near ~4.9 seconds on `/slow` indicate clients gave up waiting before the app completed work. Combined with sync workers and only three worker processes, this is strong evidence of H1 (worker concurrency exhaustion) under burst traffic.
+
+## KQL Queries with Example Output
+
+### Query 1: Identify timeout-like client disconnect pattern on hot endpoint
+
+```kusto
+AppServiceHTTPLogs
+| where TimeGenerated between (datetime(2026-04-04 11:21:50) .. datetime(2026-04-04 11:22:05))
+| where CsUriStem == "/slow"
+| project TimeGenerated, CsMethod, CsUriStem, ScStatus, TimeTaken
+| order by TimeGenerated desc
+```
+
+**Example Output:**
+
+| TimeGenerated | CsMethod | CsUriStem | ScStatus | TimeTaken |
+|---|---|---|---|---|
+| 2026-04-04 11:21:55 | GET | /slow | 499 | 4918 |
+| 2026-04-04 11:21:55 | GET | /slow | 499 | 4913 |
+| 2026-04-04 11:21:55 | GET | /slow | 499 | 4908 |
+| 2026-04-04 11:21:55 | GET | /slow | 499 | 4890 |
+| 2026-04-04 11:21:55 | GET | /slow | 499 | 4886 |
+| 2026-04-04 11:21:55 | GET | /slow | 499 | 4877 |
+
+!!! tip "How to Read This"
+    This is a queueing/latency signature, not random platform noise. Repeated same-second `499` near a consistent timeout boundary means requests are waiting too long and clients abort.
+
+### Query 2: Compare fast diagnostic route vs blocked diagnostic route
+
+```kusto
+AppServiceHTTPLogs
+| where TimeGenerated between (datetime(2026-04-04 11:23:20) .. datetime(2026-04-04 11:23:30))
+| where CsUriStem in ("/diag/env", "/diag/stats")
+| project TimeGenerated, CsMethod, CsUriStem, ScStatus, TimeTaken
+| order by TimeGenerated desc
+```
+
+**Example Output:**
+
+| TimeGenerated | CsMethod | CsUriStem | ScStatus | TimeTaken |
+|---|---|---|---|---|
+| 2026-04-04 11:23:25 | GET | /diag/env | 200 | 7 |
+| 2026-04-04 11:23:25 | GET | /diag/stats | 200 | 21735 |
+
+!!! tip "How to Read This"
+    Same timestamp, same app, radically different latency. This supports endpoint-specific blocking behavior (and worker occupancy), not complete platform unavailability.
+
+### Query 3: Confirm worker model and worker count from console logs
+
+```kusto
+AppServiceConsoleLogs
+| where TimeGenerated between (datetime(2026-04-04 11:14:15) .. datetime(2026-04-04 11:14:25))
+| where ResultDescription has_any ("Using worker", "Booting worker", "Starting gunicorn", "Listening at")
+| project TimeGenerated, Level, ResultDescription
+| order by TimeGenerated asc
+```
+
+**Example Output:**
+
+| TimeGenerated | Level | ResultDescription |
+|---|---|---|
+| 2026-04-04 11:14:18 | Error | [2026-04-04 11:14:18 +0000] [1891] [INFO] Starting gunicorn 24.1.1 |
+| 2026-04-04 11:14:18 | Error | [2026-04-04 11:14:18 +0000] [1891] [INFO] Listening at: http://0.0.0.0:8000 (1891) |
+| 2026-04-04 11:14:18 | Error | [2026-04-04 11:14:18 +0000] [1891] [INFO] Using worker: sync |
+| 2026-04-04 11:14:18 | Error | [2026-04-04 11:14:18 +0000] [1892] [INFO] Booting worker with pid: 1892 |
+| 2026-04-04 11:14:18 | Error | [2026-04-04 11:14:18 +0000] [1893] [INFO] Booting worker with pid: 1893 |
+
+!!! tip "How to Read This"
+    Only three sync workers means at most three requests can execute concurrently per instance without queue delay. Bursty `/slow` traffic will quickly saturate this model and surface timeout-driven failures.
+
+## CLI Investigation Commands
+
+```bash
+# Validate runtime stack and startup command (worker model evidence)
+az webapp config show --resource-group <resource-group> --name <app-name> --query "{linuxFxVersion:linuxFxVersion,appCommandLine:appCommandLine,alwaysOn:alwaysOn}" --output table
+
+# Check worker and timeout-related app settings
+az webapp config appsettings list --resource-group <resource-group> --name <app-name> --query "[?name=='PYTHON_GUNICORN_CUSTOM_THREAD_NUM' || name=='GUNICORN_CMD_ARGS' || name=='WEBSITES_PORT' || name=='WEBSITES_CONTAINER_START_TIME_LIMIT'].{name:name,value:value}" --output table
+
+# Inspect scale and plan context for burst periods
+az webapp show --resource-group <resource-group> --name <app-name> --query "{state:state,serverFarmId:serverFarmId,hostNames:hostNames}" --output table
+```
+
+**Example Output:**
+
+```text
+LinuxFxVersion    AppCommandLine                               AlwaysOn
+----------------  -------------------------------------------  --------
+PYTHON|3.11       gunicorn --bind 0.0.0.0:8000 src.app:app    True
+
+Name                              Value
+--------------------------------  ----------------------------
+GUNICORN_CMD_ARGS                 --workers 3 --worker-class sync --timeout 30
+WEBSITES_PORT                     8000
+WEBSITES_CONTAINER_START_TIME_LIMIT 230
+
+State    ServerFarmId                                                     HostNames
+-------  ---------------------------------------------------------------  -------------------------------------------
+Running  /subscriptions/<subscription-id>/resourceGroups/<resource-group>/providers/Microsoft.Web/serverfarms/<plan-name>  <app-name>.azurewebsites.net
+```
+
+!!! tip "How to Read This"
+    If command/settings confirm low sync-worker concurrency and logs show timeout-like request behavior, prioritize H1 mitigations first (worker model tuning, request-path optimization, and burst handling).
+
+## Normal vs Abnormal Comparison
+
+| Signal | Normal Under Burst | Intermittent 5xx Under Load (This Pattern) |
+|---|---|---|
+| `/slow` status mix | Mostly 200/206 with bounded latency | Frequent `499` near ~4.9 seconds |
+| Endpoint latency spread | Heavy endpoints slower but controlled | Extreme divergence (`/diag/env` 7 ms vs `/diag/stats` 21735 ms) |
+| Gunicorn worker model impact | Sufficient concurrency headroom | Sync workers exhausted under spikes |
+| Failure shape | Gradual degradation, recoverable with autoscale | Sudden timeout/abort bursts during concurrency spikes |
+| Root-cause direction | Dependency or traffic growth investigation | Concurrency exhaustion (H1) is primary lead |
+
+## Common Misdiagnoses
+
+- "`499` means Azure platform dropped requests." (it usually means client disconnected while waiting)
+- "200 on `/diag/env` proves no load issue." (other endpoints can still queue and time out)
+- "No explicit `WORKER TIMEOUT` line means workers are fine." (HTTP latency/abort signatures can prove saturation)
+- "Increase retries in clients to fix it." (can amplify worker exhaustion under burst)
+- "Scale-out alone is enough." (without worker/path tuning, bursts can still saturate each instance)
+
+## Related Labs
+
+- [Lab: Intermittent 5xx Under Load](../../lab-guides/intermittent-5xx.md)
+
 ## References
 - [Troubleshoot HTTP errors of "502 bad gateway" and "503 service unavailable" in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503)
 - [Get started with autoscale in Azure](https://learn.microsoft.com/en-us/azure/azure-monitor/autoscale/autoscale-get-started)

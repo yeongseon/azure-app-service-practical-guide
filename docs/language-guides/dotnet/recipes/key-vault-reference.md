@@ -139,4 +139,4 @@ Validate slot-specific identity and slot-specific app settings configuration.
 
 - [Managed Identity](managed-identity.md)
 - [Azure SQL](azure-sql.md)
-- For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-appservice/)
+- For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-app-service-practical-guide/)

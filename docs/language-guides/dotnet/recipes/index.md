@@ -85,4 +85,4 @@ For each recipe completion:
 
 - [Tutorial index](../index.md)
 - [Reference index](../../../reference/index.md)
-- For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-appservice/)
+- For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-app-service-practical-guide/)

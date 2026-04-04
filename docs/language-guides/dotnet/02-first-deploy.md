@@ -154,4 +154,4 @@ az webapp config show --resource-group "$RESOURCE_GROUP_NAME" --name "$WEB_APP_N
 
 - [03. Configuration](./03-configuration.md)
 - [05. Infrastructure as Code](./05-infrastructure-as-code.md)
-- For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-appservice/)
+- For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-app-service-practical-guide/)

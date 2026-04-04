@@ -784,6 +784,55 @@ az group delete --name "$RG" --yes --no-wait
 
 ---
 
+## Expected Evidence
+
+This section defines what you SHOULD observe at each phase of the lab. Use it to validate your investigation is on track.
+
+### Before Trigger (Baseline)
+
+| Evidence Source | Expected State | What to Capture |
+|---|---|---|
+| Health and baseline endpoints | App is healthy and serving normally | `/health` 200 and baseline diagnostics snapshots |
+| VNet integration state | App is VNet-integrated for the DNS experiment scope | `az webapp vnet-integration list` output |
+| Baseline DNS/connect checks | Resolution and connect checks succeed from HTTP perspective | Baseline `/resolve` and `/connect` result payloads |
+
+### During Incident
+
+| Evidence Source | Expected State | Key Indicator |
+|---|---|---|
+| `/resolve` response payload | Both `blob.core.windows.net` and `privatelink.blob.core.windows.net` resolve to public IP, not private endpoint IP | Resolved address `20.60.200.161` (expected private endpoint would be `10.x.x.x`) |
+| `/connect` response payload | Connection attempt to `privatelink` path fails despite DNS answer | SSL verification error on `privatelink` URL |
+| AppServiceHTTPLogs and Platform logs | App itself remains healthy while DNS routing intent is wrong | `/resolve` 200 (`TimeTaken=512ms`), `/connect` 200 (`TimeTaken=975ms`), and `Site startup probe succeeded after 36.39s` |
+
+### After Recovery
+
+| Evidence Source | Expected State | Key Indicator |
+|---|---|---|
+| Private DNS zone linkage | Private zone is linked to integration VNet | `az network private-dns link vnet list` shows expected link |
+| `/resolve` payload for `privatelink` hostname | Name resolves to private IP range | `privatelink.blob.core.windows.net` resolves to `10.x.x.x` |
+| Dependency path behavior | Traffic follows private endpoint routing intent | Connect diagnostics align with private DNS resolution |
+
+### Evidence Timeline
+
+```mermaid
+graph LR
+    A[Baseline Capture] --> B[Trigger Fault]
+    B --> C[During: Collect Evidence]
+    C --> D[After: Compare to Baseline]
+    D --> E[Verdict: Confirmed/Falsified]
+```
+
+### Evidence Chain: Why This Proves the Hypothesis
+
+!!! success "Falsification Logic"
+    If you observe healthy app status codes alongside DNS answers that map `privatelink` hostnames to public IPs (instead of private endpoint IPs), the hypothesis is CONFIRMED because DNS path misconfiguration silently redirects traffic away from intended private routing without producing obvious app-level 5xx failures.
+    
+    If you do NOT observe wrong IP mapping (for example `privatelink` correctly resolves to `10.x.x.x`), the hypothesis is FALSIFIED — consider alternatives such as TLS hostname/certificate mismatch, NSG/UDR restrictions, or dependency authorization issues.
+
+## Related Playbook
+
+- [DNS Resolution with VNet-Integrated App Service](../playbooks/outbound-network/dns-resolution-vnet-integrated-app-service.md)
+
 ## References
 
 - [Integrate your app with an Azure virtual network](https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration)

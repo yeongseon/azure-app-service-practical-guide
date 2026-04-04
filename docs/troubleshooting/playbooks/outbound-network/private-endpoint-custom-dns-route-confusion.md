@@ -221,6 +221,157 @@ AppServiceConsoleLogs
 ## 15. Quick Conclusion
 For this incident class, prove DNS answer, route path, and policy allowance independently from inside the Linux app. Most durable fixes come from correcting private DNS links/forwarding, aligning route-all with UDR intent, and removing policy/cache mismatches that keep traffic from the intended private endpoint.
 
+## Sample Log Patterns
+
+### AppServiceHTTPLogs (dns-vnet lab)
+
+```text
+[AppServiceHTTPLogs]
+2026-04-04T11:23:04Z  GET  /diag/env    200    15
+2026-04-04T11:23:03Z  GET  /diag/stats  200    24
+2026-04-04T11:22:19Z  GET  /connect     200    975
+2026-04-04T11:22:18Z  GET  /resolve     200    512
+2026-04-04T11:18:02Z  GET  /            200    148
+2026-04-04T11:17:12Z  GET  /diag/stats  499    24400
+```
+
+### AppServiceConsoleLogs (dns-vnet lab)
+
+```text
+[AppServiceConsoleLogs]
+0 rows returned for incident window.
+```
+
+### AppServicePlatformLogs (dns-vnet lab)
+
+```text
+[AppServicePlatformLogs]
+2026-04-04T11:17:11Z  Informational  Site is running with patch version PYTHON 3.11.14
+2026-04-04T11:17:11Z  Informational  State: Started, Action: None, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00
+2026-04-04T11:17:11Z  Informational  Site started.
+2026-04-04T11:17:11Z  Informational  Site is running with deployment version: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+2026-04-04T11:17:10Z  Informational  State: Starting, Action: WarmUpProbeSucceeded
+2026-04-04T11:17:10Z  Informational  Site startup probe succeeded after 36.3947007 seconds.
+```
+
+!!! tip "How to Read This"
+    Healthy startup + successful app health endpoints does not prove private endpoint path correctness. In this incident class, the deciding evidence is `/resolve` answer quality and `/connect` destination behavior.
+
+## KQL Queries with Example Output
+
+### Query 1: Focus on `/resolve` and `/connect` timeline
+
+```kusto
+AppServiceHTTPLogs
+| where TimeGenerated between (datetime(2026-04-04 11:17:00) .. datetime(2026-04-04 11:24:00))
+| where CsUriStem in ("/resolve", "/connect", "/diag/stats")
+| project TimeGenerated, CsMethod, CsUriStem, ScStatus, TimeTaken
+| order by TimeGenerated desc
+```
+
+**Example Output:**
+
+| TimeGenerated | CsMethod | CsUriStem | ScStatus | TimeTaken |
+|---|---|---|---|---|
+| 2026-04-04 11:22:19 | GET | /connect | 200 | 975 |
+| 2026-04-04 11:22:18 | GET | /resolve | 200 | 512 |
+| 2026-04-04 11:17:12 | GET | /diag/stats | 499 | 24400 |
+
+!!! tip "How to Read This"
+    `/resolve` and `/connect` returning `200` only means handlers completed, not that they used private path. Validate their payload details (resolved IP and SSL/connect details) before concluding network is healthy.
+
+### Query 2: Verify startup baseline is healthy
+
+```kusto
+AppServicePlatformLogs
+| where TimeGenerated between (datetime(2026-04-04 11:17:00) .. datetime(2026-04-04 11:18:00))
+| project TimeGenerated, Level, Message
+| order by TimeGenerated asc
+```
+
+**Example Output:**
+
+| TimeGenerated | Level | Message |
+|---|---|---|
+| 2026-04-04 11:17:10 | Informational | Site startup probe succeeded after 36.3947007 seconds. |
+| 2026-04-04 11:17:11 | Informational | Site started. |
+| 2026-04-04 11:17:11 | Informational | Site is running with deployment version: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx |
+
+!!! tip "How to Read This"
+    This removes startup instability from the root-cause set and strengthens H1/H2/H3 (DNS/forwarding/route confusion) over generic app crash hypotheses.
+
+### Query 3: Verify console diagnostic gap
+
+```kusto
+AppServiceConsoleLogs
+| where TimeGenerated between (datetime(2026-04-04 11:17:00) .. datetime(2026-04-04 11:24:00))
+| project TimeGenerated, Level, ResultDescription
+| order by TimeGenerated asc
+```
+
+**Example Output:**
+
+| TimeGenerated | Level | ResultDescription |
+|---|---|---|
+| _No rows_ |  |  |
+
+!!! tip "How to Read This"
+    A console-log gap is common here. Use endpoint diagnostics and Azure network/DNS control-plane evidence as primary proof.
+
+## CLI Investigation Commands
+
+```bash
+# Confirm private endpoint state and private IP
+az network private-endpoint show --resource-group <resource-group> --name <private-endpoint-name> --query "{name:name,ip:networkInterfaces[0].id,provisioningState:provisioningState}" --output table
+
+# Validate private DNS zone links
+az network private-dns link vnet list --resource-group <dns-resource-group> --zone-name privatelink.blob.core.windows.net --output table
+
+# Validate private DNS A records
+az network private-dns record-set a list --resource-group <dns-resource-group> --zone-name privatelink.blob.core.windows.net --output table
+
+# Confirm app VNet integration and route-all
+az webapp show --resource-group <resource-group> --name <app-name> --query "{virtualNetworkSubnetId:virtualNetworkSubnetId,vnetRouteAllEnabled:siteConfig.vnetRouteAllEnabled}" --output table
+```
+
+**Example Output:**
+
+```text
+Name                     ProvisioningState
+-----------------------  -----------------
+pe-stlabdnsvnet-blob     Succeeded
+
+Name                       VirtualNetwork
+-------------------------  --------------------------------------------------------------------------------
+link-spoke-vnet            /subscriptions/<subscription-id>/resourceGroups/<resource-group>/providers/Microsoft.Network/virtualNetworks/<spoke-vnet>
+
+Name                 IPv4Address
+-------------------  ----------------
+stlabdnsvnet         10.20.2.4
+
+VirtualNetworkSubnetId                                                                                                        VnetRouteAllEnabled
+----------------------------------------------------------------------------------------------------------------------------  -------------------
+/subscriptions/<subscription-id>/resourceGroups/<resource-group>/providers/Microsoft.Network/virtualNetworks/<vnet>/subnets/<subnet>  true
+```
+
+!!! tip "How to Read This"
+    In the dns-vnet incident, `/resolve` proved `stlabdnsvnet....blob.core.windows.net` and `stlabdnsvnet....privatelink.blob.core.windows.net` resolved to public `20.60.200.161`, and `/connect` showed SSL failure to the privatelink URL. That evidence is definitive for DNS/link/forwarding misconfiguration, not endpoint approval failure.
+
+## Normal vs Abnormal Comparison
+
+| Signal | Normal private endpoint path | Abnormal route/DNS confusion pattern |
+|---|---|---|
+| Public storage FQDN resolution | May resolve publicly from non-private path contexts | In-app private scenario should use private chain, not public answer |
+| `*.privatelink.blob.core.windows.net` resolution | Resolves to private IP (10.x) tied to private endpoint NIC | Resolves to public IP `20.60.200.161` |
+| `/connect` to privatelink URL | TLS/connect success using private route | SSL/connect failure due to public endpoint routing |
+| Private endpoint state | Approved/Succeeded and matched DNS mapping | Endpoint may appear healthy while DNS points elsewhere |
+| App/platform startup logs | Healthy | Healthy (not a startup issue) |
+| Interpretation | DNS + route policy aligned | DNS zone link/forwarding missing or incorrect despite healthy endpoint object |
+
+## Related Labs
+
+- [Lab: DNS Resolution (VNet)](../../lab-guides/dns-vnet-resolution.md)
+
 ## References
 - [Azure Private Endpoint DNS configuration](https://learn.microsoft.com/en-us/azure/private-link/private-endpoint-dns)
 - [Integrate your app with an Azure virtual network](https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration)

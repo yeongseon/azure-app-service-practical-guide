@@ -291,6 +291,167 @@ az webapp restart --resource-group <resource-group> --name <app-name>
 
 Treat **"Failed to forward request"** as a runtime proxy-path symptom, not a single root cause. Correlate platform forwarding errors (`OperationName`, `ContainerId`, `ResultDescription`) with console startup/runtime traces and HTTP latency/status patterns to isolate bind, port, protocol, middleware, timeout, or crash faults quickly and accurately.
 
+## Sample Log Patterns
+
+### AppServicePlatformLogs (forwarding/startup-path failure indicators)
+
+```text
+[AppServicePlatformLogs]
+2026-04-04T11:26:10Z  Error          State: Stopping, Action: CancellingStartup, LastError: ContainerTimeout
+2026-04-04T11:26:10Z  Error          Site container: <app-name> terminated during site startup.
+2026-04-04T11:26:10Z  Informational  Container is terminated. Total time elapsed: 5773 ms.
+2026-04-04T11:26:10Z  Informational  Site: <app-name> stopped.
+```
+
+### AppServiceHTTPLogs (only SCM/API traffic, no app user traffic)
+
+```text
+[AppServiceHTTPLogs]
+2026-04-04T11:25:58Z  POST  /api/zipdeploy          202  183
+2026-04-04T11:26:00Z  GET   /api/deployments/latest 200  41
+2026-04-04T11:26:04Z  GET   /api/deployments/latest 200  37
+```
+
+### AppServiceConsoleLogs (critical bind mistake to localhost)
+
+```text
+[AppServiceConsoleLogs]
+2026-04-04T11:25:50Z  Error  [2026-04-04 11:25:50 +0000] [1901] [INFO] Starting gunicorn 24.1.1
+2026-04-04T11:25:50Z  Error  [2026-04-04 11:25:50 +0000] [1901] [INFO] Listening at: http://127.0.0.1:8000 (1901)
+```
+
+!!! tip "How to Read This"
+    If the listener is `127.0.0.1`, App Service middleware cannot forward external traffic into the container process. This is the highest-confidence signal for this playbook.
+
+## KQL Queries with Example Output
+
+### Query 1: Platform evidence for startup/forwarding path failure
+
+```kusto
+// Platform events around failed forward/startup path
+AppServicePlatformLogs
+| where TimeGenerated between (datetime(2026-04-04 11:26:05) .. datetime(2026-04-04 11:26:12))
+| where Message has_any ("CancellingStartup", "ContainerTimeout", "terminated during site startup", "Site:")
+| project TimeGenerated, Level, Message
+| order by TimeGenerated asc
+```
+
+**Example Output:**
+
+| TimeGenerated | Level | Message |
+|---|---|---|
+| 2026-04-04 11:26:10 | Error | State: Stopping, Action: CancellingStartup, LastError: ContainerTimeout |
+| 2026-04-04 11:26:10 | Error | Site container: <app-name> terminated during site startup. |
+| 2026-04-04 11:26:10 | Informational | Container is terminated. Total time elapsed: 5773 ms. |
+| 2026-04-04 11:26:10 | Informational | Site: <app-name> stopped. |
+
+!!! tip "How to Read This"
+    This sequence confirms the platform gave up waiting for a forwardable/ready endpoint and shut down startup.
+
+### Query 2: Detect absence of end-user app requests
+
+```kusto
+// Request visibility check: SCM-only traffic indicates app not receiving user requests
+AppServiceHTTPLogs
+| where TimeGenerated between (datetime(2026-04-04 11:25:50) .. datetime(2026-04-04 11:26:20))
+| project TimeGenerated, CsMethod, CsUriStem, ScStatus, TimeTaken
+| order by TimeGenerated asc
+```
+
+**Example Output:**
+
+| TimeGenerated | CsMethod | CsUriStem | ScStatus | TimeTaken |
+|---|---|---|---|---|
+| 2026-04-04 11:25:58 | POST | /api/zipdeploy | 202 | 183 |
+| 2026-04-04 11:26:00 | GET | /api/deployments/latest | 200 | 41 |
+| 2026-04-04 11:26:04 | GET | /api/deployments/latest | 200 | 37 |
+
+!!! tip "How to Read This"
+    Seeing only deployment/SCM endpoints (and no `/`, `/api/*` app routes) means requests are not reaching the app process path.
+
+### Query 3: Bind-address confirmation from console logs
+
+```kusto
+// Confirm bind target from startup logs
+AppServiceConsoleLogs
+| where TimeGenerated between (datetime(2026-04-04 11:25:45) .. datetime(2026-04-04 11:26:05))
+| where ResultDescription has_any ("Listening at", "127.0.0.1", "0.0.0.0")
+| project TimeGenerated, Level, ResultDescription
+| order by TimeGenerated asc
+```
+
+**Example Output:**
+
+| TimeGenerated | Level | ResultDescription |
+|---|---|---|
+| 2026-04-04 11:25:50 | Error | [2026-04-04 11:25:50 +0000] [1901] [INFO] Listening at: http://127.0.0.1:8000 (1901) |
+
+!!! tip "How to Read This"
+    Any localhost bind during startup is abnormal for App Service Linux. Expected value is `0.0.0.0:<port>`.
+
+## CLI Investigation Commands
+
+```bash
+# Verify app and host runtime state
+az webapp show --resource-group <resource-group> --name <app-name> --query "{state:state,enabled:enabled,defaultHostName:defaultHostName}" --output table
+
+# Verify startup command and runtime configuration
+az webapp config show --resource-group <resource-group> --name <app-name> --query "{linuxFxVersion:linuxFxVersion,appCommandLine:appCommandLine,alwaysOn:alwaysOn}" --output table
+
+# Verify forwarding-critical app settings
+az webapp config appsettings list --resource-group <resource-group> --name <app-name> --query "[?name=='WEBSITES_PORT' || name=='WEBSITES_CONTAINER_START_TIME_LIMIT' || name=='WEBSITE_WARMUP_PATH'].{name:name,value:value}" --output table
+
+# Confirm deployment succeeded while runtime failed
+az webapp log deployment show --resource-group <resource-group> --name <app-name> --output table
+```
+
+**Example Output:**
+
+```text
+State    Enabled    DefaultHostName
+-------  ---------  -------------------------------------------
+Running  True       <app-name>.azurewebsites.net
+
+LinuxFxVersion    AppCommandLine                                  AlwaysOn
+----------------  ----------------------------------------------  --------
+PYTHON|3.11       gunicorn --bind 127.0.0.1:8000 src.app:app     True
+
+Name                                   Value
+-------------------------------------  ------
+WEBSITES_PORT                          8000
+WEBSITES_CONTAINER_START_TIME_LIMIT    230
+WEBSITE_WARMUP_PATH                    /
+```
+
+!!! tip "How to Read This"
+    In this output, the root problem is visible directly: startup command binds to `127.0.0.1`. Correct to `0.0.0.0` and retest forwarding.
+
+## Normal vs Abnormal Comparison
+
+| Signal | Normal Forwarding Path | Failed to Forward Request |
+|---|---|---|
+| App bind address | `0.0.0.0:<port>` | `127.0.0.1:<port>` or missing listener |
+| HTTP logs | User routes present (`/`, `/api/*`) | SCM-only routes and no user-path requests |
+| Platform logs | No forwarding errors, stable runtime | Startup cancellation, timeout, container termination |
+| Latency profile | Route-dependent normal latency | Timeouts or missing request completion |
+| Operational conclusion | Proxy can reach app process | Proxy path broken before app request handling |
+
+## Related Labs
+
+- [Lab: Failed to Forward Request](../../lab-guides/failed-to-forward-request.md)
+
+## Forwarding Failure Signal Matrix
+
+| Signal | Healthy Runtime | Forwarding Failure Runtime |
+|---|---|---|
+| Startup command | `--bind 0.0.0.0:<port>` | `--bind 127.0.0.1:<port>` or missing bind |
+| HTTP visibility | User routes + SCM routes | SCM routes only, no user routes |
+| Platform lifecycle | Stable site/container state | `CancellingStartup`, timeout, early container termination |
+| Primary fix path | Tune app logic/perf | Correct bind/port/proxy contract |
+
+!!! tip "How to Read This"
+    Use this matrix for first-pass triage: if user-path requests never appear and listener is localhost, skip deeper protocol analysis and fix bind/port first.
+
 ## References
 
 - [Configure a custom container for Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container)
