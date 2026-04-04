@@ -1,0 +1,324 @@
+# Deployment Succeeded but Startup Failed (Azure App Service Linux)
+
+## 1. Summary
+
+### Symptom
+
+Deployment reports success (for example, ZipDeploy/CI is green and Oryx build exits with code 0), but the app never becomes available and startup fails with messages such as "Container didn't respond to HTTP pings".
+
+### Why confusing
+
+Teams often treat deployment success as runtime success. On App Service Linux, these are separate phases: artifact creation/deployment can succeed while runtime boot fails due to startup command, module path, port binding, runtime version, or dependency/artifact layout mismatches.
+
+```mermaid
+flowchart TD
+    A[Deployment succeeded] --> B{App reachable?}
+    B -->|Yes| Z[No startup incident]
+    B -->|No| C[Collect startup evidence]
+    C --> D{Build-on-deploy mode aligned?}
+    D -->|No| H2[H2: SCM_DO_BUILD_DURING_DEPLOYMENT mismatch]
+    D -->|Yes| E{Startup command matches artifact?}
+    E -->|No| H1[H1: Startup command / module path mismatch]
+    E -->|Yes| F{Port and bind aligned?}
+    F -->|No| H3[H3: Port/bind mismatch]
+    F -->|Yes| G{Runtime + deps compatible?}
+    G -->|No| H4[H4: Runtime/dependency mismatch]
+    G -->|Yes| Y[Re-check logs for lesser-known startup crash]
+```
+
+## 2. Common Misreadings
+
+- "Pipeline is green, so App Service must be healthy" (deployment success does not prove startup success).
+- "Oryx exit 0 means dependencies are definitely installed where runtime expects" (artifact layout can still be wrong for the active startup command).
+- "This is a platform outage" (most cases are command/path/port/runtime mismatches).
+- "HTTP ping failure always means networking" (it frequently means process never started or crashed immediately).
+- "Gunicorn/Uvicorn command worked locally, so module path is correct in App Service" (working directory and artifact shape can differ).
+
+## 3. Competing Hypotheses
+
+- H1: Startup command and deployed artifact mismatch (wrong file/module path, wrong working directory target, `app:app` vs `src.app:app`, missing entrypoint file).
+- H2: Build-mode mismatch (`SCM_DO_BUILD_DURING_DEPLOYMENT=true` vs `false`) causes missing virtualenv/dependencies or incorrect artifact structure for ZipDeploy.
+- H3: Runtime listens incorrectly (wrong `WEBSITES_PORT`, app binds to different port/address, startup ping cannot reach process).
+- H4: Runtime compatibility mismatch (Python version/features mismatch or missing dependencies/requirements install gap) causes immediate startup crash.
+
+## 4. What to Check First
+
+### Metrics
+
+- Restart pattern immediately after deployment timestamp.
+- Availability drop immediately after new deployment/restart.
+
+### Logs
+
+- `AppServiceConsoleLogs`: startup command output and Python/Gunicorn/Uvicorn errors in `ResultDescription`.
+- `AppServicePlatformLogs`: startup lifecycle and container ping failures.
+- `AppServiceHTTPLogs`: whether any HTTP responses are emitted during attempted startup.
+
+### Platform Signals
+
+- App settings: `SCM_DO_BUILD_DURING_DEPLOYMENT`, `WEBSITES_PORT`, `PYTHON_VERSION` (or Linux FX runtime stack), startup command.
+- Deployment method (ZipDeploy vs external build artifact) and whether Oryx was expected.
+- Effective startup command shown in startup logs.
+
+## 5. Evidence to Collect
+
+### Required
+
+- Deployment log proving success (Oryx/build phase and final status).
+- Startup-time `AppServiceConsoleLogs` rows (especially traceback/module-not-found/command-not-found lines).
+- Startup-time `AppServicePlatformLogs` rows around ping failure and restart attempts.
+- Current app settings snapshot with masked values.
+- Deployed artifact layout (`/home/site/wwwroot`) and presence of expected files (`requirements.txt`, entry modules, startup scripts).
+
+### Useful Context
+
+- Last known good deployment ID/commit.
+- Any recent changes to startup command, Python version, or repo layout (`src/` migration, monorepo subfolder changes).
+- Whether dependencies were prebuilt in CI or expected from Oryx at deploy time.
+
+## 6. Validation and Disproof by Hypothesis
+
+### H1: Startup command and artifact/module path mismatch
+
+**Signals that support**
+
+- Console log contains errors like `ModuleNotFoundError`, `No such file or directory`, `Error: class uri`, or cannot import app module.
+- Startup command references `app:app` while code now lives at `src/app.py` (`src.app:app` needed), or vice versa.
+- Deployment artifact lacks file/module referenced by startup command.
+
+**Signals that weaken**
+
+- Startup command resolves successfully and server reaches listening state.
+- File/module exists in deployed artifact and import check succeeds.
+
+**KQL validation**
+
+```kusto
+AppServiceConsoleLogs
+| where TimeGenerated > ago(2h)
+| where ResultDescription has_any ("ModuleNotFoundError", "No such file or directory", "Error: class uri", "cannot import", "gunicorn", "uvicorn")
+| project TimeGenerated, ResultDescription
+| order by TimeGenerated desc
+```
+
+```kusto
+AppServicePlatformLogs
+| where TimeGenerated > ago(2h)
+| extend Raw = tostring(pack_all())
+| where Raw has_any ("failed to start", "didn't respond to HTTP pings", "restart")
+| project TimeGenerated, Raw
+| order by TimeGenerated desc
+```
+
+**CLI validation (long flags only)**
+
+```bash
+az webapp config show --resource-group <resource-group> --name <app-name>
+az webapp config appsettings list --resource-group <resource-group> --name <app-name>
+az webapp log tail --resource-group <resource-group> --name <app-name>
+```
+
+What to verify:
+
+1. Compare configured startup command to actual deployed paths/modules.
+2. Confirm expected entry module exists under `/home/site/wwwroot`.
+3. Fix command (`gunicorn --bind 0.0.0.0:$PORT src.app:app` or equivalent), restart, re-check platform logs.
+
+### H2: `SCM_DO_BUILD_DURING_DEPLOYMENT` mismatch with ZipDeploy/build flow
+
+**Signals that support**
+
+- Deployment succeeded but startup fails with missing package/import errors.
+- App expects Oryx-built environment, but `SCM_DO_BUILD_DURING_DEPLOYMENT=false` and artifact lacks built dependencies.
+- App expects prebuilt artifact, but setting is `true` and runtime layout differs from startup command assumptions.
+
+**Signals that weaken**
+
+- Dependencies are present and importable in deployed artifact.
+- Build strategy and artifact type are intentionally aligned and unchanged.
+
+**KQL validation**
+
+```kusto
+AppServiceConsoleLogs
+| where TimeGenerated > ago(2h)
+| where ResultDescription has_any ("ModuleNotFoundError", "ImportError", "requirements.txt", "pip", "oryx")
+| project TimeGenerated, ResultDescription
+| order by TimeGenerated desc
+```
+
+```kusto
+AppServiceHTTPLogs
+| where TimeGenerated > ago(2h)
+| extend Raw = tostring(pack_all())
+| project TimeGenerated, Raw
+| order by TimeGenerated desc
+```
+
+**CLI validation (long flags only)**
+
+```bash
+az webapp config appsettings list --resource-group <resource-group> --name <app-name>
+az webapp deployment source config-zip --resource-group <resource-group> --name <app-name> --src <path-to-package.zip>
+az webapp log deployment show --resource-group <resource-group> --name <app-name>
+```
+
+What to verify:
+
+1. Confirm intended build strategy (build during deploy vs prebuilt artifact).
+2. Ensure `SCM_DO_BUILD_DURING_DEPLOYMENT` matches that strategy.
+3. Ensure `requirements.txt` is in expected root for Oryx when build-on-deploy is enabled.
+4. Redeploy with aligned mode and validate startup behavior.
+
+### H3: Port/bind mismatch (`WEBSITES_PORT` and actual listen target)
+
+**Signals that support**
+
+- Startup log shows app listening on port X, platform expects port Y.
+- App binds to localhost instead of externally reachable interface.
+- Platform logs repeatedly show HTTP ping startup failure after process launch.
+
+**Signals that weaken**
+
+- App listens on expected port and reachable bind address.
+- Manual curl inside container succeeds on expected startup port/path.
+
+**KQL validation**
+
+```kusto
+AppServiceConsoleLogs
+| where TimeGenerated > ago(2h)
+| where ResultDescription has_any ("Listening on", "Running on", "0.0.0.0", "127.0.0.1", "PORT", "WEBSITES_PORT")
+| project TimeGenerated, ResultDescription
+| order by TimeGenerated desc
+```
+
+```kusto
+AppServicePlatformLogs
+| where TimeGenerated > ago(2h)
+| extend Raw = tostring(pack_all())
+| where Raw has_any ("didn't respond to HTTP pings", "port", "start")
+| project TimeGenerated, Raw
+| order by TimeGenerated desc
+```
+
+**CLI validation (long flags only)**
+
+```bash
+az webapp config appsettings list --resource-group <resource-group> --name <app-name>
+az webapp config appsettings set --resource-group <resource-group> --name <app-name> --settings WEBSITES_PORT=<port>
+az webapp restart --resource-group <resource-group> --name <app-name>
+```
+
+What to verify:
+
+1. Set a single source of truth for port (`WEBSITES_PORT`) and ensure app binds to that value.
+2. Use production server command with explicit bind (`--bind 0.0.0.0:$PORT`).
+3. Re-check platform startup signals after restart.
+
+### H4: Python runtime/dependency compatibility mismatch
+
+**Signals that support**
+
+- Tracebacks show syntax/features not supported by selected runtime (for example 3.12-only syntax on `PYTHON|3.11`).
+- Startup fails on missing dependency due to absent/incorrect `requirements.txt` processing.
+- Deployment succeeded, but runtime import or syntax errors occur before listener starts.
+
+**Signals that weaken**
+
+- Runtime version matches application requirements and local reproduction with same version succeeds.
+- Dependency lock/requirements are present and validated in deployed environment.
+
+**KQL validation**
+
+```kusto
+AppServiceConsoleLogs
+| where TimeGenerated > ago(2h)
+| where ResultDescription has_any ("SyntaxError", "requires Python", "ModuleNotFoundError", "ImportError", "Traceback")
+| project TimeGenerated, ResultDescription
+| order by TimeGenerated desc
+```
+
+```kusto
+AppServiceHTTPLogs
+| where TimeGenerated > ago(2h)
+| extend Raw = tostring(pack_all())
+| project TimeGenerated, Raw
+| order by TimeGenerated desc
+```
+
+**CLI validation (long flags only)**
+
+```bash
+az webapp config show --resource-group <resource-group> --name <app-name>
+az webapp config set --resource-group <resource-group> --name <app-name> --linux-fx-version "PYTHON|3.12"
+az webapp restart --resource-group <resource-group> --name <app-name>
+```
+
+What to verify:
+
+1. Match runtime stack version to application feature requirements.
+2. Confirm dependency manifest is included and install path is valid for selected build mode.
+3. Restart and verify process reaches listening state without import/syntax errors.
+
+## 7. Root Cause Patterns
+
+- Pattern A: Oryx succeeded technically, but produced an artifact shape that no longer matches startup command assumptions.
+- Pattern B: Deployment mode drift (`SCM_DO_BUILD_DURING_DEPLOYMENT`) after pipeline changes, leaving dependencies absent at runtime.
+- Pattern C: Startup command drift during refactors (`app:app` to `src.app:app`) without corresponding config updates.
+- Pattern D: Port contract drift (`WEBSITES_PORT` changed, app still hardcoded to another port/address).
+- Pattern E: Runtime stack pinned to older Python while code/dependencies assume newer language/runtime behavior.
+
+## 8. Immediate Mitigations
+
+- Roll back to last known-good deployment artifact and startup command pair (fastest restoration, may revert recent fixes).
+- Set/align `SCM_DO_BUILD_DURING_DEPLOYMENT` to intended mode and redeploy immediately (low risk when strategy is clear).
+- Correct startup command module path and explicit bind to `0.0.0.0:$PORT` (production-safe, high impact).
+- Align `WEBSITES_PORT` with actual listener and restart app (production-safe).
+- Temporarily pin runtime to known-compatible Python version while preparing dependency/code updates (short-term stability, technical debt risk).
+
+## 9. Long-term Fixes
+
+- Enforce a single deployment contract per app: either Oryx build-on-deploy or fully prebuilt artifact, never ambiguous.
+- Add CI smoke tests that run the exact startup command against packaged artifact before deployment.
+- Version-control startup command and runtime stack as code; avoid portal-only drift.
+- Add startup validation in pipeline: verify entry module exists, dependencies import, and app listens on expected port.
+- Maintain explicit Python version compatibility policy and lock dependencies accordingly.
+
+## 10. Investigation Notes
+
+- In this scenario, healthy deployment logs are necessary but insufficient evidence.
+- The decisive evidence is startup-phase telemetry (`AppServiceConsoleLogs.ResultDescription` + platform startup events).
+- For Python apps, common breakpoints are module path naming, missing dependency install, and runtime minor version assumptions.
+- Artifact inspection at `/home/site/wwwroot` is often the fastest discriminator between H1/H2 vs H3/H4.
+- Always mask identifiers in shared notes: `<subscription-id>`, `<resource-group>`, `<app-name>`, `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`.
+
+## 11. Related Queries
+
+- [`../../kql/console/startup-errors.md`](../../kql/console/startup-errors.md)
+- [`../../kql/restarts/repeated-startup-attempts.md`](../../kql/restarts/repeated-startup-attempts.md)
+
+## 12. Related Checklists
+
+- [`../../first-10-minutes/startup-availability.md`](../../first-10-minutes/startup-availability.md)
+
+## 13. Related Labs
+
+- [`../../lab-guides/deployment-succeeded-startup-failed.md`](../../lab-guides/deployment-succeeded-startup-failed.md)
+
+## 14. Limitations
+
+- This playbook is for Azure App Service Linux startup failures after successful deployment; it does not cover Windows/IIS.
+- It focuses on Oryx/startup/artifact/runtime mismatches, not deep application logic bugs after successful startup.
+- It does not replace service-health/outage investigation when there is confirmed regional platform impact.
+
+## 15. Quick Conclusion
+
+When deployment is green but the app is down, treat build success and runtime success as separate checkpoints. Correlate startup command, artifact layout, build mode, port binding, and runtime compatibility to identify why the process never became probe-ready.
+
+## References
+
+- [Configure a Linux Python app for Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/configure-language-python)
+- [Deploy to App Service using GitHub Actions](https://learn.microsoft.com/en-us/azure/app-service/deploy-github-actions)
+- [Enable diagnostic logging for apps in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs)
+- [Configure a custom container for Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container)

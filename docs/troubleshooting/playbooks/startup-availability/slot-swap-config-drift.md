@@ -1,0 +1,223 @@
+# Slot Swap Restart / Config Drift / Warm-up Race (Azure App Service Linux)
+
+## 1. Summary
+
+### Symptom
+A slot swap operation reports success, but production availability degrades immediately after swap: instances restart, startup errors appear, latency spikes, or dependencies fail due to post-swap configuration behavior.
+
+### Why this scenario is confusing
+From the control-plane perspective, swap is successful. From the application perspective, startup-critical configuration and identity context can change after warm-up, causing a second startup phase (or restart cascade) that was not validated by the original warm-up response.
+
+### Slot swap lifecycle (where races and drift appear)
+```mermaid
+flowchart LR
+    A[Deploy to Staging Slot] --> B[Warm-up Validation on Staging]
+    B --> C[Config Swap / Slot Setting Resolution]
+    C --> D[Traffic Switch to Production]
+    D --> E[Post-swap Restart Cascade Possible]
+    E --> F[Errors: config drift, stale connections, RBAC failures, latency]
+```
+
+## 2. Common Misreadings
+
+- "Swap succeeded, so production config must be correct." (success only means swap operation completed, not full post-swap runtime validation)
+- "This is the same as warm-up timeout." (different class of issue: swap succeeds first, then runtime fails)
+- "If staging passed, production will be identical." (slot settings, identities, and connection context can differ)
+- "Restarts after swap mean platform instability." (often deterministic restart triggers from non-sticky settings)
+- "Database errors right after swap are transient." (can indicate stale or swapped connection-string mismatch)
+
+## 3. Competing Hypotheses
+
+- H1: Non-sticky app settings changed during swap trigger production restarts and startup regression.
+- H2: Slot-setting drift exists between staging and production, so swapped code runs with unexpected configuration.
+- H3: Warm-up race allows traffic before swapped-in code is fully ready (`WEBSITE_SWAP_WARMUP_PING_PATH` missing or too weak).
+- H4: Post-swap dependency context differs (connection strings, managed identity RBAC), causing immediate access failures.
+
+## 4. What to Check First
+
+### Metrics
+- Restart count, instance churn, and startup duration immediately after successful swap timestamp.
+- HTTP 5xx/4xx rate and p95 latency before and after traffic switch.
+- Error-rate jump window: first 1-10 minutes after swap completion.
+
+### Logs
+- `AppServicePlatformLogs`: swap lifecycle completion, restart operations, container recycle events.
+- `AppServiceConsoleLogs`: startup exceptions, configuration load errors, identity/auth failures.
+- `AppServiceHTTPLogs`: first requests after swap, status mix, warm-up vs user-path timing.
+
+### Platform Signals
+- Effective app settings and slot-setting flags for both slots.
+- Presence/value of `WEBSITE_SWAP_WARMUP_PING_PATH` and `WEBSITE_SWAP_WARMUP_PING_STATUSES`.
+- Auto-swap configuration and startup budget (`WEBSITES_CONTAINER_START_TIME_LIMIT`).
+- Managed identity assignment and role bindings for production-scoped resources.
+
+## 5. Evidence to Collect
+
+### Required
+- Exact timeline: deployment complete, warm-up complete, swap complete, first restart, first user error.
+- App settings and connection strings for both slots (including `slotSetting` markers).
+- Platform log lines confirming successful swap followed by restart/recycle events.
+- Console log excerpts for startup and dependency initialization after swap.
+- HTTP log sample for first post-swap 10 minutes (status code and latency).
+
+### Useful Context
+- Recent changes to startup path, migrations, secret providers, feature flags.
+- Whether auto-swap is enabled and average cold-start time for this workload.
+- Whether persistent connections/caches are recreated on startup.
+- Identity model (system-assigned vs user-assigned) and scope of RBAC assignments.
+
+## 6. Validation and Disproof by Hypothesis
+
+### H1: Non-sticky settings change triggers restart after successful swap
+- Signals that support: `AppServicePlatformLogs` show swap success followed by recycle/restart; restart correlates with setting diffs.
+- Signals that weaken: no restart/recycle events after swap, stable instance IDs, and no config mutation.
+- What to verify:
+  - Compare app settings across slots and identify startup-critical values not marked as slot settings.
+  - Confirm whether settings changed at swap boundary and whether this aligns to restart timestamp.
+
+```kusto
+let windowStart = ago(24h);
+AppServicePlatformLogs
+| where TimeGenerated >= windowStart
+| where ResultDescription has_any ("swap", "restart", "recycle", "container")
+| project TimeGenerated, OperationName, ResultDescription
+| order by TimeGenerated asc
+```
+
+```bash
+az webapp config appsettings list --resource-group <resource-group> --name <app-name> --slot production
+az webapp config appsettings list --resource-group <resource-group> --name <app-name> --slot <staging-slot>
+az webapp deployment slot swap --resource-group <resource-group> --name <app-name> --slot <staging-slot> --target-slot production
+```
+
+### H2: Slot-setting drift causes swapped code to run with unexpected configuration
+- Signals that support: same build works in staging but fails in production post-swap with missing/incorrect endpoint, secret, or feature flags.
+- Signals that weaken: explicit diff confirms startup-critical parity and correct slot-setting intent.
+- What to verify:
+  - Diff app settings and connection strings with focus on `slotSetting=true` entries.
+  - Validate intended sticky/non-sticky behavior for each startup-critical value.
+
+```kusto
+let windowStart = ago(24h);
+AppServiceConsoleLogs
+| where TimeGenerated >= windowStart
+| where ResultDescription has_any ("KeyError", "missing", "configuration", "secret", "endpoint", "feature flag")
+| project TimeGenerated, ResultDescription
+| order by TimeGenerated desc
+```
+
+```bash
+az webapp config appsettings list --resource-group <resource-group> --name <app-name> --slot production
+az webapp config appsettings list --resource-group <resource-group> --name <app-name> --slot <staging-slot>
+az webapp config connection-string list --resource-group <resource-group> --name <app-name> --slot production
+az webapp config connection-string list --resource-group <resource-group> --name <app-name> --slot <staging-slot>
+```
+
+### H3: Warm-up race allows traffic before effective readiness after swap
+- Signals that support: swap succeeds quickly, user traffic starts, then high error/latency while app still initializing.
+- Signals that weaken: dedicated warm-up path exists, returns expected status, and post-swap error spike absent.
+- What to verify:
+  - Ensure `WEBSITE_SWAP_WARMUP_PING_PATH` is set to a lightweight readiness endpoint.
+  - Validate accepted statuses are explicit and minimal.
+  - Check auto-swap timing vs cold-start duration (`WEBSITES_CONTAINER_START_TIME_LIMIT`).
+
+```kusto
+let windowStart = ago(24h);
+AppServiceHTTPLogs
+| where TimeGenerated >= windowStart
+| summarize requests=count(), errors=countif(ScStatus >= 500), p95=percentile(TimeTaken,95) by bin(TimeGenerated, 1m)
+| order by TimeGenerated asc
+```
+
+```bash
+az webapp config appsettings list --resource-group <resource-group> --name <app-name> --slot <staging-slot>
+az webapp config appsettings set --resource-group <resource-group> --name <app-name> --slot <staging-slot> --settings WEBSITE_SWAP_WARMUP_PING_PATH=/ready WEBSITE_SWAP_WARMUP_PING_STATUSES=200 WEBSITES_CONTAINER_START_TIME_LIMIT=600
+az webapp deployment slot auto-swap --resource-group <resource-group> --name <app-name> --slot <staging-slot> --auto-swap-slot production
+```
+
+### H4: Post-swap dependency context breaks (stale connection strings or identity RBAC mismatch)
+- Signals that support: immediate DB/auth/storage failures after swap only on production slot context.
+- Signals that weaken: dependency access validates successfully under production slot identity and connection settings.
+- What to verify:
+  - Connection string values/Key Vault references resolve correctly in production slot.
+  - Managed identity principal used by production has required roles at correct scope.
+  - Any startup-cached tokens or pooled connections are refreshed after swap.
+
+```kusto
+let windowStart = ago(24h);
+AppServiceConsoleLogs
+| where TimeGenerated >= windowStart
+| where ResultDescription has_any ("login failed", "authorization", "forbidden", "ManagedIdentityCredential", "connection", "timeout")
+| project TimeGenerated, ResultDescription
+| order by TimeGenerated desc
+```
+
+```bash
+az webapp identity show --resource-group <resource-group> --name <app-name>
+az role assignment list --assignee <object-id> --scope /subscriptions/<subscription-id>/resourceGroups/<resource-group> --all
+az webapp config connection-string list --resource-group <resource-group> --name <app-name> --slot production
+```
+
+## 7. Likely Root Cause Patterns
+
+- Pattern A: Startup-critical setting was not marked as slot setting (or was incorrectly marked), changing effective runtime config after swap.
+- Pattern B: Warm-up endpoint validated a shallow response, but real readiness required longer dependency initialization.
+- Pattern C: Auto-swap executed with insufficient warm-up budget for cold initialization profile.
+- Pattern D: Production identity/RBAC or secret resolution differs from staging and fails immediately under real traffic.
+- Pattern E: Database/client connection pools cached stale endpoints or credentials across slot transition.
+
+## 8. Immediate Mitigations
+
+- Freeze additional swaps and validate setting parity before next release. **Risk:** release cadence slows temporarily.
+- Set explicit `WEBSITE_SWAP_WARMUP_PING_PATH` and strict status list (`200` or `200,202` only if justified). **Risk:** poorly chosen endpoint can still under-validate readiness.
+- Increase startup budget (`WEBSITES_CONTAINER_START_TIME_LIMIT`) for current build while startup path is optimized. **Risk:** slower failure detection for broken builds.
+- Recycle production slot after correcting config/identity to clear stale connection pools and token caches. **Risk:** brief additional restart event.
+- If impact is ongoing, swap back or redeploy known-good revision with validated slot settings. **Risk:** rollback can reintroduce prior defects if not verified.
+
+## 9. Long-term Fixes
+
+- Maintain a versioned slot-configuration contract: each startup-critical key has documented sticky/non-sticky intent.
+- Add CI/CD guardrails to diff slot settings and block swaps on unauthorized drift.
+- Separate `/warmup` from `/health` and ensure `/warmup` validates app-readiness invariants needed immediately after traffic switch.
+- Define post-swap observability gate (restart count, error budget burn, p95) before marking deployment successful.
+- Standardize identity model and RBAC automation so staging and production permissions are intentionally equivalent or explicitly different.
+- Rotate/refresh dependency clients on startup and on configuration change to avoid stale connection behavior.
+
+## 10. Investigation Notes
+
+- Treat slot swap as a multi-phase state transition, not an atomic runtime event.
+- Build one timeline using platform, console, and HTTP logs: swap success, restart, first failing dependency call, recovery.
+- Prioritize app setting and connection string drift review before deep code debugging.
+- For swap failures due to warm-up timeout, see [Slot Swap Failed During Warm-up](slot-swap-failed-during-warmup.md).
+- Linux App Service scope only; avoid Windows/IIS assumptions.
+
+## 11. Related Queries
+
+- [`../../kql/restarts/repeated-startup-attempts.md`](../../kql/restarts/repeated-startup-attempts.md)
+- [`../../kql/correlation/restarts-vs-latency.md`](../../kql/correlation/restarts-vs-latency.md)
+
+## 12. Related Checklists
+
+- [`../../first-10-minutes/startup-availability.md`](../../first-10-minutes/startup-availability.md)
+
+## 13. Related Labs
+
+- `../lab-guides/slot-swap-config-drift.md`
+
+## 14. Limitations
+
+- This playbook covers swap-success-then-degradation patterns, not swap operations that fail before completion.
+- Linux App Service focus only; no Windows/IIS behavior is included.
+- KQL table/field availability depends on diagnostic pipeline configuration.
+- Commands and examples use masked placeholders (`<subscription-id>`, `<object-id>`, `<resource-group>`, `<app-name>`); adapt to your environment.
+
+## 15. Quick Conclusion
+
+When a slot swap succeeds but production degrades, focus on post-swap behavior: restart triggers, slot-setting drift, readiness race conditions, and dependency context differences. Reliable swaps require explicit warm-up contracts, deterministic config parity, and identity/connection validation in the production slot context.
+
+## References
+
+- [Set up staging environments in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots)
+- [Configure an App Service app](https://learn.microsoft.com/en-us/azure/app-service/configure-common)
+- [Azure App Service diagnostics overview](https://learn.microsoft.com/en-us/azure/app-service/overview-diagnostics)
+- [Monitor App Service instances using Health check](https://learn.microsoft.com/en-us/azure/app-service/monitor-instances-health-check)

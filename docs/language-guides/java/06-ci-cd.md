@@ -1,0 +1,175 @@
+# 06. CI/CD
+
+Implement GitHub Actions CI/CD for repeatable Java builds and controlled deployments to Azure App Service.
+
+## Prerequisites
+
+- GitHub repository with this project
+- Azure resources already provisioned
+- Service principal or OIDC-based federated credential configured
+- Repository secrets/variables prepared
+
+## What you'll learn
+
+- How to build and validate the Spring Boot app in CI
+- How to deploy with `azure-webapp-maven-plugin` from GitHub Actions
+- How to gate deployment on branch/environment policies
+- How to preserve reproducibility with explicit tool versions
+
+## Main Content
+
+### Pipeline design
+
+```mermaid
+flowchart LR
+    A[Push / PR] --> B[Build + Unit Tests]
+    B --> C[Package JAR]
+    C --> D[Azure Login]
+    D --> E[Maven Deploy to App Service]
+    E --> F[Smoke Test /health]
+```
+
+### Required GitHub secrets and variables
+
+Set these in repository settings:
+
+- Secret: `AZURE_CREDENTIALS` (service principal JSON) or OIDC setup
+- Variable: `RESOURCE_GROUP_NAME`
+- Variable: `APP_NAME`
+- Variable: `LOCATION`
+
+Masked credential JSON example:
+
+```json
+{
+  "clientId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+  "clientSecret": "<redacted>",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>"
+}
+```
+
+### Complete workflow example
+
+Create `.github/workflows/java-appservice-cicd.yml`:
+
+```yaml
+name: java-appservice-cicd
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+
+      - name: Build and test
+        working-directory: app
+        run: ./mvnw --batch-mode clean verify
+
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+
+      - name: Azure login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Package app
+        working-directory: app
+        run: ./mvnw --batch-mode clean package -DskipTests
+
+      - name: Deploy with Maven plugin
+        working-directory: app
+        env:
+          RESOURCE_GROUP_NAME: ${{ vars.RESOURCE_GROUP_NAME }}
+          APP_NAME: ${{ vars.APP_NAME }}
+          LOCATION: ${{ vars.LOCATION }}
+        run: ./mvnw --batch-mode azure-webapp:deploy
+
+      - name: Smoke test
+        run: |
+          curl --fail "https://${{ vars.APP_NAME }}.azurewebsites.net/health"
+          curl --fail "https://${{ vars.APP_NAME }}.azurewebsites.net/info"
+```
+
+### Why deploy with Maven plugin in CI
+
+- Reuses the same deployment contract defined in `pom.xml`
+- Avoids duplicating runtime assumptions across scripts
+- Keeps deployment behavior consistent between local and pipeline runs
+
+### Recommended branch controls
+
+- Protect `main` branch
+- Require PR checks (`build` job)
+- Require manual approval on `production` environment
+- Restrict who can edit environment secrets
+
+!!! tip "Prefer OIDC in production"
+    Use GitHub OIDC federation instead of long-lived secrets where possible for stronger credential hygiene.
+
+### Optional: deploy only changed app code
+
+For monorepos, use path filters so docs-only changes do not trigger deployments.
+
+### Optional: add infrastructure stage
+
+Run `az deployment group what-if` for `infra/main.bicep` in PRs, then deploy infra on approved merges.
+
+!!! info "Platform architecture"
+    For platform architecture details, see the [Azure App Service Guide — How App Service Works](https://yeongseon.github.io/azure-appservice-guide/concepts/01-how-app-service-works/).
+
+## Verification
+
+- PR run executes `clean verify` successfully
+- `main` run deploys and passes smoke test calls
+- App Service deployment history shows latest artifact rollout
+- `/info` endpoint reflects expected runtime metadata
+
+## Troubleshooting
+
+### `azure/login` fails
+
+Re-check secret JSON keys and tenant/subscription alignment.
+
+### Maven deploy succeeds but app unhealthy
+
+Inspect App Service logs and confirm startup command still includes `--server.port=$PORT`.
+
+### Pipeline is slow
+
+Ensure Maven cache is enabled in `actions/setup-java`, and avoid redundant `clean package` steps.
+
+## Next Steps / See Also
+
+- [07. Custom Domain & SSL](07-custom-domain-ssl.md)
+- [Recipes: Deployment Slots Zero Downtime](./recipes/deployment-slots-zero-downtime.md)
+- [Reference: Troubleshooting](../../reference/troubleshooting.md)

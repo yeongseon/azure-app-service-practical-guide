@@ -1,0 +1,151 @@
+# 02. First Deploy
+
+Deploy the ASP.NET Core 8 app to Azure App Service (Windows) using Bicep infrastructure and zip-based code deployment.
+
+## Prerequisites
+
+- Tutorial [01. Local Run](./01-local-run.md) completed
+- Azure CLI logged in (`az login`)
+- Permission to create resource groups and App Service resources
+
+## What you'll learn
+
+- Create a resource group with Azure CLI
+- Deploy infrastructure using Bicep
+- Publish the app with `dotnet publish`
+- Deploy zip package with `az webapp deploy`
+
+## Main content
+
+### 1) Set deployment variables
+
+```bash
+export RESOURCE_GROUP_NAME="rg-dotnet-guide"
+export LOCATION="eastus"
+export BASE_NAME="dotnetguide"
+```
+
+### 2) Create resource group
+
+```bash
+az group create \
+  --name "$RESOURCE_GROUP_NAME" \
+  --location "$LOCATION" \
+  --output table
+```
+
+### 3) Deploy Bicep (Windows App Service)
+
+```bash
+az deployment group create \
+  --resource-group "$RESOURCE_GROUP_NAME" \
+  --template-file "/root/Github/azure-appservice-dotnet-guide/infra/main.bicep" \
+  --parameters baseName="$BASE_NAME" location="$LOCATION" \
+  --output json
+```
+
+Capture outputs:
+
+```bash
+export WEB_APP_NAME=$(az deployment group show \
+  --resource-group "$RESOURCE_GROUP_NAME" \
+  --name "main" \
+  --query "properties.outputs.webAppName.value" \
+  --output tsv)
+```
+
+If your deployment name differs, use the name returned by your command output.
+
+### 4) Publish application
+
+```bash
+dotnet publish "/root/Github/azure-appservice-dotnet-guide/app/GuideApi/GuideApi.csproj" \
+  --configuration Release \
+  --output "/root/Github/azure-appservice-dotnet-guide/app/GuideApi/publish"
+```
+
+### 5) Zip publish output
+
+```bash
+cd "/root/Github/azure-appservice-dotnet-guide/app/GuideApi/publish"
+zip --recurse-paths --quiet "../guideapi.zip" .
+```
+
+### 6) Deploy to App Service
+
+```bash
+az webapp deploy \
+  --resource-group "$RESOURCE_GROUP_NAME" \
+  --name "$WEB_APP_NAME" \
+  --src-path "/root/Github/azure-appservice-dotnet-guide/app/GuideApi/guideapi.zip" \
+  --type zip \
+  --output json
+```
+
+### 7) Validate app startup assumptions
+
+The app binds correctly because `Program.cs` respects platform port variables:
+
+```csharp
+var port = Environment.GetEnvironmentVariable("HTTP_PLATFORM_PORT")
+    ?? Environment.GetEnvironmentVariable("PORT")
+    ?? "5000";
+builder.WebHost.UseUrls($"http://+:{port}");
+```
+
+### 8) Azure DevOps equivalent deployment task
+
+```yaml
+- task: AzureWebApp@1
+  inputs:
+    azureSubscription: $(azureSubscription)
+    appType: webApp
+    appName: $(webAppName)
+    package: '$(Pipeline.Workspace)/drop/**/*.zip'
+```
+
+!!! note "Manual deploy and pipeline deploy should be equivalent"
+    Keep your publish profile and runtime assumptions identical so that local/manual deploys and Azure DevOps deploys produce the same behavior.
+
+## Verification
+
+```bash
+curl --include "https://$WEB_APP_NAME.azurewebsites.net/health"
+curl --silent "https://$WEB_APP_NAME.azurewebsites.net/info"
+```
+
+Expected:
+
+- HTTP 200 from `/health`
+- JSON payload with `status: healthy`
+- `/info` indicates production environment
+
+## Troubleshooting
+
+### Deployment succeeded but app returns 500
+
+- Confirm zip contains published output (`.dll`, `.deps.json`, `web.config`)
+- Check App Service Log Stream and Event Log messages
+- Re-run publish and deploy from clean output directory
+
+### Resource naming conflict
+
+Use a globally unique base name, for example:
+
+```bash
+export BASE_NAME="dotnetguide$RANDOM"
+```
+
+### Incorrect runtime stack
+
+Validate App Service configuration after deployment:
+
+```bash
+az webapp config show --resource-group "$RESOURCE_GROUP_NAME" --name "$WEB_APP_NAME" --output json
+```
+
+## See also
+
+- [03. Configuration](./03-configuration.md)
+- [05. Infrastructure as Code](./05-infrastructure-as-code.md)
+- For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-appservice-guide/)

@@ -1,0 +1,27 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "baseName": {
+      "value": "python-ref-obs"
+    },
+    "appServicePlanSku": {
+      "value": "S1"
+    },
+    "pythonVersion": {
+      "value": "3.11"
+    },
+    "logLevel": {
+      "value": "DEBUG"
+    },
+    "samplingRatio": {
+      "value": "1.0"
+    },
+    "logAnalyticsRetentionDays": {
+      "value": 90
+    },
+    "enableGunicornMultiworkers": {
+      "value": true
+    }
+  }
+}

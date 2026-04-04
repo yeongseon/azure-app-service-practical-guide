@@ -1,0 +1,260 @@
+site_name: Azure App Service Field Guide
+site_url: https://yeongseon.github.io/azure-appservice/
+site_description: Comprehensive guide for running web applications on Azure App Service
+site_author: yeongseon
+
+repo_name: yeongseon/azure-appservice
+repo_url: https://github.com/yeongseon/azure-appservice
+
+theme:
+  name: material
+  language: en
+  palette:
+    - scheme: default
+      primary: blue
+      accent: light blue
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: blue
+      accent: light blue
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.indexes
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.tabs.link
+  icon:
+    repo: fontawesome/brands/github
+  custom_dir: docs
+
+extra_css:
+  - stylesheets/extra.css
+
+extra_javascript:
+  - javascripts/mermaid-zoom.js
+
+plugins:
+  - search
+  - minify:
+      minify_html: true
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.mark
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+
+validation:
+  nav:
+    omitted_files: ignore
+  links:
+    not_found: ignore
+    anchors: ignore
+    absolute_links: ignore
+    unrecognized_links: ignore
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/yeongseon/azure-appservice
+
+nav:
+  - Start Here:
+    - start-here/overview.md
+    - start-here/learning-paths.md
+    - start-here/repository-map.md
+  - Platform:
+    - platform/index.md
+    - platform/how-app-service-works.md
+    - platform/hosting-models.md
+    - platform/request-lifecycle.md
+    - platform/scaling.md
+    - platform/networking.md
+    - platform/resource-relationships.md
+  - Language Guides:
+    - language-guides/index.md
+    - Python:
+      - language-guides/python/index.md
+      - language-guides/python/01-local-run.md
+      - language-guides/python/02-first-deploy.md
+      - language-guides/python/03-configuration.md
+      - language-guides/python/04-logging-monitoring.md
+      - language-guides/python/05-infrastructure-as-code.md
+      - language-guides/python/06-ci-cd.md
+      - language-guides/python/07-custom-domain-ssl.md
+      - language-guides/python/python-runtime.md
+      - Python Recipes:
+        - language-guides/python/recipes/index.md
+        - language-guides/python/recipes/azure-sql.md
+        - language-guides/python/recipes/bring-your-own-storage.md
+        - language-guides/python/recipes/cosmosdb.md
+        - language-guides/python/recipes/custom-container.md
+        - language-guides/python/recipes/deployment-slots-validation.md
+        - language-guides/python/recipes/easy-auth.md
+        - language-guides/python/recipes/key-vault-reference.md
+        - language-guides/python/recipes/managed-identity.md
+        - language-guides/python/recipes/native-dependencies.md
+        - language-guides/python/recipes/redis.md
+    - Node.js:
+      - language-guides/nodejs/index.md
+      - language-guides/nodejs/01-local-run.md
+      - language-guides/nodejs/02-first-deploy.md
+      - language-guides/nodejs/03-configuration.md
+      - language-guides/nodejs/04-logging-monitoring.md
+      - language-guides/nodejs/05-infrastructure-as-code.md
+      - language-guides/nodejs/06-ci-cd.md
+      - language-guides/nodejs/07-custom-domain-ssl.md
+      - language-guides/nodejs/nodejs-runtime.md
+      - Node.js Recipes:
+        - language-guides/nodejs/recipes/index.md
+        - language-guides/nodejs/recipes/azure-sql.md
+        - language-guides/nodejs/recipes/bring-your-own-storage.md
+        - language-guides/nodejs/recipes/cosmosdb.md
+        - language-guides/nodejs/recipes/custom-container.md
+        - language-guides/nodejs/recipes/deployment-slots-validation.md
+        - language-guides/nodejs/recipes/easy-auth.md
+        - language-guides/nodejs/recipes/key-vault-reference.md
+        - language-guides/nodejs/recipes/managed-identity.md
+        - language-guides/nodejs/recipes/native-dependencies.md
+        - language-guides/nodejs/recipes/nextjs.md
+        - language-guides/nodejs/recipes/redis.md
+    - Java:
+      - language-guides/java/index.md
+      - language-guides/java/01-local-run.md
+      - language-guides/java/02-first-deploy.md
+      - language-guides/java/03-configuration.md
+      - language-guides/java/04-logging-monitoring.md
+      - language-guides/java/05-infrastructure-as-code.md
+      - language-guides/java/06-ci-cd.md
+      - language-guides/java/07-custom-domain-ssl.md
+      - language-guides/java/java-runtime.md
+      - Java Recipes:
+        - language-guides/java/recipes/index.md
+        - language-guides/java/recipes/azure-sql.md
+        - language-guides/java/recipes/cosmosdb.md
+        - language-guides/java/recipes/deployment-slots-zero-downtime.md
+        - language-guides/java/recipes/easy-auth.md
+        - language-guides/java/recipes/key-vault-reference.md
+        - language-guides/java/recipes/managed-identity.md
+        - language-guides/java/recipes/private-endpoints.md
+        - language-guides/java/recipes/redis.md
+        - language-guides/java/recipes/vnet-integration.md
+    - .NET:
+      - language-guides/dotnet/index.md
+      - language-guides/dotnet/01-local-run.md
+      - language-guides/dotnet/02-first-deploy.md
+      - language-guides/dotnet/03-configuration.md
+      - language-guides/dotnet/04-logging-monitoring.md
+      - language-guides/dotnet/05-infrastructure-as-code.md
+      - language-guides/dotnet/06-ci-cd.md
+      - language-guides/dotnet/07-custom-domain-ssl.md
+      - language-guides/dotnet/dotnet-runtime.md
+      - .NET Recipes:
+        - language-guides/dotnet/recipes/index.md
+        - language-guides/dotnet/recipes/azure-sql.md
+        - language-guides/dotnet/recipes/cosmosdb.md
+        - language-guides/dotnet/recipes/deployment-slots-validation.md
+        - language-guides/dotnet/recipes/easy-auth.md
+        - language-guides/dotnet/recipes/key-vault-reference.md
+        - language-guides/dotnet/recipes/managed-identity.md
+        - language-guides/dotnet/recipes/private-endpoints.md
+        - language-guides/dotnet/recipes/redis.md
+  - Operations:
+    - operations/index.md
+    - operations/scaling.md
+    - operations/deployment-slots.md
+    - operations/health-recovery.md
+    - operations/backup-restore.md
+    - operations/networking.md
+    - operations/security.md
+    - operations/cost-optimization.md
+  - Troubleshooting:
+    - troubleshooting/index.md
+    - First 10 Minutes:
+      - troubleshooting/first-10-minutes/index.md
+      - troubleshooting/first-10-minutes/startup-availability.md
+      - troubleshooting/first-10-minutes/performance.md
+      - troubleshooting/first-10-minutes/outbound-network.md
+    - Playbooks:
+      - troubleshooting/playbooks/index.md
+      - Startup & Availability:
+        - troubleshooting/playbooks/startup-availability/container-didnt-respond-to-http-pings.md
+        - troubleshooting/playbooks/startup-availability/deployment-succeeded-startup-failed.md
+        - troubleshooting/playbooks/startup-availability/failed-to-forward-request.md
+        - troubleshooting/playbooks/startup-availability/slot-swap-config-drift.md
+        - troubleshooting/playbooks/startup-availability/slot-swap-failed-during-warmup.md
+        - troubleshooting/playbooks/startup-availability/warmup-vs-health-check.md
+      - Performance:
+        - troubleshooting/playbooks/performance/intermittent-5xx-under-load.md
+        - troubleshooting/playbooks/performance/memory-pressure-and-worker-degradation.md
+        - troubleshooting/playbooks/performance/no-space-left-on-device.md
+        - troubleshooting/playbooks/performance/slow-response-but-low-cpu.md
+        - troubleshooting/playbooks/performance/slow-start-cold-start.md
+      - Outbound Network:
+        - troubleshooting/playbooks/outbound-network/dns-resolution-vnet-integrated-app-service.md
+        - troubleshooting/playbooks/outbound-network/private-endpoint-custom-dns-route-confusion.md
+        - troubleshooting/playbooks/outbound-network/snat-or-application-issue.md
+    - Methodology:
+      - troubleshooting/methodology/troubleshooting-method.md
+      - troubleshooting/methodology/detector-map.md
+    - KQL Queries:
+      - troubleshooting/kql/index.md
+      - HTTP:
+        - troubleshooting/kql/http/index.md
+        - troubleshooting/kql/http/5xx-trend-over-time.md
+        - troubleshooting/kql/http/latency-trend-by-status-code.md
+        - troubleshooting/kql/http/slowest-requests-by-path.md
+      - Console:
+        - troubleshooting/kql/console/index.md
+        - troubleshooting/kql/console/container-binding-errors.md
+        - troubleshooting/kql/console/startup-errors.md
+      - Restarts:
+        - troubleshooting/kql/restarts/index.md
+        - troubleshooting/kql/restarts/repeated-startup-attempts.md
+        - troubleshooting/kql/restarts/restart-timing-correlation.md
+      - Correlation:
+        - troubleshooting/kql/correlation/index.md
+        - troubleshooting/kql/correlation/latency-vs-errors.md
+        - troubleshooting/kql/correlation/restarts-vs-latency.md
+    - Lab Guides:
+      - troubleshooting/lab-guides/index.md
+      - troubleshooting/lab-guides/container-http-pings.md
+      - troubleshooting/lab-guides/deployment-succeeded-startup-failed.md
+      - troubleshooting/lab-guides/dns-vnet-resolution.md
+      - troubleshooting/lab-guides/failed-to-forward-request.md
+      - troubleshooting/lab-guides/intermittent-5xx.md
+      - troubleshooting/lab-guides/memory-pressure.md
+      - troubleshooting/lab-guides/no-space-left-on-device.md
+      - troubleshooting/lab-guides/slot-swap-config-drift.md
+      - troubleshooting/lab-guides/slow-start-cold-start.md
+      - troubleshooting/lab-guides/snat-exhaustion.md
+  - Reference:
+    - reference/index.md
+    - reference/cli-cheatsheet.md
+    - reference/kql-queries.md
+    - reference/platform-limits.md
+    - reference/troubleshooting.md
+    - reference/kudu-queries.md

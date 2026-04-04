@@ -1,0 +1,36 @@
+{
+  "name": "azure-appservice-nodejs-guide",
+  "version": "1.0.0",
+  "description": "Sample application for the Azure App Service Node.js Guide",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "start:advanced": "TELEMETRY_MODE=advanced node src/server.js",
+    "dev": "nodemon src/server.js",
+    "dev:advanced": "TELEMETRY_MODE=advanced nodemon src/server.js",
+    "test": "echo \"No tests yet\" && exit 0"
+  },
+  "keywords": [
+    "azure",
+    "app-service",
+    "logging",
+    "application-insights",
+    "winston",
+    "opentelemetry"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@azure/monitor-opentelemetry": "^1.7.0",
+    "@opentelemetry/api": "^1.9.0",
+    "express": "^4.21.0",
+    "uuid": "^10.0.0",
+    "winston": "^3.15.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
