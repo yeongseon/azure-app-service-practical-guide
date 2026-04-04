@@ -100,12 +100,9 @@ def cache_health():
 ## Troubleshooting
 
 - `Timeout connecting to server`:
-  - Verify firewall/network path, VNet integration, and TLS port (`6380`).
-- `NOAUTH Authentication required`:
-  - Check key rotation and App Service setting value source.
-- Cache misses too high:
-  - Review TTL, key design, and serialization consistency.
-
+    - Verify firewall/network path, VNet integration, and TLS port (`6380`).- `NOAUTH Authentication required`:
+    - Check key rotation and App Service setting value source.- Cache misses too high:
+    - Review TTL, key design, and serialization consistency.
 ## Advanced Topics
 
 - Use Redis as session backend for cross-instance session sharing.
@@ -117,6 +114,6 @@ def cache_health():
 - [Managed Identity](./managed-identity.md)
 - [Deployment Slots](../../../operations/deployment-slots.md)
 
-## References
+## Sources
 - [Azure Cache for Redis documentation (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/azure-cache-for-redis/)
 - [Quickstart: Use Azure Cache for Redis in Python (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/azure-cache-for-redis/cache-python-get-started)

@@ -135,7 +135,7 @@ Review route table (`UDR`) and ensure required Azure service endpoints are reach
 - [Azure SQL](azure-sql.md)
 - [Operations: Networking](../../../operations/networking.md)
 
-## References
+## Sources
 
 - [Integrate your app with an Azure virtual network](https://learn.microsoft.com/en-us/azure/app-service/configure-vnet-integration-enable)
 - [Use private endpoints for Azure App Service apps](https://learn.microsoft.com/en-us/azure/app-service/networking/private-endpoint)

@@ -62,7 +62,7 @@ az monitor metrics list --resource $RESOURCE_ID --metric "MemoryPercentage" --in
 az webapp log tail --name $APP_NAME --resource-group $RG
 ```
 
-## References
+## Sources
 
 - [Azure App Service diagnostics overview](https://learn.microsoft.com/en-us/azure/app-service/overview-diagnostics)
 - [Monitor Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/monitor-app-service)

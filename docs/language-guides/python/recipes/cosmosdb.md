@@ -99,12 +99,9 @@ def ensure_container():
 ## Troubleshooting
 
 - `403 Forbidden` on data operations:
-  - Verify Cosmos DB **data-plane** role assignment (control-plane RBAC is not enough).
-- `401 Unauthorized`:
-  - Confirm managed identity is enabled and token audience is correct for Cosmos SDK.
-- High latency/timeouts:
-  - Place App Service and Cosmos DB in the same region and review indexing/pagination.
-
+    - Verify Cosmos DB **data-plane** role assignment (control-plane RBAC is not enough).- `401 Unauthorized`:
+    - Confirm managed identity is enabled and token audience is correct for Cosmos SDK.- High latency/timeouts:
+    - Place App Service and Cosmos DB in the same region and review indexing/pagination.
 ## Advanced Topics
 
 - Use `preferred_locations` in `CosmosClient` for multi-region read optimization.
@@ -116,6 +113,6 @@ def ensure_container():
 - [Key Vault References](./key-vault-reference.md)
 - [Troubleshoot](../../../reference/troubleshooting.md)
 
-## References
+## Sources
 - [Azure Cosmos DB documentation (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/cosmos-db/)
 - [Use managed identity to connect Cosmos DB from App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/tutorial-connect-msi-azure-service)

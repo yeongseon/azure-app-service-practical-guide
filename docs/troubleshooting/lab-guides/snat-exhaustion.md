@@ -205,15 +205,15 @@ flowchart LR
 All of the following must be observed in the same trigger window:
 
 1. **Transport failures appear under load**
-   - `curl` results include `000` responses and long (~60s) waits.
+    - `curl` results include `000` responses and long (~60s) waits.
 2. **HTTP log degradation appears**
-   - Large share of `499`/`503` with elevated `TimeTaken`.
+    - Large share of `499`/`503` with elevated `TimeTaken`.
 3. **Application timeout signatures appear**
-   - Body samples include timeout text (for example, `The read operation timed out`).
+    - Body samples include timeout text (for example, `The read operation timed out`).
 4. **Worker instability appears in console logs**
-   - `WORKER TIMEOUT` and `SIGKILL` events recorded.
+    - `WORKER TIMEOUT` and `SIGKILL` events recorded.
 5. **Recovery indicator appears after pressure drops**
-   - Diagnostic endpoints become reachable again and counters restart/new PID appears.
+    - Diagnostic endpoints become reachable again and counters restart/new PID appears.
 
 ### 2.4 Disproof criteria
 
@@ -738,15 +738,15 @@ graph LR
 
 ---
 
-## References
+## See Also
+
+- [SNAT or Application Issue? (Playbook)](../playbooks/outbound-network/snat-or-application-issue.md)
+- [First 10 Minutes: App Service Linux Troubleshooting](../first-10-minutes/index.md)
+
+## Sources
 
 - [Troubleshoot intermittent outbound connection errors in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-intermittent-outbound-connection-errors)
 - [Azure Load Balancer outbound connections](https://learn.microsoft.com/en-us/azure/load-balancer/load-balancer-outbound-connections)
 - [Configure a custom container for Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container)
 - [Enable diagnostic logging for apps in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs)
 - [App Service diagnostics overview](https://learn.microsoft.com/en-us/azure/app-service/overview-diagnostics)
-
-## See Also
-
-- [SNAT or Application Issue? (Playbook)](../playbooks/outbound-network/snat-or-application-issue.md)
-- [First 10 Minutes: App Service Linux Troubleshooting](../first-10-minutes/index.md)

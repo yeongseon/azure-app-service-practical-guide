@@ -98,6 +98,6 @@ node -e "require('bcrypt')"
 - [Next.js on App Service](./nextjs.md)
 - [How App Service Works](../../../platform/how-app-service-works.md)
 
-## References
+## Sources
 - [Configure Node.js on Azure App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/configure-language-nodejs)
 - [Run a custom Linux container in App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/tutorial-custom-container)

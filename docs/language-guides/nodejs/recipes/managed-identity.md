@@ -117,8 +117,7 @@ For local development, run `az login` to allow the credential to use your CLI id
 To verify that the identity is working:
 
 1. Use the Kudu console to check the identity endpoint:
-   - `curl $MSI_ENDPOINT -H "Secret: $MSI_SECRET" -v`
-2. Check the app's environment variables for `IDENTITY_ENDPOINT` and `IDENTITY_HEADER`.
+    - `curl $MSI_ENDPOINT -H "Secret: $MSI_SECRET" -v`2. Check the app's environment variables for `IDENTITY_ENDPOINT` and `IDENTITY_HEADER`.
 
 ## Troubleshooting
 
@@ -134,6 +133,6 @@ To verify that the identity is working:
 ## See Also
 - [Key Vault Reference Recipe](./key-vault-reference.md)
 
-## References
+## Sources
 - [Official Managed Identity Overview](https://learn.microsoft.com/azure/app-service/overview-managed-identity)
 - [DefaultAzureCredential Reference](https://learn.microsoft.com/javascript/api/@azure/identity/defaultazurecredential)

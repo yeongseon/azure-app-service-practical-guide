@@ -172,6 +172,6 @@ Once local development works, proceed to:
 - [02. First Deploy](./02-first-deploy.md)
 - [Node.js Runtime Concepts](../../platform/how-app-service-works.md)
 
-## References
+## Sources
 - [Configure Node.js app on Azure App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/configure-language-nodejs)
 - [App Service local development setup (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-local-cache)

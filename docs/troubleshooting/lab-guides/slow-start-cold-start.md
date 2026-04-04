@@ -152,7 +152,7 @@ Core conceptual docs used by this runbook:
 - Hosting plan tier behavior.
 - Staging/slot warm-up concepts for production deployments.
 
-Links are listed in [References](#references).
+Links are listed in [Sources](#sources).
 
 ---
 
@@ -632,9 +632,9 @@ Final verdict: **Hypothesis supported**, with nuanced interpretation that startu
 1. Do not classify startup-duration telemetry as app regression without warm-path comparison.
 2. Anchor triage on **time-window correlation** between platform lifecycle and HTTP latency.
 3. Maintain separate dashboards/queries for:
-   - startup lifecycle transitions,
-   - first-hit behavior,
-   - warm steady-state behavior.
+    - startup lifecycle transitions,
+    - first-hit behavior,
+    - warm steady-state behavior.
 4. Use slot warm-up strategies for production rollout if startup is expensive.
 
 ### 4.12 Reproducibility notes
@@ -694,14 +694,6 @@ graph LR
 
 - [Slow Start (Cold Start)](../playbooks/performance/slow-start-cold-start.md)
 
-## References
-
-- [Set up staging environments in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots)
-- [Configure an App Service app in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/configure-common)
-- [Enable diagnostic logging for apps in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs)
-- [Monitor Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/monitor-app-service)
-- [App Service plan overview](https://learn.microsoft.com/en-us/azure/app-service/overview-hosting-plans)
-
 ## See Also
 
 - [Playbook: Slow Start (Cold Start)](../playbooks/performance/slow-start-cold-start.md)
@@ -709,3 +701,11 @@ graph LR
 - [KQL: Restart Timing Correlation](../kql/restarts/restart-timing-correlation.md)
 - [KQL: Slowest Requests by Path](../kql/http/slowest-requests-by-path.md)
 - [Troubleshooting Method](../methodology/troubleshooting-method.md)
+
+## Sources
+
+- [Set up staging environments in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots)
+- [Configure an App Service app in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/configure-common)
+- [Enable diagnostic logging for apps in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs)
+- [Monitor Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/monitor-app-service)
+- [App Service plan overview](https://learn.microsoft.com/en-us/azure/app-service/overview-hosting-plans)

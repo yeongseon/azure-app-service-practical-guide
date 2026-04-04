@@ -184,17 +184,11 @@ az webapp config show --resource-group <resource-group> --name <app-name>
 ## Practical triage examples
 
 1. **Intermittent 502 + connect timeout logs + burst traffic**
-   - Decision tree branch: 5xx → intermittent → outbound candidate.
-   - Start with [SNAT or Application Issue?](playbooks/outbound-network/snat-or-application-issue.md).
-
+    - Decision tree branch: 5xx → intermittent → outbound candidate.    - Start with [SNAT or Application Issue?](playbooks/outbound-network/snat-or-application-issue.md).
 2. **Deployment succeeded + immediate 503 + ping failures**
-   - Decision tree branch: restart/deployment → startup failing.
-   - Start with [Deployment Succeeded but Startup Failed](playbooks/startup-availability/deployment-succeeded-startup-failed.md).
-
+    - Decision tree branch: restart/deployment → startup failing.    - Start with [Deployment Succeeded but Startup Failed](playbooks/startup-availability/deployment-succeeded-startup-failed.md).
 3. **Latency grows over hours + recycle + memory climb**
-   - Decision tree branch: performance → memory.
-   - Start with [Memory Pressure and Worker Degradation](playbooks/performance/memory-pressure-and-worker-degradation.md).
-
+    - Decision tree branch: performance → memory.    - Start with [Memory Pressure and Worker Degradation](playbooks/performance/memory-pressure-and-worker-degradation.md).
 ## See Also
 
 - [Troubleshooting Method](methodology/troubleshooting-method.md)
@@ -206,7 +200,7 @@ az webapp config show --resource-group <resource-group> --name <app-name>
 - [First 10 Minutes: Outbound Network](first-10-minutes/outbound-network.md)
 - [First 10 Minutes: Startup Availability](first-10-minutes/startup-availability.md)
 
-## References
+## Sources
 
 - [Azure App Service diagnostics overview](https://learn.microsoft.com/en-us/azure/app-service/overview-diagnostics)
 - [Monitor Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/monitor-app-service)

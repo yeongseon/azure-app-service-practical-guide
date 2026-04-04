@@ -8,10 +8,10 @@ Protect production workloads with scheduled backups, restore drills, and disaste
 - Storage account and blob container for backup artifacts
 - Permissions to manage storage and web app configuration
 - Variables set:
-  - `RG`
-  - `APP_NAME`
-  - `LOCATION`
-  - `STORAGE_ACCOUNT_NAME`
+    - `RG`
+    - `APP_NAME`
+    - `LOCATION`
+    - `STORAGE_ACCOUNT_NAME`
 
 ## Main Content
 

@@ -162,7 +162,7 @@ az webapp log tail \
 - [05. Infrastructure as Code](05-infrastructure-as-code.md)
 - [Recipes: Managed Identity](./recipes/managed-identity.md)
 
-## References
+## Sources
 
 - [Deploy a ZIP file to Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/deploy-zip)
 - [Quickstart: Deploy a Java app to Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/quickstart-java)

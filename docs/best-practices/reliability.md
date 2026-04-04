@@ -236,7 +236,7 @@ Expected behavior:
 - [Best Practices - Deployment](./deployment.md)
 - [Best Practices - Common Anti-Patterns](./common-anti-patterns.md)
 
-## References
+## Sources
 
 - [Best practices for Azure App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-best-practices)
 - [Monitor instances in Azure App Service with Health check (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/monitor-instances-health-check)

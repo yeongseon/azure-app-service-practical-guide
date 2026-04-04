@@ -706,15 +706,15 @@ graph LR
 
 - [Failed to Forward Request](../playbooks/startup-availability/failed-to-forward-request.md)
 
-## References
+## See Also
+
+- [Playbook: Failed to Forward Request](../playbooks/startup-availability/failed-to-forward-request.md)
+- [Troubleshooting: First 10 Minutes](../first-10-minutes/index.md)
+
+## Sources
 
 - [Configure a custom container for Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container)
 - [Troubleshoot HTTP 502/503 errors in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503)
 - [Enable diagnostic logging for apps in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs)
 - [Azure App Service diagnostics overview](https://learn.microsoft.com/en-us/azure/app-service/overview-diagnostics)
 - [App Service Linux FAQ and runtime behavior](https://learn.microsoft.com/en-us/azure/app-service/containers/app-service-linux-faq)
-
-## See Also
-
-- [Playbook: Failed to Forward Request](../playbooks/startup-availability/failed-to-forward-request.md)
-- [Troubleshooting: First 10 Minutes](../first-10-minutes/index.md)

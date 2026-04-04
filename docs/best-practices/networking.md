@@ -8,11 +8,11 @@ Networking design in Azure App Service is primarily about controlling direction 
 - Existing virtual network and required subnets
 - Permissions to manage App Service, networking, and private DNS resources
 - Variables set:
-  - `RG`
-  - `APP_NAME`
-  - `VNET_NAME`
-  - `INTEGRATION_SUBNET_NAME`
-  - `PRIVATE_ENDPOINT_SUBNET_NAME`
+    - `RG`
+    - `APP_NAME`
+    - `VNET_NAME`
+    - `INTEGRATION_SUBNET_NAME`
+    - `PRIVATE_ENDPOINT_SUBNET_NAME`
 
 ## Main Content
 
@@ -305,7 +305,7 @@ az network private-dns record-set a list \
 - [Security Best Practices](./security.md)
 - [Operations - Networking](../operations/networking.md)
 
-## References
+## Sources
 
 - [App Service networking features](https://learn.microsoft.com/azure/app-service/networking-features)
 - [Integrate App Service with virtual networks](https://learn.microsoft.com/azure/app-service/configure-vnet-integration-enable)

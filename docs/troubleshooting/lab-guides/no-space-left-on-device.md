@@ -896,7 +896,14 @@ graph LR
 
 ---
 
-## References
+## See Also
+
+- [Playbook: No Space Left on Device / Ephemeral Storage Pressure](../playbooks/performance/no-space-left-on-device.md)
+- [Playbook: Memory Pressure and Worker Degradation](../playbooks/performance/memory-pressure-and-worker-degradation.md)
+- [Lab: Memory Pressure](./memory-pressure.md)
+- [Lab: Slow Start / Cold Start](./slow-start-cold-start.md)
+
+## Sources
 
 - [Operating system functionality on Azure App Service](https://learn.microsoft.com/azure/app-service/operating-system-functionality)
 - [Azure App Service plan overview](https://learn.microsoft.com/azure/app-service/overview-hosting-plans)
@@ -904,10 +911,3 @@ graph LR
 - [Monitor App Service with Azure Monitor](https://learn.microsoft.com/azure/app-service/monitor-app-service)
 - [Configure Linux Python app on App Service](https://learn.microsoft.com/azure/app-service/configure-language-python)
 - [Azure App Service reliability](https://learn.microsoft.com/azure/reliability/reliability-app-service)
-
-## See Also
-
-- [Playbook: No Space Left on Device / Ephemeral Storage Pressure](../playbooks/performance/no-space-left-on-device.md)
-- [Playbook: Memory Pressure and Worker Degradation](../playbooks/performance/memory-pressure-and-worker-degradation.md)
-- [Lab: Memory Pressure](./memory-pressure.md)
-- [Lab: Slow Start / Cold Start](./slow-start-cold-start.md)

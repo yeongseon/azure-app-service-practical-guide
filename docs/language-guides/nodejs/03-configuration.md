@@ -125,6 +125,6 @@ az webapp config appsettings set \
 ## See Also
 - [Security Operations](../../operations/security.md)
 
-## References
+## Sources
 - [Azure App Configuration documentation](https://learn.microsoft.com/en-us/azure/azure-app-configuration/overview)
 - [Configure app settings in App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/configure-common)

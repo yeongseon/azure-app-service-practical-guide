@@ -25,9 +25,9 @@ sequenceDiagram
 - Existing Web App and production slot
 - Health endpoint for smoke checks (for example `/health`)
 - Variables set:
-  - `RG`
-  - `APP_NAME`
-  - `PLAN_NAME`
+    - `RG`
+    - `APP_NAME`
+    - `PLAN_NAME`
 
 ## Main Content
 

@@ -123,7 +123,7 @@ az webapp deployment slot delete --resource-group $RG --name $APP_NAME --slot st
 az group delete --name $RG --yes --no-wait
 ```
 
-## References
+## Sources
 
 - [Azure CLI Web App Commands (Microsoft Learn)](https://learn.microsoft.com/cli/azure/webapp)
 - [Azure CLI App Service Plan Commands (Microsoft Learn)](https://learn.microsoft.com/cli/azure/appservice/plan)

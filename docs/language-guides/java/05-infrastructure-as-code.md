@@ -160,7 +160,7 @@ Confirm `/health` endpoint exists and startup command still forwards `--server.p
 - [07. Custom Domain & SSL](07-custom-domain-ssl.md)
 - [Recipes: VNet Integration](./recipes/vnet-integration.md)
 
-## References
+## Sources
 
 - [Deploy Bicep files by using Azure CLI](https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/deploy-cli)
 - [Microsoft.Web/sites Bicep resource](https://learn.microsoft.com/en-us/azure/templates/microsoft.web/sites)

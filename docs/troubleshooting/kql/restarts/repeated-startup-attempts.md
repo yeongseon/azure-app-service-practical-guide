@@ -31,7 +31,7 @@ AppServicePlatformLogs
 - Keyword matching may include non-startup operations that contain similar text.
 - This query cannot show application stack traces causing the failure loop.
 
-## References
+## Sources
 
 - [Enable diagnostic logging for apps in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs)
 - [Monitor Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/monitor-app-service)

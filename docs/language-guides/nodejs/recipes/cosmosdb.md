@@ -104,6 +104,6 @@ az webapp config appsettings set --name $APP_NAME --resource-group $RG --setting
 - [Redis Cache for Sessions](./redis.md)
 - [Configuration Tutorial](../03-configuration.md)
 
-## References
+## Sources
 - [Azure Cosmos DB for NoSQL quickstart with Node.js (Microsoft Learn)](https://learn.microsoft.com/azure/cosmos-db/nosql/quickstart-nodejs)
 - [Use managed identity to access Cosmos DB (Microsoft Learn)](https://learn.microsoft.com/azure/cosmos-db/managed-identity-based-authentication)

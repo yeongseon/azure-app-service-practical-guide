@@ -80,12 +80,9 @@ def admin_only():
 ## Troubleshooting
 
 - User is always unauthenticated:
-  - Verify authentication is enabled and route is not anonymous.
-- Missing `X-MS-*` headers locally:
-  - Easy Auth headers are injected only on App Service; mock during local tests.
-- 403 on role-based checks:
-  - Confirm app role assignment and token claims contain expected role values.
-
+    - Verify authentication is enabled and route is not anonymous.- Missing `X-MS-*` headers locally:
+    - Easy Auth headers are injected only on App Service; mock during local tests.- 403 on role-based checks:
+    - Confirm app role assignment and token claims contain expected role values.
 ## Advanced Topics
 
 - Use provider access tokens (`X-MS-TOKEN-*`) for downstream API calls when required.
@@ -97,6 +94,6 @@ def admin_only():
 - [Key Vault References](./key-vault-reference.md)
 - [Troubleshoot](../../../reference/troubleshooting.md)
 
-## References
+## Sources
 - [Authentication and authorization in App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization)
 - [Tutorial: Authenticate users end-to-end in App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/tutorial-auth-aad)

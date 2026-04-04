@@ -68,15 +68,15 @@ graph TD
 ## 6. Validation and Disproof by Hypothesis
 ### H1: Persistent `/home` quota exhaustion
 - **Signals that support**
-  - Errors begin during deployment/build or shortly after release.
-  - Repeated console messages indicate write/extract failures under `/home`.
-  - Incidents persist across restart because persistent storage remains full.
+    - Errors begin during deployment/build or shortly after release.
+    - Repeated console messages indicate write/extract failures under `/home`.
+    - Incidents persist across restart because persistent storage remains full.
 - **Signals that weaken**
-  - Restart immediately and durably resolves issue without cleanup.
-  - Logs point to temp paths only and `/home` references are absent.
-  - Failures correlate only with transient load spikes.
+    - Restart immediately and durably resolves issue without cleanup.
+    - Logs point to temp paths only and `/home` references are absent.
+    - Failures correlate only with transient load spikes.
 - **What to verify**
-  - KQL (console storage errors and `/home` context):
+    - KQL (console storage errors and `/home` context):
     ```kusto
     AppServiceConsoleLogs
     | where TimeGenerated > ago(24h)
@@ -86,7 +86,7 @@ graph TD
     | project TimeGenerated, ResultDescription
     | order by TimeGenerated desc
     ```
-  - KQL (deploy/start impact seen in platform events):
+    - KQL (deploy/start impact seen in platform events):
     ```kusto
     AppServicePlatformLogs
     | where TimeGenerated > ago(24h)
@@ -94,7 +94,7 @@ graph TD
     | project TimeGenerated, ContainerId, OperationName, ResultDescription
     | order by TimeGenerated desc
     ```
-  - CLI (inspect settings and stream logs):
+    - CLI (inspect settings and stream logs):
     ```bash
     az webapp config appsettings list --resource-group &lt;resource-group&gt; --name &lt;app-name&gt;
     az webapp log tail --resource-group &lt;resource-group&gt; --name &lt;app-name&gt;
@@ -102,15 +102,15 @@ graph TD
 
 ### H2: Ephemeral `/tmp` or writable layer exhaustion at runtime
 - **Signals that support**
-  - Errors spike during traffic peaks, uploads, report generation, or cache warmups.
-  - Console logs reference `/tmp` and temporary write failures.
-  - Restart gives short-term relief, then issue returns as temp data accumulates.
+    - Errors spike during traffic peaks, uploads, report generation, or cache warmups.
+    - Console logs reference `/tmp` and temporary write failures.
+    - Restart gives short-term relief, then issue returns as temp data accumulates.
 - **Signals that weaken**
-  - Failures happen only during deployment with low runtime traffic.
-  - No temp-path references in console output.
-  - Endpoint latency/error profile does not change when failures occur.
+    - Failures happen only during deployment with low runtime traffic.
+    - No temp-path references in console output.
+    - Endpoint latency/error profile does not change when failures occur.
 - **What to verify**
-  - KQL (runtime temp-file/storage errors):
+    - KQL (runtime temp-file/storage errors):
     ```kusto
     AppServiceConsoleLogs
     | where TimeGenerated > ago(12h)
@@ -118,14 +118,14 @@ graph TD
     | summarize events=count() by bin(TimeGenerated, 5m)
     | order by TimeGenerated asc
     ```
-  - KQL (path and status impact during the same window):
+    - KQL (path and status impact during the same window):
     ```kusto
     AppServiceHTTPLogs
     | where TimeGenerated > ago(12h)
     | summarize req=count(), p95=percentile(TimeTaken,95), errors=countif(ScStatus >= 500) by bin(TimeGenerated, 5m), CsUriStem
     | top 30 by errors desc
     ```
-  - CLI (restart for controlled comparison):
+    - CLI (restart for controlled comparison):
     ```bash
     az webapp restart --resource-group &lt;resource-group&gt; --name &lt;app-name&gt;
     az webapp log tail --resource-group &lt;resource-group&gt; --name &lt;app-name&gt;
@@ -133,15 +133,15 @@ graph TD
 
 ### H3: Image extraction or container layer pressure
 - **Signals that support**
-  - Startup/deployment fails after image updates or dependency size growth.
-  - Platform logs show repeated container creation/start attempts with changing `ContainerId`.
-  - Console logs include extraction, layer, or filesystem write failures before app binds.
+    - Startup/deployment fails after image updates or dependency size growth.
+    - Platform logs show repeated container creation/start attempts with changing `ContainerId`.
+    - Console logs include extraction, layer, or filesystem write failures before app binds.
 - **Signals that weaken**
-  - Same image starts consistently on larger SKU without changes in behavior.
-  - Failures happen long after startup and only under request load.
-  - Container lifecycle is stable while errors are request-path-specific.
+    - Same image starts consistently on larger SKU without changes in behavior.
+    - Failures happen long after startup and only under request load.
+    - Container lifecycle is stable while errors are request-path-specific.
 - **What to verify**
-  - KQL (container lifecycle churn):
+    - KQL (container lifecycle churn):
     ```kusto
     AppServicePlatformLogs
     | where TimeGenerated > ago(24h)
@@ -149,7 +149,7 @@ graph TD
     | project TimeGenerated, ContainerId, OperationName, ResultDescription
     | order by TimeGenerated desc
     ```
-  - KQL (startup console failure signatures):
+    - KQL (startup console failure signatures):
     ```kusto
     AppServiceConsoleLogs
     | where TimeGenerated > ago(24h)
@@ -157,7 +157,7 @@ graph TD
     | project TimeGenerated, ResultDescription
     | order by TimeGenerated desc
     ```
-  - CLI (container configuration and deployment context):
+    - CLI (container configuration and deployment context):
     ```bash
     az webapp show --resource-group &lt;resource-group&gt; --name &lt;app-name&gt;
     az webapp config container show --resource-group &lt;resource-group&gt; --name &lt;app-name&gt;
@@ -165,15 +165,15 @@ graph TD
 
 ### H4: Storage signal is secondary to another churn pattern
 - **Signals that support**
-  - Repeated startup failures/restarts produce large log and temp churn.
-  - HTTP error bursts align with restart windows rather than sustained storage growth.
-  - Console logs show mixed primary failures with storage errors appearing later in sequence.
+    - Repeated startup failures/restarts produce large log and temp churn.
+    - HTTP error bursts align with restart windows rather than sustained storage growth.
+    - Console logs show mixed primary failures with storage errors appearing later in sequence.
 - **Signals that weaken**
-  - Storage errors are first failure event and remain dominant across windows.
-  - Cleaning up files immediately resolves incident without further restart loops.
-  - No evidence of repeated container lifecycle operations.
+    - Storage errors are first failure event and remain dominant across windows.
+    - Cleaning up files immediately resolves incident without further restart loops.
+    - No evidence of repeated container lifecycle operations.
 - **What to verify**
-  - KQL (restart-timing correlation):
+    - KQL (restart-timing correlation):
     ```kusto
     AppServicePlatformLogs
     | where TimeGenerated > ago(24h)
@@ -181,14 +181,14 @@ graph TD
     | summarize events=count(), containers=dcount(ContainerId) by bin(TimeGenerated, 10m), OperationName
     | order by TimeGenerated asc
     ```
-  - KQL (HTTP blast radius near churn windows):
+    - KQL (HTTP blast radius near churn windows):
     ```kusto
     AppServiceHTTPLogs
     | where TimeGenerated > ago(24h)
     | summarize req=count(), err5xx=countif(ScStatus >= 500), p95=percentile(TimeTaken,95) by bin(TimeGenerated, 10m), CsUriStem
     | order by TimeGenerated asc
     ```
-  - CLI (recent deployments and config drift checks):
+    - CLI (recent deployments and config drift checks):
     ```bash
     az webapp deployment list-publishing-profiles --resource-group &lt;resource-group&gt; --name &lt;app-name&gt;
     az webapp config show --resource-group &lt;resource-group&gt; --name &lt;app-name&gt;
@@ -196,13 +196,13 @@ graph TD
 
 ## 7. Likely Root Cause Patterns
 - **Pattern A: Build-on-deploy accumulation in `/home`**
-  - Oryx temporary/build artifacts and deployment outputs are retained beyond expected lifecycle, saturating persistent quota.
+    - Oryx temporary/build artifacts and deployment outputs are retained beyond expected lifecycle, saturating persistent quota.
 - **Pattern B: Runtime temp/cache/log growth in `/tmp` or writable paths**
-  - App writes unbounded temp files, buffered payloads, or verbose local logs without cleanup.
+    - App writes unbounded temp files, buffered payloads, or verbose local logs without cleanup.
 - **Pattern C: Image/dependency footprint outgrows ephemeral budget**
-  - Larger container layers or extracted packages push startup over available ephemeral space.
+    - Larger container layers or extracted packages push startup over available ephemeral space.
 - **Pattern D: Restart churn amplifies storage pressure**
-  - Repeated startup attempts continuously rewrite temporary files/log fragments, turning transient stress into persistent incident.
+    - Repeated startup attempts continuously rewrite temporary files/log fragments, turning transient stress into persistent incident.
 
 ## 8. Immediate Mitigations
 - Disable build-on-deploy if not required and deploy prebuilt artifacts (**production-safe** when CI build parity is validated).
@@ -395,7 +395,7 @@ $ du -sh /home/site/wwwroot/*
 
 - [Lab: No Space Left on Device](../../lab-guides/no-space-left-on-device.md)
 
-## References
+## Sources
 - [Operating system functionality on Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/operating-system-functionality)
 - [Azure App Service plan overview](https://learn.microsoft.com/en-us/azure/app-service/overview-hosting-plans)
 - [Enable diagnostic logging for apps in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs)

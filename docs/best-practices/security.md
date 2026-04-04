@@ -8,9 +8,9 @@ Security in Azure App Service is strongest when controls are layered: identity, 
 - Azure Entra tenant and required permissions
 - Security ownership defined across application, platform, and network teams
 - Variables set:
-  - `RG`
-  - `APP_NAME`
-  - `KV_NAME`
+    - `RG`
+    - `APP_NAME`
+    - `KV_NAME`
 
 ## Main Content
 
@@ -290,7 +290,7 @@ Validate these controls before go-live:
 - [Networking Best Practices](./networking.md)
 - [Operations - Security](../operations/security.md)
 
-## References
+## Sources
 
 - [Security in Azure App Service](https://learn.microsoft.com/azure/app-service/overview-security)
 - [Authentication and authorization in App Service](https://learn.microsoft.com/azure/app-service/overview-authentication-authorization)

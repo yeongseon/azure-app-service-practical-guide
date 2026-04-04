@@ -35,6 +35,6 @@ Use Java-specific recipes for identity, data, networking, and deployment pattern
 - [Operations](../../operations/index.md)
 - [Reference](../../reference/index.md)
 
-## References
+## Sources
 
 - [Quickstart: Deploy a Java app](https://learn.microsoft.com/azure/app-service/quickstart-java)

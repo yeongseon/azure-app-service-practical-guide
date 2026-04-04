@@ -746,7 +746,14 @@ graph LR
 
 ---
 
-## References
+## See Also
+
+- [Container Didn’t Respond to HTTP Pings playbook](../playbooks/startup-availability/container-didnt-respond-to-http-pings.md)
+- [Startup and availability first-10-minutes checklist](../first-10-minutes/startup-availability.md)
+- [KQL Console: startup errors](../kql/console/startup-errors.md)
+- [KQL Restarts: repeated startup attempts](../kql/restarts/repeated-startup-attempts.md)
+
+## Sources
 
 - [Configure a custom container for Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container)
 - [Configure a Linux Python app for Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/configure-language-python)
@@ -754,10 +761,3 @@ graph LR
 - [Azure App Service diagnostics overview](https://learn.microsoft.com/en-us/azure/app-service/overview-diagnostics)
 - [Monitor App Service instances using health check](https://learn.microsoft.com/en-us/azure/app-service/monitor-instances-health-check)
 - [Environment variables and app settings in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/reference-app-settings)
-
-## See Also
-
-- [Container Didn’t Respond to HTTP Pings playbook](../playbooks/startup-availability/container-didnt-respond-to-http-pings.md)
-- [Startup and availability first-10-minutes checklist](../first-10-minutes/startup-availability.md)
-- [KQL Console: startup errors](../kql/console/startup-errors.md)
-- [KQL Restarts: repeated startup attempts](../kql/restarts/repeated-startup-attempts.md)

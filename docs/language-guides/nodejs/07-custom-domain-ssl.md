@@ -57,11 +57,8 @@ ABC123DEF456GHI789JKL012MNO345PQR678STU901VWX234YZ
 ### Add DNS Records
 Go to your DNS provider and add:
 1. **TXT Record**: 
-   - Host: `asuid.www` (for `www.yourdomain.com`)
-   - Value: The Verification ID from the previous step.
-2. **CNAME Record**:
-   - Host: `www`
-    - Value: `app-myapp-abc123.azurewebsites.net`
+    - Host: `asuid.www` (for `www.yourdomain.com`)    - Value: The Verification ID from the previous step.2. **CNAME Record**:
+    - Host: `www`    - Value: `app-myapp-abc123.azurewebsites.net`
 
 ### Map the Domain in Azure
 ```bash
@@ -156,6 +153,6 @@ Congratulations! You've completed the core operations path. Explore the **[Recip
 ## See Also
 - [Operations Networking](../../operations/networking.md)
 
-## References
+## Sources
 - [Azure Front Door Documentation](https://learn.microsoft.com/en-us/azure/frontdoor/)
 - [Map a custom domain to App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/app-service-web-tutorial-custom-domain)

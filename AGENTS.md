@@ -137,14 +137,145 @@ For MkDocs admonitions (`!!!` / `???`), every line in the body must be indented 
 
 All architectural diagrams use Mermaid. Every documentation page should include at least one diagram. Test with `mkdocs build --strict`.
 
-### Section Structure
+### Nested List Indentation
 
-Documents follow a consistent structure:
+All nested list items MUST use **4-space indent** (Python-Markdown standard).
 
-- **See Also** = Internal cross-links within this repository
-- **References** = External links to Microsoft Learn (authoritative source)
+```markdown
+# CORRECT (4-space)
+1. **Item**
+    - Sub item
+    - Another sub item
+        - Third level
 
-All content must be based on Microsoft Learn with cited sources.
+# WRONG (2 or 3 spaces)
+1. **Item**
+  - Sub item          ← 2 spaces ❌
+   - Sub item         ← 3 spaces ❌
+```
+
+### Tail Section Naming
+
+Every document ends with these tail sections (in this order):
+
+| Section | Purpose | Content |
+|---|---|---|
+| `## See Also` | Internal cross-links within this repository | Links to other pages in this guide |
+| `## Sources` | External authoritative references | Links to Microsoft Learn (primary) |
+
+- `## See Also` is required on every page.
+- `## Sources` is required when external references are cited. Omit if none exist.
+- Order is always `## See Also` → `## Sources` (never reversed).
+- All content must be based on Microsoft Learn with cited sources.
+
+### Canonical Document Templates
+
+Every document follows one of 7 templates based on its section. Do not invent new structures.
+
+#### Platform docs
+
+```text
+# Title
+Brief introduction (1-2 sentences)
+## Prerequisites (optional — only if hands-on/CLI content)
+## Main Content
+### Subsections (H3 under Main Content)
+#### Sub-subsections (H4 as needed)
+## Advanced Topics (optional)
+## Language-Specific Details (optional)
+## See Also
+## Sources (optional)
+```
+
+#### Best Practices docs
+
+```text
+# Title
+Brief introduction
+## Prerequisites (optional)
+## Why This Matters
+## Recommended Practices
+## Common Mistakes / Anti-Patterns
+## Validation Checklist
+## Advanced Topics (optional)
+## See Also
+## Sources (optional)
+```
+
+#### Operations docs
+
+```text
+# Title
+Brief introduction
+## Prerequisites
+## When to Use
+## Procedure
+## Verification
+## Rollback / Troubleshooting
+## Advanced Topics (optional)
+## See Also
+## Sources (optional)
+```
+
+#### Tutorial docs (Language Guides)
+
+```text
+# Title
+Brief introduction
+## Prerequisites
+## What You'll Build
+## Steps
+## Verification
+## Next Steps / Clean Up (optional)
+## See Also
+## Sources (optional)
+```
+
+#### Playbooks
+
+```text
+# Title (no intro paragraph — Summary covers it)
+## 1. Summary
+## 2. Common Misreadings
+## 3. Competing Hypotheses
+## 4. What to Check First
+## 5. Evidence to Collect
+## 6. Validation and Disproof by Hypothesis
+## 7. Likely Root Cause Patterns
+## 8. Immediate Mitigations
+## 9. Prevention (optional)
+## See Also
+## Sources (optional)
+```
+
+#### Lab Guides
+
+```text
+# Title
+Brief introduction
+## Lab Metadata (table: difficulty, duration, tier, etc.)
+## 1) Background
+## 2) Hypothesis
+## 3) Runbook
+## 4) Experiment Log
+## Expected Evidence
+## Clean Up
+## Related Playbook
+## See Also
+## Sources
+```
+
+#### Reference docs
+
+```text
+# Title
+Brief introduction
+## Prerequisites (optional)
+## Topic/Command Groups
+## Usage Notes (optional)
+## See Also
+## Sources (optional)
+```
 
 ## Troubleshooting Content Standards
 

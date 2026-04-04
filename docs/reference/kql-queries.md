@@ -186,7 +186,7 @@ Run queries in **Application Insights > Logs** or **Log Analytics Workspace > Lo
 az monitor app-insights query --app $APP_NAME --resource-group $RG --analytics-query "AppRequests | where timestamp > ago(1h) | take 10"
 ```
 
-## References
+## Sources
 
 - [Kusto Query Language Overview](https://learn.microsoft.com/azure/data-explorer/kusto/query/)
 - [Application Insights Data Model](https://learn.microsoft.com/azure/azure-monitor/app/data-model-complete)

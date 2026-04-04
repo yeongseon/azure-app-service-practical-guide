@@ -180,7 +180,7 @@ Use `AppTraces`/`AppRequests` as primary tables; in some environments, schema na
 - [Reference: KQL Queries](../../reference/kql-queries.md)
 - [Recipes: Redis](./recipes/redis.md)
 
-## References
+## Sources
 
 - [Enable diagnostics logging for apps in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs)
 - [Monitor Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/monitor-app-service)

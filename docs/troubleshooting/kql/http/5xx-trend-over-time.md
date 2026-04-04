@@ -31,7 +31,7 @@ AppServiceHTTPLogs
 - In low-volume apps, a small number of errors can appear as large percentage impact.
 - This query cannot determine whether the error originated in app code, platform, or downstream dependency.
 
-## References
+## Sources
 
 - [Enable diagnostic logging for apps in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs)
 - [Monitor Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/monitor-app-service)

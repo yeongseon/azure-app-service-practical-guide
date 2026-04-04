@@ -125,21 +125,15 @@ AppServiceHTTPLogs
 ## Decision Points
 After these checks, you should be able to:
 - Narrow to 1-2 hypotheses:
-  - **CPU-bound**: sustained CPU saturation with broad latency increase
-  - **Memory-bound**: high memory pressure plus restart/worker degradation patterns
-  - **Dependency-bound**: timeout-heavy console/dependency signals with normal CPU
-- Select immediate direction:
-  - CPU-bound -> scale up and profile hot paths
-  - Dependency-bound -> dependency/network playbook
-  - Memory-bound -> memory pressure playbook
-
+    - **CPU-bound**: sustained CPU saturation with broad latency increase    - **Memory-bound**: high memory pressure plus restart/worker degradation patterns    - **Dependency-bound**: timeout-heavy console/dependency signals with normal CPU- Select immediate direction:
+    - CPU-bound -> scale up and profile hot paths    - Dependency-bound -> dependency/network playbook    - Memory-bound -> memory pressure playbook
 ## Next Steps
 - [Slow Response but Low CPU](../playbooks/performance/slow-response-but-low-cpu.md)
 - [Memory Pressure & Worker Degradation](../playbooks/performance/memory-pressure-and-worker-degradation.md)
 - [Intermittent 5xx Under Load](../playbooks/performance/intermittent-5xx-under-load.md)
 - [SNAT or Application Issue?](../playbooks/outbound-network/snat-or-application-issue.md)
 
-## References
+## Sources
 
 - [Troubleshoot slow app performance in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-performance-degradation)
 - [Monitor Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/monitor-app-service)

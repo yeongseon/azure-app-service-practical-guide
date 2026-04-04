@@ -163,7 +163,7 @@ Evidence is most powerful when multiple signals align:
 6. **Identify Root Cause Pattern**: The code does not handle cases where the database returns an empty result set for certain IDs.
 7. **Apply Mitigation**: Add a null check in the application code and deploy the fix. Add a unit test to cover this specific scenario in the future to prevent recurrence.
 
-## References
+## Sources
 
 - [Azure App Service diagnostics overview](https://learn.microsoft.com/en-us/azure/app-service/overview-diagnostics)
 - [Monitor Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/monitor-app-service)

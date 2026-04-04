@@ -243,7 +243,7 @@ AppServicePlatformLogs
 - [Playbooks Index](playbooks/index.md)
 - [KQL Query Library](kql/index.md)
 
-## References
+## Sources
 
 - [Azure App Service diagnostics overview](https://learn.microsoft.com/en-us/azure/app-service/overview-diagnostics)
 - [Monitor Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/monitor-app-service)

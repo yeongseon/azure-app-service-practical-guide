@@ -62,45 +62,45 @@ flowchart TD
     G --> H[Emit telemetry to monitoring and SIEM]
 ```
 
-## Network Security
+### Network Security
 
-### Inbound controls
+#### Inbound controls
 
 Inbound security determines who can reach your app process.
 
 1. **Access Restrictions**
-   - Evaluate allow/deny rules by IP, CIDR, service tag, or virtual network source.
-   - Enforced before request execution in app code.
+    - Evaluate allow/deny rules by IP, CIDR, service tag, or virtual network source.
+    - Enforced before request execution in app code.
 
 2. **Private Endpoints**
-   - Expose app ingress via private IP in your virtual network.
-   - Eliminate direct public network path for private-only architectures.
-   - Depend on correct private DNS resolution for reliable connectivity.
+    - Expose app ingress via private IP in your virtual network.
+    - Eliminate direct public network path for private-only architectures.
+    - Depend on correct private DNS resolution for reliable connectivity.
 
 3. **Azure Front Door or Application Gateway with WAF**
-   - Centralize TLS policy, bot filtering, and Layer 7 protections.
-   - Add edge inspection before traffic reaches App Service.
+    - Centralize TLS policy, bot filtering, and Layer 7 protections.
+    - Add edge inspection before traffic reaches App Service.
 
 4. **Service Endpoints (legacy pattern)**
-   - Historically used for service-level trust to subnet identity.
+    - Historically used for service-level trust to subnet identity.
 
-### Outbound controls
+#### Outbound controls
 
 Outbound security determines how your app reaches dependencies.
 
 1. **Regional VNet Integration**
-   - Routes application egress into selected virtual network paths.
-   - Required for private dependency access patterns.
+    - Routes application egress into selected virtual network paths.
+    - Required for private dependency access patterns.
 
 2. **NAT Gateway**
-   - Provides deterministic, scalable outbound IP addresses.
-   - Improves control for partner allowlists and SNAT management.
+    - Provides deterministic, scalable outbound IP addresses.
+    - Improves control for partner allowlists and SNAT management.
 
 3. **User-Defined Routes (UDR)**
-   - Force traffic through firewall or inspection appliances.
+    - Force traffic through firewall or inspection appliances.
 
 4. **Network Security Groups (NSG) on integration subnet**
-   - Restrict reachable destinations and protocols.
+    - Restrict reachable destinations and protocols.
 
 Inbound and outbound flow with security controls:
 
@@ -117,7 +117,7 @@ graph LR
     NAT --> InternetDeps[Approved Internet Dependencies]
 ```
 
-### Private App Service architecture
+#### Private App Service architecture
 
 High-security production design often uses private ingress and private dependency access end to end.
 
@@ -139,9 +139,9 @@ graph LR
 
 Design notes: treat DNS as part of the security boundary, restrict SCM/Kudu separately, and validate failover behavior for private endpoints and upstream gateways.
 
-## Identity and Access
+### Identity and Access
 
-### Managed identity
+#### Managed identity
 
 Managed identity replaces embedded credentials with workload-bound tokens issued by Microsoft Entra ID.
 
@@ -166,7 +166,7 @@ Anti-pattern to avoid:
 
 - Storing long-lived connection strings or keys in app settings when target service supports Entra ID and managed identity.
 
-### Service-to-service authentication
+#### Service-to-service authentication
 
 ```mermaid
 sequenceDiagram
@@ -183,7 +183,7 @@ sequenceDiagram
     Target-->>App: Authorized response
 ```
 
-### RBAC best practices
+#### RBAC best practices
 
 | Scenario | Target Resource | Recommended Role |
 |---|---|---|
@@ -192,9 +192,9 @@ sequenceDiagram
 | Query database | Azure SQL | db_datareader (SQL-level) |
 | Send messages | Service Bus | Azure Service Bus Data Sender |
 
-## Transport Security
+### Transport Security
 
-### TLS configuration
+#### TLS configuration
 
 Transport protection should be explicit and enforced by policy:
 
@@ -206,15 +206,15 @@ Transport protection should be explicit and enforced by policy:
 TLS termination patterns:
 
 1. **Terminate at Front Door/Application Gateway**
-   - Edge handles client TLS and WAF policy.
-   - Backend to App Service should still use HTTPS.
+    - Edge handles client TLS and WAF policy.
+    - Backend to App Service should still use HTTPS.
 
 2. **Terminate at App Service**
-   - Simpler topology, fewer components.
-   - Reduced edge-layer inspection capability compared with dedicated WAF gateway.
+    - Simpler topology, fewer components.
+    - Reduced edge-layer inspection capability compared with dedicated WAF gateway.
 
 3. **End-to-end TLS**
-   - TLS from client to edge and edge to origin.
+    - TLS from client to edge and edge to origin.
 
 Certificate sources:
 
@@ -222,7 +222,7 @@ Certificate sources:
 - Certificates from Azure Key Vault
 - Uploaded PFX certificates (operationally heavier)
 
-### HTTPS enforcement
+#### HTTPS enforcement
 
 Use the `httpsOnly` setting to force encrypted transport.
 
@@ -230,9 +230,9 @@ Use the `httpsOnly` setting to force encrypted transport.
 - Non-TLS traffic is never processed as business traffic.
 - Combine with strict headers to prevent downgrade behavior.
 
-## Application Security
+### Application Security
 
-### Security headers
+#### Security headers
 
 Baseline response headers reduce common browser-side attack classes.
 
@@ -245,7 +245,7 @@ Baseline response headers reduce common browser-side attack classes.
 | X-XSS-Protection | 0 | Disable legacy XSS filter (CSP preferred) |
 | Referrer-Policy | strict-origin-when-cross-origin | Referrer leakage prevention |
 
-### CORS configuration
+#### CORS configuration
 
 App Service supports CORS at platform layer, while frameworks can enforce CORS in code.
 
@@ -263,7 +263,7 @@ Common CORS mistakes:
 - Broad origin wildcards in production without business need.
 - Missing preflight handling for non-simple methods/headers.
 
-### FTPS and SCM security
+#### FTPS and SCM security
 
 Operational endpoints can become hidden attack surfaces.
 
@@ -272,9 +272,9 @@ Operational endpoints can become hidden attack surfaces.
 - Disable basic authentication for SCM/FTP where supported by process and tooling.
 - Use CI/CD with modern auth flows instead of shared deployment credentials.
 
-## Data Protection
+### Data Protection
 
-### Secrets management
+#### Secrets management
 
 Use Key Vault references in app settings to externalize secret storage.
 
@@ -286,7 +286,7 @@ Anti-pattern:
 
 - Persisting secrets directly in environment variables not backed by Key Vault governance.
 
-### Encryption
+#### Encryption
 
 Data protection spans multiple states:
 
@@ -294,7 +294,7 @@ Data protection spans multiple states:
 - **Encryption in transit**: TLS for client-to-app and app-to-dependency paths.
 - **Customer-managed keys (CMK)**: Available in specific App Service Environment scenarios requiring tenant-controlled key material.
 
-### Filesystem security
+#### Filesystem security
 
 Storage behavior has direct security implications:
 
@@ -302,9 +302,9 @@ Storage behavior has direct security implications:
 - Persistent app content paths require strict deployment and access controls.
 - Multi-instance apps may share persistent paths, so writes must be concurrency-safe and integrity-checked.
 
-## Compliance and Governance
+### Compliance and Governance
 
-### Azure Policy
+#### Azure Policy
 
 Use policy to enforce non-negotiable baseline controls:
 
@@ -323,7 +323,7 @@ az policy assignment list \
     --output table
 ```
 
-### Microsoft Defender for App Service
+#### Microsoft Defender for App Service
 
 Defender for App Service extends detection and posture capabilities:
 
@@ -332,7 +332,7 @@ Defender for App Service extends detection and posture capabilities:
 - Surfaces recommendations and alerts in Defender for Cloud
 - Supports integration into SOC workflows and ticketing pipelines
 
-### Audit and monitoring
+#### Audit and monitoring
 
 Security operations require combined control-plane and data-plane visibility.
 
@@ -343,7 +343,7 @@ Security operations require combined control-plane and data-plane visibility.
 
 Recommended alert domains include auth failures, access restriction deny spikes, TLS/HTTPS posture drift, and SCM endpoint exposure.
 
-## Security Anti-Patterns
+### Security Anti-Patterns
 
 | Anti-Pattern | Risk | Correct Approach |
 |---|---|---|
@@ -378,7 +378,7 @@ A durable security program treats configuration as code and operations as contin
 - [Security Operations](../operations/security.md)
 - [How App Service Works](./how-app-service-works.md)
 
-## References
+## Sources
 
 - [App Service security overview](https://learn.microsoft.com/azure/app-service/overview-security)
 - [Security baseline for App Service](https://learn.microsoft.com/security/benchmark/azure/baselines/app-service-security-baseline)

@@ -261,7 +261,7 @@ Use this checklist before every production promotion:
 - [Best Practices - Reliability](./reliability.md)
 - [Best Practices - Common Anti-Patterns](./common-anti-patterns.md)
 
-## References
+## Sources
 
 - [Deploy your app to Azure App Service - Best Practices (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/deploy-best-practices)
 - [Deploy to staging slots in Azure App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/deploy-staging-slots)

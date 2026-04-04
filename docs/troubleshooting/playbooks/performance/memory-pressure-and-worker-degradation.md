@@ -66,23 +66,23 @@ graph TD
 ## 6. Validation and Disproof by Hypothesis
 ### H1: Application memory leak or unbounded cache growth
 - **Signals that support**
-  - Memory trend rises with uptime while traffic volume is relatively stable.
-  - Latency gradually worsens before any restart event.
-  - Restart temporarily restores latency and error rates.
-  - Console/app logs mention OOM, memory allocation failures, or aggressive GC cycles.
+    - Memory trend rises with uptime while traffic volume is relatively stable.
+    - Latency gradually worsens before any restart event.
+    - Restart temporarily restores latency and error rates.
+    - Console/app logs mention OOM, memory allocation failures, or aggressive GC cycles.
 - **Signals that weaken**
-  - Memory remains flat across uptime windows.
-  - Latency degrades immediately after deployment regardless of uptime length.
-  - Restart does not produce temporary improvement.
+    - Memory remains flat across uptime windows.
+    - Latency degrades immediately after deployment regardless of uptime length.
+    - Restart does not produce temporary improvement.
 - **What to verify**
-  - KQL (latency and status trend):
+    - KQL (latency and status trend):
     ```kusto
     AppServiceHTTPLogs
     | where TimeGenerated > ago(24h)
     | summarize req=count(), p95=percentile(TimeTaken,95), p99=percentile(TimeTaken,99), errors=countif(ScStatus >= 500) by bin(TimeGenerated, 5m)
     | order by TimeGenerated asc
     ```
-  - KQL (memory symptom keywords from console):
+    - KQL (memory symptom keywords from console):
     ```kusto
     AppServiceConsoleLogs
     | where TimeGenerated > ago(24h)
@@ -90,7 +90,7 @@ graph TD
     | project TimeGenerated, ResultDescription
     | order by TimeGenerated desc
     ```
-  - CLI (plan memory and cpu):
+    - CLI (plan memory and cpu):
     ```bash
     az monitor metrics list --resource <app-service-plan-resource-id> --metric "MemoryPercentage,CpuPercentage" --interval PT1M --aggregation Average
     az webapp log tail --resource-group <resource-group> --name <app-name>
@@ -98,16 +98,16 @@ graph TD
 
 ### H2: Plan-level memory contention across multiple apps
 - **Signals that support**
-  - Multiple apps on the same App Service Plan degrade in overlapping windows.
-  - Plan memory remains high even when the affected app has moderate traffic.
-  - Incidents align with a sibling app deployment or load surge.
-  - Recycling one app helps briefly, but pressure returns until total plan demand drops.
+    - Multiple apps on the same App Service Plan degrade in overlapping windows.
+    - Plan memory remains high even when the affected app has moderate traffic.
+    - Incidents align with a sibling app deployment or load surge.
+    - Recycling one app helps briefly, but pressure returns until total plan demand drops.
 - **Signals that weaken**
-  - Other plan apps remain stable with no latency or restart signal.
-  - Plan memory headroom remains comfortably below pressure levels.
-  - Isolated dedicated plan shows no recurrence.
+    - Other plan apps remain stable with no latency or restart signal.
+    - Plan memory headroom remains comfortably below pressure levels.
+    - Isolated dedicated plan shows no recurrence.
 - **What to verify**
-  - KQL (platform restart/recycle timeline):
+    - KQL (platform restart/recycle timeline):
     ```kusto
     AppServicePlatformLogs
     | where TimeGenerated > ago(24h)
@@ -115,26 +115,26 @@ graph TD
     | project TimeGenerated, ContainerId, OperationName, ResultDescription
     | order by TimeGenerated desc
     ```
-  - CLI (apps sharing plan and plan metadata):
+    - CLI (apps sharing plan and plan metadata):
     ```bash
     az appservice plan show --resource-group <resource-group> --name <plan-name>
     az webapp list --resource-group <resource-group> --query "[?serverFarmId!=null].{name:name,serverFarmId:serverFarmId,state:state}" --output table
     az monitor metrics list --resource <app-service-plan-resource-id> --metric "MemoryPercentage" --interval PT5M --aggregation Maximum
     ```
-  - Verify whether affected and sibling apps share incident timestamps and memory pressure windows.
+    - Verify whether affected and sibling apps share incident timestamps and memory pressure windows.
 
 ### H3: Worker/process model is overcommitted for memory budget
 - **Signals that support**
-  - Startup command configures high worker/thread count relative to SKU memory.
-  - Frequent worker exits/timeouts with moderate CPU.
-  - Tail latency worsens with concurrency bursts and short recovery after recycle.
-  - Logs show repeated worker boot/restart patterns.
+    - Startup command configures high worker/thread count relative to SKU memory.
+    - Frequent worker exits/timeouts with moderate CPU.
+    - Tail latency worsens with concurrency bursts and short recovery after recycle.
+    - Logs show repeated worker boot/restart patterns.
 - **Signals that weaken**
-  - Conservative worker settings with sustained stability under equivalent load tests.
-  - No worker timeout/restart signatures in logs.
-  - Latency follows dependency slowness independent of concurrency level.
+    - Conservative worker settings with sustained stability under equivalent load tests.
+    - No worker timeout/restart signatures in logs.
+    - Latency follows dependency slowness independent of concurrency level.
 - **What to verify**
-  - KQL (worker lifecycle and timeout signatures):
+    - KQL (worker lifecycle and timeout signatures):
     ```kusto
     AppServiceConsoleLogs
     | where TimeGenerated > ago(12h)
@@ -142,32 +142,32 @@ graph TD
     | summarize events=count() by bin(TimeGenerated, 5m)
     | order by TimeGenerated asc
     ```
-  - CLI (runtime and startup config):
+    - CLI (runtime and startup config):
     ```bash
     az webapp config show --resource-group <resource-group> --name <app-name>
     az webapp config appsettings list --resource-group <resource-group> --name <app-name>
     ```
-  - Validate effective process settings (`workers`, `threads`, `timeout`) against measured memory per worker and plan limits.
+    - Validate effective process settings (`workers`, `threads`, `timeout`) against measured memory per worker and plan limits.
 
 ### H4: Dependency/runtime behavior amplifies memory pressure
 - **Signals that support**
-  - Slow periods align with high-volume endpoints returning large payloads or buffering request bodies.
-  - App logs show retry storms, large object serialization, or unbounded in-memory aggregation.
-  - HTTP latency and 499/5xx increase before restart, not only during startup.
-  - Memory pressure worsens when dependency latency increases (larger in-flight object lifetime).
+    - Slow periods align with high-volume endpoints returning large payloads or buffering request bodies.
+    - App logs show retry storms, large object serialization, or unbounded in-memory aggregation.
+    - HTTP latency and 499/5xx increase before restart, not only during startup.
+    - Memory pressure worsens when dependency latency increases (larger in-flight object lifetime).
 - **Signals that weaken**
-  - Large-payload endpoints are quiet during incidents.
-  - Dependency latency is stable while memory pressure still rises linearly.
-  - Reduced retry limits do not change memory profile.
+    - Large-payload endpoints are quiet during incidents.
+    - Dependency latency is stable while memory pressure still rises linearly.
+    - Reduced retry limits do not change memory profile.
 - **What to verify**
-  - KQL (path and payload-related latency shape):
+    - KQL (path and payload-related latency shape):
     ```kusto
     AppServiceHTTPLogs
     | where TimeGenerated > ago(12h)
     | summarize req=count(), p95=percentile(TimeTaken,95), p99=percentile(TimeTaken,99) by CsUriStem, ScStatus
     | top 20 by p99 desc
     ```
-  - KQL (application warnings and memory-affecting behavior):
+    - KQL (application warnings and memory-affecting behavior):
     ```kusto
     AppServiceAppLogs
     | where TimeGenerated > ago(12h)
@@ -175,7 +175,7 @@ graph TD
     | project TimeGenerated, CustomLevel, ResultDescription, Logger
     | order by TimeGenerated desc
     ```
-  - CLI (restart for controlled validation window):
+    - CLI (restart for controlled validation window):
     ```bash
     az webapp restart --resource-group <resource-group> --name <app-name>
     az monitor metrics list --resource <app-service-plan-resource-id> --metric "MemoryPercentage" --interval PT1M --aggregation Average
@@ -183,13 +183,13 @@ graph TD
 
 ## 7. Likely Root Cause Patterns
 - **Pattern A: Gradual heap retention in application code**
-  - Common in Python/Node when caches are unbounded, large objects remain referenced, or per-request data leaks into process scope.
+    - Common in Python/Node when caches are unbounded, large objects remain referenced, or per-request data leaks into process scope.
 - **Pattern B: Shared-plan headroom collapse**
-  - One or more sibling apps consume memory spikes, reducing effective capacity and degrading unrelated apps in the same plan.
+    - One or more sibling apps consume memory spikes, reducing effective capacity and degrading unrelated apps in the same plan.
 - **Pattern C: Over-aggressive worker count for SKU size**
-  - Higher worker concurrency increases baseline resident memory and pushes plan into frequent pressure cycles.
+    - Higher worker concurrency increases baseline resident memory and pushes plan into frequent pressure cycles.
 - **Pattern D: Slow dependency causes in-flight memory expansion**
-  - More concurrent in-flight requests hold larger object graphs longer, compounding GC cost and tail latency.
+    - More concurrent in-flight requests hold larger object graphs longer, compounding GC cost and tail latency.
 
 ## 8. Immediate Mitigations
 - Reduce worker/process count to stabilize memory footprint (**temporary**, **production-safe** if traffic is moderate).
@@ -395,7 +395,7 @@ timestamp                  CpuPercentage_Average   MemoryPercentage_Average
 
 - [Lab: Memory Pressure and Worker Degradation](../../lab-guides/memory-pressure.md)
 
-## References
+## Sources
 - [Monitor Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/monitor-app-service)
 - [Azure App Service plan overview](https://learn.microsoft.com/en-us/azure/app-service/overview-hosting-plans)
 - [Scale up an app in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/manage-scale-up)

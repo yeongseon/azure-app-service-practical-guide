@@ -55,11 +55,7 @@ Read in order:
     - [Networking](../platform/networking.md)
     - [Resource Relationships](../platform/resource-relationships.md)
 3. Best Practices sequence:
-   - [Production Baseline](../best-practices/production-baseline.md)
-   - [Scaling](../best-practices/scaling.md)
-   - [Reliability](../best-practices/reliability.md)
-   - [Common Anti-Patterns](../best-practices/common-anti-patterns.md)
-4. Operations sequence:
+    - [Production Baseline](../best-practices/production-baseline.md)    - [Scaling](../best-practices/scaling.md)    - [Reliability](../best-practices/reliability.md)    - [Common Anti-Patterns](../best-practices/common-anti-patterns.md)4. Operations sequence:
     - [Operations Index](../operations/index.md)
     - [Scaling Operations](../operations/scaling.md)
     - [Health and Recovery](../operations/health-recovery.md)
@@ -96,7 +92,7 @@ Read in order:
 - [Operations](../operations/index.md)
 - [Troubleshooting](../troubleshooting/index.md)
 
-## References
+## Sources
 
 - [Get started with Azure App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/getting-started)
 - [Deploy your app to Azure App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/quickstart)

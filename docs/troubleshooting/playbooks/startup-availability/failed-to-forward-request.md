@@ -220,8 +220,8 @@ flowchart LR
 ## 10. Investigation Notes
 
 - Key distinction:
-  - **Container didn't respond to HTTP pings** = startup availability failure before the app is considered ready.
-  - **Failed to forward request** = request-path runtime forwarding failure after traffic is being proxied.
+    - **Container didn't respond to HTTP pings** = startup availability failure before the app is considered ready.
+    - **Failed to forward request** = request-path runtime forwarding failure after traffic is being proxied.
 - On App Service Linux, there is a platform reverse-proxy/middleware hop between internet front-end and your container.
 - A successful process start does not guarantee successful request forwarding.
 - When custom middleware exists in-container (nginx/caddy), you effectively create an additional proxy hop that must be validated.
@@ -452,7 +452,7 @@ WEBSITE_WARMUP_PATH                    /
 !!! tip "How to Read This"
     Use this matrix for first-pass triage: if user-path requests never appear and listener is localhost, skip deeper protocol analysis and fix bind/port first.
 
-## References
+## Sources
 
 - [Configure a custom container for Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container)
 - [Configure a Linux Python app for Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/configure-language-python)

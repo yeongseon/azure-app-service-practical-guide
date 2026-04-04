@@ -35,6 +35,6 @@ Use Node.js-focused recipes for framework and integration scenarios.
 - [Operations](../../operations/index.md)
 - [Reference](../../reference/index.md)
 
-## References
+## Sources
 
 - [Quickstart: Deploy a Node.js web app](https://learn.microsoft.com/azure/app-service/quickstart-nodejs)

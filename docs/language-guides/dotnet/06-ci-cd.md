@@ -174,7 +174,7 @@ Confirm artifact name (`drop`) and deploy package glob path exactly match publis
 
 Inspect Log Stream and Kudu diagnostics; redeploy after a clean publish from the same SDK version as pipeline.
 
-## References
+## Sources
 
 - [Continuous deployment to Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/deploy-continuous-deployment)
 - [Use GitHub Actions to deploy to Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/deploy-github-actions)

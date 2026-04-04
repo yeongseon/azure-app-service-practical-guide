@@ -192,7 +192,7 @@ az webapp config appsettings list \
 - [Best Practices - Scaling](./scaling.md)
 - [Best Practices - Reliability](./reliability.md)
 
-## References
+## Sources
 
 - [Best practices for Azure App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-best-practices)
 - [Secure Azure App Service apps (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-security)

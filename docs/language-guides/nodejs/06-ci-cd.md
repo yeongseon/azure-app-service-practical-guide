@@ -174,6 +174,6 @@ Proceed to **[07-custom-domain-ssl.md](./07-custom-domain-ssl.md)** (Optional) t
 - [Operations Deployment Slots](../../operations/deployment-slots.md)
 - [GitHub Actions Documentation](https://docs.github.com/en/actions)
 
-## References
+## Sources
 - [Azure OIDC Documentation (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/active-directory/develop/workload-identity-federation)
 - [Deploy to App Service using GitHub Actions (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/deploy-github-actions)

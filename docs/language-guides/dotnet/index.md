@@ -35,6 +35,6 @@ Use .NET recipes to apply identity, data, networking, and deployment patterns.
 - [Operations](../../operations/index.md)
 - [Reference](../../reference/index.md)
 
-## References
+## Sources
 
 - [Quickstart: Deploy an ASP.NET Core app](https://learn.microsoft.com/azure/app-service/quickstart-dotnetcore)

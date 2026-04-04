@@ -14,20 +14,19 @@ graph LR
     F --> G[Compare against falsifiable hypothesis]
 ```
 
-## Objective
+## Lab Metadata
 
-Build a reproducible troubleshooting reference for memory-pressure incidents where the app appears healthy (HTTP 200 dominant) but OS-level and worker-level pressure indicators show risk of impending degradation.
-
-## Lab Scope
-
-- Platform: Azure App Service Linux
-- SKU: B1 (single worker)
-- Runtime: Python 3.11
-- Process model: Gunicorn sync workers
-- Trigger style:
-  - 100 sequential memory leak requests
-  - 50 concurrent heavy compute requests
-- Evidence source: sanitized artifacts from real execution
+| Field | Value |
+|---|---|
+| Lab name | `memory-pressure` |
+| Platform | Azure App Service (Linux, B1) |
+| Runtime | Python 3.11 + Gunicorn |
+| App path | `labs/memory-pressure/app` |
+| Trigger script | `labs/memory-pressure/trigger.sh` |
+| Artifact root | `labs/memory-pressure/artifacts-sanitized/` |
+| Focus | Memory pressure and worker degradation under leak + heavy workload |
+| Expected anti-pattern | Retained heap growth with constrained memory headroom across multiple sync workers |
+| Expected symptom family | Low `MemAvailable`, reclaim/swap growth, latency tail expansion before potential hard failures |
 
 !!! info "What this lab demonstrates"
     This run captured **strong memory pressure signals** and **reclaim activity**, but did **not** produce 5xx during the observed window.
@@ -36,7 +35,7 @@ Build a reproducible troubleshooting reference for memory-pressure incidents whe
 
 ---
 
-## Section 1: Background
+## 1) Background
 
 ### 1.1 Why this failure mode happens
 
@@ -109,8 +108,8 @@ sequenceDiagram
 - `/leak` stresses **persistent memory growth** (retained list in `LEAK_BUCKET`).
 - `/heavy` stresses **CPU + transient allocations** (500k list creation + sort).
 - Combined workload reveals whether the system is:
-  - still handling requests,
-  - but already paying increasing reclaim cost.
+    - still handling requests,
+    - but already paying increasing reclaim cost.
 
 ### 1.6 Signals used in this lab
 
@@ -172,7 +171,7 @@ This lab gives a full chain for (1) and (2), with a "no 5xx yet" outcome for (3)
 
 ---
 
-## Section 2: Hypothesis
+## 2) Hypothesis
 
 ### 2.1 Falsifiable hypothesis statement
 
@@ -266,7 +265,7 @@ Any one of the following would weaken/disprove this hypothesis:
 
 ---
 
-## Section 3: Runbook
+## 3) Runbook
 
 ### 3.1 Prerequisite checks
 
@@ -531,7 +530,7 @@ flowchart TD
 
 ---
 
-## Section 4: Experiment Log (Real Artifact Data)
+## 4) Experiment Log
 
 ### 4.1 Artifact inventory used
 
@@ -838,7 +837,7 @@ az group delete --name "$RG" --yes --no-wait
 
 ---
 
-## References
+## Sources
 
 - [Monitor Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/monitor-app-service)
 - [Azure App Service diagnostics logs](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs)

@@ -318,7 +318,7 @@ See [Managed Identity](./managed-identity.md) for the full setup.
 - [Managed Identity](./managed-identity.md)
 - [Key Vault References](./key-vault-reference.md)
 
-## References
+## Sources
 - [Mount Azure Storage as a local share (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/configure-connect-to-azure-storage)
 - [App Service filesystem behavior (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/operating-system-functionality)
 - [Azure Storage performance tiers (Microsoft Learn)](https://learn.microsoft.com/azure/storage/common/storage-account-overview)

@@ -152,7 +152,7 @@ Ensure `mssql-jdbc` version supports managed identity auth and `authentication=A
 - [Key Vault References](key-vault-reference.md)
 - [Tutorial: Configuration](../03-configuration.md)
 
-## References
+## Sources
 
 - [Tutorial: Connect to Azure SQL with managed identity](https://learn.microsoft.com/en-us/azure/azure-sql/database/azure-sql-passwordless-migration-java)
 - [Managed identities for Azure resources](https://learn.microsoft.com/en-us/entra/identity/managed-identities-azure-resources/overview)

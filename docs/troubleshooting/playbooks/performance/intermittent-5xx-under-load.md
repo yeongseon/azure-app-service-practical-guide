@@ -65,16 +65,16 @@ graph TD
 ## 6. Validation and Disproof by Hypothesis
 ### H1: Worker concurrency exhaustion under burst traffic
 - **Signals that support**
-  - 5xx rises when request volume/concurrency rises, especially with increased p95/p99 `TimeTaken`.
-  - Console logs show worker timeout/restart/backlog-style messages.
-  - CPU is moderate while latency and timeout exceptions climb.
-  - Failures concentrate on endpoints with longer synchronous request paths.
+    - 5xx rises when request volume/concurrency rises, especially with increased p95/p99 `TimeTaken`.
+    - Console logs show worker timeout/restart/backlog-style messages.
+    - CPU is moderate while latency and timeout exceptions climb.
+    - Failures concentrate on endpoints with longer synchronous request paths.
 - **Signals that weaken**
-  - 5xx appears even at low request volume with no queueing pattern.
-  - No worker timeout or backlog indicators in console logs.
-  - Failures are uniform across all endpoints including very fast/static ones.
+    - 5xx appears even at low request volume with no queueing pattern.
+    - No worker timeout or backlog indicators in console logs.
+    - Failures are uniform across all endpoints including very fast/static ones.
 - **What to verify**
-  - KQL (status and latency under load):
+    - KQL (status and latency under load):
     ```kusto
     AppServiceHTTPLogs
     | where TimeGenerated > ago(6h)
@@ -82,7 +82,7 @@ graph TD
     | extend errPct = todouble(err5xx) * 100.0 / iif(total == 0, 1, total)
     | order by TimeGenerated asc
     ```
-  - KQL (worker timeout signals):
+    - KQL (worker timeout signals):
     ```kusto
     AppServiceConsoleLogs
     | where TimeGenerated > ago(6h)
@@ -90,7 +90,7 @@ graph TD
     | project TimeGenerated, ResultDescription
     | order by TimeGenerated desc
     ```
-  - CLI (effective runtime/config):
+    - CLI (effective runtime/config):
     ```bash
     az webapp config show --resource-group <resource-group> --name <app-name>
     az webapp config appsettings list --resource-group <resource-group> --name <app-name>
@@ -98,16 +98,16 @@ graph TD
 
 ### H2: Dependency latency cascade
 - **Signals that support**
-  - 502/500 bursts align with timeout/refused/reset messages in console logs.
-  - Problem endpoints are dependency-heavy (DB/API/cache) rather than uniformly distributed.
-  - `TimeTaken` grows before 5xx spikes, indicating upstream stall then timeout.
-  - Retry storms appear (multiple timeout logs per request window).
+    - 502/500 bursts align with timeout/refused/reset messages in console logs.
+    - Problem endpoints are dependency-heavy (DB/API/cache) rather than uniformly distributed.
+    - `TimeTaken` grows before 5xx spikes, indicating upstream stall then timeout.
+    - Retry storms appear (multiple timeout logs per request window).
 - **Signals that weaken**
-  - Dependency-independent endpoints fail with identical timing and volume.
-  - No dependency timeout/error signatures in console logs.
-  - Platform restart/probe events alone explain the full timeline better.
+    - Dependency-independent endpoints fail with identical timing and volume.
+    - No dependency timeout/error signatures in console logs.
+    - Platform restart/probe events alone explain the full timeline better.
 - **What to verify**
-  - KQL (endpoint and status concentration):
+    - KQL (endpoint and status concentration):
     ```kusto
     AppServiceHTTPLogs
     | where TimeGenerated > ago(6h)
@@ -115,7 +115,7 @@ graph TD
     | summarize failures=count(), p95=percentile(TimeTaken,95) by CsUriStem, ScStatus
     | order by failures desc
     ```
-  - KQL (dependency timeout patterns from console):
+    - KQL (dependency timeout patterns from console):
     ```kusto
     AppServiceConsoleLogs
     | where TimeGenerated > ago(6h)
@@ -123,7 +123,7 @@ graph TD
     | summarize hits=count() by bin(TimeGenerated, 5m)
     | order by TimeGenerated asc
     ```
-  - CLI (capture app settings related to dependency timeouts/retries):
+    - CLI (capture app settings related to dependency timeouts/retries):
     ```bash
     az webapp config appsettings list --resource-group <resource-group> --name <app-name>
     az webapp show --resource-group <resource-group> --name <app-name>
@@ -131,16 +131,16 @@ graph TD
 
 ### H3: Platform health probe and restart overlap
 - **Signals that support**
-  - 503 spikes align with platform restart/recycle or health check transitions.
-  - Incident begins shortly after deployment, scale event, or container start.
-  - Console logs show startup/warmup delays near failure window.
-  - Recovery occurs after instance stabilization without code rollback.
+    - 503 spikes align with platform restart/recycle or health check transitions.
+    - Incident begins shortly after deployment, scale event, or container start.
+    - Console logs show startup/warmup delays near failure window.
+    - Recovery occurs after instance stabilization without code rollback.
 - **Signals that weaken**
-  - No restart/recycle/probe events around the incident window.
-  - 500/502 dominate without any platform event correlation.
-  - Errors persist long after stable runtime with no further platform transitions.
+    - No restart/recycle/probe events around the incident window.
+    - 500/502 dominate without any platform event correlation.
+    - Errors persist long after stable runtime with no further platform transitions.
 - **What to verify**
-  - KQL (platform event timeline):
+    - KQL (platform event timeline):
     ```kusto
     AppServicePlatformLogs
     | where TimeGenerated > ago(24h)
@@ -148,7 +148,7 @@ graph TD
     | project TimeGenerated, OperationName, ResultDescription
     | order by TimeGenerated desc
     ```
-  - KQL (503 trend around events):
+    - KQL (503 trend around events):
     ```kusto
     AppServiceHTTPLogs
     | where TimeGenerated > ago(24h)
@@ -156,7 +156,7 @@ graph TD
     | extend s503Pct = todouble(s503) * 100.0 / iif(total == 0, 1, total)
     | order by TimeGenerated asc
     ```
-  - CLI (restart and config baseline):
+    - CLI (restart and config baseline):
     ```bash
     az webapp show --resource-group <resource-group> --name <app-name>
     az webapp config show --resource-group <resource-group> --name <app-name>
@@ -164,16 +164,16 @@ graph TD
 
 ### H4: Outbound connection pressure (including SNAT-like behavior)
 - **Signals that support**
-  - Bursts of 502/500 correlate with outbound-heavy endpoints.
-  - Console logs show connect timeout/socket errors under peak parallelism.
-  - Failures improve after reducing outbound fan-out or enabling connection reuse.
-  - Detector evidence indicates outbound port stress during incident.
+    - Bursts of 502/500 correlate with outbound-heavy endpoints.
+    - Console logs show connect timeout/socket errors under peak parallelism.
+    - Failures improve after reducing outbound fan-out or enabling connection reuse.
+    - Detector evidence indicates outbound port stress during incident.
 - **Signals that weaken**
-  - Endpoints with minimal outbound calls fail at same rate.
-  - No outbound timeout/reset signatures in console logs.
-  - Traffic shape is flat (no bursts), yet failures persist continuously.
+    - Endpoints with minimal outbound calls fail at same rate.
+    - No outbound timeout/reset signatures in console logs.
+    - Traffic shape is flat (no bursts), yet failures persist continuously.
 - **What to verify**
-  - KQL (outbound/error signature sampling):
+    - KQL (outbound/error signature sampling):
     ```kusto
     AppServiceConsoleLogs
     | where TimeGenerated > ago(6h)
@@ -181,7 +181,7 @@ graph TD
     | project TimeGenerated, ResultDescription
     | order by TimeGenerated desc
     ```
-  - KQL (5xx by endpoint and time):
+    - KQL (5xx by endpoint and time):
     ```kusto
     AppServiceHTTPLogs
     | where TimeGenerated > ago(6h)
@@ -189,7 +189,7 @@ graph TD
     | summarize failures=count() by bin(TimeGenerated, 5m), CsUriStem, ScStatus
     | order by TimeGenerated asc
     ```
-  - CLI (outbound-related app config and restart action if needed):
+    - CLI (outbound-related app config and restart action if needed):
     ```bash
     az webapp config appsettings list --resource-group <resource-group> --name <app-name>
     az webapp restart --resource-group <resource-group> --name <app-name>
@@ -197,13 +197,13 @@ graph TD
 
 ## 7. Likely Root Cause Patterns
 - **Pattern A: Sync worker model + blocking calls = intermittent saturation**
-  - Under bursts, a small set of long-running requests occupies all workers; queued requests time out and surface as mixed 500/502.
+    - Under bursts, a small set of long-running requests occupies all workers; queued requests time out and surface as mixed 500/502.
 - **Pattern B: Dependency timeout cascade with retries**
-  - One slow dependency increases in-flight request duration, retries amplify load, and transient 5xx appears until backlog drains.
+    - One slow dependency increases in-flight request duration, retries amplify load, and transient 5xx appears until backlog drains.
 - **Pattern C: Health-probe instability during restart/warmup windows**
-  - Containers transition through unhealthy states during startup/recycle, causing temporary 503 that self-heals.
+    - Containers transition through unhealthy states during startup/recycle, causing temporary 503 that self-heals.
 - **Pattern D: Outbound connection pressure under high fan-out**
-  - Large numbers of short-lived outbound connections increase connect failures and timeout-driven 5xx.
+    - Large numbers of short-lived outbound connections increase connect failures and timeout-driven 5xx.
 
 ## 8. Immediate Mitigations
 - Increase worker capacity conservatively (workers/threads) and retest burst path (**temporary**, **risk-bearing**: may raise memory pressure).
@@ -399,7 +399,7 @@ Running  /subscriptions/<subscription-id>/resourceGroups/<resource-group>/provid
 
 - [Lab: Intermittent 5xx Under Load](../../lab-guides/intermittent-5xx.md)
 
-## References
+## Sources
 - [Troubleshoot HTTP errors of "502 bad gateway" and "503 service unavailable" in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503)
 - [Get started with autoscale in Azure](https://learn.microsoft.com/en-us/azure/azure-monitor/autoscale/autoscale-get-started)
 - [Azure App Service diagnostics overview](https://learn.microsoft.com/en-us/azure/app-service/overview-diagnostics)

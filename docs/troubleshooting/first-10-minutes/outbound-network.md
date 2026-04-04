@@ -22,9 +22,7 @@ graph TD
 ## Step 1: Classify inbound vs outbound symptom first
 Avoid losing time on ingress when the failure is dependency egress.
 - Quick check:
-  - Inbound issue: clients cannot reach your app endpoint.
-  - Outbound issue: app endpoint is reachable, but dependency calls fail.
-- Validate with app logs or synthetic call path.
+    - Inbound issue: clients cannot reach your app endpoint.    - Outbound issue: app endpoint is reachable, but dependency calls fail.- Validate with app logs or synthetic call path.
 - Good signal: clear isolation to outbound-only failure.
 - Bad signal: mixed signals (both inbound and outbound), requiring parallel checks.
 
@@ -74,9 +72,7 @@ nslookup <dependency-private-endpoint-fqdn>
 ## Step 6: Check Private Endpoint + DNS mapping (if applicable)
 Private Endpoint without correct DNS zone linkage can silently route to wrong targets.
 - Portal path:
-  - **Dependency resource -> Networking -> Private endpoint connections**
-  - **Private DNS zones -> Virtual network links**
-- Good signal: approved Private Endpoint and correct private DNS zone links.
+    - **Dependency resource -> Networking -> Private endpoint connections**    - **Private DNS zones -> Virtual network links**- Good signal: approved Private Endpoint and correct private DNS zone links.
 - Bad signal: pending/rejected endpoint, missing DNS link, or public IP resolution when private expected.
 
 ## Step 7: Check NAT Gateway attachment and health (if applicable)
@@ -109,20 +105,14 @@ AppServiceConsoleLogs
 ## Decision Points
 After these checks, you should be able to:
 - Narrow to 1-2 hypotheses:
-  - **SNAT pressure**: detector + TCP connection trend support exhaustion
-  - **DNS issue**: nslookup failures or wrong resolution path
-  - **Route/Private Endpoint issue**: VNet/PE/DNS zone mismatch
-- Choose next playbook:
-  - SNAT -> connection reuse/SNAT playbook
-  - DNS -> DNS resolution playbook
-  - Route/PE -> Private Endpoint and custom DNS playbook
-
+    - **SNAT pressure**: detector + TCP connection trend support exhaustion    - **DNS issue**: nslookup failures or wrong resolution path    - **Route/Private Endpoint issue**: VNet/PE/DNS zone mismatch- Choose next playbook:
+    - SNAT -> connection reuse/SNAT playbook    - DNS -> DNS resolution playbook    - Route/PE -> Private Endpoint and custom DNS playbook
 ## Next Steps
 - [SNAT or Application Issue?](../playbooks/outbound-network/snat-or-application-issue.md)
 - [DNS Resolution (VNet-Integrated)](../playbooks/outbound-network/dns-resolution-vnet-integrated-app-service.md)
 - [Private Endpoint / Custom DNS Confusion](../playbooks/outbound-network/private-endpoint-custom-dns-route-confusion.md)
 
-## References
+## Sources
 
 - [Troubleshoot outbound connection errors in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-intermittent-outbound-connection-errors)
 - [Azure App Service networking features](https://learn.microsoft.com/en-us/azure/app-service/networking-features)

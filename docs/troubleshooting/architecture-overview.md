@@ -176,17 +176,11 @@ AppServiceConsoleLogs
 ## 6) Fast routing examples
 
 - **Example A**: 5xx appears only during bursts.
-  - Start with runtime/worker model (FP-RUN-03), then outbound pressure (FP-NET-02).
-  - Open: [Intermittent 5xx Under Load](playbooks/performance/intermittent-5xx-under-load.md) and [SNAT or Application Issue?](playbooks/outbound-network/snat-or-application-issue.md).
-
+    - Start with runtime/worker model (FP-RUN-03), then outbound pressure (FP-NET-02).    - Open: [Intermittent 5xx Under Load](playbooks/performance/intermittent-5xx-under-load.md) and [SNAT or Application Issue?](playbooks/outbound-network/snat-or-application-issue.md).
 - **Example B**: deployment says success, app unavailable.
-  - Start with deployment path (FP-DEP-01/02/03).
-  - Open: [Deployment Succeeded but Startup Failed](playbooks/startup-availability/deployment-succeeded-startup-failed.md) and [Container Didn't Respond to HTTP Pings](playbooks/startup-availability/container-didnt-respond-to-http-pings.md).
-
+    - Start with deployment path (FP-DEP-01/02/03).    - Open: [Deployment Succeeded but Startup Failed](playbooks/startup-availability/deployment-succeeded-startup-failed.md) and [Container Didn't Respond to HTTP Pings](playbooks/startup-availability/container-didnt-respond-to-http-pings.md).
 - **Example C**: outbound calls fail but only for private endpoint targets.
-  - Start with outbound path (FP-NET-01/03).
-  - Open: [Private Endpoint / Custom DNS Route Confusion](playbooks/outbound-network/private-endpoint-custom-dns-route-confusion.md).
-
+    - Start with outbound path (FP-NET-01/03).    - Open: [Private Endpoint / Custom DNS Route Confusion](playbooks/outbound-network/private-endpoint-custom-dns-route-confusion.md).
 !!! note "How to use this architecture page during incidents"
     Do not treat any single metric as proof.
     Use this page to identify the most likely failure layer, then validate with time-correlated evidence.
@@ -203,7 +197,7 @@ AppServiceConsoleLogs
 - [Decision Tree](decision-tree.md)
 - [Troubleshooting Mental Model](mental-model.md)
 
-## References
+## Sources
 
 - [Azure App Service diagnostics overview](https://learn.microsoft.com/en-us/azure/app-service/overview-diagnostics)
 - [Monitor Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/monitor-app-service)

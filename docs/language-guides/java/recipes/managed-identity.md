@@ -153,7 +153,7 @@ Likely local credential succeeded but cloud identity lacks RBAC. Re-check Azure 
 - [Key Vault References](key-vault-reference.md)
 - [Tutorial: Configuration](../03-configuration.md)
 
-## References
+## Sources
 
 - [Use managed identities for App Service and Azure Functions](https://learn.microsoft.com/en-us/azure/app-service/overview-managed-identity)
 - [Managed identities for Azure resources overview](https://learn.microsoft.com/en-us/entra/identity/managed-identities-azure-resources/overview)

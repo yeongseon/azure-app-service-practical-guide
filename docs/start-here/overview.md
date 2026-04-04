@@ -58,7 +58,7 @@ graph TD
 - [Troubleshooting](../troubleshooting/index.md)
 - [Reference](../reference/index.md)
 
-## References
+## Sources
 
 - [Azure App Service overview (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview)
 - [Azure App Service documentation hub (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/)

@@ -83,6 +83,6 @@ Add `python-dotenv` for local `.env` loading, then compare request latency and m
 ## See Also
 - [02 - First Deploy](./02-first-deploy.md)
 
-## References
+## Sources
 - [Configure a Linux Python app (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/configure-language-python)
 - [Quickstart: Deploy a Python web app (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/quickstart-python)

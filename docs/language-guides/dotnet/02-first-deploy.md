@@ -144,7 +144,7 @@ Validate App Service configuration after deployment:
 az webapp config show --resource-group "$RESOURCE_GROUP_NAME" --name "$WEB_APP_NAME" --output json
 ```
 
-## References
+## Sources
 
 - [Deploy a ZIP file to Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/deploy-zip)
 - [Quickstart: Deploy an ASP.NET web app](https://learn.microsoft.com/en-us/azure/app-service/quickstart-dotnetcore)

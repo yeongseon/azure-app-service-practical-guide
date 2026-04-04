@@ -129,6 +129,6 @@ node your-app.js
 - [Redis Cache for Sessions](./redis.md)
 - [Networking Concepts](../../../platform/networking.md)
 
-## References
+## Sources
 - [Azure SQL Database connection with Node.js (Microsoft Learn)](https://learn.microsoft.com/azure/azure-sql/database/connect-query-nodejs)
 - [Connect App Service to Azure Database using Managed Identity (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/tutorial-connect-msi-azure-database)

@@ -65,23 +65,23 @@ graph TD
 ## 6. Validation and Disproof by Hypothesis
 ### H1: Downstream dependency slowness
 - **Signals that support**
-  - `AppServiceHTTPLogs` shows high `TimeTaken` only on endpoints known to call DB/external APIs.
-  - Application Insights dependencies have increased duration aligned with HTTP latency spikes.
-  - CPU remains low while request duration and upstream timeout/retry logs increase.
-  - Slow periods align with dependency-side incidents (Azure status page, API provider incident report, DB load spikes).
+    - `AppServiceHTTPLogs` shows high `TimeTaken` only on endpoints known to call DB/external APIs.
+    - Application Insights dependencies have increased duration aligned with HTTP latency spikes.
+    - CPU remains low while request duration and upstream timeout/retry logs increase.
+    - Slow periods align with dependency-side incidents (Azure status page, API provider incident report, DB load spikes).
 - **Signals that weaken**
-  - Static/light endpoints with no dependency calls are equally slow.
-  - Dependency durations remain stable while request latency rises.
-  - Local in-process operations are slow even when dependency calls are bypassed.
+    - Static/light endpoints with no dependency calls are equally slow.
+    - Dependency durations remain stable while request latency rises.
+    - Local in-process operations are slow even when dependency calls are bypassed.
 - **What to verify**
-  - KQL (`AppServiceHTTPLogs`):
+    - KQL (`AppServiceHTTPLogs`):
     ```kusto
     AppServiceHTTPLogs
     | where TimeGenerated > ago(6h)
     | summarize p50=percentile(TimeTaken,50), p95=percentile(TimeTaken,95), p99=percentile(TimeTaken,99), count() by bin(TimeGenerated, 5m), CsUriStem
     | order by TimeGenerated asc
     ```
-  - KQL (Application Insights dependency correlation):
+    - KQL (Application Insights dependency correlation):
     ```kusto
     // Time-bin approximation — for precise per-request correlation, join on operation_Id
     requests
@@ -94,7 +94,7 @@ graph TD
       ) on timestamp
     | order by timestamp asc
     ```
-  - CLI (dependency state examples):
+    - CLI (dependency state examples):
     ```bash
     az monitor metrics list --resource <sql-resource-id> --metric cpu_percent --interval PT5M --aggregation Average
     az monitor metrics list --resource <storage-account-resource-id> --metric SuccessE2ELatency --interval PT5M --aggregation Average
@@ -102,16 +102,16 @@ graph TD
 
 ### H2: Thread/worker starvation
 - **Signals that support**
-  - `AppServiceConsoleLogs` includes Gunicorn messages such as `WORKER TIMEOUT`, worker restart loops, backlog behavior.
-  - Latency spikes coincide with increased request concurrency, but CPU is still not saturated.
-  - High tail latency (P99) with moderate median (P50), indicating queueing/contention.
-  - DB/HTTP client connection pool exhaustion logs (`max pool size reached`, acquire timeout).
+    - `AppServiceConsoleLogs` includes Gunicorn messages such as `WORKER TIMEOUT`, worker restart loops, backlog behavior.
+    - Latency spikes coincide with increased request concurrency, but CPU is still not saturated.
+    - High tail latency (P99) with moderate median (P50), indicating queueing/contention.
+    - DB/HTTP client connection pool exhaustion logs (`max pool size reached`, acquire timeout).
 - **Signals that weaken**
-  - Worker count and thread pool are sized conservatively with no timeout/backlog logs.
-  - Low traffic periods still show high latency.
-  - Endpoints with no blocking operations remain fast while blocked endpoints are isolated to dependency delay (supports H1 more strongly).
+    - Worker count and thread pool are sized conservatively with no timeout/backlog logs.
+    - Low traffic periods still show high latency.
+    - Endpoints with no blocking operations remain fast while blocked endpoints are isolated to dependency delay (supports H1 more strongly).
 - **What to verify**
-  - KQL (`AppServiceConsoleLogs` worker errors):
+    - KQL (`AppServiceConsoleLogs` worker errors):
     ```kusto
     AppServiceConsoleLogs
     | where TimeGenerated > ago(6h)
@@ -119,29 +119,29 @@ graph TD
     | project TimeGenerated, ResultDescription
     | order by TimeGenerated desc
     ```
-  - CLI (Linux App Service app settings and startup command):
+    - CLI (Linux App Service app settings and startup command):
     ```bash
     az webapp config show --resource-group <resource-group> --name <app-name>
     az webapp config appsettings list --resource-group <resource-group> --name <app-name>
     ```
-  - Validate current effective Gunicorn startup parameters (`workers`, `threads`, `timeout`) from startup command / container logs.
+    - Validate current effective Gunicorn startup parameters (`workers`, `threads`, `timeout`) from startup command / container logs.
 
 ### H3: Memory pressure causing GC pauses or degraded responsiveness
 - **Signals that support**
-  - App Service Plan Memory % exceeds ~80% during slowdown windows while CPU stays low/moderate.
-  - Latency gradually degrades over uptime, then recovers after worker recycle/restart.
-  - Console logs show memory/GC pressure symptoms (large heap growth, OOM-near behavior, frequent full GC).
-  - Multiple apps share the same plan and aggregate memory pressure correlates with incident windows.
+    - App Service Plan Memory % exceeds ~80% during slowdown windows while CPU stays low/moderate.
+    - Latency gradually degrades over uptime, then recovers after worker recycle/restart.
+    - Console logs show memory/GC pressure symptoms (large heap growth, OOM-near behavior, frequent full GC).
+    - Multiple apps share the same plan and aggregate memory pressure correlates with incident windows.
 - **Signals that weaken**
-  - Memory % remains stable and comfortably below pressure thresholds during incidents.
-  - No memory growth trend over time; performance degrades immediately after deployment (points to H4/H2).
-  - Restart does not temporarily improve latency.
+    - Memory % remains stable and comfortably below pressure thresholds during incidents.
+    - No memory growth trend over time; performance degrades immediately after deployment (points to H4/H2).
+    - Restart does not temporarily improve latency.
 - **What to verify**
-  - CLI (plan metrics):
+    - CLI (plan metrics):
     ```bash
     az monitor metrics list --resource <app-service-plan-resource-id> --metric "CpuPercentage,MemoryPercentage" --interval PT1M --aggregation Average
     ```
-  - KQL (latency vs restart correlation):
+    - KQL (latency vs restart correlation):
     ```kusto
     let slow = AppServiceHTTPLogs
     | where TimeGenerated > ago(24h)
@@ -154,20 +154,20 @@ graph TD
     | join kind=leftouter restarts on TimeGenerated
     | order by TimeGenerated asc
     ```
-  - Compare memory trend across all apps in the same plan, not only the affected app.
+    - Compare memory trend across all apps in the same plan, not only the affected app.
 
 ### H4: Platform-side delays (cold start, SNAT contention, shared I/O bottlenecks)
 - **Signals that support**
-  - Latency spikes begin right after restart, scale event, slot swap, or deployment.
-  - `AppServicePlatformLogs` show restart/container initialization events aligned with user-facing delay.
-  - SNAT detector reports high/critical outbound port usage during high-latency periods.
-  - Endpoints that perform outbound calls or shared storage access are disproportionately slow.
+    - Latency spikes begin right after restart, scale event, slot swap, or deployment.
+    - `AppServicePlatformLogs` show restart/container initialization events aligned with user-facing delay.
+    - SNAT detector reports high/critical outbound port usage during high-latency periods.
+    - Endpoints that perform outbound calls or shared storage access are disproportionately slow.
 - **Signals that weaken**
-  - No restart/scale/deployment event near incident windows.
-  - SNAT detector is healthy and outbound call volume is low.
-  - Warm instances still show consistent latency long after startup.
+    - No restart/scale/deployment event near incident windows.
+    - SNAT detector is healthy and outbound call volume is low.
+    - Warm instances still show consistent latency long after startup.
 - **What to verify**
-  - KQL (`AppServicePlatformLogs` event timeline):
+    - KQL (`AppServicePlatformLogs` event timeline):
     ```kusto
     AppServicePlatformLogs
     | where TimeGenerated > ago(24h)
@@ -175,23 +175,23 @@ graph TD
     | project TimeGenerated, OperationName, ResultDescription
     | order by TimeGenerated desc
     ```
-  - Azure portal detector: **Diagnose and Solve Problems** -> **SNAT Port Exhaustion**.
-  - CLI (deployment history timing):
+    - Azure portal detector: **Diagnose and Solve Problems** -> **SNAT Port Exhaustion**.
+    - CLI (deployment history timing):
     ```bash
     az webapp deployment list --resource-group <resource-group> --name <app-name> --output table
     az resource show --ids <webapp-resource-id> --query "properties.siteConfig.linuxFxVersion"
     ```
-  - Confirm whether code path reads/writes on mounted/shared storage for hot request paths.
+    - Confirm whether code path reads/writes on mounted/shared storage for hot request paths.
 
 ## 7. Likely Root Cause Patterns
 - **Pattern A: Blocking dependency calls exhaust Gunicorn concurrency**
-  - Python App Service Linux apps often run Gunicorn sync workers. A few long synchronous dependency calls can occupy all workers, increasing queue wait and P95/P99 without high CPU.
+    - Python App Service Linux apps often run Gunicorn sync workers. A few long synchronous dependency calls can occupy all workers, increasing queue wait and P95/P99 without high CPU.
 - **Pattern B: Memory leak or heap growth drives periodic degradation**
-  - Over hours/days, memory pressure rises at plan/app level; latency worsens before recycle, then temporarily improves after restart.
+    - Over hours/days, memory pressure rises at plan/app level; latency worsens before recycle, then temporarily improves after restart.
 - **Pattern C: SNAT contention for outbound-heavy workloads**
-  - High outbound connection churn (short-lived HTTP calls, insufficient connection reuse) causes connect delays/timeouts while CPU stays low.
+    - High outbound connection churn (short-lived HTTP calls, insufficient connection reuse) causes connect delays/timeouts while CPU stays low.
 - **Pattern D: Cold-start windows after restart/deployment**
-  - Container initialization, dependency warm-up, and JIT/cache priming create temporary slow responses immediately after app restarts or new instances come online.
+    - Container initialization, dependency warm-up, and JIT/cache priming create temporary slow responses immediately after app restarts or new instances come online.
 
 ## 8. Immediate Mitigations
 - Increase Gunicorn workers/threads conservatively and redeploy startup command (**temporary**, **risk-bearing**: can increase memory pressure).
@@ -389,7 +389,7 @@ $ az webapp config appsettings list --resource-group <resource-group> --name <ap
 
 - [Lab: Slow Start / Cold Start](../../lab-guides/slow-start-cold-start.md)
 
-## References
+## Sources
 - [Troubleshoot slow app performance in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-performance-degradation)
 - [Monitor Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/monitor-app-service)
 - [Enable diagnostic logging for apps in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs)

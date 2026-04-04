@@ -150,7 +150,7 @@ Check session namespace consistency and verify all instances point to the same R
 - [VNet Integration](vnet-integration.md)
 - [Tutorial: Scaling](../../../operations/scaling.md)
 
-## References
+## Sources
 
 - [Quickstart: Use Azure Cache for Redis in Java](https://learn.microsoft.com/en-us/azure/azure-cache-for-redis/cache-java-get-started)
 - [Azure Cache for Redis documentation](https://learn.microsoft.com/en-us/azure/azure-cache-for-redis/)

@@ -20,9 +20,9 @@ flowchart LR
 - Existing App Service Plan and Web App
 - Metrics flowing to Azure Monitor
 - Variables set in shell:
-  - `RG`
-  - `APP_NAME`
-  - `PLAN_NAME`
+    - `RG`
+    - `APP_NAME`
+    - `PLAN_NAME`
 
 ## Main Content
 
@@ -31,8 +31,8 @@ flowchart LR
 - **Scale up (vertical):** change plan SKU for more CPU/memory per instance
 - **Scale out (horizontal):** increase worker instance count
 - **Rule of thumb:**
-  - scale up when single instance memory/CPU saturation occurs
-  - scale out when traffic concurrency is the bottleneck
+    - scale up when single instance memory/CPU saturation occurs
+    - scale out when traffic concurrency is the bottleneck
 
 ### Inspect Current Capacity
 

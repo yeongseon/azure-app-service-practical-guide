@@ -245,7 +245,7 @@ Capacity formula example:
 - [Best Practices - Reliability](./reliability.md)
 - [Best Practices - Common Anti-Patterns](./common-anti-patterns.md)
 
-## References
+## Sources
 
 - [Scale up an app in Azure App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/manage-scale-up)
 - [Get started with autoscale in Azure (Microsoft Learn)](https://learn.microsoft.com/azure/azure-monitor/autoscale/autoscale-get-started)

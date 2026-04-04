@@ -63,7 +63,7 @@ Quick reference for common Azure App Service platform limits and quota-related b
 - Missing files due to writing into ephemeral paths
 - Slow or dropped long-running HTTP requests over frontend timeout
 
-## References
+## Sources
 
 - [Azure App Service Limits (Microsoft Learn)](https://learn.microsoft.com/azure/azure-resource-manager/management/azure-subscription-service-limits#app-service-limits)
 - [App Service Plan Overview (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-hosting-plans)

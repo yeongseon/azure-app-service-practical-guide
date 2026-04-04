@@ -150,7 +150,7 @@ az webapp config ssl list --resource-group "$RESOURCE_GROUP_NAME" --output table
 
 Check hostname binding list and ensure the custom host is attached to the right app/slot.
 
-## References
+## Sources
 
 - [Map a custom DNS name to Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/app-service-web-tutorial-custom-domain)
 - [Secure a custom DNS name with a TLS/SSL binding](https://learn.microsoft.com/en-us/azure/app-service/configure-ssl-bindings)

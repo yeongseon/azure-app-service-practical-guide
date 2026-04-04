@@ -40,21 +40,21 @@ Use this table as your decision map for the Best Practices section.
 Follow this sequence for each workload:
 
 1. **Read Platform concepts first**
-   - Understand hosting model, request flow, scaling, and networking constraints.
-   - Confirm whether your workload assumptions match platform reality.
+    - Understand hosting model, request flow, scaling, and networking constraints.
+    - Confirm whether your workload assumptions match platform reality.
 2. **Define your baseline decisions**
-   - Pick plan tier, identity model, TLS policy, and logging targets.
-   - Write these down as explicit team standards.
+    - Pick plan tier, identity model, TLS policy, and logging targets.
+    - Write these down as explicit team standards.
 3. **Review domain-specific best practices**
-   - Networking for connectivity and DNS.
-   - Security for identity, secret handling, and perimeter controls.
-   - Deployment/scaling/reliability patterns based on risk tolerance.
+    - Networking for connectivity and DNS.
+    - Security for identity, secret handling, and perimeter controls.
+    - Deployment/scaling/reliability patterns based on risk tolerance.
 4. **Implement in language guides**
-   - Translate decisions into app settings, code, and CI/CD.
-   - Avoid inventing standards during implementation.
+    - Translate decisions into app settings, code, and CI/CD.
+    - Avoid inventing standards during implementation.
 5. **Operationalize and re-validate**
-   - Monitor drift from baseline.
-   - Revisit decisions when workload profile changes.
+    - Monitor drift from baseline.
+    - Revisit decisions when workload profile changes.
 
 !!! info "Design judgment over checklist thinking"
     This section is not only a static checklist. Use it to reason about trade-offs in your context: traffic shape, compliance, team maturity, dependency profile, and cost envelope.
@@ -197,7 +197,7 @@ Treat this section as a living operational standard:
 - [Language Guides](../language-guides/index.md)
 - [Troubleshooting](../troubleshooting/index.md)
 
-## References
+## Sources
 
 - [Azure App Service documentation (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/)
 - [Overview of App Service best practices](https://learn.microsoft.com/azure/app-service/overview-best-practices)

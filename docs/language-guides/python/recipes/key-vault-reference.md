@@ -90,12 +90,9 @@ def connect_with_secret():
 ## Troubleshooting
 
 - Environment variable contains literal `@Microsoft.KeyVault(...)`:
-  - Reference resolution failed; verify identity and Key Vault permissions.
-- `Secret not found` or stale value:
-  - Check secret name/version and remember updates may take time to refresh.
-- Works in one slot, fails in another:
-  - Confirm slot-specific app settings and identity assignments.
-
+    - Reference resolution failed; verify identity and Key Vault permissions.- `Secret not found` or stale value:
+    - Check secret name/version and remember updates may take time to refresh.- Works in one slot, fails in another:
+    - Confirm slot-specific app settings and identity assignments.
 ## Advanced Topics
 
 - Combine with slot settings to isolate staging vs production secrets.
@@ -107,6 +104,6 @@ def connect_with_secret():
 - [Redis Cache with redis-py](./redis.md)
 - [Configure App Settings](../03-configuration.md)
 
-## References
+## Sources
 - [Use Key Vault references as app settings (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/app-service-key-vault-references)
 - [Azure Key Vault overview (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/key-vault/general/overview)

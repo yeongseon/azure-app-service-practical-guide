@@ -399,7 +399,7 @@ HealthCheckPath    LinuxFxVersion  AppCommandLine
 
 - [Lab: Slot Swap Config Drift](../../lab-guides/slot-swap-config-drift.md)
 
-## References
+## Sources
 
 - [Monitor App Service instances using Health check](https://learn.microsoft.com/en-us/azure/app-service/monitor-instances-health-check)
 - [Set up staging environments in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots)

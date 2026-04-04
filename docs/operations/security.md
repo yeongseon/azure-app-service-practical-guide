@@ -8,8 +8,8 @@ Protect App Service workloads with layered controls: identity, authentication, t
 - Azure Entra tenant and permissions for identity/auth configuration
 - Security ownership defined for app, platform, and network controls
 - Variables set:
-  - `RG`
-  - `APP_NAME`
+    - `RG`
+    - `APP_NAME`
 
 ## Main Content
 

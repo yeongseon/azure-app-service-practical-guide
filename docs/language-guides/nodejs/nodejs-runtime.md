@@ -175,6 +175,6 @@ Cold starts occur when an app scales out or starts after being idle.
 - [How App Service Works](../../platform/how-app-service-works.md)
 - [CLI Cheatsheet](../../reference/cli-cheatsheet.md)
 
-## References
+## Sources
 - [Configure Node.js on Azure App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/configure-language-nodejs)
 - [Node.js version support in App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/language-support-policy)

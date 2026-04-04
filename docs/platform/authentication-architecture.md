@@ -2,7 +2,9 @@
 
 Azure App Service Authentication/Authorization (commonly called **Easy Auth**) implements a platform-level authentication layer that executes before your application code. This document explains the runtime architecture, request flows, token lifecycle, and design boundaries you must account for in production systems.
 
-## How App Service Authentication Works
+## Main Content
+
+### How App Service Authentication Works
 
 App Service inserts an authentication component into the inbound request path so identity is established before requests are handed to your app process.
 
@@ -56,7 +58,7 @@ When authentication succeeds, App Service adds identity context headers such as:
 
 Your code consumes these headers as trusted platform inputs only when requests are guaranteed to come through App Service frontends and worker proxies.
 
-## Authentication Flow
+### Authentication Flow
 
 App Service supports two primary interaction models depending on client type and trust boundaries.
 
@@ -134,7 +136,7 @@ Characteristics:
 - App Service still centralizes token validation and provider trust config.
 - Useful when front-end and back-end are decoupled and use explicit bearer tokens.
 
-## Token Lifecycle
+### Token Lifecycle
 
 App Service token management combines client session state and a server-side token store.
 
@@ -190,7 +192,7 @@ stateDiagram-v2
     SignedOut --> Unauthenticated
 ```
 
-## Identity Providers
+### Identity Providers
 
 Provider support varies by protocol details and enterprise governance requirements.
 
@@ -212,7 +214,7 @@ Provider selection considerations:
 - Conditional Access and MFA enforcement behavior.
 - Operational ownership of secrets, certificates, and metadata rollover.
 
-## Authentication vs Authorization
+### Authentication vs Authorization
 
 App Service auth settings establish **identity**, not full access policy.
 
@@ -253,7 +255,7 @@ tenant isolation, action-level policy"]
     App -.-> AppNote
 ```
 
-## Architecture Patterns
+### Architecture Patterns
 
 ### Pattern 1: Platform-Only Authentication
 
@@ -328,7 +330,7 @@ flowchart TB
     end
 ```
 
-## Platform Behavior Details
+## Advanced Topics
 
 ### Linux vs Windows Differences
 
@@ -390,7 +392,7 @@ Mitigations:
 - [How App Service Works](./how-app-service-works.md)
 - [Security Operations](../operations/security.md)
 
-## References
+## Sources
 
 - [Authentication and authorization in Azure App Service](https://learn.microsoft.com/azure/app-service/overview-authentication-authorization)
 - [Configure authentication providers](https://learn.microsoft.com/azure/app-service/configure-authentication-provider-aad)

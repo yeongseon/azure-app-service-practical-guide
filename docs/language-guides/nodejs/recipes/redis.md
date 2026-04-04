@@ -120,6 +120,6 @@ az webapp config appsettings set --name $APP_NAME --resource-group $RG --setting
 - [Networking Concepts](../../../platform/networking.md)
 - [Cosmos DB Integration](./cosmosdb.md)
 
-## References
+## Sources
 - [Get started with Azure Cache for Redis and Node.js (Microsoft Learn)](https://learn.microsoft.com/azure/azure-cache-for-redis/cache-nodejs-get-started)
 - [Best practices for Azure Cache for Redis (Microsoft Learn)](https://learn.microsoft.com/azure/azure-cache-for-redis/cache-best-practices-development)

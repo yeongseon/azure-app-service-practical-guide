@@ -23,8 +23,8 @@ flowchart TD
 - A lightweight health endpoint (for example `/health`)
 - Azure Monitor access for metrics and activity logs
 - Variables set:
-  - `RG`
-  - `APP_NAME`
+    - `RG`
+    - `APP_NAME`
 
 ## Main Content
 

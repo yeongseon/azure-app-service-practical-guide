@@ -183,7 +183,7 @@ az webapp config appsettings set \
 
 Confirm you are using instrumented libraries and avoid suppressing `DiagnosticSource` activity in custom middleware.
 
-## References
+## Sources
 
 - [Enable diagnostics logging for apps in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs)
 - [Monitor Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/monitor-app-service)

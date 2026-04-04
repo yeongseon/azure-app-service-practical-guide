@@ -72,8 +72,8 @@ flowchart LR
 - Signals that support: `AppServicePlatformLogs` show swap success followed by recycle/restart; restart correlates with setting diffs.
 - Signals that weaken: no restart/recycle events after swap, stable instance IDs, and no config mutation.
 - What to verify:
-  - Compare app settings across slots and identify startup-critical values not marked as slot settings.
-  - Confirm whether settings changed at swap boundary and whether this aligns to restart timestamp.
+    - Compare app settings across slots and identify startup-critical values not marked as slot settings.
+    - Confirm whether settings changed at swap boundary and whether this aligns to restart timestamp.
 
 ```kusto
 let windowStart = ago(24h);
@@ -94,8 +94,8 @@ az webapp deployment slot swap --resource-group <resource-group> --name <app-nam
 - Signals that support: same build works in staging but fails in production post-swap with missing/incorrect endpoint, secret, or feature flags.
 - Signals that weaken: explicit diff confirms startup-critical parity and correct slot-setting intent.
 - What to verify:
-  - Diff app settings and connection strings with focus on `slotSetting=true` entries.
-  - Validate intended sticky/non-sticky behavior for each startup-critical value.
+    - Diff app settings and connection strings with focus on `slotSetting=true` entries.
+    - Validate intended sticky/non-sticky behavior for each startup-critical value.
 
 ```kusto
 let windowStart = ago(24h);
@@ -117,9 +117,9 @@ az webapp config connection-string list --resource-group <resource-group> --name
 - Signals that support: swap succeeds quickly, user traffic starts, then high error/latency while app still initializing.
 - Signals that weaken: dedicated warm-up path exists, returns expected status, and post-swap error spike absent.
 - What to verify:
-  - Ensure `WEBSITE_SWAP_WARMUP_PING_PATH` is set to a lightweight readiness endpoint.
-  - Validate accepted statuses are explicit and minimal.
-  - Check auto-swap timing vs cold-start duration (`WEBSITES_CONTAINER_START_TIME_LIMIT`).
+    - Ensure `WEBSITE_SWAP_WARMUP_PING_PATH` is set to a lightweight readiness endpoint.
+    - Validate accepted statuses are explicit and minimal.
+    - Check auto-swap timing vs cold-start duration (`WEBSITES_CONTAINER_START_TIME_LIMIT`).
 
 ```kusto
 let windowStart = ago(24h);
@@ -139,9 +139,9 @@ az webapp deployment slot auto-swap --resource-group <resource-group> --name <ap
 - Signals that support: immediate DB/auth/storage failures after swap only on production slot context.
 - Signals that weaken: dependency access validates successfully under production slot identity and connection settings.
 - What to verify:
-  - Connection string values/Key Vault references resolve correctly in production slot.
-  - Managed identity principal used by production has required roles at correct scope.
-  - Any startup-cached tokens or pooled connections are refreshed after swap.
+    - Connection string values/Key Vault references resolve correctly in production slot.
+    - Managed identity principal used by production has required roles at correct scope.
+    - Any startup-cached tokens or pooled connections are refreshed after swap.
 
 ```kusto
 let windowStart = ago(24h);
@@ -446,7 +446,7 @@ WEBSITE_SWAP_WARMUP_PING_STATUSES 200                                           
 
 - [Lab: Slot Swap Config Drift](../../lab-guides/slot-swap-config-drift.md)
 
-## References
+## Sources
 
 - [Set up staging environments in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots)
 - [Configure an App Service app](https://learn.microsoft.com/en-us/azure/app-service/configure-common)

@@ -142,7 +142,7 @@ Ensure document model uses compatible types and includes an `id` field.
 - [Managed Identity](managed-identity.md)
 - [Tutorial: Logging & Monitoring](../04-logging-monitoring.md)
 
-## References
+## Sources
 
 - [Quickstart: Build a Java app by using Azure Cosmos DB SQL API account](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/quickstart-java)
 - [Spring Data Azure Cosmos DB developer guide](https://learn.microsoft.com/en-us/azure/developer/java/spring-framework/configure-spring-data-azure-cosmos-db)

@@ -782,6 +782,6 @@ TimeGenerated              Name         Target                              Dura
 - [KQL Queries Reference](../../reference/kql-queries.md)
 - [Troubleshooting & Debugging](../../reference/troubleshooting.md)
 
-## References
+## Sources
 - [Enable diagnostics logging for apps in App Service](https://learn.microsoft.com/azure/app-service/troubleshoot-diagnostic-logs)
 - [Application Insights for Python](https://learn.microsoft.com/azure/azure-monitor/app/opencensus-python)

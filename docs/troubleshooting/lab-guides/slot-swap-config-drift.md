@@ -372,9 +372,9 @@ The script does:
 3. Swap execution.
 4. Post-swap capture.
 5. Behavior summary booleans:
-   - feature swapped
-   - sticky DB remained
-   - process restart observed
+    - feature swapped
+    - sticky DB remained
+    - process restart observed
 
 ### 3.10 KQL runbook queries
 
@@ -789,14 +789,6 @@ graph LR
 
 - [Slot Swap Restart / Config Drift / Warm-up Race](../playbooks/startup-availability/slot-swap-config-drift.md)
 
-## References
-
-- [Set up staging environments in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots)
-- [Configure an App Service app in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/configure-common)
-- [Enable diagnostic logging for apps in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs)
-- [Monitor Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/monitor-app-service)
-- [App Service plan overview](https://learn.microsoft.com/en-us/azure/app-service/overview-hosting-plans)
-
 ## See Also
 
 - [Playbook: Slot Swap Restart / Config Drift / Warm-up Race](../playbooks/startup-availability/slot-swap-config-drift.md)
@@ -804,3 +796,11 @@ graph LR
 - [Playbook: Warm-up vs Health Check](../playbooks/startup-availability/warmup-vs-health-check.md)
 - [KQL: Restart Timing Correlation](../kql/restarts/restart-timing-correlation.md)
 - [Troubleshooting Method](../methodology/troubleshooting-method.md)
+
+## Sources
+
+- [Set up staging environments in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots)
+- [Configure an App Service app in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/configure-common)
+- [Enable diagnostic logging for apps in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs)
+- [Monitor Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/monitor-app-service)
+- [App Service plan overview](https://learn.microsoft.com/en-us/azure/app-service/overview-hosting-plans)

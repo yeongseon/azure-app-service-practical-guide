@@ -76,6 +76,6 @@ Modularize Bicep by separating compute, monitoring, and networking modules, and 
 - [06 - CI/CD](./06-ci-cd.md)
 - [Provision Infrastructure (Existing Guide)](./02-first-deploy.md)
 
-## References
+## Sources
 - [Bicep documentation (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/)
 - [Quickstart: Create an App Service app using Bicep (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/quickstart-arm-template)

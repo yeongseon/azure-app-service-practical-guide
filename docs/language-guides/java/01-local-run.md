@@ -150,7 +150,7 @@ Ensure you are hitting the correct base URL and port (`localhost:8080` by defaul
 - [03. Configuration](03-configuration.md)
 - [Recipes Index](./recipes/index.md)
 
-## References
+## Sources
 
 - [Configure a Java app for Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/configure-language-java)
 - [Quickstart: Deploy a Java app to Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/quickstart-java)

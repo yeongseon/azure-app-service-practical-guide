@@ -129,7 +129,7 @@ Look for startup logs confirming Java version, active profiles, and listening po
 - [Operations: Scaling](../../operations/scaling.md)
 - [Platform: How App Service Works](../../platform/how-app-service-works.md)
 
-## References
+## Sources
 
 - [Configure a Java app for Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/configure-language-java)
 - [Configure an App Service app](https://learn.microsoft.com/en-us/azure/app-service/configure-common)

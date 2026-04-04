@@ -214,7 +214,7 @@ Note: For standard ZIP/Git deployments, rollback is typically managed by re-depl
 - [Deployment Slots](../../operations/deployment-slots.md)
 - [Custom Container Recipe](./recipes/custom-container.md)
 
-## References
+## Sources
 - [Quickstart: Build a Node.js app in Azure App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/quickstart-nodejs)
 - [Deploy a ZIP file to Azure App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/deploy-zip)
 - [Kudu service overview (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/resources-kudu)

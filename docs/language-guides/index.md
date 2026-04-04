@@ -34,7 +34,7 @@ For shared platform concepts, see [Platform](../platform/index.md).
 - [Java Guide](java/index.md)
 - [.NET Guide](dotnet/index.md)
 
-## References
+## Sources
 
 - [Quickstart: Deploy a Python web app](https://learn.microsoft.com/azure/app-service/quickstart-python)
 - [Quickstart: Deploy a Node.js web app](https://learn.microsoft.com/azure/app-service/quickstart-nodejs)

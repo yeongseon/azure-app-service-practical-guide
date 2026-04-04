@@ -62,15 +62,15 @@ graph TD
 
 - Existing Web App and App Service Plan
 - Existing VNet and subnets for:
-  - private endpoint
-  - VNet integration
+    - private endpoint
+    - VNet integration
 - Required RBAC permissions for Web, Network, and DNS resources
 - Variables set:
-  - `RG`
-  - `APP_NAME`
-  - `VNET_NAME`
-  - `INTEGRATION_SUBNET_NAME`
-  - `PRIVATE_ENDPOINT_SUBNET_NAME`
+    - `RG`
+    - `APP_NAME`
+    - `VNET_NAME`
+    - `INTEGRATION_SUBNET_NAME`
+    - `PRIVATE_ENDPOINT_SUBNET_NAME`
 
 ## Main Content
 

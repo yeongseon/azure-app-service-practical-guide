@@ -848,7 +848,14 @@ graph LR
 
 - [Deployment Succeeded but Startup Failed](../playbooks/startup-availability/deployment-succeeded-startup-failed.md)
 
-## References
+## See Also
+
+- [Playbook: Deployment Succeeded but Startup Failed](../playbooks/startup-availability/deployment-succeeded-startup-failed.md)
+- [Playbook: Container Didn't Respond to HTTP Pings](../playbooks/startup-availability/container-didnt-respond-to-http-pings.md)
+- [Playbook: Warmup vs Health Check](../playbooks/startup-availability/warmup-vs-health-check.md)
+- [Lab: Failed to Forward Request](./failed-to-forward-request.md)
+
+## Sources
 
 - [Configure a Linux Python app for Azure App Service](https://learn.microsoft.com/azure/app-service/configure-language-python)
 - [Configure a custom startup file for Linux apps in Azure App Service](https://learn.microsoft.com/azure/app-service/configure-language-python#container-characteristics)
@@ -856,10 +863,3 @@ graph LR
 - [Deploy files to Azure App Service](https://learn.microsoft.com/azure/app-service/deploy-zip)
 - [Enable diagnostics logging for Azure App Service](https://learn.microsoft.com/azure/app-service/troubleshoot-diagnostic-logs)
 - [Monitor App Service with Azure Monitor](https://learn.microsoft.com/azure/app-service/monitor-app-service)
-
-## See Also
-
-- [Playbook: Deployment Succeeded but Startup Failed](../playbooks/startup-availability/deployment-succeeded-startup-failed.md)
-- [Playbook: Container Didn't Respond to HTTP Pings](../playbooks/startup-availability/container-didnt-respond-to-http-pings.md)
-- [Playbook: Warmup vs Health Check](../playbooks/startup-availability/warmup-vs-health-check.md)
-- [Lab: Failed to Forward Request](./failed-to-forward-request.md)

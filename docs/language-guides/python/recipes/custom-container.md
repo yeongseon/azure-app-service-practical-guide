@@ -97,12 +97,9 @@ Subsystem sftp internal-sftp
 ## Troubleshooting
 
 - Container exits immediately:
-  - Confirm `CMD` points to executable script and script starts Gunicorn in foreground.
-- App responds `502` after deploy:
-  - Ensure Gunicorn binds `0.0.0.0:${PORT}` and `PORT` is not hard-coded.
-- Cannot SSH:
-  - Check port `2222` exposure and App Service SSH console compatibility.
-
+    - Confirm `CMD` points to executable script and script starts Gunicorn in foreground.- App responds `502` after deploy:
+    - Ensure Gunicorn binds `0.0.0.0:${PORT}` and `PORT` is not hard-coded.- Cannot SSH:
+    - Check port `2222` exposure and App Service SSH console compatibility.
 ## Advanced Topics
 
 - Use multi-stage builds and wheelhouse caching to reduce image size.
@@ -114,6 +111,6 @@ Subsystem sftp internal-sftp
 - [Deploy Application](../02-first-deploy.md)
 - [Troubleshoot](../../../reference/troubleshooting.md)
 
-## References
+## Sources
 - [Run a custom container in App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/tutorial-custom-container)
 - [Configure a custom container (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container)

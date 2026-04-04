@@ -360,7 +360,7 @@ AppServicePlatformLogs
 - [Restart Timing Correlation](kql/restarts/restart-timing-correlation.md)
 - [Startup Errors](kql/console/startup-errors.md)
 
-## References
+## Sources
 
 - [Monitor Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/monitor-app-service)
 - [Enable diagnostic logging for apps in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs)

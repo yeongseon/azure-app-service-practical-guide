@@ -154,7 +154,7 @@ Check slot name, distribution values, and caching/CDN layers that may mask split
 - [Tutorial: Configuration](../03-configuration.md)
 - [Operations: Deployment Slots](../../../operations/deployment-slots.md)
 
-## References
+## Sources
 
 - [Set up staging environments in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots)
 - [Swap deployment slots in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots#swap-deployment-slots)

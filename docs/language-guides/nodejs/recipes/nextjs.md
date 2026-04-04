@@ -100,6 +100,6 @@ CMD ["node", "server.js"]
 - [Redis Cache for Sessions](./redis.md)
 - [Logging & Monitoring Tutorial](../04-logging-monitoring.md)
 
-## References
+## Sources
 - [Deploy Next.js hybrid apps to Azure Static Web Apps (Microsoft Learn)](https://learn.microsoft.com/azure/static-web-apps/deploy-nextjs-hybrid)
 - [Configure Node.js on Azure App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/configure-language-nodejs)

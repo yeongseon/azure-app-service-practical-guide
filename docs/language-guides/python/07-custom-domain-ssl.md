@@ -97,6 +97,6 @@ Use Azure DNS and Traffic Manager for multi-region failover, and automate certif
 - [Tutorial Overview](./index.md)
 - [Deployment Slots](../../operations/deployment-slots.md)
 
-## References
+## Sources
 - [Map an existing custom DNS name to App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/app-service-web-tutorial-custom-domain)
 - [Add and manage TLS/SSL certificates (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/configure-ssl-certificate)

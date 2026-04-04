@@ -174,6 +174,6 @@ Now that your infrastructure is ready, proceed to **[06-ci-cd.md](./06-ci-cd.md)
 ## See Also
 - [Operations Scaling](../../operations/scaling.md)
 
-## References
+## Sources
 - [Bicep Documentation](https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/)
 - [Deploy App Service resources with Bicep (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/provision-resource-bicep)

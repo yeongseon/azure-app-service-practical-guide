@@ -387,7 +387,7 @@ stlabdnsvnet         10.20.2.4
 
 - [Lab: DNS Resolution (VNet)](../../lab-guides/dns-vnet-resolution.md)
 
-## References
+## Sources
 - [Integrate your app with an Azure virtual network](https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration)
 - [Azure DNS private zones overview](https://learn.microsoft.com/en-us/azure/dns/private-dns-overview)
 - [Name resolution for resources in Azure virtual networks](https://learn.microsoft.com/en-us/azure/virtual-network/virtual-networks-name-resolution-for-vms-and-role-instances)

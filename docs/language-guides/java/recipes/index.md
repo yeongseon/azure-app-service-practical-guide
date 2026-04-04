@@ -98,6 +98,6 @@ Implement [Deployment Slots Zero Downtime](deployment-slots-zero-downtime.md) be
 - [03. Configuration](../03-configuration.md)
 - [04. Logging & Monitoring](../04-logging-monitoring.md)
 
-## References
+## Sources
 
 - [Azure App Service documentation](https://learn.microsoft.com/en-us/azure/app-service/)

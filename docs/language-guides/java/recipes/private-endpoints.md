@@ -137,7 +137,7 @@ Use resilient retry settings (Spring Data JPA retry logic, Redis reconnect behav
 - [VNet Integration](vnet-integration.md)
 - [Platform: How App Service Works](../../../platform/how-app-service-works.md)
 
-## References
+## Sources
 
 - [Use private endpoints for Azure App Service apps](https://learn.microsoft.com/en-us/azure/app-service/networking/private-endpoint)
 - [Integrate your app with an Azure virtual network](https://learn.microsoft.com/en-us/azure/app-service/configure-vnet-integration-enable)

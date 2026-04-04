@@ -164,7 +164,7 @@ az deployment group what-if \
 
 Split resources into modules and expose explicit outputs/inputs to avoid implicit timing assumptions.
 
-## References
+## Sources
 
 - [Deploy Bicep files by using Azure CLI](https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/deploy-cli)
 - [Microsoft.Web/sites Bicep resource](https://learn.microsoft.com/en-us/azure/templates/microsoft.web/sites)

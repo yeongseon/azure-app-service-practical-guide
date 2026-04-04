@@ -122,7 +122,7 @@ Confirm Easy Auth is enabled and requests are not bypassing App Service front do
 - [Custom Domain & SSL](../07-custom-domain-ssl.md)
 - [Operations: Security](../../../operations/security.md)
 
-## References
+## Sources
 
 - [Authentication and authorization in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization)
 - [Configure your App Service app to use Microsoft Entra sign-in](https://learn.microsoft.com/en-us/azure/app-service/configure-authentication-provider-aad)

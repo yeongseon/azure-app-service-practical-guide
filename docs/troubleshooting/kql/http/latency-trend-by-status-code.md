@@ -30,7 +30,7 @@ AppServiceHTTPLogs
 - Low-traffic periods can distort percentiles because sample size is small.
 - This query cannot identify the exact dependency/code path causing latency.
 
-## References
+## Sources
 
 - [Enable diagnostic logging for apps in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs)
 - [Monitor Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/monitor-app-service)

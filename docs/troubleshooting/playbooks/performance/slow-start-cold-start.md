@@ -52,15 +52,15 @@ Cold start latency is bursty and event-driven, while true performance regression
 ## 6. Validation and Disproof by Hypothesis
 ### H1: Expected cold start window
 - **Signals that support**
-  - Spikes align tightly with `AppServicePlatformLogs` events (`container start`, `restart`, `scale out`).
-  - First requests on new instances are slow; subsequent requests normalize quickly.
-  - Latency spike is narrow (for example 5-15 minutes) and not sustained.
+    - Spikes align tightly with `AppServicePlatformLogs` events (`container start`, `restart`, `scale out`).
+    - First requests on new instances are slow; subsequent requests normalize quickly.
+    - Latency spike is narrow (for example 5-15 minutes) and not sustained.
 - **Signals that weaken**
-  - No restart/scale/deployment/idle event near latency increase.
-  - Warm traffic remains slow long after instance initialization.
-  - All requests across all instances are consistently slow.
+    - No restart/scale/deployment/idle event near latency increase.
+    - Warm traffic remains slow long after instance initialization.
+    - All requests across all instances are consistently slow.
 - **What to verify**
-  - KQL (event and latency correlation):
+    - KQL (event and latency correlation):
     ```kusto
     let latency = AppServiceHTTPLogs
     | where TimeGenerated > ago(24h)
@@ -73,7 +73,7 @@ Cold start latency is bursty and event-driven, while true performance regression
     | join kind=leftouter platform on TimeGenerated
     | order by TimeGenerated asc
     ```
-  - KQL (first-hit signature by path/status):
+    - KQL (first-hit signature by path/status):
     ```kusto
     AppServiceHTTPLogs
     | where TimeGenerated > ago(6h)
@@ -83,17 +83,17 @@ Cold start latency is bursty and event-driven, while true performance regression
 
 ### H2: Startup path is too heavy (Python-specific initialization)
 - **Signals that support**
-  - `AppServiceConsoleLogs.ResultDescription` shows long gaps during startup before listener is ready.
-  - Logs indicate expensive imports (`numpy`, `pandas`, ML model loading) during worker boot.
-  - Oryx-related build/install activity appears in startup path (for example `pip install` executed during restart/startup workflow), delaying readiness.
-  - Startup scripts perform package/network tasks before app starts (for example runtime `pip install` behavior).
-  - Cold start duration increases with app package size/model size while warm-path latency remains stable.
+    - `AppServiceConsoleLogs.ResultDescription` shows long gaps during startup before listener is ready.
+    - Logs indicate expensive imports (`numpy`, `pandas`, ML model loading) during worker boot.
+    - Oryx-related build/install activity appears in startup path (for example `pip install` executed during restart/startup workflow), delaying readiness.
+    - Startup scripts perform package/network tasks before app starts (for example runtime `pip install` behavior).
+    - Cold start duration increases with app package size/model size while warm-path latency remains stable.
 - **Signals that weaken**
-  - Startup completes quickly and consistently in logs.
-  - Import/model load is deferred and first-request spikes are absent in controlled warm tests.
-  - Slowdown persists on already warm workers (indicates H4).
+    - Startup completes quickly and consistently in logs.
+    - Import/model load is deferred and first-request spikes are absent in controlled warm tests.
+    - Slowdown persists on already warm workers (indicates H4).
 - **What to verify**
-  - KQL (startup timing clues from console):
+    - KQL (startup timing clues from console):
     ```kusto
     AppServiceConsoleLogs
     | where TimeGenerated > ago(24h)
@@ -101,30 +101,30 @@ Cold start latency is bursty and event-driven, while true performance regression
     | project TimeGenerated, ResultDescription
     | order by TimeGenerated asc
     ```
-  - CLI (startup config and app settings):
+    - CLI (startup config and app settings):
     ```bash
     az webapp config show --resource-group <resource-group> --name <app-name>
     az webapp config appsettings list --resource-group <resource-group> --name <app-name>
     ```
-  - Confirm build/run flow: dependencies should be installed at build/deploy stage, not per restart/startup script.
+    - Confirm build/run flow: dependencies should be installed at build/deploy stage, not per restart/startup script.
 
 ### H3: Warm-up/startup controls are misconfigured
 - **Signals that support**
-  - `AlwaysOn` is disabled for continuously-used production workloads.
-  - `WEBSITE_WARMUP_PATH` is missing or points to heavy endpoint.
-  - `WEBSITES_CONTAINER_START_TIME_LIMIT` is too low for known startup duration, causing startup retries/failures.
-  - Health Check path is expensive, unstable, or not representative of readiness.
+    - `AlwaysOn` is disabled for continuously-used production workloads.
+    - `WEBSITE_WARMUP_PATH` is missing or points to heavy endpoint.
+    - `WEBSITES_CONTAINER_START_TIME_LIMIT` is too low for known startup duration, causing startup retries/failures.
+    - Health Check path is expensive, unstable, or not representative of readiness.
 - **Signals that weaken**
-  - `AlwaysOn` enabled, warm-up endpoint lightweight, and startup timeout sized with margin.
-  - Startup completes consistently without timeout/recycle loops.
-  - Cold start occurs only after legitimate scale-out and remains within expected SLO.
+    - `AlwaysOn` enabled, warm-up endpoint lightweight, and startup timeout sized with margin.
+    - Startup completes consistently without timeout/recycle loops.
+    - Cold start occurs only after legitimate scale-out and remains within expected SLO.
 - **What to verify**
-  - CLI (settings inspection):
+    - CLI (settings inspection):
     ```bash
     az webapp show --resource-group <resource-group> --name <app-name> --query "siteConfig.alwaysOn"
     az webapp config appsettings list --resource-group <resource-group> --name <app-name> --query "[?name=='WEBSITE_WARMUP_PATH' || name=='WEBSITES_CONTAINER_START_TIME_LIMIT']"
     ```
-  - KQL (timeout/recycle hints):
+    - KQL (timeout/recycle hints):
     ```kusto
     AppServicePlatformLogs
     | where TimeGenerated > ago(24h)
@@ -132,27 +132,27 @@ Cold start latency is bursty and event-driven, while true performance regression
     | project TimeGenerated, OperationName, ResultDescription
     | order by TimeGenerated desc
     ```
-  - Treat `WEBSITES_CONTAINER_START_TIME_LIMIT` as a startup survivability control, not a latency optimization knob.
+    - Treat `WEBSITES_CONTAINER_START_TIME_LIMIT` as a startup survivability control, not a latency optimization knob.
 
 ### H4: Real regression in warm request path
 - **Signals that support**
-  - Elevated P95/P99 continues well after startup windows.
-  - Slow endpoints are the same under warm traffic and normal instance lifecycle.
-  - Dependency timings/error rates increased after code or config change.
-  - No meaningful correlation with restart/scale/deployment events.
+    - Elevated P95/P99 continues well after startup windows.
+    - Slow endpoints are the same under warm traffic and normal instance lifecycle.
+    - Dependency timings/error rates increased after code or config change.
+    - No meaningful correlation with restart/scale/deployment events.
 - **Signals that weaken**
-  - Only first request(s) are slow and metrics normalize quickly.
-  - Performance degradation disappears once workers are warm.
-  - Regression cannot be reproduced with sustained warm load.
+    - Only first request(s) are slow and metrics normalize quickly.
+    - Performance degradation disappears once workers are warm.
+    - Regression cannot be reproduced with sustained warm load.
 - **What to verify**
-  - KQL (sustained warm-path latency):
+    - KQL (sustained warm-path latency):
     ```kusto
     AppServiceHTTPLogs
     | where TimeGenerated > ago(24h)
     | summarize p50=percentile(TimeTaken,50), p95=percentile(TimeTaken,95), p99=percentile(TimeTaken,99), requests=count() by bin(TimeGenerated, 15m)
     | order by TimeGenerated asc
     ```
-  - KQL (slowest warm endpoints):
+    - KQL (slowest warm endpoints):
     ```kusto
     AppServiceHTTPLogs
     | where TimeGenerated > ago(6h)
@@ -163,13 +163,13 @@ Cold start latency is bursty and event-driven, while true performance regression
 
 ## 7. Likely Root Cause Patterns
 - **Pattern A: Scale-out cold instance onboarding delay**
-  - New instances need image/container/runtime/app initialization before stable serving.
+    - New instances need image/container/runtime/app initialization before stable serving.
 - **Pattern B: Deployment-triggered first-hit slowness**
-  - Fresh workers receive user traffic before caches/imports/readiness are warmed.
+    - Fresh workers receive user traffic before caches/imports/readiness are warmed.
 - **Pattern C: Idle recycle then cold request (AlwaysOn disabled)**
-  - Idle period leads to recycle; next request pays startup cost.
+    - Idle period leads to recycle; next request pays startup cost.
 - **Pattern D: Misread startup spike as regression**
-  - Teams evaluate only immediate post-event latency and miss steady-state normalization.
+    - Teams evaluate only immediate post-event latency and miss steady-state normalization.
 
 ## 8. Immediate Mitigations
 - Enable `AlwaysOn` for production apps that require low first-hit latency (**risk**: increased baseline resource usage/cost).
@@ -374,7 +374,7 @@ $ az webapp deployment list --resource-group <resource-group> --name <app-name>
 
 - [Lab: Slow Start / Cold Start](../../lab-guides/slow-start-cold-start.md)
 
-## References
+## Sources
 - [Configure an App Service app](https://learn.microsoft.com/en-us/azure/app-service/configure-common)
 - [Azure App Service plan overview](https://learn.microsoft.com/en-us/azure/app-service/overview-hosting-plans)
 - [Monitor instances using Health check](https://learn.microsoft.com/en-us/azure/app-service/monitor-instances-health-check)

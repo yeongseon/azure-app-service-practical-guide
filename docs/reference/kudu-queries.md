@@ -138,7 +138,7 @@ curl -s -u "$AUTH_USER:$AUTH_PASS" \
 | `/home/data` | Persistent data directory |
 | `/tmp` | Temporary storage (ephemeral) |
 
-## References
+## Sources
 
 - [Kudu in Azure App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/resources-kudu)
 - [App Service Diagnostics Overview (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-diagnostics)

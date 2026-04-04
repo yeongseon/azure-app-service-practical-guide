@@ -8,9 +8,9 @@ This guide defines a minimum production baseline for Azure App Service workloads
 - Existing resource group, App Service Plan, and Web App
 - Shared ownership between application and platform teams for baseline standards
 - Variables set:
-  - `RG`
-  - `APP_NAME`
-  - `PLAN_NAME`
+    - `RG`
+    - `APP_NAME`
+    - `PLAN_NAME`
 
 ## Main Content
 
@@ -321,7 +321,7 @@ Run this checklist before calling an app production-ready:
 - [Security Best Practices](./security.md)
 - [Operations - Health and Recovery](../operations/health-recovery.md)
 
-## References
+## Sources
 
 - [Overview of App Service best practices](https://learn.microsoft.com/azure/app-service/overview-best-practices)
 - [Configure common App Service settings](https://learn.microsoft.com/azure/app-service/configure-common)

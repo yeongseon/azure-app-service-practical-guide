@@ -779,6 +779,6 @@ TimeGenerated              Name  Target                              DurationMs 
 - [KQL Queries Reference](../../reference/kql-queries.md)
 - [Troubleshooting & Debugging](../../reference/troubleshooting.md)
 
-## References
+## Sources
 - [Diagnostic Settings Documentation](https://learn.microsoft.com/azure/azure-monitor/essentials/diagnostic-settings)
 - [Application Insights for Node.js](https://learn.microsoft.com/azure/azure-monitor/app/nodejs)

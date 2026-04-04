@@ -27,7 +27,7 @@ graph TD
     F -->|No| G[Investigate app-level auth middleware policy]
 ```
 
-## 2. Symptom
+### Symptom details
 
 - Browser console reports `Access-Control-Allow-Origin` or preflight errors.
 - `OPTIONS` calls fail or do not return expected CORS headers.
@@ -78,7 +78,15 @@ sequenceDiagram
     end
 ```
 
-## 3. Hypotheses
+## 2. Common Misreadings
+
+- "Browser says CORS, so token is fine." (CORS may hide underlying 401/403 auth details.)
+- "401 always means expired token." (Could be audience/issuer mismatch or missing credentials mode.)
+- "403 means CORS denied." (403 is usually authorization/policy denial after auth pipeline.)
+- "Adding `*` to CORS is the safest quick fix." (`*` is incompatible with credentialed requests and can create new failures.)
+- "If Postman works, browser should also work." (Browser enforces preflight/CORS; Postman does not.)
+
+## 3. Competing Hypotheses
 
 - **H1: CORS not configured or misconfigured** — Allowed origins do not include frontend domain, or wildcard (`*`) is combined with credentials.
 - **H2: Preflight OPTIONS request blocked by auth** — App Service Auth or app auth layer challenges OPTIONS before CORS handling.
@@ -86,7 +94,27 @@ sequenceDiagram
 - **H4: Double CORS headers** — Both App Service platform CORS and application middleware emit CORS headers, causing browser rejection.
 - **H5: Custom domain vs default domain mismatch** — SPA origin and token audience/issuer expectations use different domains (`contoso.com` vs `azurewebsites.net`).
 
-## 4. Evidence Collection
+## 4. What to Check First
+
+### Metrics
+
+- Trend of `OPTIONS` requests by status (`2xx`, `401`, `403`) for affected routes.
+- Correlation of `401/403` bursts with token lifetime boundaries.
+- Relative error distribution by method (`OPTIONS` vs `GET/POST`) and endpoint.
+
+### Logs
+
+- `AppServiceHTTPLogs` for preflight status behavior and route concentration.
+- `AppServiceAuthenticationLogs` for token expiry/audience/issuer and challenge failures.
+- Browser network capture for preflight + actual request pair and response headers.
+
+### Platform Signals
+
+- Effective App Service CORS configuration and Easy Auth/auth settings.
+- Active hostname strategy (`azurewebsites.net` vs custom domain) across SPA/API.
+- Any recent auth/CORS setting changes close to incident start.
+
+## 5. Evidence to Collect
 
 ### Required Evidence
 
@@ -139,74 +167,81 @@ AppServiceAuthenticationLogs
 | order by TimeGenerated desc
 ```
 
-## 5. Validation
+## 6. Validation and Disproof by Hypothesis
 
 ### H1: CORS not configured or misconfigured
 
 - **Signals that support**
-  - Frontend origin missing from allowed origins.
-  - `*` configured while requests use credentials (cookies or auth headers) and browser rejects response.
-  - Preflight response lacks expected `Access-Control-Allow-*` fields.
+    - Frontend origin missing from allowed origins.
+    - `*` configured while requests use credentials (cookies or auth headers) and browser rejects response.
+    - Preflight response lacks expected `Access-Control-Allow-*` fields.
 - **Signals that weaken**
-  - Allowed origins exactly match active SPA origin(s), including scheme and port.
-  - Preflight succeeds with correct headers and status.
+    - Allowed origins exactly match active SPA origin(s), including scheme and port.
+    - Preflight succeeds with correct headers and status.
 - **What to verify**
-  1. Compare browser `Origin` to exact configured origins.
-  2. Validate credential mode and CORS policy compatibility.
+    1. Compare browser `Origin` to exact configured origins.
+    2. Validate credential mode and CORS policy compatibility.
 
 ### H2: Preflight OPTIONS blocked by auth
 
 - **Signals that support**
-  - `OPTIONS` requests return `401/403` while `GET/POST` behavior differs.
-  - Auth logs show challenge or unauthorized outcomes for preflight endpoints.
-  - Temporarily bypassing auth for OPTIONS resolves CORS failure.
+    - `OPTIONS` requests return `401/403` while `GET/POST` behavior differs.
+    - Auth logs show challenge or unauthorized outcomes for preflight endpoints.
+    - Temporarily bypassing auth for OPTIONS resolves CORS failure.
 - **Signals that weaken**
-  - OPTIONS consistently returns 2xx with proper CORS headers.
-  - No auth events associated with preflight timing.
+    - OPTIONS consistently returns 2xx with proper CORS headers.
+    - No auth events associated with preflight timing.
 - **What to verify**
-  1. Query `AppServiceHTTPLogs` for OPTIONS status distribution.
-  2. Confirm request pipeline allows preflight before auth challenge logic.
+    1. Query `AppServiceHTTPLogs` for OPTIONS status distribution.
+    2. Confirm request pipeline allows preflight before auth challenge logic.
 
 ### H3: Token expired and silent refresh fails
 
 - **Signals that support**
-  - Failures spike at token lifetime boundaries.
-  - Auth logs show expired token or refresh-related failures.
-  - Browser indicates blocked third-party cookie/silent refresh path.
+    - Failures spike at token lifetime boundaries.
+    - Auth logs show expired token or refresh-related failures.
+    - Browser indicates blocked third-party cookie/silent refresh path.
 - **Signals that weaken**
-  - Fresh token acquisition works and API still returns 401/403.
-  - Failures occur immediately after interactive login without expiry relation.
+    - Fresh token acquisition works and API still returns 401/403.
+    - Failures occur immediately after interactive login without expiry relation.
 - **What to verify**
-  1. Correlate 401 bursts to access token expiry interval.
-  2. Validate refresh flow requirements (cookie policy, redirect URI, CORS allowances).
+    1. Correlate 401 bursts to access token expiry interval.
+    2. Validate refresh flow requirements (cookie policy, redirect URI, CORS allowances).
 
 ### H4: Double CORS headers
 
 - **Signals that support**
-  - Response contains duplicate or conflicting `Access-Control-Allow-Origin` headers.
-  - Platform CORS and app middleware both enabled.
-  - Browser rejects despite apparent allowed origin.
+    - Response contains duplicate or conflicting `Access-Control-Allow-Origin` headers.
+    - Platform CORS and app middleware both enabled.
+    - Browser rejects despite apparent allowed origin.
 - **Signals that weaken**
-  - Only one CORS authority emits headers consistently.
-  - No duplicate header evidence in network trace.
+    - Only one CORS authority emits headers consistently.
+    - No duplicate header evidence in network trace.
 - **What to verify**
-  1. Inspect raw response headers in browser and server logs.
-  2. Disable one CORS layer and retest.
+    1. Inspect raw response headers in browser and server logs.
+    2. Disable one CORS layer and retest.
 
 ### H5: Custom domain vs default domain mismatch
 
 - **Signals that support**
-  - SPA runs on custom domain, but API audience/issuer or CORS origins point to `azurewebsites.net` only.
-  - Tokens minted for one audience are sent to another-domain API endpoint.
-  - Failures disappear when hostnames are aligned end-to-end.
+    - SPA runs on custom domain, but API audience/issuer or CORS origins point to `azurewebsites.net` only.
+    - Tokens minted for one audience are sent to another-domain API endpoint.
+    - Failures disappear when hostnames are aligned end-to-end.
 - **Signals that weaken**
-  - Origin, audience, and endpoint host all use consistent domain strategy.
-  - Token validation passes for same domain endpoints.
+    - Origin, audience, and endpoint host all use consistent domain strategy.
+    - Token validation passes for same domain endpoints.
 - **What to verify**
-  1. Compare SPA origin, API URL, token audience, and issuer values.
-  2. Ensure CORS origins and auth audiences cover active production hostnames only.
+    1. Compare SPA origin, API URL, token audience, and issuer values.
+    2. Ensure CORS origins and auth audiences cover active production hostnames only.
 
-## 6. Mitigation
+## 7. Likely Root Cause Patterns
+
+- **Preflight is challenged before CORS handling**: `OPTIONS` receives `401/403`, browser reports CORS failure, and actual API call is blocked in-browser.
+- **Auth token lifecycle mismatch**: access tokens expire and silent refresh fails due to cookie/CORS/session constraints, producing repeated `401/403`.
+- **Domain/audience contract drift**: SPA origin, API host, token audience/issuer, and CORS origin list are not aligned end-to-end.
+- **Dual CORS ownership**: platform CORS and app middleware both emit CORS headers, causing duplicate/conflicting header behavior.
+
+## 8. Immediate Mitigations
 
 - **For H1**: Add exact frontend origin(s), remove invalid wildcard-with-credentials pattern, and redeploy policy.
 - **For H2**: Exempt OPTIONS preflight from auth challenge or reorder middleware so CORS preflight is processed first.
@@ -214,19 +249,13 @@ AppServiceAuthenticationLogs
 - **For H4**: Use a single CORS authority (platform or app), not both.
 - **For H5**: Align custom domain strategy across SPA origin, API endpoint, token audience, and CORS configuration.
 
-## 7. Prevention
+## 9. Prevention
 
 - Treat CORS and auth as one contract in deployment validation (origin, audience, issuer, credential mode).
 - Add automated preflight tests for critical endpoints and headers (`Authorization`, custom headers, credentials).
 - Monitor `OPTIONS` 401/403 trends and token validation failures with alerts.
 - Keep domain migration runbooks explicit: default domain and custom domain must not be mixed unintentionally.
 - Version-control CORS and auth config with environment-specific review gates.
-
-## 8. See Also
-
-- [Intermittent 5xx Under Load](intermittent-5xx-under-load.md)
-- [Slow Response but Low CPU](slow-response-but-low-cpu.md)
-- [Troubleshooting KQL Queries](../../kql/index.md)
 
 ## Sample Log Patterns
 
@@ -391,10 +420,16 @@ WEBSITE_AUTH_ALLOWED_AUDIENCES    api://<expected-api-app-id>
 
 - No dedicated lab for this scenario.
 
-## References
+## Sources
 
 - [Configure CORS in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/app-service-web-tutorial-rest-api)
 - [Authentication and authorization in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization)
 - [Use OAuth 2.0 authorization code flow with Microsoft identity platform](https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-auth-code-flow)
 - [Browser cookies and SameSite guidance for identity scenarios](https://learn.microsoft.com/en-us/entra/identity-platform/howto-handle-samesite-cookie-changes-chrome-browser)
 - [Troubleshoot HTTP 401 and 403 errors in Azure App Service](https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/diagnostic-information)
+
+## See Also
+
+- [Intermittent 5xx Under Load](intermittent-5xx-under-load.md)
+- [Slow Response but Low CPU](slow-response-but-low-cpu.md)
+- [Troubleshooting KQL Queries](../../kql/index.md)

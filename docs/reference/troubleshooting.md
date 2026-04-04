@@ -126,7 +126,7 @@ See [Kudu API Reference](./kudu-queries.md) for endpoint details.
 - Plan SKU and current instance count
 - Relevant error snippets (PII removed)
 
-## References
+## Sources
 
 - [Diagnose and Solve Problems in App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-diagnostics)
 - [Troubleshoot Diagnostic Logs in App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/troubleshoot-diagnostic-logs)

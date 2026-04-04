@@ -122,18 +122,14 @@ AppServiceConsoleLogs
 ## Decision Points
 After these checks, you should be able to:
 - Narrow to 1-2 hypotheses:
-  - **Port mismatch** -> fix WEBSITES_PORT or app listen port
-  - **Binding mismatch** -> bind to `0.0.0.0`
-  - **Startup timeout** -> increase time limit and reduce startup work
-  - **Crash on boot** -> investigate stack trace/runtime dependency error
-- Select immediate corrective path before full deep dive.
+    - **Port mismatch** -> fix WEBSITES_PORT or app listen port    - **Binding mismatch** -> bind to `0.0.0.0`    - **Startup timeout** -> increase time limit and reduce startup work    - **Crash on boot** -> investigate stack trace/runtime dependency error- Select immediate corrective path before full deep dive.
 
 ## Next Steps
 - [Container Didn't Respond to HTTP Pings](../playbooks/startup-availability/container-didnt-respond-to-http-pings.md)
 - [Warm-up vs Health Check](../playbooks/startup-availability/warmup-vs-health-check.md)
 - [Slot Swap Failed During Warm-up](../playbooks/startup-availability/slot-swap-failed-during-warmup.md)
 
-## References
+## Sources
 
 - [Configure a custom container for Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container)
 - [Enable diagnostic logging for apps in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs)

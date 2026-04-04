@@ -105,13 +105,9 @@ gunicorn --bind 0.0.0.0:${PORT:-8000} app:app --workers 2 --timeout 120
 ## Troubleshooting
 
 - `Login failed for user '<token-identified principal>'`:
-  - Ensure `CREATE USER ... FROM EXTERNAL PROVIDER` ran in the correct database.
-  - Confirm role membership (`db_datareader`, `db_datawriter`, or custom role).
-- `ODBC Driver 18 not found`:
-  - Use a custom container and install `msodbcsql18`, or verify platform image support.
-- Connection timeout:
-  - Validate SQL firewall rules, VNet integration, DNS, and private endpoint routing.
-
+    - Ensure `CREATE USER ... FROM EXTERNAL PROVIDER` ran in the correct database.    - Confirm role membership (`db_datareader`, `db_datawriter`, or custom role).- `ODBC Driver 18 not found`:
+    - Use a custom container and install `msodbcsql18`, or verify platform image support.- Connection timeout:
+    - Validate SQL firewall rules, VNet integration, DNS, and private endpoint routing.
 ## Advanced Topics
 
 - Use retry logic (`tenacity`) for transient errors (error codes 40613, 40197, 40501).
@@ -123,6 +119,6 @@ gunicorn --bind 0.0.0.0:${PORT:-8000} app:app --workers 2 --timeout 120
 - [Native Dependencies](./native-dependencies.md)
 - [Configure App Settings](../03-configuration.md)
 
-## References
+## Sources
 - [Tutorial: Connect to SQL Database from App Service using managed identity (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/tutorial-connect-msi-sql-database)
 - [Azure SQL documentation (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/azure-sql/)

@@ -78,14 +78,10 @@ def health_native():
 ## Troubleshooting
 
 - `error: subprocess-exited-with-error` during `pip install`:
-  - Missing compiler or system headers; move to custom container build dependencies.
-- `ImportError: libpq.so.*` for PostgreSQL:
-  - Install `libpq` runtime libraries or use `psycopg2-binary`.
-- `Pillow` image codec missing:
-  - Add required OS libs (`libjpeg`, `zlib`, optional `libwebp`).
-- `numpy/pandas` build timeout:
-  - Pin to wheels and avoid source builds on platform runtime.
-
+    - Missing compiler or system headers; move to custom container build dependencies.- `ImportError: libpq.so.*` for PostgreSQL:
+    - Install `libpq` runtime libraries or use `psycopg2-binary`.- `Pillow` image codec missing:
+    - Add required OS libs (`libjpeg`, `zlib`, optional `libwebp`).- `numpy/pandas` build timeout:
+    - Pin to wheels and avoid source builds on platform runtime.
 ## Advanced Topics
 
 - Prebuild wheels in CI (`pip wheel`) and publish to an internal package index.
@@ -97,6 +93,6 @@ def health_native():
 - [Deploy Application](../02-first-deploy.md)
 - [Troubleshoot](../../../reference/troubleshooting.md)
 
-## References
+## Sources
 - [Configure a Linux Python app (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/configure-language-python)
 - [Run a custom container in App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/tutorial-custom-container)

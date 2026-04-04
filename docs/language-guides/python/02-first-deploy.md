@@ -121,7 +121,7 @@ Adopt Zip Deploy for deterministic packages, pin transitive dependencies with `p
 ## See Also
 - [03 - Configuration](./03-configuration.md)
 
-## References
+## Sources
 - [Quickstart: Deploy a Python web app (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/quickstart-python)
 - [Deploy to App Service using GitHub Actions (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/deploy-github-actions)
 - [Kudu service overview (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/resources-kudu)

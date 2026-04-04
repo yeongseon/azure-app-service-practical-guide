@@ -450,7 +450,7 @@ AppServiceHTTPLogs
 !!! tip "How to Read This"
     This confirms remediation only when `Errors` stays at zero during fresh restarts and P95 remains below your startup SLO.
 
-## References
+## Sources
 
 - [Configure a custom container for Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container)
 - [Enable diagnostic logging for apps in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs)

@@ -87,6 +87,6 @@ Split CI and CD jobs, gate deployment with required approvals, and add slot-base
 - [07 - Custom Domain and SSL](./07-custom-domain-ssl.md)
 - [GitHub Actions (Existing Guide)](./06-ci-cd.md)
 
-## References
+## Sources
 - [Deploy to App Service using GitHub Actions (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/deploy-github-actions)
 - [Continuous deployment to App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/deploy-continuous-deployment)

@@ -130,7 +130,7 @@ Review VNet integration, private endpoint health, and private DNS linkage.
 - [VNet Integration](vnet-integration.md)
 - [Tutorial: Configuration](../03-configuration.md)
 
-## References
+## Sources
 
 - [Use Key Vault references for App Service](https://learn.microsoft.com/en-us/azure/app-service/app-service-key-vault-references)
 - [Authenticate to Azure Key Vault using managed identity](https://learn.microsoft.com/en-us/azure/key-vault/general/authentication)

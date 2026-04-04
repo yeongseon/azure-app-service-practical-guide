@@ -372,7 +372,7 @@ VirtualNetworkSubnetId                                                          
 
 - [Lab: DNS Resolution (VNet)](../../lab-guides/dns-vnet-resolution.md)
 
-## References
+## Sources
 - [Azure Private Endpoint DNS configuration](https://learn.microsoft.com/en-us/azure/private-link/private-endpoint-dns)
 - [Integrate your app with an Azure virtual network](https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration)
 - [Azure App Service networking features](https://learn.microsoft.com/en-us/azure/app-service/networking-features)

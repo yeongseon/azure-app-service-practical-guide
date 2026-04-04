@@ -31,7 +31,7 @@ AppServiceConsoleLogs
 - Broad keyword matching can include benign listen information.
 - This query cannot validate actual socket state inside the running container.
 
-## References
+## Sources
 
 - [Enable diagnostic logging for apps in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs)
 - [Monitor Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/monitor-app-service)

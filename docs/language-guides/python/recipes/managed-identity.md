@@ -90,12 +90,9 @@ az webapp config appsettings set \
 ## Troubleshooting
 
 - `ManagedIdentityCredential authentication unavailable`:
-  - Identity may be disabled or app not restarted after enablement.
-- `403 Forbidden` from Azure SDK:
-  - Role assignment missing or not propagated yet.
-- Works locally but fails in Azure:
-  - Validate `DefaultAzureCredential` chain differences and required environment settings.
-
+    - Identity may be disabled or app not restarted after enablement.- `403 Forbidden` from Azure SDK:
+    - Role assignment missing or not propagated yet.- Works locally but fails in Azure:
+    - Validate `DefaultAzureCredential` chain differences and required environment settings.
 ## Advanced Topics
 
 - Use user-assigned managed identity for shared identity across multiple apps.
@@ -112,6 +109,6 @@ credential = DefaultAzureCredential(managed_identity_client_id=os.environ["AZURE
 - [Cosmos DB with azure-cosmos](./cosmosdb.md)
 - [Key Vault References](./key-vault-reference.md)
 
-## References
+## Sources
 - [Use managed identities for App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/overview-managed-identity)
 - [DefaultAzureCredential overview (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/developer/python/sdk/authentication/credential-chains)

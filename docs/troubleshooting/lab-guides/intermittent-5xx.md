@@ -30,8 +30,8 @@ Create a reference-quality, reproducible guide for diagnosing intermittent 5xx-l
 - Runtime: Python 3.11
 - Gunicorn model: `sync`, `--workers 2`, `--timeout 30`
 - Trigger model:
-  - 20 concurrent `/slow` requests with `curl --max-time 45`
-  - 10 `/fast` requests sent immediately after
+    - 20 concurrent `/slow` requests with `curl --max-time 45`
+    - 10 `/fast` requests sent immediately after
 - Evidence: sanitized artifacts from real run
 
 !!! info "Status code interpretation"
@@ -775,7 +775,7 @@ az group delete --name "$RG" --yes --no-wait
 
 ---
 
-## References
+## Sources
 
 - [Troubleshoot HTTP 502 and 503 in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503)
 - [Monitor Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/monitor-app-service)

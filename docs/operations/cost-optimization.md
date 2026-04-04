@@ -8,9 +8,9 @@ Control App Service spend without sacrificing reliability by right-sizing plans,
 - Baseline metrics (CPU, memory, latency, request volume)
 - Cost Management access for budget and trend analysis
 - Variables set:
-  - `RG`
-  - `APP_NAME`
-  - `PLAN_NAME`
+    - `RG`
+    - `APP_NAME`
+    - `PLAN_NAME`
 
 ## Main Content
 

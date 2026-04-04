@@ -36,6 +36,6 @@ Use the Python-specific recipes for service integrations and production patterns
 - [Operations](../../operations/index.md)
 - [Reference](../../reference/index.md)
 
-## References
+## Sources
 
 - [Quickstart: Deploy a Python web app](https://learn.microsoft.com/azure/app-service/quickstart-python)

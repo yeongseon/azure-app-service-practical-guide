@@ -174,7 +174,7 @@ Ensure Maven cache is enabled in `actions/setup-java`, and avoid redundant `clea
 - [Recipes: Deployment Slots Zero Downtime](./recipes/deployment-slots-zero-downtime.md)
 - [Reference: Troubleshooting](../../reference/troubleshooting.md)
 
-## References
+## Sources
 
 - [Continuous deployment to Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/deploy-continuous-deployment)
 - [Use GitHub Actions to deploy to Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/deploy-github-actions)

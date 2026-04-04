@@ -121,6 +121,6 @@ if (!databasePassword) {
 - [Managed Identity Recipe](./managed-identity.md)
 - [Azure App Service Security Documentation](../../../operations/security.md)
 
-## References
+## Sources
 - [Official Azure Key Vault References documentation](https://learn.microsoft.com/azure/app-service/app-service-key-vault-references)
 - [Use managed identity to access Key Vault from App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/tutorial-connect-msi-key-vault)

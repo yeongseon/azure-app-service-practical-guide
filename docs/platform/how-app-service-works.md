@@ -24,7 +24,9 @@ Azure App Service is a managed hosting platform for web apps and APIs. You focus
 
 ---
 
-## [Beginner] Platform architecture at a glance
+## Main Content
+
+### [Beginner] Platform architecture at a glance
 
 The most useful mental model for App Service is **three planes**, not two:
 
@@ -34,7 +36,7 @@ The most useful mental model for App Service is **three planes**, not two:
 
 Each plane has different APIs, responsibilities, and failure modes.
 
-### Three-plane model
+#### Three-plane model
 
 | Plane | What it is | Typical operations | Typical tools |
 |---|---|---|---|
@@ -45,7 +47,7 @@ Each plane has different APIs, responsibilities, and failure modes.
 !!! note
     A single management-plane change (for example, changing an app setting) can trigger runtime recycle. Treat any config mutation as potentially restart-impacting.
 
-### Core request path (single-region, single-app)
+#### Core request path (single-region, single-app)
 
 For a normal single-app flow, keep the model simple:
 
@@ -60,7 +62,7 @@ graph LR
     W --> APP[App Process]
 ```
 
-### Management, runtime, and SCM interactions
+#### Management, runtime, and SCM interactions
 
 ```mermaid
 graph TD
@@ -90,11 +92,11 @@ Microsoft Learn references:
 
 ---
 
-## [Beginner] Hosting modes and what changes
+### [Beginner] Hosting modes and what changes
 
 App Service behavior is not identical across hosting modes. Most confusion comes from applying Linux custom container assumptions to built-in stacks, or vice versa.
 
-### Hosting mode comparison
+#### Hosting mode comparison
 
 | Aspect | Windows Code | Linux Built-in | Linux Custom Container |
 |---|---|---|---|
@@ -107,19 +109,19 @@ App Service behavior is not identical across hosting modes. Most confusion comes
 !!! warning "Port and storage are mode-specific"
     Do not apply one universal rule for every mode. Your app must satisfy the correct contract for **its** hosting mode.
 
-### Port contract by hosting mode
+#### Port contract by hosting mode
 
 - **Windows code**
-  - App Service integrates with IIS/httpPlatform/ASP.NET hosting model.
-  - Binding is platform-managed (named pipe or platform-assigned port behavior depending on stack).
+    - App Service integrates with IIS/httpPlatform/ASP.NET hosting model.
+    - Binding is platform-managed (named pipe or platform-assigned port behavior depending on stack).
 - **Linux built-in image**
-  - App typically binds to `PORT` (and in some cases `WEBSITES_PORT`).
-  - Validate startup command and framework binding behavior.
+    - App typically binds to `PORT` (and in some cases `WEBSITES_PORT`).
+    - Validate startup command and framework binding behavior.
 - **Linux custom container**
-  - App Service needs container port metadata, typically via `WEBSITES_PORT`.
-  - Ensure your container listens on the configured port.
+    - App Service needs container port metadata, typically via `WEBSITES_PORT`.
+    - Ensure your container listens on the configured port.
 
-### Storage behavior by hosting mode
+#### Storage behavior by hosting mode
 
 - **Built-in images**: `/home` is typically persistent and shared.
 - **Custom containers**: persistence behavior depends on `WEBSITES_ENABLE_APP_SERVICE_STORAGE`.
@@ -134,7 +136,7 @@ Learn references:
 
 ---
 
-## [Beginner] Management plane: what you configure
+### [Beginner] Management plane: what you configure
 
 The management plane is where desired state is declared.
 
@@ -148,7 +150,7 @@ Typical objects and settings:
 - Identity settings (system/user-assigned managed identity)
 - Backup and restore configuration
 
-### Why management-plane changes can restart runtime
+#### Why management-plane changes can restart runtime
 
 Many settings are consumed at process/container start. When changed, App Service recycles processes to enforce consistency.
 
@@ -160,7 +162,7 @@ Common recycle triggers:
 - Slot swap
 - Scale up/down or scale in/out
 
-### Example: inspect current app state with CLI
+#### Example: inspect current app state with CLI
 
 ```bash
 az webapp show \
@@ -184,7 +186,7 @@ Example output (PII masked):
 }
 ```
 
-### Example: inspect key app settings safely
+#### Example: inspect key app settings safely
 
 ```bash
 az webapp config appsettings list \
@@ -200,11 +202,11 @@ Learn references:
 
 ---
 
-## [Beginner] Runtime plane: how requests are served
+### [Beginner] Runtime plane: how requests are served
 
 At runtime, App Service frontends terminate inbound connections and route traffic to healthy worker instances.
 
-### Runtime path and warm instance selection
+#### Runtime path and warm instance selection
 
 ```mermaid
 sequenceDiagram
@@ -220,7 +222,7 @@ sequenceDiagram
     FE-->>U: HTTPS response
 ```
 
-### Instance lifecycle realities
+#### Instance lifecycle realities
 
 - Instances can recycle during platform maintenance.
 - Scale-out adds new instances that must warm up.
@@ -233,7 +235,7 @@ Design implications:
 - Externalize durable state.
 - Ensure graceful shutdown behavior.
 
-### Runtime observability basics
+#### Runtime observability basics
 
 - Request failures (HTTP 5xx, latency spikes) are runtime symptoms.
 - Management-plane metrics alone are insufficient.
@@ -246,7 +248,7 @@ Learn references:
 
 ---
 
-## [Operator] SCM plane (Kudu): deployment and diagnostics companion
+### [Operator] SCM plane (Kudu): deployment and diagnostics companion
 
 The SCM site (`<app-name>.scm.azurewebsites.net`) is a companion management surface.
 
@@ -256,7 +258,7 @@ Reframe it correctly:
 - Diagnostic depth varies by hosting model.
 - Deployment APIs are still valuable even when UI features differ.
 
-### What Kudu typically provides
+#### What Kudu typically provides
 
 | Capability | Endpoint or surface |
 |---|---|
@@ -266,25 +268,25 @@ Reframe it correctly:
 | Log stream | `/api/logstream` |
 | File APIs | `/api/vfs/` |
 
-### Critical caveats by hosting model
+#### Critical caveats by hosting model
 
 1. **Linux custom container**
-   - SCM site runs in a **separate container** from your app container.
-   - SCM cannot directly inspect app container filesystem/processes.
-   - Use app-container SSH/logs as primary diagnostic path.
+    - SCM site runs in a **separate container** from your app container.
+    - SCM cannot directly inspect app container filesystem/processes.
+    - Use app-container SSH/logs as primary diagnostic path.
 
 2. **SCM access restrictions can differ from main app**
-   - Main site may be reachable while SCM is blocked.
-   - Troubleshoot SCM access rules separately.
+    - Main site may be reachable while SCM is blocked.
+    - Troubleshoot SCM access rules separately.
 
 3. **Linux Kudu ZIP deploy UI limitations**
-   - UI behavior is not universal across Linux scenarios.
-   - Prefer API/CLI deployment commands for reliability.
+    - UI behavior is not universal across Linux scenarios.
+    - Prefer API/CLI deployment commands for reliability.
 
 !!! warning "Common confusion"
     "My app works, but Kudu will not open" is often an SCM access-restriction configuration issue, not an app runtime issue.
 
-### Access restrictions for main site vs SCM site
+#### Access restrictions for main site vs SCM site
 
 ```mermaid
 graph TD
@@ -294,7 +296,7 @@ graph TD
     SCMR --> KUDU[app.scm.azurewebsites.net]
 ```
 
-### CLI check: SCM and app access restrictions
+#### CLI check: SCM and app access restrictions
 
 ```bash
 az webapp config access-restriction show \
@@ -311,18 +313,18 @@ Learn references:
 
 ---
 
-## [Operator] Build and deployment flow (accurate model)
+### [Operator] Build and deployment flow (accurate model)
 
 App Service supports multiple deployment sources and mechanisms. **Oryx is one build automation path**, not a universal default for every deployment style.
 
-### Correct framing
+#### Correct framing
 
 - You can build in CI and deploy artifacts.
 - You can trigger server-side build for selected flows.
 - You can deploy prebuilt containers.
 - ZIP deploy does **not** auto-build unless you explicitly enable it.
 
-### Deployment method vs build behavior
+#### Deployment method vs build behavior
 
 | Deployment method | Typical build location | Build behavior notes |
 |---|---|---|
@@ -331,7 +333,7 @@ App Service supports multiple deployment sources and mechanisms. **Oryx is one b
 | Local Git / external Git integration | Can use server-side build path | May use build automation depending on stack and configuration |
 | Container image deploy | Container build pipeline | App Service pulls image; no App Service source build step |
 
-### Deployment flow map
+#### Deployment flow map
 
 ```mermaid
 flowchart LR
@@ -344,7 +346,7 @@ flowchart LR
     KUDUDEPLOY --> APP
 ```
 
-### ZIP deploy with explicit server-side build setting
+#### ZIP deploy with explicit server-side build setting
 
 ```bash
 az webapp config appsettings set \
@@ -359,7 +361,7 @@ az webapp deploy \
     --type zip
 ```
 
-### GitHub Actions pattern (high-level)
+#### GitHub Actions pattern (high-level)
 
 1. Build and test in CI.
 2. Produce immutable artifact (or container image digest).
@@ -377,14 +379,14 @@ Learn references:
 
 ---
 
-## [Beginner] Filesystem model: ephemeral vs persistent
+### [Beginner] Filesystem model: ephemeral vs persistent
 
 Storage behavior drives many production incidents. Separate storage into two classes:
 
 1. Ephemeral instance-local storage
 2. Persistent shared storage
 
-### Ephemeral storage
+#### Ephemeral storage
 
 Characteristics:
 
@@ -405,7 +407,7 @@ Bad uses:
 - Cross-instance coordination files
 - Any state you need after restart
 
-### Persistent storage (`/home` on Linux)
+#### Persistent storage (`/home` on Linux)
 
 Characteristics:
 
@@ -425,7 +427,7 @@ Key Linux paths:
 !!! warning "Verify hosting mode defaults"
     For built-in Linux images, `/home` is generally persistent and shared. For custom containers, persistence depends on `WEBSITES_ENABLE_APP_SERVICE_STORAGE`. Verify your actual app settings and runtime behavior.
 
-### Mistake example: file-based database on `/home`
+#### Mistake example: file-based database on `/home`
 
 Do **not** assume `/home` is suitable for SQLite or other file-based databases in production multi-instance scenarios.
 
@@ -446,7 +448,7 @@ Learn references:
 
 ---
 
-## [Operator] Startup contracts and health
+### [Operator] Startup contracts and health
 
 Startup success is a contract between your app and the platform:
 
@@ -455,7 +457,7 @@ Startup success is a contract between your app and the platform:
 - Health endpoint reflects readiness truthfully
 - App handles termination gracefully
 
-### Health Check behavior details
+#### Health Check behavior details
 
 Health Check is more than a monitoring toggle; it is part of runtime traffic safety.
 
@@ -475,7 +477,7 @@ flowchart TD
     OUT --> REC[Recovery/replace actions]
 ```
 
-### Example health endpoint design rules
+#### Example health endpoint design rules
 
 - Avoid expensive deep checks on every probe call.
 - Confirm critical dependencies needed for serving traffic.
@@ -489,11 +491,11 @@ Learn references:
 
 ---
 
-## [Operator] Warm-up and deployment safety
+### [Operator] Warm-up and deployment safety
 
 Deployment safety is about controlling user impact while new code starts.
 
-### Slot swap mechanics
+#### Slot swap mechanics
 
 When using deployment slots:
 
@@ -514,19 +516,19 @@ sequenceDiagram
     Prod-->>Dev: New version active
 ```
 
-### Custom swap warm-up settings
+#### Custom swap warm-up settings
 
 - `WEBSITE_SWAP_WARMUP_PING_PATH`
 - `WEBSITE_SWAP_WARMUP_PING_STATUSES`
 
 Use these to align swap readiness with your app’s real warm-up endpoint and expected status codes.
 
-### Important slot constraints
+#### Important slot constraints
 
 - Deployment slots require **Standard tier or higher**.
 - Auto swap is **not supported** on Linux web apps / Web App for Containers.
 
-### If slots are not available
+#### If slots are not available
 
 Use one or more alternatives:
 
@@ -544,43 +546,11 @@ Learn references:
 
 ---
 
-## [Advanced] Zone redundancy and regional resiliency
-
-Zone resilience in App Service depends on SKU, instance count, and regional capability.
-
-### Conditions and boundaries
-
-- Zone redundancy is available on supported Premium tiers (for example Premium v2/v3/v4 where supported).
-- You generally need **2+ instances** for meaningful zonal distribution.
-- Region must support the relevant zonal capability.
-- Fault domains are platform-managed; they are not directly user-controlled in App Service.
-
-### What this means operationally
-
-- Validate zone support before committing architecture decisions.
-- Pair zonal design with data-tier resiliency.
-- Add regional failover strategy for true regional outage tolerance.
-
-```mermaid
-graph LR
-    U[User Traffic] --> FE[Regional Frontends]
-    FE --> Z1[Workers in Zone 1]
-    FE --> Z2[Workers in Zone 2]
-    FE --> Z3[Workers in Zone 3]
-```
-
-Learn references:
-
-- [Reliability in App Service](https://learn.microsoft.com/azure/reliability/reliability-app-service)
-- [About availability zones](https://learn.microsoft.com/azure/reliability/availability-zones-overview)
-
----
-
-## [Operator] Shared plan contention and capacity behavior
+### [Operator] Shared plan contention and capacity behavior
 
 An App Service Plan is the compute boundary. Apps in the same plan compete for shared CPU, memory, and I/O capacity.
 
-### What shares plan resources
+#### What shares plan resources
 
 Within one plan, shared compute can be consumed by:
 
@@ -592,7 +562,7 @@ Within one plan, shared compute can be consumed by:
 
 This is why app-only metrics can hide root cause. Plan-level visibility is mandatory.
 
-### Monitoring strategy: app and plan together
+#### Monitoring strategy: app and plan together
 
 Track at least:
 
@@ -601,7 +571,7 @@ Track at least:
 - HTTP queue/latency signals at app level
 - Restart count and instance health
 
-### Example: inspect plan for an app
+#### Example: inspect plan for an app
 
 ```bash
 az webapp show \
@@ -620,42 +590,76 @@ Learn references:
 
 ---
 
-## [Beginner] Operational baseline checklist
+### [Beginner] Operational baseline checklist
 
 Use this as a minimum baseline before production go-live.
 
-### Reliability baseline
+#### Reliability baseline
 
 - Health endpoint implemented and tested
 - Health check configured in App Service
 - At least two instances for meaningful health-based routing (where workload requires availability)
 - Startup path measured and within acceptable threshold
 
-### Deployment safety baseline
+#### Deployment safety baseline
 
 - CI build/test pipeline produces immutable artifacts
 - Rollback method documented and tested
-  - If Standard+ with slots: slot swap/rollback runbook
-  - If no slots: previous artifact redeploy or run-from-package fallback
+    - If Standard+ with slots: slot swap/rollback runbook
+    - If no slots: previous artifact redeploy or run-from-package fallback
 - Deployment identity/credentials minimized
 
-### Observability baseline
+#### Observability baseline
 
 - Application logging enabled with structured format
 - Log retention and export path documented
 - Alerting defined for error rate, restart spikes, and latency regressions
 
-### Configuration baseline
+#### Configuration baseline
 
 - Port contract validated for hosting mode
 - Storage behavior validated (`/home` persistence expectation verified)
 - Secrets stored in secure settings/Key Vault references where applicable
 
-### Capacity baseline
+#### Capacity baseline
 
 - Plan-level metrics dashboard in place
 - App-level and plan-level alerts linked in incident workflow
 - Scale policy reviewed against real traffic profile
+
+---
+
+## Advanced Topics
+
+### Zone redundancy and regional resiliency
+
+Zone resilience in App Service depends on SKU, instance count, and regional capability.
+
+#### Conditions and boundaries
+
+- Zone redundancy is available on supported Premium tiers (for example Premium v2/v3/v4 where supported).
+- You generally need **2+ instances** for meaningful zonal distribution.
+- Region must support the relevant zonal capability.
+- Fault domains are platform-managed; they are not directly user-controlled in App Service.
+
+#### What this means operationally
+
+- Validate zone support before committing architecture decisions.
+- Pair zonal design with data-tier resiliency.
+- Add regional failover strategy for true regional outage tolerance.
+
+```mermaid
+graph LR
+    U[User Traffic] --> FE[Regional Frontends]
+    FE --> Z1[Workers in Zone 1]
+    FE --> Z2[Workers in Zone 2]
+    FE --> Z3[Workers in Zone 3]
+```
+
+Learn references:
+
+- [Reliability in App Service](https://learn.microsoft.com/azure/reliability/reliability-app-service)
+- [About availability zones](https://learn.microsoft.com/azure/reliability/availability-zones-overview)
 
 ---
 
@@ -680,7 +684,7 @@ For language-specific implementation details, see:
 - [Authentication Architecture](./authentication-architecture.md)
 - [Security Architecture](./security-architecture.md)
 
-## Reference
+## Sources
 
 - [Azure App Service overview](https://learn.microsoft.com/azure/app-service/overview)
 - [App Service Environment overview](https://learn.microsoft.com/azure/app-service/environment/overview)

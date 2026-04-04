@@ -57,6 +57,6 @@ For language-specific implementation details, see:
 - [Best Practices](../best-practices/index.md)
 - [Reference](../reference/index.md)
 
-## References
+## Sources
 
 - [Azure App Service documentation (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/)

@@ -41,7 +41,7 @@ union LatencySeries, RestartSeries
 - Near-real-time ingestion delays can briefly misalign restart and latency points.
 - This query cannot prove causation; correlated events may share a third underlying cause.
 
-## References
+## Sources
 
 - [Enable diagnostic logging for apps in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs)
 - [Monitor Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/monitor-app-service)

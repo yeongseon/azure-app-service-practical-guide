@@ -68,6 +68,6 @@ az webapp restart --resource-group "$RG" --name "$APP_NAME"
 - [Key Vault References](./key-vault-reference.md)
 - [Troubleshoot](../../../reference/troubleshooting.md)
 
-## References
+## Sources
 - [App Service documentation (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/)
 - [Use managed identities for App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/overview-managed-identity)

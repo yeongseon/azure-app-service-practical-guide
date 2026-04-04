@@ -184,21 +184,13 @@ Avoid storing durable application state on non-persistent paths.
 ### Module and Path Failures
 
 1. **`ModuleNotFoundError` after deploy**
-   - Cause: Missing package in `requirements.txt` or build skipped.
-   - Fix: Add package, redeploy with `SCM_DO_BUILD_DURING_DEPLOYMENT=true`.
-
+    - Cause: Missing package in `requirements.txt` or build skipped.    - Fix: Add package, redeploy with `SCM_DO_BUILD_DURING_DEPLOYMENT=true`.
 2. **`Failed to find attribute 'app'` / WSGI import errors**
-   - Cause: Incorrect module path in startup command.
-   - Fix: Match `module:callable` exactly (`src.app:app`, `app:app`, etc.).
-
+    - Cause: Incorrect module path in startup command.    - Fix: Match `module:callable` exactly (`src.app:app`, `app:app`, etc.).
 3. **`No module named src`**
-   - Cause: Wrong working directory assumptions.
-   - Fix: Adjust startup path to deployed folder layout.
-
+    - Cause: Wrong working directory assumptions.    - Fix: Adjust startup path to deployed folder layout.
 4. **App starts locally but fails in App Service**
-   - Cause: OS-level native dependencies missing or case-sensitive import mismatch.
-   - Fix: Pin compatible wheels and validate Linux import casing.
-
+    - Cause: OS-level native dependencies missing or case-sensitive import mismatch.    - Fix: Pin compatible wheels and validate Linux import casing.
 ### Fast Validation Commands
 
 ```bash
@@ -215,6 +207,6 @@ Check installed packages and startup process from SSH/Kudu when diagnosing impor
 - [CLI Cheatsheet](../../reference/cli-cheatsheet.md)
 - [Troubleshooting](../../reference/troubleshooting.md)
 
-## References
+## Sources
 - [Configure a Linux Python app (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/configure-language-python)
 - [Python version support in App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/configure-language-python#supported-python-versions)

@@ -204,13 +204,13 @@ When VNet integration is added with custom DNS or Private DNS zones, resolution 
 The hypothesis is considered **supported** if all of the following are observed:
 
 1. Non-VNet baseline:
-   - `/resolve` returns successful DNS answers for public hostnames.
-   - `diag-dns` shows valid answers for management/login/storage public names.
+    - `/resolve` returns successful DNS answers for public hostnames.
+    - `diag-dns` shows valid answers for management/login/storage public names.
 2. VNet-integrated misconfigured run:
-   - one or more hostnames fail resolution (`ok: false` or resolver error).
-   - resolver/path evidence shows missing zone link or forwarding issue.
+    - one or more hostnames fail resolution (`ok: false` or resolver error).
+    - resolver/path evidence shows missing zone link or forwarding issue.
 3. Correlated telemetry:
-   - HTTP failures or increased latency align with DNS error window.
+    - HTTP failures or increased latency align with DNS error window.
 
 ### 2.4 Disproof criteria
 
@@ -833,7 +833,14 @@ graph LR
 
 - [DNS Resolution with VNet-Integrated App Service](../playbooks/outbound-network/dns-resolution-vnet-integrated-app-service.md)
 
-## References
+## See Also
+
+- [DNS Resolution with VNet-Integrated App Service](../playbooks/outbound-network/dns-resolution-vnet-integrated-app-service.md)
+- [Outbound network first-10-minutes checklist](../first-10-minutes/outbound-network.md)
+- [KQL HTTP: 5xx trend over time](../kql/http/5xx-trend-over-time.md)
+- [KQL Console: startup errors](../kql/console/startup-errors.md)
+
+## Sources
 
 - [Integrate your app with an Azure virtual network](https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration)
 - [Azure App Service networking features](https://learn.microsoft.com/en-us/azure/app-service/networking-features)
@@ -842,10 +849,3 @@ graph LR
 - [Azure private endpoint DNS configuration](https://learn.microsoft.com/en-us/azure/private-link/private-endpoint-dns)
 - [Enable diagnostic logging for apps in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs)
 - [Azure Monitor Logs query language tutorial](https://learn.microsoft.com/en-us/azure/azure-monitor/logs/get-started-queries)
-
-## See Also
-
-- [DNS Resolution with VNet-Integrated App Service](../playbooks/outbound-network/dns-resolution-vnet-integrated-app-service.md)
-- [Outbound network first-10-minutes checklist](../first-10-minutes/outbound-network.md)
-- [KQL HTTP: 5xx trend over time](../kql/http/5xx-trend-over-time.md)
-- [KQL Console: startup errors](../kql/console/startup-errors.md)
