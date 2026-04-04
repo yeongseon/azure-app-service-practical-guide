@@ -1,0 +1,51 @@
+{
+  "tables": [
+    {
+      "columns": [
+        {
+          "name": "TimeGenerated",
+          "type": "datetime"
+        },
+        {
+          "name": "ResultDescription",
+          "type": "string"
+        }
+      ],
+      "name": "PrimaryResult",
+      "rows": [
+        [
+          "2026-04-04T05:59:53.5240524Z",
+          "OSError: [Errno 28] No space left on device"
+        ],
+        [
+          "2026-04-04T05:59:53.5240479Z",
+          "    os.fsync(handle.fileno())"
+        ],
+        [
+          "2026-04-04T05:59:53.5240426Z",
+          "  File \"/tmp/8de920aeed092c2/app.py\", line 54, in write_payload"
+        ],
+        [
+          "2026-04-04T05:59:53.5240377Z",
+          "                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:59:53.5240246Z",
+          "    write_result = write_payload(HOME_TEMP_DIR, size_mb)"
+        ],
+        [
+          "2026-04-04T05:59:53.5237253Z",
+          "  File \"/tmp/8de920aeed092c2/app.py\", line 182, in fill_home"
+        ],
+        [
+          "2026-04-04T05:59:53.5234869Z",
+          "Traceback (most recent call last):"
+        ],
+        [
+          "2026-04-04T05:59:53.4968911Z",
+          "[2026-04-04 05:59:53,475] ERROR in app: fill-home failed with disk error: [Errno 28] No space left on device"
+        ]
+      ]
+    }
+  ]
+}

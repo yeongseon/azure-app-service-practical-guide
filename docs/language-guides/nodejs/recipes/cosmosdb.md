@@ -95,9 +95,9 @@ az webapp config appsettings set --name $APP_NAME --resource-group $RG --setting
 ## Advanced Topics
 
 !!! info "Coming Soon"
-    - [Change feed patterns](https://github.com/yeongseon/azure-appservice-nodejs-guide/issues)
-    - [Global distribution](https://github.com/yeongseon/azure-appservice-nodejs-guide/issues)
-    - [Contribute](https://github.com/yeongseon/azure-appservice-nodejs-guide/issues)
+    - [Change feed patterns](https://github.com/yeongseon/azure-appservice/issues)
+    - [Global distribution](https://github.com/yeongseon/azure-appservice/issues)
+    - [Contribute](https://github.com/yeongseon/azure-appservice/issues)
 
 ## See Also
 - [Azure SQL Integration](./azure-sql.md)

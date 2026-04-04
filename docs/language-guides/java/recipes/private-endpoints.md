@@ -130,9 +130,14 @@ Use dependency telemetry and synthetic API checks to verify end-to-end connectiv
 
 Use resilient retry settings (Spring Data JPA retry logic, Redis reconnect behavior) and monitor transient errors.
 
-## See also
+## See Also
 
 - [Azure SQL](azure-sql.md)
 - [Redis Cache](redis.md)
 - [VNet Integration](vnet-integration.md)
-- For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-appservice-guide/)
+- [Platform: How App Service Works](../../../platform/how-app-service-works.md)
+
+## References
+
+- [Use private endpoints for Azure App Service apps](https://learn.microsoft.com/en-us/azure/app-service/networking/private-endpoint)
+- [Integrate your app with an Azure virtual network](https://learn.microsoft.com/en-us/azure/app-service/configure-vnet-integration-enable)

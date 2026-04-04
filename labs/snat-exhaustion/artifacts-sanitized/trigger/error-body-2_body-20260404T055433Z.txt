@@ -1,0 +1,1 @@
+{"calls":20,"elapsedMs":35774,"failures":1,"mode":"without-pooling","sampleErrors":["The read operation timed out"],"successes":19,"target":"https://httpbin.org/get"}

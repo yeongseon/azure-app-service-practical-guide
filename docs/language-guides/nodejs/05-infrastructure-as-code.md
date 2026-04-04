@@ -169,7 +169,7 @@ Now that your infrastructure is ready, proceed to **[06-ci-cd.md](./06-ci-cd.md)
 !!! info "Coming Soon"
     - Terraform for multi-cloud deployments
     - Azure Developer CLI (azd) integration
-    - [Contribute](https://github.com/yeongseon/azure-appservice-nodejs-guide/issues)
+- [Contribute](https://github.com/yeongseon/azure-appservice/issues)
 
 ## See Also
 - [Operations Scaling](../../operations/scaling.md)

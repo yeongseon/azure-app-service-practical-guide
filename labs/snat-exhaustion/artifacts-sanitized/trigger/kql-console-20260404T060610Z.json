@@ -1,0 +1,2019 @@
+{
+  "tables": [
+    {
+      "columns": [
+        {
+          "name": "TimeGenerated",
+          "type": "datetime"
+        },
+        {
+          "name": "ResultDescription",
+          "type": "string"
+        }
+      ],
+      "name": "PrimaryResult",
+      "rows": [
+        [
+          "2026-04-04T05:59:43.0881145Z",
+          "[2026-04-04 05:59:43 +0000] [1904] [INFO] Control socket listening at /root/.gunicorn/gunicorn.ctl"
+        ],
+        [
+          "2026-04-04T05:59:43.0880529Z",
+          "[2026-04-04 05:59:43 +0000] [1929] [INFO] Booting worker with pid: 1929"
+        ],
+        [
+          "2026-04-04T05:59:43.0811811Z",
+          "[2026-04-04 05:59:43 +0000] [1904] [ERROR] Worker (pid:1908) was sent SIGKILL! Perhaps out of memory?"
+        ],
+        [
+          "2026-04-04T05:59:42.0768517Z",
+          "[2026-04-04 05:59:42 +0000] [1904] [CRITICAL] WORKER TIMEOUT (pid:1908)"
+        ],
+        [
+          "2026-04-04T05:58:47.0240355Z",
+          "[2026-04-04 05:58:47 +0000] [1904] [INFO] Control socket listening at /root/.gunicorn/gunicorn.ctl"
+        ],
+        [
+          "2026-04-04T05:58:47.0240046Z",
+          "[2026-04-04 05:58:47 +0000] [1927] [INFO] Booting worker with pid: 1927"
+        ],
+        [
+          "2026-04-04T05:58:46.9810082Z",
+          "[2026-04-04 05:58:46 +0000] [1904] [INFO] Control socket listening at /root/.gunicorn/gunicorn.ctl"
+        ],
+        [
+          "2026-04-04T05:58:46.9796417Z",
+          "[2026-04-04 05:58:46 +0000] [1925] [INFO] Booting worker with pid: 1925"
+        ],
+        [
+          "2026-04-04T05:58:46.9568115Z",
+          "[2026-04-04 05:58:46 +0000] [1904] [ERROR] Worker (pid:1906) was sent SIGKILL! Perhaps out of memory?"
+        ],
+        [
+          "2026-04-04T05:58:46.9558858Z",
+          "[2026-04-04 05:58:46 +0000] [1904] [ERROR] Worker (pid:1905) was sent SIGKILL! Perhaps out of memory?"
+        ],
+        [
+          "2026-04-04T05:58:45.9503149Z",
+          "[2026-04-04 05:58:45 +0000] [1904] [CRITICAL] WORKER TIMEOUT (pid:1906)"
+        ],
+        [
+          "2026-04-04T05:58:45.949913Z",
+          "[2026-04-04 05:58:45 +0000] [1904] [CRITICAL] WORKER TIMEOUT (pid:1905)"
+        ],
+        [
+          "2026-04-04T05:58:15.8570188Z",
+          "[2026-04-04 05:58:15 +0000] [1904] [INFO] Control socket listening at /root/.gunicorn/gunicorn.ctl"
+        ],
+        [
+          "2026-04-04T05:58:15.8538401Z",
+          "[2026-04-04 05:58:15 +0000] [1923] [INFO] Booting worker with pid: 1923"
+        ],
+        [
+          "2026-04-04T05:58:15.4205065Z",
+          "[2026-04-04 05:58:15 +0000] [1904] [ERROR] Worker (pid:1907) was sent SIGKILL! Perhaps out of memory?"
+        ],
+        [
+          "2026-04-04T05:58:14.4650185Z",
+          "[2026-04-04 05:58:14 +0000] [1904] [CRITICAL] WORKER TIMEOUT (pid:1907)"
+        ],
+        [
+          "2026-04-04T05:52:07.2618408Z",
+          "[2026-04-04 05:52:07 +0000] [1904] [INFO] Control socket listening at /root/.gunicorn/gunicorn.ctl"
+        ],
+        [
+          "2026-04-04T05:52:07.1015626Z",
+          "[2026-04-04 05:52:07 +0000] [1908] [INFO] Booting worker with pid: 1908"
+        ],
+        [
+          "2026-04-04T05:52:07.0361327Z",
+          "[2026-04-04 05:52:07 +0000] [1907] [INFO] Booting worker with pid: 1907"
+        ],
+        [
+          "2026-04-04T05:52:06.9459147Z",
+          "[2026-04-04 05:52:06 +0000] [1906] [INFO] Booting worker with pid: 1906"
+        ],
+        [
+          "2026-04-04T05:52:06.9059939Z",
+          "[2026-04-04 05:52:06 +0000] [1905] [INFO] Booting worker with pid: 1905"
+        ],
+        [
+          "2026-04-04T05:52:06.9026213Z",
+          "[2026-04-04 05:52:06 +0000] [1904] [INFO] Using worker: sync"
+        ],
+        [
+          "2026-04-04T05:52:06.9025986Z",
+          "[2026-04-04 05:52:06 +0000] [1904] [INFO] Listening at: http://0.0.0.0:8000 (1904)"
+        ],
+        [
+          "2026-04-04T05:52:06.8993487Z",
+          "[2026-04-04 05:52:06 +0000] [1904] [INFO] Starting gunicorn 25.3.0"
+        ],
+        [
+          "2026-04-04T05:52:06.6988194Z",
+          "Updated PYTHONPATH to '/opt/startup/app_logs:/tmp/8de9207a868cb07/antenv/lib/python3.11/site-packages'"
+        ],
+        [
+          "2026-04-04T05:52:06.6987316Z",
+          "Using packages from virtual environment antenv located at /tmp/8de9207a868cb07/antenv."
+        ],
+        [
+          "2026-04-04T05:52:00.584008Z",
+          "Writing output script to '/opt/startup/startup.sh'"
+        ],
+        [
+          "2026-04-04T05:51:54.5626542Z",
+          "App path is set to '/tmp/8de9207a868cb07'"
+        ],
+        [
+          "2026-04-04T05:51:54.5626139Z",
+          "zstd tar Successfully extracted '/home/site/wwwroot/output.tar.zst' to '/tmp/8de9207a868cb07'"
+        ],
+        [
+          "2026-04-04T05:51:51.5719733Z",
+          "Using zstd for decompression of file: /home/site/wwwroot/output.tar.zst"
+        ],
+        [
+          "2026-04-04T05:51:51.5718315Z",
+          "Extracting '/home/site/wwwroot/output.tar.zst' to directory '/tmp/8de9207a868cb07'..."
+        ],
+        [
+          "2026-04-04T05:51:51.570454Z",
+          "Found zstd-compressed tarball."
+        ],
+        [
+          "2026-04-04T05:51:51.5694697Z",
+          "Output is compressed. Extracting it..."
+        ],
+        [
+          "2026-04-04T05:51:51.5691864Z",
+          "Oryx Version: 0.2.20260130.1, Commit: a98e9aef5dfb6572a08b0a07ce414e1122ab4a2e, ReleaseTagName: 20260130.1"
+        ],
+        [
+          "2026-04-04T05:51:51.5668841Z",
+          "Build Operation ID: 6ec533a54a914e3e"
+        ],
+        [
+          "2026-04-04T05:51:51.5441892Z",
+          "Found build manifest file at '/home/site/wwwroot/oryx-manifest.toml'. Deserializing it..."
+        ],
+        [
+          "2026-04-04T05:51:51.4364466Z",
+          "Launching oryx with: create-script -appPath /home/site/wwwroot -output /opt/startup/startup.sh -virtualEnvName antenv -defaultApp /opt/defaultsite -userStartupCommand 'gunicorn --bind=0.0.0.0 --timeout=120 --workers=4 app:app'"
+        ],
+        [
+          "2026-04-04T05:51:51.4280952Z",
+          "Starting periodic command scheduler: cron."
+        ],
+        [
+          "2026-04-04T05:51:50.0475621Z",
+          "Site's appCommandLine: gunicorn --bind=0.0.0.0 --timeout=120 --workers=4 app:app"
+        ],
+        [
+          "2026-04-04T05:51:49.599014Z",
+          "CA certificates copied and updated successfully."
+        ],
+        [
+          "2026-04-04T05:51:49.5849812Z",
+          "done."
+        ],
+        [
+          "2026-04-04T05:51:49.5597768Z",
+          "Running hooks in /etc/ca-certificates/update.d..."
+        ],
+        [
+          "2026-04-04T05:51:49.5597305Z",
+          "4 added, 0 removed; done."
+        ],
+        [
+          "2026-04-04T05:51:49.3751287Z",
+          "rehash: warning: skipping duplicate certificate in azl_SSL.com_TLS_ECC_Root_CA_2022.pem"
+        ],
+        [
+          "2026-04-04T05:51:49.3675323Z",
+          "rehash: warning: skipping duplicate certificate in azl_Sectigo_Public_Server_Authentication_Root_R46.pem"
+        ],
+        [
+          "2026-04-04T05:51:49.3500458Z",
+          "rehash: warning: skipping duplicate certificate in azl_SSL.com_TLS_RSA_Root_CA_2022.pem"
+        ],
+        [
+          "2026-04-04T05:51:49.3469037Z",
+          "rehash: warning: skipping duplicate certificate in azl_Sectigo_Public_Server_Authentication_Root_E46.pem"
+        ],
+        [
+          "2026-04-04T05:51:39.2908541Z",
+          "Updating certificates in /etc/ssl/certs..."
+        ],
+        [
+          "2026-04-04T05:51:39.2686803Z",
+          "WEBSITES_INCLUDE_CLOUD_CERTS is not set to true."
+        ],
+        [
+          "2026-04-04T05:51:39.2625916Z",
+          "Starting OpenBSD Secure Shell server: sshd."
+        ],
+        [
+          "2026-04-04T05:51:38.8335886Z",
+          "Note: Any data outside '/home' is not persisted"
+        ],
+        [
+          "2026-04-04T05:51:38.833583Z",
+          ""
+        ],
+        [
+          "2026-04-04T05:51:38.833576Z",
+          "Instance Id      : 10cc0c2f971bbd03aa841c0f05177f32339132ea7b554afed827241f800ac7ec"
+        ],
+        [
+          "2026-04-04T05:51:38.8335685Z",
+          "Instance Name    : 10-30-0-28"
+        ],
+        [
+          "2026-04-04T05:51:38.8335627Z",
+          "Python version   : 3.11.14"
+        ],
+        [
+          "2026-04-04T05:51:38.8335559Z",
+          "Python quickstart: https://aka.ms/python-qs"
+        ],
+        [
+          "2026-04-04T05:51:38.8335496Z",
+          "Documentation    : http://aka.ms/webapp-linux"
+        ],
+        [
+          "2026-04-04T05:51:38.8335434Z",
+          ""
+        ],
+        [
+          "2026-04-04T05:51:38.8335378Z",
+          "A P P   S E R V I C E   O N   L I N U X"
+        ],
+        [
+          "2026-04-04T05:51:38.8335302Z",
+          "        \\/      \\/                  \\/ "
+        ],
+        [
+          "2026-04-04T05:51:38.8335224Z",
+          "\\____|__  /_____ \\____/ |__|    \\___  >"
+        ],
+        [
+          "2026-04-04T05:51:38.8335164Z",
+          "/    |    \\/    /|  |  /|  | \\/\\  ___/ "
+        ],
+        [
+          "2026-04-04T05:51:38.83351Z",
+          " /  /_\\  \\\\___   /  |  \\_  __ \\_/ __ \\ "
+        ],
+        [
+          "2026-04-04T05:51:38.8334962Z",
+          "  /  _  \\ __________ _________   ____  "
+        ],
+        [
+          "2026-04-04T05:51:38.8313033Z",
+          "   _____                               "
+        ],
+        [
+          "2026-04-04T05:50:18.8584494Z",
+          "[2026-04-04 05:50:18 +0000] [1906] [INFO] Control socket listening at /root/.gunicorn/gunicorn.ctl"
+        ],
+        [
+          "2026-04-04T05:50:18.8557567Z",
+          "[2026-04-04 05:50:18 +0000] [2002] [INFO] Booting worker with pid: 2002"
+        ],
+        [
+          "2026-04-04T05:50:18.8218239Z",
+          "[2026-04-04 05:50:18 +0000] [2000] [INFO] Booting worker with pid: 2000"
+        ],
+        [
+          "2026-04-04T05:50:18.8195899Z",
+          "[2026-04-04 05:50:18 +0000] [1906] [INFO] Control socket listening at /root/.gunicorn/gunicorn.ctl"
+        ],
+        [
+          "2026-04-04T05:50:18.7447489Z",
+          "[2026-04-04 05:50:18 +0000] [1990] [INFO] Worker exiting (pid: 1990)"
+        ],
+        [
+          "2026-04-04T05:50:18.7447446Z",
+          "SystemExit: 1"
+        ],
+        [
+          "2026-04-04T05:50:18.7447398Z",
+          "    sys.exit(1)"
+        ],
+        [
+          "2026-04-04T05:50:18.7447352Z",
+          "  File \"/tmp/8de9207a868cb07/antenv/lib/python3.11/site-packages/gunicorn/workers/base.py\", line 198, in handle_abort"
+        ],
+        [
+          "2026-04-04T05:50:18.7447308Z",
+          "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:50:18.7447266Z",
+          "    return self._sslobj.read(len, buffer)"
+        ],
+        [
+          "2026-04-04T05:50:18.7447221Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/ssl.py\", line 1166, in read"
+        ],
+        [
+          "2026-04-04T05:50:18.7447172Z",
+          "           ^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:50:18.7447133Z",
+          "    return self.read(nbytes, buffer)"
+        ],
+        [
+          "2026-04-04T05:50:18.7447089Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/ssl.py\", line 1314, in recv_into"
+        ],
+        [
+          "2026-04-04T05:50:18.7447047Z",
+          "           ^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:50:18.7447004Z",
+          "    return self._sock.recv_into(b)"
+        ],
+        [
+          "2026-04-04T05:50:18.744695Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/socket.py\", line 718, in readinto"
+        ],
+        [
+          "2026-04-04T05:50:18.7446906Z",
+          "               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:50:18.7446858Z",
+          "    line = str(self.fp.readline(_MAXLINE + 1), \"iso-8859-1\")"
+        ],
+        [
+          "2026-04-04T05:50:18.7446811Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/http/client.py\", line 286, in _read_status"
+        ],
+        [
+          "2026-04-04T05:50:18.744676Z",
+          "                              ^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:50:18.7446718Z",
+          "    version, status, reason = self._read_status()"
+        ],
+        [
+          "2026-04-04T05:50:18.7446673Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/http/client.py\", line 325, in begin"
+        ],
+        [
+          "2026-04-04T05:50:18.7446629Z",
+          "    response.begin()"
+        ],
+        [
+          "2026-04-04T05:50:18.7446582Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/http/client.py\", line 1395, in getresponse"
+        ],
+        [
+          "2026-04-04T05:50:18.7446532Z",
+          "        ^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:50:18.7446491Z",
+          "    r = h.getresponse()"
+        ],
+        [
+          "2026-04-04T05:50:18.7446445Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/urllib/request.py\", line 1352, in do_open"
+        ],
+        [
+          "2026-04-04T05:50:18.7446403Z",
+          "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:50:18.7446353Z",
+          "    return self.do_open(http.client.HTTPSConnection, req,"
+        ],
+        [
+          "2026-04-04T05:50:18.7446307Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/urllib/request.py\", line 1391, in https_open"
+        ],
+        [
+          "2026-04-04T05:50:18.7446264Z",
+          "             ^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:50:18.7446221Z",
+          "    result = func(*args)"
+        ],
+        [
+          "2026-04-04T05:50:18.7446174Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/urllib/request.py\", line 496, in _call_chain"
+        ],
+        [
+          "2026-04-04T05:50:18.7446125Z",
+          "             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:50:18.7446079Z",
+          "    result = self._call_chain(self.handle_open, protocol, protocol +"
+        ],
+        [
+          "2026-04-04T05:50:18.7446033Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/urllib/request.py\", line 536, in _open"
+        ],
+        [
+          "2026-04-04T05:50:18.7445991Z",
+          "               ^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:50:18.7445942Z",
+          "    response = self._open(req, data)"
+        ],
+        [
+          "2026-04-04T05:50:18.7445898Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/urllib/request.py\", line 519, in open"
+        ],
+        [
+          "2026-04-04T05:50:18.7445856Z",
+          "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:50:18.7445818Z",
+          "    return opener.open(url, data, timeout)"
+        ],
+        [
+          "2026-04-04T05:50:18.7445774Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/urllib/request.py\", line 216, in urlopen"
+        ],
+        [
+          "2026-04-04T05:50:18.7445725Z",
+          "         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:50:18.7445683Z",
+          "    with urllib.request.urlopen(req, timeout=timeout_seconds) as resp:"
+        ],
+        [
+          "2026-04-04T05:50:18.7445635Z",
+          "  File \"/tmp/8de9207a868cb07/app.py\", line 141, in outbound_without_pooling"
+        ],
+        [
+          "2026-04-04T05:50:18.7445594Z",
+          "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:50:18.7445546Z",
+          "    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]"
+        ],
+        [
+          "2026-04-04T05:50:18.7445501Z",
+          "  File \"/tmp/8de9207a868cb07/antenv/lib/python3.11/site-packages/flask/app.py\", line 902, in dispatch_request"
+        ],
+        [
+          "2026-04-04T05:50:18.7445459Z",
+          "         ^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:50:18.7445418Z",
+          "    rv = self.dispatch_request()"
+        ],
+        [
+          "2026-04-04T05:50:18.7445371Z",
+          "  File \"/tmp/8de9207a868cb07/antenv/lib/python3.11/site-packages/flask/app.py\", line 917, in full_dispatch_request"
+        ],
+        [
+          "2026-04-04T05:50:18.7445317Z",
+          "               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:50:18.744527Z",
+          "    response = self.full_dispatch_request()"
+        ],
+        [
+          "2026-04-04T05:50:18.7445218Z",
+          "  File \"/tmp/8de9207a868cb07/antenv/lib/python3.11/site-packages/flask/app.py\", line 1511, in wsgi_app"
+        ],
+        [
+          "2026-04-04T05:50:18.7445165Z",
+          "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:50:18.7445099Z",
+          "    return self.wsgi_app(environ, start_response)"
+        ],
+        [
+          "2026-04-04T05:50:18.7445039Z",
+          "  File \"/tmp/8de9207a868cb07/antenv/lib/python3.11/site-packages/flask/app.py\", line 1536, in __call__"
+        ],
+        [
+          "2026-04-04T05:50:18.7444989Z",
+          "               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:50:18.7444934Z",
+          "    respiter = self.wsgi(environ, resp.start_response)"
+        ],
+        [
+          "2026-04-04T05:50:18.7444878Z",
+          "  File \"/tmp/8de9207a868cb07/antenv/lib/python3.11/site-packages/gunicorn/workers/sync.py\", line 185, in handle_request"
+        ],
+        [
+          "2026-04-04T05:50:18.7444805Z",
+          "    self.handle_request(listener, req, client, addr)"
+        ],
+        [
+          "2026-04-04T05:50:18.7444751Z",
+          "  File \"/tmp/8de9207a868cb07/antenv/lib/python3.11/site-packages/gunicorn/workers/sync.py\", line 142, in handle"
+        ],
+        [
+          "2026-04-04T05:50:18.7444695Z",
+          "Traceback (most recent call last):"
+        ],
+        [
+          "2026-04-04T05:50:18.7444563Z",
+          "[2026-04-04 05:50:18 +0000] [1990] [ERROR] Error handling request GET /outbound?calls=40"
+        ],
+        [
+          "2026-04-04T05:50:18.738313Z",
+          "[2026-04-04 05:50:18 +0000] [1988] [INFO] Worker exiting (pid: 1988)"
+        ],
+        [
+          "2026-04-04T05:50:18.7381366Z",
+          "SystemExit: 1"
+        ],
+        [
+          "2026-04-04T05:50:18.7381321Z",
+          "    sys.exit(1)"
+        ],
+        [
+          "2026-04-04T05:50:18.7381269Z",
+          "  File \"/tmp/8de9207a868cb07/antenv/lib/python3.11/site-packages/gunicorn/workers/base.py\", line 198, in handle_abort"
+        ],
+        [
+          "2026-04-04T05:50:18.7381213Z",
+          "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:50:18.7381164Z",
+          "    return self._sslobj.read(len, buffer)"
+        ],
+        [
+          "2026-04-04T05:50:18.7381112Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/ssl.py\", line 1166, in read"
+        ],
+        [
+          "2026-04-04T05:50:18.7381064Z",
+          "           ^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:50:18.7381021Z",
+          "    return self.read(nbytes, buffer)"
+        ],
+        [
+          "2026-04-04T05:50:18.7380961Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/ssl.py\", line 1314, in recv_into"
+        ],
+        [
+          "2026-04-04T05:50:18.7380918Z",
+          "           ^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:50:18.7380875Z",
+          "    return self._sock.recv_into(b)"
+        ],
+        [
+          "2026-04-04T05:50:18.7380826Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/socket.py\", line 718, in readinto"
+        ],
+        [
+          "2026-04-04T05:50:18.7380781Z",
+          "               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:50:18.7380722Z",
+          "    line = str(self.fp.readline(_MAXLINE + 1), \"iso-8859-1\")"
+        ],
+        [
+          "2026-04-04T05:50:18.738067Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/http/client.py\", line 286, in _read_status"
+        ],
+        [
+          "2026-04-04T05:50:18.7380625Z",
+          "                              ^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:50:18.7380578Z",
+          "    version, status, reason = self._read_status()"
+        ],
+        [
+          "2026-04-04T05:50:18.7380521Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/http/client.py\", line 325, in begin"
+        ],
+        [
+          "2026-04-04T05:50:18.7380475Z",
+          "    response.begin()"
+        ],
+        [
+          "2026-04-04T05:50:18.7380426Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/http/client.py\", line 1395, in getresponse"
+        ],
+        [
+          "2026-04-04T05:50:18.7380379Z",
+          "        ^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:50:18.7380331Z",
+          "    r = h.getresponse()"
+        ],
+        [
+          "2026-04-04T05:50:18.7380273Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/urllib/request.py\", line 1352, in do_open"
+        ],
+        [
+          "2026-04-04T05:50:18.7380225Z",
+          "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:50:18.7380176Z",
+          "    return self.do_open(http.client.HTTPSConnection, req,"
+        ],
+        [
+          "2026-04-04T05:50:18.7380126Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/urllib/request.py\", line 1391, in https_open"
+        ],
+        [
+          "2026-04-04T05:50:18.7380068Z",
+          "             ^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:50:18.738002Z",
+          "    result = func(*args)"
+        ],
+        [
+          "2026-04-04T05:50:18.7379968Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/urllib/request.py\", line 496, in _call_chain"
+        ],
+        [
+          "2026-04-04T05:50:18.7379917Z",
+          "             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:50:18.7379861Z",
+          "    result = self._call_chain(self.handle_open, protocol, protocol +"
+        ],
+        [
+          "2026-04-04T05:50:18.7379798Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/urllib/request.py\", line 536, in _open"
+        ],
+        [
+          "2026-04-04T05:50:18.7379753Z",
+          "               ^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:50:18.7379708Z",
+          "    response = self._open(req, data)"
+        ],
+        [
+          "2026-04-04T05:50:18.7379658Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/urllib/request.py\", line 519, in open"
+        ],
+        [
+          "2026-04-04T05:50:18.7379603Z",
+          "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:50:18.7379557Z",
+          "    return opener.open(url, data, timeout)"
+        ],
+        [
+          "2026-04-04T05:50:18.7379505Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/urllib/request.py\", line 216, in urlopen"
+        ],
+        [
+          "2026-04-04T05:50:18.7379455Z",
+          "         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:50:18.7379408Z",
+          "    with urllib.request.urlopen(req, timeout=timeout_seconds) as resp:"
+        ],
+        [
+          "2026-04-04T05:50:18.7379348Z",
+          "  File \"/tmp/8de9207a868cb07/app.py\", line 141, in outbound_without_pooling"
+        ],
+        [
+          "2026-04-04T05:50:18.7379298Z",
+          "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:50:18.7379249Z",
+          "    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]"
+        ],
+        [
+          "2026-04-04T05:50:18.7379186Z",
+          "  File \"/tmp/8de9207a868cb07/antenv/lib/python3.11/site-packages/flask/app.py\", line 902, in dispatch_request"
+        ],
+        [
+          "2026-04-04T05:50:18.737912Z",
+          "         ^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:50:18.737906Z",
+          "    rv = self.dispatch_request()"
+        ],
+        [
+          "2026-04-04T05:50:18.7378429Z",
+          "  File \"/tmp/8de9207a868cb07/antenv/lib/python3.11/site-packages/flask/app.py\", line 917, in full_dispatch_request"
+        ],
+        [
+          "2026-04-04T05:50:18.7378379Z",
+          "               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:50:18.7378332Z",
+          "    response = self.full_dispatch_request()"
+        ],
+        [
+          "2026-04-04T05:50:18.7378259Z",
+          "  File \"/tmp/8de9207a868cb07/antenv/lib/python3.11/site-packages/flask/app.py\", line 1511, in wsgi_app"
+        ],
+        [
+          "2026-04-04T05:50:18.7378208Z",
+          "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:50:18.7378125Z",
+          "    return self.wsgi_app(environ, start_response)"
+        ],
+        [
+          "2026-04-04T05:50:18.7377008Z",
+          "  File \"/tmp/8de9207a868cb07/antenv/lib/python3.11/site-packages/flask/app.py\", line 1536, in __call__"
+        ],
+        [
+          "2026-04-04T05:50:18.7376939Z",
+          "               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:50:18.737689Z",
+          "    respiter = self.wsgi(environ, resp.start_response)"
+        ],
+        [
+          "2026-04-04T05:50:18.7376838Z",
+          "  File \"/tmp/8de9207a868cb07/antenv/lib/python3.11/site-packages/gunicorn/workers/sync.py\", line 185, in handle_request"
+        ],
+        [
+          "2026-04-04T05:50:18.7376789Z",
+          "    self.handle_request(listener, req, client, addr)"
+        ],
+        [
+          "2026-04-04T05:50:18.7376722Z",
+          "  File \"/tmp/8de9207a868cb07/antenv/lib/python3.11/site-packages/gunicorn/workers/sync.py\", line 142, in handle"
+        ],
+        [
+          "2026-04-04T05:50:18.7376634Z",
+          "Traceback (most recent call last):"
+        ],
+        [
+          "2026-04-04T05:50:18.7376465Z",
+          "[2026-04-04 05:50:18 +0000] [1988] [ERROR] Error handling request GET /outbound?calls=40"
+        ],
+        [
+          "2026-04-04T05:50:18.7368308Z",
+          "[2026-04-04 05:50:18 +0000] [1906] [CRITICAL] WORKER TIMEOUT (pid:1990)"
+        ],
+        [
+          "2026-04-04T05:50:18.7323447Z",
+          "[2026-04-04 05:50:18 +0000] [1906] [CRITICAL] WORKER TIMEOUT (pid:1988)"
+        ],
+        [
+          "2026-04-04T05:50:15.7282209Z",
+          "[2026-04-04 05:50:15 +0000] [1906] [INFO] Control socket listening at /root/.gunicorn/gunicorn.ctl"
+        ],
+        [
+          "2026-04-04T05:50:15.7272099Z",
+          "[2026-04-04 05:50:15 +0000] [1998] [INFO] Booting worker with pid: 1998"
+        ],
+        [
+          "2026-04-04T05:50:15.6692754Z",
+          "[2026-04-04 05:50:15 +0000] [1986] [INFO] Worker exiting (pid: 1986)"
+        ],
+        [
+          "2026-04-04T05:50:15.6668766Z",
+          "SystemExit: 1"
+        ],
+        [
+          "2026-04-04T05:50:15.6668724Z",
+          "    sys.exit(1)"
+        ],
+        [
+          "2026-04-04T05:50:15.6668671Z",
+          "  File \"/tmp/8de9207a868cb07/antenv/lib/python3.11/site-packages/gunicorn/workers/base.py\", line 198, in handle_abort"
+        ],
+        [
+          "2026-04-04T05:50:15.6668619Z",
+          "    self._sslobj.do_handshake()"
+        ],
+        [
+          "2026-04-04T05:50:15.666857Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/ssl.py\", line 1382, in do_handshake"
+        ],
+        [
+          "2026-04-04T05:50:15.6668515Z",
+          "    self.do_handshake()"
+        ],
+        [
+          "2026-04-04T05:50:15.6668465Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/ssl.py\", line 1104, in _create"
+        ],
+        [
+          "2026-04-04T05:50:15.6668419Z",
+          "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:50:15.6668376Z",
+          "    return self.sslsocket_class._create("
+        ],
+        [
+          "2026-04-04T05:50:15.6668323Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/ssl.py\", line 517, in wrap_socket"
+        ],
+        [
+          "2026-04-04T05:50:15.6668269Z",
+          "                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:50:15.6668222Z",
+          "    self.sock = self._context.wrap_socket(self.sock,"
+        ],
+        [
+          "2026-04-04T05:50:15.6668172Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/http/client.py\", line 1475, in connect"
+        ],
+        [
+          "2026-04-04T05:50:15.6668126Z",
+          "    self.connect()"
+        ],
+        [
+          "2026-04-04T05:50:15.6668067Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/http/client.py\", line 996, in send"
+        ],
+        [
+          "2026-04-04T05:50:15.6668018Z",
+          "    self.send(msg)"
+        ],
+        [
+          "2026-04-04T05:50:15.6667969Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/http/client.py\", line 1058, in _send_output"
+        ],
+        [
+          "2026-04-04T05:50:15.6667922Z",
+          "    self._send_output(message_body, encode_chunked=encode_chunked)"
+        ],
+        [
+          "2026-04-04T05:50:15.6667873Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/http/client.py\", line 1298, in endheaders"
+        ],
+        [
+          "2026-04-04T05:50:15.6667816Z",
+          "    self.endheaders(body, encode_chunked=encode_chunked)"
+        ],
+        [
+          "2026-04-04T05:50:15.6667764Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/http/client.py\", line 1349, in _send_request"
+        ],
+        [
+          "2026-04-04T05:50:15.6667709Z",
+          "    self._send_request(method, url, body, headers, encode_chunked)"
+        ],
+        [
+          "2026-04-04T05:50:15.6667649Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/http/client.py\", line 1303, in request"
+        ],
+        [
+          "2026-04-04T05:50:15.6667576Z",
+          "    h.request(req.get_method(), req.selector, req.data, headers,"
+        ],
+        [
+          "2026-04-04T05:50:15.6667512Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/urllib/request.py\", line 1348, in do_open"
+        ],
+        [
+          "2026-04-04T05:50:15.6667457Z",
+          "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:50:15.6667378Z",
+          "    return self.do_open(http.client.HTTPSConnection, req,"
+        ],
+        [
+          "2026-04-04T05:50:15.6666819Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/urllib/request.py\", line 1391, in https_open"
+        ],
+        [
+          "2026-04-04T05:50:15.6666757Z",
+          "             ^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:50:15.6666712Z",
+          "    result = func(*args)"
+        ],
+        [
+          "2026-04-04T05:50:15.666666Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/urllib/request.py\", line 496, in _call_chain"
+        ],
+        [
+          "2026-04-04T05:50:15.6666611Z",
+          "             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:50:15.6666543Z",
+          "    result = self._call_chain(self.handle_open, protocol, protocol +"
+        ],
+        [
+          "2026-04-04T05:50:15.6666485Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/urllib/request.py\", line 536, in _open"
+        ],
+        [
+          "2026-04-04T05:50:15.6666436Z",
+          "               ^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:50:15.6666391Z",
+          "    response = self._open(req, data)"
+        ],
+        [
+          "2026-04-04T05:50:15.6666338Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/urllib/request.py\", line 519, in open"
+        ],
+        [
+          "2026-04-04T05:50:15.6666273Z",
+          "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:50:15.6666228Z",
+          "    return opener.open(url, data, timeout)"
+        ],
+        [
+          "2026-04-04T05:50:15.6666181Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/urllib/request.py\", line 216, in urlopen"
+        ],
+        [
+          "2026-04-04T05:50:15.6666135Z",
+          "         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:50:15.6666054Z",
+          "    with urllib.request.urlopen(req, timeout=timeout_seconds) as resp:"
+        ],
+        [
+          "2026-04-04T05:50:15.6665186Z",
+          "  File \"/tmp/8de9207a868cb07/app.py\", line 141, in outbound_without_pooling"
+        ],
+        [
+          "2026-04-04T05:50:15.6665136Z",
+          "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:50:15.6665085Z",
+          "    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]"
+        ],
+        [
+          "2026-04-04T05:50:15.6665012Z",
+          "  File \"/tmp/8de9207a868cb07/antenv/lib/python3.11/site-packages/flask/app.py\", line 902, in dispatch_request"
+        ],
+        [
+          "2026-04-04T05:50:15.6664963Z",
+          "         ^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:50:15.6664914Z",
+          "    rv = self.dispatch_request()"
+        ],
+        [
+          "2026-04-04T05:50:15.6664854Z",
+          "  File \"/tmp/8de9207a868cb07/antenv/lib/python3.11/site-packages/flask/app.py\", line 917, in full_dispatch_request"
+        ],
+        [
+          "2026-04-04T05:50:15.6664771Z",
+          "               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:50:15.6664376Z",
+          "    response = self.full_dispatch_request()"
+        ],
+        [
+          "2026-04-04T05:50:15.6664325Z",
+          "  File \"/tmp/8de9207a868cb07/antenv/lib/python3.11/site-packages/flask/app.py\", line 1511, in wsgi_app"
+        ],
+        [
+          "2026-04-04T05:50:15.6664275Z",
+          "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:50:15.6664224Z",
+          "    return self.wsgi_app(environ, start_response)"
+        ],
+        [
+          "2026-04-04T05:50:15.6664152Z",
+          "  File \"/tmp/8de9207a868cb07/antenv/lib/python3.11/site-packages/flask/app.py\", line 1536, in __call__"
+        ],
+        [
+          "2026-04-04T05:50:15.66641Z",
+          "               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:50:15.6664041Z",
+          "    respiter = self.wsgi(environ, resp.start_response)"
+        ],
+        [
+          "2026-04-04T05:50:15.6663968Z",
+          "  File \"/tmp/8de9207a868cb07/antenv/lib/python3.11/site-packages/gunicorn/workers/sync.py\", line 185, in handle_request"
+        ],
+        [
+          "2026-04-04T05:50:15.6663912Z",
+          "    self.handle_request(listener, req, client, addr)"
+        ],
+        [
+          "2026-04-04T05:50:15.6663828Z",
+          "  File \"/tmp/8de9207a868cb07/antenv/lib/python3.11/site-packages/gunicorn/workers/sync.py\", line 142, in handle"
+        ],
+        [
+          "2026-04-04T05:50:15.6663762Z",
+          "Traceback (most recent call last):"
+        ],
+        [
+          "2026-04-04T05:50:15.6663589Z",
+          "[2026-04-04 05:50:15 +0000] [1986] [ERROR] Error handling request GET /outbound?calls=40"
+        ],
+        [
+          "2026-04-04T05:50:15.6643356Z",
+          "[2026-04-04 05:50:15 +0000] [1906] [CRITICAL] WORKER TIMEOUT (pid:1986)"
+        ],
+        [
+          "2026-04-04T05:48:23.5715616Z",
+          "[2026-04-04 05:48:23 +0000] [1906] [INFO] Control socket listening at /root/.gunicorn/gunicorn.ctl"
+        ],
+        [
+          "2026-04-04T05:48:23.5707727Z",
+          "[2026-04-04 05:48:23 +0000] [1992] [INFO] Booting worker with pid: 1992"
+        ],
+        [
+          "2026-04-04T05:48:23.5672517Z",
+          "[2026-04-04 05:48:23 +0000] [1906] [ERROR] Worker (pid:1980) was sent SIGKILL! Perhaps out of memory?"
+        ],
+        [
+          "2026-04-04T05:48:22.5635633Z",
+          "[2026-04-04 05:48:22 +0000] [1906] [CRITICAL] WORKER TIMEOUT (pid:1980)"
+        ],
+        [
+          "2026-04-04T05:48:18.5115573Z",
+          "[2026-04-04 05:48:18 +0000] [1990] [INFO] Booting worker with pid: 1990"
+        ],
+        [
+          "2026-04-04T05:48:18.5103661Z",
+          "[2026-04-04 05:48:18 +0000] [1906] [INFO] Control socket listening at /root/.gunicorn/gunicorn.ctl"
+        ],
+        [
+          "2026-04-04T05:48:18.5033261Z",
+          "[2026-04-04 05:48:18 +0000] [1906] [ERROR] Worker (pid:1974) was sent SIGKILL! Perhaps out of memory?"
+        ],
+        [
+          "2026-04-04T05:48:18.4863756Z",
+          "[2026-04-04 05:48:18 +0000] [1906] [INFO] Control socket listening at /root/.gunicorn/gunicorn.ctl"
+        ],
+        [
+          "2026-04-04T05:48:18.485091Z",
+          "[2026-04-04 05:48:18 +0000] [1988] [INFO] Booting worker with pid: 1988"
+        ],
+        [
+          "2026-04-04T05:48:18.4788501Z",
+          "[2026-04-04 05:48:18 +0000] [1906] [ERROR] Worker (pid:1976) was sent SIGKILL! Perhaps out of memory?"
+        ],
+        [
+          "2026-04-04T05:48:18.474979Z",
+          "[2026-04-04 05:48:18 +0000] [1906] [CRITICAL] WORKER TIMEOUT (pid:1974)"
+        ],
+        [
+          "2026-04-04T05:48:17.4744953Z",
+          "[2026-04-04 05:48:17 +0000] [1906] [CRITICAL] WORKER TIMEOUT (pid:1976)"
+        ],
+        [
+          "2026-04-04T05:48:15.4300431Z",
+          "[2026-04-04 05:48:15 +0000] [1906] [INFO] Control socket listening at /root/.gunicorn/gunicorn.ctl"
+        ],
+        [
+          "2026-04-04T05:48:15.428778Z",
+          "[2026-04-04 05:48:15 +0000] [1986] [INFO] Booting worker with pid: 1986"
+        ],
+        [
+          "2026-04-04T05:48:15.4250683Z",
+          "[2026-04-04 05:48:15 +0000] [1906] [ERROR] Worker (pid:1978) was sent SIGKILL! Perhaps out of memory?"
+        ],
+        [
+          "2026-04-04T05:48:14.4205489Z",
+          "[2026-04-04 05:48:14 +0000] [1906] [CRITICAL] WORKER TIMEOUT (pid:1978)"
+        ],
+        [
+          "2026-04-04T05:44:57.2650145Z",
+          "[2026-04-04 05:44:57 +0000] [1906] [INFO] Control socket listening at /root/.gunicorn/gunicorn.ctl"
+        ],
+        [
+          "2026-04-04T05:44:57.2649754Z",
+          "[2026-04-04 05:44:57 +0000] [1980] [INFO] Booting worker with pid: 1980"
+        ],
+        [
+          "2026-04-04T05:44:57.2192822Z",
+          "[2026-04-04 05:44:57 +0000] [1972] [INFO] Worker exiting (pid: 1972)"
+        ],
+        [
+          "2026-04-04T05:44:57.2169373Z",
+          "SystemExit: 1"
+        ],
+        [
+          "2026-04-04T05:44:57.2169329Z",
+          "    sys.exit(1)"
+        ],
+        [
+          "2026-04-04T05:44:57.2169274Z",
+          "  File \"/tmp/8de9207a868cb07/antenv/lib/python3.11/site-packages/gunicorn/workers/base.py\", line 198, in handle_abort"
+        ],
+        [
+          "2026-04-04T05:44:57.2169231Z",
+          "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:44:57.2169185Z",
+          "    return self._sslobj.read(len, buffer)"
+        ],
+        [
+          "2026-04-04T05:44:57.2169136Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/ssl.py\", line 1166, in read"
+        ],
+        [
+          "2026-04-04T05:44:57.2169092Z",
+          "           ^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:44:57.2169038Z",
+          "    return self.read(nbytes, buffer)"
+        ],
+        [
+          "2026-04-04T05:44:57.216899Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/ssl.py\", line 1314, in recv_into"
+        ],
+        [
+          "2026-04-04T05:44:57.216894Z",
+          "           ^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:44:57.2168893Z",
+          "    return self._sock.recv_into(b)"
+        ],
+        [
+          "2026-04-04T05:44:57.216883Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/socket.py\", line 718, in readinto"
+        ],
+        [
+          "2026-04-04T05:44:57.216878Z",
+          "               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:44:57.2168723Z",
+          "    line = str(self.fp.readline(_MAXLINE + 1), \"iso-8859-1\")"
+        ],
+        [
+          "2026-04-04T05:44:57.2168672Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/http/client.py\", line 286, in _read_status"
+        ],
+        [
+          "2026-04-04T05:44:57.2168623Z",
+          "                              ^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:44:57.2168565Z",
+          "    version, status, reason = self._read_status()"
+        ],
+        [
+          "2026-04-04T05:44:57.2168513Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/http/client.py\", line 325, in begin"
+        ],
+        [
+          "2026-04-04T05:44:57.2168464Z",
+          "    response.begin()"
+        ],
+        [
+          "2026-04-04T05:44:57.2168414Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/http/client.py\", line 1395, in getresponse"
+        ],
+        [
+          "2026-04-04T05:44:57.2168363Z",
+          "        ^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:44:57.2168307Z",
+          "    r = h.getresponse()"
+        ],
+        [
+          "2026-04-04T05:44:57.2168256Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/urllib/request.py\", line 1352, in do_open"
+        ],
+        [
+          "2026-04-04T05:44:57.216821Z",
+          "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:44:57.2168167Z",
+          "    return self.do_open(http.client.HTTPSConnection, req,"
+        ],
+        [
+          "2026-04-04T05:44:57.2168112Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/urllib/request.py\", line 1391, in https_open"
+        ],
+        [
+          "2026-04-04T05:44:57.2168066Z",
+          "             ^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:44:57.2168024Z",
+          "    result = func(*args)"
+        ],
+        [
+          "2026-04-04T05:44:57.2167972Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/urllib/request.py\", line 496, in _call_chain"
+        ],
+        [
+          "2026-04-04T05:44:57.2167923Z",
+          "             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:44:57.2167868Z",
+          "    result = self._call_chain(self.handle_open, protocol, protocol +"
+        ],
+        [
+          "2026-04-04T05:44:57.2167814Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/urllib/request.py\", line 536, in _open"
+        ],
+        [
+          "2026-04-04T05:44:57.2167766Z",
+          "               ^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:44:57.2167717Z",
+          "    response = self._open(req, data)"
+        ],
+        [
+          "2026-04-04T05:44:57.2167656Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/urllib/request.py\", line 519, in open"
+        ],
+        [
+          "2026-04-04T05:44:57.2167608Z",
+          "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:44:57.2167562Z",
+          "    return opener.open(url, data, timeout)"
+        ],
+        [
+          "2026-04-04T05:44:57.2167508Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/urllib/request.py\", line 216, in urlopen"
+        ],
+        [
+          "2026-04-04T05:44:57.2167459Z",
+          "         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:44:57.2167394Z",
+          "    with urllib.request.urlopen(req, timeout=timeout_seconds) as resp:"
+        ],
+        [
+          "2026-04-04T05:44:57.2167343Z",
+          "  File \"/tmp/8de9207a868cb07/app.py\", line 141, in outbound_without_pooling"
+        ],
+        [
+          "2026-04-04T05:44:57.2167297Z",
+          "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:44:57.2167246Z",
+          "    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]"
+        ],
+        [
+          "2026-04-04T05:44:57.2167182Z",
+          "  File \"/tmp/8de9207a868cb07/antenv/lib/python3.11/site-packages/flask/app.py\", line 902, in dispatch_request"
+        ],
+        [
+          "2026-04-04T05:44:57.2167134Z",
+          "         ^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:44:57.2167089Z",
+          "    rv = self.dispatch_request()"
+        ],
+        [
+          "2026-04-04T05:44:57.2167037Z",
+          "  File \"/tmp/8de9207a868cb07/antenv/lib/python3.11/site-packages/flask/app.py\", line 917, in full_dispatch_request"
+        ],
+        [
+          "2026-04-04T05:44:57.2166987Z",
+          "               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:44:57.2166929Z",
+          "    response = self.full_dispatch_request()"
+        ],
+        [
+          "2026-04-04T05:44:57.2166877Z",
+          "  File \"/tmp/8de9207a868cb07/antenv/lib/python3.11/site-packages/flask/app.py\", line 1511, in wsgi_app"
+        ],
+        [
+          "2026-04-04T05:44:57.2166828Z",
+          "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:44:57.2166777Z",
+          "    return self.wsgi_app(environ, start_response)"
+        ],
+        [
+          "2026-04-04T05:44:57.2166713Z",
+          "  File \"/tmp/8de9207a868cb07/antenv/lib/python3.11/site-packages/flask/app.py\", line 1536, in __call__"
+        ],
+        [
+          "2026-04-04T05:44:57.2166661Z",
+          "               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:44:57.2166607Z",
+          "    respiter = self.wsgi(environ, resp.start_response)"
+        ],
+        [
+          "2026-04-04T05:44:57.2166541Z",
+          "  File \"/tmp/8de9207a868cb07/antenv/lib/python3.11/site-packages/gunicorn/workers/sync.py\", line 185, in handle_request"
+        ],
+        [
+          "2026-04-04T05:44:57.2166473Z",
+          "    self.handle_request(listener, req, client, addr)"
+        ],
+        [
+          "2026-04-04T05:44:57.2166371Z",
+          "  File \"/tmp/8de9207a868cb07/antenv/lib/python3.11/site-packages/gunicorn/workers/sync.py\", line 142, in handle"
+        ],
+        [
+          "2026-04-04T05:44:57.2166311Z",
+          "Traceback (most recent call last):"
+        ],
+        [
+          "2026-04-04T05:44:57.2166111Z",
+          "[2026-04-04 05:44:57 +0000] [1972] [ERROR] Error handling request GET /outbound?calls=40"
+        ],
+        [
+          "2026-04-04T05:44:57.2124003Z",
+          "[2026-04-04 05:44:57 +0000] [1906] [CRITICAL] WORKER TIMEOUT (pid:1972)"
+        ],
+        [
+          "2026-04-04T05:44:52.1720231Z",
+          "[2026-04-04 05:44:52 +0000] [1978] [INFO] Booting worker with pid: 1978"
+        ],
+        [
+          "2026-04-04T05:44:52.1707681Z",
+          "[2026-04-04 05:44:52 +0000] [1906] [INFO] Control socket listening at /root/.gunicorn/gunicorn.ctl"
+        ],
+        [
+          "2026-04-04T05:44:52.1622615Z",
+          "[2026-04-04 05:44:52 +0000] [1906] [ERROR] Worker (pid:1968) was sent SIGKILL! Perhaps out of memory?"
+        ],
+        [
+          "2026-04-04T05:44:52.1201468Z",
+          "[2026-04-04 05:44:52 +0000] [1906] [INFO] Control socket listening at /root/.gunicorn/gunicorn.ctl"
+        ],
+        [
+          "2026-04-04T05:44:52.1184757Z",
+          "[2026-04-04 05:44:52 +0000] [1976] [INFO] Booting worker with pid: 1976"
+        ],
+        [
+          "2026-04-04T05:44:52.0606787Z",
+          "[2026-04-04 05:44:52 +0000] [1968] [INFO] Worker exiting (pid: 1968)"
+        ],
+        [
+          "2026-04-04T05:44:52.0606739Z",
+          "SystemExit: 1"
+        ],
+        [
+          "2026-04-04T05:44:52.060663Z",
+          "    sys.exit(1)"
+        ],
+        [
+          "2026-04-04T05:44:52.0605544Z",
+          "  File \"/tmp/8de9207a868cb07/antenv/lib/python3.11/site-packages/gunicorn/workers/base.py\", line 198, in handle_abort"
+        ],
+        [
+          "2026-04-04T05:44:52.0605493Z",
+          "    sock.connect(sa)"
+        ],
+        [
+          "2026-04-04T05:44:52.060544Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/socket.py\", line 848, in create_connection"
+        ],
+        [
+          "2026-04-04T05:44:52.0605382Z",
+          "                ^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:44:52.0605245Z",
+          "    self.sock = self._create_connection("
+        ],
+        [
+          "2026-04-04T05:44:52.0604353Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/http/client.py\", line 962, in connect"
+        ],
+        [
+          "2026-04-04T05:44:52.0604305Z",
+          "    super().connect()"
+        ],
+        [
+          "2026-04-04T05:44:52.0604258Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/http/client.py\", line 1468, in connect"
+        ],
+        [
+          "2026-04-04T05:44:52.0604216Z",
+          "    self.connect()"
+        ],
+        [
+          "2026-04-04T05:44:52.0604157Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/http/client.py\", line 996, in send"
+        ],
+        [
+          "2026-04-04T05:44:52.0604111Z",
+          "    self.send(msg)"
+        ],
+        [
+          "2026-04-04T05:44:52.060406Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/http/client.py\", line 1058, in _send_output"
+        ],
+        [
+          "2026-04-04T05:44:52.0604013Z",
+          "    self._send_output(message_body, encode_chunked=encode_chunked)"
+        ],
+        [
+          "2026-04-04T05:44:52.0603938Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/http/client.py\", line 1298, in endheaders"
+        ],
+        [
+          "2026-04-04T05:44:52.0603888Z",
+          "    self.endheaders(body, encode_chunked=encode_chunked)"
+        ],
+        [
+          "2026-04-04T05:44:52.0603824Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/http/client.py\", line 1349, in _send_request"
+        ],
+        [
+          "2026-04-04T05:44:52.0602029Z",
+          "    self._send_request(method, url, body, headers, encode_chunked)"
+        ],
+        [
+          "2026-04-04T05:44:52.0601971Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/http/client.py\", line 1303, in request"
+        ],
+        [
+          "2026-04-04T05:44:52.0601914Z",
+          "    h.request(req.get_method(), req.selector, req.data, headers,"
+        ],
+        [
+          "2026-04-04T05:44:52.0601869Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/urllib/request.py\", line 1348, in do_open"
+        ],
+        [
+          "2026-04-04T05:44:52.0601824Z",
+          "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:44:52.0601782Z",
+          "    return self.do_open(http.client.HTTPSConnection, req,"
+        ],
+        [
+          "2026-04-04T05:44:52.0601729Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/urllib/request.py\", line 1391, in https_open"
+        ],
+        [
+          "2026-04-04T05:44:52.0601685Z",
+          "             ^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:44:52.0601644Z",
+          "    result = func(*args)"
+        ],
+        [
+          "2026-04-04T05:44:52.0601598Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/urllib/request.py\", line 496, in _call_chain"
+        ],
+        [
+          "2026-04-04T05:44:52.0601551Z",
+          "             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:44:52.0601492Z",
+          "    result = self._call_chain(self.handle_open, protocol, protocol +"
+        ],
+        [
+          "2026-04-04T05:44:52.0601444Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/urllib/request.py\", line 536, in _open"
+        ],
+        [
+          "2026-04-04T05:44:52.0601401Z",
+          "               ^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:44:52.0601341Z",
+          "    response = self._open(req, data)"
+        ],
+        [
+          "2026-04-04T05:44:52.0600435Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/urllib/request.py\", line 519, in open"
+        ],
+        [
+          "2026-04-04T05:44:52.0600392Z",
+          "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:44:52.0600352Z",
+          "    return opener.open(url, data, timeout)"
+        ],
+        [
+          "2026-04-04T05:44:52.0600308Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/urllib/request.py\", line 216, in urlopen"
+        ],
+        [
+          "2026-04-04T05:44:52.0600264Z",
+          "         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:44:52.0600213Z",
+          "    with urllib.request.urlopen(req, timeout=timeout_seconds) as resp:"
+        ],
+        [
+          "2026-04-04T05:44:52.0600166Z",
+          "  File \"/tmp/8de9207a868cb07/app.py\", line 141, in outbound_without_pooling"
+        ],
+        [
+          "2026-04-04T05:44:52.0600122Z",
+          "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:44:52.0600077Z",
+          "    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]"
+        ],
+        [
+          "2026-04-04T05:44:52.0600016Z",
+          "  File \"/tmp/8de9207a868cb07/antenv/lib/python3.11/site-packages/flask/app.py\", line 902, in dispatch_request"
+        ],
+        [
+          "2026-04-04T05:44:52.0599972Z",
+          "         ^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:44:52.0599932Z",
+          "    rv = self.dispatch_request()"
+        ],
+        [
+          "2026-04-04T05:44:52.0599885Z",
+          "  File \"/tmp/8de9207a868cb07/antenv/lib/python3.11/site-packages/flask/app.py\", line 917, in full_dispatch_request"
+        ],
+        [
+          "2026-04-04T05:44:52.0599826Z",
+          "               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:44:52.0599783Z",
+          "    response = self.full_dispatch_request()"
+        ],
+        [
+          "2026-04-04T05:44:52.0599729Z",
+          "  File \"/tmp/8de9207a868cb07/antenv/lib/python3.11/site-packages/flask/app.py\", line 1511, in wsgi_app"
+        ],
+        [
+          "2026-04-04T05:44:52.0598949Z",
+          "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:44:52.0598908Z",
+          "    return self.wsgi_app(environ, start_response)"
+        ],
+        [
+          "2026-04-04T05:44:52.059885Z",
+          "  File \"/tmp/8de9207a868cb07/antenv/lib/python3.11/site-packages/flask/app.py\", line 1536, in __call__"
+        ],
+        [
+          "2026-04-04T05:44:52.0598804Z",
+          "               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:44:52.0598761Z",
+          "    respiter = self.wsgi(environ, resp.start_response)"
+        ],
+        [
+          "2026-04-04T05:44:52.0598715Z",
+          "  File \"/tmp/8de9207a868cb07/antenv/lib/python3.11/site-packages/gunicorn/workers/sync.py\", line 185, in handle_request"
+        ],
+        [
+          "2026-04-04T05:44:52.0598656Z",
+          "    self.handle_request(listener, req, client, addr)"
+        ],
+        [
+          "2026-04-04T05:44:52.0598607Z",
+          "  File \"/tmp/8de9207a868cb07/antenv/lib/python3.11/site-packages/gunicorn/workers/sync.py\", line 142, in handle"
+        ],
+        [
+          "2026-04-04T05:44:52.059856Z",
+          "Traceback (most recent call last):"
+        ],
+        [
+          "2026-04-04T05:44:52.0598504Z",
+          "[2026-04-04 05:44:52 +0000] [1968] [ERROR] Error handling request GET /outbound?calls=40"
+        ],
+        [
+          "2026-04-04T05:44:52.0598367Z",
+          "[2026-04-04 05:44:52 +0000] [1970] [INFO] Worker exiting (pid: 1970)"
+        ],
+        [
+          "2026-04-04T05:44:52.051513Z",
+          "SystemExit: 1"
+        ],
+        [
+          "2026-04-04T05:44:52.0515084Z",
+          "    sys.exit(1)"
+        ],
+        [
+          "2026-04-04T05:44:52.0515034Z",
+          "  File \"/tmp/8de9207a868cb07/antenv/lib/python3.11/site-packages/gunicorn/workers/base.py\", line 198, in handle_abort"
+        ],
+        [
+          "2026-04-04T05:44:52.0514982Z",
+          "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:44:52.0514925Z",
+          "    return self._sslobj.read(len, buffer)"
+        ],
+        [
+          "2026-04-04T05:44:52.0514877Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/ssl.py\", line 1166, in read"
+        ],
+        [
+          "2026-04-04T05:44:52.0514827Z",
+          "           ^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:44:52.051478Z",
+          "    return self.read(nbytes, buffer)"
+        ],
+        [
+          "2026-04-04T05:44:52.0514734Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/ssl.py\", line 1314, in recv_into"
+        ],
+        [
+          "2026-04-04T05:44:52.0514684Z",
+          "           ^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:44:52.0514642Z",
+          "    return self._sock.recv_into(b)"
+        ],
+        [
+          "2026-04-04T05:44:52.0514595Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/socket.py\", line 718, in readinto"
+        ],
+        [
+          "2026-04-04T05:44:52.0514551Z",
+          "               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:44:52.0514495Z",
+          "    line = str(self.fp.readline(_MAXLINE + 1), \"iso-8859-1\")"
+        ],
+        [
+          "2026-04-04T05:44:52.0514436Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/http/client.py\", line 286, in _read_status"
+        ],
+        [
+          "2026-04-04T05:44:52.051439Z",
+          "                              ^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:44:52.0514342Z",
+          "    version, status, reason = self._read_status()"
+        ],
+        [
+          "2026-04-04T05:44:52.0514291Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/http/client.py\", line 325, in begin"
+        ],
+        [
+          "2026-04-04T05:44:52.0514226Z",
+          "    response.begin()"
+        ],
+        [
+          "2026-04-04T05:44:52.0514179Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/http/client.py\", line 1395, in getresponse"
+        ],
+        [
+          "2026-04-04T05:44:52.0514132Z",
+          "        ^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:44:52.0514085Z",
+          "    r = h.getresponse()"
+        ],
+        [
+          "2026-04-04T05:44:52.0514033Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/urllib/request.py\", line 1352, in do_open"
+        ],
+        [
+          "2026-04-04T05:44:52.0513977Z",
+          "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:44:52.0513928Z",
+          "    return self.do_open(http.client.HTTPSConnection, req,"
+        ],
+        [
+          "2026-04-04T05:44:52.0513877Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/urllib/request.py\", line 1391, in https_open"
+        ],
+        [
+          "2026-04-04T05:44:52.0513829Z",
+          "             ^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:44:52.0513775Z",
+          "    result = func(*args)"
+        ],
+        [
+          "2026-04-04T05:44:52.0513721Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/urllib/request.py\", line 496, in _call_chain"
+        ],
+        [
+          "2026-04-04T05:44:52.0513671Z",
+          "             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:44:52.0513617Z",
+          "    result = self._call_chain(self.handle_open, protocol, protocol +"
+        ],
+        [
+          "2026-04-04T05:44:52.0513565Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/urllib/request.py\", line 536, in _open"
+        ],
+        [
+          "2026-04-04T05:44:52.0513509Z",
+          "               ^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:44:52.0513463Z",
+          "    response = self._open(req, data)"
+        ],
+        [
+          "2026-04-04T05:44:52.0513411Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/urllib/request.py\", line 519, in open"
+        ],
+        [
+          "2026-04-04T05:44:52.0513366Z",
+          "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:44:52.0513306Z",
+          "    return opener.open(url, data, timeout)"
+        ],
+        [
+          "2026-04-04T05:44:52.0513253Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/urllib/request.py\", line 216, in urlopen"
+        ],
+        [
+          "2026-04-04T05:44:52.0513205Z",
+          "         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:44:52.0513152Z",
+          "    with urllib.request.urlopen(req, timeout=timeout_seconds) as resp:"
+        ],
+        [
+          "2026-04-04T05:44:52.0513099Z",
+          "  File \"/tmp/8de9207a868cb07/app.py\", line 141, in outbound_without_pooling"
+        ],
+        [
+          "2026-04-04T05:44:52.0513043Z",
+          "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:44:52.0512997Z",
+          "    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]"
+        ],
+        [
+          "2026-04-04T05:44:52.0512941Z",
+          "  File \"/tmp/8de9207a868cb07/antenv/lib/python3.11/site-packages/flask/app.py\", line 902, in dispatch_request"
+        ],
+        [
+          "2026-04-04T05:44:52.0512889Z",
+          "         ^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:44:52.0512835Z",
+          "    rv = self.dispatch_request()"
+        ],
+        [
+          "2026-04-04T05:44:52.0512781Z",
+          "  File \"/tmp/8de9207a868cb07/antenv/lib/python3.11/site-packages/flask/app.py\", line 917, in full_dispatch_request"
+        ],
+        [
+          "2026-04-04T05:44:52.0512733Z",
+          "               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:44:52.0512686Z",
+          "    response = self.full_dispatch_request()"
+        ],
+        [
+          "2026-04-04T05:44:52.0512624Z",
+          "  File \"/tmp/8de9207a868cb07/antenv/lib/python3.11/site-packages/flask/app.py\", line 1511, in wsgi_app"
+        ],
+        [
+          "2026-04-04T05:44:52.0512551Z",
+          "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:44:52.05125Z",
+          "    return self.wsgi_app(environ, start_response)"
+        ],
+        [
+          "2026-04-04T05:44:52.0512436Z",
+          "  File \"/tmp/8de9207a868cb07/antenv/lib/python3.11/site-packages/flask/app.py\", line 1536, in __call__"
+        ],
+        [
+          "2026-04-04T05:44:52.0512381Z",
+          "               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:44:52.0512318Z",
+          "    respiter = self.wsgi(environ, resp.start_response)"
+        ],
+        [
+          "2026-04-04T05:44:52.0512264Z",
+          "  File \"/tmp/8de9207a868cb07/antenv/lib/python3.11/site-packages/gunicorn/workers/sync.py\", line 185, in handle_request"
+        ],
+        [
+          "2026-04-04T05:44:52.0512211Z",
+          "    self.handle_request(listener, req, client, addr)"
+        ],
+        [
+          "2026-04-04T05:44:52.0512151Z",
+          "  File \"/tmp/8de9207a868cb07/antenv/lib/python3.11/site-packages/gunicorn/workers/sync.py\", line 142, in handle"
+        ],
+        [
+          "2026-04-04T05:44:52.051206Z",
+          "Traceback (most recent call last):"
+        ],
+        [
+          "2026-04-04T05:44:52.0511899Z",
+          "[2026-04-04 05:44:52 +0000] [1970] [ERROR] Error handling request GET /outbound?calls=40"
+        ],
+        [
+          "2026-04-04T05:44:52.0470846Z",
+          "[2026-04-04 05:44:52 +0000] [1906] [CRITICAL] WORKER TIMEOUT (pid:1970)"
+        ],
+        [
+          "2026-04-04T05:44:52.0445326Z",
+          "[2026-04-04 05:44:52 +0000] [1906] [CRITICAL] WORKER TIMEOUT (pid:1968)"
+        ],
+        [
+          "2026-04-04T05:43:42.9394708Z",
+          "[2026-04-04 05:43:42 +0000] [1906] [INFO] Control socket listening at /root/.gunicorn/gunicorn.ctl"
+        ],
+        [
+          "2026-04-04T05:43:42.9384837Z",
+          "[2026-04-04 05:43:42 +0000] [1974] [INFO] Booting worker with pid: 1974"
+        ],
+        [
+          "2026-04-04T05:43:42.9345088Z",
+          "[2026-04-04 05:43:42 +0000] [1906] [ERROR] Worker (pid:1956) was sent SIGKILL! Perhaps out of memory?"
+        ],
+        [
+          "2026-04-04T05:43:41.9305934Z",
+          "[2026-04-04 05:43:41 +0000] [1906] [CRITICAL] WORKER TIMEOUT (pid:1956)"
+        ],
+        [
+          "2026-04-04T05:42:56.8880771Z",
+          "[2026-04-04 05:42:56 +0000] [1906] [INFO] Control socket listening at /root/.gunicorn/gunicorn.ctl"
+        ],
+        [
+          "2026-04-04T05:42:56.888049Z",
+          "[2026-04-04 05:42:56 +0000] [1972] [INFO] Booting worker with pid: 1972"
+        ],
+        [
+          "2026-04-04T05:42:56.8787058Z",
+          "[2026-04-04 05:42:56 +0000] [1906] [ERROR] Worker (pid:1964) was sent SIGKILL! Perhaps out of memory?"
+        ],
+        [
+          "2026-04-04T05:42:55.874909Z",
+          "[2026-04-04 05:42:55 +0000] [1906] [CRITICAL] WORKER TIMEOUT (pid:1964)"
+        ],
+        [
+          "2026-04-04T05:42:51.8636273Z",
+          "[2026-04-04 05:42:51 +0000] [1906] [INFO] Control socket listening at /root/.gunicorn/gunicorn.ctl"
+        ],
+        [
+          "2026-04-04T05:42:51.8617429Z",
+          "[2026-04-04 05:42:51 +0000] [1970] [INFO] Booting worker with pid: 1970"
+        ],
+        [
+          "2026-04-04T05:42:51.856645Z",
+          "[2026-04-04 05:42:51 +0000] [1906] [ERROR] Worker (pid:1966) was sent SIGKILL! Perhaps out of memory?"
+        ],
+        [
+          "2026-04-04T05:42:51.8000552Z",
+          "[2026-04-04 05:42:51 +0000] [1968] [INFO] Booting worker with pid: 1968"
+        ],
+        [
+          "2026-04-04T05:42:51.7980123Z",
+          "[2026-04-04 05:42:51 +0000] [1906] [INFO] Control socket listening at /root/.gunicorn/gunicorn.ctl"
+        ],
+        [
+          "2026-04-04T05:42:51.7926807Z",
+          "[2026-04-04 05:42:51 +0000] [1906] [ERROR] Worker (pid:1958) was sent SIGKILL! Perhaps out of memory?"
+        ],
+        [
+          "2026-04-04T05:42:51.7926205Z",
+          "[2026-04-04 05:42:51 +0000] [1906] [CRITICAL] WORKER TIMEOUT (pid:1966)"
+        ],
+        [
+          "2026-04-04T05:42:50.7875757Z",
+          "[2026-04-04 05:42:50 +0000] [1906] [CRITICAL] WORKER TIMEOUT (pid:1958)"
+        ],
+        [
+          "2026-04-04T05:40:02.673362Z",
+          "[2026-04-04 05:40:02 +0000] [1906] [INFO] Control socket listening at /root/.gunicorn/gunicorn.ctl"
+        ],
+        [
+          "2026-04-04T05:40:02.6725814Z",
+          "[2026-04-04 05:40:02 +0000] [1966] [INFO] Booting worker with pid: 1966"
+        ],
+        [
+          "2026-04-04T05:40:02.6687015Z",
+          "[2026-04-04 05:40:02 +0000] [1906] [ERROR] Worker (pid:1952) was sent SIGKILL! Perhaps out of memory?"
+        ],
+        [
+          "2026-04-04T05:40:02.5695349Z",
+          "[2026-04-04 05:40:02 +0000] [1906] [INFO] Control socket listening at /root/.gunicorn/gunicorn.ctl"
+        ],
+        [
+          "2026-04-04T05:40:02.5671317Z",
+          "[2026-04-04 05:40:02 +0000] [1964] [INFO] Booting worker with pid: 1964"
+        ],
+        [
+          "2026-04-04T05:40:02.5072041Z",
+          "[2026-04-04 05:40:02 +0000] [1954] [INFO] Worker exiting (pid: 1954)"
+        ],
+        [
+          "2026-04-04T05:40:02.5062317Z",
+          "SystemExit: 1"
+        ],
+        [
+          "2026-04-04T05:40:02.5062269Z",
+          "    sys.exit(1)"
+        ],
+        [
+          "2026-04-04T05:40:02.5062219Z",
+          "  File \"/tmp/8de9207a868cb07/antenv/lib/python3.11/site-packages/gunicorn/workers/base.py\", line 198, in handle_abort"
+        ],
+        [
+          "2026-04-04T05:40:02.5062159Z",
+          "    sock.connect(sa)"
+        ],
+        [
+          "2026-04-04T05:40:02.5062108Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/socket.py\", line 848, in create_connection"
+        ],
+        [
+          "2026-04-04T05:40:02.5062063Z",
+          "                ^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:40:02.5062014Z",
+          "    self.sock = self._create_connection("
+        ],
+        [
+          "2026-04-04T05:40:02.5061962Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/http/client.py\", line 962, in connect"
+        ],
+        [
+          "2026-04-04T05:40:02.5061903Z",
+          "    super().connect()"
+        ],
+        [
+          "2026-04-04T05:40:02.5061856Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/http/client.py\", line 1468, in connect"
+        ],
+        [
+          "2026-04-04T05:40:02.5061808Z",
+          "    self.connect()"
+        ]
+      ]
+    }
+  ]
+}

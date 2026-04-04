@@ -170,4 +170,4 @@ Disable auto-swap and enforce manual approval stage in GitHub Actions for high-r
 
 - [Tutorial: 06. CI/CD](../06-ci-cd.md)
 - [Tutorial: 03. Configuration](../03-configuration.md)
-- For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-appservice-guide/)
+- For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-appservice/)

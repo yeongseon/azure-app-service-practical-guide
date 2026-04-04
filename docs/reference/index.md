@@ -33,5 +33,5 @@ Quick lookup documentation for Azure App Service platform operations and diagnos
 This repository covers platform-level, language-agnostic reference material.
 For runtime/framework-specific guidance, see:
 
-- [Azure App Service Node.js Guide](https://yeongseon.github.io/azure-appservice-nodejs-guide/)
-- [Azure App Service Python Guide](https://yeongseon.github.io/azure-appservice-python-guide/)
+- [Azure App Service Node.js Guide](../language-guides/nodejs/index.md)
+- [Azure App Service Python Guide](../language-guides/python/index.md)

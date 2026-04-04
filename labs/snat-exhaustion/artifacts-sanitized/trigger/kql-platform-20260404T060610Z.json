@@ -1,0 +1,1023 @@
+{
+  "tables": [
+    {
+      "columns": [
+        {
+          "name": "TimeGenerated",
+          "type": "datetime"
+        },
+        {
+          "name": "Level",
+          "type": "string"
+        },
+        {
+          "name": "Message",
+          "type": "string"
+        }
+      ],
+      "name": "PrimaryResult",
+      "rows": [
+        [
+          "2026-04-04T05:51:38.7555626Z",
+          "Informational",
+          "State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:51:38.7555438Z",
+          "Informational",
+          "State: Starting, Action: InitiatingSiteWarmUpProbe, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container app-labsnat-6kr7mkxulwioo successfully created and is running., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:51:38.7553999Z",
+          "Informational",
+          "Container start method finished after 1625 ms."
+        ],
+        [
+          "2026-04-04T05:51:38.6628595Z",
+          "Informational",
+          "State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container app-labsnat-6kr7mkxulwioo successfully created and is running., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:51:38.6620452Z",
+          "Informational",
+          "Container is running."
+        ],
+        [
+          "2026-04-04T05:51:38.6619125Z",
+          "Informational",
+          "Starting metrics collection."
+        ],
+        [
+          "2026-04-04T05:51:38.6606252Z",
+          "Informational",
+          "Starting watchers and probes."
+        ],
+        [
+          "2026-04-04T05:51:38.6461588Z",
+          "Informational",
+          "Container start method finished after 1615 ms."
+        ],
+        [
+          "2026-04-04T05:51:38.6198434Z",
+          "Informational",
+          "Starting container: 4574a8e856c1_app-labsnat-6kr7mkxulwioo."
+        ],
+        [
+          "2026-04-04T05:51:38.6059554Z",
+          "Informational",
+          "Container is running."
+        ],
+        [
+          "2026-04-04T05:51:38.6042666Z",
+          "Informational",
+          "Starting metrics collection."
+        ],
+        [
+          "2026-04-04T05:51:38.6039751Z",
+          "Informational",
+          "Starting watchers and probes."
+        ],
+        [
+          "2026-04-04T05:51:38.5634697Z",
+          "Informational",
+          "Starting container: 4d33219dc42d_app-labsnat-6kr7mkxulwioo_kudu."
+        ],
+        [
+          "2026-04-04T05:51:37.4645809Z",
+          "Informational",
+          "Creating container with image: appsvc/python:3.11_20260203.2.tuxprod from registry: 10.1.0.6:13209 and fully qualified image name: 10.1.0.6:13209/appsvc/python:3.11_20260203.2.tuxprod"
+        ],
+        [
+          "2026-04-04T05:51:37.4643698Z",
+          "Informational",
+          "Successfully removed non-blocking flag from /podr/container/pipe/4574a8e856c1_app-labsnat-6kr7mkxulwioo/stderr_b7d68dfb72ca4af38eb0f0466d09d017."
+        ],
+        [
+          "2026-04-04T05:51:37.4638864Z",
+          "Informational",
+          "Successfully opened named pipe: /podr/container/pipe/4574a8e856c1_app-labsnat-6kr7mkxulwioo/stderr_b7d68dfb72ca4af38eb0f0466d09d017."
+        ],
+        [
+          "2026-04-04T05:51:37.4636778Z",
+          "Informational",
+          "Opening named pipe /podr/container/pipe/4574a8e856c1_app-labsnat-6kr7mkxulwioo/stderr_b7d68dfb72ca4af38eb0f0466d09d017 for reading in non-blocking mode."
+        ],
+        [
+          "2026-04-04T05:51:37.4632213Z",
+          "Informational",
+          "Successfully created stderr named pipe at: /podr/container/pipe/4574a8e856c1_app-labsnat-6kr7mkxulwioo/stderr_b7d68dfb72ca4af38eb0f0466d09d017."
+        ],
+        [
+          "2026-04-04T05:51:37.4628468Z",
+          "Informational",
+          "Creating stderr named pipe at /podr/container/pipe/4574a8e856c1_app-labsnat-6kr7mkxulwioo/stderr_b7d68dfb72ca4af38eb0f0466d09d017."
+        ],
+        [
+          "2026-04-04T05:51:37.4620428Z",
+          "Informational",
+          "Successfully removed non-blocking flag from /podr/container/pipe/4574a8e856c1_app-labsnat-6kr7mkxulwioo/stdout_13c03cafa97f454481710a67d035615b."
+        ],
+        [
+          "2026-04-04T05:51:37.4618443Z",
+          "Informational",
+          "Successfully opened named pipe: /podr/container/pipe/4574a8e856c1_app-labsnat-6kr7mkxulwioo/stdout_13c03cafa97f454481710a67d035615b."
+        ],
+        [
+          "2026-04-04T05:51:37.4616372Z",
+          "Informational",
+          "Opening named pipe /podr/container/pipe/4574a8e856c1_app-labsnat-6kr7mkxulwioo/stdout_13c03cafa97f454481710a67d035615b for reading in non-blocking mode."
+        ],
+        [
+          "2026-04-04T05:51:37.4614546Z",
+          "Informational",
+          "Successfully created stdout named pipe at: /podr/container/pipe/4574a8e856c1_app-labsnat-6kr7mkxulwioo/stdout_13c03cafa97f454481710a67d035615b."
+        ],
+        [
+          "2026-04-04T05:51:37.4607106Z",
+          "Informational",
+          "Creating stdout named pipe at /podr/container/pipe/4574a8e856c1_app-labsnat-6kr7mkxulwioo/stdout_13c03cafa97f454481710a67d035615b."
+        ],
+        [
+          "2026-04-04T05:51:37.4605542Z",
+          "Informational",
+          "Creating pipes for streaming container io."
+        ],
+        [
+          "2026-04-04T05:51:37.4604539Z",
+          "Informational",
+          "Creating container."
+        ],
+        [
+          "2026-04-04T05:51:37.4603351Z",
+          "Informational",
+          "State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Finished pulling container image and mounting volumes for app-labsnat-6kr7mkxulwioo. Allocatinng the rest of the container resources to finish container creation., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:51:37.3827821Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:51:37.3765389Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:51:37.372617Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:51:37.3678257Z",
+          "Informational",
+          "Nested mountpoint volatile/logs"
+        ],
+        [
+          "2026-04-04T05:51:37.3602802Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:51:37.3591298Z",
+          "Informational",
+          "Mounting volumes."
+        ],
+        [
+          "2026-04-04T05:51:37.3589002Z",
+          "Informational",
+          "Establishing network if not established already."
+        ],
+        [
+          "2026-04-04T05:51:37.3586169Z",
+          "Informational",
+          "Establishing user namespace if not established already."
+        ],
+        [
+          "2026-04-04T05:51:37.3582766Z",
+          "Informational",
+          "State: Starting, Action: MountingVolumes, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Mounting volumes for app-labsnat-6kr7mkxulwioo., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:51:37.3579876Z",
+          "Informational",
+          "Container is starting."
+        ],
+        [
+          "2026-04-04T05:51:37.2949898Z",
+          "Informational",
+          "Creating container with image: appsvc/kudulite:bullseye_20260204.5.tuxprod from registry: 10.1.0.4:13209 and fully qualified image name: 10.1.0.4:13209/appsvc/kudulite:bullseye_20260204.5.tuxprod"
+        ],
+        [
+          "2026-04-04T05:51:37.2927275Z",
+          "Informational",
+          "Successfully removed non-blocking flag from /podr/container/pipe/4d33219dc42d_app-labsnat-6kr7mkxulwioo_kudu/stderr_5ea437bbfa2e48e5b16d702237e9de98."
+        ],
+        [
+          "2026-04-04T05:51:37.2917386Z",
+          "Informational",
+          "Successfully opened named pipe: /podr/container/pipe/4d33219dc42d_app-labsnat-6kr7mkxulwioo_kudu/stderr_5ea437bbfa2e48e5b16d702237e9de98."
+        ],
+        [
+          "2026-04-04T05:51:37.2912144Z",
+          "Informational",
+          "Opening named pipe /podr/container/pipe/4d33219dc42d_app-labsnat-6kr7mkxulwioo_kudu/stderr_5ea437bbfa2e48e5b16d702237e9de98 for reading in non-blocking mode."
+        ],
+        [
+          "2026-04-04T05:51:37.2910531Z",
+          "Informational",
+          "Successfully created stderr named pipe at: /podr/container/pipe/4d33219dc42d_app-labsnat-6kr7mkxulwioo_kudu/stderr_5ea437bbfa2e48e5b16d702237e9de98."
+        ],
+        [
+          "2026-04-04T05:51:37.2900436Z",
+          "Informational",
+          "Creating stderr named pipe at /podr/container/pipe/4d33219dc42d_app-labsnat-6kr7mkxulwioo_kudu/stderr_5ea437bbfa2e48e5b16d702237e9de98."
+        ],
+        [
+          "2026-04-04T05:51:37.2872963Z",
+          "Informational",
+          "Successfully removed non-blocking flag from /podr/container/pipe/4d33219dc42d_app-labsnat-6kr7mkxulwioo_kudu/stdout_609a5261c9dd47a48630c112f5102a75."
+        ],
+        [
+          "2026-04-04T05:51:37.2870903Z",
+          "Informational",
+          "Successfully opened named pipe: /podr/container/pipe/4d33219dc42d_app-labsnat-6kr7mkxulwioo_kudu/stdout_609a5261c9dd47a48630c112f5102a75."
+        ],
+        [
+          "2026-04-04T05:51:37.2866476Z",
+          "Informational",
+          "Opening named pipe /podr/container/pipe/4d33219dc42d_app-labsnat-6kr7mkxulwioo_kudu/stdout_609a5261c9dd47a48630c112f5102a75 for reading in non-blocking mode."
+        ],
+        [
+          "2026-04-04T05:51:37.2865008Z",
+          "Informational",
+          "Successfully created stdout named pipe at: /podr/container/pipe/4d33219dc42d_app-labsnat-6kr7mkxulwioo_kudu/stdout_609a5261c9dd47a48630c112f5102a75."
+        ],
+        [
+          "2026-04-04T05:51:37.2771843Z",
+          "Informational",
+          "Creating stdout named pipe at /podr/container/pipe/4d33219dc42d_app-labsnat-6kr7mkxulwioo_kudu/stdout_609a5261c9dd47a48630c112f5102a75."
+        ],
+        [
+          "2026-04-04T05:51:37.2770111Z",
+          "Informational",
+          "Creating pipes for streaming container io."
+        ],
+        [
+          "2026-04-04T05:51:37.2752809Z",
+          "Informational",
+          "Creating container."
+        ],
+        [
+          "2026-04-04T05:51:37.2530575Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:51:37.2517794Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:51:37.238092Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:51:37.2069003Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:51:37.2014023Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:51:37.1914804Z",
+          "Informational",
+          "Nested mountpoint volatile/logs"
+        ],
+        [
+          "2026-04-04T05:51:37.180547Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:51:37.179422Z",
+          "Informational",
+          "Mounting volumes."
+        ],
+        [
+          "2026-04-04T05:51:37.1790126Z",
+          "Informational",
+          "Establishing network if not established already."
+        ],
+        [
+          "2026-04-04T05:51:37.1782085Z",
+          "Informational",
+          "Establishing user namespace if not established already."
+        ],
+        [
+          "2026-04-04T05:51:37.1774449Z",
+          "Informational",
+          "Container is starting."
+        ],
+        [
+          "2026-04-04T05:51:37.1289488Z",
+          "Informational",
+          "Pulling image: appsvc/python:3.11_20260203.2.tuxprod."
+        ],
+        [
+          "2026-04-04T05:51:37.1288082Z",
+          "Informational",
+          "Establishing network."
+        ],
+        [
+          "2026-04-04T05:51:37.128695Z",
+          "Informational",
+          "State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image 10.1.0.6:13209/appsvc/python:3.11_20260203.2.tuxprod for app-labsnat-6kr7mkxulwioo., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:51:37.1286479Z",
+          "Informational",
+          "Container start method called."
+        ],
+        [
+          "2026-04-04T05:51:37.1285133Z",
+          "Informational",
+          "State: Starting, Action: StartingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:51:37.0812071Z",
+          "Informational",
+          "Pulling image: appsvc/kudulite:bullseye_20260204.5.tuxprod."
+        ],
+        [
+          "2026-04-04T05:51:37.03174Z",
+          "Informational",
+          "Establishing network."
+        ],
+        [
+          "2026-04-04T05:51:37.0309156Z",
+          "Informational",
+          "Container start method called."
+        ],
+        [
+          "2026-04-04T05:51:35.5148683Z",
+          "Informational",
+          "State: Starting, Action: EstablishingSiteNetworks, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:05:41.8124494Z",
+          "Informational",
+          "Site is running with patch version PYTHON 3.11.14"
+        ],
+        [
+          "2026-04-04T05:05:41.2253945Z",
+          "Informational",
+          "State: Started, Action: None, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 04/04/2026 05:05:41 (UTC), DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:05:41.2252433Z",
+          "Informational",
+          "Site started."
+        ],
+        [
+          "2026-04-04T05:05:41.2242464Z",
+          "Informational",
+          "Site is running with deployment version: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+        ],
+        [
+          "2026-04-04T05:05:40.6851544Z",
+          "Informational",
+          "State: Starting, Action: WarmUpProbeSucceeded, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site startup probe succeeded after 13.3514855 seconds., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:05:40.4402924Z",
+          "Informational",
+          "Site startup probe succeeded after 13.3514855 seconds."
+        ],
+        [
+          "2026-04-04T05:05:27.0468195Z",
+          "Informational",
+          "State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:05:27.0390908Z",
+          "Informational",
+          "State: Starting, Action: InitiatingSiteWarmUpProbe, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container app-labsnat-6kr7mkxulwioo successfully created and is running., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:05:27.0388358Z",
+          "Informational",
+          "Container start method finished after 2503 ms."
+        ],
+        [
+          "2026-04-04T05:05:26.984902Z",
+          "Informational",
+          "State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container app-labsnat-6kr7mkxulwioo successfully created and is running., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:05:26.9848141Z",
+          "Informational",
+          "Container is running."
+        ],
+        [
+          "2026-04-04T05:05:26.9845952Z",
+          "Informational",
+          "Starting metrics collection."
+        ],
+        [
+          "2026-04-04T05:05:26.9842402Z",
+          "Informational",
+          "Starting watchers and probes."
+        ],
+        [
+          "2026-04-04T05:05:26.8832966Z",
+          "Informational",
+          "Starting container: 388766090a40_app-labsnat-6kr7mkxulwioo."
+        ],
+        [
+          "2026-04-04T05:05:25.3673763Z",
+          "Informational",
+          "Creating container with image: appsvc/python:3.11_20260203.2.tuxprod from registry: 10.1.0.6:13209 and fully qualified image name: 10.1.0.6:13209/appsvc/python:3.11_20260203.2.tuxprod"
+        ],
+        [
+          "2026-04-04T05:05:25.3671574Z",
+          "Informational",
+          "Successfully removed non-blocking flag from /podr/container/pipe/388766090a40_app-labsnat-6kr7mkxulwioo/stderr_b5bf02939a4e4b4786ab62748d2dd2a9."
+        ],
+        [
+          "2026-04-04T05:05:25.3670016Z",
+          "Informational",
+          "Successfully opened named pipe: /podr/container/pipe/388766090a40_app-labsnat-6kr7mkxulwioo/stderr_b5bf02939a4e4b4786ab62748d2dd2a9."
+        ],
+        [
+          "2026-04-04T05:05:25.36676Z",
+          "Informational",
+          "Opening named pipe /podr/container/pipe/388766090a40_app-labsnat-6kr7mkxulwioo/stderr_b5bf02939a4e4b4786ab62748d2dd2a9 for reading in non-blocking mode."
+        ],
+        [
+          "2026-04-04T05:05:25.3666137Z",
+          "Informational",
+          "Successfully created stderr named pipe at: /podr/container/pipe/388766090a40_app-labsnat-6kr7mkxulwioo/stderr_b5bf02939a4e4b4786ab62748d2dd2a9."
+        ],
+        [
+          "2026-04-04T05:05:25.3659385Z",
+          "Informational",
+          "Creating stderr named pipe at /podr/container/pipe/388766090a40_app-labsnat-6kr7mkxulwioo/stderr_b5bf02939a4e4b4786ab62748d2dd2a9."
+        ],
+        [
+          "2026-04-04T05:05:25.3650657Z",
+          "Informational",
+          "Successfully removed non-blocking flag from /podr/container/pipe/388766090a40_app-labsnat-6kr7mkxulwioo/stdout_19171ca4c8804126955caed0716759c8."
+        ],
+        [
+          "2026-04-04T05:05:25.3648825Z",
+          "Informational",
+          "Successfully opened named pipe: /podr/container/pipe/388766090a40_app-labsnat-6kr7mkxulwioo/stdout_19171ca4c8804126955caed0716759c8."
+        ],
+        [
+          "2026-04-04T05:05:25.3644846Z",
+          "Informational",
+          "Opening named pipe /podr/container/pipe/388766090a40_app-labsnat-6kr7mkxulwioo/stdout_19171ca4c8804126955caed0716759c8 for reading in non-blocking mode."
+        ],
+        [
+          "2026-04-04T05:05:25.3638547Z",
+          "Informational",
+          "Successfully created stdout named pipe at: /podr/container/pipe/388766090a40_app-labsnat-6kr7mkxulwioo/stdout_19171ca4c8804126955caed0716759c8."
+        ],
+        [
+          "2026-04-04T05:05:25.3600857Z",
+          "Informational",
+          "Creating stdout named pipe at /podr/container/pipe/388766090a40_app-labsnat-6kr7mkxulwioo/stdout_19171ca4c8804126955caed0716759c8."
+        ],
+        [
+          "2026-04-04T05:05:25.3586669Z",
+          "Informational",
+          "Creating pipes for streaming container io."
+        ],
+        [
+          "2026-04-04T05:05:25.3573256Z",
+          "Informational",
+          "Creating container."
+        ],
+        [
+          "2026-04-04T05:05:25.3570457Z",
+          "Informational",
+          "State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Finished pulling container image and mounting volumes for app-labsnat-6kr7mkxulwioo. Allocatinng the rest of the container resources to finish container creation., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:05:25.1947178Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:05:25.1938962Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:05:25.174689Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:05:25.1654592Z",
+          "Informational",
+          "Nested mountpoint volatile/logs"
+        ],
+        [
+          "2026-04-04T05:05:25.1545741Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:05:25.1485432Z",
+          "Informational",
+          "Mounting volumes."
+        ],
+        [
+          "2026-04-04T05:05:25.1478179Z",
+          "Informational",
+          "Establishing network if not established already."
+        ],
+        [
+          "2026-04-04T05:05:25.1467982Z",
+          "Informational",
+          "Establishing user namespace if not established already."
+        ],
+        [
+          "2026-04-04T05:05:25.1428551Z",
+          "Informational",
+          "State: Starting, Action: MountingVolumes, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Mounting volumes for app-labsnat-6kr7mkxulwioo., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:05:25.1427476Z",
+          "Informational",
+          "Container is starting."
+        ],
+        [
+          "2026-04-04T05:05:25.1425439Z",
+          "Informational",
+          "Image appsvc/python:3.11_20260203.2.tuxprod is pulled from registry 10.1.0.6:13209"
+        ],
+        [
+          "2026-04-04T05:05:24.5411102Z",
+          "Informational",
+          "Pulling image: appsvc/python:3.11_20260203.2.tuxprod."
+        ],
+        [
+          "2026-04-04T05:05:24.5399917Z",
+          "Informational",
+          "Establishing network."
+        ],
+        [
+          "2026-04-04T05:05:24.5390274Z",
+          "Informational",
+          "State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image 10.1.0.6:13209/appsvc/python:3.11_20260203.2.tuxprod for app-labsnat-6kr7mkxulwioo., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:05:24.5356762Z",
+          "Informational",
+          "Container start method called."
+        ],
+        [
+          "2026-04-04T05:05:24.5354429Z",
+          "Informational",
+          "State: Starting, Action: StartingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:05:23.7082702Z",
+          "Informational",
+          "State: Starting, Action: EstablishingSiteNetworks, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-03T15:39:06.7173959Z",
+          "Informational",
+          "Site: app-labsnat-6kr7mkxulwioo stopped."
+        ],
+        [
+          "2026-04-03T15:39:06.7172069Z",
+          "Informational",
+          "Container is terminated. Total time elapsed: 6953 ms."
+        ],
+        [
+          "2026-04-03T15:39:06.7084226Z",
+          "Informational",
+          "Container spec TerminationMessagePolicy  path "
+        ],
+        [
+          "2026-04-03T15:39:05.1688324Z",
+          "Informational",
+          "Deleting container: be8df22065ae_app-labsnat-6kr7mkxulwioo. Retry count = 0"
+        ],
+        [
+          "2026-04-03T15:39:01.7603761Z",
+          "Informational",
+          "Kudu: app-labsnat-6kr7mkxulwioo stopped."
+        ],
+        [
+          "2026-04-03T15:39:01.7603059Z",
+          "Informational",
+          "Container is terminated. Total time elapsed: 2042 ms."
+        ],
+        [
+          "2026-04-03T15:39:01.7591006Z",
+          "Informational",
+          "Container spec TerminationMessagePolicy  path "
+        ],
+        [
+          "2026-04-03T15:39:00.0662444Z",
+          "Informational",
+          "Deleting container: 27dd97b43b97_app-labsnat-6kr7mkxulwioo_kudu. Retry count = 0"
+        ],
+        [
+          "2026-04-03T15:38:59.7753115Z",
+          "Informational",
+          "Stopping container: be8df22065ae_app-labsnat-6kr7mkxulwioo."
+        ],
+        [
+          "2026-04-03T15:38:59.7687172Z",
+          "Informational",
+          "Stop and delete container. Retry count = 0"
+        ],
+        [
+          "2026-04-03T15:38:59.756975Z",
+          "Informational",
+          "Container is terminating. Grace period: 5 seconds."
+        ],
+        [
+          "2026-04-03T15:38:59.7566338Z",
+          "Informational",
+          "State: Stopping, Action: StoppingSiteContainers, LastError: ContainerTimeout, LastErrorTimestamp: 04/03/2026 15:27:59, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Site started at 04/03/2026 15:31:57 (UTC), DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-03T15:38:59.7478073Z",
+          "Informational",
+          "State: Stopping, Action: StoppingSite, LastError: ContainerTimeout, LastErrorTimestamp: 04/03/2026 15:27:59, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Site started at 04/03/2026 15:31:57 (UTC), DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-03T15:38:59.7362362Z",
+          "Informational",
+          "Stopping container: 27dd97b43b97_app-labsnat-6kr7mkxulwioo_kudu."
+        ],
+        [
+          "2026-04-03T15:38:59.7294649Z",
+          "Informational",
+          "Stop and delete container. Retry count = 0"
+        ],
+        [
+          "2026-04-03T15:38:59.7178377Z",
+          "Informational",
+          "Container is terminating. Grace period: 0 seconds."
+        ],
+        [
+          "2026-04-03T15:31:57.5564221Z",
+          "Informational",
+          "Site is running with patch version PYTHON 3.11.14"
+        ],
+        [
+          "2026-04-03T15:31:57.4872157Z",
+          "Informational",
+          "State: Started, Action: None, LastError: ContainerTimeout, LastErrorTimestamp: 04/03/2026 15:27:59, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Site started at 04/03/2026 15:31:57 (UTC), DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-03T15:31:57.4857333Z",
+          "Informational",
+          "Site started."
+        ],
+        [
+          "2026-04-03T15:31:57.4842743Z",
+          "Informational",
+          "Site is running with deployment version: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+        ],
+        [
+          "2026-04-03T15:31:56.6566794Z",
+          "Informational",
+          "State: Starting, Action: WarmUpProbeSucceeded, LastError: ContainerTimeout, LastErrorTimestamp: 04/03/2026 15:27:59, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Site startup probe succeeded after 43.6162531 seconds., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-03T15:31:56.3786023Z",
+          "Informational",
+          "Site startup probe succeeded after 43.6162531 seconds."
+        ],
+        [
+          "2026-04-03T15:31:12.7206835Z",
+          "Informational",
+          "State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: ContainerTimeout, LastErrorTimestamp: 04/03/2026 15:27:59, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-03T15:31:12.7206295Z",
+          "Informational",
+          "State: Starting, Action: InitiatingSiteWarmUpProbe, LastError: ContainerTimeout, LastErrorTimestamp: 04/03/2026 15:27:59, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Container app-labsnat-6kr7mkxulwioo successfully created and is running., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-03T15:31:12.714181Z",
+          "Informational",
+          "Container start method finished after 5065 ms."
+        ],
+        [
+          "2026-04-03T15:31:12.2609296Z",
+          "Informational",
+          "State: Starting, Action: CreatingContainer, LastError: ContainerTimeout, LastErrorTimestamp: 04/03/2026 15:27:59, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Container app-labsnat-6kr7mkxulwioo successfully created and is running., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-03T15:31:12.2524403Z",
+          "Informational",
+          "Container is running."
+        ],
+        [
+          "2026-04-03T15:31:12.2522187Z",
+          "Informational",
+          "Starting metrics collection."
+        ],
+        [
+          "2026-04-03T15:31:12.2506777Z",
+          "Informational",
+          "Starting watchers and probes."
+        ],
+        [
+          "2026-04-03T15:31:12.1063464Z",
+          "Informational",
+          "Starting container: be8df22065ae_app-labsnat-6kr7mkxulwioo."
+        ],
+        [
+          "2026-04-03T15:31:09.0480086Z",
+          "Informational",
+          "Creating container with image: appsvc/python:3.11_20260203.2.tuxprod from registry: 10.1.0.4:13209 and fully qualified image name: 10.1.0.4:13209/appsvc/python:3.11_20260203.2.tuxprod"
+        ],
+        [
+          "2026-04-03T15:31:09.0478079Z",
+          "Informational",
+          "Successfully removed non-blocking flag from /podr/container/pipe/be8df22065ae_app-labsnat-6kr7mkxulwioo/stderr_ac591c0ccfd8413bbd9cc5050455a682."
+        ],
+        [
+          "2026-04-03T15:31:09.0475836Z",
+          "Informational",
+          "Successfully opened named pipe: /podr/container/pipe/be8df22065ae_app-labsnat-6kr7mkxulwioo/stderr_ac591c0ccfd8413bbd9cc5050455a682."
+        ],
+        [
+          "2026-04-03T15:31:09.0378749Z",
+          "Informational",
+          "Opening named pipe /podr/container/pipe/be8df22065ae_app-labsnat-6kr7mkxulwioo/stderr_ac591c0ccfd8413bbd9cc5050455a682 for reading in non-blocking mode."
+        ],
+        [
+          "2026-04-03T15:31:09.0376004Z",
+          "Informational",
+          "Successfully created stderr named pipe at: /podr/container/pipe/be8df22065ae_app-labsnat-6kr7mkxulwioo/stderr_ac591c0ccfd8413bbd9cc5050455a682."
+        ],
+        [
+          "2026-04-03T15:31:09.0358812Z",
+          "Informational",
+          "Creating stderr named pipe at /podr/container/pipe/be8df22065ae_app-labsnat-6kr7mkxulwioo/stderr_ac591c0ccfd8413bbd9cc5050455a682."
+        ],
+        [
+          "2026-04-03T15:31:09.0271742Z",
+          "Informational",
+          "Successfully removed non-blocking flag from /podr/container/pipe/be8df22065ae_app-labsnat-6kr7mkxulwioo/stdout_56ce38288e964ed9b57a36b05799995b."
+        ],
+        [
+          "2026-04-03T15:31:09.0269898Z",
+          "Informational",
+          "Successfully opened named pipe: /podr/container/pipe/be8df22065ae_app-labsnat-6kr7mkxulwioo/stdout_56ce38288e964ed9b57a36b05799995b."
+        ],
+        [
+          "2026-04-03T15:31:09.0266714Z",
+          "Informational",
+          "Opening named pipe /podr/container/pipe/be8df22065ae_app-labsnat-6kr7mkxulwioo/stdout_56ce38288e964ed9b57a36b05799995b for reading in non-blocking mode."
+        ],
+        [
+          "2026-04-03T15:31:09.0263155Z",
+          "Informational",
+          "Successfully created stdout named pipe at: /podr/container/pipe/be8df22065ae_app-labsnat-6kr7mkxulwioo/stdout_56ce38288e964ed9b57a36b05799995b."
+        ],
+        [
+          "2026-04-03T15:31:09.0252506Z",
+          "Informational",
+          "Creating stdout named pipe at /podr/container/pipe/be8df22065ae_app-labsnat-6kr7mkxulwioo/stdout_56ce38288e964ed9b57a36b05799995b."
+        ],
+        [
+          "2026-04-03T15:31:09.0185286Z",
+          "Informational",
+          "Creating pipes for streaming container io."
+        ],
+        [
+          "2026-04-03T15:31:09.0173373Z",
+          "Informational",
+          "Creating container."
+        ],
+        [
+          "2026-04-03T15:31:09.0168164Z",
+          "Informational",
+          "State: Starting, Action: CreatingContainer, LastError: ContainerTimeout, LastErrorTimestamp: 04/03/2026 15:27:59, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Finished pulling container image and mounting volumes for app-labsnat-6kr7mkxulwioo. Allocatinng the rest of the container resources to finish container creation., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-03T15:31:08.4731774Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-03T15:31:08.373585Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-03T15:31:08.2431217Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-03T15:31:08.2159564Z",
+          "Informational",
+          "Nested mountpoint volatile/logs"
+        ],
+        [
+          "2026-04-03T15:31:08.1457406Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-03T15:31:08.1374618Z",
+          "Informational",
+          "Mounting volumes."
+        ],
+        [
+          "2026-04-03T15:31:08.1372559Z",
+          "Informational",
+          "Establishing network if not established already."
+        ],
+        [
+          "2026-04-03T15:31:08.1367466Z",
+          "Informational",
+          "Establishing user namespace if not established already."
+        ],
+        [
+          "2026-04-03T15:31:08.1365069Z",
+          "Informational",
+          "State: Starting, Action: MountingVolumes, LastError: ContainerTimeout, LastErrorTimestamp: 04/03/2026 15:27:59, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Mounting volumes for app-labsnat-6kr7mkxulwioo., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-03T15:31:08.1363361Z",
+          "Informational",
+          "Container is starting."
+        ],
+        [
+          "2026-04-03T15:31:07.6881797Z",
+          "Informational",
+          "Pulling image: appsvc/python:3.11_20260203.2.tuxprod."
+        ],
+        [
+          "2026-04-03T15:31:07.6495733Z",
+          "Informational",
+          "Establishing network."
+        ],
+        [
+          "2026-04-03T15:31:07.6494042Z",
+          "Informational",
+          "State: Starting, Action: PullingImage, LastError: ContainerTimeout, LastErrorTimestamp: 04/03/2026 15:27:59, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Pulling image 10.1.0.4:13209/appsvc/python:3.11_20260203.2.tuxprod for app-labsnat-6kr7mkxulwioo., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-03T15:31:07.6487517Z",
+          "Informational",
+          "Container start method called."
+        ],
+        [
+          "2026-04-03T15:31:07.6408229Z",
+          "Warning",
+          "State: Starting, Action: StartingSiteContainers, LastError: ContainerTimeout, LastErrorTimestamp: 04/03/2026 15:27:59, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Site stopped at 04/03/2026 15:28:01 (UTC), DetailsLevel: WARN"
+        ],
+        [
+          "2026-04-03T15:31:04.8547403Z",
+          "Warning",
+          "State: Starting, Action: EstablishingSiteNetworks, LastError: ContainerTimeout, LastErrorTimestamp: 04/03/2026 15:27:59, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Site stopped at 04/03/2026 15:28:01 (UTC), DetailsLevel: WARN"
+        ],
+        [
+          "2026-04-03T15:30:01.6389928Z",
+          "Informational",
+          "Site: app-labsnat-6kr7mkxulwioo is unblocked."
+        ],
+        [
+          "2026-04-03T15:28:01.8299176Z",
+          "Warning",
+          "State: Stopped, Action: None, LastError: ContainerTimeout, LastErrorTimestamp: 04/03/2026 15:27:59, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Site stopped at 04/03/2026 15:28:01 (UTC), DetailsLevel: WARN"
+        ],
+        [
+          "2026-04-03T15:28:01.6304676Z",
+          "Warning",
+          "State: Stopped, Action: None, LastError: ContainerTimeout, LastErrorTimestamp: 04/03/2026 15:27:59, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Site stopped at 04/03/2026 15:28:01 (UTC), DetailsLevel: WARN"
+        ],
+        [
+          "2026-04-03T15:28:01.6034264Z",
+          "Warning",
+          "State: Blocked, Action: StoppingSiteNetworks, LastError: ContainerTimeout, LastErrorTimestamp: 04/03/2026 15:27:59, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Site: app-labsnat-6kr7mkxulwioo will be blocked for 2 minutes till 04/03/2026 15:30:01, DetailsLevel: WARN"
+        ],
+        [
+          "2026-04-03T15:28:01.6021812Z",
+          "Informational",
+          "Site: app-labsnat-6kr7mkxulwioo will be blocked for 2 minutes till 04/03/2026 15:30:01"
+        ],
+        [
+          "2026-04-03T15:28:01.0990995Z",
+          "Error",
+          "State: Stopping, Action: StoppingSiteNetworks, LastError: ContainerTimeout, LastErrorTimestamp: 04/03/2026 15:27:59, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Site container: app-labsnat-6kr7mkxulwioo terminated during site startup. Cancelling site startup., DetailsLevel: ERR"
+        ],
+        [
+          "2026-04-03T15:28:00.1443421Z",
+          "Error",
+          "State: Stopping, Action: UnmountingVolumes, LastError: ContainerTimeout, LastErrorTimestamp: 04/03/2026 15:27:59, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Site container: app-labsnat-6kr7mkxulwioo terminated during site startup. Cancelling site startup., DetailsLevel: ERR"
+        ],
+        [
+          "2026-04-03T15:28:00.0379281Z",
+          "Informational",
+          "Site: app-labsnat-6kr7mkxulwioo stopped."
+        ],
+        [
+          "2026-04-03T15:28:00.0378781Z",
+          "Error",
+          "State: Stopping, Action: StoppingSiteContainers, LastError: ContainerTimeout, LastErrorTimestamp: 04/03/2026 15:27:59, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Site container: app-labsnat-6kr7mkxulwioo terminated during site startup. Cancelling site startup., DetailsLevel: ERR"
+        ],
+        [
+          "2026-04-03T15:28:00.0261234Z",
+          "Error",
+          "State: Stopping, Action: StoppingSite, LastError: ContainerTimeout, LastErrorTimestamp: 04/03/2026 15:27:59, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Site container: app-labsnat-6kr7mkxulwioo terminated during site startup. Cancelling site startup., DetailsLevel: ERR"
+        ],
+        [
+          "2026-04-03T15:28:00.02551Z",
+          "Error",
+          "Failed to start site. Revert by stopping site."
+        ],
+        [
+          "2026-04-03T15:27:59.9966209Z",
+          "Error",
+          "State: Stopping, Action: CancellingStartup, LastError: ContainerTimeout, LastErrorTimestamp: 04/03/2026 15:27:59, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Site container: app-labsnat-6kr7mkxulwioo terminated during site startup. Cancelling site startup., DetailsLevel: ERR"
+        ],
+        [
+          "2026-04-03T15:27:59.2389115Z",
+          "Informational",
+          "Site startup probe failed after 27.1017947 seconds."
+        ],
+        [
+          "2026-04-03T15:27:59.0601609Z",
+          "Error",
+          "State: Stopping, Action: CancellingStartup, LastError: ContainerTimeout, LastErrorTimestamp: 04/03/2026 15:26:11, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Site container: app-labsnat-6kr7mkxulwioo terminated during site startup. Cancelling site startup., DetailsLevel: ERR"
+        ],
+        [
+          "2026-04-03T15:27:59.0599837Z",
+          "Error",
+          "Site container: app-labsnat-6kr7mkxulwioo terminated during site startup."
+        ],
+        [
+          "2026-04-03T15:27:59.0597651Z",
+          "Informational",
+          "Container is terminated. Total time elapsed: 358 ms."
+        ],
+        [
+          "2026-04-03T15:27:59.0524324Z",
+          "Informational",
+          "Container spec TerminationMessagePolicy  path "
+        ],
+        [
+          "2026-04-03T15:27:58.801461Z",
+          "Informational",
+          "Deleting container: 39aa6cf78d1f_app-labsnat-6kr7mkxulwioo. Retry count = 0"
+        ],
+        [
+          "2026-04-03T15:27:58.7040077Z",
+          "Informational",
+          "Stopping container: 39aa6cf78d1f_app-labsnat-6kr7mkxulwioo."
+        ],
+        [
+          "2026-04-03T15:27:58.7031366Z",
+          "Informational",
+          "Stop and delete container. Retry count = 0"
+        ],
+        [
+          "2026-04-03T15:27:58.6934702Z",
+          "Informational",
+          "Container is terminating. Grace period: 5 seconds."
+        ],
+        [
+          "2026-04-03T15:27:58.6846425Z",
+          "Warning",
+          "Container has finished running with exit code: 3."
+        ],
+        [
+          "2026-04-03T15:27:32.0787563Z",
+          "Informational",
+          "State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: ContainerTimeout, LastErrorTimestamp: 04/03/2026 15:26:11, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-03T15:27:32.078706Z",
+          "Informational",
+          "State: Starting, Action: InitiatingSiteWarmUpProbe, LastError: ContainerTimeout, LastErrorTimestamp: 04/03/2026 15:26:11, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Container app-labsnat-6kr7mkxulwioo successfully created and is running., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-03T15:27:32.0784164Z",
+          "Informational",
+          "Container start method finished after 3066 ms."
+        ]
+      ]
+    }
+  ]
+}

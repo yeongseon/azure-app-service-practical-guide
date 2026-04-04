@@ -1,0 +1,813 @@
+{
+  "tables": [
+    {
+      "columns": [
+        {
+          "name": "TimeGenerated",
+          "type": "datetime"
+        },
+        {
+          "name": "Level",
+          "type": "string"
+        },
+        {
+          "name": "Message",
+          "type": "string"
+        }
+      ],
+      "name": "PrimaryResult",
+      "rows": [
+        [
+          "2026-04-04T05:06:32.2920934Z",
+          "Informational",
+          "Site: app-labdns-fbg6cycknd2gm stopped."
+        ],
+        [
+          "2026-04-04T05:06:32.2895701Z",
+          "Informational",
+          "Container is terminated. Total time elapsed: 5879 ms."
+        ],
+        [
+          "2026-04-04T05:06:32.2805917Z",
+          "Informational",
+          "Container spec TerminationMessagePolicy  path "
+        ],
+        [
+          "2026-04-04T05:06:31.6366986Z",
+          "Informational",
+          "Deleting container: 31e4d60df472_app-labdns-fbg6cycknd2gm. Retry count = 0"
+        ],
+        [
+          "2026-04-04T05:06:26.4997957Z",
+          "Informational",
+          "Stopping container: 31e4d60df472_app-labdns-fbg6cycknd2gm."
+        ],
+        [
+          "2026-04-04T05:06:26.4996573Z",
+          "Informational",
+          "Stop and delete container. Retry count = 0"
+        ],
+        [
+          "2026-04-04T05:06:26.4087925Z",
+          "Informational",
+          "Container is terminating. Grace period: 5 seconds."
+        ],
+        [
+          "2026-04-04T05:06:26.4006651Z",
+          "Informational",
+          "State: Stopping, Action: StoppingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 04/03/2026 15:18:58 (UTC), DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:06:26.391987Z",
+          "Informational",
+          "State: Stopping, Action: StoppingSite, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 04/03/2026 15:18:58 (UTC), DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:06:06.1958557Z",
+          "Informational",
+          "Site is running with patch version PYTHON 3.11.14"
+        ],
+        [
+          "2026-04-04T05:06:06.1952715Z",
+          "Informational",
+          "State: Started, Action: None, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 04/04/2026 05:06:06 (UTC), DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:06:06.1950521Z",
+          "Informational",
+          "Site started."
+        ],
+        [
+          "2026-04-04T05:06:06.1943075Z",
+          "Informational",
+          "Site is running with deployment version: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+        ],
+        [
+          "2026-04-04T05:06:05.0167976Z",
+          "Informational",
+          "State: Starting, Action: WarmUpProbeSucceeded, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site startup probe succeeded after 36.0705838 seconds., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:06:04.5368943Z",
+          "Informational",
+          "Site startup probe succeeded after 36.0705838 seconds."
+        ],
+        [
+          "2026-04-04T05:05:28.4131195Z",
+          "Informational",
+          "State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:05:28.3750535Z",
+          "Informational",
+          "State: Starting, Action: InitiatingSiteWarmUpProbe, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container app-labdns-fbg6cycknd2gm successfully created and is running., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:05:28.3728989Z",
+          "Informational",
+          "Container start method finished after 3160 ms."
+        ],
+        [
+          "2026-04-04T05:05:27.951347Z",
+          "Informational",
+          "State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container app-labdns-fbg6cycknd2gm successfully created and is running., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:05:27.9507727Z",
+          "Informational",
+          "Container is running."
+        ],
+        [
+          "2026-04-04T05:05:27.949275Z",
+          "Informational",
+          "Starting metrics collection."
+        ],
+        [
+          "2026-04-04T05:05:27.933495Z",
+          "Informational",
+          "Starting watchers and probes."
+        ],
+        [
+          "2026-04-04T05:05:27.7673765Z",
+          "Informational",
+          "Starting container: 56837f06b086_app-labdns-fbg6cycknd2gm."
+        ],
+        [
+          "2026-04-04T05:05:26.9496727Z",
+          "Informational",
+          "Creating container with image: appsvc/python:3.11_20260203.2.tuxprod from registry: 10.1.0.6:13209 and fully qualified image name: 10.1.0.6:13209/appsvc/python:3.11_20260203.2.tuxprod"
+        ],
+        [
+          "2026-04-04T05:05:26.9424484Z",
+          "Informational",
+          "Setting value of PORT variable to 8000"
+        ],
+        [
+          "2026-04-04T05:05:26.9420155Z",
+          "Informational",
+          "Overriding PORT environment variable with pre-calculated port: 8000."
+        ],
+        [
+          "2026-04-04T05:05:26.9401436Z",
+          "Informational",
+          "Successfully removed non-blocking flag from /podr/container/pipe/56837f06b086_app-labdns-fbg6cycknd2gm/stderr_065d940bd26c4f15afe0a916e49dcc84."
+        ],
+        [
+          "2026-04-04T05:05:26.9396985Z",
+          "Informational",
+          "Successfully opened named pipe: /podr/container/pipe/56837f06b086_app-labdns-fbg6cycknd2gm/stderr_065d940bd26c4f15afe0a916e49dcc84."
+        ],
+        [
+          "2026-04-04T05:05:26.9319714Z",
+          "Informational",
+          "Opening named pipe /podr/container/pipe/56837f06b086_app-labdns-fbg6cycknd2gm/stderr_065d940bd26c4f15afe0a916e49dcc84 for reading in non-blocking mode."
+        ],
+        [
+          "2026-04-04T05:05:26.9315259Z",
+          "Informational",
+          "Successfully created stderr named pipe at: /podr/container/pipe/56837f06b086_app-labdns-fbg6cycknd2gm/stderr_065d940bd26c4f15afe0a916e49dcc84."
+        ],
+        [
+          "2026-04-04T05:05:26.9305042Z",
+          "Informational",
+          "Creating stderr named pipe at /podr/container/pipe/56837f06b086_app-labdns-fbg6cycknd2gm/stderr_065d940bd26c4f15afe0a916e49dcc84."
+        ],
+        [
+          "2026-04-04T05:05:26.923892Z",
+          "Informational",
+          "Successfully removed non-blocking flag from /podr/container/pipe/56837f06b086_app-labdns-fbg6cycknd2gm/stdout_22960187b0594f55987a56d631952763."
+        ],
+        [
+          "2026-04-04T05:05:26.9225901Z",
+          "Informational",
+          "Successfully opened named pipe: /podr/container/pipe/56837f06b086_app-labdns-fbg6cycknd2gm/stdout_22960187b0594f55987a56d631952763."
+        ],
+        [
+          "2026-04-04T05:05:26.8917553Z",
+          "Informational",
+          "Opening named pipe /podr/container/pipe/56837f06b086_app-labdns-fbg6cycknd2gm/stdout_22960187b0594f55987a56d631952763 for reading in non-blocking mode."
+        ],
+        [
+          "2026-04-04T05:05:26.8910496Z",
+          "Informational",
+          "Successfully created stdout named pipe at: /podr/container/pipe/56837f06b086_app-labdns-fbg6cycknd2gm/stdout_22960187b0594f55987a56d631952763."
+        ],
+        [
+          "2026-04-04T05:05:26.890288Z",
+          "Informational",
+          "Creating stdout named pipe at /podr/container/pipe/56837f06b086_app-labdns-fbg6cycknd2gm/stdout_22960187b0594f55987a56d631952763."
+        ],
+        [
+          "2026-04-04T05:05:26.8797288Z",
+          "Informational",
+          "Creating pipes for streaming container io."
+        ],
+        [
+          "2026-04-04T05:05:26.8790267Z",
+          "Informational",
+          "Creating container."
+        ],
+        [
+          "2026-04-04T05:05:26.8778661Z",
+          "Informational",
+          "State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Finished pulling container image and mounting volumes for app-labdns-fbg6cycknd2gm. Allocatinng the rest of the container resources to finish container creation., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:05:25.9054553Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:05:25.8742721Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:05:25.834114Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:05:25.7839182Z",
+          "Informational",
+          "Nested mountpoint volatile/logs"
+        ],
+        [
+          "2026-04-04T05:05:25.6929703Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:05:25.6837164Z",
+          "Informational",
+          "Mounting volumes."
+        ],
+        [
+          "2026-04-04T05:05:25.6835576Z",
+          "Informational",
+          "Establishing network if not established already."
+        ],
+        [
+          "2026-04-04T05:05:25.6830427Z",
+          "Informational",
+          "Establishing user namespace if not established already."
+        ],
+        [
+          "2026-04-04T05:05:25.681826Z",
+          "Informational",
+          "State: Starting, Action: MountingVolumes, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Mounting volumes for app-labdns-fbg6cycknd2gm., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:05:25.6736982Z",
+          "Informational",
+          "Container is starting."
+        ],
+        [
+          "2026-04-04T05:05:25.2599605Z",
+          "Informational",
+          "Pulling image: appsvc/python:3.11_20260203.2.tuxprod."
+        ],
+        [
+          "2026-04-04T05:05:25.2505946Z",
+          "Informational",
+          "Establishing network."
+        ],
+        [
+          "2026-04-04T05:05:25.2499082Z",
+          "Informational",
+          "State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image 10.1.0.6:13209/appsvc/python:3.11_20260203.2.tuxprod for app-labdns-fbg6cycknd2gm., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:05:25.2116957Z",
+          "Informational",
+          "Container start method called."
+        ],
+        [
+          "2026-04-04T05:05:25.2092955Z",
+          "Informational",
+          "State: Starting, Action: StartingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:05:21.893036Z",
+          "Informational",
+          "State: Starting, Action: EstablishingSiteNetworks, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-03T15:19:25.0774125Z",
+          "Informational",
+          "Site: app-labdns-fbg6cycknd2gm stopped."
+        ],
+        [
+          "2026-04-03T15:19:25.0653934Z",
+          "Informational",
+          "Container is terminated. Total time elapsed: 6129 ms."
+        ],
+        [
+          "2026-04-03T15:19:25.054397Z",
+          "Informational",
+          "Container spec TerminationMessagePolicy  path "
+        ],
+        [
+          "2026-04-03T15:19:24.4286814Z",
+          "Informational",
+          "Deleting container: 4fd2df115be4_app-labdns-fbg6cycknd2gm. Retry count = 0"
+        ],
+        [
+          "2026-04-03T15:19:19.0142414Z",
+          "Informational",
+          "Stopping container: 4fd2df115be4_app-labdns-fbg6cycknd2gm."
+        ],
+        [
+          "2026-04-03T15:19:19.0047638Z",
+          "Informational",
+          "Stop and delete container. Retry count = 0"
+        ],
+        [
+          "2026-04-03T15:19:18.9340866Z",
+          "Informational",
+          "Container is terminating. Grace period: 5 seconds."
+        ],
+        [
+          "2026-04-03T15:19:18.9083291Z",
+          "Informational",
+          "State: Stopping, Action: StoppingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 04/03/2026 15:16:26 (UTC), DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-03T15:19:18.8796731Z",
+          "Informational",
+          "State: Stopping, Action: StoppingSite, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 04/03/2026 15:16:26 (UTC), DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-03T15:18:58.6393498Z",
+          "Informational",
+          "Site is running with patch version PYTHON 3.11.14"
+        ],
+        [
+          "2026-04-03T15:18:58.6389431Z",
+          "Informational",
+          "State: Started, Action: None, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 04/03/2026 15:18:58 (UTC), DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-03T15:18:58.6387689Z",
+          "Informational",
+          "Site started."
+        ],
+        [
+          "2026-04-03T15:18:58.6305385Z",
+          "Informational",
+          "Site is running with deployment version: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+        ],
+        [
+          "2026-04-03T15:18:57.8277059Z",
+          "Informational",
+          "State: Starting, Action: WarmUpProbeSucceeded, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site startup probe succeeded after 42.4140125 seconds., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-03T15:18:57.3370311Z",
+          "Informational",
+          "Site startup probe succeeded after 42.4140125 seconds."
+        ],
+        [
+          "2026-04-03T15:18:14.8323125Z",
+          "Informational",
+          "State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-03T15:18:14.832275Z",
+          "Informational",
+          "State: Starting, Action: InitiatingSiteWarmUpProbe, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container app-labdns-fbg6cycknd2gm successfully created and is running., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-03T15:18:14.7734543Z",
+          "Informational",
+          "Container start method finished after 3418 ms."
+        ],
+        [
+          "2026-04-03T15:18:14.5826777Z",
+          "Informational",
+          "State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container app-labdns-fbg6cycknd2gm successfully created and is running., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-03T15:18:14.5823215Z",
+          "Informational",
+          "Container is running."
+        ],
+        [
+          "2026-04-03T15:18:14.581824Z",
+          "Informational",
+          "Starting metrics collection."
+        ],
+        [
+          "2026-04-03T15:18:14.5724543Z",
+          "Informational",
+          "Starting watchers and probes."
+        ],
+        [
+          "2026-04-03T15:18:14.4713783Z",
+          "Informational",
+          "Starting container: 31e4d60df472_app-labdns-fbg6cycknd2gm."
+        ],
+        [
+          "2026-04-03T15:18:13.3281336Z",
+          "Informational",
+          "Creating container with image: appsvc/python:3.11_20260203.2.tuxprod from registry: 10.1.0.6:13209 and fully qualified image name: 10.1.0.6:13209/appsvc/python:3.11_20260203.2.tuxprod"
+        ],
+        [
+          "2026-04-03T15:18:13.3279383Z",
+          "Informational",
+          "Setting value of PORT variable to 8000"
+        ],
+        [
+          "2026-04-03T15:18:13.3278428Z",
+          "Informational",
+          "Overriding PORT environment variable with pre-calculated port: 8000."
+        ],
+        [
+          "2026-04-03T15:18:13.3266802Z",
+          "Informational",
+          "Successfully removed non-blocking flag from /podr/container/pipe/31e4d60df472_app-labdns-fbg6cycknd2gm/stderr_cdccfdce698549c49a98cb0f8be5f10a."
+        ],
+        [
+          "2026-04-03T15:18:13.326599Z",
+          "Informational",
+          "Successfully opened named pipe: /podr/container/pipe/31e4d60df472_app-labdns-fbg6cycknd2gm/stderr_cdccfdce698549c49a98cb0f8be5f10a."
+        ],
+        [
+          "2026-04-03T15:18:13.3264675Z",
+          "Informational",
+          "Opening named pipe /podr/container/pipe/31e4d60df472_app-labdns-fbg6cycknd2gm/stderr_cdccfdce698549c49a98cb0f8be5f10a for reading in non-blocking mode."
+        ],
+        [
+          "2026-04-03T15:18:13.326308Z",
+          "Informational",
+          "Successfully created stderr named pipe at: /podr/container/pipe/31e4d60df472_app-labdns-fbg6cycknd2gm/stderr_cdccfdce698549c49a98cb0f8be5f10a."
+        ],
+        [
+          "2026-04-03T15:18:13.1660939Z",
+          "Informational",
+          "Creating stderr named pipe at /podr/container/pipe/31e4d60df472_app-labdns-fbg6cycknd2gm/stderr_cdccfdce698549c49a98cb0f8be5f10a."
+        ],
+        [
+          "2026-04-03T15:18:13.1658714Z",
+          "Informational",
+          "Successfully removed non-blocking flag from /podr/container/pipe/31e4d60df472_app-labdns-fbg6cycknd2gm/stdout_7642c05c44ec4e2d8958a328c1a6903c."
+        ],
+        [
+          "2026-04-03T15:18:13.1657383Z",
+          "Informational",
+          "Successfully opened named pipe: /podr/container/pipe/31e4d60df472_app-labdns-fbg6cycknd2gm/stdout_7642c05c44ec4e2d8958a328c1a6903c."
+        ],
+        [
+          "2026-04-03T15:18:13.1655003Z",
+          "Informational",
+          "Opening named pipe /podr/container/pipe/31e4d60df472_app-labdns-fbg6cycknd2gm/stdout_7642c05c44ec4e2d8958a328c1a6903c for reading in non-blocking mode."
+        ],
+        [
+          "2026-04-03T15:18:13.165182Z",
+          "Informational",
+          "Successfully created stdout named pipe at: /podr/container/pipe/31e4d60df472_app-labdns-fbg6cycknd2gm/stdout_7642c05c44ec4e2d8958a328c1a6903c."
+        ],
+        [
+          "2026-04-03T15:18:13.1360712Z",
+          "Informational",
+          "Creating stdout named pipe at /podr/container/pipe/31e4d60df472_app-labdns-fbg6cycknd2gm/stdout_7642c05c44ec4e2d8958a328c1a6903c."
+        ],
+        [
+          "2026-04-03T15:18:13.135989Z",
+          "Informational",
+          "Creating pipes for streaming container io."
+        ],
+        [
+          "2026-04-03T15:18:13.1358782Z",
+          "Informational",
+          "Creating container."
+        ],
+        [
+          "2026-04-03T15:18:13.1357581Z",
+          "Informational",
+          "State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Finished pulling container image and mounting volumes for app-labdns-fbg6cycknd2gm. Allocatinng the rest of the container resources to finish container creation., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-03T15:18:12.245163Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-03T15:18:12.195989Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-03T15:18:12.185099Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-03T15:18:12.0861403Z",
+          "Informational",
+          "Nested mountpoint volatile/logs"
+        ],
+        [
+          "2026-04-03T15:18:11.974311Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-03T15:18:11.9531048Z",
+          "Informational",
+          "Mounting volumes."
+        ],
+        [
+          "2026-04-03T15:18:11.9448275Z",
+          "Informational",
+          "Establishing network if not established already."
+        ],
+        [
+          "2026-04-03T15:18:11.9354173Z",
+          "Informational",
+          "Establishing user namespace if not established already."
+        ],
+        [
+          "2026-04-03T15:18:11.9351873Z",
+          "Informational",
+          "State: Starting, Action: MountingVolumes, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Mounting volumes for app-labdns-fbg6cycknd2gm., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-03T15:18:11.9341551Z",
+          "Informational",
+          "Container is starting."
+        ],
+        [
+          "2026-04-03T15:18:11.3558959Z",
+          "Informational",
+          "Pulling image: appsvc/python:3.11_20260203.2.tuxprod."
+        ],
+        [
+          "2026-04-03T15:18:11.3556272Z",
+          "Informational",
+          "Establishing network."
+        ],
+        [
+          "2026-04-03T15:18:11.3550494Z",
+          "Informational",
+          "State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image 10.1.0.6:13209/appsvc/python:3.11_20260203.2.tuxprod for app-labdns-fbg6cycknd2gm., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-03T15:18:11.3545787Z",
+          "Informational",
+          "Container start method called."
+        ],
+        [
+          "2026-04-03T15:18:11.3539831Z",
+          "Informational",
+          "State: Starting, Action: StartingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-03T15:18:08.0581098Z",
+          "Informational",
+          "State: Starting, Action: EstablishingSiteNetworks, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-03T15:16:26.1805851Z",
+          "Informational",
+          "Site is running with patch version PYTHON 3.11.14"
+        ],
+        [
+          "2026-04-03T15:16:26.0286811Z",
+          "Informational",
+          "State: Started, Action: None, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 04/03/2026 15:16:26 (UTC), DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-03T15:16:26.0285638Z",
+          "Informational",
+          "Site started."
+        ],
+        [
+          "2026-04-03T15:16:26.0112612Z",
+          "Informational",
+          "Site is running with deployment version: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+        ],
+        [
+          "2026-04-03T15:16:25.3478221Z",
+          "Informational",
+          "State: Starting, Action: WarmUpProbeSucceeded, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site startup probe succeeded after 44.7779461 seconds., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-03T15:16:25.0935652Z",
+          "Informational",
+          "Site startup probe succeeded after 44.7779461 seconds."
+        ],
+        [
+          "2026-04-03T15:15:40.2756214Z",
+          "Informational",
+          "State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-03T15:15:40.1900476Z",
+          "Informational",
+          "State: Starting, Action: InitiatingSiteWarmUpProbe, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container app-labdns-fbg6cycknd2gm successfully created and is running., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-03T15:15:40.1711962Z",
+          "Informational",
+          "Container start method finished after 2411 ms."
+        ],
+        [
+          "2026-04-03T15:15:40.0096787Z",
+          "Informational",
+          "State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container app-labdns-fbg6cycknd2gm successfully created and is running., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-03T15:15:40.0088785Z",
+          "Informational",
+          "Container is running."
+        ],
+        [
+          "2026-04-03T15:15:39.9905961Z",
+          "Informational",
+          "Starting metrics collection."
+        ],
+        [
+          "2026-04-03T15:15:39.9796445Z",
+          "Informational",
+          "Starting watchers and probes."
+        ],
+        [
+          "2026-04-03T15:15:39.8700146Z",
+          "Informational",
+          "Starting container: 4fd2df115be4_app-labdns-fbg6cycknd2gm."
+        ],
+        [
+          "2026-04-03T15:15:39.330395Z",
+          "Warning",
+          "Container get processes received unexpected exception."
+        ],
+        [
+          "2026-04-03T15:15:39.291292Z",
+          "Warning",
+          "Container get mounts received unexpected exception."
+        ],
+        [
+          "2026-04-03T15:15:39.0964296Z",
+          "Informational",
+          "Creating container with image: appsvc/python:3.11_20260203.2.tuxprod from registry: 10.1.0.6:13209 and fully qualified image name: 10.1.0.6:13209/appsvc/python:3.11_20260203.2.tuxprod"
+        ],
+        [
+          "2026-04-03T15:15:39.0951909Z",
+          "Informational",
+          "Setting value of PORT variable to 8000"
+        ],
+        [
+          "2026-04-03T15:15:39.085364Z",
+          "Informational",
+          "Overriding PORT environment variable with pre-calculated port: 8000."
+        ],
+        [
+          "2026-04-03T15:15:39.0765168Z",
+          "Informational",
+          "Successfully removed non-blocking flag from /podr/container/pipe/4fd2df115be4_app-labdns-fbg6cycknd2gm/stderr_07ed56a9826c4a00bb2373cc5af6710c."
+        ],
+        [
+          "2026-04-03T15:15:39.0761461Z",
+          "Informational",
+          "Successfully opened named pipe: /podr/container/pipe/4fd2df115be4_app-labdns-fbg6cycknd2gm/stderr_07ed56a9826c4a00bb2373cc5af6710c."
+        ],
+        [
+          "2026-04-03T15:15:39.0756062Z",
+          "Informational",
+          "Opening named pipe /podr/container/pipe/4fd2df115be4_app-labdns-fbg6cycknd2gm/stderr_07ed56a9826c4a00bb2373cc5af6710c for reading in non-blocking mode."
+        ],
+        [
+          "2026-04-03T15:15:39.0753673Z",
+          "Informational",
+          "Successfully created stderr named pipe at: /podr/container/pipe/4fd2df115be4_app-labdns-fbg6cycknd2gm/stderr_07ed56a9826c4a00bb2373cc5af6710c."
+        ],
+        [
+          "2026-04-03T15:15:39.0748685Z",
+          "Informational",
+          "Creating stderr named pipe at /podr/container/pipe/4fd2df115be4_app-labdns-fbg6cycknd2gm/stderr_07ed56a9826c4a00bb2373cc5af6710c."
+        ],
+        [
+          "2026-04-03T15:15:39.0664478Z",
+          "Informational",
+          "Successfully removed non-blocking flag from /podr/container/pipe/4fd2df115be4_app-labdns-fbg6cycknd2gm/stdout_3d8d00cfed6a4c1288e149b7d5ba7c3c."
+        ],
+        [
+          "2026-04-03T15:15:39.0654053Z",
+          "Informational",
+          "Successfully opened named pipe: /podr/container/pipe/4fd2df115be4_app-labdns-fbg6cycknd2gm/stdout_3d8d00cfed6a4c1288e149b7d5ba7c3c."
+        ],
+        [
+          "2026-04-03T15:15:39.064993Z",
+          "Informational",
+          "Opening named pipe /podr/container/pipe/4fd2df115be4_app-labdns-fbg6cycknd2gm/stdout_3d8d00cfed6a4c1288e149b7d5ba7c3c for reading in non-blocking mode."
+        ],
+        [
+          "2026-04-03T15:15:39.0641045Z",
+          "Informational",
+          "Successfully created stdout named pipe at: /podr/container/pipe/4fd2df115be4_app-labdns-fbg6cycknd2gm/stdout_3d8d00cfed6a4c1288e149b7d5ba7c3c."
+        ],
+        [
+          "2026-04-03T15:15:39.0460418Z",
+          "Informational",
+          "Creating stdout named pipe at /podr/container/pipe/4fd2df115be4_app-labdns-fbg6cycknd2gm/stdout_3d8d00cfed6a4c1288e149b7d5ba7c3c."
+        ],
+        [
+          "2026-04-03T15:15:39.0455127Z",
+          "Informational",
+          "Creating pipes for streaming container io."
+        ],
+        [
+          "2026-04-03T15:15:39.0453729Z",
+          "Informational",
+          "Creating container."
+        ],
+        [
+          "2026-04-03T15:15:39.0445566Z",
+          "Informational",
+          "State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Finished pulling container image and mounting volumes for app-labdns-fbg6cycknd2gm. Allocatinng the rest of the container resources to finish container creation., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-03T15:15:38.4288327Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-03T15:15:38.3819587Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-03T15:15:38.2823879Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-03T15:15:38.2232972Z",
+          "Informational",
+          "Nested mountpoint volatile/logs"
+        ],
+        [
+          "2026-04-03T15:15:38.1816076Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-03T15:15:38.1729611Z",
+          "Informational",
+          "Mounting volumes."
+        ],
+        [
+          "2026-04-03T15:15:38.1723689Z",
+          "Informational",
+          "Establishing network if not established already."
+        ],
+        [
+          "2026-04-03T15:15:38.1718815Z",
+          "Informational",
+          "Establishing user namespace if not established already."
+        ],
+        [
+          "2026-04-03T15:15:38.1715134Z",
+          "Informational",
+          "State: Starting, Action: MountingVolumes, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Mounting volumes for app-labdns-fbg6cycknd2gm., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-03T15:15:38.1649062Z",
+          "Informational",
+          "Container is starting."
+        ],
+        [
+          "2026-04-03T15:15:37.7612326Z",
+          "Informational",
+          "Pulling image: appsvc/python:3.11_20260203.2.tuxprod."
+        ],
+        [
+          "2026-04-03T15:15:37.760249Z",
+          "Informational",
+          "Establishing network."
+        ],
+        [
+          "2026-04-03T15:15:37.7595315Z",
+          "Informational",
+          "State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image 10.1.0.6:13209/appsvc/python:3.11_20260203.2.tuxprod for app-labdns-fbg6cycknd2gm., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-03T15:15:37.7589811Z",
+          "Informational",
+          "Container start method called."
+        ],
+        [
+          "2026-04-03T15:15:37.7580118Z",
+          "Informational",
+          "State: Starting, Action: StartingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-03T15:15:33.0232064Z",
+          "Informational",
+          "State: Starting, Action: EstablishingSiteNetworks, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO"
+        ]
+      ]
+    }
+  ]
+}

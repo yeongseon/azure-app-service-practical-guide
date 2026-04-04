@@ -1,0 +1,1 @@
+{"PORT":"8000","SCM_DO_BUILD_DURING_DEPLOYMENT":"<unset>","WEBSITES_PORT":"8080","WEBSITE_HOSTNAME":"app-labping-zlqaxhq4w4rx6.<azurewebsites-domain-redacted>","WEBSITE_INSTANCE_ID":"2e9614b903860387ad41d2d4735570ca0c8b29649a02cb187ad6afea560d5745","WEBSITE_SLOT_NAME":"<unset>","actual_bind_host":"0.0.0.0","actual_bind_port":"8000","effective_port_hint":"8080"}

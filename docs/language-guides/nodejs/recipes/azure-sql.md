@@ -120,9 +120,9 @@ node your-app.js
 ## Advanced Topics
 
 !!! info "Coming Soon"
-    - [Connection pooling optimization](https://github.com/yeongseon/azure-appservice-nodejs-guide/issues)
-    - [Read replicas](https://github.com/yeongseon/azure-appservice-nodejs-guide/issues)
-    - [Contribute](https://github.com/yeongseon/azure-appservice-nodejs-guide/issues)
+    - [Connection pooling optimization](https://github.com/yeongseon/azure-appservice/issues)
+    - [Read replicas](https://github.com/yeongseon/azure-appservice/issues)
+    - [Contribute](https://github.com/yeongseon/azure-appservice/issues)
 
 ## See Also
 - [Cosmos DB Integration](./cosmosdb.md)

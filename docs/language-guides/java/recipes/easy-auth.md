@@ -94,7 +94,7 @@ For fully declarative environments, manage auth settings through ARM/Bicep resou
     Easy Auth handles authentication. Your app should still enforce domain-specific authorization.
 
 !!! info "Platform architecture"
-    For platform architecture details, see the [Azure App Service Guide — How App Service Works](https://yeongseon.github.io/azure-appservice-guide/concepts/01-how-app-service-works/).
+    For platform architecture details, see [Platform: How App Service Works](../../../platform/how-app-service-works.md).
 
 ## Verification
 
@@ -121,3 +121,8 @@ Confirm Easy Auth is enabled and requests are not bypassing App Service front do
 - [Managed Identity](managed-identity.md)
 - [Custom Domain & SSL](../07-custom-domain-ssl.md)
 - [Operations: Security](../../../operations/security.md)
+
+## References
+
+- [Authentication and authorization in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization)
+- [Configure your App Service app to use Microsoft Entra sign-in](https://learn.microsoft.com/en-us/azure/app-service/configure-authentication-provider-aad)

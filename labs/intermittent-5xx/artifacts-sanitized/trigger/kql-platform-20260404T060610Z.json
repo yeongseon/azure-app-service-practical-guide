@@ -1,0 +1,873 @@
+{
+  "tables": [
+    {
+      "columns": [
+        {
+          "name": "TimeGenerated",
+          "type": "datetime"
+        },
+        {
+          "name": "Level",
+          "type": "string"
+        },
+        {
+          "name": "Message",
+          "type": "string"
+        }
+      ],
+      "name": "PrimaryResult",
+      "rows": [
+        [
+          "2026-04-04T05:05:05.5816898Z",
+          "Informational",
+          "Site is running with patch version PYTHON 3.11.14"
+        ],
+        [
+          "2026-04-04T05:05:05.542966Z",
+          "Informational",
+          "State: Started, Action: None, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 04/04/2026 05:05:05 (UTC), DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:05:05.5422387Z",
+          "Informational",
+          "Site started."
+        ],
+        [
+          "2026-04-04T05:05:05.5410576Z",
+          "Informational",
+          "Site is running with deployment version: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+        ],
+        [
+          "2026-04-04T05:05:05.1436291Z",
+          "Informational",
+          "State: Starting, Action: WarmUpProbeSucceeded, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site startup probe succeeded after 8.0666499 seconds., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:05:05.0599636Z",
+          "Informational",
+          "Site startup probe succeeded after 8.0666499 seconds."
+        ],
+        [
+          "2026-04-04T05:04:56.9663853Z",
+          "Informational",
+          "State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:04:56.9606547Z",
+          "Informational",
+          "State: Starting, Action: InitiatingSiteWarmUpProbe, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container app-lab5xx-o4evin7tt76tc successfully created and is running., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:04:56.9603856Z",
+          "Informational",
+          "Container start method finished after 812 ms."
+        ],
+        [
+          "2026-04-04T05:04:56.9231043Z",
+          "Informational",
+          "State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container app-lab5xx-o4evin7tt76tc successfully created and is running., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:04:56.9229799Z",
+          "Informational",
+          "Container is running."
+        ],
+        [
+          "2026-04-04T05:04:56.9197461Z",
+          "Informational",
+          "Starting metrics collection."
+        ],
+        [
+          "2026-04-04T05:04:56.9194222Z",
+          "Informational",
+          "Starting watchers and probes."
+        ],
+        [
+          "2026-04-04T05:04:56.893744Z",
+          "Informational",
+          "Starting container: bf258a668d3f_app-lab5xx-o4evin7tt76tc."
+        ],
+        [
+          "2026-04-04T05:04:56.5853759Z",
+          "Informational",
+          "Creating container with image: appsvc/python:3.11_20260203.2.tuxprod from registry: 10.1.0.4:13209 and fully qualified image name: 10.1.0.4:13209/appsvc/python:3.11_20260203.2.tuxprod"
+        ],
+        [
+          "2026-04-04T05:04:56.5852801Z",
+          "Informational",
+          "Successfully removed non-blocking flag from /podr/container/pipe/bf258a668d3f_app-lab5xx-o4evin7tt76tc/stderr_fc8d0803933d4cbead3ac36e761dbe2f."
+        ],
+        [
+          "2026-04-04T05:04:56.5852159Z",
+          "Informational",
+          "Successfully opened named pipe: /podr/container/pipe/bf258a668d3f_app-lab5xx-o4evin7tt76tc/stderr_fc8d0803933d4cbead3ac36e761dbe2f."
+        ],
+        [
+          "2026-04-04T05:04:56.5851192Z",
+          "Informational",
+          "Opening named pipe /podr/container/pipe/bf258a668d3f_app-lab5xx-o4evin7tt76tc/stderr_fc8d0803933d4cbead3ac36e761dbe2f for reading in non-blocking mode."
+        ],
+        [
+          "2026-04-04T05:04:56.5849905Z",
+          "Informational",
+          "Successfully created stderr named pipe at: /podr/container/pipe/bf258a668d3f_app-lab5xx-o4evin7tt76tc/stderr_fc8d0803933d4cbead3ac36e761dbe2f."
+        ],
+        [
+          "2026-04-04T05:04:56.5848773Z",
+          "Informational",
+          "Creating stderr named pipe at /podr/container/pipe/bf258a668d3f_app-lab5xx-o4evin7tt76tc/stderr_fc8d0803933d4cbead3ac36e761dbe2f."
+        ],
+        [
+          "2026-04-04T05:04:56.5847633Z",
+          "Informational",
+          "Successfully removed non-blocking flag from /podr/container/pipe/bf258a668d3f_app-lab5xx-o4evin7tt76tc/stdout_0f144880947246e59fd72ac96ad3902c."
+        ],
+        [
+          "2026-04-04T05:04:56.584678Z",
+          "Informational",
+          "Successfully opened named pipe: /podr/container/pipe/bf258a668d3f_app-lab5xx-o4evin7tt76tc/stdout_0f144880947246e59fd72ac96ad3902c."
+        ],
+        [
+          "2026-04-04T05:04:56.58415Z",
+          "Informational",
+          "Opening named pipe /podr/container/pipe/bf258a668d3f_app-lab5xx-o4evin7tt76tc/stdout_0f144880947246e59fd72ac96ad3902c for reading in non-blocking mode."
+        ],
+        [
+          "2026-04-04T05:04:56.5837853Z",
+          "Informational",
+          "Successfully created stdout named pipe at: /podr/container/pipe/bf258a668d3f_app-lab5xx-o4evin7tt76tc/stdout_0f144880947246e59fd72ac96ad3902c."
+        ],
+        [
+          "2026-04-04T05:04:56.5765473Z",
+          "Informational",
+          "Creating stdout named pipe at /podr/container/pipe/bf258a668d3f_app-lab5xx-o4evin7tt76tc/stdout_0f144880947246e59fd72ac96ad3902c."
+        ],
+        [
+          "2026-04-04T05:04:56.5763716Z",
+          "Informational",
+          "Creating pipes for streaming container io."
+        ],
+        [
+          "2026-04-04T05:04:56.5754425Z",
+          "Informational",
+          "Creating container."
+        ],
+        [
+          "2026-04-04T05:04:56.575119Z",
+          "Informational",
+          "State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Finished pulling container image and mounting volumes for app-lab5xx-o4evin7tt76tc. Allocatinng the rest of the container resources to finish container creation., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:04:56.4988956Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:04:56.497668Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:04:56.4853647Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:04:56.4823323Z",
+          "Informational",
+          "Nested mountpoint volatile/logs"
+        ],
+        [
+          "2026-04-04T05:04:56.4805635Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:04:56.4796299Z",
+          "Informational",
+          "Mounting volumes."
+        ],
+        [
+          "2026-04-04T05:04:56.4784065Z",
+          "Informational",
+          "Establishing network if not established already."
+        ],
+        [
+          "2026-04-04T05:04:56.4782484Z",
+          "Informational",
+          "Establishing user namespace if not established already."
+        ],
+        [
+          "2026-04-04T05:04:56.4781033Z",
+          "Informational",
+          "State: Starting, Action: MountingVolumes, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Mounting volumes for app-lab5xx-o4evin7tt76tc., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:04:56.4779738Z",
+          "Informational",
+          "Container is starting."
+        ],
+        [
+          "2026-04-04T05:04:56.4777363Z",
+          "Informational",
+          "Image appsvc/python:3.11_20260203.2.tuxprod is pulled from registry 10.1.0.4:13209"
+        ],
+        [
+          "2026-04-04T05:04:56.1516962Z",
+          "Informational",
+          "Pulling image: appsvc/python:3.11_20260203.2.tuxprod."
+        ],
+        [
+          "2026-04-04T05:04:56.1514232Z",
+          "Informational",
+          "Establishing network."
+        ],
+        [
+          "2026-04-04T05:04:56.1506322Z",
+          "Informational",
+          "State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image 10.1.0.4:13209/appsvc/python:3.11_20260203.2.tuxprod for app-lab5xx-o4evin7tt76tc., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:04:56.1481806Z",
+          "Informational",
+          "Container start method called."
+        ],
+        [
+          "2026-04-04T05:04:56.1476613Z",
+          "Informational",
+          "State: Starting, Action: StartingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:04:55.6438408Z",
+          "Informational",
+          "State: Starting, Action: EstablishingSiteNetworks, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:04:26.4318634Z",
+          "Informational",
+          "Container start method finished after 1226 ms."
+        ],
+        [
+          "2026-04-04T05:04:26.3874172Z",
+          "Informational",
+          "Container is running."
+        ],
+        [
+          "2026-04-04T05:04:26.3835665Z",
+          "Informational",
+          "Starting metrics collection."
+        ],
+        [
+          "2026-04-04T05:04:26.3700304Z",
+          "Informational",
+          "Starting watchers and probes."
+        ],
+        [
+          "2026-04-04T05:04:26.2821818Z",
+          "Informational",
+          "Starting container: 53ba491f4f08_app-lab5xx-o4evin7tt76tc_kudu."
+        ],
+        [
+          "2026-04-04T05:04:25.6877449Z",
+          "Informational",
+          "Creating container with image: appsvc/kudulite:bullseye_20260204.5.tuxprod from registry: 10.1.0.6:13209 and fully qualified image name: 10.1.0.6:13209/appsvc/kudulite:bullseye_20260204.5.tuxprod"
+        ],
+        [
+          "2026-04-04T05:04:25.684947Z",
+          "Informational",
+          "Successfully removed non-blocking flag from /podr/container/pipe/53ba491f4f08_app-lab5xx-o4evin7tt76tc_kudu/stderr_b798c231ce0d422a9d2af143de3e71b5."
+        ],
+        [
+          "2026-04-04T05:04:25.6848042Z",
+          "Informational",
+          "Successfully opened named pipe: /podr/container/pipe/53ba491f4f08_app-lab5xx-o4evin7tt76tc_kudu/stderr_b798c231ce0d422a9d2af143de3e71b5."
+        ],
+        [
+          "2026-04-04T05:04:25.6846285Z",
+          "Informational",
+          "Opening named pipe /podr/container/pipe/53ba491f4f08_app-lab5xx-o4evin7tt76tc_kudu/stderr_b798c231ce0d422a9d2af143de3e71b5 for reading in non-blocking mode."
+        ],
+        [
+          "2026-04-04T05:04:25.6843303Z",
+          "Informational",
+          "Successfully created stderr named pipe at: /podr/container/pipe/53ba491f4f08_app-lab5xx-o4evin7tt76tc_kudu/stderr_b798c231ce0d422a9d2af143de3e71b5."
+        ],
+        [
+          "2026-04-04T05:04:25.6839521Z",
+          "Informational",
+          "Creating stderr named pipe at /podr/container/pipe/53ba491f4f08_app-lab5xx-o4evin7tt76tc_kudu/stderr_b798c231ce0d422a9d2af143de3e71b5."
+        ],
+        [
+          "2026-04-04T05:04:25.6823596Z",
+          "Informational",
+          "Successfully removed non-blocking flag from /podr/container/pipe/53ba491f4f08_app-lab5xx-o4evin7tt76tc_kudu/stdout_657d50d8ca8f499db4d22665938f779f."
+        ],
+        [
+          "2026-04-04T05:04:25.6816494Z",
+          "Informational",
+          "Successfully opened named pipe: /podr/container/pipe/53ba491f4f08_app-lab5xx-o4evin7tt76tc_kudu/stdout_657d50d8ca8f499db4d22665938f779f."
+        ],
+        [
+          "2026-04-04T05:04:25.6813615Z",
+          "Informational",
+          "Opening named pipe /podr/container/pipe/53ba491f4f08_app-lab5xx-o4evin7tt76tc_kudu/stdout_657d50d8ca8f499db4d22665938f779f for reading in non-blocking mode."
+        ],
+        [
+          "2026-04-04T05:04:25.6802545Z",
+          "Informational",
+          "Successfully created stdout named pipe at: /podr/container/pipe/53ba491f4f08_app-lab5xx-o4evin7tt76tc_kudu/stdout_657d50d8ca8f499db4d22665938f779f."
+        ],
+        [
+          "2026-04-04T05:04:25.679514Z",
+          "Informational",
+          "Creating stdout named pipe at /podr/container/pipe/53ba491f4f08_app-lab5xx-o4evin7tt76tc_kudu/stdout_657d50d8ca8f499db4d22665938f779f."
+        ],
+        [
+          "2026-04-04T05:04:25.6786458Z",
+          "Informational",
+          "Creating pipes for streaming container io."
+        ],
+        [
+          "2026-04-04T05:04:25.6776997Z",
+          "Informational",
+          "Creating container."
+        ],
+        [
+          "2026-04-04T05:04:25.6408201Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:04:25.6372965Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:04:25.6353274Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:04:25.5934676Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:04:25.5898359Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:04:25.5799741Z",
+          "Informational",
+          "Nested mountpoint volatile/logs"
+        ],
+        [
+          "2026-04-04T05:04:25.5039219Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:04:25.4951108Z",
+          "Informational",
+          "Mounting volumes."
+        ],
+        [
+          "2026-04-04T05:04:25.4949209Z",
+          "Informational",
+          "Establishing network if not established already."
+        ],
+        [
+          "2026-04-04T05:04:25.494322Z",
+          "Informational",
+          "Establishing user namespace if not established already."
+        ],
+        [
+          "2026-04-04T05:04:25.4931635Z",
+          "Informational",
+          "Container is starting."
+        ],
+        [
+          "2026-04-04T05:04:25.2173858Z",
+          "Informational",
+          "Pulling image: appsvc/kudulite:bullseye_20260204.5.tuxprod."
+        ],
+        [
+          "2026-04-04T05:04:25.2166966Z",
+          "Informational",
+          "Establishing network."
+        ],
+        [
+          "2026-04-04T05:04:25.2027597Z",
+          "Informational",
+          "Container start method called."
+        ],
+        [
+          "2026-04-03T15:39:03.7665986Z",
+          "Informational",
+          "Site: app-lab5xx-o4evin7tt76tc stopped."
+        ],
+        [
+          "2026-04-03T15:39:03.7664517Z",
+          "Informational",
+          "Container is terminated. Total time elapsed: 6449 ms."
+        ],
+        [
+          "2026-04-03T15:39:03.7583005Z",
+          "Informational",
+          "Container spec TerminationMessagePolicy  path "
+        ],
+        [
+          "2026-04-03T15:39:02.991031Z",
+          "Informational",
+          "Deleting container: 0121fc3aa5fb_app-lab5xx-o4evin7tt76tc. Retry count = 0"
+        ],
+        [
+          "2026-04-03T15:38:58.5937665Z",
+          "Informational",
+          "Kudu: app-lab5xx-o4evin7tt76tc stopped."
+        ],
+        [
+          "2026-04-03T15:38:58.5849992Z",
+          "Informational",
+          "Container is terminated. Total time elapsed: 931 ms."
+        ],
+        [
+          "2026-04-03T15:38:58.5746486Z",
+          "Informational",
+          "Container spec TerminationMessagePolicy  path "
+        ],
+        [
+          "2026-04-03T15:38:58.2026838Z",
+          "Informational",
+          "Deleting container: dbb6223eee63_app-lab5xx-o4evin7tt76tc_kudu. Retry count = 0"
+        ],
+        [
+          "2026-04-03T15:38:57.6981841Z",
+          "Informational",
+          "Stopping container: dbb6223eee63_app-lab5xx-o4evin7tt76tc_kudu."
+        ],
+        [
+          "2026-04-03T15:38:57.6819064Z",
+          "Informational",
+          "Stop and delete container. Retry count = 0"
+        ],
+        [
+          "2026-04-03T15:38:57.6522156Z",
+          "Informational",
+          "Container is terminating. Grace period: 0 seconds."
+        ],
+        [
+          "2026-04-03T15:38:57.4326787Z",
+          "Informational",
+          "Stopping container: 0121fc3aa5fb_app-lab5xx-o4evin7tt76tc."
+        ],
+        [
+          "2026-04-03T15:38:57.4292695Z",
+          "Informational",
+          "Stop and delete container. Retry count = 0"
+        ],
+        [
+          "2026-04-03T15:38:57.3142768Z",
+          "Informational",
+          "Container is terminating. Grace period: 5 seconds."
+        ],
+        [
+          "2026-04-03T15:38:57.2698261Z",
+          "Informational",
+          "State: Stopping, Action: StoppingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 04/03/2026 15:14:48 (UTC), DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-03T15:38:57.1754118Z",
+          "Informational",
+          "State: Stopping, Action: StoppingSite, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 04/03/2026 15:14:48 (UTC), DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-03T15:14:49.0983441Z",
+          "Informational",
+          "Site is running with patch version PYTHON 3.11.14"
+        ],
+        [
+          "2026-04-03T15:14:48.8713026Z",
+          "Informational",
+          "State: Started, Action: None, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 04/03/2026 15:14:48 (UTC), DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-03T15:14:48.8711777Z",
+          "Informational",
+          "Site started."
+        ],
+        [
+          "2026-04-03T15:14:48.8697192Z",
+          "Informational",
+          "Site is running with deployment version: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+        ],
+        [
+          "2026-04-03T15:14:47.4496734Z",
+          "Informational",
+          "State: Starting, Action: WarmUpProbeSucceeded, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site startup probe succeeded after 38.0159869 seconds., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-03T15:14:47.0294864Z",
+          "Informational",
+          "Site startup probe succeeded after 38.0159869 seconds."
+        ],
+        [
+          "2026-04-03T15:14:08.9279698Z",
+          "Informational",
+          "State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-03T15:14:08.8886166Z",
+          "Informational",
+          "State: Starting, Action: InitiatingSiteWarmUpProbe, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container app-lab5xx-o4evin7tt76tc successfully created and is running., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-03T15:14:08.8510664Z",
+          "Informational",
+          "Container start method finished after 6762 ms."
+        ],
+        [
+          "2026-04-03T15:14:08.3379731Z",
+          "Informational",
+          "State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container app-lab5xx-o4evin7tt76tc successfully created and is running., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-03T15:14:08.3373024Z",
+          "Informational",
+          "Container is running."
+        ],
+        [
+          "2026-04-03T15:14:08.3100577Z",
+          "Informational",
+          "Starting metrics collection."
+        ],
+        [
+          "2026-04-03T15:14:08.3077373Z",
+          "Informational",
+          "Starting watchers and probes."
+        ],
+        [
+          "2026-04-03T15:14:07.9925484Z",
+          "Informational",
+          "Starting container: 0121fc3aa5fb_app-lab5xx-o4evin7tt76tc."
+        ],
+        [
+          "2026-04-03T15:14:05.7589966Z",
+          "Informational",
+          "Creating container with image: appsvc/python:3.11_20260203.2.tuxprod from registry: 10.1.0.6:13209 and fully qualified image name: 10.1.0.6:13209/appsvc/python:3.11_20260203.2.tuxprod"
+        ],
+        [
+          "2026-04-03T15:14:05.7515371Z",
+          "Informational",
+          "Successfully removed non-blocking flag from /podr/container/pipe/0121fc3aa5fb_app-lab5xx-o4evin7tt76tc/stderr_a4c4802cee0744a5b75bb7199a5f38f2."
+        ],
+        [
+          "2026-04-03T15:14:05.7513903Z",
+          "Informational",
+          "Successfully opened named pipe: /podr/container/pipe/0121fc3aa5fb_app-lab5xx-o4evin7tt76tc/stderr_a4c4802cee0744a5b75bb7199a5f38f2."
+        ],
+        [
+          "2026-04-03T15:14:05.7490086Z",
+          "Informational",
+          "Opening named pipe /podr/container/pipe/0121fc3aa5fb_app-lab5xx-o4evin7tt76tc/stderr_a4c4802cee0744a5b75bb7199a5f38f2 for reading in non-blocking mode."
+        ],
+        [
+          "2026-04-03T15:14:05.7406297Z",
+          "Informational",
+          "Successfully created stderr named pipe at: /podr/container/pipe/0121fc3aa5fb_app-lab5xx-o4evin7tt76tc/stderr_a4c4802cee0744a5b75bb7199a5f38f2."
+        ],
+        [
+          "2026-04-03T15:14:05.7397188Z",
+          "Informational",
+          "Creating stderr named pipe at /podr/container/pipe/0121fc3aa5fb_app-lab5xx-o4evin7tt76tc/stderr_a4c4802cee0744a5b75bb7199a5f38f2."
+        ],
+        [
+          "2026-04-03T15:14:05.7196145Z",
+          "Informational",
+          "Successfully removed non-blocking flag from /podr/container/pipe/0121fc3aa5fb_app-lab5xx-o4evin7tt76tc/stdout_8379c22540b2475fb91586ea60213a89."
+        ],
+        [
+          "2026-04-03T15:14:05.7094495Z",
+          "Informational",
+          "Successfully opened named pipe: /podr/container/pipe/0121fc3aa5fb_app-lab5xx-o4evin7tt76tc/stdout_8379c22540b2475fb91586ea60213a89."
+        ],
+        [
+          "2026-04-03T15:14:05.6813139Z",
+          "Informational",
+          "Opening named pipe /podr/container/pipe/0121fc3aa5fb_app-lab5xx-o4evin7tt76tc/stdout_8379c22540b2475fb91586ea60213a89 for reading in non-blocking mode."
+        ],
+        [
+          "2026-04-03T15:14:05.674981Z",
+          "Informational",
+          "Successfully created stdout named pipe at: /podr/container/pipe/0121fc3aa5fb_app-lab5xx-o4evin7tt76tc/stdout_8379c22540b2475fb91586ea60213a89."
+        ],
+        [
+          "2026-04-03T15:14:05.6074898Z",
+          "Informational",
+          "Creating stdout named pipe at /podr/container/pipe/0121fc3aa5fb_app-lab5xx-o4evin7tt76tc/stdout_8379c22540b2475fb91586ea60213a89."
+        ],
+        [
+          "2026-04-03T15:14:05.6073891Z",
+          "Informational",
+          "Creating pipes for streaming container io."
+        ],
+        [
+          "2026-04-03T15:14:05.607282Z",
+          "Informational",
+          "Creating container."
+        ],
+        [
+          "2026-04-03T15:14:05.6071398Z",
+          "Informational",
+          "State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Finished pulling container image and mounting volumes for app-lab5xx-o4evin7tt76tc. Allocatinng the rest of the container resources to finish container creation., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-03T15:14:04.5903344Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-03T15:14:04.4951886Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-03T15:14:04.2042224Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-03T15:14:04.1448798Z",
+          "Informational",
+          "Nested mountpoint volatile/logs"
+        ],
+        [
+          "2026-04-03T15:14:04.1054193Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-03T15:14:04.0875318Z",
+          "Informational",
+          "Mounting volumes."
+        ],
+        [
+          "2026-04-03T15:14:04.0865026Z",
+          "Informational",
+          "Establishing network if not established already."
+        ],
+        [
+          "2026-04-03T15:14:04.0863634Z",
+          "Informational",
+          "Establishing user namespace if not established already."
+        ],
+        [
+          "2026-04-03T15:14:04.0862406Z",
+          "Informational",
+          "State: Starting, Action: MountingVolumes, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Mounting volumes for app-lab5xx-o4evin7tt76tc., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-03T15:14:04.0860904Z",
+          "Informational",
+          "Container is starting."
+        ],
+        [
+          "2026-04-03T15:14:04.0858343Z",
+          "Informational",
+          "Image appsvc/python:3.11_20260203.2.tuxprod is pulled from registry 10.1.0.6:13209"
+        ],
+        [
+          "2026-04-03T15:14:02.1362391Z",
+          "Informational",
+          "Pulling image: appsvc/python:3.11_20260203.2.tuxprod."
+        ],
+        [
+          "2026-04-03T15:14:02.1258895Z",
+          "Informational",
+          "Establishing network."
+        ],
+        [
+          "2026-04-03T15:14:02.1185425Z",
+          "Informational",
+          "State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image 10.1.0.6:13209/appsvc/python:3.11_20260203.2.tuxprod for app-lab5xx-o4evin7tt76tc., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-03T15:14:02.0409045Z",
+          "Informational",
+          "Container start method called."
+        ],
+        [
+          "2026-04-03T15:14:02.038605Z",
+          "Informational",
+          "State: Starting, Action: StartingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-03T15:13:59.2717634Z",
+          "Informational",
+          "State: Starting, Action: EstablishingSiteNetworks, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-03T15:13:15.7731784Z",
+          "Informational",
+          "Container start method finished after 5446 ms."
+        ],
+        [
+          "2026-04-03T15:13:15.2059867Z",
+          "Informational",
+          "Container is running."
+        ],
+        [
+          "2026-04-03T15:13:15.0925857Z",
+          "Informational",
+          "Starting metrics collection."
+        ],
+        [
+          "2026-04-03T15:13:14.9458403Z",
+          "Informational",
+          "Starting watchers and probes."
+        ],
+        [
+          "2026-04-03T15:13:14.4369844Z",
+          "Informational",
+          "Starting container: dbb6223eee63_app-lab5xx-o4evin7tt76tc_kudu."
+        ],
+        [
+          "2026-04-03T15:13:12.2098845Z",
+          "Informational",
+          "Creating container with image: appsvc/kudulite:bullseye_20260204.5.tuxprod from registry: 10.1.0.4:13209 and fully qualified image name: 10.1.0.4:13209/appsvc/kudulite:bullseye_20260204.5.tuxprod"
+        ],
+        [
+          "2026-04-03T15:13:12.1512623Z",
+          "Informational",
+          "Successfully removed non-blocking flag from /podr/container/pipe/dbb6223eee63_app-lab5xx-o4evin7tt76tc_kudu/stderr_36815826b9b64058afca205d77718f6a."
+        ],
+        [
+          "2026-04-03T15:13:12.1510406Z",
+          "Informational",
+          "Successfully opened named pipe: /podr/container/pipe/dbb6223eee63_app-lab5xx-o4evin7tt76tc_kudu/stderr_36815826b9b64058afca205d77718f6a."
+        ],
+        [
+          "2026-04-03T15:13:12.1508515Z",
+          "Informational",
+          "Opening named pipe /podr/container/pipe/dbb6223eee63_app-lab5xx-o4evin7tt76tc_kudu/stderr_36815826b9b64058afca205d77718f6a for reading in non-blocking mode."
+        ],
+        [
+          "2026-04-03T15:13:12.1497847Z",
+          "Informational",
+          "Successfully created stderr named pipe at: /podr/container/pipe/dbb6223eee63_app-lab5xx-o4evin7tt76tc_kudu/stderr_36815826b9b64058afca205d77718f6a."
+        ],
+        [
+          "2026-04-03T15:13:12.1424502Z",
+          "Informational",
+          "Creating stderr named pipe at /podr/container/pipe/dbb6223eee63_app-lab5xx-o4evin7tt76tc_kudu/stderr_36815826b9b64058afca205d77718f6a."
+        ],
+        [
+          "2026-04-03T15:13:12.1335018Z",
+          "Informational",
+          "Successfully removed non-blocking flag from /podr/container/pipe/dbb6223eee63_app-lab5xx-o4evin7tt76tc_kudu/stdout_ae6e515f914a404e89413b9f5ab29104."
+        ],
+        [
+          "2026-04-03T15:13:12.1324316Z",
+          "Informational",
+          "Successfully opened named pipe: /podr/container/pipe/dbb6223eee63_app-lab5xx-o4evin7tt76tc_kudu/stdout_ae6e515f914a404e89413b9f5ab29104."
+        ],
+        [
+          "2026-04-03T15:13:12.1318306Z",
+          "Informational",
+          "Opening named pipe /podr/container/pipe/dbb6223eee63_app-lab5xx-o4evin7tt76tc_kudu/stdout_ae6e515f914a404e89413b9f5ab29104 for reading in non-blocking mode."
+        ],
+        [
+          "2026-04-03T15:13:12.1240863Z",
+          "Informational",
+          "Successfully created stdout named pipe at: /podr/container/pipe/dbb6223eee63_app-lab5xx-o4evin7tt76tc_kudu/stdout_ae6e515f914a404e89413b9f5ab29104."
+        ],
+        [
+          "2026-04-03T15:13:12.1232376Z",
+          "Informational",
+          "Creating stdout named pipe at /podr/container/pipe/dbb6223eee63_app-lab5xx-o4evin7tt76tc_kudu/stdout_ae6e515f914a404e89413b9f5ab29104."
+        ],
+        [
+          "2026-04-03T15:13:12.1214121Z",
+          "Informational",
+          "Creating pipes for streaming container io."
+        ],
+        [
+          "2026-04-03T15:13:12.1141171Z",
+          "Informational",
+          "Creating container."
+        ],
+        [
+          "2026-04-03T15:13:11.9773888Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-03T15:13:11.9760981Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-03T15:13:11.9157306Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-03T15:13:11.5612363Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-03T15:13:11.5219378Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-03T15:13:11.4222118Z",
+          "Informational",
+          "Nested mountpoint volatile/logs"
+        ],
+        [
+          "2026-04-03T15:13:11.298233Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-03T15:13:11.286416Z",
+          "Informational",
+          "Mounting volumes."
+        ],
+        [
+          "2026-04-03T15:13:11.2791953Z",
+          "Informational",
+          "Establishing network if not established already."
+        ],
+        [
+          "2026-04-03T15:13:11.2789309Z",
+          "Informational",
+          "Establishing user namespace if not established already."
+        ],
+        [
+          "2026-04-03T15:13:11.2773629Z",
+          "Informational",
+          "Container is starting."
+        ],
+        [
+          "2026-04-03T15:13:10.3634319Z",
+          "Informational",
+          "Pulling image: appsvc/kudulite:bullseye_20260204.5.tuxprod."
+        ],
+        [
+          "2026-04-03T15:13:10.3627843Z",
+          "Informational",
+          "Establishing network."
+        ],
+        [
+          "2026-04-03T15:13:10.2946139Z",
+          "Informational",
+          "Container start method called."
+        ]
+      ]
+    }
+  ]
+}

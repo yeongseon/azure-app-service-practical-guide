@@ -1,0 +1,723 @@
+{
+  "tables": [
+    {
+      "columns": [
+        {
+          "name": "TimeGenerated",
+          "type": "datetime"
+        },
+        {
+          "name": "Level",
+          "type": "string"
+        },
+        {
+          "name": "Message",
+          "type": "string"
+        }
+      ],
+      "name": "PrimaryResult",
+      "rows": [
+        [
+          "2026-04-04T05:04:41.348622Z",
+          "Informational",
+          "Site is running with patch version PYTHON 3.11.14"
+        ],
+        [
+          "2026-04-04T05:04:41.3171193Z",
+          "Informational",
+          "State: Started, Action: None, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 04/04/2026 05:04:41 (UTC), DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:04:41.3166132Z",
+          "Informational",
+          "Site started."
+        ],
+        [
+          "2026-04-04T05:04:41.3158302Z",
+          "Informational",
+          "Site is running with deployment version: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+        ],
+        [
+          "2026-04-04T05:04:41.0395645Z",
+          "Informational",
+          "State: Starting, Action: WarmUpProbeSucceeded, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site startup probe succeeded after 8.7320828 seconds., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:04:40.9261995Z",
+          "Informational",
+          "Site startup probe succeeded after 8.7320828 seconds."
+        ],
+        [
+          "2026-04-04T05:04:32.1700801Z",
+          "Informational",
+          "State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:04:32.1647829Z",
+          "Informational",
+          "State: Starting, Action: InitiatingSiteWarmUpProbe, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container app-labmem-hch2g6gq7u63u successfully created and is running., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:04:32.1643073Z",
+          "Informational",
+          "Container start method finished after 995 ms."
+        ],
+        [
+          "2026-04-04T05:04:32.0994665Z",
+          "Informational",
+          "State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container app-labmem-hch2g6gq7u63u successfully created and is running., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:04:32.099382Z",
+          "Informational",
+          "Container is running."
+        ],
+        [
+          "2026-04-04T05:04:32.0992103Z",
+          "Informational",
+          "Starting metrics collection."
+        ],
+        [
+          "2026-04-04T05:04:32.0985128Z",
+          "Informational",
+          "Starting watchers and probes."
+        ],
+        [
+          "2026-04-04T05:04:32.0761485Z",
+          "Informational",
+          "Starting container: 975e8f0922b9_app-labmem-hch2g6gq7u63u."
+        ],
+        [
+          "2026-04-04T05:04:31.674957Z",
+          "Informational",
+          "Creating container with image: appsvc/python:3.11_20260203.2.tuxprod from registry: 10.1.0.6:13209 and fully qualified image name: 10.1.0.6:13209/appsvc/python:3.11_20260203.2.tuxprod"
+        ],
+        [
+          "2026-04-04T05:04:31.6695341Z",
+          "Informational",
+          "Successfully removed non-blocking flag from /podr/container/pipe/975e8f0922b9_app-labmem-hch2g6gq7u63u/stderr_80bb3669171b478bae8b5332a8f772b6."
+        ],
+        [
+          "2026-04-04T05:04:31.6693968Z",
+          "Informational",
+          "Successfully opened named pipe: /podr/container/pipe/975e8f0922b9_app-labmem-hch2g6gq7u63u/stderr_80bb3669171b478bae8b5332a8f772b6."
+        ],
+        [
+          "2026-04-04T05:04:31.6690971Z",
+          "Informational",
+          "Opening named pipe /podr/container/pipe/975e8f0922b9_app-labmem-hch2g6gq7u63u/stderr_80bb3669171b478bae8b5332a8f772b6 for reading in non-blocking mode."
+        ],
+        [
+          "2026-04-04T05:04:31.6688823Z",
+          "Informational",
+          "Successfully created stderr named pipe at: /podr/container/pipe/975e8f0922b9_app-labmem-hch2g6gq7u63u/stderr_80bb3669171b478bae8b5332a8f772b6."
+        ],
+        [
+          "2026-04-04T05:04:31.6686947Z",
+          "Informational",
+          "Creating stderr named pipe at /podr/container/pipe/975e8f0922b9_app-labmem-hch2g6gq7u63u/stderr_80bb3669171b478bae8b5332a8f772b6."
+        ],
+        [
+          "2026-04-04T05:04:31.6683388Z",
+          "Informational",
+          "Successfully removed non-blocking flag from /podr/container/pipe/975e8f0922b9_app-labmem-hch2g6gq7u63u/stdout_6e462670fc414f79b7cf3d05f2bc8f21."
+        ],
+        [
+          "2026-04-04T05:04:31.6680943Z",
+          "Informational",
+          "Successfully opened named pipe: /podr/container/pipe/975e8f0922b9_app-labmem-hch2g6gq7u63u/stdout_6e462670fc414f79b7cf3d05f2bc8f21."
+        ],
+        [
+          "2026-04-04T05:04:31.6678146Z",
+          "Informational",
+          "Opening named pipe /podr/container/pipe/975e8f0922b9_app-labmem-hch2g6gq7u63u/stdout_6e462670fc414f79b7cf3d05f2bc8f21 for reading in non-blocking mode."
+        ],
+        [
+          "2026-04-04T05:04:31.6673045Z",
+          "Informational",
+          "Successfully created stdout named pipe at: /podr/container/pipe/975e8f0922b9_app-labmem-hch2g6gq7u63u/stdout_6e462670fc414f79b7cf3d05f2bc8f21."
+        ],
+        [
+          "2026-04-04T05:04:31.6655899Z",
+          "Informational",
+          "Creating stdout named pipe at /podr/container/pipe/975e8f0922b9_app-labmem-hch2g6gq7u63u/stdout_6e462670fc414f79b7cf3d05f2bc8f21."
+        ],
+        [
+          "2026-04-04T05:04:31.6654669Z",
+          "Informational",
+          "Creating pipes for streaming container io."
+        ],
+        [
+          "2026-04-04T05:04:31.6653326Z",
+          "Informational",
+          "Creating container."
+        ],
+        [
+          "2026-04-04T05:04:31.6651885Z",
+          "Informational",
+          "State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Finished pulling container image and mounting volumes for app-labmem-hch2g6gq7u63u. Allocatinng the rest of the container resources to finish container creation., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:04:31.5686433Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:04:31.5653066Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:04:31.5577031Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:04:31.5510029Z",
+          "Informational",
+          "Nested mountpoint volatile/logs"
+        ],
+        [
+          "2026-04-04T05:04:31.5478988Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:04:31.5476375Z",
+          "Informational",
+          "Mounting volumes."
+        ],
+        [
+          "2026-04-04T05:04:31.5475481Z",
+          "Informational",
+          "Establishing network if not established already."
+        ],
+        [
+          "2026-04-04T05:04:31.5474821Z",
+          "Informational",
+          "Establishing user namespace if not established already."
+        ],
+        [
+          "2026-04-04T05:04:31.5474087Z",
+          "Informational",
+          "State: Starting, Action: MountingVolumes, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Mounting volumes for app-labmem-hch2g6gq7u63u., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:04:31.547322Z",
+          "Informational",
+          "Container is starting."
+        ],
+        [
+          "2026-04-04T05:04:31.5472117Z",
+          "Informational",
+          "Image appsvc/python:3.11_20260203.2.tuxprod is pulled from registry 10.1.0.6:13209"
+        ],
+        [
+          "2026-04-04T05:04:31.1724555Z",
+          "Informational",
+          "Pulling image: appsvc/python:3.11_20260203.2.tuxprod."
+        ],
+        [
+          "2026-04-04T05:04:31.1718146Z",
+          "Informational",
+          "Establishing network."
+        ],
+        [
+          "2026-04-04T05:04:31.1713167Z",
+          "Informational",
+          "State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image 10.1.0.6:13209/appsvc/python:3.11_20260203.2.tuxprod for app-labmem-hch2g6gq7u63u., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:04:31.1689803Z",
+          "Informational",
+          "Container start method called."
+        ],
+        [
+          "2026-04-04T05:04:31.1680923Z",
+          "Informational",
+          "State: Starting, Action: StartingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:04:30.6690615Z",
+          "Informational",
+          "State: Starting, Action: EstablishingSiteNetworks, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:04:16.660641Z",
+          "Informational",
+          "Container start method finished after 1251 ms."
+        ],
+        [
+          "2026-04-04T05:04:16.584295Z",
+          "Informational",
+          "Container is running."
+        ],
+        [
+          "2026-04-04T05:04:16.5761969Z",
+          "Informational",
+          "Starting metrics collection."
+        ],
+        [
+          "2026-04-04T05:04:16.5454138Z",
+          "Informational",
+          "Starting watchers and probes."
+        ],
+        [
+          "2026-04-04T05:04:16.4662589Z",
+          "Informational",
+          "Starting container: 97d47e2fb56c_app-labmem-hch2g6gq7u63u_kudu."
+        ],
+        [
+          "2026-04-04T05:04:15.853642Z",
+          "Informational",
+          "Creating container with image: appsvc/kudulite:bullseye_20260204.5.tuxprod from registry: 10.1.0.4:13209 and fully qualified image name: 10.1.0.4:13209/appsvc/kudulite:bullseye_20260204.5.tuxprod"
+        ],
+        [
+          "2026-04-04T05:04:15.8389354Z",
+          "Informational",
+          "Successfully removed non-blocking flag from /podr/container/pipe/97d47e2fb56c_app-labmem-hch2g6gq7u63u_kudu/stderr_7f0adc3f96404eb58ff59afe71c2e62e."
+        ],
+        [
+          "2026-04-04T05:04:15.8387171Z",
+          "Informational",
+          "Successfully opened named pipe: /podr/container/pipe/97d47e2fb56c_app-labmem-hch2g6gq7u63u_kudu/stderr_7f0adc3f96404eb58ff59afe71c2e62e."
+        ],
+        [
+          "2026-04-04T05:04:15.8381478Z",
+          "Informational",
+          "Opening named pipe /podr/container/pipe/97d47e2fb56c_app-labmem-hch2g6gq7u63u_kudu/stderr_7f0adc3f96404eb58ff59afe71c2e62e for reading in non-blocking mode."
+        ],
+        [
+          "2026-04-04T05:04:15.8351382Z",
+          "Informational",
+          "Successfully created stderr named pipe at: /podr/container/pipe/97d47e2fb56c_app-labmem-hch2g6gq7u63u_kudu/stderr_7f0adc3f96404eb58ff59afe71c2e62e."
+        ],
+        [
+          "2026-04-04T05:04:15.8258979Z",
+          "Informational",
+          "Creating stderr named pipe at /podr/container/pipe/97d47e2fb56c_app-labmem-hch2g6gq7u63u_kudu/stderr_7f0adc3f96404eb58ff59afe71c2e62e."
+        ],
+        [
+          "2026-04-04T05:04:15.8249244Z",
+          "Informational",
+          "Successfully removed non-blocking flag from /podr/container/pipe/97d47e2fb56c_app-labmem-hch2g6gq7u63u_kudu/stdout_95a8ef9d6e284f76a8afd514d0a92db9."
+        ],
+        [
+          "2026-04-04T05:04:15.8244361Z",
+          "Informational",
+          "Successfully opened named pipe: /podr/container/pipe/97d47e2fb56c_app-labmem-hch2g6gq7u63u_kudu/stdout_95a8ef9d6e284f76a8afd514d0a92db9."
+        ],
+        [
+          "2026-04-04T05:04:15.8242672Z",
+          "Informational",
+          "Opening named pipe /podr/container/pipe/97d47e2fb56c_app-labmem-hch2g6gq7u63u_kudu/stdout_95a8ef9d6e284f76a8afd514d0a92db9 for reading in non-blocking mode."
+        ],
+        [
+          "2026-04-04T05:04:15.8234555Z",
+          "Informational",
+          "Successfully created stdout named pipe at: /podr/container/pipe/97d47e2fb56c_app-labmem-hch2g6gq7u63u_kudu/stdout_95a8ef9d6e284f76a8afd514d0a92db9."
+        ],
+        [
+          "2026-04-04T05:04:15.8223038Z",
+          "Informational",
+          "Creating stdout named pipe at /podr/container/pipe/97d47e2fb56c_app-labmem-hch2g6gq7u63u_kudu/stdout_95a8ef9d6e284f76a8afd514d0a92db9."
+        ],
+        [
+          "2026-04-04T05:04:15.817079Z",
+          "Informational",
+          "Creating pipes for streaming container io."
+        ],
+        [
+          "2026-04-04T05:04:15.8152027Z",
+          "Informational",
+          "Creating container."
+        ],
+        [
+          "2026-04-04T05:04:15.7570862Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:04:15.7527294Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:04:15.7443168Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:04:15.6935821Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:04:15.6804446Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:04:15.6720341Z",
+          "Informational",
+          "Nested mountpoint volatile/logs"
+        ],
+        [
+          "2026-04-04T05:04:15.6495323Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:04:15.6452519Z",
+          "Informational",
+          "Mounting volumes."
+        ],
+        [
+          "2026-04-04T05:04:15.6447211Z",
+          "Informational",
+          "Establishing network if not established already."
+        ],
+        [
+          "2026-04-04T05:04:15.6443718Z",
+          "Informational",
+          "Establishing user namespace if not established already."
+        ],
+        [
+          "2026-04-04T05:04:15.6432044Z",
+          "Informational",
+          "Container is starting."
+        ],
+        [
+          "2026-04-04T05:04:15.4186694Z",
+          "Informational",
+          "Pulling image: appsvc/kudulite:bullseye_20260204.5.tuxprod."
+        ],
+        [
+          "2026-04-04T05:04:15.4152768Z",
+          "Informational",
+          "Establishing network."
+        ],
+        [
+          "2026-04-04T05:04:15.4070828Z",
+          "Informational",
+          "Container start method called."
+        ],
+        [
+          "2026-04-03T15:39:05.1323688Z",
+          "Informational",
+          "Site: app-labmem-hch2g6gq7u63u stopped."
+        ],
+        [
+          "2026-04-03T15:39:05.1322467Z",
+          "Informational",
+          "Container is terminated. Total time elapsed: 7446 ms."
+        ],
+        [
+          "2026-04-03T15:39:05.1314689Z",
+          "Informational",
+          "Container spec TerminationMessagePolicy  path "
+        ],
+        [
+          "2026-04-03T15:39:04.9313035Z",
+          "Informational",
+          "Deleting container: 630476c92538_app-labmem-hch2g6gq7u63u. Retry count = 0"
+        ],
+        [
+          "2026-04-03T15:38:59.3754023Z",
+          "Informational",
+          "Kudu: app-labmem-hch2g6gq7u63u stopped."
+        ],
+        [
+          "2026-04-03T15:38:59.3664553Z",
+          "Informational",
+          "Container is terminated. Total time elapsed: 975 ms."
+        ],
+        [
+          "2026-04-03T15:38:59.3532738Z",
+          "Informational",
+          "Container spec TerminationMessagePolicy  path "
+        ],
+        [
+          "2026-04-03T15:38:58.982869Z",
+          "Informational",
+          "Deleting container: e77c62a7fe50_app-labmem-hch2g6gq7u63u_kudu. Retry count = 0"
+        ],
+        [
+          "2026-04-03T15:38:58.4088232Z",
+          "Informational",
+          "Stopping container: e77c62a7fe50_app-labmem-hch2g6gq7u63u_kudu."
+        ],
+        [
+          "2026-04-03T15:38:58.4084881Z",
+          "Informational",
+          "Stop and delete container. Retry count = 0"
+        ],
+        [
+          "2026-04-03T15:38:58.3902617Z",
+          "Informational",
+          "Container is terminating. Grace period: 0 seconds."
+        ],
+        [
+          "2026-04-03T15:38:58.0599391Z",
+          "Informational",
+          "Stopping container: 630476c92538_app-labmem-hch2g6gq7u63u."
+        ],
+        [
+          "2026-04-03T15:38:58.0500056Z",
+          "Informational",
+          "Stop and delete container. Retry count = 0"
+        ],
+        [
+          "2026-04-03T15:38:57.6847995Z",
+          "Informational",
+          "Container is terminating. Grace period: 5 seconds."
+        ],
+        [
+          "2026-04-03T15:38:57.6032268Z",
+          "Informational",
+          "State: Stopping, Action: StoppingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 04/03/2026 15:14:36 (UTC), DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-03T15:38:57.4682169Z",
+          "Informational",
+          "State: Stopping, Action: StoppingSite, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 04/03/2026 15:14:36 (UTC), DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-03T15:25:25.1163864Z",
+          "Warning",
+          "Container get mounts received unexpected exception."
+        ],
+        [
+          "2026-04-03T15:24:20.5926756Z",
+          "Warning",
+          "Container get mounts received unexpected exception."
+        ],
+        [
+          "2026-04-03T15:22:47.3727687Z",
+          "Warning",
+          "Container get mounts received unexpected exception."
+        ],
+        [
+          "2026-04-03T15:14:36.6242219Z",
+          "Informational",
+          "Site is running with patch version PYTHON 3.11.14"
+        ],
+        [
+          "2026-04-03T15:14:36.5076144Z",
+          "Informational",
+          "State: Started, Action: None, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 04/03/2026 15:14:36 (UTC), DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-03T15:14:36.5070884Z",
+          "Informational",
+          "Site started."
+        ],
+        [
+          "2026-04-03T15:14:36.4978904Z",
+          "Informational",
+          "Site is running with deployment version: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+        ],
+        [
+          "2026-04-03T15:14:35.2818409Z",
+          "Informational",
+          "State: Starting, Action: WarmUpProbeSucceeded, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site startup probe succeeded after 35.4909292 seconds., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-03T15:14:34.8534364Z",
+          "Informational",
+          "Site startup probe succeeded after 35.4909292 seconds."
+        ],
+        [
+          "2026-04-03T15:13:59.2909147Z",
+          "Informational",
+          "State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-03T15:13:59.2018247Z",
+          "Informational",
+          "State: Starting, Action: InitiatingSiteWarmUpProbe, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container app-labmem-hch2g6gq7u63u successfully created and is running., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-03T15:13:59.2013928Z",
+          "Informational",
+          "Container start method finished after 3632 ms."
+        ],
+        [
+          "2026-04-03T15:13:59.0710272Z",
+          "Informational",
+          "State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container app-labmem-hch2g6gq7u63u successfully created and is running., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-03T15:13:59.05355Z",
+          "Informational",
+          "Container is running."
+        ],
+        [
+          "2026-04-03T15:13:59.052112Z",
+          "Informational",
+          "Starting metrics collection."
+        ],
+        [
+          "2026-04-03T15:13:59.0429991Z",
+          "Informational",
+          "Starting watchers and probes."
+        ],
+        [
+          "2026-04-03T15:13:58.972612Z",
+          "Informational",
+          "Starting container: 630476c92538_app-labmem-hch2g6gq7u63u."
+        ],
+        [
+          "2026-04-03T15:13:56.9148138Z",
+          "Informational",
+          "Creating container with image: appsvc/python:3.11_20260203.2.tuxprod from registry: 10.1.0.6:13209 and fully qualified image name: 10.1.0.6:13209/appsvc/python:3.11_20260203.2.tuxprod"
+        ],
+        [
+          "2026-04-03T15:13:56.9146501Z",
+          "Informational",
+          "Successfully removed non-blocking flag from /podr/container/pipe/630476c92538_app-labmem-hch2g6gq7u63u/stderr_c147a70b4e354accba0ab2f88351c3fb."
+        ],
+        [
+          "2026-04-03T15:13:56.914577Z",
+          "Informational",
+          "Successfully opened named pipe: /podr/container/pipe/630476c92538_app-labmem-hch2g6gq7u63u/stderr_c147a70b4e354accba0ab2f88351c3fb."
+        ],
+        [
+          "2026-04-03T15:13:56.9144792Z",
+          "Informational",
+          "Opening named pipe /podr/container/pipe/630476c92538_app-labmem-hch2g6gq7u63u/stderr_c147a70b4e354accba0ab2f88351c3fb for reading in non-blocking mode."
+        ],
+        [
+          "2026-04-03T15:13:56.914371Z",
+          "Informational",
+          "Successfully created stderr named pipe at: /podr/container/pipe/630476c92538_app-labmem-hch2g6gq7u63u/stderr_c147a70b4e354accba0ab2f88351c3fb."
+        ],
+        [
+          "2026-04-03T15:13:56.9051564Z",
+          "Informational",
+          "Creating stderr named pipe at /podr/container/pipe/630476c92538_app-labmem-hch2g6gq7u63u/stderr_c147a70b4e354accba0ab2f88351c3fb."
+        ],
+        [
+          "2026-04-03T15:13:56.8954196Z",
+          "Informational",
+          "Successfully removed non-blocking flag from /podr/container/pipe/630476c92538_app-labmem-hch2g6gq7u63u/stdout_0f0c7a043b574ebe950d0e6c30c9395e."
+        ],
+        [
+          "2026-04-03T15:13:56.8952927Z",
+          "Informational",
+          "Successfully opened named pipe: /podr/container/pipe/630476c92538_app-labmem-hch2g6gq7u63u/stdout_0f0c7a043b574ebe950d0e6c30c9395e."
+        ],
+        [
+          "2026-04-03T15:13:56.8943963Z",
+          "Informational",
+          "Opening named pipe /podr/container/pipe/630476c92538_app-labmem-hch2g6gq7u63u/stdout_0f0c7a043b574ebe950d0e6c30c9395e for reading in non-blocking mode."
+        ],
+        [
+          "2026-04-03T15:13:56.8942859Z",
+          "Informational",
+          "Successfully created stdout named pipe at: /podr/container/pipe/630476c92538_app-labmem-hch2g6gq7u63u/stdout_0f0c7a043b574ebe950d0e6c30c9395e."
+        ],
+        [
+          "2026-04-03T15:13:56.8940405Z",
+          "Informational",
+          "Creating stdout named pipe at /podr/container/pipe/630476c92538_app-labmem-hch2g6gq7u63u/stdout_0f0c7a043b574ebe950d0e6c30c9395e."
+        ],
+        [
+          "2026-04-03T15:13:56.8939298Z",
+          "Informational",
+          "Creating pipes for streaming container io."
+        ],
+        [
+          "2026-04-03T15:13:56.8937927Z",
+          "Informational",
+          "Creating container."
+        ],
+        [
+          "2026-04-03T15:13:56.8933871Z",
+          "Informational",
+          "State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Finished pulling container image and mounting volumes for app-labmem-hch2g6gq7u63u. Allocatinng the rest of the container resources to finish container creation., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-03T15:13:56.2473706Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-03T15:13:56.2180536Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-03T15:13:56.106901Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-03T15:13:56.0361345Z",
+          "Informational",
+          "Nested mountpoint volatile/logs"
+        ],
+        [
+          "2026-04-03T15:13:56.0088928Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-03T15:13:56.0003402Z",
+          "Informational",
+          "Mounting volumes."
+        ],
+        [
+          "2026-04-03T15:13:56.0002129Z",
+          "Informational",
+          "Establishing network if not established already."
+        ],
+        [
+          "2026-04-03T15:13:56.0000865Z",
+          "Informational",
+          "Establishing user namespace if not established already."
+        ],
+        [
+          "2026-04-03T15:13:55.999939Z",
+          "Informational",
+          "State: Starting, Action: MountingVolumes, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Mounting volumes for app-labmem-hch2g6gq7u63u., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-03T15:13:55.9996104Z",
+          "Informational",
+          "Container is starting."
+        ],
+        [
+          "2026-04-03T15:13:55.6208047Z",
+          "Informational",
+          "Pulling image: appsvc/python:3.11_20260203.2.tuxprod."
+        ],
+        [
+          "2026-04-03T15:13:55.620364Z",
+          "Informational",
+          "Establishing network."
+        ],
+        [
+          "2026-04-03T15:13:55.6199845Z",
+          "Informational",
+          "State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image 10.1.0.6:13209/appsvc/python:3.11_20260203.2.tuxprod for app-labmem-hch2g6gq7u63u., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-03T15:13:55.5683413Z",
+          "Informational",
+          "Container start method called."
+        ],
+        [
+          "2026-04-03T15:13:55.567852Z",
+          "Informational",
+          "State: Starting, Action: StartingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-03T15:13:51.9769117Z",
+          "Informational",
+          "State: Starting, Action: EstablishingSiteNetworks, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO"
+        ]
+      ]
+    }
+  ]
+}

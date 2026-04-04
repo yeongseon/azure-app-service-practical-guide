@@ -143,8 +143,8 @@ Expect value to round-trip and persist across scaled-out instances.
 - Ensure `UseSession()` is in middleware pipeline.
 - Confirm distributed cache registration occurs before session setup.
 
-## See also
+## See Also
 
 - [Private Endpoints](private-endpoints.md)
 - [Key Vault References](key-vault-reference.md)
-- For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-appservice-guide/)
+- For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-appservice/)

@@ -107,7 +107,7 @@ az webapp config appsettings set \
     Integration subnet size impacts scaling headroom. Start with a subnet range that supports expected instance growth.
 
 !!! info "Platform architecture"
-    For platform architecture details, see the [Azure App Service Guide — How App Service Works](https://yeongseon.github.io/azure-appservice-guide/concepts/01-how-app-service-works/).
+    For platform architecture details, see [Platform: How App Service Works](../../../platform/how-app-service-works.md).
 
 ## Verification
 
@@ -134,3 +134,8 @@ Review route table (`UDR`) and ensure required Azure service endpoints are reach
 - [Key Vault References](key-vault-reference.md)
 - [Azure SQL](azure-sql.md)
 - [Operations: Networking](../../../operations/networking.md)
+
+## References
+
+- [Integrate your app with an Azure virtual network](https://learn.microsoft.com/en-us/azure/app-service/configure-vnet-integration-enable)
+- [Use private endpoints for Azure App Service apps](https://learn.microsoft.com/en-us/azure/app-service/networking/private-endpoint)

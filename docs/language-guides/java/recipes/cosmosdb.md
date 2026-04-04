@@ -114,7 +114,7 @@ public Map<String, Object> cosmosPing(OrderRepository repository) {
     Design Cosmos documents around read patterns to avoid cross-partition fan-out and expensive server-side filtering.
 
 !!! info "Platform architecture"
-    For platform architecture details, see the [Azure App Service Guide — How App Service Works](https://yeongseon.github.io/azure-appservice-guide/concepts/01-how-app-service-works/).
+    For platform architecture details, see [Platform: How App Service Works](../../../platform/how-app-service-works.md).
 
 ## Verification
 
@@ -141,3 +141,8 @@ Ensure document model uses compatible types and includes an `id` field.
 - [Redis Cache](redis.md)
 - [Managed Identity](managed-identity.md)
 - [Tutorial: Logging & Monitoring](../04-logging-monitoring.md)
+
+## References
+
+- [Quickstart: Build a Java app by using Azure Cosmos DB SQL API account](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/quickstart-java)
+- [Spring Data Azure Cosmos DB developer guide](https://learn.microsoft.com/en-us/azure/developer/java/spring-framework/configure-spring-data-azure-cosmos-db)

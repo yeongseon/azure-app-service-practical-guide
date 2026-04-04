@@ -1,0 +1,1023 @@
+{
+  "tables": [
+    {
+      "columns": [
+        {
+          "name": "TimeGenerated",
+          "type": "datetime"
+        },
+        {
+          "name": "Level",
+          "type": "string"
+        },
+        {
+          "name": "Message",
+          "type": "string"
+        }
+      ],
+      "name": "PrimaryResult",
+      "rows": [
+        [
+          "2026-04-04T05:54:25.423419Z",
+          "Informational",
+          "Site: app-labping-zlqaxhq4w4rx6 stopped."
+        ],
+        [
+          "2026-04-04T05:54:25.423279Z",
+          "Informational",
+          "Container is terminated. Total time elapsed: 5158 ms."
+        ],
+        [
+          "2026-04-04T05:54:25.4230828Z",
+          "Informational",
+          "Container spec TerminationMessagePolicy  path "
+        ],
+        [
+          "2026-04-04T05:54:25.3122191Z",
+          "Informational",
+          "Deleting container: 36787a59fee3_app-labping-zlqaxhq4w4rx6. Retry count = 0"
+        ],
+        [
+          "2026-04-04T05:54:20.2672262Z",
+          "Informational",
+          "Stopping container: 36787a59fee3_app-labping-zlqaxhq4w4rx6."
+        ],
+        [
+          "2026-04-04T05:54:20.2670668Z",
+          "Informational",
+          "Stop and delete container. Retry count = 0"
+        ],
+        [
+          "2026-04-04T05:54:20.2651212Z",
+          "Informational",
+          "Container is terminating. Grace period: 5 seconds."
+        ],
+        [
+          "2026-04-04T05:54:20.2649773Z",
+          "Informational",
+          "State: Stopping, Action: StoppingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 04/04/2026 05:52:02 (UTC), DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:54:20.2642575Z",
+          "Informational",
+          "State: Stopping, Action: StoppingSite, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 04/04/2026 05:52:02 (UTC), DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:54:15.6538101Z",
+          "Informational",
+          "Kudu: app-labping-zlqaxhq4w4rx6 stopped."
+        ],
+        [
+          "2026-04-04T05:54:15.6537497Z",
+          "Informational",
+          "Container is terminated. Total time elapsed: 333 ms."
+        ],
+        [
+          "2026-04-04T05:54:15.6535464Z",
+          "Informational",
+          "Container spec TerminationMessagePolicy  path "
+        ],
+        [
+          "2026-04-04T05:54:15.3723353Z",
+          "Informational",
+          "Deleting container: 975240c1484d_app-labping-zlqaxhq4w4rx6_kudu. Retry count = 0"
+        ],
+        [
+          "2026-04-04T05:54:15.3244209Z",
+          "Informational",
+          "Stopping container: 975240c1484d_app-labping-zlqaxhq4w4rx6_kudu."
+        ],
+        [
+          "2026-04-04T05:54:15.3242813Z",
+          "Informational",
+          "Stop and delete container. Retry count = 0"
+        ],
+        [
+          "2026-04-04T05:54:15.3205462Z",
+          "Informational",
+          "Container is terminating. Grace period: 0 seconds."
+        ],
+        [
+          "2026-04-04T05:54:00.0716752Z",
+          "Informational",
+          "Site: app-labping-zlqaxhq4w4rx6 stopped."
+        ],
+        [
+          "2026-04-04T05:54:00.0712725Z",
+          "Error",
+          "State: Stopping, Action: CancellingStartup, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:53:54, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Site container: app-labping-zlqaxhq4w4rx6 terminated during site startup. Cancelling site startup., DetailsLevel: ERR"
+        ],
+        [
+          "2026-04-04T05:54:00.0664123Z",
+          "Error",
+          "Site container: app-labping-zlqaxhq4w4rx6 terminated during site startup."
+        ],
+        [
+          "2026-04-04T05:54:00.0662987Z",
+          "Informational",
+          "Container is terminated. Total time elapsed: 5179 ms."
+        ],
+        [
+          "2026-04-04T05:54:00.0661487Z",
+          "Informational",
+          "Container spec TerminationMessagePolicy  path "
+        ],
+        [
+          "2026-04-04T05:53:59.9321685Z",
+          "Informational",
+          "Deleting container: e49bc1e97220_app-labping-zlqaxhq4w4rx6. Retry count = 0"
+        ],
+        [
+          "2026-04-04T05:53:55.0542705Z",
+          "Informational",
+          "Kudu: app-labping-zlqaxhq4w4rx6 stopped."
+        ],
+        [
+          "2026-04-04T05:53:55.0542407Z",
+          "Informational",
+          "Container is terminated. Total time elapsed: 252 ms."
+        ],
+        [
+          "2026-04-04T05:53:55.0539975Z",
+          "Informational",
+          "Container spec TerminationMessagePolicy  path "
+        ],
+        [
+          "2026-04-04T05:53:54.8918562Z",
+          "Informational",
+          "Stopping container: e49bc1e97220_app-labping-zlqaxhq4w4rx6."
+        ],
+        [
+          "2026-04-04T05:53:54.8917316Z",
+          "Informational",
+          "Stop and delete container. Retry count = 0"
+        ],
+        [
+          "2026-04-04T05:53:54.888302Z",
+          "Informational",
+          "Deleting container: 42e016cf0e95_app-labping-zlqaxhq4w4rx6_kudu. Retry count = 0"
+        ],
+        [
+          "2026-04-04T05:53:54.886262Z",
+          "Informational",
+          "Container is terminating. Grace period: 5 seconds."
+        ],
+        [
+          "2026-04-04T05:53:54.8861461Z",
+          "Error",
+          "State: Stopping, Action: StoppingSiteContainers, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:53:54, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: ERR"
+        ],
+        [
+          "2026-04-04T05:53:54.8791813Z",
+          "Error",
+          "State: Stopping, Action: StoppingSite, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:53:54, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: ERR"
+        ],
+        [
+          "2026-04-04T05:53:54.8767213Z",
+          "Error",
+          "Failed to start site. Revert by stopping site."
+        ],
+        [
+          "2026-04-04T05:53:54.8744736Z",
+          "Error",
+          "State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:53:54, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: ERR"
+        ],
+        [
+          "2026-04-04T05:53:54.8196631Z",
+          "Informational",
+          "Stopping container: 42e016cf0e95_app-labping-zlqaxhq4w4rx6_kudu."
+        ],
+        [
+          "2026-04-04T05:53:54.8195111Z",
+          "Informational",
+          "Stop and delete container. Retry count = 0"
+        ],
+        [
+          "2026-04-04T05:53:54.8017703Z",
+          "Informational",
+          "Container is terminating. Grace period: 0 seconds."
+        ],
+        [
+          "2026-04-04T05:53:54.795306Z",
+          "Error",
+          "Failed to start kudu. Revert by stopping kudu."
+        ],
+        [
+          "2026-04-04T05:53:54.7609129Z",
+          "Informational",
+          "Site startup probe failed after 0.1175982 seconds."
+        ],
+        [
+          "2026-04-04T05:53:54.6428885Z",
+          "Informational",
+          "State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:53:54.6382868Z",
+          "Informational",
+          "State: Starting, Action: InitiatingSiteWarmUpProbe, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container app-labping-zlqaxhq4w4rx6 successfully created and is running., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:53:54.6380791Z",
+          "Informational",
+          "Container start method finished after 1071 ms."
+        ],
+        [
+          "2026-04-04T05:53:54.6117361Z",
+          "Informational",
+          "State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container app-labping-zlqaxhq4w4rx6 successfully created and is running., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:53:54.6101982Z",
+          "Informational",
+          "Container is running."
+        ],
+        [
+          "2026-04-04T05:53:54.609299Z",
+          "Informational",
+          "Starting metrics collection."
+        ],
+        [
+          "2026-04-04T05:53:54.6090812Z",
+          "Informational",
+          "Starting watchers and probes."
+        ],
+        [
+          "2026-04-04T05:53:54.5870524Z",
+          "Informational",
+          "Starting container: e49bc1e97220_app-labping-zlqaxhq4w4rx6."
+        ],
+        [
+          "2026-04-04T05:53:54.3662728Z",
+          "Informational",
+          "Creating container with image: appsvc/python:3.11_20260203.2.tuxprod from registry: 10.1.0.4:13209 and fully qualified image name: 10.1.0.4:13209/appsvc/python:3.11_20260203.2.tuxprod"
+        ],
+        [
+          "2026-04-04T05:53:54.3661015Z",
+          "Informational",
+          "Successfully removed non-blocking flag from /podr/container/pipe/e49bc1e97220_app-labping-zlqaxhq4w4rx6/stderr_e5d78ca56e264e42b56cc6c823db6d03."
+        ],
+        [
+          "2026-04-04T05:53:54.3659822Z",
+          "Informational",
+          "Successfully opened named pipe: /podr/container/pipe/e49bc1e97220_app-labping-zlqaxhq4w4rx6/stderr_e5d78ca56e264e42b56cc6c823db6d03."
+        ],
+        [
+          "2026-04-04T05:53:54.3658272Z",
+          "Informational",
+          "Opening named pipe /podr/container/pipe/e49bc1e97220_app-labping-zlqaxhq4w4rx6/stderr_e5d78ca56e264e42b56cc6c823db6d03 for reading in non-blocking mode."
+        ],
+        [
+          "2026-04-04T05:53:54.3655693Z",
+          "Informational",
+          "Successfully created stderr named pipe at: /podr/container/pipe/e49bc1e97220_app-labping-zlqaxhq4w4rx6/stderr_e5d78ca56e264e42b56cc6c823db6d03."
+        ],
+        [
+          "2026-04-04T05:53:54.3651202Z",
+          "Informational",
+          "Creating stderr named pipe at /podr/container/pipe/e49bc1e97220_app-labping-zlqaxhq4w4rx6/stderr_e5d78ca56e264e42b56cc6c823db6d03."
+        ],
+        [
+          "2026-04-04T05:53:54.3648875Z",
+          "Informational",
+          "Successfully removed non-blocking flag from /podr/container/pipe/e49bc1e97220_app-labping-zlqaxhq4w4rx6/stdout_c043fd937e854618af326d014e615ad9."
+        ],
+        [
+          "2026-04-04T05:53:54.3647661Z",
+          "Informational",
+          "Successfully opened named pipe: /podr/container/pipe/e49bc1e97220_app-labping-zlqaxhq4w4rx6/stdout_c043fd937e854618af326d014e615ad9."
+        ],
+        [
+          "2026-04-04T05:53:54.3646118Z",
+          "Informational",
+          "Opening named pipe /podr/container/pipe/e49bc1e97220_app-labping-zlqaxhq4w4rx6/stdout_c043fd937e854618af326d014e615ad9 for reading in non-blocking mode."
+        ],
+        [
+          "2026-04-04T05:53:54.3642876Z",
+          "Informational",
+          "Successfully created stdout named pipe at: /podr/container/pipe/e49bc1e97220_app-labping-zlqaxhq4w4rx6/stdout_c043fd937e854618af326d014e615ad9."
+        ],
+        [
+          "2026-04-04T05:53:54.3640525Z",
+          "Informational",
+          "Creating stdout named pipe at /podr/container/pipe/e49bc1e97220_app-labping-zlqaxhq4w4rx6/stdout_c043fd937e854618af326d014e615ad9."
+        ],
+        [
+          "2026-04-04T05:53:54.3638014Z",
+          "Informational",
+          "Creating pipes for streaming container io."
+        ],
+        [
+          "2026-04-04T05:53:54.3636508Z",
+          "Informational",
+          "Creating container."
+        ],
+        [
+          "2026-04-04T05:53:54.3634115Z",
+          "Informational",
+          "State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Finished pulling container image and mounting volumes for app-labping-zlqaxhq4w4rx6. Allocatinng the rest of the container resources to finish container creation., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:53:54.2436512Z",
+          "Informational",
+          "Container start method finished after 683 ms."
+        ],
+        [
+          "2026-04-04T05:53:54.2326412Z",
+          "Informational",
+          "Container is running."
+        ],
+        [
+          "2026-04-04T05:53:54.2324911Z",
+          "Informational",
+          "Starting metrics collection."
+        ],
+        [
+          "2026-04-04T05:53:54.2321933Z",
+          "Informational",
+          "Starting watchers and probes."
+        ],
+        [
+          "2026-04-04T05:53:54.1760294Z",
+          "Informational",
+          "Starting container: 42e016cf0e95_app-labping-zlqaxhq4w4rx6_kudu."
+        ],
+        [
+          "2026-04-04T05:53:54.1196007Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:53:54.1102801Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:53:54.1081969Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:53:54.0902247Z",
+          "Informational",
+          "Nested mountpoint volatile/logs"
+        ],
+        [
+          "2026-04-04T05:53:54.089395Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:53:54.0891968Z",
+          "Informational",
+          "Mounting volumes."
+        ],
+        [
+          "2026-04-04T05:53:54.0890488Z",
+          "Informational",
+          "Establishing network if not established already."
+        ],
+        [
+          "2026-04-04T05:53:54.0888278Z",
+          "Informational",
+          "Establishing user namespace if not established already."
+        ],
+        [
+          "2026-04-04T05:53:54.0886932Z",
+          "Informational",
+          "State: Starting, Action: MountingVolumes, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Mounting volumes for app-labping-zlqaxhq4w4rx6., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:53:54.0885527Z",
+          "Informational",
+          "Container is starting."
+        ],
+        [
+          "2026-04-04T05:53:54.0883543Z",
+          "Informational",
+          "Image appsvc/python:3.11_20260203.2.tuxprod is pulled from registry 10.1.0.4:13209"
+        ],
+        [
+          "2026-04-04T05:53:53.8133389Z",
+          "Informational",
+          "Creating container with image: appsvc/kudulite:bullseye_20260204.5.tuxprod from registry: 10.1.0.4:13209 and fully qualified image name: 10.1.0.4:13209/appsvc/kudulite:bullseye_20260204.5.tuxprod"
+        ],
+        [
+          "2026-04-04T05:53:53.8125516Z",
+          "Informational",
+          "Successfully removed non-blocking flag from /podr/container/pipe/42e016cf0e95_app-labping-zlqaxhq4w4rx6_kudu/stderr_279efc1a6be44f9fb5f5f8f178053b8d."
+        ],
+        [
+          "2026-04-04T05:53:53.8124356Z",
+          "Informational",
+          "Successfully opened named pipe: /podr/container/pipe/42e016cf0e95_app-labping-zlqaxhq4w4rx6_kudu/stderr_279efc1a6be44f9fb5f5f8f178053b8d."
+        ],
+        [
+          "2026-04-04T05:53:53.8122804Z",
+          "Informational",
+          "Opening named pipe /podr/container/pipe/42e016cf0e95_app-labping-zlqaxhq4w4rx6_kudu/stderr_279efc1a6be44f9fb5f5f8f178053b8d for reading in non-blocking mode."
+        ],
+        [
+          "2026-04-04T05:53:53.8121459Z",
+          "Informational",
+          "Successfully created stderr named pipe at: /podr/container/pipe/42e016cf0e95_app-labping-zlqaxhq4w4rx6_kudu/stderr_279efc1a6be44f9fb5f5f8f178053b8d."
+        ],
+        [
+          "2026-04-04T05:53:53.8116575Z",
+          "Informational",
+          "Creating stderr named pipe at /podr/container/pipe/42e016cf0e95_app-labping-zlqaxhq4w4rx6_kudu/stderr_279efc1a6be44f9fb5f5f8f178053b8d."
+        ],
+        [
+          "2026-04-04T05:53:53.8114671Z",
+          "Informational",
+          "Successfully removed non-blocking flag from /podr/container/pipe/42e016cf0e95_app-labping-zlqaxhq4w4rx6_kudu/stdout_4294595245c84eb68be9e4a97ad96ccc."
+        ],
+        [
+          "2026-04-04T05:53:53.8113036Z",
+          "Informational",
+          "Successfully opened named pipe: /podr/container/pipe/42e016cf0e95_app-labping-zlqaxhq4w4rx6_kudu/stdout_4294595245c84eb68be9e4a97ad96ccc."
+        ],
+        [
+          "2026-04-04T05:53:53.8111627Z",
+          "Informational",
+          "Opening named pipe /podr/container/pipe/42e016cf0e95_app-labping-zlqaxhq4w4rx6_kudu/stdout_4294595245c84eb68be9e4a97ad96ccc for reading in non-blocking mode."
+        ],
+        [
+          "2026-04-04T05:53:53.8110229Z",
+          "Informational",
+          "Successfully created stdout named pipe at: /podr/container/pipe/42e016cf0e95_app-labping-zlqaxhq4w4rx6_kudu/stdout_4294595245c84eb68be9e4a97ad96ccc."
+        ],
+        [
+          "2026-04-04T05:53:53.809207Z",
+          "Informational",
+          "Creating stdout named pipe at /podr/container/pipe/42e016cf0e95_app-labping-zlqaxhq4w4rx6_kudu/stdout_4294595245c84eb68be9e4a97ad96ccc."
+        ],
+        [
+          "2026-04-04T05:53:53.8090923Z",
+          "Informational",
+          "Creating pipes for streaming container io."
+        ],
+        [
+          "2026-04-04T05:53:53.8089535Z",
+          "Informational",
+          "Creating container."
+        ],
+        [
+          "2026-04-04T05:53:53.7770823Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:53:53.7758815Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:53:53.767035Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:53:53.7394433Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:53:53.7315029Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:53:53.7231503Z",
+          "Informational",
+          "Nested mountpoint volatile/logs"
+        ],
+        [
+          "2026-04-04T05:53:53.715485Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:53:53.7152605Z",
+          "Informational",
+          "Mounting volumes."
+        ],
+        [
+          "2026-04-04T05:53:53.7150743Z",
+          "Informational",
+          "Establishing network if not established already."
+        ],
+        [
+          "2026-04-04T05:53:53.7145838Z",
+          "Informational",
+          "Establishing user namespace if not established already."
+        ],
+        [
+          "2026-04-04T05:53:53.7142054Z",
+          "Informational",
+          "Container is starting."
+        ],
+        [
+          "2026-04-04T05:53:53.5665609Z",
+          "Informational",
+          "Pulling image: appsvc/python:3.11_20260203.2.tuxprod."
+        ],
+        [
+          "2026-04-04T05:53:53.5664169Z",
+          "Informational",
+          "Establishing network."
+        ],
+        [
+          "2026-04-04T05:53:53.5662793Z",
+          "Informational",
+          "State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image 10.1.0.4:13209/appsvc/python:3.11_20260203.2.tuxprod for app-labping-zlqaxhq4w4rx6., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:53:53.5662003Z",
+          "Informational",
+          "Container start method called."
+        ],
+        [
+          "2026-04-04T05:53:53.564307Z",
+          "Informational",
+          "Pulling image: appsvc/kudulite:bullseye_20260204.5.tuxprod."
+        ],
+        [
+          "2026-04-04T05:53:53.5635002Z",
+          "Informational",
+          "State: Starting, Action: StartingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:53:53.5631041Z",
+          "Informational",
+          "Establishing network."
+        ],
+        [
+          "2026-04-04T05:53:53.5600574Z",
+          "Informational",
+          "Container start method called."
+        ],
+        [
+          "2026-04-04T05:53:53.0574072Z",
+          "Informational",
+          "State: Starting, Action: EstablishingSiteNetworks, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:52:27.769915Z",
+          "Informational",
+          "Site: app-labping-zlqaxhq4w4rx6 stopped."
+        ],
+        [
+          "2026-04-04T05:52:27.7664277Z",
+          "Informational",
+          "Container is terminated. Total time elapsed: 5164 ms."
+        ],
+        [
+          "2026-04-04T05:52:27.766269Z",
+          "Informational",
+          "Container spec TerminationMessagePolicy  path "
+        ],
+        [
+          "2026-04-04T05:52:27.6642882Z",
+          "Informational",
+          "Deleting container: 265599792bce_app-labping-zlqaxhq4w4rx6. Retry count = 0"
+        ],
+        [
+          "2026-04-04T05:52:23.152579Z",
+          "Informational",
+          "Kudu: app-labping-zlqaxhq4w4rx6 stopped."
+        ],
+        [
+          "2026-04-04T05:52:23.1512992Z",
+          "Informational",
+          "Container is terminated. Total time elapsed: 263 ms."
+        ],
+        [
+          "2026-04-04T05:52:23.1479103Z",
+          "Informational",
+          "Container spec TerminationMessagePolicy  path "
+        ],
+        [
+          "2026-04-04T05:52:22.9861876Z",
+          "Informational",
+          "Deleting container: 3cd4c62b9a06_app-labping-zlqaxhq4w4rx6_kudu. Retry count = 0"
+        ],
+        [
+          "2026-04-04T05:52:22.8929678Z",
+          "Informational",
+          "Stopping container: 3cd4c62b9a06_app-labping-zlqaxhq4w4rx6_kudu."
+        ],
+        [
+          "2026-04-04T05:52:22.8928419Z",
+          "Informational",
+          "Stop and delete container. Retry count = 0"
+        ],
+        [
+          "2026-04-04T05:52:22.8874125Z",
+          "Informational",
+          "Container is terminating. Grace period: 0 seconds."
+        ],
+        [
+          "2026-04-04T05:52:22.6542875Z",
+          "Informational",
+          "Stopping container: 265599792bce_app-labping-zlqaxhq4w4rx6."
+        ],
+        [
+          "2026-04-04T05:52:22.6520861Z",
+          "Informational",
+          "Stop and delete container. Retry count = 0"
+        ],
+        [
+          "2026-04-04T05:52:22.6007315Z",
+          "Informational",
+          "Container is terminating. Grace period: 5 seconds."
+        ],
+        [
+          "2026-04-04T05:52:22.5887287Z",
+          "Informational",
+          "State: Stopping, Action: StoppingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 04/04/2026 05:04:54 (UTC), DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:52:22.5799891Z",
+          "Informational",
+          "State: Stopping, Action: StoppingSite, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 04/04/2026 05:04:54 (UTC), DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:52:02.4752255Z",
+          "Informational",
+          "Site is running with patch version PYTHON 3.11.14"
+        ],
+        [
+          "2026-04-04T05:52:02.4731699Z",
+          "Informational",
+          "State: Started, Action: None, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 04/04/2026 05:52:02 (UTC), DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:52:02.4728658Z",
+          "Informational",
+          "Site started."
+        ],
+        [
+          "2026-04-04T05:52:02.4714614Z",
+          "Informational",
+          "Site is running with deployment version: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+        ],
+        [
+          "2026-04-04T05:52:01.4252078Z",
+          "Informational",
+          "State: Starting, Action: WarmUpProbeSucceeded, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site startup probe succeeded after 12.4412323 seconds., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:52:01.2460837Z",
+          "Informational",
+          "Site startup probe succeeded after 12.4412323 seconds."
+        ],
+        [
+          "2026-04-04T05:51:48.7717803Z",
+          "Informational",
+          "State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:51:48.7717368Z",
+          "Informational",
+          "State: Starting, Action: InitiatingSiteWarmUpProbe, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container app-labping-zlqaxhq4w4rx6 successfully created and is running., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:51:48.7710569Z",
+          "Informational",
+          "Container start method finished after 1940 ms."
+        ],
+        [
+          "2026-04-04T05:51:48.7176968Z",
+          "Informational",
+          "State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container app-labping-zlqaxhq4w4rx6 successfully created and is running., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:51:48.7175807Z",
+          "Informational",
+          "Container is running."
+        ],
+        [
+          "2026-04-04T05:51:48.7173797Z",
+          "Informational",
+          "Starting metrics collection."
+        ],
+        [
+          "2026-04-04T05:51:48.7164738Z",
+          "Informational",
+          "Starting watchers and probes."
+        ],
+        [
+          "2026-04-04T05:51:48.6633444Z",
+          "Informational",
+          "Starting container: 36787a59fee3_app-labping-zlqaxhq4w4rx6."
+        ],
+        [
+          "2026-04-04T05:51:48.6569Z",
+          "Informational",
+          "Container start method finished after 1932 ms."
+        ],
+        [
+          "2026-04-04T05:51:48.6019132Z",
+          "Informational",
+          "Container is running."
+        ],
+        [
+          "2026-04-04T05:51:48.6008741Z",
+          "Informational",
+          "Starting metrics collection."
+        ],
+        [
+          "2026-04-04T05:51:48.5976688Z",
+          "Informational",
+          "Starting watchers and probes."
+        ],
+        [
+          "2026-04-04T05:51:48.5650255Z",
+          "Informational",
+          "Starting container: 975240c1484d_app-labping-zlqaxhq4w4rx6_kudu."
+        ],
+        [
+          "2026-04-04T05:51:48.0543243Z",
+          "Informational",
+          "Creating container with image: appsvc/python:3.11_20260203.2.tuxprod from registry: 10.1.0.6:13209 and fully qualified image name: 10.1.0.6:13209/appsvc/python:3.11_20260203.2.tuxprod"
+        ],
+        [
+          "2026-04-04T05:51:48.05377Z",
+          "Informational",
+          "Successfully removed non-blocking flag from /podr/container/pipe/36787a59fee3_app-labping-zlqaxhq4w4rx6/stderr_4437ce9292a1431892fecba8dfcd809e."
+        ],
+        [
+          "2026-04-04T05:51:48.0530959Z",
+          "Informational",
+          "Successfully opened named pipe: /podr/container/pipe/36787a59fee3_app-labping-zlqaxhq4w4rx6/stderr_4437ce9292a1431892fecba8dfcd809e."
+        ],
+        [
+          "2026-04-04T05:51:48.0528297Z",
+          "Informational",
+          "Opening named pipe /podr/container/pipe/36787a59fee3_app-labping-zlqaxhq4w4rx6/stderr_4437ce9292a1431892fecba8dfcd809e for reading in non-blocking mode."
+        ],
+        [
+          "2026-04-04T05:51:48.0526807Z",
+          "Informational",
+          "Successfully created stderr named pipe at: /podr/container/pipe/36787a59fee3_app-labping-zlqaxhq4w4rx6/stderr_4437ce9292a1431892fecba8dfcd809e."
+        ],
+        [
+          "2026-04-04T05:51:48.0518637Z",
+          "Informational",
+          "Creating stderr named pipe at /podr/container/pipe/36787a59fee3_app-labping-zlqaxhq4w4rx6/stderr_4437ce9292a1431892fecba8dfcd809e."
+        ],
+        [
+          "2026-04-04T05:51:48.0512267Z",
+          "Informational",
+          "Successfully removed non-blocking flag from /podr/container/pipe/36787a59fee3_app-labping-zlqaxhq4w4rx6/stdout_fab393ad469f4c7ea7844de6c9e3256e."
+        ],
+        [
+          "2026-04-04T05:51:48.051088Z",
+          "Informational",
+          "Successfully opened named pipe: /podr/container/pipe/36787a59fee3_app-labping-zlqaxhq4w4rx6/stdout_fab393ad469f4c7ea7844de6c9e3256e."
+        ],
+        [
+          "2026-04-04T05:51:48.0509323Z",
+          "Informational",
+          "Opening named pipe /podr/container/pipe/36787a59fee3_app-labping-zlqaxhq4w4rx6/stdout_fab393ad469f4c7ea7844de6c9e3256e for reading in non-blocking mode."
+        ],
+        [
+          "2026-04-04T05:51:48.0507502Z",
+          "Informational",
+          "Successfully created stdout named pipe at: /podr/container/pipe/36787a59fee3_app-labping-zlqaxhq4w4rx6/stdout_fab393ad469f4c7ea7844de6c9e3256e."
+        ],
+        [
+          "2026-04-04T05:51:48.0492785Z",
+          "Informational",
+          "Creating stdout named pipe at /podr/container/pipe/36787a59fee3_app-labping-zlqaxhq4w4rx6/stdout_fab393ad469f4c7ea7844de6c9e3256e."
+        ],
+        [
+          "2026-04-04T05:51:48.0486776Z",
+          "Informational",
+          "Creating pipes for streaming container io."
+        ],
+        [
+          "2026-04-04T05:51:48.0485185Z",
+          "Informational",
+          "Creating container."
+        ],
+        [
+          "2026-04-04T05:51:48.0476861Z",
+          "Informational",
+          "State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Finished pulling container image and mounting volumes for app-labping-zlqaxhq4w4rx6. Allocatinng the rest of the container resources to finish container creation., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:51:47.9426266Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:51:47.9355966Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:51:47.9291155Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:51:47.9257917Z",
+          "Informational",
+          "Nested mountpoint volatile/logs"
+        ],
+        [
+          "2026-04-04T05:51:47.8870434Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:51:47.8868442Z",
+          "Informational",
+          "Mounting volumes."
+        ],
+        [
+          "2026-04-04T05:51:47.8866056Z",
+          "Informational",
+          "Establishing network if not established already."
+        ],
+        [
+          "2026-04-04T05:51:47.8862851Z",
+          "Informational",
+          "Establishing user namespace if not established already."
+        ],
+        [
+          "2026-04-04T05:51:47.8858807Z",
+          "Informational",
+          "State: Starting, Action: MountingVolumes, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Mounting volumes for app-labping-zlqaxhq4w4rx6., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:51:47.8841187Z",
+          "Informational",
+          "Container is starting."
+        ],
+        [
+          "2026-04-04T05:51:47.3198208Z",
+          "Informational",
+          "Creating container with image: appsvc/kudulite:bullseye_20260204.5.tuxprod from registry: 10.1.0.4:13209 and fully qualified image name: 10.1.0.4:13209/appsvc/kudulite:bullseye_20260204.5.tuxprod"
+        ],
+        [
+          "2026-04-04T05:51:47.3114579Z",
+          "Informational",
+          "Successfully removed non-blocking flag from /podr/container/pipe/975240c1484d_app-labping-zlqaxhq4w4rx6_kudu/stderr_110076e1cce74381a476bd8ff78d728d."
+        ],
+        [
+          "2026-04-04T05:51:47.3113464Z",
+          "Informational",
+          "Successfully opened named pipe: /podr/container/pipe/975240c1484d_app-labping-zlqaxhq4w4rx6_kudu/stderr_110076e1cce74381a476bd8ff78d728d."
+        ],
+        [
+          "2026-04-04T05:51:47.3111921Z",
+          "Informational",
+          "Opening named pipe /podr/container/pipe/975240c1484d_app-labping-zlqaxhq4w4rx6_kudu/stderr_110076e1cce74381a476bd8ff78d728d for reading in non-blocking mode."
+        ],
+        [
+          "2026-04-04T05:51:47.3087633Z",
+          "Informational",
+          "Successfully created stderr named pipe at: /podr/container/pipe/975240c1484d_app-labping-zlqaxhq4w4rx6_kudu/stderr_110076e1cce74381a476bd8ff78d728d."
+        ],
+        [
+          "2026-04-04T05:51:47.30865Z",
+          "Informational",
+          "Creating stderr named pipe at /podr/container/pipe/975240c1484d_app-labping-zlqaxhq4w4rx6_kudu/stderr_110076e1cce74381a476bd8ff78d728d."
+        ],
+        [
+          "2026-04-04T05:51:47.3085386Z",
+          "Informational",
+          "Successfully removed non-blocking flag from /podr/container/pipe/975240c1484d_app-labping-zlqaxhq4w4rx6_kudu/stdout_1ce47a9a9f784dad88cbaadf8d4e2f1f."
+        ],
+        [
+          "2026-04-04T05:51:47.3084711Z",
+          "Informational",
+          "Successfully opened named pipe: /podr/container/pipe/975240c1484d_app-labping-zlqaxhq4w4rx6_kudu/stdout_1ce47a9a9f784dad88cbaadf8d4e2f1f."
+        ],
+        [
+          "2026-04-04T05:51:47.3083772Z",
+          "Informational",
+          "Opening named pipe /podr/container/pipe/975240c1484d_app-labping-zlqaxhq4w4rx6_kudu/stdout_1ce47a9a9f784dad88cbaadf8d4e2f1f for reading in non-blocking mode."
+        ],
+        [
+          "2026-04-04T05:51:47.3082628Z",
+          "Informational",
+          "Successfully created stdout named pipe at: /podr/container/pipe/975240c1484d_app-labping-zlqaxhq4w4rx6_kudu/stdout_1ce47a9a9f784dad88cbaadf8d4e2f1f."
+        ],
+        [
+          "2026-04-04T05:51:47.3040934Z",
+          "Informational",
+          "Creating stdout named pipe at /podr/container/pipe/975240c1484d_app-labping-zlqaxhq4w4rx6_kudu/stdout_1ce47a9a9f784dad88cbaadf8d4e2f1f."
+        ],
+        [
+          "2026-04-04T05:51:47.3039327Z",
+          "Informational",
+          "Creating pipes for streaming container io."
+        ],
+        [
+          "2026-04-04T05:51:47.3037694Z",
+          "Informational",
+          "Creating container."
+        ],
+        [
+          "2026-04-04T05:51:47.269482Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:51:47.2689069Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:51:47.2495049Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:51:47.0845714Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:51:47.0797369Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:51:47.0732365Z",
+          "Informational",
+          "Nested mountpoint volatile/logs"
+        ],
+        [
+          "2026-04-04T05:51:47.0690106Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:51:47.0645253Z",
+          "Informational",
+          "Mounting volumes."
+        ],
+        [
+          "2026-04-04T05:51:47.064375Z",
+          "Informational",
+          "Establishing network if not established already."
+        ],
+        [
+          "2026-04-04T05:51:47.0642467Z",
+          "Informational",
+          "Establishing user namespace if not established already."
+        ],
+        [
+          "2026-04-04T05:51:47.0639048Z",
+          "Informational",
+          "Container is starting."
+        ],
+        [
+          "2026-04-04T05:51:46.8279852Z",
+          "Informational",
+          "Pulling image: appsvc/python:3.11_20260203.2.tuxprod."
+        ],
+        [
+          "2026-04-04T05:51:46.8278014Z",
+          "Informational",
+          "Establishing network."
+        ],
+        [
+          "2026-04-04T05:51:46.8276663Z",
+          "Informational",
+          "State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image 10.1.0.6:13209/appsvc/python:3.11_20260203.2.tuxprod for app-labping-zlqaxhq4w4rx6., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:51:46.8270342Z",
+          "Informational",
+          "Container start method called."
+        ],
+        [
+          "2026-04-04T05:51:46.8251846Z",
+          "Informational",
+          "State: Starting, Action: StartingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:51:46.7265386Z",
+          "Informational",
+          "Pulling image: appsvc/kudulite:bullseye_20260204.5.tuxprod."
+        ],
+        [
+          "2026-04-04T05:51:46.7249008Z",
+          "Informational",
+          "Establishing network."
+        ],
+        [
+          "2026-04-04T05:51:46.7239656Z",
+          "Informational",
+          "Container start method called."
+        ]
+      ]
+    }
+  ]
+}

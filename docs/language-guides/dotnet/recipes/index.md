@@ -81,8 +81,8 @@ For each recipe completion:
 - If private connectivity fails, validate DNS and route tables before app code changes.
 - If slot swap causes incidents, mark config as slot-sticky and add explicit health validation.
 
-## See also
+## See Also
 
 - [Tutorial index](../index.md)
 - [Reference index](../../../reference/index.md)
-- For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-appservice-guide/)
+- For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-appservice/)

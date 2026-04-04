@@ -155,8 +155,8 @@ Validate item exists in Cosmos Data Explorer and check App Insights dependency t
 
 Align CLR naming and JSON policy; use explicit attributes when integrating with pre-existing document schema.
 
-## See also
+## See Also
 
 - [Managed Identity](managed-identity.md)
 - [Private Endpoints](private-endpoints.md)
-- For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-appservice-guide/)
+- For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-appservice/)

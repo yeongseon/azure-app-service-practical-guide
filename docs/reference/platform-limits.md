@@ -74,5 +74,5 @@ Quick reference for common Azure App Service platform limits and quota-related b
 Language/runtime behavior (for example, worker model, memory profile, and startup semantics) can change how these limits are experienced in practice.
 See:
 
-- [Azure App Service Node.js Guide — Reference](https://yeongseon.github.io/azure-appservice-nodejs-guide/reference/)
-- [Azure App Service Python Guide — Reference](https://yeongseon.github.io/azure-appservice-python-guide/reference/)
+- [Azure App Service Node.js Guide — Reference](../language-guides/nodejs/index.md)
+- [Azure App Service Python Guide — Reference](../language-guides/python/index.md)

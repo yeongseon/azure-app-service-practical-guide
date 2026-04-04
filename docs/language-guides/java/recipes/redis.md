@@ -121,7 +121,7 @@ public Map<String, Object> redisPing(StringRedisTemplate redis) {
     Deploy Redis and App Service in the same Azure region to minimize latency and cross-zone cost.
 
 !!! info "Platform architecture"
-    For platform architecture details, see the [Azure App Service Guide — How App Service Works](https://yeongseon.github.io/azure-appservice-guide/concepts/01-how-app-service-works/).
+    For platform architecture details, see [Platform: How App Service Works](../../../platform/how-app-service-works.md).
 
 ## Verification
 
@@ -149,3 +149,8 @@ Check session namespace consistency and verify all instances point to the same R
 - [Managed Identity](managed-identity.md)
 - [VNet Integration](vnet-integration.md)
 - [Tutorial: Scaling](../../../operations/scaling.md)
+
+## References
+
+- [Quickstart: Use Azure Cache for Redis in Java](https://learn.microsoft.com/en-us/azure/azure-cache-for-redis/cache-java-get-started)
+- [Azure Cache for Redis documentation](https://learn.microsoft.com/en-us/azure/azure-cache-for-redis/)

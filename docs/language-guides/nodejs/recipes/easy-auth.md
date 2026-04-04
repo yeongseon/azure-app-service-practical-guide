@@ -106,9 +106,9 @@ After deployment, verify the setup with these steps:
 ## Advanced Topics
 
 !!! info "Coming Soon"
-    - [Custom authentication flows](https://github.com/yeongseon/azure-appservice-nodejs-guide/issues)
-    - [Role-based authorization with Easy Auth](https://github.com/yeongseon/azure-appservice-nodejs-guide/issues)
-    - [Contribute](https://github.com/yeongseon/azure-appservice-nodejs-guide/issues)
+    - [Custom authentication flows](https://github.com/yeongseon/azure-appservice/issues)
+    - [Role-based authorization with Easy Auth](https://github.com/yeongseon/azure-appservice/issues)
+    - [Contribute](https://github.com/yeongseon/azure-appservice/issues)
 
 ## See Also
 - [Security Operations](../../../operations/security.md)

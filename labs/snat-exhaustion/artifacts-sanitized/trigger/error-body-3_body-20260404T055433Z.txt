@@ -1,0 +1,1 @@
+{"calls":20,"elapsedMs":20103,"failures":0,"mode":"without-pooling","sampleErrors":[],"successes":20,"target":"https://httpbin.org/get"}

@@ -102,7 +102,7 @@ If Key Vault is private-only:
     If identity or network path to Key Vault fails, your app receives unresolved/empty config and may fail startup.
 
 !!! info "Platform architecture"
-    For platform architecture details, see the [Azure App Service Guide — How App Service Works](https://yeongseon.github.io/azure-appservice-guide/concepts/01-how-app-service-works/).
+    For platform architecture details, see [Platform: How App Service Works](../../../platform/how-app-service-works.md).
 
 ## Verification
 
@@ -129,3 +129,8 @@ Review VNet integration, private endpoint health, and private DNS linkage.
 - [Managed Identity](managed-identity.md)
 - [VNet Integration](vnet-integration.md)
 - [Tutorial: Configuration](../03-configuration.md)
+
+## References
+
+- [Use Key Vault references for App Service](https://learn.microsoft.com/en-us/azure/app-service/app-service-key-vault-references)
+- [Authenticate to Azure Key Vault using managed identity](https://learn.microsoft.com/en-us/azure/key-vault/general/authentication)

@@ -162,8 +162,8 @@ Validate no pending restart/operation exists and check App Service Activity Log 
 
 Disable auto-swap and enforce manual approval stage in Azure DevOps for high-risk environments.
 
-## See also
+## See Also
 
 - [Tutorial: 06. CI/CD](../06-ci-cd.md)
 - [Tutorial: 03. Configuration](../03-configuration.md)
-- For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-appservice-guide/)
+- For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-appservice/)

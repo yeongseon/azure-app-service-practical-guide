@@ -89,9 +89,9 @@ node -e "require('bcrypt')"
 ## Advanced Topics
 
 !!! info "Coming Soon"
-    - [Pre-built binaries](https://github.com/yeongseon/azure-appservice-nodejs-guide/issues)
-    - [Alpine compatibility](https://github.com/yeongseon/azure-appservice-nodejs-guide/issues)
-    - [Contribute](https://github.com/yeongseon/azure-appservice-nodejs-guide/issues)
+    - [Pre-built binaries](https://github.com/yeongseon/azure-appservice/issues)
+    - [Alpine compatibility](https://github.com/yeongseon/azure-appservice/issues)
+    - [Contribute](https://github.com/yeongseon/azure-appservice/issues)
 
 ## See Also
 - [Custom Container](./custom-container.md)

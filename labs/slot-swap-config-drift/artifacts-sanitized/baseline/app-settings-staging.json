@@ -1,0 +1,17 @@
+[
+  {
+    "name": "SCM_DO_BUILD_DURING_DEPLOYMENT",
+    "slotSetting": false,
+    "value": "true"
+  },
+  {
+    "name": "DB_CONNECTION_STRING",
+    "slotSetting": true,
+    "value": "staging-server.database.windows.net"
+  },
+  {
+    "name": "FEATURE_FLAG",
+    "slotSetting": false,
+    "value": "v2"
+  }
+]

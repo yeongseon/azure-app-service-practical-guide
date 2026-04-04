@@ -153,8 +153,8 @@ Enable EF Core retries and verify firewall/private endpoint rules.
 
 Capture query plans and add indexes; review `dependencies` telemetry for high-duration SQL operations.
 
-## See also
+## See Also
 
 - [Managed Identity](managed-identity.md)
 - [Key Vault References](key-vault-reference.md)
-- For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-appservice-guide/)
+- For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-appservice/)

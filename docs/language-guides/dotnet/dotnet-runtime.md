@@ -3,7 +3,7 @@
 Runtime alignment is critical for startup reliability. This reference summarizes .NET 8 runtime settings, environment variables, `web.config` behavior, and startup conventions for this guide.
 
 !!! tip "Common Guide Reference"
-    For platform-level runtime behavior, see [Reference](https://yeongseon.github.io/azure-appservice-guide/reference/) in the Azure App Service Guide.
+    For platform-level runtime behavior, see [Reference](https://yeongseon.github.io/azure-appservice/reference/) in the Azure App Service Guide.
 
 ## Runtime baseline in this repository
 
@@ -109,8 +109,10 @@ az webapp show --resource-group $RESOURCE_GROUP_NAME --name $WEB_APP_NAME --outp
 | Missing framework version | Runtime mismatch | Update stack or retarget build |
 | Port binding failure | Wrong URL binding assumptions | Ensure `HTTP_PLATFORM_PORT` flow used |
 
-## See also
+## See Also
 
+- [01. Local Run](./01-local-run.md)
+- [02. First Deploy](./02-first-deploy.md)
 - [Troubleshooting](../../reference/troubleshooting.md)
 - [CLI Cheatsheet](../../reference/cli-cheatsheet.md)
 - [Concepts: How App Service Works](../../platform/how-app-service-works.md)

@@ -1,0 +1,395 @@
+{
+  "tables": [
+    {
+      "columns": [
+        {
+          "name": "TimeGenerated",
+          "type": "datetime"
+        },
+        {
+          "name": "ResultDescription",
+          "type": "string"
+        }
+      ],
+      "name": "PrimaryResult",
+      "rows": [
+        [
+          "2026-04-04T05:49:04.6153423Z",
+          "[2026-04-04 05:49:04 +0000] [1895] [INFO] Control socket listening at /root/.gunicorn/gunicorn.ctl"
+        ],
+        [
+          "2026-04-04T05:49:04.163576Z",
+          "[2026-04-04 05:49:04 +0000] [1897] [INFO] Booting worker with pid: 1897"
+        ],
+        [
+          "2026-04-04T05:49:04.0742069Z",
+          "[2026-04-04 05:49:04 +0000] [1896] [INFO] Booting worker with pid: 1896"
+        ],
+        [
+          "2026-04-04T05:49:04.0113799Z",
+          "[2026-04-04 05:49:04 +0000] [1895] [INFO] Using worker: sync"
+        ],
+        [
+          "2026-04-04T05:49:04.0105079Z",
+          "[2026-04-04 05:49:04 +0000] [1895] [INFO] Listening at: http://0.0.0.0:8000 (1895)"
+        ],
+        [
+          "2026-04-04T05:49:04.0022069Z",
+          "[2026-04-04 05:49:04 +0000] [1895] [INFO] Starting gunicorn 25.3.0"
+        ],
+        [
+          "2026-04-04T05:49:02.6570463Z",
+          "Updated PYTHONPATH to '/opt/startup/app_logs:/tmp/8de92089dd681f0/antenv/lib/python3.11/site-packages'"
+        ],
+        [
+          "2026-04-04T05:49:02.6490092Z",
+          "Using packages from virtual environment antenv located at /tmp/8de92089dd681f0/antenv."
+        ],
+        [
+          "2026-04-04T05:49:01.832686Z",
+          "Writing output script to '/opt/startup/startup.sh'"
+        ],
+        [
+          "2026-04-04T05:49:00.016958Z",
+          "App path is set to '/tmp/8de92089dd681f0'"
+        ],
+        [
+          "2026-04-04T05:49:00.0160384Z",
+          "zstd tar Successfully extracted '/home/site/wwwroot/output.tar.zst' to '/tmp/8de92089dd681f0'"
+        ],
+        [
+          "2026-04-04T05:48:51.1113105Z",
+          "Using zstd for decompression of file: /home/site/wwwroot/output.tar.zst"
+        ],
+        [
+          "2026-04-04T05:48:51.1024052Z",
+          "Extracting '/home/site/wwwroot/output.tar.zst' to directory '/tmp/8de92089dd681f0'..."
+        ],
+        [
+          "2026-04-04T05:48:51.1005839Z",
+          "Found zstd-compressed tarball."
+        ],
+        [
+          "2026-04-04T05:48:51.0795204Z",
+          "Output is compressed. Extracting it..."
+        ],
+        [
+          "2026-04-04T05:48:51.0515103Z",
+          "Oryx Version: 0.2.20260130.1, Commit: a98e9aef5dfb6572a08b0a07ce414e1122ab4a2e, ReleaseTagName: 20260130.1"
+        ],
+        [
+          "2026-04-04T05:48:51.0423462Z",
+          "Build Operation ID: bcabeda89141c1b7"
+        ],
+        [
+          "2026-04-04T05:48:51.0397562Z",
+          "Found build manifest file at '/home/site/wwwroot/oryx-manifest.toml'. Deserializing it..."
+        ],
+        [
+          "2026-04-04T05:48:50.435971Z",
+          "Launching oryx with: create-script -appPath /home/site/wwwroot -output /opt/startup/startup.sh -virtualEnvName antenv -defaultApp /opt/defaultsite -userStartupCommand 'gunicorn --bind=0.0.0.0 --timeout=120 --workers=2 app:app'"
+        ],
+        [
+          "2026-04-04T05:48:50.4183292Z",
+          "Starting periodic command scheduler: cron."
+        ],
+        [
+          "2026-04-04T05:48:49.6313079Z",
+          "Site's appCommandLine: gunicorn --bind=0.0.0.0 --timeout=120 --workers=2 app:app"
+        ],
+        [
+          "2026-04-04T05:48:49.1810325Z",
+          "CA certificates copied and updated successfully."
+        ],
+        [
+          "2026-04-04T05:48:49.0993827Z",
+          "done."
+        ],
+        [
+          "2026-04-04T05:48:49.0813171Z",
+          "Running hooks in /etc/ca-certificates/update.d..."
+        ],
+        [
+          "2026-04-04T05:48:49.0803744Z",
+          "4 added, 0 removed; done."
+        ],
+        [
+          "2026-04-04T05:48:49.0477157Z",
+          "rehash: warning: skipping duplicate certificate in azl_Sectigo_Public_Server_Authentication_Root_R46.pem"
+        ],
+        [
+          "2026-04-04T05:48:49.0383263Z",
+          "rehash: warning: skipping duplicate certificate in azl_SSL.com_TLS_RSA_Root_CA_2022.pem"
+        ],
+        [
+          "2026-04-04T05:48:49.0288338Z",
+          "rehash: warning: skipping duplicate certificate in azl_Sectigo_Public_Server_Authentication_Root_E46.pem"
+        ],
+        [
+          "2026-04-04T05:48:49.0004007Z",
+          "rehash: warning: skipping duplicate certificate in azl_SSL.com_TLS_ECC_Root_CA_2022.pem"
+        ],
+        [
+          "2026-04-04T05:48:15.5953508Z",
+          "Updating certificates in /etc/ssl/certs..."
+        ],
+        [
+          "2026-04-04T05:48:15.4459135Z",
+          "WEBSITES_INCLUDE_CLOUD_CERTS is not set to true."
+        ],
+        [
+          "2026-04-04T05:48:15.3970587Z",
+          "Starting OpenBSD Secure Shell server: sshd."
+        ],
+        [
+          "2026-04-04T05:48:10.5984436Z",
+          "Note: Any data outside '/home' is not persisted"
+        ],
+        [
+          "2026-04-04T05:48:10.5984384Z",
+          ""
+        ],
+        [
+          "2026-04-04T05:48:10.5984347Z",
+          "Instance Id      : 9480f1b3a4ea41281b02d48f3129dccfd2f31e69b8bdcefabb76bd8b5a937796"
+        ],
+        [
+          "2026-04-04T05:48:10.5984297Z",
+          "Instance Name    : lw0sdlwk0009QI"
+        ],
+        [
+          "2026-04-04T05:48:10.5984241Z",
+          "Python version   : 3.11.14"
+        ],
+        [
+          "2026-04-04T05:48:10.5984202Z",
+          "Python quickstart: https://aka.ms/python-qs"
+        ],
+        [
+          "2026-04-04T05:48:10.5984159Z",
+          "Documentation    : http://aka.ms/webapp-linux"
+        ],
+        [
+          "2026-04-04T05:48:10.5984109Z",
+          ""
+        ],
+        [
+          "2026-04-04T05:48:10.5984052Z",
+          "A P P   S E R V I C E   O N   L I N U X"
+        ],
+        [
+          "2026-04-04T05:48:10.5984009Z",
+          "        \\/      \\/                  \\/ "
+        ],
+        [
+          "2026-04-04T05:48:10.5983946Z",
+          "\\____|__  /_____ \\____/ |__|    \\___  >"
+        ],
+        [
+          "2026-04-04T05:48:10.5983869Z",
+          "/    |    \\/    /|  |  /|  | \\/\\  ___/ "
+        ],
+        [
+          "2026-04-04T05:48:10.5983819Z",
+          " /  /_\\  \\\\___   /  |  \\_  __ \\_/ __ \\ "
+        ],
+        [
+          "2026-04-04T05:48:10.598367Z",
+          "  /  _  \\ __________ _________   ____  "
+        ],
+        [
+          "2026-04-04T05:48:10.5790952Z",
+          "   _____                               "
+        ],
+        [
+          "2026-04-04T05:46:55.4235829Z",
+          "[2026-04-04 05:46:55 +0000] [1896] [INFO] Control socket listening at /root/.gunicorn/gunicorn.ctl"
+        ],
+        [
+          "2026-04-04T05:46:54.7403325Z",
+          "[2026-04-04 05:46:54 +0000] [1898] [INFO] Booting worker with pid: 1898"
+        ],
+        [
+          "2026-04-04T05:46:54.5090358Z",
+          "[2026-04-04 05:46:54 +0000] [1897] [INFO] Booting worker with pid: 1897"
+        ],
+        [
+          "2026-04-04T05:46:54.4366718Z",
+          "[2026-04-04 05:46:54 +0000] [1896] [INFO] Using worker: sync"
+        ],
+        [
+          "2026-04-04T05:46:54.4366378Z",
+          "[2026-04-04 05:46:54 +0000] [1896] [INFO] Listening at: http://0.0.0.0:8000 (1896)"
+        ],
+        [
+          "2026-04-04T05:46:54.4089176Z",
+          "[2026-04-04 05:46:54 +0000] [1896] [INFO] Starting gunicorn 25.3.0"
+        ],
+        [
+          "2026-04-04T05:46:52.988058Z",
+          "Updated PYTHONPATH to '/opt/startup/app_logs:/tmp/8de9209f5c9d402/antenv/lib/python3.11/site-packages'"
+        ],
+        [
+          "2026-04-04T05:46:52.9694057Z",
+          "Using packages from virtual environment antenv located at /tmp/8de9209f5c9d402/antenv."
+        ],
+        [
+          "2026-04-04T05:46:52.6771504Z",
+          "Writing output script to '/opt/startup/startup.sh'"
+        ],
+        [
+          "2026-04-04T05:46:51.7280636Z",
+          "App path is set to '/tmp/8de9209f5c9d402'"
+        ],
+        [
+          "2026-04-04T05:46:51.7279739Z",
+          "zstd tar Successfully extracted '/home/site/wwwroot/output.tar.zst' to '/tmp/8de9209f5c9d402'"
+        ],
+        [
+          "2026-04-04T05:46:39.1967151Z",
+          "Using zstd for decompression of file: /home/site/wwwroot/output.tar.zst"
+        ],
+        [
+          "2026-04-04T05:46:39.1966958Z",
+          "Extracting '/home/site/wwwroot/output.tar.zst' to directory '/tmp/8de9209f5c9d402'..."
+        ],
+        [
+          "2026-04-04T05:46:39.1966807Z",
+          "Oryx Version: 0.2.20260130.1, Commit: a98e9aef5dfb6572a08b0a07ce414e1122ab4a2e, ReleaseTagName: 20260130.1"
+        ],
+        [
+          "2026-04-04T05:46:39.1965909Z",
+          "Build Operation ID: b61199645b611494"
+        ],
+        [
+          "2026-04-04T05:46:39.166231Z",
+          "Found zstd-compressed tarball."
+        ],
+        [
+          "2026-04-04T05:46:39.1659386Z",
+          "Output is compressed. Extracting it..."
+        ],
+        [
+          "2026-04-04T05:46:39.1453551Z",
+          "Found build manifest file at '/home/site/wwwroot/oryx-manifest.toml'. Deserializing it..."
+        ],
+        [
+          "2026-04-04T05:46:38.1413686Z",
+          "Launching oryx with: create-script -appPath /home/site/wwwroot -output /opt/startup/startup.sh -virtualEnvName antenv -defaultApp /opt/defaultsite -userStartupCommand 'gunicorn --bind=0.0.0.0 --timeout=120 --workers=2 app:app'"
+        ],
+        [
+          "2026-04-04T05:46:38.1106931Z",
+          "Starting periodic command scheduler: cron."
+        ],
+        [
+          "2026-04-04T05:46:37.3687227Z",
+          "Site's appCommandLine: gunicorn --bind=0.0.0.0 --timeout=120 --workers=2 app:app"
+        ],
+        [
+          "2026-04-04T05:46:37.1654747Z",
+          "CA certificates copied and updated successfully."
+        ],
+        [
+          "2026-04-04T05:46:37.146089Z",
+          "done."
+        ],
+        [
+          "2026-04-04T05:46:37.1274817Z",
+          "Running hooks in /etc/ca-certificates/update.d..."
+        ],
+        [
+          "2026-04-04T05:46:37.1268173Z",
+          "4 added, 0 removed; done."
+        ],
+        [
+          "2026-04-04T05:46:37.0657508Z",
+          "rehash: warning: skipping duplicate certificate in azl_Sectigo_Public_Server_Authentication_Root_R46.pem"
+        ],
+        [
+          "2026-04-04T05:46:37.0159778Z",
+          "rehash: warning: skipping duplicate certificate in azl_SSL.com_TLS_RSA_Root_CA_2022.pem"
+        ],
+        [
+          "2026-04-04T05:46:36.9565516Z",
+          "rehash: warning: skipping duplicate certificate in azl_Sectigo_Public_Server_Authentication_Root_E46.pem"
+        ],
+        [
+          "2026-04-04T05:46:36.947094Z",
+          "rehash: warning: skipping duplicate certificate in azl_SSL.com_TLS_ECC_Root_CA_2022.pem"
+        ],
+        [
+          "2026-04-04T05:46:02.7938898Z",
+          "Updating certificates in /etc/ssl/certs..."
+        ],
+        [
+          "2026-04-04T05:46:02.4528317Z",
+          "WEBSITES_INCLUDE_CLOUD_CERTS is not set to true."
+        ],
+        [
+          "2026-04-04T05:46:02.2813354Z",
+          "Starting OpenBSD Secure Shell server: sshd."
+        ],
+        [
+          "2026-04-04T05:45:58.2092893Z",
+          "Note: Any data outside '/home' is not persisted"
+        ],
+        [
+          "2026-04-04T05:45:58.2092835Z",
+          ""
+        ],
+        [
+          "2026-04-04T05:45:58.2092796Z",
+          "Instance Id      : 9480f1b3a4ea41281b02d48f3129dccfd2f31e69b8bdcefabb76bd8b5a937796"
+        ],
+        [
+          "2026-04-04T05:45:58.2092736Z",
+          "Instance Name    : lw0sdlwk0009QI"
+        ],
+        [
+          "2026-04-04T05:45:58.2092696Z",
+          "Python version   : 3.11.14"
+        ],
+        [
+          "2026-04-04T05:45:58.2092643Z",
+          "Python quickstart: https://aka.ms/python-qs"
+        ],
+        [
+          "2026-04-04T05:45:58.20926Z",
+          "Documentation    : http://aka.ms/webapp-linux"
+        ],
+        [
+          "2026-04-04T05:45:58.2092555Z",
+          ""
+        ],
+        [
+          "2026-04-04T05:45:58.2091956Z",
+          "A P P   S E R V I C E   O N   L I N U X"
+        ],
+        [
+          "2026-04-04T05:45:58.2091912Z",
+          "        \\/      \\/                  \\/ "
+        ],
+        [
+          "2026-04-04T05:45:58.2091854Z",
+          "\\____|__  /_____ \\____/ |__|    \\___  >"
+        ],
+        [
+          "2026-04-04T05:45:58.20918Z",
+          "/    |    \\/    /|  |  /|  | \\/\\  ___/ "
+        ],
+        [
+          "2026-04-04T05:45:58.2091721Z",
+          " /  /_\\  \\\\___   /  |  \\_  __ \\_/ __ \\ "
+        ],
+        [
+          "2026-04-04T05:45:58.2091573Z",
+          "  /  _  \\ __________ _________   ____  "
+        ],
+        [
+          "2026-04-04T05:45:58.2007094Z",
+          "   _____                               "
+        ]
+      ]
+    }
+  ]
+}

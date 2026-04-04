@@ -70,7 +70,7 @@ flowchart TD
     Start with Managed Identity before SQL/Key Vault recipes so your data integrations remain passwordless by design.
 
 !!! info "Platform concepts"
-    For platform architecture details, see the [Azure App Service Guide — How App Service Works](https://yeongseon.github.io/azure-appservice-guide/concepts/01-how-app-service-works/).
+    For platform architecture details, see [Platform: How App Service Works](../../../platform/how-app-service-works.md).
 
 ## Verification
 
@@ -97,3 +97,7 @@ Implement [Deployment Slots Zero Downtime](deployment-slots-zero-downtime.md) be
 - [Tutorial Index](../index.md)
 - [03. Configuration](../03-configuration.md)
 - [04. Logging & Monitoring](../04-logging-monitoring.md)
+
+## References
+
+- [Azure App Service documentation](https://learn.microsoft.com/en-us/azure/app-service/)

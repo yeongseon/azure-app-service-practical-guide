@@ -151,7 +151,7 @@ Congratulations! You've completed the core operations path. Explore the **[Recip
 !!! info "Coming Soon"
     - Wildcard SSL certificates
     - Azure Front Door for global delivery
-    - [Contribute](https://github.com/yeongseon/azure-appservice-nodejs-guide/issues)
+- [Contribute](https://github.com/yeongseon/azure-appservice/issues)
 
 ## See Also
 - [Operations Networking](../../operations/networking.md)

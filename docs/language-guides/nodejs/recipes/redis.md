@@ -111,9 +111,9 @@ az webapp config appsettings set --name $APP_NAME --resource-group $RG --setting
 ## Advanced Topics
 
 !!! info "Coming Soon"
-    - [Cluster mode](https://github.com/yeongseon/azure-appservice-nodejs-guide/issues)
-    - [Persistence strategies](https://github.com/yeongseon/azure-appservice-nodejs-guide/issues)
-    - [Contribute](https://github.com/yeongseon/azure-appservice-nodejs-guide/issues)
+    - [Cluster mode](https://github.com/yeongseon/azure-appservice/issues)
+    - [Persistence strategies](https://github.com/yeongseon/azure-appservice/issues)
+    - [Contribute](https://github.com/yeongseon/azure-appservice/issues)
 
 ## See Also
 - [Scaling Concepts](../../../platform/scaling.md)

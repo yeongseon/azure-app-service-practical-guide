@@ -1,0 +1,411 @@
+{
+  "tables": [
+    {
+      "columns": [
+        {
+          "name": "TimeGenerated",
+          "type": "datetime"
+        },
+        {
+          "name": "ResultDescription",
+          "type": "string"
+        }
+      ],
+      "name": "PrimaryResult",
+      "rows": [
+        [
+          "2026-04-04T05:53:55.4942553Z",
+          "Updating certificates in /etc/ssl/certs..."
+        ],
+        [
+          "2026-04-04T05:53:55.4693638Z",
+          "WEBSITES_INCLUDE_CLOUD_CERTS is not set to true."
+        ],
+        [
+          "2026-04-04T05:53:55.4637256Z",
+          "Starting OpenBSD Secure Shell server: sshd."
+        ],
+        [
+          "2026-04-04T05:53:54.6693362Z",
+          "Note: Any data outside '/home' is not persisted"
+        ],
+        [
+          "2026-04-04T05:53:54.6693321Z",
+          ""
+        ],
+        [
+          "2026-04-04T05:53:54.6693271Z",
+          "Instance Id      : 2e9614b903860387ad41d2d4735570ca0c8b29649a02cb187ad6afea560d5745"
+        ],
+        [
+          "2026-04-04T05:53:54.6693222Z",
+          "Instance Name    : 10-30-0-103"
+        ],
+        [
+          "2026-04-04T05:53:54.669318Z",
+          "Python version   : 3.11.14"
+        ],
+        [
+          "2026-04-04T05:53:54.6693132Z",
+          "Python quickstart: https://aka.ms/python-qs"
+        ],
+        [
+          "2026-04-04T05:53:54.6693085Z",
+          "Documentation    : http://aka.ms/webapp-linux"
+        ],
+        [
+          "2026-04-04T05:53:54.6693038Z",
+          ""
+        ],
+        [
+          "2026-04-04T05:53:54.6692997Z",
+          "A P P   S E R V I C E   O N   L I N U X"
+        ],
+        [
+          "2026-04-04T05:53:54.669294Z",
+          "        \\/      \\/                  \\/ "
+        ],
+        [
+          "2026-04-04T05:53:54.6692656Z",
+          "\\____|__  /_____ \\____/ |__|    \\___  >"
+        ],
+        [
+          "2026-04-04T05:53:54.6692611Z",
+          "/    |    \\/    /|  |  /|  | \\/\\  ___/ "
+        ],
+        [
+          "2026-04-04T05:53:54.6692557Z",
+          " /  /_\\  \\\\___   /  |  \\_  __ \\_/ __ \\ "
+        ],
+        [
+          "2026-04-04T05:53:54.6692406Z",
+          "  /  _  \\ __________ _________   ____  "
+        ],
+        [
+          "2026-04-04T05:53:54.6680622Z",
+          "   _____                               "
+        ],
+        [
+          "2026-04-04T05:52:00.4988195Z",
+          "[2026-04-04 05:52:00 +0000] [1896] [INFO] Booting worker with pid: 1896"
+        ],
+        [
+          "2026-04-04T05:52:00.4911688Z",
+          "[2026-04-04 05:52:00 +0000] [1894] [INFO] Using worker: sync"
+        ],
+        [
+          "2026-04-04T05:52:00.4908785Z",
+          "[2026-04-04 05:52:00 +0000] [1894] [INFO] Listening at: http://0.0.0.0:8000 (1894)"
+        ],
+        [
+          "2026-04-04T05:52:00.4883758Z",
+          "[2026-04-04 05:52:00 +0000] [1894] [INFO] Starting gunicorn 24.1.1"
+        ],
+        [
+          "2026-04-04T05:51:59.9583195Z",
+          "WARNING: Could not find package directory /home/site/wwwroot/__oryx_packages__."
+        ],
+        [
+          "2026-04-04T05:51:59.9565578Z",
+          "WARNING: Could not find virtual environment directory /home/site/wwwroot/antenv."
+        ],
+        [
+          "2026-04-04T05:51:59.7036993Z",
+          "Writing output script to '/opt/startup/startup.sh'"
+        ],
+        [
+          "2026-04-04T05:51:59.5554159Z",
+          "Oryx Version: 0.2.20260130.1, Commit: a98e9aef5dfb6572a08b0a07ce414e1122ab4a2e, ReleaseTagName: 20260130.1"
+        ],
+        [
+          "2026-04-04T05:51:58.8846888Z",
+          "Build Operation ID: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+        ],
+        [
+          "2026-04-04T05:51:58.8845888Z",
+          "Could not find operation ID in manifest. Generating an operation id..."
+        ],
+        [
+          "2026-04-04T05:51:58.88294Z",
+          "Could not find build manifest file at '/home/site/wwwroot/oryx-manifest.toml'"
+        ],
+        [
+          "2026-04-04T05:51:58.800854Z",
+          "Launching oryx with: create-script -appPath /home/site/wwwroot -output /opt/startup/startup.sh -virtualEnvName antenv -defaultApp /opt/defaultsite -userStartupCommand 'gunicorn --bind 0.0.0.0:8000 app:app'"
+        ],
+        [
+          "2026-04-04T05:51:58.7989598Z",
+          "Starting periodic command scheduler: cron."
+        ],
+        [
+          "2026-04-04T05:51:58.3002029Z",
+          "Site's appCommandLine: gunicorn --bind 0.0.0.0:8000 app:app"
+        ],
+        [
+          "2026-04-04T05:51:58.016867Z",
+          "CA certificates copied and updated successfully."
+        ],
+        [
+          "2026-04-04T05:51:58.006424Z",
+          "done."
+        ],
+        [
+          "2026-04-04T05:51:57.9955752Z",
+          "Running hooks in /etc/ca-certificates/update.d..."
+        ],
+        [
+          "2026-04-04T05:51:57.9953104Z",
+          "4 added, 0 removed; done."
+        ],
+        [
+          "2026-04-04T05:51:57.9754681Z",
+          "rehash: warning: skipping duplicate certificate in azl_SSL.com_TLS_ECC_Root_CA_2022.pem"
+        ],
+        [
+          "2026-04-04T05:51:57.9678032Z",
+          "rehash: warning: skipping duplicate certificate in azl_Sectigo_Public_Server_Authentication_Root_R46.pem"
+        ],
+        [
+          "2026-04-04T05:51:57.9616951Z",
+          "rehash: warning: skipping duplicate certificate in azl_SSL.com_TLS_RSA_Root_CA_2022.pem"
+        ],
+        [
+          "2026-04-04T05:51:57.9543696Z",
+          "rehash: warning: skipping duplicate certificate in azl_Sectigo_Public_Server_Authentication_Root_E46.pem"
+        ],
+        [
+          "2026-04-04T05:51:49.5145919Z",
+          "Updating certificates in /etc/ssl/certs..."
+        ],
+        [
+          "2026-04-04T05:51:49.480266Z",
+          "WEBSITES_INCLUDE_CLOUD_CERTS is not set to true."
+        ],
+        [
+          "2026-04-04T05:51:49.4681841Z",
+          "Starting OpenBSD Secure Shell server: sshd."
+        ],
+        [
+          "2026-04-04T05:51:48.9223674Z",
+          "Note: Any data outside '/home' is not persisted"
+        ],
+        [
+          "2026-04-04T05:51:48.9223611Z",
+          ""
+        ],
+        [
+          "2026-04-04T05:51:48.922353Z",
+          "Instance Id      : 2e9614b903860387ad41d2d4735570ca0c8b29649a02cb187ad6afea560d5745"
+        ],
+        [
+          "2026-04-04T05:51:48.9223461Z",
+          "Instance Name    : 10-30-0-103"
+        ],
+        [
+          "2026-04-04T05:51:48.9223398Z",
+          "Python version   : 3.11.14"
+        ],
+        [
+          "2026-04-04T05:51:48.9223319Z",
+          "Python quickstart: https://aka.ms/python-qs"
+        ],
+        [
+          "2026-04-04T05:51:48.9223247Z",
+          "Documentation    : http://aka.ms/webapp-linux"
+        ],
+        [
+          "2026-04-04T05:51:48.9223167Z",
+          ""
+        ],
+        [
+          "2026-04-04T05:51:48.9223079Z",
+          "A P P   S E R V I C E   O N   L I N U X"
+        ],
+        [
+          "2026-04-04T05:51:48.9222907Z",
+          "        \\/      \\/                  \\/ "
+        ],
+        [
+          "2026-04-04T05:51:48.9213464Z",
+          "\\____|__  /_____ \\____/ |__|    \\___  >"
+        ],
+        [
+          "2026-04-04T05:51:48.9213188Z",
+          "/    |    \\/    /|  |  /|  | \\/\\  ___/ "
+        ],
+        [
+          "2026-04-04T05:51:48.9213134Z",
+          " /  /_\\  \\\\___   /  |  \\_  __ \\_/ __ \\ "
+        ],
+        [
+          "2026-04-04T05:51:48.9212902Z",
+          "  /  _  \\ __________ _________   ____  "
+        ],
+        [
+          "2026-04-04T05:51:48.9177381Z",
+          "   _____                               "
+        ],
+        [
+          "2026-04-03T15:24:50.8893836Z",
+          "[2026-04-03 15:24:50 +0000] [1893] [INFO] Booting worker with pid: 1893"
+        ],
+        [
+          "2026-04-03T15:24:50.8786373Z",
+          "[2026-04-03 15:24:50 +0000] [1892] [INFO] Using worker: sync"
+        ],
+        [
+          "2026-04-03T15:24:50.8785693Z",
+          "[2026-04-03 15:24:50 +0000] [1892] [INFO] Listening at: http://0.0.0.0:8000 (1892)"
+        ],
+        [
+          "2026-04-03T15:24:50.8611279Z",
+          "[2026-04-03 15:24:50 +0000] [1892] [INFO] Starting gunicorn 24.1.1"
+        ],
+        [
+          "2026-04-03T15:24:49.1821322Z",
+          "WARNING: Could not find package directory /home/site/wwwroot/__oryx_packages__."
+        ],
+        [
+          "2026-04-03T15:24:49.1809692Z",
+          "WARNING: Could not find virtual environment directory /home/site/wwwroot/antenv."
+        ],
+        [
+          "2026-04-03T15:24:48.9696123Z",
+          "Writing output script to '/opt/startup/startup.sh'"
+        ],
+        [
+          "2026-04-03T15:24:48.8013574Z",
+          "Oryx Version: 0.2.20260130.1, Commit: a98e9aef5dfb6572a08b0a07ce414e1122ab4a2e, ReleaseTagName: 20260130.1"
+        ],
+        [
+          "2026-04-03T15:24:47.8755522Z",
+          "Build Operation ID: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+        ],
+        [
+          "2026-04-03T15:24:47.8755429Z",
+          "Could not find operation ID in manifest. Generating an operation id..."
+        ],
+        [
+          "2026-04-03T15:24:47.8666142Z",
+          "Could not find build manifest file at '/home/site/wwwroot/oryx-manifest.toml'"
+        ],
+        [
+          "2026-04-03T15:24:47.6735755Z",
+          "Launching oryx with: create-script -appPath /home/site/wwwroot -output /opt/startup/startup.sh -virtualEnvName antenv -defaultApp /opt/defaultsite -userStartupCommand 'gunicorn --bind 0.0.0.0:8000 app:app'"
+        ],
+        [
+          "2026-04-03T15:24:47.6637285Z",
+          "Starting periodic command scheduler: cron."
+        ],
+        [
+          "2026-04-03T15:24:47.290221Z",
+          "Site's appCommandLine: gunicorn --bind 0.0.0.0:8000 app:app"
+        ],
+        [
+          "2026-04-03T15:24:47.1497184Z",
+          "CA certificates copied and updated successfully."
+        ],
+        [
+          "2026-04-03T15:24:47.1496517Z",
+          "done."
+        ],
+        [
+          "2026-04-03T15:24:47.1302961Z",
+          "Running hooks in /etc/ca-certificates/update.d..."
+        ],
+        [
+          "2026-04-03T15:24:47.1019868Z",
+          "4 added, 0 removed; done."
+        ],
+        [
+          "2026-04-03T15:24:46.9793368Z",
+          "rehash: warning: skipping duplicate certificate in azl_Sectigo_Public_Server_Authentication_Root_R46.pem"
+        ],
+        [
+          "2026-04-03T15:24:46.9793216Z",
+          "rehash: warning: skipping duplicate certificate in azl_SSL.com_TLS_RSA_Root_CA_2022.pem"
+        ],
+        [
+          "2026-04-03T15:24:46.9792428Z",
+          "rehash: warning: skipping duplicate certificate in azl_SSL.com_TLS_ECC_Root_CA_2022.pem"
+        ],
+        [
+          "2026-04-03T15:24:46.9409064Z",
+          "rehash: warning: skipping duplicate certificate in azl_Sectigo_Public_Server_Authentication_Root_E46.pem"
+        ],
+        [
+          "2026-04-03T15:24:25.6797292Z",
+          "Updating certificates in /etc/ssl/certs..."
+        ],
+        [
+          "2026-04-03T15:24:25.5905297Z",
+          "WEBSITES_INCLUDE_CLOUD_CERTS is not set to true."
+        ],
+        [
+          "2026-04-03T15:24:25.5512955Z",
+          "Starting OpenBSD Secure Shell server: sshd."
+        ],
+        [
+          "2026-04-03T15:24:23.2805983Z",
+          "Note: Any data outside '/home' is not persisted"
+        ],
+        [
+          "2026-04-03T15:24:23.2805919Z",
+          ""
+        ],
+        [
+          "2026-04-03T15:24:23.28053Z",
+          "Instance Id      : f4c06971145d0d0ebcb7f3489285b28cbf186b279804820d07f9fea67c8e2cfe"
+        ],
+        [
+          "2026-04-03T15:24:23.2623164Z",
+          "Instance Name    : lw0sdlwk0009QR"
+        ],
+        [
+          "2026-04-03T15:24:23.2623117Z",
+          "Python version   : 3.11.14"
+        ],
+        [
+          "2026-04-03T15:24:23.2623071Z",
+          "Python quickstart: https://aka.ms/python-qs"
+        ],
+        [
+          "2026-04-03T15:24:23.2623004Z",
+          "Documentation    : http://aka.ms/webapp-linux"
+        ],
+        [
+          "2026-04-03T15:24:23.262294Z",
+          ""
+        ],
+        [
+          "2026-04-03T15:24:23.2622883Z",
+          "A P P   S E R V I C E   O N   L I N U X"
+        ],
+        [
+          "2026-04-03T15:24:23.2622829Z",
+          "        \\/      \\/                  \\/ "
+        ],
+        [
+          "2026-04-03T15:24:23.2622439Z",
+          "\\____|__  /_____ \\____/ |__|    \\___  >"
+        ],
+        [
+          "2026-04-03T15:24:23.2622363Z",
+          "/    |    \\/    /|  |  /|  | \\/\\  ___/ "
+        ],
+        [
+          "2026-04-03T15:24:23.2622136Z",
+          " /  /_\\  \\\\___   /  |  \\_  __ \\_/ __ \\ "
+        ],
+        [
+          "2026-04-03T15:24:23.2621902Z",
+          "  /  _  \\ __________ _________   ____  "
+        ],
+        [
+          "2026-04-03T15:24:23.2608204Z",
+          "   _____                               "
+        ]
+      ]
+    }
+  ]
+}

@@ -65,7 +65,7 @@ az webapp deploy \
   --resource-group "$RG" \
   --name "$APP_NAME" \
   --slot "$SLOT_NAME" \
-  --src-path "app/target/azure-appservice-java-guide-1.0.0.jar" \
+  --src-path "app/target/<artifact-name>.jar" \
   --type jar \
   --output json
 ```
@@ -125,7 +125,7 @@ az webapp deployment slot swap \
     Hit `/health` and one business endpoint repeatedly on staging before swap to reduce post-swap cold latency.
 
 !!! info "Platform architecture"
-    For platform architecture details, see the [Azure App Service Guide — How App Service Works](https://yeongseon.github.io/azure-appservice-guide/concepts/01-how-app-service-works/).
+    For platform architecture details, see [Platform: How App Service Works](../../../platform/how-app-service-works.md).
 
 ## Verification
 
@@ -153,3 +153,8 @@ Check slot name, distribution values, and caching/CDN layers that may mask split
 - [Tutorial: CI/CD](../06-ci-cd.md)
 - [Tutorial: Configuration](../03-configuration.md)
 - [Operations: Deployment Slots](../../../operations/deployment-slots.md)
+
+## References
+
+- [Set up staging environments in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots)
+- [Swap deployment slots in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots#swap-deployment-slots)

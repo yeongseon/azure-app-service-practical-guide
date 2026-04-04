@@ -131,7 +131,7 @@ az deployment group what-if \
     If you change App Service settings directly in the portal and never reflect them in Bicep, subsequent deployments may overwrite or conflict with manual edits.
 
 !!! info "Platform architecture"
-    For platform architecture details, see the [Azure App Service Guide — How App Service Works](https://yeongseon.github.io/azure-appservice-guide/concepts/01-how-app-service-works/).
+    For platform architecture details, see [Platform: How App Service Works](../../platform/how-app-service-works.md).
 
 ## Verification
 
@@ -159,3 +159,8 @@ Confirm `/health` endpoint exists and startup command still forwards `--server.p
 - [06. CI/CD](06-ci-cd.md)
 - [07. Custom Domain & SSL](07-custom-domain-ssl.md)
 - [Recipes: VNet Integration](./recipes/vnet-integration.md)
+
+## References
+
+- [Deploy Bicep files by using Azure CLI](https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/deploy-cli)
+- [Microsoft.Web/sites Bicep resource](https://learn.microsoft.com/en-us/azure/templates/microsoft.web/sites)

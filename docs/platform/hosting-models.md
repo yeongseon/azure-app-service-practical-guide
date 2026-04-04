@@ -249,10 +249,10 @@ If using custom containers:
 ## Language-Specific Details
 
 For language-specific implementation details, see:
-- [Node.js Guide](https://yeongseon.github.io/azure-appservice-nodejs-guide/)
-- [Python Guide](https://yeongseon.github.io/azure-appservice-python-guide/)
-- [Java Guide](https://yeongseon.github.io/azure-appservice-java-guide/)
-- [.NET Guide](https://yeongseon.github.io/azure-appservice-dotnet-guide/)
+- [Node.js Guide](../language-guides/nodejs/index.md)
+- [Python Guide](../language-guides/python/index.md)
+- [Java Guide](../language-guides/java/index.md)
+- [.NET Guide](../language-guides/dotnet/index.md)
 
 ## See Also
 

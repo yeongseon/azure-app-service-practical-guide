@@ -147,8 +147,8 @@ You can inspect header presence in app logs for debugging (without dumping sensi
 
 Normalize claim type mapping and case sensitivity in one place.
 
-## See also
+## See Also
 
 - [Managed Identity](managed-identity.md)
 - [Deployment Slots Validation](deployment-slots-validation.md)
-- For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-appservice-guide/)
+- For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-appservice/)

@@ -149,8 +149,8 @@ Expect successful response without any secret stored in source code or App Setti
 
 Set explicit exclusions in `DefaultAzureCredentialOptions` to prevent credential chain surprises.
 
-## See also
+## See Also
 
 - [Key Vault References](key-vault-reference.md)
 - [Azure SQL](azure-sql.md)
-- For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-appservice-guide/)
+- For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-appservice/)

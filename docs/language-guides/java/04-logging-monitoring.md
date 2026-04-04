@@ -141,7 +141,7 @@ failed
     Add availability tests against `/health` and a lightweight business endpoint to catch platform and app regressions early.
 
 !!! info "Platform architecture"
-    For platform architecture details, see the [Azure App Service Guide — How App Service Works](https://yeongseon.github.io/azure-appservice-guide/concepts/01-how-app-service-works/).
+    For platform architecture details, see [Platform: How App Service Works](../../platform/how-app-service-works.md).
 
 ## Verification
 
@@ -179,3 +179,8 @@ Use `AppTraces`/`AppRequests` as primary tables; in some environments, schema na
 - [05. Infrastructure as Code](05-infrastructure-as-code.md)
 - [Reference: KQL Queries](../../reference/kql-queries.md)
 - [Recipes: Redis](./recipes/redis.md)
+
+## References
+
+- [Enable diagnostics logging for apps in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs)
+- [Monitor Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/monitor-app-service)

@@ -123,7 +123,7 @@ Expected status code for `/health`: `200`.
     Initial startup can take 30-90 seconds on Basic plans. If you get `503` immediately after deploy, wait and retry.
 
 !!! info "Platform architecture"
-    For platform architecture details, see the [Azure App Service Guide — How App Service Works](https://yeongseon.github.io/azure-appservice-guide/concepts/01-how-app-service-works/).
+    For platform architecture details, see [Platform: How App Service Works](../../platform/how-app-service-works.md).
 
 ## Verification
 
@@ -161,3 +161,9 @@ az webapp log tail \
 - [03. Configuration](03-configuration.md)
 - [05. Infrastructure as Code](05-infrastructure-as-code.md)
 - [Recipes: Managed Identity](./recipes/managed-identity.md)
+
+## References
+
+- [Deploy a ZIP file to Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/deploy-zip)
+- [Quickstart: Deploy a Java app to Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/quickstart-java)
+- [Azure App Service deployment overview](https://learn.microsoft.com/en-us/azure/app-service/deploy-best-practices)

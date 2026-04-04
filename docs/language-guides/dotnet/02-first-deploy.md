@@ -39,7 +39,7 @@ az group create \
 ```bash
 az deployment group create \
   --resource-group "$RESOURCE_GROUP_NAME" \
-  --template-file "/root/Github/azure-appservice-dotnet-guide/infra/main.bicep" \
+  --template-file "infra/main.bicep" \
   --parameters baseName="$BASE_NAME" location="$LOCATION" \
   --output json
 ```
@@ -59,15 +59,15 @@ If your deployment name differs, use the name returned by your command output.
 ### 4) Publish application
 
 ```bash
-dotnet publish "/root/Github/azure-appservice-dotnet-guide/app/GuideApi/GuideApi.csproj" \
+dotnet publish "app/GuideApi/GuideApi.csproj" \
   --configuration Release \
-  --output "/root/Github/azure-appservice-dotnet-guide/app/GuideApi/publish"
+  --output "app/GuideApi/publish"
 ```
 
 ### 5) Zip publish output
 
 ```bash
-cd "/root/Github/azure-appservice-dotnet-guide/app/GuideApi/publish"
+cd "app/GuideApi/publish"
 zip --recurse-paths --quiet "../guideapi.zip" .
 ```
 
@@ -77,7 +77,7 @@ zip --recurse-paths --quiet "../guideapi.zip" .
 az webapp deploy \
   --resource-group "$RESOURCE_GROUP_NAME" \
   --name "$WEB_APP_NAME" \
-  --src-path "/root/Github/azure-appservice-dotnet-guide/app/GuideApi/guideapi.zip" \
+  --src-path "app/GuideApi/guideapi.zip" \
   --type zip \
   --output json
 ```
@@ -144,8 +144,14 @@ Validate App Service configuration after deployment:
 az webapp config show --resource-group "$RESOURCE_GROUP_NAME" --name "$WEB_APP_NAME" --output json
 ```
 
-## See also
+## References
+
+- [Deploy a ZIP file to Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/deploy-zip)
+- [Quickstart: Deploy an ASP.NET web app](https://learn.microsoft.com/en-us/azure/app-service/quickstart-dotnetcore)
+- [Azure App Service deployment overview](https://learn.microsoft.com/en-us/azure/app-service/deploy-best-practices)
+
+## See Also
 
 - [03. Configuration](./03-configuration.md)
 - [05. Infrastructure as Code](./05-infrastructure-as-code.md)
-- For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-appservice-guide/)
+- For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-appservice/)

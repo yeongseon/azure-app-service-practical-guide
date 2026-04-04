@@ -136,5 +136,5 @@ See [Kudu API Reference](./kudu-queries.md) for endpoint details.
 
 Runtime-specific startup failures, package/import issues, framework worker tuning, and language-level exception handling are documented in:
 
-- [Azure App Service Node.js Guide — Troubleshooting](https://yeongseon.github.io/azure-appservice-nodejs-guide/reference/troubleshooting/)
-- [Azure App Service Python Guide — Troubleshooting](https://yeongseon.github.io/azure-appservice-python-guide/reference/troubleshooting/)
+- [Azure App Service Node.js Guide — Troubleshooting](../language-guides/nodejs/index.md)
+- [Azure App Service Python Guide — Troubleshooting](../language-guides/python/index.md)

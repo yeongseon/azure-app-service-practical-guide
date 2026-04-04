@@ -1,0 +1,335 @@
+{
+  "tables": [
+    {
+      "columns": [
+        {
+          "name": "TimeGenerated",
+          "type": "datetime"
+        },
+        {
+          "name": "ResultDescription",
+          "type": "string"
+        }
+      ],
+      "name": "PrimaryResult",
+      "rows": [
+        [
+          "2026-04-04T05:55:06.4678473Z",
+          "[2026-04-04 05:55:06 +0000] [1895] [ERROR] Reason: Worker failed to boot."
+        ],
+        [
+          "2026-04-04T05:55:06.4677855Z",
+          "[2026-04-04 05:55:06 +0000] [1895] [ERROR] Shutting down: Master"
+        ],
+        [
+          "2026-04-04T05:55:04.4655815Z",
+          "[2026-04-04 05:55:04 +0000] [1895] [INFO] Control socket listening at /root/.gunicorn/gunicorn.ctl"
+        ],
+        [
+          "2026-04-04T05:55:04.4635229Z",
+          "[2026-04-04 05:55:04 +0000] [1895] [ERROR] Worker (pid:1901) exited with code 3."
+        ],
+        [
+          "2026-04-04T05:55:04.0861846Z",
+          "[2026-04-04 05:55:04 +0000] [1901] [INFO] Worker exiting (pid: 1901)"
+        ],
+        [
+          "2026-04-04T05:55:04.0857549Z",
+          "No module named 'wrong_module'"
+        ],
+        [
+          "2026-04-04T05:55:04.0838827Z",
+          "ModuleNotFoundError: No module named 'wrong_module'"
+        ],
+        [
+          "2026-04-04T05:55:04.0838786Z",
+          "  File \"<frozen importlib._bootstrap>\", line 1140, in _find_and_load_unlocked"
+        ],
+        [
+          "2026-04-04T05:55:04.0838717Z",
+          "  File \"<frozen importlib._bootstrap>\", line 1176, in _find_and_load"
+        ],
+        [
+          "2026-04-04T05:55:04.0838678Z",
+          "  File \"<frozen importlib._bootstrap>\", line 1204, in _gcd_import"
+        ],
+        [
+          "2026-04-04T05:55:04.0838644Z",
+          "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:55:04.0838584Z",
+          "    return _bootstrap._gcd_import(name[level:], package, level)"
+        ],
+        [
+          "2026-04-04T05:55:04.0838547Z",
+          "  File \"/opt/python/3.11.14/lib/python3.11/importlib/__init__.py\", line 126, in import_module"
+        ],
+        [
+          "2026-04-04T05:55:04.0838447Z",
+          "          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:55:04.0838412Z",
+          "    mod = importlib.import_module(module)"
+        ],
+        [
+          "2026-04-04T05:55:04.0838352Z",
+          "  File \"/tmp/8de92095c402412/antenv/lib/python3.11/site-packages/gunicorn/util.py\", line 377, in import_app"
+        ],
+        [
+          "2026-04-04T05:55:04.0838317Z",
+          "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:55:04.0838277Z",
+          "    return util.import_app(self.app_uri)"
+        ],
+        [
+          "2026-04-04T05:55:04.0838199Z",
+          "  File \"/tmp/8de92095c402412/antenv/lib/python3.11/site-packages/gunicorn/app/wsgiapp.py\", line 47, in load_wsgiapp"
+        ],
+        [
+          "2026-04-04T05:55:04.0838164Z",
+          "           ^^^^^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:55:04.083813Z",
+          "    return self.load_wsgiapp()"
+        ],
+        [
+          "2026-04-04T05:55:04.0838065Z",
+          "  File \"/tmp/8de92095c402412/antenv/lib/python3.11/site-packages/gunicorn/app/wsgiapp.py\", line 57, in load"
+        ],
+        [
+          "2026-04-04T05:55:04.0838033Z",
+          "                    ^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:55:04.0838002Z",
+          "    self.callable = self.load()"
+        ],
+        [
+          "2026-04-04T05:55:04.0837964Z",
+          "  File \"/tmp/8de92095c402412/antenv/lib/python3.11/site-packages/gunicorn/app/base.py\", line 66, in wsgi"
+        ],
+        [
+          "2026-04-04T05:55:04.0837905Z",
+          "                ^^^^^^^^^^^^^^^"
+        ],
+        [
+          "2026-04-04T05:55:04.0837872Z",
+          "    self.wsgi = self.app.wsgi()"
+        ],
+        [
+          "2026-04-04T05:55:04.0837834Z",
+          "  File \"/tmp/8de92095c402412/antenv/lib/python3.11/site-packages/gunicorn/workers/base.py\", line 148, in load_wsgi"
+        ],
+        [
+          "2026-04-04T05:55:04.0837769Z",
+          "    self.load_wsgi()"
+        ],
+        [
+          "2026-04-04T05:55:04.0837727Z",
+          "  File \"/tmp/8de92095c402412/antenv/lib/python3.11/site-packages/gunicorn/workers/base.py\", line 136, in init_process"
+        ],
+        [
+          "2026-04-04T05:55:04.0837679Z",
+          "    worker.init_process()"
+        ],
+        [
+          "2026-04-04T05:55:04.0837382Z",
+          "  File \"/tmp/8de92095c402412/antenv/lib/python3.11/site-packages/gunicorn/arbiter.py\", line 713, in spawn_worker"
+        ],
+        [
+          "2026-04-04T05:55:04.0837334Z",
+          "Traceback (most recent call last):"
+        ],
+        [
+          "2026-04-04T05:55:04.0837163Z",
+          "[2026-04-04 05:55:04 +0000] [1901] [ERROR] Exception in worker process"
+        ],
+        [
+          "2026-04-04T05:55:04.0342721Z",
+          "[2026-04-04 05:55:04 +0000] [1901] [INFO] Booting worker with pid: 1901"
+        ],
+        [
+          "2026-04-04T05:55:04.0232327Z",
+          "[2026-04-04 05:55:04 +0000] [1895] [INFO] Using worker: sync"
+        ],
+        [
+          "2026-04-04T05:55:04.0168334Z",
+          "[2026-04-04 05:55:04 +0000] [1895] [INFO] Listening at: http://0.0.0.0:8000 (1895)"
+        ],
+        [
+          "2026-04-04T05:55:04.0145343Z",
+          "[2026-04-04 05:55:04 +0000] [1895] [INFO] Starting gunicorn 25.3.0"
+        ],
+        [
+          "2026-04-04T05:55:01.0853193Z",
+          "Updated PYTHONPATH to '/opt/startup/app_logs:/tmp/8de92095c402412/antenv/lib/python3.11/site-packages'"
+        ],
+        [
+          "2026-04-04T05:55:01.0686422Z",
+          "Using packages from virtual environment antenv located at /tmp/8de92095c402412/antenv."
+        ],
+        [
+          "2026-04-04T05:55:00.6178349Z",
+          "Writing output script to '/opt/startup/startup.sh'"
+        ],
+        [
+          "2026-04-04T05:54:58.9804259Z",
+          "App path is set to '/tmp/8de92095c402412'"
+        ],
+        [
+          "2026-04-04T05:54:58.9790686Z",
+          "zstd tar Successfully extracted '/home/site/wwwroot/output.tar.zst' to '/tmp/8de92095c402412'"
+        ],
+        [
+          "2026-04-04T05:54:50.9913781Z",
+          "Using zstd for decompression of file: /home/site/wwwroot/output.tar.zst"
+        ],
+        [
+          "2026-04-04T05:54:50.9894669Z",
+          "Extracting '/home/site/wwwroot/output.tar.zst' to directory '/tmp/8de92095c402412'..."
+        ],
+        [
+          "2026-04-04T05:54:50.9894477Z",
+          "Found zstd-compressed tarball."
+        ],
+        [
+          "2026-04-04T05:54:50.9723036Z",
+          "Output is compressed. Extracting it..."
+        ],
+        [
+          "2026-04-04T05:54:50.9704317Z",
+          "Oryx Version: 0.2.20260130.1, Commit: a98e9aef5dfb6572a08b0a07ce414e1122ab4a2e, ReleaseTagName: 20260130.1"
+        ],
+        [
+          "2026-04-04T05:54:50.9505288Z",
+          "Build Operation ID: 2ab63a12cdb7998d"
+        ],
+        [
+          "2026-04-04T05:54:50.9411682Z",
+          "Found build manifest file at '/home/site/wwwroot/oryx-manifest.toml'. Deserializing it..."
+        ],
+        [
+          "2026-04-04T05:54:50.5327009Z",
+          "Launching oryx with: create-script -appPath /home/site/wwwroot -output /opt/startup/startup.sh -virtualEnvName antenv -defaultApp /opt/defaultsite -userStartupCommand 'gunicorn --bind=0.0.0.0:8000 --timeout=120 wrong_module:app'"
+        ],
+        [
+          "2026-04-04T05:54:50.5254186Z",
+          "Starting periodic command scheduler: cron."
+        ],
+        [
+          "2026-04-04T05:54:49.4185745Z",
+          "Site's appCommandLine: gunicorn --bind=0.0.0.0:8000 --timeout=120 wrong_module:app"
+        ],
+        [
+          "2026-04-04T05:54:49.0475595Z",
+          "CA certificates copied and updated successfully."
+        ],
+        [
+          "2026-04-04T05:54:48.9702369Z",
+          "done."
+        ],
+        [
+          "2026-04-04T05:54:48.9701965Z",
+          "Running hooks in /etc/ca-certificates/update.d..."
+        ],
+        [
+          "2026-04-04T05:54:48.9701574Z",
+          "4 added, 0 removed; done."
+        ],
+        [
+          "2026-04-04T05:54:48.7515207Z",
+          "rehash: warning: skipping duplicate certificate in azl_Sectigo_Public_Server_Authentication_Root_E46.pem"
+        ],
+        [
+          "2026-04-04T05:54:48.7195552Z",
+          "rehash: warning: skipping duplicate certificate in azl_SSL.com_TLS_RSA_Root_CA_2022.pem"
+        ],
+        [
+          "2026-04-04T05:54:48.6625855Z",
+          "rehash: warning: skipping duplicate certificate in azl_Sectigo_Public_Server_Authentication_Root_R46.pem"
+        ],
+        [
+          "2026-04-04T05:54:48.5801105Z",
+          "rehash: warning: skipping duplicate certificate in azl_SSL.com_TLS_ECC_Root_CA_2022.pem"
+        ],
+        [
+          "2026-04-04T05:54:20.0915274Z",
+          "Updating certificates in /etc/ssl/certs..."
+        ],
+        [
+          "2026-04-04T05:54:20.0007006Z",
+          "WEBSITES_INCLUDE_CLOUD_CERTS is not set to true."
+        ],
+        [
+          "2026-04-04T05:54:19.950652Z",
+          "Starting OpenBSD Secure Shell server: sshd."
+        ],
+        [
+          "2026-04-04T05:54:17.954966Z",
+          "Note: Any data outside '/home' is not persisted"
+        ],
+        [
+          "2026-04-04T05:54:17.9549619Z",
+          ""
+        ],
+        [
+          "2026-04-04T05:54:17.9549577Z",
+          "Instance Id      : f7914080a1e04baaab7e548dc057c38527ceb352eed71d9074f19e190f413990"
+        ],
+        [
+          "2026-04-04T05:54:17.9549509Z",
+          "Instance Name    : lw0sdlwk0008GT"
+        ],
+        [
+          "2026-04-04T05:54:17.9549468Z",
+          "Python version   : 3.11.14"
+        ],
+        [
+          "2026-04-04T05:54:17.9549426Z",
+          "Python quickstart: https://aka.ms/python-qs"
+        ],
+        [
+          "2026-04-04T05:54:17.954936Z",
+          "Documentation    : http://aka.ms/webapp-linux"
+        ],
+        [
+          "2026-04-04T05:54:17.954931Z",
+          ""
+        ],
+        [
+          "2026-04-04T05:54:17.954927Z",
+          "A P P   S E R V I C E   O N   L I N U X"
+        ],
+        [
+          "2026-04-04T05:54:17.9549226Z",
+          "        \\/      \\/                  \\/ "
+        ],
+        [
+          "2026-04-04T05:54:17.9549139Z",
+          "\\____|__  /_____ \\____/ |__|    \\___  >"
+        ],
+        [
+          "2026-04-04T05:54:17.9549085Z",
+          "/    |    \\/    /|  |  /|  | \\/\\  ___/ "
+        ],
+        [
+          "2026-04-04T05:54:17.9549034Z",
+          " /  /_\\  \\\\___   /  |  \\_  __ \\_/ __ \\ "
+        ],
+        [
+          "2026-04-04T05:54:17.95489Z",
+          "  /  _  \\ __________ _________   ____  "
+        ],
+        [
+          "2026-04-04T05:54:17.8955387Z",
+          "   _____                               "
+        ]
+      ]
+    }
+  ]
+}

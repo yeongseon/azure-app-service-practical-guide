@@ -147,5 +147,5 @@ curl -s -u "$AUTH_USER:$AUTH_PASS" \
 
 Kudu endpoint usage is platform-level and shared across stacks. For runtime-specific checks (for example, stack-specific startup artifacts), see:
 
-- [Azure App Service Node.js Guide — Reference](https://yeongseon.github.io/azure-appservice-nodejs-guide/reference/)
-- [Azure App Service Python Guide — Reference](https://yeongseon.github.io/azure-appservice-python-guide/reference/)
+- [Azure App Service Node.js Guide — Reference](../language-guides/nodejs/index.md)
+- [Azure App Service Python Guide — Reference](../language-guides/python/index.md)

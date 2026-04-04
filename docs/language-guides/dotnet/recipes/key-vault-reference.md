@@ -135,8 +135,8 @@ az webapp config appsettings list --resource-group "$RESOURCE_GROUP_NAME" --name
 
 Validate slot-specific identity and slot-specific app settings configuration.
 
-## See also
+## See Also
 
 - [Managed Identity](managed-identity.md)
 - [Azure SQL](azure-sql.md)
-- For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-appservice-guide/)
+- For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-appservice/)

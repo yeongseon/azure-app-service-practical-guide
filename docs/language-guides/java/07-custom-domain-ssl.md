@@ -127,7 +127,7 @@ You should get HTTP 200 and a valid certificate chain.
     App Service Managed Certificates have platform-specific limitations (for example wildcard coverage). Validate your domain pattern before committing to this approach.
 
 !!! info "Platform architecture"
-    For platform architecture details, see the [Azure App Service Guide — How App Service Works](https://yeongseon.github.io/azure-appservice-guide/concepts/01-how-app-service-works/).
+    For platform architecture details, see [Platform: How App Service Works](../../platform/how-app-service-works.md).
 
 ## Verification
 
@@ -155,3 +155,8 @@ Clear DNS/TLS cache or test with another network; propagation can lag at edge re
 - [Recipes: Easy Auth](./recipes/easy-auth.md)
 - [Recipes: Deployment Slots Zero Downtime](./recipes/deployment-slots-zero-downtime.md)
 - [Operations: Networking](../../operations/networking.md)
+
+## References
+
+- [Map a custom DNS name to Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/app-service-web-tutorial-custom-domain)
+- [Secure a custom DNS name with a TLS/SSL binding](https://learn.microsoft.com/en-us/azure/app-service/configure-ssl-bindings)

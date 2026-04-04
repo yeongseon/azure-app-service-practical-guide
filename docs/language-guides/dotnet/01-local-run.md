@@ -5,7 +5,7 @@ Run the ASP.NET Core 8 reference API locally using the same port and environment
 ## Prerequisites
 
 - .NET 8 SDK installed (`dotnet --info`)
-- Local clone of `azure-appservice-dotnet-guide`
+- Local clone of `azure-appservice`
 - Terminal with access to `app/GuideApi`
 
 ## What you'll learn
@@ -20,8 +20,8 @@ Run the ASP.NET Core 8 reference API locally using the same port and environment
 ### 1) Run the app
 
 ```bash
-dotnet restore "/root/Github/azure-appservice-dotnet-guide/app/GuideApi/GuideApi.csproj"
-dotnet run --project "/root/Github/azure-appservice-dotnet-guide/app/GuideApi/GuideApi.csproj"
+dotnet restore "app/GuideApi/GuideApi.csproj"
+dotnet run --project "app/GuideApi/GuideApi.csproj"
 ```
 
 By default, the app listens on port `5000` if no environment variable is provided.
@@ -67,13 +67,13 @@ Expected `/health` shape:
 Run in Development:
 
 ```bash
-ASPNETCORE_ENVIRONMENT=Development dotnet run --project "/root/Github/azure-appservice-dotnet-guide/app/GuideApi/GuideApi.csproj"
+ASPNETCORE_ENVIRONMENT=Development dotnet run --project "app/GuideApi/GuideApi.csproj"
 ```
 
 Run in Production:
 
 ```bash
-ASPNETCORE_ENVIRONMENT=Production dotnet run --project "/root/Github/azure-appservice-dotnet-guide/app/GuideApi/GuideApi.csproj"
+ASPNETCORE_ENVIRONMENT=Production dotnet run --project "app/GuideApi/GuideApi.csproj"
 ```
 
 Typical differences:
@@ -118,7 +118,7 @@ curl --include --request GET "http://localhost:5000/health"
 Stop the previous process and rerun, or test with platform-style port simulation:
 
 ```bash
-HTTP_PLATFORM_PORT=5050 dotnet run --project "/root/Github/azure-appservice-dotnet-guide/app/GuideApi/GuideApi.csproj"
+HTTP_PLATFORM_PORT=5050 dotnet run --project "app/GuideApi/GuideApi.csproj"
 ```
 
 ### Missing .NET SDK
@@ -137,8 +137,13 @@ Print current environment at startup:
 Console.WriteLine($"ASPNETCORE_ENVIRONMENT={builder.Environment.EnvironmentName}");
 ```
 
-## See also
+## References
+
+- [Configure a .NET app for Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/configure-language-dotnetcore)
+- [Quickstart: Deploy an ASP.NET web app](https://learn.microsoft.com/en-us/azure/app-service/quickstart-dotnetcore)
+
+## See Also
 
 - [02. First Deploy](./02-first-deploy.md)
 - [03. Configuration](./03-configuration.md)
-- For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-appservice-guide/)
+- For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-appservice/)

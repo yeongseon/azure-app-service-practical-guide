@@ -127,4 +127,9 @@ Look for startup logs confirming Java version, active profiles, and listening po
 - [Reference: CLI Cheatsheet](../../reference/cli-cheatsheet.md)
 - [Reference: Platform Limits](../../reference/platform-limits.md)
 - [Operations: Scaling](../../operations/scaling.md)
-- [Common Guide: Platform Limits](https://yeongseon.github.io/azure-appservice-guide/reference/platform-limits/)
+- [Platform: How App Service Works](../../platform/how-app-service-works.md)
+
+## References
+
+- [Configure a Java app for Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/configure-language-java)
+- [Configure an App Service app](https://learn.microsoft.com/en-us/azure/app-service/configure-common)

@@ -133,8 +133,8 @@ Use dependency telemetry and synthetic API checks to verify end-to-end connectiv
 
 Use resilient retry settings (`EnableRetryOnFailure`, Redis reconnect behavior) and monitor transient errors.
 
-## See also
+## See Also
 
 - [Azure SQL](azure-sql.md)
 - [Redis Cache](redis.md)
-- For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-appservice-guide/)
+- For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-appservice/)

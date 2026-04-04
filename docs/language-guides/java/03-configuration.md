@@ -126,7 +126,7 @@ az webapp config appsettings set \
     Keep secrets in Key Vault and expose them via Key Vault References in App Settings.
 
 !!! info "Platform architecture"
-    For platform architecture details, see the [Azure App Service Guide — How App Service Works](https://yeongseon.github.io/azure-appservice-guide/concepts/01-how-app-service-works/).
+    For platform architecture details, see [Platform: How App Service Works](../../platform/how-app-service-works.md).
 
 ## Verification
 
@@ -167,3 +167,9 @@ Identity creation and RBAC propagation can take several minutes; validate role a
 - [04. Logging & Monitoring](04-logging-monitoring.md)
 - [Recipes: Key Vault References](./recipes/key-vault-reference.md)
 - [Recipes: Managed Identity](./recipes/managed-identity.md)
+
+## References
+
+- [Configure an App Service app](https://learn.microsoft.com/en-us/azure/app-service/configure-common)
+- [Configure a Java app for Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/configure-language-java)
+- [Use Key Vault references for App Service](https://learn.microsoft.com/en-us/azure/app-service/app-service-key-vault-references)

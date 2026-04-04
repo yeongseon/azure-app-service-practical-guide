@@ -139,7 +139,7 @@ Because pipeline deploys published binaries, startup behavior must not depend on
 Use these for debugging outside pipeline:
 
 ```bash
-dotnet publish "/root/Github/azure-appservice-dotnet-guide/app/GuideApi/GuideApi.csproj" --configuration Release --output "/tmp/guideapi-publish"
+dotnet publish "app/GuideApi/GuideApi.csproj" --configuration Release --output "/tmp/guideapi-publish"
 az webapp deploy --resource-group "$RESOURCE_GROUP_NAME" --name "$WEB_APP_NAME" --src-path "/tmp/guideapi.zip" --type zip --output json
 ```
 
@@ -174,8 +174,13 @@ Confirm artifact name (`drop`) and deploy package glob path exactly match publis
 
 Inspect Log Stream and Kudu diagnostics; redeploy after a clean publish from the same SDK version as pipeline.
 
-## See also
+## References
+
+- [Continuous deployment to Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/deploy-continuous-deployment)
+- [Use GitHub Actions to deploy to Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/deploy-github-actions)
+
+## See Also
 
 - [07. Custom Domain & SSL](./07-custom-domain-ssl.md)
 - [Reference: Azure DevOps Pipeline Variables](../../reference/index.md)
-- For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-appservice-guide/)
+- For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-appservice/)

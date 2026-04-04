@@ -21,7 +21,7 @@ Use Bicep to provision reproducible Windows App Service infrastructure for ASP.N
 ```bash
 az deployment group create \
   --resource-group "$RESOURCE_GROUP_NAME" \
-  --template-file "/root/Github/azure-appservice-dotnet-guide/infra/main.bicep" \
+  --template-file "infra/main.bicep" \
   --parameters baseName="$BASE_NAME" location="$LOCATION" appServicePlanSku="B1" \
   --output table
 ```
@@ -156,7 +156,7 @@ Run a what-if before applying changes:
 ```bash
 az deployment group what-if \
   --resource-group "$RESOURCE_GROUP_NAME" \
-  --template-file "/root/Github/azure-appservice-dotnet-guide/infra/main.bicep" \
+  --template-file "infra/main.bicep" \
   --parameters baseName="$BASE_NAME" location="$LOCATION"
 ```
 
@@ -164,8 +164,13 @@ az deployment group what-if \
 
 Split resources into modules and expose explicit outputs/inputs to avoid implicit timing assumptions.
 
-## See also
+## References
+
+- [Deploy Bicep files by using Azure CLI](https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/deploy-cli)
+- [Microsoft.Web/sites Bicep resource](https://learn.microsoft.com/en-us/azure/templates/microsoft.web/sites)
+
+## See Also
 
 - [06. CI/CD](./06-ci-cd.md)
 - [02. First Deploy](./02-first-deploy.md)
-- For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-appservice-guide/)
+- For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-appservice/)

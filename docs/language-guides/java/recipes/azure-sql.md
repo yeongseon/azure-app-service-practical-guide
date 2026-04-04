@@ -123,7 +123,7 @@ public Map<String, Object> sqlPing(JdbcTemplate jdbcTemplate) {
     Avoid embedding SQL usernames/passwords in App Settings unless required for legacy migration phases.
 
 !!! info "Platform architecture"
-    For platform architecture details, see the [Azure App Service Guide — How App Service Works](https://yeongseon.github.io/azure-appservice-guide/concepts/01-how-app-service-works/).
+    For platform architecture details, see [Platform: How App Service Works](../../../platform/how-app-service-works.md).
 
 ## Verification
 
@@ -151,3 +151,8 @@ Ensure `mssql-jdbc` version supports managed identity auth and `authentication=A
 - [Managed Identity](managed-identity.md)
 - [Key Vault References](key-vault-reference.md)
 - [Tutorial: Configuration](../03-configuration.md)
+
+## References
+
+- [Tutorial: Connect to Azure SQL with managed identity](https://learn.microsoft.com/en-us/azure/azure-sql/database/azure-sql-passwordless-migration-java)
+- [Managed identities for Azure resources](https://learn.microsoft.com/en-us/entra/identity/managed-identities-azure-resources/overview)

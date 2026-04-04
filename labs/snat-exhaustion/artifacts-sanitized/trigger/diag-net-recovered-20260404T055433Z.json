@@ -1,0 +1,1 @@
+{"connection_count":7,"ip_local_port_range":{"end":"60999","start":"32768"},"sockstat":{"sockets":{"used":"10"},"tcp":{"alloc":"182","inuse":"5","mem":"63","orphan":"0","tw":"1"},"udp":{"inuse":"1","mem":"0"}}}

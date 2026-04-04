@@ -71,7 +71,7 @@ Typical `/info` response:
 
 ```json
 {
-  "name": "azure-appservice-java-guide",
+  "name": "azure-appservice",
   "version": "1.0.0",
   "java": "17",
   "framework": "Spring Boot 3.2",
@@ -113,7 +113,7 @@ curl http://localhost:8181/health
     This validates the same startup contract used by App Service (`PORT`, production profile, structured logs) before your first deployment.
 
 !!! info "Platform architecture"
-    For platform architecture details, see the [Azure App Service Guide — How App Service Works](https://yeongseon.github.io/azure-appservice-guide/concepts/01-how-app-service-works/).
+    For platform architecture details, see [Platform: How App Service Works](../../platform/how-app-service-works.md).
 
 ## Verification
 
@@ -149,3 +149,8 @@ Ensure you are hitting the correct base URL and port (`localhost:8080` by defaul
 - [02. First Deploy](02-first-deploy.md)
 - [03. Configuration](03-configuration.md)
 - [Recipes Index](./recipes/index.md)
+
+## References
+
+- [Configure a Java app for Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/configure-language-java)
+- [Quickstart: Deploy a Java app to Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/quickstart-java)

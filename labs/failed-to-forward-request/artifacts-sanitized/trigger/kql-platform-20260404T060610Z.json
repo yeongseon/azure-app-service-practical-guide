@@ -1,0 +1,1023 @@
+{
+  "tables": [
+    {
+      "columns": [
+        {
+          "name": "TimeGenerated",
+          "type": "datetime"
+        },
+        {
+          "name": "Level",
+          "type": "string"
+        },
+        {
+          "name": "Message",
+          "type": "string"
+        }
+      ],
+      "name": "PrimaryResult",
+      "rows": [
+        [
+          "2026-04-04T05:58:40.6755819Z",
+          "Informational",
+          "Site: app-labfwd-qevzrtvntab46 stopped."
+        ],
+        [
+          "2026-04-04T05:58:40.6753909Z",
+          "Informational",
+          "Container is terminated. Total time elapsed: 5591 ms."
+        ],
+        [
+          "2026-04-04T05:58:40.6671937Z",
+          "Informational",
+          "Container spec TerminationMessagePolicy  path "
+        ],
+        [
+          "2026-04-04T05:58:40.243872Z",
+          "Informational",
+          "Deleting container: 11ac6829b5b6_app-labfwd-qevzrtvntab46. Retry count = 0"
+        ],
+        [
+          "2026-04-04T05:58:35.0938024Z",
+          "Informational",
+          "Stopping container: 11ac6829b5b6_app-labfwd-qevzrtvntab46."
+        ],
+        [
+          "2026-04-04T05:58:35.0937008Z",
+          "Informational",
+          "Stop and delete container. Retry count = 0"
+        ],
+        [
+          "2026-04-04T05:58:35.0754822Z",
+          "Informational",
+          "Container is terminating. Grace period: 5 seconds."
+        ],
+        [
+          "2026-04-04T05:58:35.0711479Z",
+          "Informational",
+          "State: Stopping, Action: StoppingSiteContainers, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:49:41, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Site started at 04/04/2026 05:51:01 (UTC), DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:58:35.0699002Z",
+          "Informational",
+          "State: Stopping, Action: StoppingSite, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:49:41, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Site started at 04/04/2026 05:51:01 (UTC), DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:58:13.8648629Z",
+          "Informational",
+          "Site: app-labfwd-qevzrtvntab46 stopped."
+        ],
+        [
+          "2026-04-04T05:58:13.8644393Z",
+          "Error",
+          "State: Stopping, Action: CancellingStartup, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:58:07, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Site container: app-labfwd-qevzrtvntab46 terminated during site startup. Cancelling site startup., DetailsLevel: ERR"
+        ],
+        [
+          "2026-04-04T05:58:13.86402Z",
+          "Error",
+          "Site container: app-labfwd-qevzrtvntab46 terminated during site startup."
+        ],
+        [
+          "2026-04-04T05:58:13.8632914Z",
+          "Informational",
+          "Container is terminated. Total time elapsed: 5763 ms."
+        ],
+        [
+          "2026-04-04T05:58:13.8623753Z",
+          "Informational",
+          "Container spec TerminationMessagePolicy  path "
+        ],
+        [
+          "2026-04-04T05:58:13.2410018Z",
+          "Informational",
+          "Deleting container: 9de0eb2b8489_app-labfwd-qevzrtvntab46. Retry count = 0"
+        ],
+        [
+          "2026-04-04T05:58:08.1468661Z",
+          "Informational",
+          "Stopping container: 9de0eb2b8489_app-labfwd-qevzrtvntab46."
+        ],
+        [
+          "2026-04-04T05:58:08.1194126Z",
+          "Informational",
+          "Stop and delete container. Retry count = 0"
+        ],
+        [
+          "2026-04-04T05:58:08.0990499Z",
+          "Informational",
+          "Container is terminating. Grace period: 5 seconds."
+        ],
+        [
+          "2026-04-04T05:58:08.0887485Z",
+          "Error",
+          "State: Stopping, Action: StoppingSiteContainers, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:58:07, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: ERR"
+        ],
+        [
+          "2026-04-04T05:58:08.0682324Z",
+          "Error",
+          "State: Stopping, Action: StoppingSite, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:58:07, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: ERR"
+        ],
+        [
+          "2026-04-04T05:58:08.0680092Z",
+          "Error",
+          "Failed to start site. Revert by stopping site."
+        ],
+        [
+          "2026-04-04T05:58:08.0274102Z",
+          "Error",
+          "State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:58:07, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: ERR"
+        ],
+        [
+          "2026-04-04T05:58:07.8475924Z",
+          "Informational",
+          "Site startup probe failed after 231.0055547 seconds."
+        ],
+        [
+          "2026-04-04T05:55:16.3210222Z",
+          "Informational",
+          "Kudu: app-labfwd-qevzrtvntab46 stopped."
+        ],
+        [
+          "2026-04-04T05:55:16.3204944Z",
+          "Informational",
+          "Container is terminated. Total time elapsed: 623 ms."
+        ],
+        [
+          "2026-04-04T05:55:16.3202479Z",
+          "Informational",
+          "Container spec TerminationMessagePolicy  path "
+        ],
+        [
+          "2026-04-04T05:55:16.0099555Z",
+          "Informational",
+          "Deleting container: 14b960ff8dc1_app-labfwd-qevzrtvntab46_kudu. Retry count = 0"
+        ],
+        [
+          "2026-04-04T05:55:15.7665033Z",
+          "Informational",
+          "Stopping container: 14b960ff8dc1_app-labfwd-qevzrtvntab46_kudu."
+        ],
+        [
+          "2026-04-04T05:55:15.7659963Z",
+          "Informational",
+          "Stop and delete container. Retry count = 0"
+        ],
+        [
+          "2026-04-04T05:55:15.6964945Z",
+          "Informational",
+          "Container is terminating. Grace period: 0 seconds."
+        ],
+        [
+          "2026-04-04T05:54:16.8316311Z",
+          "Informational",
+          "State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:54:16.8316046Z",
+          "Informational",
+          "State: Starting, Action: InitiatingSiteWarmUpProbe, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container app-labfwd-qevzrtvntab46 successfully created and is running., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:54:16.830852Z",
+          "Informational",
+          "Container start method finished after 7165 ms."
+        ],
+        [
+          "2026-04-04T05:54:16.5892222Z",
+          "Informational",
+          "State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container app-labfwd-qevzrtvntab46 successfully created and is running., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:54:16.5891249Z",
+          "Informational",
+          "Container is running."
+        ],
+        [
+          "2026-04-04T05:54:16.5811906Z",
+          "Informational",
+          "Starting metrics collection."
+        ],
+        [
+          "2026-04-04T05:54:16.5809133Z",
+          "Informational",
+          "Starting watchers and probes."
+        ],
+        [
+          "2026-04-04T05:54:16.4306807Z",
+          "Informational",
+          "Starting container: 9de0eb2b8489_app-labfwd-qevzrtvntab46."
+        ],
+        [
+          "2026-04-04T05:54:14.7098169Z",
+          "Informational",
+          "Creating container with image: appsvc/python:3.11_20260203.2.tuxprod from registry: 10.1.0.4:13209 and fully qualified image name: 10.1.0.4:13209/appsvc/python:3.11_20260203.2.tuxprod"
+        ],
+        [
+          "2026-04-04T05:54:14.7091087Z",
+          "Informational",
+          "Successfully removed non-blocking flag from /podr/container/pipe/9de0eb2b8489_app-labfwd-qevzrtvntab46/stderr_2675547eddb149999a6fa01586e3b90c."
+        ],
+        [
+          "2026-04-04T05:54:14.7089177Z",
+          "Informational",
+          "Successfully opened named pipe: /podr/container/pipe/9de0eb2b8489_app-labfwd-qevzrtvntab46/stderr_2675547eddb149999a6fa01586e3b90c."
+        ],
+        [
+          "2026-04-04T05:54:14.7003012Z",
+          "Informational",
+          "Opening named pipe /podr/container/pipe/9de0eb2b8489_app-labfwd-qevzrtvntab46/stderr_2675547eddb149999a6fa01586e3b90c for reading in non-blocking mode."
+        ],
+        [
+          "2026-04-04T05:54:14.6998082Z",
+          "Informational",
+          "Successfully created stderr named pipe at: /podr/container/pipe/9de0eb2b8489_app-labfwd-qevzrtvntab46/stderr_2675547eddb149999a6fa01586e3b90c."
+        ],
+        [
+          "2026-04-04T05:54:14.6712319Z",
+          "Informational",
+          "Creating stderr named pipe at /podr/container/pipe/9de0eb2b8489_app-labfwd-qevzrtvntab46/stderr_2675547eddb149999a6fa01586e3b90c."
+        ],
+        [
+          "2026-04-04T05:54:14.6611391Z",
+          "Informational",
+          "Successfully removed non-blocking flag from /podr/container/pipe/9de0eb2b8489_app-labfwd-qevzrtvntab46/stdout_5f61ac3b158a49dc98695beaecfd9e6b."
+        ],
+        [
+          "2026-04-04T05:54:14.6607182Z",
+          "Informational",
+          "Successfully opened named pipe: /podr/container/pipe/9de0eb2b8489_app-labfwd-qevzrtvntab46/stdout_5f61ac3b158a49dc98695beaecfd9e6b."
+        ],
+        [
+          "2026-04-04T05:54:14.6598445Z",
+          "Informational",
+          "Opening named pipe /podr/container/pipe/9de0eb2b8489_app-labfwd-qevzrtvntab46/stdout_5f61ac3b158a49dc98695beaecfd9e6b for reading in non-blocking mode."
+        ],
+        [
+          "2026-04-04T05:54:14.659306Z",
+          "Informational",
+          "Successfully created stdout named pipe at: /podr/container/pipe/9de0eb2b8489_app-labfwd-qevzrtvntab46/stdout_5f61ac3b158a49dc98695beaecfd9e6b."
+        ],
+        [
+          "2026-04-04T05:54:14.6208128Z",
+          "Informational",
+          "Creating stdout named pipe at /podr/container/pipe/9de0eb2b8489_app-labfwd-qevzrtvntab46/stdout_5f61ac3b158a49dc98695beaecfd9e6b."
+        ],
+        [
+          "2026-04-04T05:54:14.6207197Z",
+          "Informational",
+          "Creating pipes for streaming container io."
+        ],
+        [
+          "2026-04-04T05:54:14.6206342Z",
+          "Informational",
+          "Creating container."
+        ],
+        [
+          "2026-04-04T05:54:14.6204441Z",
+          "Informational",
+          "State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Finished pulling container image and mounting volumes for app-labfwd-qevzrtvntab46. Allocatinng the rest of the container resources to finish container creation., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:54:12.987824Z",
+          "Informational",
+          "Container start method finished after 3179 ms."
+        ],
+        [
+          "2026-04-04T05:54:12.9665106Z",
+          "Informational",
+          "Container is running."
+        ],
+        [
+          "2026-04-04T05:54:12.9659735Z",
+          "Informational",
+          "Starting metrics collection."
+        ],
+        [
+          "2026-04-04T05:54:12.9575658Z",
+          "Informational",
+          "Starting watchers and probes."
+        ],
+        [
+          "2026-04-04T05:54:12.8364279Z",
+          "Informational",
+          "Starting container: e1d155ce79e3_app-labfwd-qevzrtvntab46_kudu."
+        ],
+        [
+          "2026-04-04T05:54:12.4232211Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:54:12.2336976Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:54:12.1437571Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:54:12.1323826Z",
+          "Informational",
+          "Nested mountpoint volatile/logs"
+        ],
+        [
+          "2026-04-04T05:54:12.0108001Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:54:12.0106325Z",
+          "Informational",
+          "Mounting volumes."
+        ],
+        [
+          "2026-04-04T05:54:12.0105325Z",
+          "Informational",
+          "Establishing network if not established already."
+        ],
+        [
+          "2026-04-04T05:54:12.0103632Z",
+          "Informational",
+          "Establishing user namespace if not established already."
+        ],
+        [
+          "2026-04-04T05:54:12.0098542Z",
+          "Informational",
+          "State: Starting, Action: MountingVolumes, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Mounting volumes for app-labfwd-qevzrtvntab46., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:54:11.9625815Z",
+          "Informational",
+          "Container is starting."
+        ],
+        [
+          "2026-04-04T05:54:11.9619464Z",
+          "Informational",
+          "Image appsvc/python:3.11_20260203.2.tuxprod is pulled from registry 10.1.0.4:13209"
+        ],
+        [
+          "2026-04-04T05:54:10.833632Z",
+          "Informational",
+          "Creating container with image: appsvc/kudulite:bullseye_20260204.5.tuxprod from registry: 10.1.0.6:13209 and fully qualified image name: 10.1.0.6:13209/appsvc/kudulite:bullseye_20260204.5.tuxprod"
+        ],
+        [
+          "2026-04-04T05:54:10.8335277Z",
+          "Informational",
+          "Successfully removed non-blocking flag from /podr/container/pipe/e1d155ce79e3_app-labfwd-qevzrtvntab46_kudu/stderr_f50398d521d04dedae7b669c448592f2."
+        ],
+        [
+          "2026-04-04T05:54:10.8334606Z",
+          "Informational",
+          "Successfully opened named pipe: /podr/container/pipe/e1d155ce79e3_app-labfwd-qevzrtvntab46_kudu/stderr_f50398d521d04dedae7b669c448592f2."
+        ],
+        [
+          "2026-04-04T05:54:10.833379Z",
+          "Informational",
+          "Opening named pipe /podr/container/pipe/e1d155ce79e3_app-labfwd-qevzrtvntab46_kudu/stderr_f50398d521d04dedae7b669c448592f2 for reading in non-blocking mode."
+        ],
+        [
+          "2026-04-04T05:54:10.8333049Z",
+          "Informational",
+          "Successfully created stderr named pipe at: /podr/container/pipe/e1d155ce79e3_app-labfwd-qevzrtvntab46_kudu/stderr_f50398d521d04dedae7b669c448592f2."
+        ],
+        [
+          "2026-04-04T05:54:10.833203Z",
+          "Informational",
+          "Creating stderr named pipe at /podr/container/pipe/e1d155ce79e3_app-labfwd-qevzrtvntab46_kudu/stderr_f50398d521d04dedae7b669c448592f2."
+        ],
+        [
+          "2026-04-04T05:54:10.8331032Z",
+          "Informational",
+          "Successfully removed non-blocking flag from /podr/container/pipe/e1d155ce79e3_app-labfwd-qevzrtvntab46_kudu/stdout_bc2c030466f546f89a2e423d0612626c."
+        ],
+        [
+          "2026-04-04T05:54:10.8330282Z",
+          "Informational",
+          "Successfully opened named pipe: /podr/container/pipe/e1d155ce79e3_app-labfwd-qevzrtvntab46_kudu/stdout_bc2c030466f546f89a2e423d0612626c."
+        ],
+        [
+          "2026-04-04T05:54:10.8329433Z",
+          "Informational",
+          "Opening named pipe /podr/container/pipe/e1d155ce79e3_app-labfwd-qevzrtvntab46_kudu/stdout_bc2c030466f546f89a2e423d0612626c for reading in non-blocking mode."
+        ],
+        [
+          "2026-04-04T05:54:10.8328586Z",
+          "Informational",
+          "Successfully created stdout named pipe at: /podr/container/pipe/e1d155ce79e3_app-labfwd-qevzrtvntab46_kudu/stdout_bc2c030466f546f89a2e423d0612626c."
+        ],
+        [
+          "2026-04-04T05:54:10.83269Z",
+          "Informational",
+          "Creating stdout named pipe at /podr/container/pipe/e1d155ce79e3_app-labfwd-qevzrtvntab46_kudu/stdout_bc2c030466f546f89a2e423d0612626c."
+        ],
+        [
+          "2026-04-04T05:54:10.8326181Z",
+          "Informational",
+          "Creating pipes for streaming container io."
+        ],
+        [
+          "2026-04-04T05:54:10.8325235Z",
+          "Informational",
+          "Creating container."
+        ],
+        [
+          "2026-04-04T05:54:10.6724888Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:54:10.6705306Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:54:10.6610868Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:54:10.6406044Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:54:10.3902018Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:54:10.379369Z",
+          "Informational",
+          "Nested mountpoint volatile/logs"
+        ],
+        [
+          "2026-04-04T05:54:10.2707515Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:54:10.2706023Z",
+          "Informational",
+          "Mounting volumes."
+        ],
+        [
+          "2026-04-04T05:54:10.2704922Z",
+          "Informational",
+          "Establishing network if not established already."
+        ],
+        [
+          "2026-04-04T05:54:10.2703857Z",
+          "Informational",
+          "Establishing user namespace if not established already."
+        ],
+        [
+          "2026-04-04T05:54:10.2685894Z",
+          "Informational",
+          "Container is starting."
+        ],
+        [
+          "2026-04-04T05:54:09.8080182Z",
+          "Informational",
+          "Pulling image: appsvc/kudulite:bullseye_20260204.5.tuxprod."
+        ],
+        [
+          "2026-04-04T05:54:09.8078781Z",
+          "Informational",
+          "Establishing network."
+        ],
+        [
+          "2026-04-04T05:54:09.8077122Z",
+          "Informational",
+          "Container start method called."
+        ],
+        [
+          "2026-04-04T05:54:09.6651584Z",
+          "Informational",
+          "Pulling image: appsvc/python:3.11_20260203.2.tuxprod."
+        ],
+        [
+          "2026-04-04T05:54:09.6650464Z",
+          "Informational",
+          "Establishing network."
+        ],
+        [
+          "2026-04-04T05:54:09.6649042Z",
+          "Informational",
+          "State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image 10.1.0.4:13209/appsvc/python:3.11_20260203.2.tuxprod for app-labfwd-qevzrtvntab46., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:54:09.6647529Z",
+          "Informational",
+          "Container start method called."
+        ],
+        [
+          "2026-04-04T05:54:09.6274019Z",
+          "Informational",
+          "State: Starting, Action: StartingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:54:06.7649621Z",
+          "Informational",
+          "State: Starting, Action: EstablishingSiteNetworks, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:51:01.3572284Z",
+          "Informational",
+          "Site is running with patch version PYTHON 3.11.14"
+        ],
+        [
+          "2026-04-04T05:51:01.306285Z",
+          "Informational",
+          "State: Started, Action: None, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:49:41, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Site started at 04/04/2026 05:51:01 (UTC), DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:51:01.305463Z",
+          "Informational",
+          "Site started."
+        ],
+        [
+          "2026-04-04T05:51:01.3051322Z",
+          "Informational",
+          "Site is running with deployment version: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+        ],
+        [
+          "2026-04-04T05:51:00.6512815Z",
+          "Informational",
+          "State: Starting, Action: WarmUpProbeSucceeded, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:49:41, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Site startup probe succeeded after 34.1067273 seconds., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:51:00.4316463Z",
+          "Informational",
+          "Site startup probe succeeded after 34.1067273 seconds."
+        ],
+        [
+          "2026-04-04T05:50:39.9148176Z",
+          "Informational",
+          "Kudu: app-labfwd-qevzrtvntab46 stopped."
+        ],
+        [
+          "2026-04-04T05:50:39.8958593Z",
+          "Informational",
+          "Container is terminated. Total time elapsed: 4015 ms."
+        ],
+        [
+          "2026-04-04T05:50:39.8951716Z",
+          "Informational",
+          "Container spec TerminationMessagePolicy  path "
+        ],
+        [
+          "2026-04-04T05:50:36.5246391Z",
+          "Informational",
+          "Deleting container: 2f2970a9e2af_app-labfwd-qevzrtvntab46_kudu. Retry count = 0"
+        ],
+        [
+          "2026-04-04T05:50:36.0726287Z",
+          "Informational",
+          "Stopping container: 2f2970a9e2af_app-labfwd-qevzrtvntab46_kudu."
+        ],
+        [
+          "2026-04-04T05:50:36.0710223Z",
+          "Informational",
+          "Stop and delete container. Retry count = 0"
+        ],
+        [
+          "2026-04-04T05:50:35.8805596Z",
+          "Informational",
+          "Container is terminating. Grace period: 0 seconds."
+        ],
+        [
+          "2026-04-04T05:50:26.3238027Z",
+          "Informational",
+          "State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:49:41, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:50:26.3237464Z",
+          "Informational",
+          "State: Starting, Action: InitiatingSiteWarmUpProbe, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:49:41, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Container app-labfwd-qevzrtvntab46 successfully created and is running., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:50:26.3231164Z",
+          "Informational",
+          "Container start method finished after 1991 ms."
+        ],
+        [
+          "2026-04-04T05:50:26.2030978Z",
+          "Informational",
+          "State: Starting, Action: CreatingContainer, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:49:41, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Container app-labfwd-qevzrtvntab46 successfully created and is running., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:50:26.2029642Z",
+          "Informational",
+          "Container is running."
+        ],
+        [
+          "2026-04-04T05:50:26.2027127Z",
+          "Informational",
+          "Starting metrics collection."
+        ],
+        [
+          "2026-04-04T05:50:26.2013524Z",
+          "Informational",
+          "Starting watchers and probes."
+        ],
+        [
+          "2026-04-04T05:50:26.1016424Z",
+          "Informational",
+          "Starting container: 11ac6829b5b6_app-labfwd-qevzrtvntab46."
+        ],
+        [
+          "2026-04-04T05:50:25.2674805Z",
+          "Informational",
+          "Creating container with image: appsvc/python:3.11_20260203.2.tuxprod from registry: 10.1.0.6:13209 and fully qualified image name: 10.1.0.6:13209/appsvc/python:3.11_20260203.2.tuxprod"
+        ],
+        [
+          "2026-04-04T05:50:25.2668169Z",
+          "Informational",
+          "Successfully removed non-blocking flag from /podr/container/pipe/11ac6829b5b6_app-labfwd-qevzrtvntab46/stderr_95b5b2ad7edc49c4a5ade8e98dfa79d7."
+        ],
+        [
+          "2026-04-04T05:50:25.2667409Z",
+          "Informational",
+          "Successfully opened named pipe: /podr/container/pipe/11ac6829b5b6_app-labfwd-qevzrtvntab46/stderr_95b5b2ad7edc49c4a5ade8e98dfa79d7."
+        ],
+        [
+          "2026-04-04T05:50:25.2666514Z",
+          "Informational",
+          "Opening named pipe /podr/container/pipe/11ac6829b5b6_app-labfwd-qevzrtvntab46/stderr_95b5b2ad7edc49c4a5ade8e98dfa79d7 for reading in non-blocking mode."
+        ],
+        [
+          "2026-04-04T05:50:25.2665746Z",
+          "Informational",
+          "Successfully created stderr named pipe at: /podr/container/pipe/11ac6829b5b6_app-labfwd-qevzrtvntab46/stderr_95b5b2ad7edc49c4a5ade8e98dfa79d7."
+        ],
+        [
+          "2026-04-04T05:50:25.2663821Z",
+          "Informational",
+          "Creating stderr named pipe at /podr/container/pipe/11ac6829b5b6_app-labfwd-qevzrtvntab46/stderr_95b5b2ad7edc49c4a5ade8e98dfa79d7."
+        ],
+        [
+          "2026-04-04T05:50:25.2462928Z",
+          "Informational",
+          "Successfully removed non-blocking flag from /podr/container/pipe/11ac6829b5b6_app-labfwd-qevzrtvntab46/stdout_c0e2e392700c48ea802aa176fa220bc4."
+        ],
+        [
+          "2026-04-04T05:50:25.2462166Z",
+          "Informational",
+          "Successfully opened named pipe: /podr/container/pipe/11ac6829b5b6_app-labfwd-qevzrtvntab46/stdout_c0e2e392700c48ea802aa176fa220bc4."
+        ],
+        [
+          "2026-04-04T05:50:25.246122Z",
+          "Informational",
+          "Opening named pipe /podr/container/pipe/11ac6829b5b6_app-labfwd-qevzrtvntab46/stdout_c0e2e392700c48ea802aa176fa220bc4 for reading in non-blocking mode."
+        ],
+        [
+          "2026-04-04T05:50:25.2460496Z",
+          "Informational",
+          "Successfully created stdout named pipe at: /podr/container/pipe/11ac6829b5b6_app-labfwd-qevzrtvntab46/stdout_c0e2e392700c48ea802aa176fa220bc4."
+        ],
+        [
+          "2026-04-04T05:50:25.2458568Z",
+          "Informational",
+          "Creating stdout named pipe at /podr/container/pipe/11ac6829b5b6_app-labfwd-qevzrtvntab46/stdout_c0e2e392700c48ea802aa176fa220bc4."
+        ],
+        [
+          "2026-04-04T05:50:25.245787Z",
+          "Informational",
+          "Creating pipes for streaming container io."
+        ],
+        [
+          "2026-04-04T05:50:25.2457087Z",
+          "Informational",
+          "Creating container."
+        ],
+        [
+          "2026-04-04T05:50:25.2455962Z",
+          "Informational",
+          "State: Starting, Action: CreatingContainer, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:49:41, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Finished pulling container image and mounting volumes for app-labfwd-qevzrtvntab46. Allocatinng the rest of the container resources to finish container creation., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:50:24.8729173Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:50:24.7946571Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:50:24.7940373Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:50:24.7335625Z",
+          "Informational",
+          "Nested mountpoint volatile/logs"
+        ],
+        [
+          "2026-04-04T05:50:24.7027153Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:50:24.7025593Z",
+          "Informational",
+          "Mounting volumes."
+        ],
+        [
+          "2026-04-04T05:50:24.7024655Z",
+          "Informational",
+          "Establishing network if not established already."
+        ],
+        [
+          "2026-04-04T05:50:24.7023837Z",
+          "Informational",
+          "Establishing user namespace if not established already."
+        ],
+        [
+          "2026-04-04T05:50:24.7022997Z",
+          "Informational",
+          "State: Starting, Action: MountingVolumes, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:49:41, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Mounting volumes for app-labfwd-qevzrtvntab46., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:50:24.7022077Z",
+          "Informational",
+          "Container is starting."
+        ],
+        [
+          "2026-04-04T05:50:24.3318513Z",
+          "Informational",
+          "Pulling image: appsvc/python:3.11_20260203.2.tuxprod."
+        ],
+        [
+          "2026-04-04T05:50:24.3317243Z",
+          "Informational",
+          "Establishing network."
+        ],
+        [
+          "2026-04-04T05:50:24.3316198Z",
+          "Informational",
+          "State: Starting, Action: PullingImage, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:49:41, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Pulling image 10.1.0.6:13209/appsvc/python:3.11_20260203.2.tuxprod for app-labfwd-qevzrtvntab46., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:50:24.3315403Z",
+          "Informational",
+          "Container start method called."
+        ],
+        [
+          "2026-04-04T05:50:24.3313954Z",
+          "Warning",
+          "State: Starting, Action: StartingSiteContainers, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:49:41, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Site stopped at 04/04/2026 05:49:48 (UTC), DetailsLevel: WARN"
+        ],
+        [
+          "2026-04-04T05:50:22.2577914Z",
+          "Warning",
+          "State: Starting, Action: EstablishingSiteNetworks, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:49:41, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Site stopped at 04/04/2026 05:49:48 (UTC), DetailsLevel: WARN"
+        ],
+        [
+          "2026-04-04T05:49:57.3325791Z",
+          "Informational",
+          "Container start method finished after 1959 ms."
+        ],
+        [
+          "2026-04-04T05:49:57.2739048Z",
+          "Informational",
+          "Container is running."
+        ],
+        [
+          "2026-04-04T05:49:57.2728797Z",
+          "Informational",
+          "Starting metrics collection."
+        ],
+        [
+          "2026-04-04T05:49:57.2609223Z",
+          "Informational",
+          "Starting watchers and probes."
+        ],
+        [
+          "2026-04-04T05:49:57.198605Z",
+          "Informational",
+          "Starting container: 14b960ff8dc1_app-labfwd-qevzrtvntab46_kudu."
+        ],
+        [
+          "2026-04-04T05:49:56.2963031Z",
+          "Informational",
+          "Creating container with image: appsvc/kudulite:bullseye_20260204.5.tuxprod from registry: 10.1.0.6:13209 and fully qualified image name: 10.1.0.6:13209/appsvc/kudulite:bullseye_20260204.5.tuxprod"
+        ],
+        [
+          "2026-04-04T05:49:56.2961349Z",
+          "Informational",
+          "Successfully removed non-blocking flag from /podr/container/pipe/14b960ff8dc1_app-labfwd-qevzrtvntab46_kudu/stderr_17c231f5a0e14a0da6b62f886801a2b6."
+        ],
+        [
+          "2026-04-04T05:49:56.2957751Z",
+          "Informational",
+          "Successfully opened named pipe: /podr/container/pipe/14b960ff8dc1_app-labfwd-qevzrtvntab46_kudu/stderr_17c231f5a0e14a0da6b62f886801a2b6."
+        ],
+        [
+          "2026-04-04T05:49:56.2952135Z",
+          "Informational",
+          "Opening named pipe /podr/container/pipe/14b960ff8dc1_app-labfwd-qevzrtvntab46_kudu/stderr_17c231f5a0e14a0da6b62f886801a2b6 for reading in non-blocking mode."
+        ],
+        [
+          "2026-04-04T05:49:56.2357899Z",
+          "Informational",
+          "Successfully created stderr named pipe at: /podr/container/pipe/14b960ff8dc1_app-labfwd-qevzrtvntab46_kudu/stderr_17c231f5a0e14a0da6b62f886801a2b6."
+        ],
+        [
+          "2026-04-04T05:49:56.2355689Z",
+          "Informational",
+          "Creating stderr named pipe at /podr/container/pipe/14b960ff8dc1_app-labfwd-qevzrtvntab46_kudu/stderr_17c231f5a0e14a0da6b62f886801a2b6."
+        ],
+        [
+          "2026-04-04T05:49:56.225279Z",
+          "Informational",
+          "Successfully removed non-blocking flag from /podr/container/pipe/14b960ff8dc1_app-labfwd-qevzrtvntab46_kudu/stdout_3dea6ecda34c489fb9c6e10fe38e2a71."
+        ],
+        [
+          "2026-04-04T05:49:56.225142Z",
+          "Informational",
+          "Successfully opened named pipe: /podr/container/pipe/14b960ff8dc1_app-labfwd-qevzrtvntab46_kudu/stdout_3dea6ecda34c489fb9c6e10fe38e2a71."
+        ],
+        [
+          "2026-04-04T05:49:56.2249892Z",
+          "Informational",
+          "Opening named pipe /podr/container/pipe/14b960ff8dc1_app-labfwd-qevzrtvntab46_kudu/stdout_3dea6ecda34c489fb9c6e10fe38e2a71 for reading in non-blocking mode."
+        ],
+        [
+          "2026-04-04T05:49:56.2246931Z",
+          "Informational",
+          "Successfully created stdout named pipe at: /podr/container/pipe/14b960ff8dc1_app-labfwd-qevzrtvntab46_kudu/stdout_3dea6ecda34c489fb9c6e10fe38e2a71."
+        ],
+        [
+          "2026-04-04T05:49:56.2242709Z",
+          "Informational",
+          "Creating stdout named pipe at /podr/container/pipe/14b960ff8dc1_app-labfwd-qevzrtvntab46_kudu/stdout_3dea6ecda34c489fb9c6e10fe38e2a71."
+        ],
+        [
+          "2026-04-04T05:49:56.224134Z",
+          "Informational",
+          "Creating pipes for streaming container io."
+        ],
+        [
+          "2026-04-04T05:49:56.2236297Z",
+          "Informational",
+          "Creating container."
+        ],
+        [
+          "2026-04-04T05:49:56.1753253Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:49:56.1661453Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:49:56.1262342Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:49:55.9929145Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:49:55.8224073Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:49:55.7329469Z",
+          "Informational",
+          "Nested mountpoint volatile/logs"
+        ],
+        [
+          "2026-04-04T05:49:55.6936664Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:49:55.6935Z",
+          "Informational",
+          "Mounting volumes."
+        ],
+        [
+          "2026-04-04T05:49:55.6933833Z",
+          "Informational",
+          "Establishing network if not established already."
+        ],
+        [
+          "2026-04-04T05:49:55.6932938Z",
+          "Informational",
+          "Establishing user namespace if not established already."
+        ],
+        [
+          "2026-04-04T05:49:55.6931913Z",
+          "Informational",
+          "Container is starting."
+        ],
+        [
+          "2026-04-04T05:49:55.3721834Z",
+          "Informational",
+          "Pulling image: appsvc/kudulite:bullseye_20260204.5.tuxprod."
+        ],
+        [
+          "2026-04-04T05:49:55.3720754Z",
+          "Informational",
+          "Establishing network."
+        ],
+        [
+          "2026-04-04T05:49:55.3718312Z",
+          "Informational",
+          "Container start method called."
+        ],
+        [
+          "2026-04-04T05:49:47.327081Z",
+          "Informational",
+          "Site: app-labfwd-qevzrtvntab46 stopped."
+        ],
+        [
+          "2026-04-04T05:49:47.3265363Z",
+          "Error",
+          "State: Stopping, Action: CancellingStartup, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:49:41, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Site container: app-labfwd-qevzrtvntab46 terminated during site startup. Cancelling site startup., DetailsLevel: ERR"
+        ],
+        [
+          "2026-04-04T05:49:47.3263808Z",
+          "Error",
+          "Site container: app-labfwd-qevzrtvntab46 terminated during site startup."
+        ],
+        [
+          "2026-04-04T05:49:47.3260583Z",
+          "Informational",
+          "Container is terminated. Total time elapsed: 6117 ms."
+        ],
+        [
+          "2026-04-04T05:49:47.3256605Z",
+          "Informational",
+          "Container spec TerminationMessagePolicy  path "
+        ],
+        [
+          "2026-04-04T05:49:46.3731783Z",
+          "Informational",
+          "Deleting container: 83a23b6b8a56_app-labfwd-qevzrtvntab46. Retry count = 0"
+        ],
+        [
+          "2026-04-04T05:49:41.2574701Z",
+          "Informational",
+          "Stopping container: 83a23b6b8a56_app-labfwd-qevzrtvntab46."
+        ],
+        [
+          "2026-04-04T05:49:41.2572734Z",
+          "Informational",
+          "Stop and delete container. Retry count = 0"
+        ],
+        [
+          "2026-04-04T05:49:41.2078085Z",
+          "Informational",
+          "Container is terminating. Grace period: 5 seconds."
+        ],
+        [
+          "2026-04-04T05:49:41.2076448Z",
+          "Error",
+          "State: Stopping, Action: StoppingSiteContainers, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:49:41, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: ERR"
+        ],
+        [
+          "2026-04-04T05:49:41.2072311Z",
+          "Error",
+          "State: Stopping, Action: StoppingSite, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:49:41, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: ERR"
+        ],
+        [
+          "2026-04-04T05:49:41.2068033Z",
+          "Error",
+          "Failed to start site. Revert by stopping site."
+        ],
+        [
+          "2026-04-04T05:49:41.1981078Z",
+          "Error",
+          "State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:49:41, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: ERR"
+        ],
+        [
+          "2026-04-04T05:49:41.0860195Z",
+          "Informational",
+          "Site startup probe failed after 230.0164258 seconds."
+        ],
+        [
+          "2026-04-04T05:45:51.0674516Z",
+          "Informational",
+          "State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:36:25, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:45:51.0672079Z",
+          "Informational",
+          "State: Starting, Action: InitiatingSiteWarmUpProbe, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:36:25, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Container app-labfwd-qevzrtvntab46 successfully created and is running., DetailsLevel: INFO"
+        ]
+      ]
+    }
+  ]
+}

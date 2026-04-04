@@ -1,0 +1,1 @@
+{"endpoint_counters":{"diag_stats":1},"outbound_call_counters":{"with-pooling":{"failures":0,"successes":0},"without-pooling":{"failures":0,"successes":0}},"pid":1907,"process_start_time":"2026-04-04T05:05:40.566103+00:00","request_count":1,"uptime_seconds":1642.522}

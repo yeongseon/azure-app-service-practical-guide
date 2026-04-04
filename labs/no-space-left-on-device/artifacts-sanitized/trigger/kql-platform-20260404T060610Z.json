@@ -1,0 +1,1023 @@
+{
+  "tables": [
+    {
+      "columns": [
+        {
+          "name": "TimeGenerated",
+          "type": "datetime"
+        },
+        {
+          "name": "Level",
+          "type": "string"
+        },
+        {
+          "name": "Message",
+          "type": "string"
+        }
+      ],
+      "name": "PrimaryResult",
+      "rows": [
+        [
+          "2026-04-04T05:30:22.2136378Z",
+          "Informational",
+          "Site is running with patch version PYTHON 3.11.14"
+        ],
+        [
+          "2026-04-04T05:30:22.1950903Z",
+          "Informational",
+          "State: Started, Action: None, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:26:28, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Site started at 04/04/2026 05:30:22 (UTC), DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:30:22.1946741Z",
+          "Informational",
+          "Site started."
+        ],
+        [
+          "2026-04-04T05:30:22.1941543Z",
+          "Informational",
+          "Site is running with deployment version: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+        ],
+        [
+          "2026-04-04T05:30:21.6765548Z",
+          "Informational",
+          "State: Starting, Action: WarmUpProbeSucceeded, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:26:28, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Site startup probe succeeded after 51.3835802 seconds., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:30:21.44011Z",
+          "Informational",
+          "Site startup probe succeeded after 51.3835802 seconds."
+        ],
+        [
+          "2026-04-04T05:29:46.0549338Z",
+          "Informational",
+          "Kudu: app-labnospace-ii2quhiube3ma stopped."
+        ],
+        [
+          "2026-04-04T05:29:46.0275727Z",
+          "Informational",
+          "Container is terminated. Total time elapsed: 5717 ms."
+        ],
+        [
+          "2026-04-04T05:29:46.0272104Z",
+          "Informational",
+          "Container spec TerminationMessagePolicy  path "
+        ],
+        [
+          "2026-04-04T05:29:41.1993795Z",
+          "Informational",
+          "Deleting container: bfbc6aa50a51_app-labnospace-ii2quhiube3ma_kudu. Retry count = 0"
+        ],
+        [
+          "2026-04-04T05:29:40.4095683Z",
+          "Informational",
+          "Stopping container: bfbc6aa50a51_app-labnospace-ii2quhiube3ma_kudu."
+        ],
+        [
+          "2026-04-04T05:29:40.4088925Z",
+          "Informational",
+          "Stop and delete container. Retry count = 0"
+        ],
+        [
+          "2026-04-04T05:29:40.3092692Z",
+          "Informational",
+          "Container is terminating. Grace period: 0 seconds."
+        ],
+        [
+          "2026-04-04T05:29:30.0560532Z",
+          "Informational",
+          "State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:26:28, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:29:30.0559846Z",
+          "Informational",
+          "State: Starting, Action: InitiatingSiteWarmUpProbe, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:26:28, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Container app-labnospace-ii2quhiube3ma successfully created and is running., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:29:29.8699238Z",
+          "Informational",
+          "Container start method finished after 3343 ms."
+        ],
+        [
+          "2026-04-04T05:29:29.6515743Z",
+          "Informational",
+          "State: Starting, Action: CreatingContainer, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:26:28, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Container app-labnospace-ii2quhiube3ma successfully created and is running., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:29:29.6311324Z",
+          "Informational",
+          "Container is running."
+        ],
+        [
+          "2026-04-04T05:29:29.6297481Z",
+          "Informational",
+          "Starting metrics collection."
+        ],
+        [
+          "2026-04-04T05:29:29.6191765Z",
+          "Informational",
+          "Starting watchers and probes."
+        ],
+        [
+          "2026-04-04T05:29:29.4902232Z",
+          "Informational",
+          "Starting container: c544fa673fe1_app-labnospace-ii2quhiube3ma."
+        ],
+        [
+          "2026-04-04T05:29:28.4715122Z",
+          "Informational",
+          "Creating container with image: appsvc/python:3.11_20260203.2.tuxprod from registry: 10.1.0.4:13209 and fully qualified image name: 10.1.0.4:13209/appsvc/python:3.11_20260203.2.tuxprod"
+        ],
+        [
+          "2026-04-04T05:29:28.4623657Z",
+          "Informational",
+          "Successfully removed non-blocking flag from /podr/container/pipe/c544fa673fe1_app-labnospace-ii2quhiube3ma/stderr_b607633d381f4c9abdfe97c81fe18228."
+        ],
+        [
+          "2026-04-04T05:29:28.461937Z",
+          "Informational",
+          "Successfully opened named pipe: /podr/container/pipe/c544fa673fe1_app-labnospace-ii2quhiube3ma/stderr_b607633d381f4c9abdfe97c81fe18228."
+        ],
+        [
+          "2026-04-04T05:29:28.4615446Z",
+          "Informational",
+          "Opening named pipe /podr/container/pipe/c544fa673fe1_app-labnospace-ii2quhiube3ma/stderr_b607633d381f4c9abdfe97c81fe18228 for reading in non-blocking mode."
+        ],
+        [
+          "2026-04-04T05:29:28.4537952Z",
+          "Informational",
+          "Successfully created stderr named pipe at: /podr/container/pipe/c544fa673fe1_app-labnospace-ii2quhiube3ma/stderr_b607633d381f4c9abdfe97c81fe18228."
+        ],
+        [
+          "2026-04-04T05:29:28.4535389Z",
+          "Informational",
+          "Creating stderr named pipe at /podr/container/pipe/c544fa673fe1_app-labnospace-ii2quhiube3ma/stderr_b607633d381f4c9abdfe97c81fe18228."
+        ],
+        [
+          "2026-04-04T05:29:28.4442174Z",
+          "Informational",
+          "Successfully removed non-blocking flag from /podr/container/pipe/c544fa673fe1_app-labnospace-ii2quhiube3ma/stdout_58c3bd95cd2547b89329f60e95089e11."
+        ],
+        [
+          "2026-04-04T05:29:28.4440867Z",
+          "Informational",
+          "Successfully opened named pipe: /podr/container/pipe/c544fa673fe1_app-labnospace-ii2quhiube3ma/stdout_58c3bd95cd2547b89329f60e95089e11."
+        ],
+        [
+          "2026-04-04T05:29:28.4437854Z",
+          "Informational",
+          "Opening named pipe /podr/container/pipe/c544fa673fe1_app-labnospace-ii2quhiube3ma/stdout_58c3bd95cd2547b89329f60e95089e11 for reading in non-blocking mode."
+        ],
+        [
+          "2026-04-04T05:29:28.4434314Z",
+          "Informational",
+          "Successfully created stdout named pipe at: /podr/container/pipe/c544fa673fe1_app-labnospace-ii2quhiube3ma/stdout_58c3bd95cd2547b89329f60e95089e11."
+        ],
+        [
+          "2026-04-04T05:29:28.4346567Z",
+          "Informational",
+          "Creating stdout named pipe at /podr/container/pipe/c544fa673fe1_app-labnospace-ii2quhiube3ma/stdout_58c3bd95cd2547b89329f60e95089e11."
+        ],
+        [
+          "2026-04-04T05:29:28.4323803Z",
+          "Informational",
+          "Creating pipes for streaming container io."
+        ],
+        [
+          "2026-04-04T05:29:28.3849723Z",
+          "Informational",
+          "Creating container."
+        ],
+        [
+          "2026-04-04T05:29:28.384479Z",
+          "Informational",
+          "State: Starting, Action: CreatingContainer, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:26:28, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Finished pulling container image and mounting volumes for app-labnospace-ii2quhiube3ma. Allocatinng the rest of the container resources to finish container creation., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:29:27.5621739Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:29:27.3704017Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:29:27.3692567Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:29:27.3104003Z",
+          "Informational",
+          "Nested mountpoint volatile/logs"
+        ],
+        [
+          "2026-04-04T05:29:27.2706039Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:29:27.2620222Z",
+          "Informational",
+          "Mounting volumes."
+        ],
+        [
+          "2026-04-04T05:29:27.261689Z",
+          "Informational",
+          "Establishing network if not established already."
+        ],
+        [
+          "2026-04-04T05:29:27.260894Z",
+          "Informational",
+          "Establishing user namespace if not established already."
+        ],
+        [
+          "2026-04-04T05:29:27.2607288Z",
+          "Informational",
+          "State: Starting, Action: MountingVolumes, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:26:28, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Mounting volumes for app-labnospace-ii2quhiube3ma., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:29:27.260403Z",
+          "Informational",
+          "Container is starting."
+        ],
+        [
+          "2026-04-04T05:29:26.5556751Z",
+          "Informational",
+          "Pulling image: appsvc/python:3.11_20260203.2.tuxprod."
+        ],
+        [
+          "2026-04-04T05:29:26.5546262Z",
+          "Informational",
+          "Establishing network."
+        ],
+        [
+          "2026-04-04T05:29:26.5284421Z",
+          "Informational",
+          "State: Starting, Action: PullingImage, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:26:28, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Pulling image 10.1.0.4:13209/appsvc/python:3.11_20260203.2.tuxprod for app-labnospace-ii2quhiube3ma., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:29:26.5262631Z",
+          "Informational",
+          "Container start method called."
+        ],
+        [
+          "2026-04-04T05:29:26.5260478Z",
+          "Warning",
+          "State: Starting, Action: StartingSiteContainers, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:26:28, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Site stopped at 04/04/2026 05:26:29 (UTC), DetailsLevel: WARN"
+        ],
+        [
+          "2026-04-04T05:29:24.2235092Z",
+          "Warning",
+          "State: Starting, Action: EstablishingSiteNetworks, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:26:28, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Site stopped at 04/04/2026 05:26:29 (UTC), DetailsLevel: WARN"
+        ],
+        [
+          "2026-04-04T05:27:40.4164924Z",
+          "Informational",
+          "Container start method finished after 2921 ms."
+        ],
+        [
+          "2026-04-04T05:27:39.9676466Z",
+          "Informational",
+          "Container is running."
+        ],
+        [
+          "2026-04-04T05:27:39.966543Z",
+          "Informational",
+          "Starting metrics collection."
+        ],
+        [
+          "2026-04-04T05:27:39.9461587Z",
+          "Informational",
+          "Starting watchers and probes."
+        ],
+        [
+          "2026-04-04T05:27:39.8462927Z",
+          "Informational",
+          "Starting container: 3326c3ac16a2_app-labnospace-ii2quhiube3ma_kudu."
+        ],
+        [
+          "2026-04-04T05:27:38.8647519Z",
+          "Informational",
+          "Creating container with image: appsvc/kudulite:bullseye_20260204.5.tuxprod from registry: 10.1.0.4:13209 and fully qualified image name: 10.1.0.4:13209/appsvc/kudulite:bullseye_20260204.5.tuxprod"
+        ],
+        [
+          "2026-04-04T05:27:38.8640214Z",
+          "Informational",
+          "Successfully removed non-blocking flag from /podr/container/pipe/3326c3ac16a2_app-labnospace-ii2quhiube3ma_kudu/stderr_0c9791a786864277a83154829d43c785."
+        ],
+        [
+          "2026-04-04T05:27:38.8635353Z",
+          "Informational",
+          "Successfully opened named pipe: /podr/container/pipe/3326c3ac16a2_app-labnospace-ii2quhiube3ma_kudu/stderr_0c9791a786864277a83154829d43c785."
+        ],
+        [
+          "2026-04-04T05:27:38.8462108Z",
+          "Informational",
+          "Opening named pipe /podr/container/pipe/3326c3ac16a2_app-labnospace-ii2quhiube3ma_kudu/stderr_0c9791a786864277a83154829d43c785 for reading in non-blocking mode."
+        ],
+        [
+          "2026-04-04T05:27:38.8460259Z",
+          "Informational",
+          "Successfully created stderr named pipe at: /podr/container/pipe/3326c3ac16a2_app-labnospace-ii2quhiube3ma_kudu/stderr_0c9791a786864277a83154829d43c785."
+        ],
+        [
+          "2026-04-04T05:27:38.8452219Z",
+          "Informational",
+          "Creating stderr named pipe at /podr/container/pipe/3326c3ac16a2_app-labnospace-ii2quhiube3ma_kudu/stderr_0c9791a786864277a83154829d43c785."
+        ],
+        [
+          "2026-04-04T05:27:38.8445853Z",
+          "Informational",
+          "Successfully removed non-blocking flag from /podr/container/pipe/3326c3ac16a2_app-labnospace-ii2quhiube3ma_kudu/stdout_80958d9dbf7e4c4cbac95489d8ad0e37."
+        ],
+        [
+          "2026-04-04T05:27:38.8442992Z",
+          "Informational",
+          "Successfully opened named pipe: /podr/container/pipe/3326c3ac16a2_app-labnospace-ii2quhiube3ma_kudu/stdout_80958d9dbf7e4c4cbac95489d8ad0e37."
+        ],
+        [
+          "2026-04-04T05:27:38.8064147Z",
+          "Informational",
+          "Opening named pipe /podr/container/pipe/3326c3ac16a2_app-labnospace-ii2quhiube3ma_kudu/stdout_80958d9dbf7e4c4cbac95489d8ad0e37 for reading in non-blocking mode."
+        ],
+        [
+          "2026-04-04T05:27:38.8062337Z",
+          "Informational",
+          "Successfully created stdout named pipe at: /podr/container/pipe/3326c3ac16a2_app-labnospace-ii2quhiube3ma_kudu/stdout_80958d9dbf7e4c4cbac95489d8ad0e37."
+        ],
+        [
+          "2026-04-04T05:27:38.8058704Z",
+          "Informational",
+          "Creating stdout named pipe at /podr/container/pipe/3326c3ac16a2_app-labnospace-ii2quhiube3ma_kudu/stdout_80958d9dbf7e4c4cbac95489d8ad0e37."
+        ],
+        [
+          "2026-04-04T05:27:38.8057426Z",
+          "Informational",
+          "Creating pipes for streaming container io."
+        ],
+        [
+          "2026-04-04T05:27:38.8055602Z",
+          "Informational",
+          "Creating container."
+        ],
+        [
+          "2026-04-04T05:27:38.6359698Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:27:38.63525Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:27:38.4867027Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:27:38.0301457Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:27:37.9497884Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:27:37.8322547Z",
+          "Informational",
+          "Nested mountpoint volatile/logs"
+        ],
+        [
+          "2026-04-04T05:27:37.7428358Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:27:37.7426226Z",
+          "Informational",
+          "Mounting volumes."
+        ],
+        [
+          "2026-04-04T05:27:37.7424684Z",
+          "Informational",
+          "Establishing network if not established already."
+        ],
+        [
+          "2026-04-04T05:27:37.7423429Z",
+          "Informational",
+          "Establishing user namespace if not established already."
+        ],
+        [
+          "2026-04-04T05:27:37.7421529Z",
+          "Informational",
+          "Container is starting."
+        ],
+        [
+          "2026-04-04T05:27:37.4883974Z",
+          "Informational",
+          "Pulling image: appsvc/kudulite:bullseye_20260204.5.tuxprod."
+        ],
+        [
+          "2026-04-04T05:27:37.4882032Z",
+          "Informational",
+          "Establishing network."
+        ],
+        [
+          "2026-04-04T05:27:37.4869438Z",
+          "Informational",
+          "Container start method called."
+        ],
+        [
+          "2026-04-04T05:26:28.8005837Z",
+          "Informational",
+          "Site: app-labnospace-ii2quhiube3ma stopped."
+        ],
+        [
+          "2026-04-04T05:26:28.8005507Z",
+          "Error",
+          "State: Stopping, Action: StoppingSiteContainers, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:26:28, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Site container: app-labnospace-ii2quhiube3ma terminated during site startup. Cancelling site startup., DetailsLevel: ERR"
+        ],
+        [
+          "2026-04-04T05:26:28.7918864Z",
+          "Error",
+          "State: Stopping, Action: StoppingSite, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:26:28, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Site container: app-labnospace-ii2quhiube3ma terminated during site startup. Cancelling site startup., DetailsLevel: ERR"
+        ],
+        [
+          "2026-04-04T05:26:28.7824963Z",
+          "Error",
+          "Failed to start site. Revert by stopping site."
+        ],
+        [
+          "2026-04-04T05:26:28.7616632Z",
+          "Error",
+          "State: Stopping, Action: CancellingStartup, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:26:28, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Site container: app-labnospace-ii2quhiube3ma terminated during site startup. Cancelling site startup., DetailsLevel: ERR"
+        ],
+        [
+          "2026-04-04T05:26:28.5439497Z",
+          "Informational",
+          "Site startup probe failed after 39.3401642 seconds."
+        ],
+        [
+          "2026-04-04T05:26:28.5336945Z",
+          "Error",
+          "State: Stopping, Action: CancellingStartup, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:22:41, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Site container: app-labnospace-ii2quhiube3ma terminated during site startup. Cancelling site startup., DetailsLevel: ERR"
+        ],
+        [
+          "2026-04-04T05:26:28.5328041Z",
+          "Error",
+          "Site container: app-labnospace-ii2quhiube3ma terminated during site startup."
+        ],
+        [
+          "2026-04-04T05:26:28.5316855Z",
+          "Informational",
+          "Container is terminated. Total time elapsed: 723 ms."
+        ],
+        [
+          "2026-04-04T05:26:28.5308777Z",
+          "Informational",
+          "Container spec TerminationMessagePolicy  path "
+        ],
+        [
+          "2026-04-04T05:26:27.9142684Z",
+          "Informational",
+          "Deleting container: 5f5adff4b681_app-labnospace-ii2quhiube3ma. Retry count = 0"
+        ],
+        [
+          "2026-04-04T05:26:27.8087115Z",
+          "Informational",
+          "Stopping container: 5f5adff4b681_app-labnospace-ii2quhiube3ma."
+        ],
+        [
+          "2026-04-04T05:26:27.8085747Z",
+          "Informational",
+          "Stop and delete container. Retry count = 0"
+        ],
+        [
+          "2026-04-04T05:26:27.8078764Z",
+          "Informational",
+          "Container is terminating. Grace period: 5 seconds."
+        ],
+        [
+          "2026-04-04T05:26:27.8001011Z",
+          "Warning",
+          "Container has finished running with exit code: 1."
+        ],
+        [
+          "2026-04-04T05:25:49.1747586Z",
+          "Informational",
+          "State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:22:41, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:25:49.1747142Z",
+          "Informational",
+          "State: Starting, Action: InitiatingSiteWarmUpProbe, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:22:41, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Container app-labnospace-ii2quhiube3ma successfully created and is running., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:25:49.1563916Z",
+          "Informational",
+          "Container start method finished after 2264 ms."
+        ],
+        [
+          "2026-04-04T05:25:48.6851259Z",
+          "Informational",
+          "State: Starting, Action: CreatingContainer, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:22:41, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Container app-labnospace-ii2quhiube3ma successfully created and is running., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:25:48.6687018Z",
+          "Informational",
+          "Container is running."
+        ],
+        [
+          "2026-04-04T05:25:48.6665382Z",
+          "Informational",
+          "Starting metrics collection."
+        ],
+        [
+          "2026-04-04T05:25:48.6586629Z",
+          "Informational",
+          "Starting watchers and probes."
+        ],
+        [
+          "2026-04-04T05:25:48.5901196Z",
+          "Informational",
+          "Starting container: 5f5adff4b681_app-labnospace-ii2quhiube3ma."
+        ],
+        [
+          "2026-04-04T05:25:47.8471361Z",
+          "Informational",
+          "Creating container with image: appsvc/python:3.11_20260203.2.tuxprod from registry: 10.1.0.4:13209 and fully qualified image name: 10.1.0.4:13209/appsvc/python:3.11_20260203.2.tuxprod"
+        ],
+        [
+          "2026-04-04T05:25:47.8380595Z",
+          "Informational",
+          "Successfully removed non-blocking flag from /podr/container/pipe/5f5adff4b681_app-labnospace-ii2quhiube3ma/stderr_2bf5ce8424684658840b10546c442e5e."
+        ],
+        [
+          "2026-04-04T05:25:47.8377275Z",
+          "Informational",
+          "Successfully opened named pipe: /podr/container/pipe/5f5adff4b681_app-labnospace-ii2quhiube3ma/stderr_2bf5ce8424684658840b10546c442e5e."
+        ],
+        [
+          "2026-04-04T05:25:47.8369317Z",
+          "Informational",
+          "Opening named pipe /podr/container/pipe/5f5adff4b681_app-labnospace-ii2quhiube3ma/stderr_2bf5ce8424684658840b10546c442e5e for reading in non-blocking mode."
+        ],
+        [
+          "2026-04-04T05:25:47.8257498Z",
+          "Informational",
+          "Successfully created stderr named pipe at: /podr/container/pipe/5f5adff4b681_app-labnospace-ii2quhiube3ma/stderr_2bf5ce8424684658840b10546c442e5e."
+        ],
+        [
+          "2026-04-04T05:25:47.7895344Z",
+          "Informational",
+          "Creating stderr named pipe at /podr/container/pipe/5f5adff4b681_app-labnospace-ii2quhiube3ma/stderr_2bf5ce8424684658840b10546c442e5e."
+        ],
+        [
+          "2026-04-04T05:25:47.7588152Z",
+          "Informational",
+          "Successfully removed non-blocking flag from /podr/container/pipe/5f5adff4b681_app-labnospace-ii2quhiube3ma/stdout_e62bb4f62bd84293a9fe81e38f189d72."
+        ],
+        [
+          "2026-04-04T05:25:47.720198Z",
+          "Informational",
+          "Successfully opened named pipe: /podr/container/pipe/5f5adff4b681_app-labnospace-ii2quhiube3ma/stdout_e62bb4f62bd84293a9fe81e38f189d72."
+        ],
+        [
+          "2026-04-04T05:25:47.7199063Z",
+          "Informational",
+          "Opening named pipe /podr/container/pipe/5f5adff4b681_app-labnospace-ii2quhiube3ma/stdout_e62bb4f62bd84293a9fe81e38f189d72 for reading in non-blocking mode."
+        ],
+        [
+          "2026-04-04T05:25:47.719617Z",
+          "Informational",
+          "Successfully created stdout named pipe at: /podr/container/pipe/5f5adff4b681_app-labnospace-ii2quhiube3ma/stdout_e62bb4f62bd84293a9fe81e38f189d72."
+        ],
+        [
+          "2026-04-04T05:25:47.7174276Z",
+          "Informational",
+          "Creating stdout named pipe at /podr/container/pipe/5f5adff4b681_app-labnospace-ii2quhiube3ma/stdout_e62bb4f62bd84293a9fe81e38f189d72."
+        ],
+        [
+          "2026-04-04T05:25:47.7172238Z",
+          "Informational",
+          "Creating pipes for streaming container io."
+        ],
+        [
+          "2026-04-04T05:25:47.7168141Z",
+          "Informational",
+          "Creating container."
+        ],
+        [
+          "2026-04-04T05:25:47.7164497Z",
+          "Informational",
+          "State: Starting, Action: CreatingContainer, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:22:41, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Finished pulling container image and mounting volumes for app-labnospace-ii2quhiube3ma. Allocatinng the rest of the container resources to finish container creation., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:25:47.3379779Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:25:47.329865Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:25:47.3183844Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:25:47.2790365Z",
+          "Informational",
+          "Nested mountpoint volatile/logs"
+        ],
+        [
+          "2026-04-04T05:25:47.2520455Z",
+          "Informational",
+          "Nested mountpoint "
+        ],
+        [
+          "2026-04-04T05:25:47.2509652Z",
+          "Informational",
+          "Mounting volumes."
+        ],
+        [
+          "2026-04-04T05:25:47.2507393Z",
+          "Informational",
+          "Establishing network if not established already."
+        ],
+        [
+          "2026-04-04T05:25:47.2506395Z",
+          "Informational",
+          "Establishing user namespace if not established already."
+        ],
+        [
+          "2026-04-04T05:25:47.2505261Z",
+          "Informational",
+          "State: Starting, Action: MountingVolumes, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:22:41, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Mounting volumes for app-labnospace-ii2quhiube3ma., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:25:47.250438Z",
+          "Informational",
+          "Container is starting."
+        ],
+        [
+          "2026-04-04T05:25:46.949846Z",
+          "Informational",
+          "Pulling image: appsvc/python:3.11_20260203.2.tuxprod."
+        ],
+        [
+          "2026-04-04T05:25:46.938749Z",
+          "Informational",
+          "Establishing network."
+        ],
+        [
+          "2026-04-04T05:25:46.9300923Z",
+          "Informational",
+          "State: Starting, Action: PullingImage, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:22:41, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Pulling image 10.1.0.4:13209/appsvc/python:3.11_20260203.2.tuxprod for app-labnospace-ii2quhiube3ma., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:25:46.8911594Z",
+          "Informational",
+          "Container start method called."
+        ],
+        [
+          "2026-04-04T05:25:46.8885362Z",
+          "Warning",
+          "State: Starting, Action: StartingSiteContainers, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:22:41, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 04/04/2026 05:24:41, DetailsLevel: WARN"
+        ],
+        [
+          "2026-04-04T05:25:44.4832464Z",
+          "Warning",
+          "State: Starting, Action: EstablishingSiteNetworks, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:22:41, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 04/04/2026 05:24:41, DetailsLevel: WARN"
+        ],
+        [
+          "2026-04-04T05:24:41.8328261Z",
+          "Informational",
+          "Site: app-labnospace-ii2quhiube3ma is unblocked."
+        ],
+        [
+          "2026-04-04T05:23:44.0628129Z",
+          "Warning",
+          "Start site prohibitted because the site is being blocked."
+        ],
+        [
+          "2026-04-04T05:23:44.0626986Z",
+          "Warning",
+          "State: Blocked, Action: None, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:22:41, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 04/04/2026 05:24:41, DetailsLevel: WARN"
+        ],
+        [
+          "2026-04-04T05:23:38.9613598Z",
+          "Warning",
+          "Start site prohibitted because the site is being blocked."
+        ],
+        [
+          "2026-04-04T05:23:38.9613Z",
+          "Warning",
+          "State: Blocked, Action: None, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:22:41, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 04/04/2026 05:24:41, DetailsLevel: WARN"
+        ],
+        [
+          "2026-04-04T05:23:33.7429333Z",
+          "Warning",
+          "Start site prohibitted because the site is being blocked."
+        ],
+        [
+          "2026-04-04T05:23:33.7427539Z",
+          "Warning",
+          "State: Blocked, Action: None, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:22:41, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 04/04/2026 05:24:41, DetailsLevel: WARN"
+        ],
+        [
+          "2026-04-04T05:23:28.6463092Z",
+          "Warning",
+          "Start site prohibitted because the site is being blocked."
+        ],
+        [
+          "2026-04-04T05:23:28.6462548Z",
+          "Warning",
+          "State: Blocked, Action: None, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:22:41, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 04/04/2026 05:24:41, DetailsLevel: WARN"
+        ],
+        [
+          "2026-04-04T05:23:23.5304255Z",
+          "Warning",
+          "Start site prohibitted because the site is being blocked."
+        ],
+        [
+          "2026-04-04T05:23:23.5235925Z",
+          "Warning",
+          "State: Blocked, Action: None, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:22:41, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 04/04/2026 05:24:41, DetailsLevel: WARN"
+        ],
+        [
+          "2026-04-04T05:23:18.362743Z",
+          "Warning",
+          "Start site prohibitted because the site is being blocked."
+        ],
+        [
+          "2026-04-04T05:23:18.3626622Z",
+          "Warning",
+          "State: Blocked, Action: None, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:22:41, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 04/04/2026 05:24:41, DetailsLevel: WARN"
+        ],
+        [
+          "2026-04-04T05:23:13.1182621Z",
+          "Warning",
+          "Start site prohibitted because the site is being blocked."
+        ],
+        [
+          "2026-04-04T05:23:13.1182142Z",
+          "Warning",
+          "State: Blocked, Action: None, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:22:41, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 04/04/2026 05:24:41, DetailsLevel: WARN"
+        ],
+        [
+          "2026-04-04T05:23:07.9254315Z",
+          "Warning",
+          "Start site prohibitted because the site is being blocked."
+        ],
+        [
+          "2026-04-04T05:23:07.9252519Z",
+          "Warning",
+          "State: Blocked, Action: None, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:22:41, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 04/04/2026 05:24:41, DetailsLevel: WARN"
+        ],
+        [
+          "2026-04-04T05:23:02.6764607Z",
+          "Warning",
+          "Start site prohibitted because the site is being blocked."
+        ],
+        [
+          "2026-04-04T05:23:02.6764086Z",
+          "Warning",
+          "State: Blocked, Action: None, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:22:41, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 04/04/2026 05:24:41, DetailsLevel: WARN"
+        ],
+        [
+          "2026-04-04T05:22:57.5383294Z",
+          "Warning",
+          "Start site prohibitted because the site is being blocked."
+        ],
+        [
+          "2026-04-04T05:22:57.5381973Z",
+          "Warning",
+          "State: Blocked, Action: None, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:22:41, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 04/04/2026 05:24:41, DetailsLevel: WARN"
+        ],
+        [
+          "2026-04-04T05:22:52.3644748Z",
+          "Warning",
+          "Start site prohibitted because the site is being blocked."
+        ],
+        [
+          "2026-04-04T05:22:52.3582902Z",
+          "Warning",
+          "State: Blocked, Action: None, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:22:41, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 04/04/2026 05:24:41, DetailsLevel: WARN"
+        ],
+        [
+          "2026-04-04T05:22:47.2674682Z",
+          "Warning",
+          "Start site prohibitted because the site is being blocked."
+        ],
+        [
+          "2026-04-04T05:22:47.2673448Z",
+          "Warning",
+          "State: Blocked, Action: None, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:22:41, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 04/04/2026 05:24:41, DetailsLevel: WARN"
+        ],
+        [
+          "2026-04-04T05:22:42.1706219Z",
+          "Warning",
+          "State: Stopped, Action: None, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:22:41, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Site stopped at 04/04/2026 05:22:41 (UTC), DetailsLevel: WARN"
+        ],
+        [
+          "2026-04-04T05:22:41.8337394Z",
+          "Warning",
+          "State: Stopped, Action: None, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:22:41, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Site stopped at 04/04/2026 05:22:41 (UTC), DetailsLevel: WARN"
+        ],
+        [
+          "2026-04-04T05:22:41.833213Z",
+          "Warning",
+          "State: Blocked, Action: StoppingSiteNetworks, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:22:41, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Site: app-labnospace-ii2quhiube3ma will be blocked for 2 minutes till 04/04/2026 05:24:41, DetailsLevel: WARN"
+        ],
+        [
+          "2026-04-04T05:22:41.8327459Z",
+          "Informational",
+          "Site: app-labnospace-ii2quhiube3ma will be blocked for 2 minutes till 04/04/2026 05:24:41"
+        ],
+        [
+          "2026-04-04T05:22:41.6832403Z",
+          "Error",
+          "State: Stopping, Action: StoppingSiteNetworks, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:22:41, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Site container: app-labnospace-ii2quhiube3ma terminated during site startup. Cancelling site startup., DetailsLevel: ERR"
+        ],
+        [
+          "2026-04-04T05:22:41.0894547Z",
+          "Error",
+          "State: Stopping, Action: UnmountingVolumes, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:22:41, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Site container: app-labnospace-ii2quhiube3ma terminated during site startup. Cancelling site startup., DetailsLevel: ERR"
+        ],
+        [
+          "2026-04-04T05:22:41.0626447Z",
+          "Informational",
+          "Site: app-labnospace-ii2quhiube3ma stopped."
+        ],
+        [
+          "2026-04-04T05:22:41.062616Z",
+          "Error",
+          "State: Stopping, Action: StoppingSiteContainers, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:22:41, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Site container: app-labnospace-ii2quhiube3ma terminated during site startup. Cancelling site startup., DetailsLevel: ERR"
+        ],
+        [
+          "2026-04-04T05:22:41.0619234Z",
+          "Error",
+          "State: Stopping, Action: StoppingSite, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:22:41, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Site container: app-labnospace-ii2quhiube3ma terminated during site startup. Cancelling site startup., DetailsLevel: ERR"
+        ],
+        [
+          "2026-04-04T05:22:41.0616771Z",
+          "Error",
+          "Failed to start site. Revert by stopping site."
+        ],
+        [
+          "2026-04-04T05:22:41.0323863Z",
+          "Error",
+          "State: Stopping, Action: CancellingStartup, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:22:41, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Site container: app-labnospace-ii2quhiube3ma terminated during site startup. Cancelling site startup., DetailsLevel: ERR"
+        ],
+        [
+          "2026-04-04T05:22:40.813021Z",
+          "Informational",
+          "Site startup probe failed after 53.1651455 seconds."
+        ],
+        [
+          "2026-04-04T05:22:40.7342435Z",
+          "Error",
+          "State: Stopping, Action: CancellingStartup, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:19:38, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Site container: app-labnospace-ii2quhiube3ma terminated during site startup. Cancelling site startup., DetailsLevel: ERR"
+        ],
+        [
+          "2026-04-04T05:22:40.7320207Z",
+          "Error",
+          "Site container: app-labnospace-ii2quhiube3ma terminated during site startup."
+        ],
+        [
+          "2026-04-04T05:22:40.7317961Z",
+          "Informational",
+          "Container is terminated. Total time elapsed: 736 ms."
+        ],
+        [
+          "2026-04-04T05:22:40.7311586Z",
+          "Informational",
+          "Container spec TerminationMessagePolicy  path "
+        ],
+        [
+          "2026-04-04T05:22:40.0837552Z",
+          "Informational",
+          "Deleting container: 1a45d28ec3c0_app-labnospace-ii2quhiube3ma. Retry count = 0"
+        ],
+        [
+          "2026-04-04T05:22:40.0140295Z",
+          "Informational",
+          "Stopping container: 1a45d28ec3c0_app-labnospace-ii2quhiube3ma."
+        ],
+        [
+          "2026-04-04T05:22:40.0057343Z",
+          "Informational",
+          "Stop and delete container. Retry count = 0"
+        ],
+        [
+          "2026-04-04T05:22:39.9946507Z",
+          "Informational",
+          "Container is terminating. Grace period: 5 seconds."
+        ],
+        [
+          "2026-04-04T05:22:39.9932915Z",
+          "Warning",
+          "Container has finished running with exit code: 1."
+        ],
+        [
+          "2026-04-04T05:21:47.618308Z",
+          "Informational",
+          "State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:19:38, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:21:47.6075966Z",
+          "Informational",
+          "State: Starting, Action: InitiatingSiteWarmUpProbe, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:19:38, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Container app-labnospace-ii2quhiube3ma successfully created and is running., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:21:47.4567168Z",
+          "Informational",
+          "Container start method finished after 2718 ms."
+        ],
+        [
+          "2026-04-04T05:21:47.2117844Z",
+          "Informational",
+          "State: Starting, Action: CreatingContainer, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:19:38, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Container app-labnospace-ii2quhiube3ma successfully created and is running., DetailsLevel: INFO"
+        ],
+        [
+          "2026-04-04T05:21:47.2116783Z",
+          "Informational",
+          "Container is running."
+        ],
+        [
+          "2026-04-04T05:21:47.2114803Z",
+          "Informational",
+          "Starting metrics collection."
+        ],
+        [
+          "2026-04-04T05:21:47.2021646Z",
+          "Informational",
+          "Starting watchers and probes."
+        ],
+        [
+          "2026-04-04T05:21:47.1323023Z",
+          "Informational",
+          "Starting container: 1a45d28ec3c0_app-labnospace-ii2quhiube3ma."
+        ],
+        [
+          "2026-04-04T05:21:45.9161729Z",
+          "Informational",
+          "Creating container with image: appsvc/python:3.11_20260203.2.tuxprod from registry: 10.1.0.4:13209 and fully qualified image name: 10.1.0.4:13209/appsvc/python:3.11_20260203.2.tuxprod"
+        ],
+        [
+          "2026-04-04T05:21:45.9159794Z",
+          "Informational",
+          "Successfully removed non-blocking flag from /podr/container/pipe/1a45d28ec3c0_app-labnospace-ii2quhiube3ma/stderr_b8d0ee517bba4d95ad1f0651215dc939."
+        ],
+        [
+          "2026-04-04T05:21:45.9158589Z",
+          "Informational",
+          "Successfully opened named pipe: /podr/container/pipe/1a45d28ec3c0_app-labnospace-ii2quhiube3ma/stderr_b8d0ee517bba4d95ad1f0651215dc939."
+        ],
+        [
+          "2026-04-04T05:21:45.9157138Z",
+          "Informational",
+          "Opening named pipe /podr/container/pipe/1a45d28ec3c0_app-labnospace-ii2quhiube3ma/stderr_b8d0ee517bba4d95ad1f0651215dc939 for reading in non-blocking mode."
+        ],
+        [
+          "2026-04-04T05:21:45.9155788Z",
+          "Informational",
+          "Successfully created stderr named pipe at: /podr/container/pipe/1a45d28ec3c0_app-labnospace-ii2quhiube3ma/stderr_b8d0ee517bba4d95ad1f0651215dc939."
+        ],
+        [
+          "2026-04-04T05:21:45.9153508Z",
+          "Informational",
+          "Creating stderr named pipe at /podr/container/pipe/1a45d28ec3c0_app-labnospace-ii2quhiube3ma/stderr_b8d0ee517bba4d95ad1f0651215dc939."
+        ],
+        [
+          "2026-04-04T05:21:45.9142726Z",
+          "Informational",
+          "Successfully removed non-blocking flag from /podr/container/pipe/1a45d28ec3c0_app-labnospace-ii2quhiube3ma/stdout_60b2ec4e24d64592b11d8924a6749913."
+        ],
+        [
+          "2026-04-04T05:21:45.9141466Z",
+          "Informational",
+          "Successfully opened named pipe: /podr/container/pipe/1a45d28ec3c0_app-labnospace-ii2quhiube3ma/stdout_60b2ec4e24d64592b11d8924a6749913."
+        ],
+        [
+          "2026-04-04T05:21:45.9139954Z",
+          "Informational",
+          "Opening named pipe /podr/container/pipe/1a45d28ec3c0_app-labnospace-ii2quhiube3ma/stdout_60b2ec4e24d64592b11d8924a6749913 for reading in non-blocking mode."
+        ],
+        [
+          "2026-04-04T05:21:45.9138257Z",
+          "Informational",
+          "Successfully created stdout named pipe at: /podr/container/pipe/1a45d28ec3c0_app-labnospace-ii2quhiube3ma/stdout_60b2ec4e24d64592b11d8924a6749913."
+        ]
+      ]
+    }
+  ]
+}

@@ -125,7 +125,7 @@ No branching logic is needed between local and cloud identity paths.
     Assign roles at the smallest scope possible (resource level preferred over subscription level).
 
 !!! info "Platform architecture"
-    For platform architecture details, see the [Azure App Service Guide — How App Service Works](https://yeongseon.github.io/azure-appservice-guide/concepts/01-how-app-service-works/).
+    For platform architecture details, see [Platform: How App Service Works](../../../platform/how-app-service-works.md).
 
 ## Verification
 
@@ -152,3 +152,8 @@ Likely local credential succeeded but cloud identity lacks RBAC. Re-check Azure 
 - [Azure SQL](azure-sql.md)
 - [Key Vault References](key-vault-reference.md)
 - [Tutorial: Configuration](../03-configuration.md)
+
+## References
+
+- [Use managed identities for App Service and Azure Functions](https://learn.microsoft.com/en-us/azure/app-service/overview-managed-identity)
+- [Managed identities for Azure resources overview](https://learn.microsoft.com/en-us/entra/identity/managed-identities-azure-resources/overview)
