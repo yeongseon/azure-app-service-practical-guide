@@ -1,0 +1,235 @@
+# Authentication Redirect Loop (Azure App Service Linux)
+
+## 1. Summary
+
+### Symptom
+
+Users are redirected repeatedly between App Service and the identity provider (Microsoft Entra ID or another OpenID Connect provider). The browser eventually shows a "too many redirects" error, and the application never loads.
+
+### Why this scenario is confusing
+
+Redirect loops can be caused by identity configuration drift, reverse-proxy header handling, token persistence failures, protocol mismatch, or deployment-slot behavior. The browser symptom is the same while the remediation is different for each root cause.
+
+### Troubleshooting decision flow
+
+```mermaid
+graph TD
+    A[Symptom: Infinite auth redirects] --> B{Do redirect_uri and host match actual public URL?}
+    B -->|No| H1[H1: Redirect URI mismatch]
+    B -->|Yes| C{Are X-Forwarded-* and Host preserved through proxy?}
+    C -->|No| H2[H2: Reverse proxy/header rewrite]
+    C -->|Yes| D{Do auth logs show session/token persistence errors?}
+    D -->|Yes| H3[H3: Token store corruption/full]
+    D -->|No| E{Do redirects flip between http and https?}
+    E -->|Yes| H4[H4: Mixed HTTP/HTTPS]
+    E -->|No| F{Did issue begin right after slot swap?}
+    F -->|Yes| H5[H5: Slot swap auth config drift]
+    F -->|No| G[Inspect custom auth middleware and cookie domain settings]
+```
+
+## 2. Symptom
+
+- Browser network trace shows repeated `302` responses between App Service and the identity provider.
+- Browser error: `ERR_TOO_MANY_REDIRECTS` (or equivalent).
+- App sign-in appears successful at the identity provider but returns to sign-in immediately.
+- No steady authenticated session is established.
+
+### Normal flow vs redirect loop flow
+
+```mermaid
+sequenceDiagram
+    participant U as User Browser
+    participant P as Front Door/App Gateway
+    participant A as App Service
+    participant I as Identity Provider
+
+    rect rgb(230,255,230)
+        Note over U,I: Normal auth flow
+        U->>P: GET /app
+        P->>A: Forward request (Host + X-Forwarded-Proto)
+        A-->>U: 302 to IdP authorize endpoint
+        U->>I: Authorize request (redirect_uri=https://app.contoso.com/.auth/login/...)
+        I-->>U: 302 back with auth code
+        U->>P: GET /.auth/login/callback?code=...
+        P->>A: Forward callback (original host/proto preserved)
+        A-->>U: Session cookie + 302 /app
+        U->>A: GET /app with session cookie
+        A-->>U: 200 OK
+    end
+
+    rect rgb(255,235,235)
+        Note over U,I: Redirect loop flow
+        U->>A: GET /app
+        A-->>U: 302 to IdP
+        U->>I: Authorize
+        I-->>U: 302 callback
+        U->>A: GET callback
+        A-->>U: 302 to IdP again (session not recognized or redirect_uri/proto mismatch)
+        loop Repeats until browser limit
+            U->>I: Authorize
+            I-->>U: Redirect back
+            U->>A: Callback
+            A-->>U: 302 to IdP
+        end
+    end
+```
+
+## 3. Hypotheses
+
+- **H1: Redirect URI mismatch** — App registration redirect URI does not match the app's actual public URL (for example custom domain vs `azurewebsites.net`).
+- **H2: Reverse proxy stripping headers** — Front Door or Application Gateway modifies `Host` or `X-Forwarded-Proto`, so auth redirect generation is incorrect.
+- **H3: Token store corruption or full** — Auth module cannot persist or retrieve session tokens, so each request re-triggers authentication.
+- **H4: Mixed HTTP/HTTPS** — App is effectively perceived as HTTP internally while external URL is HTTPS, causing protocol mismatch loops.
+- **H5: Slot swap broke auth config** — Slot-sticky auth settings (client ID, issuer, redirect URI assumptions) diverged during swap.
+
+## 4. Evidence Collection
+
+### Required Evidence
+
+- Redirect chain capture from browser DevTools (network HAR preferred).
+- Authentication settings and app settings from Azure CLI.
+- `AppServiceHTTPLogs` evidence showing 302 chain patterns.
+- `AppServiceAuthenticationLogs` evidence showing callback/auth failures.
+- Proxy configuration evidence (Front Door/App Gateway header forwarding behavior).
+
+### Core commands
+
+```bash
+az webapp show --resource-group <resource-group> --name <app-name>
+az webapp auth show --resource-group <resource-group> --name <app-name>
+az webapp config appsettings list --resource-group <resource-group> --name <app-name>
+az webapp deployment slot list --resource-group <resource-group> --name <app-name>
+```
+
+### KQL: HTTP redirect-chain evidence
+
+```kusto
+AppServiceHTTPLogs
+| where TimeGenerated > ago(6h)
+| where ScStatus == 302
+| summarize redirects=count(), paths=dcount(CsUriStem), clients=dcount(CIp) by bin(TimeGenerated, 5m)
+| order by TimeGenerated asc
+```
+
+```kusto
+AppServiceHTTPLogs
+| where TimeGenerated > ago(6h)
+| where ScStatus == 302
+| summarize hops=count() by CIp, CsUserAgent, bin(TimeGenerated, 2m)
+| where hops > 10
+| order by hops desc
+```
+
+### KQL: authentication failure evidence
+
+```kusto
+AppServiceAuthenticationLogs
+| where TimeGenerated > ago(6h)
+| summarize failures=count() by ResultDescription, bin(TimeGenerated, 5m)
+| order by TimeGenerated asc
+```
+
+```kusto
+AppServiceAuthenticationLogs
+| where TimeGenerated > ago(6h)
+| where ResultDescription has_any ("redirect_uri", "invalid", "nonce", "state", "token", "cookie", "correlation")
+| project TimeGenerated, OperationName, ResultDescription
+| order by TimeGenerated desc
+```
+
+## 5. Validation
+
+### H1: Redirect URI mismatch
+
+- **Signals that support**
+  - Auth logs show `redirect_uri` or callback mismatch errors.
+  - Identity provider app registration includes only `https://<app-name>.azurewebsites.net/...` while users access `https://app.contoso.com`.
+  - Redirect location headers oscillate between multiple hostnames.
+- **Signals that weaken**
+  - Redirect URIs in app registration exactly match active public URL and callback path.
+  - Auth logs show successful callback processing with no URI mismatch.
+- **What to verify**
+  1. Compare browser-visible host, App Service default host, and configured redirect URIs.
+  2. Confirm callback path and scheme (`https`) are identical in IdP and App Service auth config.
+
+### H2: Reverse proxy stripping headers
+
+- **Signals that support**
+  - Redirects generated with wrong host or protocol after passing through Front Door/App Gateway.
+  - Logs show request host different from expected public host.
+  - Issue reproduces only through proxy, not on direct `azurewebsites.net` endpoint.
+- **Signals that weaken**
+  - `Host` and `X-Forwarded-Proto` are consistently preserved.
+  - Same redirect loop occurs when bypassing proxy.
+- **What to verify**
+  1. Review proxy rule set for host-header override and forwarded-header behavior.
+  2. Confirm end-to-end `https` with preserved host from client edge to App Service.
+
+### H3: Token store corruption or full
+
+- **Signals that support**
+  - Auth logs indicate token/session persistence failures.
+  - Every authenticated callback is followed by fresh challenge with no durable session cookie behavior.
+  - Problem started after storage pressure, key rotation, or auth token store changes.
+- **Signals that weaken**
+  - Authentication logs show stable session creation and retrieval.
+  - Session cookies persist and are accepted across requests.
+- **What to verify**
+  1. Inspect `AppServiceAuthenticationLogs` for storage, cookie, nonce, state, and token handling errors.
+  2. Validate configured auth token store settings and backing dependency health (if externalized).
+
+### H4: Mixed HTTP/HTTPS
+
+- **Signals that support**
+  - Redirect sequence alternates between `http://` and `https://`.
+  - App enforces HTTPS while upstream auth components infer HTTP from forwarded headers.
+  - Loop disappears when forcing consistent HTTPS at edge and app settings.
+- **Signals that weaken**
+  - All redirects are consistently HTTPS.
+  - No scheme mismatch in logs, headers, or callback URLs.
+- **What to verify**
+  1. Confirm HTTPS-only setting and TLS termination pattern.
+  2. Verify proxy sends `X-Forwarded-Proto: https` and app trusts forwarded headers.
+
+### H5: Slot swap broke auth config
+
+- **Signals that support**
+  - Incident starts immediately after slot swap.
+  - Slot-specific app settings differ (`clientId`, issuer URL, allowed audiences, auth flags).
+  - Staging works, production loops only after swap.
+- **Signals that weaken**
+  - No recent swap activity and slot configs are identical for auth-relevant settings.
+  - Problem persists even after reapplying known-good production auth settings.
+- **What to verify**
+  1. Diff production/staging slot settings and auth config snapshots.
+  2. Confirm slot-sticky settings include all auth-sensitive values.
+
+## 6. Mitigation
+
+- **For H1**: Add exact redirect URIs for every active host (`custom-domain` and App Service domain only if intentionally used), including callback path.
+- **For H2**: Configure Front Door/App Gateway to preserve host and forward protocol headers correctly.
+- **For H3**: Clear or repair token/session store path, fix storage limits, and validate cookie/session settings.
+- **For H4**: Enforce HTTPS everywhere and correct forwarded-proto trust configuration.
+- **For H5**: Reapply production auth settings, correct slot-sticky configuration, then perform validated swap runbook.
+
+## 7. Prevention
+
+- Standardize on a single canonical public host per environment and register all required redirect URIs explicitly.
+- Add pre-deployment validation that checks auth settings, callback URI, and slot-sticky settings before swap.
+- Keep reverse-proxy templates version-controlled, including host/proto forwarding rules.
+- Add alerting on `AppServiceAuthenticationLogs` spikes for redirect/correlation/token failures.
+- Include a synthetic sign-in test in release validation to catch redirect loops before user impact.
+
+## 8. See Also
+
+- [Slot Swap Config Drift](slot-swap-config-drift.md)
+- [Deployment Succeeded, Startup Failed](deployment-succeeded-startup-failed.md)
+- [Troubleshooting KQL Queries](../../kql/)
+
+## References
+
+- [Authentication and authorization in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization)
+- [Configure your App Service or Azure Functions app to use Microsoft Entra sign-in](https://learn.microsoft.com/en-us/azure/app-service/configure-authentication-provider-aad)
+- [Configure Azure App Service authentication settings by using the Azure CLI](https://learn.microsoft.com/en-us/azure/app-service/configure-authentication-api-version)
+- [Azure Front Door origin and routing architecture](https://learn.microsoft.com/en-us/azure/frontdoor/front-door-routing-architecture)
+- [Application Gateway request routing rules overview](https://learn.microsoft.com/en-us/azure/application-gateway/configuration-request-routing-rules)

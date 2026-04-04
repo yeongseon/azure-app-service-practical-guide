@@ -94,6 +94,8 @@ nav:
     - platform/scaling.md
     - platform/networking.md
     - platform/resource-relationships.md
+    - platform/authentication-architecture.md
+    - platform/security-architecture.md
   - Language Guides:
     - language-guides/index.md
     - Python:
@@ -207,12 +209,14 @@ nav:
         - troubleshooting/playbooks/startup-availability/slot-swap-config-drift.md
         - troubleshooting/playbooks/startup-availability/slot-swap-failed-during-warmup.md
         - troubleshooting/playbooks/startup-availability/warmup-vs-health-check.md
+        - troubleshooting/playbooks/startup-availability/auth-redirect-loop.md
       - Performance:
         - troubleshooting/playbooks/performance/intermittent-5xx-under-load.md
         - troubleshooting/playbooks/performance/memory-pressure-and-worker-degradation.md
         - troubleshooting/playbooks/performance/no-space-left-on-device.md
         - troubleshooting/playbooks/performance/slow-response-but-low-cpu.md
         - troubleshooting/playbooks/performance/slow-start-cold-start.md
+        - troubleshooting/playbooks/performance/cors-and-token-errors.md
       - Outbound Network:
         - troubleshooting/playbooks/outbound-network/dns-resolution-vnet-integrated-app-service.md
         - troubleshooting/playbooks/outbound-network/private-endpoint-custom-dns-route-confusion.md

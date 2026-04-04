@@ -13,6 +13,25 @@ Protect App Service workloads with layered controls: identity, authentication, t
 
 ## Main Content
 
+```mermaid
+flowchart TD
+    A[Security Operations] --> B[Transport]
+    A --> C[Identity]
+    A --> D[Network]
+    A --> E[Application]
+    A --> F[Secrets]
+    B --> B1[HTTPS-only]
+    B --> B2[TLS 1.2+]
+    C --> C1[Managed Identity]
+    C --> C2[Platform Auth]
+    D --> D1[Access Restrictions]
+    D --> D2[Private Endpoints]
+    E --> E1[CORS]
+    E --> E2[Security Headers]
+    F --> F1[Key Vault References]
+    F --> F2[Secret Rotation]
+```
+
 ### Security Baseline Checklist
 
 Apply these baseline controls first:
@@ -168,6 +187,67 @@ az webapp config set \
 
 Prefer deployment through secure CI/CD identities and least privilege RBAC.
 
+### Configure CORS
+
+Set allowed origins for cross-origin requests:
+
+```bash
+az webapp cors add \
+  --resource-group $RG \
+  --name $APP_NAME \
+  --allowed-origins "https://frontend.example.com" "https://admin.example.com" \
+  --output json
+```
+
+View current CORS configuration:
+
+```bash
+az webapp cors show \
+  --resource-group $RG \
+  --name $APP_NAME \
+  --output json
+```
+
+Remove a specific origin:
+
+```bash
+az webapp cors remove \
+  --resource-group $RG \
+  --name $APP_NAME \
+  --allowed-origins "https://old-frontend.example.com" \
+  --output json
+```
+
+!!! warning "Avoid wildcard origins with credentials"
+    Setting `--allowed-origins "*"` allows any origin. When combined with App Service Authentication, this can expose tokens to unauthorized frontends. Always specify explicit origins in production.
+
+!!! info "Platform CORS vs Application CORS"
+    App Service platform CORS and application-level CORS middleware (e.g., Flask-CORS, Express cors) can conflict. Use one or the other, not both. If the platform handles CORS, disable it in your application code to avoid duplicate headers.
+
+### Configure Security Headers
+
+App Service does not set security headers by default. Add them via application code or web.config/custom startup.
+
+Recommended production headers:
+
+| Header | Recommended Value | Purpose |
+|--------|------------------|---------|
+| `Strict-Transport-Security` | `max-age=31536000; includeSubDomains` | Enforce HTTPS via HSTS |
+| `X-Content-Type-Options` | `nosniff` | Prevent MIME sniffing |
+| `X-Frame-Options` | `DENY` | Prevent clickjacking |
+| `Content-Security-Policy` | `default-src 'self'` | Prevent XSS and injection |
+| `Referrer-Policy` | `strict-origin-when-cross-origin` | Limit referrer leakage |
+| `Permissions-Policy` | `camera=(), microphone=(), geolocation=()` | Restrict browser features |
+
+Verify headers are present:
+
+```bash
+curl --silent --head "https://$APP_NAME.azurewebsites.net" | grep -iE "(strict-transport|x-content-type|x-frame|content-security|referrer-policy|permissions-policy)"
+```
+
+!!! info "Where to set headers"
+    On Linux App Service, set headers in your application framework (Flask, Express, Spring, ASP.NET middleware). On Windows, you can also use `web.config` custom headers. For both, Azure Front Door can inject headers at the edge.
+
 ### Verification
 
 Authentication and identity:
@@ -261,16 +341,24 @@ Use Azure Policy to enforce controls such as:
 
 ## Language-Specific Details
 
-For language-specific operational guidance, see:
-- [Node.js Guide](https://yeongseon.github.io/azure-appservice-nodejs-guide/)
-- [Python Guide](https://yeongseon.github.io/azure-appservice-python-guide/)
-- [Java Guide](https://yeongseon.github.io/azure-appservice-java-guide/)
-- [.NET Guide](https://yeongseon.github.io/azure-appservice-dotnet-guide/)
+For language-specific security patterns and auth integration:
+
+- [Python Managed Identity](../language-guides/python/recipes/managed-identity.md)
+- [Python Easy Auth](../language-guides/python/recipes/easy-auth.md)
+- [Node.js Managed Identity](../language-guides/nodejs/recipes/managed-identity.md)
+- [Node.js Easy Auth](../language-guides/nodejs/recipes/easy-auth.md)
+- [Java Managed Identity](../language-guides/java/recipes/managed-identity.md)
+- [Java Easy Auth](../language-guides/java/recipes/easy-auth.md)
+- [.NET Managed Identity](../language-guides/dotnet/recipes/managed-identity.md)
+- [.NET Easy Auth](../language-guides/dotnet/recipes/easy-auth.md)
 
 ## See Also
 
 - [Operations Index](./index.md)
+- [Authentication Architecture](../platform/authentication-architecture.md)
+- [Security Architecture](../platform/security-architecture.md)
 - [Networking](./networking.md)
 - [Health and Recovery](./health-recovery.md)
 - [App Service security overview (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-security)
 - [Authentication and authorization (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-authentication-authorization)
+- [Configure CORS (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/app-service-web-tutorial-rest-api#enable-cors)
