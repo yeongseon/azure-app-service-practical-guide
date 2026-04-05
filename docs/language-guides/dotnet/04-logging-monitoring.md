@@ -91,6 +91,12 @@ With Application Insights SDK in ASP.NET Core, these are collected automatically
     Use `TelemetryClient` for business events or domain-specific metrics.
     Keep event cardinality low to avoid noisy, expensive telemetry.
 
+!!! warning "Query location matters"
+    Table names differ by where you run the query. See [KQL Queries Reference — Table Naming](../../reference/kql-queries.md#table-naming) for details.
+    
+    - **Application Insights → Logs**: `traces`, `requests`, `dependencies`
+    - **Log Analytics Workspace → Logs**: `AppTraces`, `AppRequests`, `AppDependencies`
+
 ### 5) Add custom event and metric
 
 ```csharp

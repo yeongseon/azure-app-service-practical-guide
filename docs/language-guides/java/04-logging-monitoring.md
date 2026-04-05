@@ -80,6 +80,12 @@ az webapp log config \
 !!! note "Production guidance"
     Prefer central telemetry in Application Insights for long-term analytics. Filesystem logs are best for short-lived debugging.
 
+!!! warning "Query location matters"
+    Table names differ by where you run the query. See [KQL Queries Reference — Table Naming](../../reference/kql-queries.md#table-naming) for details.
+    
+    - **Application Insights → Logs**: `traces`, `requests`, `dependencies`
+    - **Log Analytics Workspace → Logs**: `AppTraces`, `AppRequests`, `AppDependencies`
+
 ### KQL query: recent application logs
 
 ```kusto

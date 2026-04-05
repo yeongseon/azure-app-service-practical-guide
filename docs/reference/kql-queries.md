@@ -13,10 +13,60 @@ flowchart TD
     E --> F[Deployment and Scale]
 ```
 
-## Query Scope and Time Columns
+## Query Location and Table Names {#table-naming}
 
-- Use `timestamp` for Application Insights tables (`AppRequests`, `AppDependencies`, `AppExceptions`, `AppTraces`).
-- Use `TimeGenerated` for Log Analytics tables (`AppServiceHTTPLogs`, `AppServiceConsoleLogs`, `AppServicePlatformLogs`).
+!!! warning "Table names differ by query location"
+    The same data uses **different table names** depending on where you run the query:
+    
+    | Query Location | Table Names | Time Column |
+    |---|---|---|
+    | **Application Insights → Logs** | `traces`, `requests`, `dependencies`, `exceptions` | `timestamp` |
+    | **Log Analytics Workspace → Logs** | `AppTraces`, `AppRequests`, `AppDependencies`, `AppExceptions` | `TimeGenerated` |
+    | **App Service → Logs** | Platform tables only (`AppServiceHTTPLogs`, etc.) | `TimeGenerated` |
+
+### Where to Run Each Query
+
+```mermaid
+flowchart LR
+    subgraph AI ["Application Insights"]
+        T1["traces"]
+        R1["requests"]
+        D1["dependencies"]
+    end
+    
+    subgraph LA ["Log Analytics Workspace"]
+        T2["AppTraces"]
+        R2["AppRequests"]
+        D2["AppDependencies"]
+        P["AppServiceHTTPLogs\nAppServiceConsoleLogs\nAppServicePlatformLogs"]
+    end
+    
+    subgraph AS ["App Service → Logs"]
+        P2["Platform tables only\n(No AppTraces)"]
+    end
+```
+
+### Example: Same Query, Different Location
+
+**Application Insights → Logs:**
+```kql
+traces
+| where timestamp > ago(30m)
+| project timestamp, message, severityLevel
+| order by timestamp desc
+```
+
+**Log Analytics Workspace → Logs:**
+```kql
+AppTraces
+| where TimeGenerated > ago(30m)
+| project TimeGenerated, Message, SeverityLevel
+| order by TimeGenerated desc
+```
+
+!!! tip "Quick Rule"
+    - Portal path includes "Application Insights" → use lowercase (`traces`, `requests`)
+    - Portal path includes "Log Analytics" → use PascalCase (`AppTraces`, `AppRequests`)
 
 ## Application Insights Queries
 

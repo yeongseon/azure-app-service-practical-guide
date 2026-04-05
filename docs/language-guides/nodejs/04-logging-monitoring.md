@@ -413,6 +413,12 @@ Application Insights collects telemetry into four queryable tables when either:
 
 Setting `APPLICATIONINSIGHTS_CONNECTION_STRING` alone is not sufficient — telemetry only reaches Application Insights when one of the above paths is active.
 
+!!! warning "Query location matters"
+    Table names differ by where you run the query. See [KQL Queries Reference — Table Naming](../../reference/kql-queries.md#table-naming) for details.
+    
+    - **Application Insights → Logs**: `traces`, `requests`, `dependencies`
+    - **Log Analytics Workspace → Logs**: `AppTraces`, `AppRequests`, `AppDependencies`
+
 ### What Gets Collected
 
 ```mermaid
