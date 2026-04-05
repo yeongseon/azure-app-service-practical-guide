@@ -72,7 +72,9 @@ graph TD
     - `INTEGRATION_SUBNET_NAME`
     - `PRIVATE_ENDPOINT_SUBNET_NAME`
 
-## Main Content
+## When to Use
+
+## Procedure
 
 ### Configure Inbound Access Restrictions
 
@@ -217,7 +219,7 @@ az network vnet subnet show \
   --output tsv
 ```
 
-### Verification Steps
+## Verification
 
 #### Access Restrictions
 
@@ -281,6 +283,8 @@ Layered checks:
 | IP reachable, port closed | Service firewall/ACL | Update target service network rules |
 | HTTP 403 | Access restriction or auth policy | Validate allow rules and auth configuration |
 | Intermittent egress failures | SNAT/NAT path assumptions | Validate actual egress through NAT design |
+
+## Rollback / Troubleshooting
 
 ## Advanced Topics
 

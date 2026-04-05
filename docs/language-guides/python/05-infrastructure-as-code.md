@@ -2,6 +2,15 @@
 
 This tutorial provisions Flask hosting infrastructure with Bicep for repeatable environments. It defines Python runtime settings, startup command, and worker-related app settings as code.
 
+```mermaid
+flowchart LR
+    A[Define Bicep resources] --> B[Set linuxFxVersion PYTHON|3.11]
+    B --> C[Set gunicorn startup command]
+    C --> D[Apply app settings and workers]
+    D --> E[Deploy template]
+    E --> F[Validate runtime config]
+```
+
 ## Prerequisites
 
 - Completed [04 - Logging and Monitoring](./04-logging-monitoring.md)

@@ -31,6 +31,11 @@ AppServicePlatformLogs
 - Some restart-like behaviors may be represented by related operation names not captured by this filter.
 - This query cannot identify the root cause of restart (app crash vs platform action) by itself.
 
+## See Also
+
+- [Restarts Query Pack](index.md)
+- [KQL Query Packs](../index.md)
+
 ## Sources
 
 - [Enable diagnostic logging for apps in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs)

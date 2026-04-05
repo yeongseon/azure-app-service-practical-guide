@@ -2,6 +2,16 @@
 
 Deploy the ASP.NET Core 8 app to Azure App Service (Windows) using Bicep infrastructure and zip-based code deployment.
 
+```mermaid
+flowchart LR
+    A[Set variables] --> B[Create resource group]
+    B --> C[Deploy Bicep infra]
+    C --> D[dotnet publish]
+    D --> E[Zip artifacts]
+    E --> F[az webapp deploy]
+    F --> G[Verify app endpoint]
+```
+
 ## Prerequisites
 
 - Tutorial [01. Local Run](./01-local-run.md) completed
@@ -144,14 +154,14 @@ Validate App Service configuration after deployment:
 az webapp config show --resource-group "$RESOURCE_GROUP_NAME" --name "$WEB_APP_NAME" --output json
 ```
 
-## Sources
-
-- [Deploy a ZIP file to Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/deploy-zip)
-- [Quickstart: Deploy an ASP.NET web app](https://learn.microsoft.com/en-us/azure/app-service/quickstart-dotnetcore)
-- [Azure App Service deployment overview](https://learn.microsoft.com/en-us/azure/app-service/deploy-best-practices)
-
 ## See Also
 
 - [03. Configuration](./03-configuration.md)
 - [05. Infrastructure as Code](./05-infrastructure-as-code.md)
 - For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-app-service-practical-guide/)
+
+## Sources
+
+- [Deploy a ZIP file to Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/deploy-zip)
+- [Quickstart: Deploy an ASP.NET web app](https://learn.microsoft.com/en-us/azure/app-service/quickstart-dotnetcore)
+- [Azure App Service deployment overview](https://learn.microsoft.com/en-us/azure/app-service/deploy-best-practices)

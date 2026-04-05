@@ -389,6 +389,11 @@ $ az webapp config appsettings list --resource-group <resource-group> --name <ap
 
 - [Lab: Slow Start / Cold Start](../../lab-guides/slow-start-cold-start.md)
 
+## See Also
+
+- [Performance (First 10 Minutes)](../../first-10-minutes/performance.md)
+- [Slow Start / Cold Start](slow-start-cold-start.md)
+
 ## Sources
 - [Troubleshoot slow app performance in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-performance-degradation)
 - [Monitor Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/monitor-app-service)

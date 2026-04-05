@@ -399,6 +399,11 @@ Running  /subscriptions/<subscription-id>/resourceGroups/<resource-group>/provid
 
 - [Lab: Intermittent 5xx Under Load](../../lab-guides/intermittent-5xx.md)
 
+## See Also
+
+- [Performance (First 10 Minutes)](../../first-10-minutes/performance.md)
+- [Intermittent 5xx Lab](../../lab-guides/intermittent-5xx.md)
+
 ## Sources
 - [Troubleshoot HTTP errors of "502 bad gateway" and "503 service unavailable" in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503)
 - [Get started with autoscale in Azure](https://learn.microsoft.com/en-us/azure/azure-monitor/autoscale/autoscale-get-started)

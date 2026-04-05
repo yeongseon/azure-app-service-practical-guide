@@ -129,6 +129,11 @@ After these checks, you should be able to:
 - [Warm-up vs Health Check](../playbooks/startup-availability/warmup-vs-health-check.md)
 - [Slot Swap Failed During Warm-up](../playbooks/startup-availability/slot-swap-failed-during-warmup.md)
 
+## See Also
+
+- [Container Didn't Respond to HTTP Pings](../playbooks/startup-availability/container-didnt-respond-to-http-pings.md)
+- [Startup Errors](../kql/console/startup-errors.md)
+
 ## Sources
 
 - [Configure a custom container for Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container)

@@ -146,7 +146,7 @@ Validate network path: SQL firewall, private endpoint DNS, VNet integration rout
 
 Ensure `mssql-jdbc` version supports managed identity auth and `authentication=ActiveDirectoryManagedIdentity` is present.
 
-## Next Steps / See Also
+## See Also
 
 - [Managed Identity](managed-identity.md)
 - [Key Vault References](key-vault-reference.md)

@@ -2,6 +2,14 @@
 
 Use Azure Cache for Redis with ASP.NET Core 8 for distributed caching and session state, including TLS-first configuration for production.
 
+```mermaid
+flowchart LR
+    A[Set Redis connection setting] --> B[Register IDistributedCache]
+    B --> C[Read or write cache keys]
+    C --> D[Redis TLS endpoint]
+    D --> E[Verify cache hit ratio]
+```
+
 ## Prerequisites
 
 - Azure Cache for Redis instance provisioned

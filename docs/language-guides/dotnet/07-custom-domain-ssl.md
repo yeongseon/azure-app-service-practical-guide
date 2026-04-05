@@ -2,6 +2,15 @@
 
 Map a custom domain to your Windows App Service app, validate ownership, and secure traffic with a managed TLS certificate.
 
+```mermaid
+flowchart LR
+    A[Choose hostname strategy] --> B[Add DNS records]
+    B --> C[Add hostname in App Service]
+    C --> D[Create managed certificate]
+    D --> E[Bind certificate to hostname]
+    E --> F[Verify HTTPS access]
+```
+
 ## Prerequisites
 
 - Tutorial [06. CI/CD](./06-ci-cd.md) completed
@@ -150,13 +159,13 @@ az webapp config ssl list --resource-group "$RESOURCE_GROUP_NAME" --output table
 
 Check hostname binding list and ensure the custom host is attached to the right app/slot.
 
-## Sources
-
-- [Map a custom DNS name to Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/app-service-web-tutorial-custom-domain)
-- [Secure a custom DNS name with a TLS/SSL binding](https://learn.microsoft.com/en-us/azure/app-service/configure-ssl-bindings)
-
 ## See Also
 
 - [06. CI/CD](./06-ci-cd.md)
 - [Recipes: Deployment Slots Validation](./recipes/deployment-slots-validation.md)
 - For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-app-service-practical-guide/)
+
+## Sources
+
+- [Map a custom DNS name to Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/app-service-web-tutorial-custom-domain)
+- [Secure a custom DNS name with a TLS/SSL binding](https://learn.microsoft.com/en-us/azure/app-service/configure-ssl-bindings)

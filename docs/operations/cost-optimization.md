@@ -2,6 +2,20 @@
 
 Control App Service spend without sacrificing reliability by right-sizing plans, tuning scaling behavior, and removing operational waste. This guide focuses on practical, language-agnostic cost controls.
 
+```mermaid
+flowchart TD
+    A[Analyze Current Costs] --> B{Over-provisioned?}
+    B -->|Yes| C[Right-size SKU]
+    B -->|No| D{Scaling Efficient?}
+    D -->|No| E[Tune Autoscale Rules]
+    D -->|Yes| F{Unused Resources?}
+    F -->|Yes| G[Remove/Consolidate]
+    F -->|No| H[Monitor & Iterate]
+    C --> H
+    E --> H
+    G --> H
+```
+
 ## Prerequisites
 
 - Existing App Service Plan and Web App
@@ -12,7 +26,9 @@ Control App Service spend without sacrificing reliability by right-sizing plans,
     - `APP_NAME`
     - `PLAN_NAME`
 
-## Main Content
+## When to Use
+
+## Procedure
 
 ### Establish Cost and Performance Baseline
 
@@ -168,7 +184,7 @@ Recommended alert thresholds:
 - 80% monthly budget (investigation)
 - 100% monthly budget (incident level)
 
-### Verify Cost Controls Are Active
+## Verification
 
 Check autoscale configuration:
 
@@ -199,7 +215,7 @@ appservice-plan-shared    84.12   USD
 monitoring-shared         11.44   USD
 ```
 
-### Troubleshooting
+## Rollback / Troubleshooting
 
 #### Bill is higher than expected
 

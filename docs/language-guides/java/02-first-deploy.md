@@ -156,7 +156,7 @@ az webapp log tail \
   --name "$APP_NAME"
 ```
 
-## Next Steps / See Also
+## See Also
 
 - [03. Configuration](03-configuration.md)
 - [05. Infrastructure as Code](05-infrastructure-as-code.md)

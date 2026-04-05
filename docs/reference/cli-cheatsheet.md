@@ -2,6 +2,18 @@
 
 Language-agnostic quick reference for Azure App Service operations with long flags only.
 
+## Overview
+
+```mermaid
+flowchart TD
+    A[Azure CLI Cheatsheet] --> B[Lifecycle]
+    A --> C[Configuration]
+    A --> D[Deployment]
+    A --> E[Monitoring]
+    A --> F[Networking]
+    A --> G[Identity & Slots]
+```
+
 ## Prerequisites
 
 ```bash
@@ -122,6 +134,11 @@ az webapp deployment slot delete --resource-group $RG --name $APP_NAME --slot st
 ```bash
 az group delete --name $RG --yes --no-wait
 ```
+
+## See Also
+
+- [KQL Queries](kql-queries.md)
+- [Platform Limits](platform-limits.md)
 
 ## Sources
 

@@ -2,6 +2,15 @@
 
 Configure runtime behavior, secrets, and identity for your Spring Boot app on Azure App Service without rebuilding the JAR.
 
+```mermaid
+flowchart LR
+    A[List current App Settings] --> B[Update runtime and JAVA_OPTS]
+    B --> C[Add Connection String if needed]
+    C --> D[Enable Managed Identity]
+    D --> E[Apply Spring profile settings]
+    E --> F[Verify effective config]
+```
+
 ## Prerequisites
 
 - Completed [02. First Deploy](02-first-deploy.md)
@@ -162,7 +171,7 @@ Reduce `MaxRAMPercentage` in `JAVA_OPTS` and retest startup time + GC behavior.
 
 Identity creation and RBAC propagation can take several minutes; validate role assignment scope and wait briefly.
 
-## Next Steps / See Also
+## See Also
 
 - [04. Logging & Monitoring](04-logging-monitoring.md)
 - [Recipes: Key Vault References](./recipes/key-vault-reference.md)

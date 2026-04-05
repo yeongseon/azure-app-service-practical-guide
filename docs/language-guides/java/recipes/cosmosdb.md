@@ -136,7 +136,7 @@ Review partition key choice and query filters; avoid unbounded scans.
 
 Ensure document model uses compatible types and includes an `id` field.
 
-## Next Steps / See Also
+## See Also
 
 - [Redis Cache](redis.md)
 - [Managed Identity](managed-identity.md)

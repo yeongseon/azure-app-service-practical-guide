@@ -147,7 +147,7 @@ Check role name, scope, and principal ID correctness; wait for propagation and r
 
 Likely local credential succeeded but cloud identity lacks RBAC. Re-check Azure role assignments for app principal.
 
-## Next Steps / See Also
+## See Also
 
 - [Azure SQL](azure-sql.md)
 - [Key Vault References](key-vault-reference.md)

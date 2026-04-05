@@ -372,6 +372,11 @@ VirtualNetworkSubnetId                                                          
 
 - [Lab: DNS Resolution (VNet)](../../lab-guides/dns-vnet-resolution.md)
 
+## See Also
+
+- [Outbound Network (First 10 Minutes)](../../first-10-minutes/outbound-network.md)
+- [DNS Resolution (VNet-integrated App Service)](dns-resolution-vnet-integrated-app-service.md)
+
 ## Sources
 - [Azure Private Endpoint DNS configuration](https://learn.microsoft.com/en-us/azure/private-link/private-endpoint-dns)
 - [Integrate your app with an Azure virtual network](https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration)

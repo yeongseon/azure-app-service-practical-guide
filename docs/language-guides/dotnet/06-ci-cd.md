@@ -2,6 +2,15 @@
 
 Implement continuous integration and deployment for the .NET guide using **Azure DevOps Pipelines** as the primary delivery workflow.
 
+```mermaid
+flowchart LR
+    A[Commit to main] --> B[Build stage restore/build/test]
+    B --> C[Publish artifact]
+    C --> D[Deploy stage to App Service]
+    D --> E[Environment approval]
+    E --> F[Production validation]
+```
+
 ## Prerequisites
 
 - Tutorial [05. Infrastructure as Code](./05-infrastructure-as-code.md) completed
@@ -174,13 +183,13 @@ Confirm artifact name (`drop`) and deploy package glob path exactly match publis
 
 Inspect Log Stream and Kudu diagnostics; redeploy after a clean publish from the same SDK version as pipeline.
 
-## Sources
-
-- [Continuous deployment to Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/deploy-continuous-deployment)
-- [Use GitHub Actions to deploy to Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/deploy-github-actions)
-
 ## See Also
 
 - [07. Custom Domain & SSL](./07-custom-domain-ssl.md)
 - [Reference: Azure DevOps Pipeline Variables](../../reference/index.md)
 - For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-app-service-practical-guide/)
+
+## Sources
+
+- [Continuous deployment to Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/deploy-continuous-deployment)
+- [Use GitHub Actions to deploy to Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/deploy-github-actions)

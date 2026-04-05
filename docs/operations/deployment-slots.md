@@ -29,7 +29,9 @@ sequenceDiagram
     - `APP_NAME`
     - `PLAN_NAME`
 
-## Main Content
+## When to Use
+
+## Procedure
 
 ### Verify Tier Supports Slots
 
@@ -225,7 +227,7 @@ resource stagingSlot 'Microsoft.Web/sites/slots@2022-09-01' = {
 }
 ```
 
-### Inspect Current Swap and Routing State
+## Verification
 
 ```bash
 az webapp show \
@@ -267,7 +269,7 @@ After swap:
 3. Route split reset if canary test was used
 4. Incident channel observes no regression window alerts
 
-### Troubleshooting
+## Rollback / Troubleshooting
 
 #### Slot not available
 

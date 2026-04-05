@@ -2,6 +2,17 @@
 
 Quick lookup documentation for Azure App Service platform operations and diagnostics.
 
+## Overview
+
+```mermaid
+flowchart TD
+    A[Reference Hub] --> B[CLI Cheatsheet]
+    A --> C[KQL Queries]
+    A --> D[Troubleshooting]
+    A --> E[Kudu API]
+    A --> F[Platform Limits]
+```
+
 ## Documents
 
 | Document | Description |

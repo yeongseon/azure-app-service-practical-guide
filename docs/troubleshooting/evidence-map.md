@@ -4,6 +4,16 @@ This page maps common investigation questions to the best evidence source, the C
 
 Use it when you know **what you need to answer** but not **where to collect proof**.
 
+```mermaid
+flowchart LR
+    Q[Investigation Question] --> S[Evidence Source]
+    S --> CLI[CLI Command]
+    S --> KQL[KQL Query]
+    CLI --> P[Proof Artifact]
+    KQL --> P
+    P --> H[Hypothesis Validation]
+```
+
 ## Why an evidence map
 
 During incidents, teams lose time by checking the wrong signal first.

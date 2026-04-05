@@ -148,7 +148,7 @@ Ensure parity for non-sticky settings and dependent resource access policies.
 
 Check slot name, distribution values, and caching/CDN layers that may mask split traffic behavior.
 
-## Next Steps / See Also
+## See Also
 
 - [Tutorial: CI/CD](../06-ci-cd.md)
 - [Tutorial: Configuration](../03-configuration.md)

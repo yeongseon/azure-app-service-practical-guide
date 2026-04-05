@@ -415,6 +415,11 @@ Swap initiated. Monitor logs for warm-up acceptance or rollback.
 
 - [Lab: Slot Swap Config Drift](../../lab-guides/slot-swap-config-drift.md)
 
+## See Also
+
+- [Startup Availability (First 10 Minutes)](../../first-10-minutes/startup-availability.md)
+- [Slot Swap Config Drift](slot-swap-config-drift.md)
+
 ## Sources
 
 - [Set up staging environments in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots)

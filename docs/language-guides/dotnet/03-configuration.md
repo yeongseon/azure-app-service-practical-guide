@@ -2,6 +2,15 @@
 
 Manage ASP.NET Core configuration safely in Azure App Service using App Settings, Connection Strings, environment-specific files, and slot-sticky values.
 
+```mermaid
+flowchart LR
+    A[List current settings] --> B[Set App Settings]
+    B --> C[Configure Connection Strings]
+    C --> D[Apply appsettings.Production.json defaults]
+    D --> E[Mark slot-sticky values]
+    E --> F[Validate in running app]
+```
+
 ## Prerequisites
 
 - Tutorial [02. First Deploy](./02-first-deploy.md) completed
@@ -162,14 +171,14 @@ Inspect effective environment variables through Kudu or startup logging and conf
 
 Verify key names and nesting in `appsettings.*.json`, and ensure environment variable separators use double underscores.
 
-## Sources
-
-- [Configure an App Service app](https://learn.microsoft.com/en-us/azure/app-service/configure-common)
-- [Configure a .NET app for Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/configure-language-dotnetcore)
-- [Use Key Vault references for App Service](https://learn.microsoft.com/en-us/azure/app-service/app-service-key-vault-references)
-
 ## See Also
 
 - [04. Logging & Monitoring](./04-logging-monitoring.md)
 - [Recipes: Key Vault References](./recipes/key-vault-reference.md)
 - For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-app-service-practical-guide/)
+
+## Sources
+
+- [Configure an App Service app](https://learn.microsoft.com/en-us/azure/app-service/configure-common)
+- [Configure a .NET app for Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/configure-language-dotnetcore)
+- [Use Key Vault references for App Service](https://learn.microsoft.com/en-us/azure/app-service/app-service-key-vault-references)

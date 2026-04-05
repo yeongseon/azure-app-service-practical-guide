@@ -2,6 +2,14 @@
 
 Run the Spring Boot reference app locally using the same runtime assumptions Azure App Service uses in production.
 
+```mermaid
+flowchart LR
+    A[Run ./mvnw spring-boot:run] --> B[Bind server.port to PORT or 8080]
+    B --> C[Test /health and /info]
+    C --> D[Test /api/requests/log-levels]
+    D --> E[Validate local vs production profile behavior]
+```
+
 ## Prerequisites
 
 - Java 17 installed (`java --version`)
@@ -144,7 +152,7 @@ chmod +x ./mvnw
 
 Ensure you are hitting the correct base URL and port (`localhost:8080` by default), and confirm startup completed before testing.
 
-## Next Steps / See Also
+## See Also
 
 - [02. First Deploy](02-first-deploy.md)
 - [03. Configuration](03-configuration.md)

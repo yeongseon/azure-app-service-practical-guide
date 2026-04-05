@@ -2,6 +2,15 @@
 
 Connect ASP.NET Core 8 to Azure SQL using Entity Framework Core and managed identity authentication for passwordless production access.
 
+```mermaid
+flowchart LR
+    A[Enable managed identity] --> B[Grant SQL access]
+    B --> C[Set SQL connection string]
+    C --> D[Register DbContext]
+    D --> E[Run migration or query]
+    E --> F[Verify data endpoint]
+```
+
 ## Prerequisites
 
 - Existing Azure SQL Server and Database

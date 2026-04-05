@@ -31,6 +31,11 @@ AppServiceConsoleLogs
 - Keyword search may include non-fatal lines or miss framework-specific error formats.
 - This query cannot prove whether App Service health probes succeeded.
 
+## See Also
+
+- [Console Query Pack](index.md)
+- [KQL Query Packs](../index.md)
+
 ## Sources
 
 - [Enable diagnostic logging for apps in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs)

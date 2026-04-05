@@ -2,6 +2,17 @@
 
 Language-agnostic KQL queries for Azure App Service monitoring, diagnostics, and operations.
 
+## Overview
+
+```mermaid
+flowchart TD
+    A[KQL Query Packs] --> B[App Insights]
+    A --> C[Log Analytics]
+    A --> D[Diagnostics]
+    A --> E[Operations]
+    E --> F[Deployment and Scale]
+```
+
 ## Query Scope and Time Columns
 
 - Use `timestamp` for Application Insights tables (`AppRequests`, `AppDependencies`, `AppExceptions`, `AppTraces`).
@@ -185,6 +196,11 @@ Run queries in **Application Insights > Logs** or **Log Analytics Workspace > Lo
 ```bash
 az monitor app-insights query --app $APP_NAME --resource-group $RG --analytics-query "AppRequests | where timestamp > ago(1h) | take 10"
 ```
+
+## See Also
+
+- [CLI Cheatsheet](cli-cheatsheet.md)
+- [Troubleshooting Reference](troubleshooting.md)
 
 ## Sources
 

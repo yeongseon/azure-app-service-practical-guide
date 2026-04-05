@@ -2,6 +2,15 @@
 
 This recipe explains how to manage native Node.js modules like `sharp` and `bcrypt` on Azure App Service using multi-stage Docker builds.
 
+```mermaid
+flowchart LR
+    A[Source with native modules] --> B[Builder image with compilers]
+    B --> C[npm install + build]
+    C --> D[Runtime image with minimal libs]
+    D --> E[Deploy to App Service]
+    E --> F[Verify module load succeeds]
+```
+
 ## Overview
 
 Native modules contain C/C++ code that must be compiled for the target operating system and architecture. When deploying to Azure App Service (Linux), compiling these locally (e.g., on Windows or macOS) can result in runtime errors like `ELF header invalid`.

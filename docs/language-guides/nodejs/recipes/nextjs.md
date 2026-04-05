@@ -2,6 +2,15 @@
 
 This recipe covers deploying a Next.js application to Azure App Service using the standalone build feature and SSR configuration.
 
+```mermaid
+flowchart LR
+    A[Configure output: standalone] --> B[npm run build]
+    B --> C[Generate .next/standalone]
+    C --> D[Build runtime container]
+    D --> E[Deploy to App Service]
+    E --> F[Validate SSR and static assets]
+```
+
 ## Overview
 
 Next.js is a popular React framework that supports both client-side and server-side rendering (SSR). For optimal performance and resource usage on Azure App Service, the **standalone** build mode is highly recommended.

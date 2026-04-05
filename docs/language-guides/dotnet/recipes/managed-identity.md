@@ -2,6 +2,15 @@
 
 Use App Service managed identity with `Azure.Identity` and `DefaultAzureCredential` to access Azure resources without storing credentials.
 
+```mermaid
+flowchart LR
+    A[Enable system-assigned identity] --> B[Get principal ID]
+    B --> C[Grant RBAC on target resource]
+    C --> D[Use DefaultAzureCredential in code]
+    D --> E[Request token at runtime]
+    E --> F[Access Azure service]
+```
+
 ## Prerequisites
 
 - App Service app deployed and running

@@ -2,6 +2,20 @@
 
 Platform-level troubleshooting reference for Azure App Service across runtimes.
 
+## Overview
+
+```mermaid
+flowchart TD
+    A[Incident Symptom] --> B[Collect Baseline]
+    B --> C{Issue Domain}
+    C --> D[Deployment Checks]
+    C --> E[Network Checks]
+    C --> F[Runtime and Logs]
+    D --> G[Validate and Mitigate]
+    E --> G
+    F --> G
+```
+
 ## Diagnostic Tools Overview
 
 | Tool | Purpose | Access |
@@ -125,6 +139,11 @@ See [Kudu API Reference](./kudu-queries.md) for endpoint details.
 - Recent deployment ID and timestamp
 - Plan SKU and current instance count
 - Relevant error snippets (PII removed)
+
+## See Also
+
+- [KQL Queries](kql-queries.md)
+- [Kudu Queries](kudu-queries.md)
 
 ## Sources
 

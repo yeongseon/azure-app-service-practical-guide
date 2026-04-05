@@ -2,6 +2,15 @@
 
 Runtime alignment is critical for startup reliability. This reference summarizes .NET 8 runtime settings, environment variables, `web.config` behavior, and startup conventions for this guide.
 
+```mermaid
+graph TD
+    A[App Service Front End] --> B[IIS + ASP.NET Core Module]
+    B --> C[dotnet process Kestrel]
+    C --> D[GuideApi net8.0]
+    E[HTTP_PLATFORM_PORT or PORT] --> C
+    F[App Settings and web.config] --> C
+```
+
 !!! tip "Common Guide Reference"
     For platform-level runtime behavior, see [Reference](https://yeongseon.github.io/azure-app-service-practical-guide/reference/) in the Azure App Service Guide.
 

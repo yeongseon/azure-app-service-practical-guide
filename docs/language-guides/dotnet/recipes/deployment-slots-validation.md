@@ -2,6 +2,16 @@
 
 Use staging slots to validate deployments before production swap, with health checks and automated safeguards in Azure DevOps.
 
+```mermaid
+flowchart LR
+    A[Deploy build to staging slot] --> B[Apply slot-sticky settings]
+    B --> C[Run health endpoints]
+    C --> D[Run readyz check]
+    D --> E{Validation passed?}
+    E -- Yes --> F[Swap staging to production]
+    E -- No --> G[Rollback and investigate]
+```
+
 ## Prerequisites
 
 - App Service plan supports deployment slots

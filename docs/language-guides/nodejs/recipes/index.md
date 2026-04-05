@@ -2,6 +2,16 @@
 
 Practical guides for common scenarios and integrations.
 
+```mermaid
+flowchart TD
+    A[Node.js Recipes] --> B[Database Integrations]
+    A --> C[Security and Identity]
+    A --> D[Advanced Deployments]
+    B --> E[Azure SQL / Cosmos DB / Redis]
+    C --> F[Managed Identity / Key Vault / Easy Auth]
+    D --> G[Container / Native Modules / Next.js / BYOS]
+```
+
 ## Database Integrations
 
 | Recipe | Description |

@@ -4,6 +4,19 @@ Production operations and day-2 practices for Azure App Service. This section is
 
 ## Main Content
 
+### Operations Navigation Overview
+
+```mermaid
+flowchart TD
+    A[Operations Start] --> B[Scaling]
+    A --> C[Deployment Slots]
+    A --> D[Health and Recovery]
+    A --> E[Backup and Restore]
+    A --> F[Networking]
+    A --> G[Security]
+    A --> H[Cost Optimization]
+```
+
 ### Operations Documents
 
 | Document | Description |

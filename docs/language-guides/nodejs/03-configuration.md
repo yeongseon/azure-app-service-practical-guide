@@ -4,6 +4,15 @@
 
 Manage environment variables, secrets, and identity for your Node.js application in Azure.
 
+```mermaid
+flowchart LR
+    A[Define config needs] --> B[Set App Settings]
+    B --> C[Set Connection Strings]
+    C --> D[Enable Managed Identity]
+    D --> E[Mark slot-sticky values]
+    E --> F[Verify via /info and logs]
+```
+
 ## Prerequisites
 
 - Application deployed to Azure ([02. Deploy Application](./02-first-deploy.md))

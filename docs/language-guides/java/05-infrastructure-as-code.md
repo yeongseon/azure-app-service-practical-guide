@@ -154,7 +154,7 @@ Check App Service runtime in portal or CLI; confirm `linuxFxVersion` is `JAVA|17
 
 Confirm `/health` endpoint exists and startup command still forwards `--server.port=$PORT`.
 
-## Next Steps / See Also
+## See Also
 
 - [06. CI/CD](06-ci-cd.md)
 - [07. Custom Domain & SSL](07-custom-domain-ssl.md)

@@ -2,6 +2,16 @@
 
 Use staging slots to validate deployments before production swap, with health checks and automated safeguards in GitHub Actions.
 
+```mermaid
+flowchart LR
+    A[Deploy to staging slot] --> B[Apply slot-sticky settings]
+    B --> C[Run /health and /info checks]
+    C --> D[Run /readyz validation]
+    D --> E{Checks pass?}
+    E -- Yes --> F[Swap to production]
+    E -- No --> G[Fix and redeploy staging]
+```
+
 ## Prerequisites
 
 - App Service plan supports deployment slots

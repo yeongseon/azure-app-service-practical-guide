@@ -472,6 +472,11 @@ PYTHON_VERSION                         3.11
 
 - [Lab: Deployment Succeeded but Startup Failed](../../lab-guides/deployment-succeeded-startup-failed.md)
 
+## See Also
+
+- [Startup Availability (First 10 Minutes)](../../first-10-minutes/startup-availability.md)
+- [Deployment Succeeded, Startup Failed Lab](../../lab-guides/deployment-succeeded-startup-failed.md)
+
 ## Sources
 
 - [Configure a Linux Python app for Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/configure-language-python)

@@ -133,6 +133,11 @@ After these checks, you should be able to:
 - [Intermittent 5xx Under Load](../playbooks/performance/intermittent-5xx-under-load.md)
 - [SNAT or Application Issue?](../playbooks/outbound-network/snat-or-application-issue.md)
 
+## See Also
+
+- [Slow Response but Low CPU](../playbooks/performance/slow-response-but-low-cpu.md)
+- [Latency Trend by Status Code](../kql/http/latency-trend-by-status-code.md)
+
 ## Sources
 
 - [Troubleshoot slow app performance in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-performance-degradation)

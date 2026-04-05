@@ -452,6 +452,11 @@ WEBSITE_WARMUP_PATH                    /
 !!! tip "How to Read This"
     Use this matrix for first-pass triage: if user-path requests never appear and listener is localhost, skip deeper protocol analysis and fix bind/port first.
 
+## See Also
+
+- [Startup Availability (First 10 Minutes)](../../first-10-minutes/startup-availability.md)
+- [Failed to Forward Request Lab](../../lab-guides/failed-to-forward-request.md)
+
 ## Sources
 
 - [Configure a custom container for Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container)

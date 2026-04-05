@@ -2,6 +2,19 @@
 
 App Service provides a built-in authentication and authorization service, often called Easy Auth. This platform-level feature handles user logins and provides identity information to your Node.js application through HTTP headers.
 
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant FE as App Service Easy Auth
+    participant IDP as Entra ID
+    participant APP as Node.js App
+    U->>FE: Request protected endpoint
+    FE->>IDP: Redirect + token validation
+    IDP-->>FE: Authenticated token
+    FE->>APP: Forward request with X-MS-* headers
+    APP-->>U: Response using claims
+```
+
 ## Overview
 
 Easy Auth eliminates the need to manage security tokens or integrate complex authentication SDKs into your code. The platform validates incoming tokens and populates standard headers before the request reaches your application.

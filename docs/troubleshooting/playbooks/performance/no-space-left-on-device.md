@@ -395,6 +395,11 @@ $ du -sh /home/site/wwwroot/*
 
 - [Lab: No Space Left on Device](../../lab-guides/no-space-left-on-device.md)
 
+## See Also
+
+- [Performance (First 10 Minutes)](../../first-10-minutes/performance.md)
+- [No Space Left on Device Lab](../../lab-guides/no-space-left-on-device.md)
+
 ## Sources
 - [Operating system functionality on Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/operating-system-functionality)
 - [Azure App Service plan overview](https://learn.microsoft.com/en-us/azure/app-service/overview-hosting-plans)

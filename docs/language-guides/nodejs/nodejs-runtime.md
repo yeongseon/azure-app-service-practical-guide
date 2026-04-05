@@ -2,6 +2,15 @@
 
 Quick lookup for the Node.js runtime environment on Azure App Service (Linux).
 
+```mermaid
+graph TD
+    A[Client HTTPS Request] --> B[App Service Front End]
+    B --> C[Node Worker on process.env.PORT]
+    C --> D[Express/Node Application]
+    D --> E[App Insights and Logs]
+    F[Oryx Build Engine] --> C
+```
+
 ## Supported Node.js Versions
 
 App Service supports current LTS versions. Check available versions via CLI:

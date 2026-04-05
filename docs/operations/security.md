@@ -11,7 +11,9 @@ Protect App Service workloads with layered controls: identity, authentication, t
     - `RG`
     - `APP_NAME`
 
-## Main Content
+## When to Use
+
+## Procedure
 
 ```mermaid
 flowchart TD
@@ -248,7 +250,7 @@ curl --silent --head "https://$APP_NAME.azurewebsites.net" | grep -iE "(strict-t
 !!! info "Where to set headers"
     On Linux App Service, set headers in your application framework (Flask, Express, Spring, ASP.NET middleware). On Windows, you can also use `web.config` custom headers. For both, Azure Front Door can inject headers at the edge.
 
-### Verification
+## Verification
 
 Authentication and identity:
 
@@ -286,7 +288,7 @@ Expected:
 - TLS meets minimum baseline
 - unauthorized requests challenged or denied by policy
 
-### Troubleshooting
+## Rollback / Troubleshooting
 
 #### Authentication redirect loop
 

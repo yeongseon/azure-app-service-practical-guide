@@ -2,6 +2,18 @@
 
 Use these production-oriented recipes to integrate common Azure services with ASP.NET Core 8 on Windows App Service.
 
+```mermaid
+flowchart TD
+    A[.NET Recipes] --> B[Database]
+    A --> C[Security]
+    A --> D[Networking]
+    A --> E[Deployment]
+    B --> F[Azure SQL / Cosmos DB / Redis]
+    C --> G[Managed Identity / Key Vault / Easy Auth]
+    D --> H[Private Endpoints]
+    E --> I[Slots Validation]
+```
+
 ## Prerequisites
 
 - Tutorials 01-03 completed for baseline deployment and configuration

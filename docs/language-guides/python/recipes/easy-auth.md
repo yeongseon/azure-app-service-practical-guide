@@ -2,6 +2,19 @@
 
 Protect Flask endpoints using App Service built-in authentication and consume authenticated user context from request headers.
 
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant EA as Easy Auth
+    participant IDP as Identity Provider
+    participant F as Flask App
+    U->>EA: Access protected route
+    EA->>IDP: Authenticate user
+    IDP-->>EA: Return token
+    EA->>F: Forward with X-MS-* headers
+    F-->>U: JSON response with user context
+```
+
 ## Prerequisites
 
 - App Service web app running Flask

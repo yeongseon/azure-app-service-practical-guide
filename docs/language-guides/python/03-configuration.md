@@ -2,6 +2,14 @@
 
 This guide standardizes runtime configuration for Flask on Azure App Service. You will set environment settings, separate dev/prod behavior, and secure secrets with Key Vault references.
 
+```mermaid
+flowchart LR
+    A[Set App Settings] --> B[Read env vars in Flask]
+    B --> C[Separate local and production profiles]
+    C --> D[Add Key Vault references]
+    D --> E[List and validate effective settings]
+```
+
 ## Prerequisites
 
 - Completed [02 - First Deploy](./02-first-deploy.md)

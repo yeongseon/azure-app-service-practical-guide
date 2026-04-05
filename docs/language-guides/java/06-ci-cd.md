@@ -168,7 +168,7 @@ Inspect App Service logs and confirm startup command still includes `--server.po
 
 Ensure Maven cache is enabled in `actions/setup-java`, and avoid redundant `clean package` steps.
 
-## Next Steps / See Also
+## See Also
 
 - [07. Custom Domain & SSL](07-custom-domain-ssl.md)
 - [Recipes: Deployment Slots Zero Downtime](./recipes/deployment-slots-zero-downtime.md)

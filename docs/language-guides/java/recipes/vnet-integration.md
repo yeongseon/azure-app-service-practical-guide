@@ -129,7 +129,7 @@ Check VNet DNS settings and private DNS zone association to the integration VNet
 
 Review route table (`UDR`) and ensure required Azure service endpoints are reachable through your forced egress path.
 
-## Next Steps / See Also
+## See Also
 
 - [Key Vault References](key-vault-reference.md)
 - [Azure SQL](azure-sql.md)

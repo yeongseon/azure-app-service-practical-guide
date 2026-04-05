@@ -2,6 +2,15 @@
 
 Runtime reference for Java 17 on Azure App Service Linux with Spring Boot 3.2.x. Use this document as the Java equivalent of a runtime compatibility and tuning sheet.
 
+```mermaid
+graph TD
+    A[App Service Front End] --> B[Java SE container]
+    B --> C[Spring Boot JAR process]
+    C --> D[server.port uses PORT]
+    E[JAVA_OPTS memory and GC] --> C
+    F[linuxFxVersion JAVA|17-java17] --> B
+```
+
 ## Supported baseline in this guide
 
 - Runtime target: **Java 17**

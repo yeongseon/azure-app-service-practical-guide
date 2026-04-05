@@ -2,6 +2,16 @@
 
 Practical patterns for common Azure App Service scenarios in Python and Flask.
 
+```mermaid
+flowchart TD
+    A[Python Flask Recipes] --> B[Identity and Secrets]
+    A --> C[Data and Cache]
+    A --> D[Runtime and Deployment]
+    B --> E[Managed Identity / Key Vault / Easy Auth]
+    C --> F[Azure SQL / Cosmos DB / Redis]
+    D --> G[Custom Container / Native Deps / Slots]
+```
+
 ## Prerequisites
 
 - A deployed App Service web app running Python 3.11+

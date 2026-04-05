@@ -2,6 +2,17 @@
 
 Quick reference for Kudu (SCM) endpoints used to diagnose and operate Azure App Service apps.
 
+## Overview
+
+```mermaid
+flowchart TD
+    A[Kudu API] --> B[Environment]
+    A --> C[Processes]
+    A --> D[File System]
+    A --> E[Deployments]
+    A --> F[Command API]
+```
+
 ## Base URL and Authentication
 
 Kudu endpoint format:
@@ -137,6 +148,11 @@ curl -s -u "$AUTH_USER:$AUTH_PASS" \
 | `/home/LogFiles` | Application, platform, and deployment logs |
 | `/home/data` | Persistent data directory |
 | `/tmp` | Temporary storage (ephemeral) |
+
+## See Also
+
+- [Troubleshooting Reference](troubleshooting.md)
+- [CLI Cheatsheet](cli-cheatsheet.md)
 
 ## Sources
 

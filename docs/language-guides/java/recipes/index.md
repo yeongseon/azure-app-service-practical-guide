@@ -92,7 +92,7 @@ Pair [VNet Integration](vnet-integration.md) with private endpoints on each back
 
 Implement [Deployment Slots Zero Downtime](deployment-slots-zero-downtime.md) before service integrations.
 
-## Next Steps / See Also
+## See Also
 
 - [Tutorial Index](../index.md)
 - [03. Configuration](../03-configuration.md)

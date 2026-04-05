@@ -144,7 +144,7 @@ Review TTL policy and key design; ensure cache keys include stable identifiers.
 
 Check session namespace consistency and verify all instances point to the same Redis cache.
 
-## Next Steps / See Also
+## See Also
 
 - [Managed Identity](managed-identity.md)
 - [VNet Integration](vnet-integration.md)

@@ -2,6 +2,15 @@
 
 Quick lookup reference.
 
+```mermaid
+graph TD
+    A[Zip Deploy or Source Deploy] --> B[Oryx detects requirements.txt]
+    B --> C[Create Python venv + install deps]
+    C --> D[Generate startup metadata]
+    D --> E[Gunicorn binds to PORT]
+    E --> F[Flask app serves requests]
+```
+
 ## Supported Runtime Versions
 
 ### App Service Python Versions (Linux)

@@ -2,6 +2,17 @@
 
 Connect App Service to backend services over private networking using VNet integration and private endpoints for SQL, Redis, and Key Vault.
 
+```mermaid
+flowchart LR
+    A[App Service with VNet integration] --> B[Private DNS zones]
+    B --> C[Private Endpoint SQL]
+    B --> D[Private Endpoint Redis]
+    B --> E[Private Endpoint Key Vault]
+    C --> F[Private backend connectivity]
+    D --> F
+    E --> F
+```
+
 ## Prerequisites
 
 - App Service Plan tier that supports VNet integration

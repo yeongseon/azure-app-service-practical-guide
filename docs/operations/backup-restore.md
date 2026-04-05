@@ -2,6 +2,22 @@
 
 Protect production workloads with scheduled backups, restore drills, and disaster recovery procedures. This guide covers App Service backup capabilities and complementary operational patterns.
 
+```mermaid
+sequenceDiagram
+    participant Op as Operator
+    participant App as App Service
+    participant Blob as Storage Account
+    participant DB as Database (optional)
+
+    Op->>App: Configure backup schedule
+    App->>Blob: Store site content + config
+    App->>DB: Snapshot (if connected)
+    Note over Blob: Retention policy applies
+    Op->>App: Trigger restore
+    App->>Blob: Retrieve backup artifact
+    App->>App: Apply configuration
+```
+
 ## Prerequisites
 
 - App Service Plan tier **Standard or higher**
@@ -13,7 +29,9 @@ Protect production workloads with scheduled backups, restore drills, and disaste
     - `LOCATION`
     - `STORAGE_ACCOUNT_NAME`
 
-## Main Content
+## When to Use
+
+## Procedure
 
 ### Understand Backup Scope and Limits
 
@@ -140,7 +158,7 @@ Sample response (PII-masked):
 }
 ```
 
-### Validate Post-Restore State
+## Verification
 
 1. Confirm app state is `Running`
 2. Validate `/health` endpoint
@@ -182,6 +200,26 @@ Strengthen disaster recovery posture:
 - pair app backups with database-native backup strategy
 - rehearse failover and failback quarterly
 
+## Rollback / Troubleshooting
+
+#### Backup job fails
+
+- Verify storage URL and SAS validity
+- Confirm storage firewall settings allow access
+- Confirm app tier supports backups
+
+#### Restore fails or stalls
+
+- Confirm backup artifact exists and is complete
+- Retry with latest known-good backup
+- Check activity logs for operation-level errors
+
+#### Restored app is unhealthy
+
+- Validate app settings and slot-specific configuration
+- Confirm dependent services are reachable
+- Check startup logs for runtime initialization issues
+
 ## Advanced Topics
 
 ### RPO/RTO Planning
@@ -208,26 +246,6 @@ Example model:
 
 !!! info "Enterprise Considerations"
     Treat backup success alone as insufficient. Include recurring restore drills with measured recovery times and explicit sign-off from service owners.
-
-### Troubleshooting
-
-#### Backup job fails
-
-- Verify storage URL and SAS validity
-- Confirm storage firewall settings allow access
-- Confirm app tier supports backups
-
-#### Restore fails or stalls
-
-- Confirm backup artifact exists and is complete
-- Retry with latest known-good backup
-- Check activity logs for operation-level errors
-
-#### Restored app is unhealthy
-
-- Validate app settings and slot-specific configuration
-- Confirm dependent services are reachable
-- Check startup logs for runtime initialization issues
 
 ## Language-Specific Details
 

@@ -150,7 +150,7 @@ Confirm hostname is validated and publicly resolvable. Managed certificate issua
 
 Clear DNS/TLS cache or test with another network; propagation can lag at edge resolvers.
 
-## Next Steps / See Also
+## See Also
 
 - [Recipes: Easy Auth](./recipes/easy-auth.md)
 - [Recipes: Deployment Slots Zero Downtime](./recipes/deployment-slots-zero-downtime.md)

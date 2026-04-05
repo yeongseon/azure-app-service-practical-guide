@@ -2,6 +2,15 @@
 
 Handle Python packages with C/C++ extensions reliably on Azure App Service Linux.
 
+```mermaid
+flowchart LR
+    A[Select wheel-first packages] --> B[Deploy with Oryx build]
+    B --> C{Wheel unavailable?}
+    C -- No --> D[Run app normally]
+    C -- Yes --> E[Build custom container with system libs]
+    E --> F[Deploy container and verify native imports]
+```
+
 ## Prerequisites
 
 - Python 3.11 runtime on App Service Linux

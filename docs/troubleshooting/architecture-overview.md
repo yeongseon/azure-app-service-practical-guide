@@ -186,7 +186,7 @@ AppServiceConsoleLogs
     Use this page to identify the most likely failure layer, then validate with time-correlated evidence.
     Move to the linked playbook only after you identify which layer best matches the symptom timing.
 
-## 7) See Also
+## See Also
 
 - [Troubleshooting Method](methodology/troubleshooting-method.md)
 - [Detector Map](methodology/detector-map.md)

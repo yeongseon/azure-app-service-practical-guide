@@ -369,6 +369,11 @@ VirtualNetworkSubnetId                                                          
 
 - [Lab: SNAT Exhaustion](../../lab-guides/snat-exhaustion.md)
 
+## See Also
+
+- [Outbound Network (First 10 Minutes)](../../first-10-minutes/outbound-network.md)
+- [SNAT Exhaustion Lab](../../lab-guides/snat-exhaustion.md)
+
 ## Sources
 - [Troubleshoot outbound connection errors in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-intermittent-outbound-connection-errors)
 - [Integrate your app with an Azure virtual network](https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration)

@@ -2,6 +2,18 @@
 
 Use App Service Key Vault References to inject secrets into environment variables without changing Spring Boot application code.
 
+```mermaid
+sequenceDiagram
+    participant APP as App Service App
+    participant MI as Managed Identity
+    participant KV as Azure Key Vault
+    participant SB as Spring Boot
+    APP->>KV: Resolve Key Vault Reference using MI
+    KV-->>APP: Secret value
+    APP->>SB: Inject as environment variable
+    SB-->>APP: Use in datasource/redis config
+```
+
 ## Prerequisites
 
 - Azure Key Vault with required secrets created
@@ -124,7 +136,7 @@ Validate secret format/content compatibility with application expectations.
 
 Review VNet integration, private endpoint health, and private DNS linkage.
 
-## Next Steps / See Also
+## See Also
 
 - [Managed Identity](managed-identity.md)
 - [VNet Integration](vnet-integration.md)

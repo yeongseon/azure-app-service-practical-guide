@@ -374,6 +374,11 @@ $ az webapp deployment list --resource-group <resource-group> --name <app-name>
 
 - [Lab: Slow Start / Cold Start](../../lab-guides/slow-start-cold-start.md)
 
+## See Also
+
+- [Performance (First 10 Minutes)](../../first-10-minutes/performance.md)
+- [Slow Start / Cold Start Lab](../../lab-guides/slow-start-cold-start.md)
+
 ## Sources
 - [Configure an App Service app](https://learn.microsoft.com/en-us/azure/app-service/configure-common)
 - [Azure App Service plan overview](https://learn.microsoft.com/en-us/azure/app-service/overview-hosting-plans)

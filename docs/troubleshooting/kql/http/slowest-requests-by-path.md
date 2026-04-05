@@ -30,6 +30,11 @@ AppServiceHTTPLogs
 - Paths with very low count can produce unstable percentile values.
 - This query cannot reveal internal function-level bottlenecks inside a path.
 
+## See Also
+
+- [HTTP Query Pack](index.md)
+- [KQL Query Packs](../index.md)
+
 ## Sources
 
 - [Enable diagnostic logging for apps in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs)

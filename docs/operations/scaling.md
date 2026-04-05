@@ -24,7 +24,9 @@ flowchart LR
     - `APP_NAME`
     - `PLAN_NAME`
 
-## Main Content
+## When to Use
+
+## Procedure
 
 ### Understand Scale Up vs Scale Out
 
@@ -201,7 +203,7 @@ az monitor activity-log list \
   --output table
 ```
 
-### Verification Checklist
+## Verification
 
 1. Plan SKU matches expected tier
 2. Worker count changes correctly under load
@@ -209,7 +211,7 @@ az monitor activity-log list \
 4. Activity log records scale actions
 5. Application SLO remains within target during scale transitions
 
-### Troubleshooting
+## Rollback / Troubleshooting
 
 #### Autoscale does not trigger
 

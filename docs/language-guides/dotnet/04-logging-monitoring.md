@@ -2,6 +2,15 @@
 
 Instrument ASP.NET Core 8 on Azure App Service with `ILogger` and Application Insights, then query operational signals using KQL.
 
+```mermaid
+flowchart LR
+    A[App request] --> B[ILogger structured logs]
+    B --> C[Application Insights ingestion]
+    C --> D[Log Analytics workspace]
+    D --> E[Run KQL diagnostics]
+    E --> F[Operational decisions]
+```
+
 ## Prerequisites
 
 - Tutorial [03. Configuration](./03-configuration.md) completed
@@ -183,13 +192,13 @@ az webapp config appsettings set \
 
 Confirm you are using instrumented libraries and avoid suppressing `DiagnosticSource` activity in custom middleware.
 
-## Sources
-
-- [Enable diagnostics logging for apps in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs)
-- [Monitor Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/monitor-app-service)
-
 ## See Also
 
 - [05. Infrastructure as Code](./05-infrastructure-as-code.md)
 - [Reference: KQL Queries](../../reference/kql-queries.md)
 - For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-app-service-practical-guide/)
+
+## Sources
+
+- [Enable diagnostics logging for apps in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs)
+- [Monitor Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/monitor-app-service)

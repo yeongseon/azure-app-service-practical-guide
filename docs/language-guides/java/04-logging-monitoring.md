@@ -174,7 +174,7 @@ az webapp config appsettings set \
 
 Use `AppTraces`/`AppRequests` as primary tables; in some environments, schema naming may vary by ingestion mode.
 
-## Next Steps / See Also
+## See Also
 
 - [05. Infrastructure as Code](05-infrastructure-as-code.md)
 - [Reference: KQL Queries](../../reference/kql-queries.md)

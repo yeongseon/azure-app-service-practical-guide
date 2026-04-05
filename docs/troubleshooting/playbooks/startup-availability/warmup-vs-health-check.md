@@ -399,6 +399,11 @@ HealthCheckPath    LinuxFxVersion  AppCommandLine
 
 - [Lab: Slot Swap Config Drift](../../lab-guides/slot-swap-config-drift.md)
 
+## See Also
+
+- [Startup Availability (First 10 Minutes)](../../first-10-minutes/startup-availability.md)
+- [Slot Swap Failed During Warmup](slot-swap-failed-during-warmup.md)
+
 ## Sources
 
 - [Monitor App Service instances using Health check](https://learn.microsoft.com/en-us/azure/app-service/monitor-instances-health-check)

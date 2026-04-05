@@ -2,6 +2,15 @@
 
 This chapter deploys a Flask app to Azure App Service using Python build automation. It focuses on `requirements.txt`, Oryx build detection, and explicit startup command settings.
 
+```mermaid
+flowchart LR
+    A[Set RG APP PLAN variables] --> B[Create group plan web app]
+    B --> C[Enable SCM_DO_BUILD_DURING_DEPLOYMENT]
+    C --> D[Set gunicorn startup command]
+    D --> E[Deploy source package]
+    E --> F[Verify health endpoint]
+```
+
 ## Prerequisites
 
 - Completed [01 - Local Run](./01-local-run.md)

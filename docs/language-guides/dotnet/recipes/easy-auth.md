@@ -2,6 +2,19 @@
 
 Protect your ASP.NET Core app with Azure App Service built-in authentication (Easy Auth), and consume identity claims from platform-injected headers.
 
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant EA as Easy Auth
+    participant IDP as Entra ID
+    participant API as ASP.NET Core API
+    U->>EA: Request protected route
+    EA->>IDP: Authenticate user
+    IDP-->>EA: Token + claims
+    EA->>API: Forward with X-MS-CLIENT-PRINCIPAL
+    API-->>U: Authorized response
+```
+
 ## Prerequisites
 
 - App Service app deployed

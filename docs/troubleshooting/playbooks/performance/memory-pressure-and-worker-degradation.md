@@ -395,6 +395,11 @@ timestamp                  CpuPercentage_Average   MemoryPercentage_Average
 
 - [Lab: Memory Pressure and Worker Degradation](../../lab-guides/memory-pressure.md)
 
+## See Also
+
+- [Performance (First 10 Minutes)](../../first-10-minutes/performance.md)
+- [Memory Pressure Lab](../../lab-guides/memory-pressure.md)
+
 ## Sources
 - [Monitor Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/monitor-app-service)
 - [Azure App Service plan overview](https://learn.microsoft.com/en-us/azure/app-service/overview-hosting-plans)

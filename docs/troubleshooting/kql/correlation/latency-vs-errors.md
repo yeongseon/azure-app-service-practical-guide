@@ -31,6 +31,11 @@ AppServiceHTTPLogs
 - Short windows with low request count can produce volatile error-rate percentages.
 - This query cannot isolate whether errors originate in app runtime, platform, or dependency.
 
+## See Also
+
+- [Correlation Query Pack](index.md)
+- [KQL Query Packs](../index.md)
+
 ## Sources
 
 - [Enable diagnostic logging for apps in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs)

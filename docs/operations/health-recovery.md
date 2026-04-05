@@ -26,7 +26,9 @@ flowchart TD
     - `RG`
     - `APP_NAME`
 
-## Main Content
+## When to Use
+
+## Procedure
 
 ### Define a Reliable Health Endpoint Contract
 
@@ -137,7 +139,7 @@ az webapp restart \
   --output json
 ```
 
-### Validate Recovery Controls End-to-End
+## Verification
 
 Control plane validation:
 
@@ -173,7 +175,7 @@ Expected result: HTTP success response and stable latency.
 2026-04-03T09:16:00Z  metric  Error rate back to baseline
 ```
 
-### Troubleshooting
+## Rollback / Troubleshooting
 
 #### Health check keeps failing
 

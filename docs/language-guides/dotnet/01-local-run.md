@@ -2,6 +2,14 @@
 
 Run the ASP.NET Core 8 reference API locally using the same port and environment conventions expected by Azure App Service on Windows.
 
+```mermaid
+flowchart LR
+    A[dotnet restore] --> B[dotnet run]
+    B --> C[Bind to HTTP_PLATFORM_PORT or PORT]
+    C --> D[Test /health and /info]
+    D --> E[Switch Development or Production mode]
+```
+
 ## Prerequisites
 
 - .NET 8 SDK installed (`dotnet --info`)
@@ -137,13 +145,13 @@ Print current environment at startup:
 Console.WriteLine($"ASPNETCORE_ENVIRONMENT={builder.Environment.EnvironmentName}");
 ```
 
-## Sources
-
-- [Configure a .NET app for Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/configure-language-dotnetcore)
-- [Quickstart: Deploy an ASP.NET web app](https://learn.microsoft.com/en-us/azure/app-service/quickstart-dotnetcore)
-
 ## See Also
 
 - [02. First Deploy](./02-first-deploy.md)
 - [03. Configuration](./03-configuration.md)
 - For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-app-service-practical-guide/)
+
+## Sources
+
+- [Configure a .NET app for Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/configure-language-dotnetcore)
+- [Quickstart: Deploy an ASP.NET web app](https://learn.microsoft.com/en-us/azure/app-service/quickstart-dotnetcore)

@@ -116,7 +116,7 @@ Update allowed redirect URIs and issuer settings for the custom hostname.
 
 Confirm Easy Auth is enabled and requests are not bypassing App Service front door.
 
-## Next Steps / See Also
+## See Also
 
 - [Managed Identity](managed-identity.md)
 - [Custom Domain & SSL](../07-custom-domain-ssl.md)

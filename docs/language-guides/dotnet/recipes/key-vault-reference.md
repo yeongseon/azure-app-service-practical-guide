@@ -2,6 +2,18 @@
 
 Use Azure App Service Key Vault References to inject secrets into configuration without embedding secret values in code or pipeline variables.
 
+```mermaid
+sequenceDiagram
+    participant APP as App Service App
+    participant MI as Managed Identity
+    participant KV as Azure Key Vault
+    participant CFG as IConfiguration
+    APP->>KV: Resolve @Microsoft.KeyVault reference via MI
+    KV-->>APP: Secret value
+    APP->>CFG: Expose as App Setting
+    CFG-->>APP: Read ConnectionStrings:MainDb
+```
+
 ## Prerequisites
 
 - Azure Key Vault with at least one secret
