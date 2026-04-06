@@ -412,13 +412,6 @@ For intermittent 5xx under load on App Service Linux, avoid single-cause assumpt
 
 - [Lab: Intermittent 5xx Under Load](../../lab-guides/intermittent-5xx.md)
 
-### Related Labs
-
-- [Lab: Intermittent 5xx Under Load](../../lab-guides/intermittent-5xx.md)
-
-- [Performance (First 10 Minutes)](../../first-10-minutes/performance.md)
-- [Intermittent 5xx Lab](../../lab-guides/intermittent-5xx.md)
-
 ## Sources
 
 - [Troubleshoot HTTP errors of "502 bad gateway" and "503 service unavailable" in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503)

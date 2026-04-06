@@ -444,12 +444,9 @@ az webapp config connection-string list --resource-group <resource-group> --name
 
 - [Lab: Slot Swap Config Drift](../../lab-guides/slot-swap-config-drift.md)
 
-### Related Labs
-
-- [Lab: Slot Swap Config Drift](../../lab-guides/slot-swap-config-drift.md)
+### Related Checklists
 
 - [Startup Availability (First 10 Minutes)](../../first-10-minutes/startup-availability.md)
-- [Slot Swap Config Drift Lab](../../lab-guides/slot-swap-config-drift.md)
 
 ## Sources
 

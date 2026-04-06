@@ -82,12 +82,6 @@ sequenceDiagram
 - "This is always an app code bug." (most loops are auth/proxy/host/protocol configuration issues)
 - "If production works, staging config differences do not matter." (slot swap can promote bad auth settings)
 
-- [Authentication and authorization in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization)
-- [Configure your App Service or Azure Functions app to use Microsoft Entra sign-in](https://learn.microsoft.com/en-us/azure/app-service/configure-authentication-provider-aad)
-- [Configure Azure App Service authentication settings by using the Azure CLI](https://learn.microsoft.com/en-us/azure/app-service/configure-authentication-api-version)
-- [Azure Front Door origin and routing architecture](https://learn.microsoft.com/en-us/azure/frontdoor/front-door-routing-architecture)
-- [Application Gateway request routing rules overview](https://learn.microsoft.com/en-us/azure/application-gateway/configuration-request-routing-rules)
-
 ## 3. Competing Hypotheses
 
 - **H1: Redirect URI mismatch** — App registration redirect URI does not match the app's actual public URL (for example custom domain vs `azurewebsites.net`).
