@@ -271,3 +271,8 @@ For language-specific implementation details, see:
 - [Networking](./networking.md)
 - [Scale up App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/manage-scale-up)
 - [Azure Monitor autoscale (Microsoft Learn)](https://learn.microsoft.com/azure/azure-monitor/autoscale/autoscale-get-started)
+
+## Sources
+
+- [Scale up App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/manage-scale-up)
+- [Azure Monitor autoscale (Microsoft Learn)](https://learn.microsoft.com/azure/azure-monitor/autoscale/autoscale-get-started)

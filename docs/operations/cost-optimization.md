@@ -279,3 +279,8 @@ For language-specific operational guidance, see:
 - [Security](./security.md)
 - [Manage costs for App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-manage-costs)
 - [Cost management best practices (Microsoft Learn)](https://learn.microsoft.com/azure/cost-management-billing/costs/cost-mgt-best-practices)
+
+## Sources
+
+- [Manage costs for App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-manage-costs)
+- [Cost management best practices (Microsoft Learn)](https://learn.microsoft.com/azure/cost-management-billing/costs/cost-mgt-best-practices)

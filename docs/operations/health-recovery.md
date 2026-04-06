@@ -243,3 +243,8 @@ For language-specific operational guidance, see:
 - [Backup and Restore](./backup-restore.md)
 - [Health check in App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/monitor-instances-health-check)
 - [Diagnostics and auto-heal (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-diagnostics)
+
+## Sources
+
+- [Health check in App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/monitor-instances-health-check)
+- [Diagnostics and auto-heal (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-diagnostics)

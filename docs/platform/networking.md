@@ -270,3 +270,8 @@ For language-specific implementation details, see:
 - [Resource Relationships](./resource-relationships.md)
 - [App Service networking features (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/networking-features)
 - [VNet integration overview (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-vnet-integration)
+
+## Sources
+
+- [App Service networking features (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/networking-features)
+- [VNet integration overview (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-vnet-integration)

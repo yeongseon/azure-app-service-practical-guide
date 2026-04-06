@@ -734,6 +734,8 @@ This section defines what you SHOULD observe at each phase of the lab. Use it to
 | Platform/Console logs | No mandatory platform crash required | Recovery can occur without restart |
 | Incident interpretation | 499 treated as timeout symptom, not server 5xx | Confirms worker exhaustion pattern rather than random platform failure |
 
+### Evidence Timeline
+
 ```mermaid
 graph LR
     A[Baseline Capture] --> B[Trigger Fault]

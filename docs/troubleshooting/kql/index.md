@@ -29,3 +29,9 @@ graph TD
 - Default time windows are intentionally short (1h to 24h) for first-response triage.
 - Adjust `ago(...)` windows and bin size for low-traffic or long-burn incidents.
 - Validate table availability in your Log Analytics workspace before use.
+
+## See Also
+
+- [HTTP Queries](http/index.md)
+- [Console Queries](console/index.md)
+- [Correlation Queries](correlation/index.md)

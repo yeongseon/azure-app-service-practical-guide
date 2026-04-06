@@ -364,3 +364,9 @@ For language-specific security patterns and auth integration:
 - [App Service security overview (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-security)
 - [Authentication and authorization (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-authentication-authorization)
 - [Configure CORS (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/app-service-web-tutorial-rest-api#enable-cors)
+
+## Sources
+
+- [App Service security overview (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-security)
+- [Authentication and authorization (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-authentication-authorization)
+- [Configure CORS (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/app-service-web-tutorial-rest-api#enable-cors)

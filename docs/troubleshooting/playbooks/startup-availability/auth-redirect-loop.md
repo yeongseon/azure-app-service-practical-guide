@@ -82,14 +82,6 @@ sequenceDiagram
 - "This is always an app code bug." (most loops are auth/proxy/host/protocol configuration issues)
 - "If production works, staging config differences do not matter." (slot swap can promote bad auth settings)
 
-### Common Misdiagnoses
-
-- "Identity provider is down." (loop usually results from config mismatch, not provider outage)
-- "User password or MFA failure." (credentials can be correct while callback/session handling is broken)
-- "Clearing browser cookies is the fix." (may temporarily mask symptoms but not configuration root cause)
-- "This is always an app code bug." (most loops are auth/proxy/host/protocol configuration issues)
-- "If production works, staging config differences do not matter." (slot swap can promote bad auth settings)
-
 - [Authentication and authorization in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization)
 - [Configure your App Service or Azure Functions app to use Microsoft Entra sign-in](https://learn.microsoft.com/en-us/azure/app-service/configure-authentication-provider-aad)
 - [Configure Azure App Service authentication settings by using the Azure CLI](https://learn.microsoft.com/en-us/azure/app-service/configure-authentication-api-version)

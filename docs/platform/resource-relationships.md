@@ -310,3 +310,8 @@ For language-specific implementation details, see:
 - [Networking](./networking.md)
 - [Managed identity for App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-managed-identity)
 - [Azure RBAC overview (Microsoft Learn)](https://learn.microsoft.com/azure/role-based-access-control/overview)
+
+## Sources
+
+- [Managed identity for App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-managed-identity)
+- [Azure RBAC overview (Microsoft Learn)](https://learn.microsoft.com/azure/role-based-access-control/overview)

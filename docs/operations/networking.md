@@ -329,3 +329,8 @@ For language-specific operational guidance, see:
 - [Health and Recovery](./health-recovery.md)
 - [App Service networking features (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/networking-features)
 - [VNet integration (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-vnet-integration)
+
+## Sources
+
+- [App Service networking features (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/networking-features)
+- [VNet integration (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-vnet-integration)

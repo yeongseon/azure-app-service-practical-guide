@@ -276,3 +276,8 @@ For language-specific operational guidance, see:
 - [Cost Optimization](./cost-optimization.md)
 - [Scale up an App Service plan (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/manage-scale-up)
 - [Azure Monitor autoscale (Microsoft Learn)](https://learn.microsoft.com/azure/azure-monitor/autoscale/autoscale-get-started)
+
+## Sources
+
+- [Scale up an App Service plan (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/manage-scale-up)
+- [Azure Monitor autoscale (Microsoft Learn)](https://learn.microsoft.com/azure/azure-monitor/autoscale/autoscale-get-started)

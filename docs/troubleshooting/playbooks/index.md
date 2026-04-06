@@ -56,3 +56,9 @@ graph TD
 | [Deployment Succeeded but Startup Failed](startup-availability/deployment-succeeded-startup-failed.md) | Deploy green but app down — startup command or artifact mismatch |
 | [Failed to Forward Request](startup-availability/failed-to-forward-request.md) | Platform proxy cannot reach app container at runtime |
 | [Slot Swap Config Drift / Restart Race](startup-availability/slot-swap-config-drift.md) | Swap succeeds but production restarts or config breaks |
+
+## See Also
+
+- [Troubleshooting](../index.md)
+- [First 10 Minutes Checklists](../first-10-minutes/index.md)
+- [Hands-on Labs](../lab-guides/index.md)

@@ -87,3 +87,9 @@ az group delete --name rg-lab-<name> --yes --no-wait
 
 !!! warning "Cost"
     Each lab deploys a B1 App Service Plan. Delete the resource group after completing the lab to avoid ongoing charges.
+
+## See Also
+
+- [Troubleshooting](../index.md)
+- [First 10 Minutes Checklists](../first-10-minutes/index.md)
+- [Playbooks](../playbooks/index.md)

@@ -799,6 +799,8 @@ This section defines what you SHOULD observe at each phase of the lab. Use it to
 | `/diag/proc` | Pressure can ease, but counters remain advanced | Reclaim counters do not roll back, proving pressure occurred |
 | Console/Platform logs | No mandatory crash signatures in this run | Absence of restart does not disprove memory pressure |
 
+### Evidence Timeline
+
 ```mermaid
 graph LR
     A[Baseline Capture] --> B[Trigger Fault]

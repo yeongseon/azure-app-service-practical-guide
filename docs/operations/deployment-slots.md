@@ -332,3 +332,7 @@ For language-specific operational guidance, see:
 - [Health and Recovery](./health-recovery.md)
 - [Security](./security.md)
 - [Deployment slots (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/deploy-staging-slots)
+
+## Sources
+
+- [Deployment slots (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/deploy-staging-slots)

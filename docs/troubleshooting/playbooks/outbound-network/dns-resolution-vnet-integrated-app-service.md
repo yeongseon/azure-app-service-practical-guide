@@ -376,8 +376,6 @@ az monitor metrics list --resource "/subscriptions/<subscription-id>/resourceGro
 - [`../../kql/correlation/latency-vs-errors.md`](../../kql/correlation/latency-vs-errors.md)
 - [`../../first-10-minutes/outbound-network.md`](../../first-10-minutes/outbound-network.md)
 - [Lab: DNS Resolution (VNet)](../../lab-guides/dns-vnet-resolution.md)
-- [Outbound Network (First 10 Minutes)](../../first-10-minutes/outbound-network.md)
-- [DNS VNet Resolution Lab](../../lab-guides/dns-vnet-resolution.md)
 
 ## Sources
 - [Integrate your app with an Azure virtual network](https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration)

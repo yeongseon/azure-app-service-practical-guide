@@ -722,6 +722,8 @@ This section defines what you SHOULD observe at each phase of the lab. Use it to
 | Platform logs | No forced restart requirement | Lifecycle remains stable |
 | Comparative analysis | Establishes what NORMAL looks like | Baseline profile to contrast with startup-availability failure labs |
 
+### Evidence Timeline
+
 ```mermaid
 graph LR
     A[Baseline Capture] --> B[Trigger Fault]

@@ -387,13 +387,6 @@ If latency spikes occur immediately after scale/deploy/idle events and then norm
 
 - [Lab: Slow Start / Cold Start](../../lab-guides/slow-start-cold-start.md)
 
-### Related Labs (Evidence Drills)
-
-- [Lab: Slow Start / Cold Start](../../lab-guides/slow-start-cold-start.md)
-
-- [Performance (First 10 Minutes)](../../first-10-minutes/performance.md)
-- [Slow Start / Cold Start Lab](../../lab-guides/slow-start-cold-start.md)
-
 ## Sources
 
 - [Configure an App Service app](https://learn.microsoft.com/en-us/azure/app-service/configure-common)

@@ -861,6 +861,8 @@ This section defines what you SHOULD observe at each phase of the lab. Use it to
 | AppServiceHTTPLogs | Health endpoint may remain 200 through partial degradation | Availability checks alone can miss storage incidents |
 | Operational remediation | Manual cleanup required for persistent path | Use `/cleanup` or file removal workflow to reclaim `/home` |
 
+### Evidence Timeline
+
 ```mermaid
 graph LR
     A[Baseline Capture] --> B[Trigger Fault]

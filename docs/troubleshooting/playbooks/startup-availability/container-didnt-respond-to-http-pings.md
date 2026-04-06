@@ -126,6 +126,8 @@ PYTHON|3.11       gunicorn --bind 0.0.0.0:8000 src.app:app    True
 !!! tip "How to Read This"
     If settings and bind are aligned but startup pings still fail intermittently, investigate startup duration variance, heavy initialization, and recycle timing rather than port/address first.
 
+### Sample Log Patterns
+
 ### AppServiceConsoleLogs (container process did start)
 
 ```text
@@ -156,6 +158,8 @@ PYTHON|3.11       gunicorn --bind 0.0.0.0:8000 src.app:app    True
 
 !!! tip "How to Read This"
     This pattern shows the process can start and respond (`200` responses exist), so this incident class is usually intermittent startup reachability/configuration drift, not a permanent app boot failure.
+
+### KQL Queries with Example Output
 
 ### Query 1: Confirm the app process bound to an externally reachable address
 

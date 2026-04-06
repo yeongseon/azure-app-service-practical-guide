@@ -703,6 +703,8 @@ This section defines what you SHOULD observe at each phase of the lab. Use it to
 | Mitigation test | Connection pooling/reduced fan-out improves stability | Recovery requires reducing concurrent outbound calls or using service endpoints/private connectivity patterns |
 | Incident interpretation | `499` remains key symptom | Front-end timeout waiting on blocked worker path, not immediate app-side 5xx |
 
+### Evidence Timeline
+
 ```mermaid
 graph LR
     A[Baseline Capture] --> B[Trigger Fault]

@@ -262,3 +262,8 @@ For language-specific operational guidance, see:
 - [Health and Recovery](./health-recovery.md)
 - [Back up and restore App Service apps (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/manage-backup)
 - [Disaster recovery guidance (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/manage-disaster-recovery)
+
+## Sources
+
+- [Back up and restore App Service apps (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/manage-backup)
+- [Disaster recovery guidance (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/manage-disaster-recovery)

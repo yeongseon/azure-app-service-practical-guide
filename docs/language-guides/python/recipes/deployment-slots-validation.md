@@ -182,7 +182,7 @@ Ensure no other management operations are running on the App Service. Check the 
 
 Disable auto-swap and revert to manual swap or a controlled GitHub Actions workflow. Ensure that the staging slot is fully warmed up before auto-swap triggers.
 
-## See also
+## See Also
 
 - [Tutorial: 06. CI/CD](../06-ci-cd.md)
 - [Tutorial: 03. Configuration](../03-configuration.md)
