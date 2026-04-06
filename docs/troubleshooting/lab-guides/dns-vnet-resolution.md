@@ -8,7 +8,17 @@ The artifacts prove that the non-VNet baseline resolves public hostnames correct
 
 ---
 
-## Section 1: Background
+## Lab Metadata
+
+| Attribute | Value |
+|---|---|
+| Difficulty | Advanced |
+| Estimated Duration | 60-75 minutes |
+| Tier | Standard |
+| Failure Mode | DNS resolution changes across App Service VNet integration and can fail when private DNS or forwarding is misconfigured |
+| Skills Practiced | DNS path analysis, VNet integration troubleshooting, private DNS validation, KQL correlation |
+
+## 1) Background
 
 ### 1.1 Why this lab matters
 
@@ -175,7 +185,7 @@ That distinction is critical for incident-quality documentation.
 
 ---
 
-## Section 2: Hypothesis
+## 2) Hypothesis
 
 ### 2.1 Primary hypothesis for this lab
 
@@ -270,7 +280,7 @@ flowchart TD
 
 ---
 
-## Section 3: Runbook
+## 3) Runbook
 
 This runbook is written as an incident-grade procedure with strict command formatting.
 All CLI examples use long flags only.
@@ -287,10 +297,10 @@ All CLI examples use long flags only.
 ### 3.2 Environment variables
 
 ```bash
-export $RG="rg-lab-dns"
-export $LOCATION="koreacentral"
-export $APP_NAME=""
-export $APP_URL=""
+export RG="rg-lab-dns"
+export LOCATION="koreacentral"
+export APP_NAME=""
+export APP_URL=""
 ```
 
 !!! note "Variable naming convention"
@@ -503,18 +513,7 @@ curl --silent --show-error "$APP_URL/connect"
     Artifact files and KQL outputs are UTC-stamped.
     Keep runbook notes in UTC to avoid false correlation.
 
-### 3.15 Cleanup
-
-```bash
-az group delete \
-    --name "$RG" \
-    --yes \
-    --no-wait
-```
-
----
-
-## Section 4: Experiment Log
+## 4) Experiment Log
 
 This section is based on real artifacts in:
 
@@ -828,6 +827,12 @@ graph LR
     If you observe healthy app status codes alongside DNS answers that map `privatelink` hostnames to public IPs (instead of private endpoint IPs), the hypothesis is CONFIRMED because DNS path misconfiguration silently redirects traffic away from intended private routing without producing obvious app-level 5xx failures.
     
     If you do NOT observe wrong IP mapping (for example `privatelink` correctly resolves to `10.x.x.x`), the hypothesis is FALSIFIED — consider alternatives such as TLS hostname/certificate mismatch, NSG/UDR restrictions, or dependency authorization issues.
+
+## Clean Up
+
+```bash
+az group delete --name "$RG" --yes --no-wait
+```
 
 ## Related Playbook
 

@@ -1,6 +1,7 @@
 # Memory Pressure and Worker Degradation (Azure App Service Linux)
 
 ## 1. Summary
+
 ### Symptom
 Latency and error rates gradually worsen over uptime even when CPU is not saturated. Requests that were stable after deployment become slower after several hours, then often recover after restart or recycle. In severe windows, the app shows 502/503 bursts, worker restarts, or OOM-like behavior.
 
@@ -22,6 +23,7 @@ graph TD
 ```
 
 ## 2. Common Misreadings
+
 - "CPU is healthy, so platform capacity is healthy."
 - "Only one app is affected, therefore the App Service Plan is not relevant."
 - "Restart fixed it, so the issue is gone" (without proving root cause).
@@ -29,12 +31,14 @@ graph TD
 - "Memory leak always means obvious out-of-memory crash" (ignoring slow degradation patterns).
 
 ## 3. Competing Hypotheses
+
 - **H1: Application memory leak or unbounded cache growth** in Python/Node worker processes causes progressive memory retention and GC overhead.
 - **H2: Plan-level memory contention (noisy neighbor pattern)** where multiple apps in the same plan consume shared memory headroom, degrading one another.
 - **H3: Worker/process model mismatch** (too many workers/threads for available memory) causing thrash, frequent restarts, and queueing.
 - **H4: Dependency and runtime behavior amplifies memory pressure** (large payload buffering, retry storms, long-lived objects), creating degraded workers before hard OOM.
 
 ## 4. What to Check First
+
 ### Metrics
 - App Service Plan **Memory Percentage** and **CpuPercentage** over the same timeline as latency degradation.
 - HTTP latency distribution using `AppServiceHTTPLogs.TimeTaken` (P50/P95/P99).
@@ -51,6 +55,7 @@ graph TD
 - Shared-plan context: whether sibling apps show simultaneous stress.
 
 ## 5. Evidence to Collect
+
 ### Required Evidence
 - KQL: latency trend and endpoint distribution from `AppServiceHTTPLogs`.
 - KQL: memory-pressure keywords and worker lifecycle events from `AppServiceConsoleLogs` and `AppServicePlatformLogs`.
@@ -63,7 +68,165 @@ graph TD
 - Plan topology: number of apps in the same App Service Plan and recent utilization trends.
 - Incident timing: when degradation starts after startup and how quickly restart restores baseline.
 
+### Sample Log Patterns
+
+### AppServiceHTTPLogs (memory-pressure lab)
+
+```text
+2026-04-04T11:23:04Z  GET  /diag/env    200  4
+2026-04-04T11:23:03Z  GET  /diag/stats  200  18
+2026-04-04T11:21:50Z  GET  /heavy       200  1384
+2026-04-04T11:21:49Z  GET  /heavy       200  1153
+2026-04-04T11:21:49Z  GET  /heavy       200  1019
+2026-04-04T11:21:49Z  GET  /heavy       200  950
+2026-04-04T11:21:49Z  GET  /heavy       200  920
+2026-04-04T11:21:48Z  GET  /leak        200  4808
+```
+
+### AppServiceConsoleLogs (worker model clues)
+
+```text
+2026-04-04T11:14:07Z  [2026-04-04 11:14:07 +0000] [1891] [INFO] Starting gunicorn 24.1.1
+2026-04-04T11:14:07Z  [2026-04-04 11:14:07 +0000] [1891] [INFO] Listening at: http://0.0.0.0:8000 (1891)
+2026-04-04T11:14:07Z  [2026-04-04 11:14:07 +0000] [1891] [INFO] Using worker: sync
+2026-04-04T11:14:07Z  [2026-04-04 11:14:07 +0000] [1892] [INFO] Booting worker with pid: 1892
+2026-04-04T11:14:07Z  [2026-04-04 11:14:07 +0000] [1893] [INFO] Booting worker with pid: 1893
+2026-04-04T11:14:07Z  [2026-04-04 11:14:07 +0000] [1894] [INFO] Booting worker with pid: 1894
+2026-04-04T11:14:07Z  [2026-04-04 11:14:07 +0000] [1895] [INFO] Booting worker with pid: 1895
+```
+
+### AppServicePlatformLogs (recycle sequence)
+
+```text
+2026-04-04T11:14:30Z  Informational  Container is terminating. Grace period: 5 seconds.
+2026-04-04T11:14:30Z  Informational  Stopping container: f19d98813a89_<app-name>.
+2026-04-04T11:14:36Z  Informational  Container is terminated. Total time elapsed: 5545 ms.
+2026-04-04T11:14:36Z  Informational  Site: <app-name> stopped.
+```
+
+!!! tip "How to Read This"
+    `/heavy` requests are consistently ~920-1384 ms while `/leak` is 4808 ms, even with HTTP 200 responses. That is a degradation signature, not an availability-only incident. Combined with `sync` workers and only four workers, a few long-running calls can saturate worker slots and amplify queue delay.
+
+### KQL Queries with Example Output
+
+### Query 1: Endpoint latency fingerprint during incident window
+
+```kusto
+AppServiceHTTPLogs
+| where TimeGenerated between (datetime(2026-04-04 11:21:45) .. datetime(2026-04-04 11:23:05))
+| project TimeGenerated, CsMethod, CsUriStem, ScStatus, TimeTaken
+| order by TimeGenerated desc
+```
+
+**Example Output**
+
+| TimeGenerated | CsMethod | CsUriStem | ScStatus | TimeTaken |
+|---|---|---|---|---|
+| 2026-04-04 11:23:04 | GET | /diag/env | 200 | 4 |
+| 2026-04-04 11:23:03 | GET | /diag/stats | 200 | 18 |
+| 2026-04-04 11:21:50 | GET | /heavy | 200 | 1384 |
+| 2026-04-04 11:21:49 | GET | /heavy | 200 | 1153 |
+| 2026-04-04 11:21:49 | GET | /heavy | 200 | 1019 |
+| 2026-04-04 11:21:49 | GET | /heavy | 200 | 950 |
+| 2026-04-04 11:21:49 | GET | /heavy | 200 | 920 |
+| 2026-04-04 11:21:48 | GET | /leak | 200 | 4808 |
+
+!!! tip "How to Read This"
+    Health endpoints (`/diag/env`, `/diag/stats`) remain fast while workload endpoints degrade. This weakens global network outage hypotheses and strengthens endpoint-specific pressure hypotheses (memory growth, heavy compute, queueing).
+
+### Query 2: Worker model and boot evidence from console logs
+
+```kusto
+AppServiceConsoleLogs
+| where TimeGenerated between (datetime(2026-04-04 11:14:00) .. datetime(2026-04-04 11:14:10))
+| project TimeGenerated, Level, ResultDescription
+| order by TimeGenerated desc
+```
+
+**Example Output**
+
+| TimeGenerated | Level | ResultDescription |
+|---|---|---|
+| 2026-04-04 11:14:07 | Error | [2026-04-04 11:14:07 +0000] [1895] [INFO] Booting worker with pid: 1895 |
+| 2026-04-04 11:14:07 | Error | [2026-04-04 11:14:07 +0000] [1894] [INFO] Booting worker with pid: 1894 |
+| 2026-04-04 11:14:07 | Error | [2026-04-04 11:14:07 +0000] [1893] [INFO] Booting worker with pid: 1893 |
+| 2026-04-04 11:14:07 | Error | [2026-04-04 11:14:07 +0000] [1892] [INFO] Booting worker with pid: 1892 |
+| 2026-04-04 11:14:07 | Error | [2026-04-04 11:14:07 +0000] [1891] [INFO] Using worker: sync |
+| 2026-04-04 11:14:07 | Error | [2026-04-04 11:14:07 +0000] [1891] [INFO] Listening at: http://0.0.0.0:8000 (1891) |
+| 2026-04-04 11:14:07 | Error | [2026-04-04 11:14:07 +0000] [1891] [INFO] Starting gunicorn 24.1.1 |
+
+!!! tip "How to Read This"
+    `sync` plus a small worker count means each worker handles one blocking request at a time. Long `/heavy` and `/leak` calls can consume all workers quickly even when CPU is not pegged.
+
+### Query 3: Platform recycle timeline around pressure event
+
+```kusto
+AppServicePlatformLogs
+| where TimeGenerated between (datetime(2026-04-04 11:14:25) .. datetime(2026-04-04 11:14:40))
+| project TimeGenerated, Level, Message
+| order by TimeGenerated desc
+```
+
+**Example Output**
+
+| TimeGenerated | Level | Message |
+|---|---|---|
+| 2026-04-04 11:14:36 | Informational | Site: <app-name> stopped. |
+| 2026-04-04 11:14:36 | Informational | Container is terminated. Total time elapsed: 5545 ms. |
+| 2026-04-04 11:14:30 | Informational | Stopping container: f19d98813a89_<app-name>. |
+| 2026-04-04 11:14:30 | Informational | Container is terminating. Grace period: 5 seconds. |
+
+!!! tip "How to Read This"
+    These rows confirm lifecycle churn. If latency improves immediately after this stop/start cycle and then degrades again with uptime, treat memory/worker degradation as primary until disproven.
+
+### CLI Investigation Commands
+
+```bash
+az webapp config show --resource-group <resource-group> --name <app-name>
+az webapp config appsettings list --resource-group <resource-group> --name <app-name>
+az webapp log tail --resource-group <resource-group> --name <app-name>
+az monitor metrics list --resource <app-service-plan-resource-id> --metric "CpuPercentage,MemoryPercentage" --interval PT1M --aggregation Average
+```
+
+**Example Output (sanitized)**
+
+```text
+$ az webapp config show --resource-group <resource-group> --name <app-name>
+{
+  "linuxFxVersion": "PYTHON|3.12",
+  "alwaysOn": true,
+  "http20Enabled": true
+}
+
+$ az webapp config appsettings list --resource-group <resource-group> --name <app-name>
+[
+  {"name": "WEBSITES_PORT", "value": "8000"},
+  {"name": "SCM_DO_BUILD_DURING_DEPLOYMENT", "value": "false"}
+]
+
+$ az monitor metrics list --resource <app-service-plan-resource-id> --metric "CpuPercentage,MemoryPercentage" --interval PT1M --aggregation Average
+timestamp                  CpuPercentage_Average   MemoryPercentage_Average
+-------------------------  ----------------------  ------------------------
+2026-04-04T11:21:00Z       36.2                    83.7
+2026-04-04T11:22:00Z       39.8                    86.4
+```
+
+!!! tip "How to Read This"
+    If memory remains high while CPU is moderate and HTTP latency climbs, scaling by CPU signal alone will miss the failure mode. Revisit worker count, memory profile, and endpoint behavior.
+
+### Normal vs Abnormal Comparison
+
+| Signal | Normal (Healthy) | Abnormal (Memory/Worker Degradation) |
+|---|---|---|
+| `/heavy` latency | Mostly sub-second, stable tail | Repeated 920-1384 ms spikes under moderate load |
+| `/leak` latency | Rare and bounded | Multi-second outlier (for example 4808 ms) |
+| Health endpoint latency | Low and stable | Still low (can remain deceptively healthy) |
+| Gunicorn worker mode | Matches workload profile and capacity | `sync` workers saturated by long-running calls |
+| Platform lifecycle | Infrequent stop/start events | Recurrent container termination/restart correlation |
+| CPU vs memory trend | CPU and memory proportional to load | CPU moderate, memory elevated and climbing |
+
 ## 6. Validation and Disproof by Hypothesis
+
 ### H1: Application memory leak or unbounded cache growth
 - **Signals that support**
     - Memory trend rises with uptime while traffic volume is relatively stable.
@@ -182,6 +345,7 @@ graph TD
     ```
 
 ## 7. Likely Root Cause Patterns
+
 - **Pattern A: Gradual heap retention in application code**
     - Common in Python/Node when caches are unbounded, large objects remain referenced, or per-request data leaks into process scope.
 - **Pattern B: Shared-plan headroom collapse**
@@ -191,7 +355,20 @@ graph TD
 - **Pattern D: Slow dependency causes in-flight memory expansion**
     - More concurrent in-flight requests hold larger object graphs longer, compounding GC cost and tail latency.
 
+### Investigation Notes
+
+- App Service Linux performance incidents can be memory-first even when CPU appears healthy.
+- Always align evidence by time window; individual signals in isolation can be misleading.
+- A restart that helps is a useful signal, not a root cause.
+- Plan-level memory is shared capacity; app-level tuning without plan context is often incomplete.
+- Validate both application behavior and process model choices before concluding platform fault.
+
+### Quick Conclusion
+
+When App Service Linux response times degrade over uptime and improve after restart, treat memory pressure and worker degradation as primary hypotheses early. Correlate `AppServiceHTTPLogs`, `AppServiceConsoleLogs`, `AppServicePlatformLogs`, `AppServiceAppLogs`, and plan metrics in one timeline to separate leak patterns, plan contention, worker overcommit, and dependency-amplified pressure. Stabilize with low-risk mitigations, then implement durable memory budgeting, isolation, and workload design changes to prevent recurrence.
+
 ## 8. Immediate Mitigations
+
 - Reduce worker/process count to stabilize memory footprint (**temporary**, **production-safe** if traffic is moderate).
 - Scale up App Service Plan SKU to add memory headroom quickly (**temporary**, **production-safe**, cost impact).
 - Move high-memory sibling app to a separate plan to remove contention (**production-safe**, operational change risk).
@@ -199,7 +376,8 @@ graph TD
 - Restart affected app during incident to recover service while investigation continues (**temporary**, **risk-bearing**: brief disruption and cold-start effect).
 - Reduce retry fan-out and cap request payload sizes in hot paths (**production-safe** with behavior validation).
 
-## 9. Long-term Fixes
+## 9. Prevention
+
 - Establish memory budgets per worker and choose concurrency settings from load-test data, not defaults.
 - Add leak detection and periodic heap profiling in pre-production and canary slots.
 - Implement bounded caches with explicit eviction policy and size controls.
@@ -207,200 +385,38 @@ graph TD
 - Track SLOs using P95/P99 latency plus memory trend and restart frequency correlation alerts.
 - Refactor large buffering code paths to streaming patterns where possible.
 
-## 10. Investigation Notes
-- App Service Linux performance incidents can be memory-first even when CPU appears healthy.
-- Always align evidence by time window; individual signals in isolation can be misleading.
-- A restart that helps is a useful signal, not a root cause.
-- Plan-level memory is shared capacity; app-level tuning without plan context is often incomplete.
-- Validate both application behavior and process model choices before concluding platform fault.
+### Limitations
 
-## 11. Related Queries
+- This playbook focuses on Azure App Service Linux and OSS runtime patterns only.
+- It does not replace framework-specific memory profiling guidance for each language ecosystem.
+- Kernel-level host diagnostics are abstracted by the platform and may not be directly visible.
+
+## See Also
+
+### Related Queries
+
 - [`../../kql/http/latency-trend-by-status-code.md`](../../kql/http/latency-trend-by-status-code.md)
 - [`../../kql/http/slowest-requests-by-path.md`](../../kql/http/slowest-requests-by-path.md)
 - [`../../kql/correlation/latency-vs-errors.md`](../../kql/correlation/latency-vs-errors.md)
 - [`../../kql/restarts/restart-timing-correlation.md`](../../kql/restarts/restart-timing-correlation.md)
 
-## 12. Related Checklists
+### Related Checklists
+
 - [`../../first-10-minutes/performance.md`](../../first-10-minutes/performance.md)
 
-## 13. Related Labs
-- [Lab: Memory Pressure and Worker Degradation](../../lab-guides/memory-pressure.md)
-
-## 14. Limitations
-- This playbook focuses on Azure App Service Linux and OSS runtime patterns only.
-- It does not replace framework-specific memory profiling guidance for each language ecosystem.
-- Kernel-level host diagnostics are abstracted by the platform and may not be directly visible.
-
-## 15. Quick Conclusion
-When App Service Linux response times degrade over uptime and improve after restart, treat memory pressure and worker degradation as primary hypotheses early. Correlate `AppServiceHTTPLogs`, `AppServiceConsoleLogs`, `AppServicePlatformLogs`, `AppServiceAppLogs`, and plan metrics in one timeline to separate leak patterns, plan contention, worker overcommit, and dependency-amplified pressure. Stabilize with low-risk mitigations, then implement durable memory budgeting, isolation, and workload design changes to prevent recurrence.
-
-## Sample Log Patterns
-
-### AppServiceHTTPLogs (memory-pressure lab)
-
-```text
-2026-04-04T11:23:04Z  GET  /diag/env    200  4
-2026-04-04T11:23:03Z  GET  /diag/stats  200  18
-2026-04-04T11:21:50Z  GET  /heavy       200  1384
-2026-04-04T11:21:49Z  GET  /heavy       200  1153
-2026-04-04T11:21:49Z  GET  /heavy       200  1019
-2026-04-04T11:21:49Z  GET  /heavy       200  950
-2026-04-04T11:21:49Z  GET  /heavy       200  920
-2026-04-04T11:21:48Z  GET  /leak        200  4808
-```
-
-### AppServiceConsoleLogs (worker model clues)
-
-```text
-2026-04-04T11:14:07Z  [2026-04-04 11:14:07 +0000] [1891] [INFO] Starting gunicorn 24.1.1
-2026-04-04T11:14:07Z  [2026-04-04 11:14:07 +0000] [1891] [INFO] Listening at: http://0.0.0.0:8000 (1891)
-2026-04-04T11:14:07Z  [2026-04-04 11:14:07 +0000] [1891] [INFO] Using worker: sync
-2026-04-04T11:14:07Z  [2026-04-04 11:14:07 +0000] [1892] [INFO] Booting worker with pid: 1892
-2026-04-04T11:14:07Z  [2026-04-04 11:14:07 +0000] [1893] [INFO] Booting worker with pid: 1893
-2026-04-04T11:14:07Z  [2026-04-04 11:14:07 +0000] [1894] [INFO] Booting worker with pid: 1894
-2026-04-04T11:14:07Z  [2026-04-04 11:14:07 +0000] [1895] [INFO] Booting worker with pid: 1895
-```
-
-### AppServicePlatformLogs (recycle sequence)
-
-```text
-2026-04-04T11:14:30Z  Informational  Container is terminating. Grace period: 5 seconds.
-2026-04-04T11:14:30Z  Informational  Stopping container: f19d98813a89_<app-name>.
-2026-04-04T11:14:36Z  Informational  Container is terminated. Total time elapsed: 5545 ms.
-2026-04-04T11:14:36Z  Informational  Site: <app-name> stopped.
-```
-
-!!! tip "How to Read This"
-    `/heavy` requests are consistently ~920-1384 ms while `/leak` is 4808 ms, even with HTTP 200 responses. That is a degradation signature, not an availability-only incident. Combined with `sync` workers and only four workers, a few long-running calls can saturate worker slots and amplify queue delay.
-
-## KQL Queries with Example Output
-
-### Query 1: Endpoint latency fingerprint during incident window
-
-```kusto
-AppServiceHTTPLogs
-| where TimeGenerated between (datetime(2026-04-04 11:21:45) .. datetime(2026-04-04 11:23:05))
-| project TimeGenerated, CsMethod, CsUriStem, ScStatus, TimeTaken
-| order by TimeGenerated desc
-```
-
-**Example Output**
-
-| TimeGenerated | CsMethod | CsUriStem | ScStatus | TimeTaken |
-|---|---|---|---|---|
-| 2026-04-04 11:23:04 | GET | /diag/env | 200 | 4 |
-| 2026-04-04 11:23:03 | GET | /diag/stats | 200 | 18 |
-| 2026-04-04 11:21:50 | GET | /heavy | 200 | 1384 |
-| 2026-04-04 11:21:49 | GET | /heavy | 200 | 1153 |
-| 2026-04-04 11:21:49 | GET | /heavy | 200 | 1019 |
-| 2026-04-04 11:21:49 | GET | /heavy | 200 | 950 |
-| 2026-04-04 11:21:49 | GET | /heavy | 200 | 920 |
-| 2026-04-04 11:21:48 | GET | /leak | 200 | 4808 |
-
-!!! tip "How to Read This"
-    Health endpoints (`/diag/env`, `/diag/stats`) remain fast while workload endpoints degrade. This weakens global network outage hypotheses and strengthens endpoint-specific pressure hypotheses (memory growth, heavy compute, queueing).
-
-### Query 2: Worker model and boot evidence from console logs
-
-```kusto
-AppServiceConsoleLogs
-| where TimeGenerated between (datetime(2026-04-04 11:14:00) .. datetime(2026-04-04 11:14:10))
-| project TimeGenerated, Level, ResultDescription
-| order by TimeGenerated desc
-```
-
-**Example Output**
-
-| TimeGenerated | Level | ResultDescription |
-|---|---|---|
-| 2026-04-04 11:14:07 | Error | [2026-04-04 11:14:07 +0000] [1895] [INFO] Booting worker with pid: 1895 |
-| 2026-04-04 11:14:07 | Error | [2026-04-04 11:14:07 +0000] [1894] [INFO] Booting worker with pid: 1894 |
-| 2026-04-04 11:14:07 | Error | [2026-04-04 11:14:07 +0000] [1893] [INFO] Booting worker with pid: 1893 |
-| 2026-04-04 11:14:07 | Error | [2026-04-04 11:14:07 +0000] [1892] [INFO] Booting worker with pid: 1892 |
-| 2026-04-04 11:14:07 | Error | [2026-04-04 11:14:07 +0000] [1891] [INFO] Using worker: sync |
-| 2026-04-04 11:14:07 | Error | [2026-04-04 11:14:07 +0000] [1891] [INFO] Listening at: http://0.0.0.0:8000 (1891) |
-| 2026-04-04 11:14:07 | Error | [2026-04-04 11:14:07 +0000] [1891] [INFO] Starting gunicorn 24.1.1 |
-
-!!! tip "How to Read This"
-    `sync` plus a small worker count means each worker handles one blocking request at a time. Long `/heavy` and `/leak` calls can consume all workers quickly even when CPU is not pegged.
-
-### Query 3: Platform recycle timeline around pressure event
-
-```kusto
-AppServicePlatformLogs
-| where TimeGenerated between (datetime(2026-04-04 11:14:25) .. datetime(2026-04-04 11:14:40))
-| project TimeGenerated, Level, Message
-| order by TimeGenerated desc
-```
-
-**Example Output**
-
-| TimeGenerated | Level | Message |
-|---|---|---|
-| 2026-04-04 11:14:36 | Informational | Site: <app-name> stopped. |
-| 2026-04-04 11:14:36 | Informational | Container is terminated. Total time elapsed: 5545 ms. |
-| 2026-04-04 11:14:30 | Informational | Stopping container: f19d98813a89_<app-name>. |
-| 2026-04-04 11:14:30 | Informational | Container is terminating. Grace period: 5 seconds. |
-
-!!! tip "How to Read This"
-    These rows confirm lifecycle churn. If latency improves immediately after this stop/start cycle and then degrades again with uptime, treat memory/worker degradation as primary until disproven.
-
-## CLI Investigation Commands
-
-```bash
-az webapp config show --resource-group <resource-group> --name <app-name>
-az webapp config appsettings list --resource-group <resource-group> --name <app-name>
-az webapp log tail --resource-group <resource-group> --name <app-name>
-az monitor metrics list --resource <app-service-plan-resource-id> --metric "CpuPercentage,MemoryPercentage" --interval PT1M --aggregation Average
-```
-
-**Example Output (sanitized)**
-
-```text
-$ az webapp config show --resource-group <resource-group> --name <app-name>
-{
-  "linuxFxVersion": "PYTHON|3.12",
-  "alwaysOn": true,
-  "http20Enabled": true
-}
-
-$ az webapp config appsettings list --resource-group <resource-group> --name <app-name>
-[
-  {"name": "WEBSITES_PORT", "value": "8000"},
-  {"name": "SCM_DO_BUILD_DURING_DEPLOYMENT", "value": "false"}
-]
-
-$ az monitor metrics list --resource <app-service-plan-resource-id> --metric "CpuPercentage,MemoryPercentage" --interval PT1M --aggregation Average
-timestamp                  CpuPercentage_Average   MemoryPercentage_Average
--------------------------  ----------------------  ------------------------
-2026-04-04T11:21:00Z       36.2                    83.7
-2026-04-04T11:22:00Z       39.8                    86.4
-```
-
-!!! tip "How to Read This"
-    If memory remains high while CPU is moderate and HTTP latency climbs, scaling by CPU signal alone will miss the failure mode. Revisit worker count, memory profile, and endpoint behavior.
-
-## Normal vs Abnormal Comparison
-
-| Signal | Normal (Healthy) | Abnormal (Memory/Worker Degradation) |
-|---|---|---|
-| `/heavy` latency | Mostly sub-second, stable tail | Repeated 920-1384 ms spikes under moderate load |
-| `/leak` latency | Rare and bounded | Multi-second outlier (for example 4808 ms) |
-| Health endpoint latency | Low and stable | Still low (can remain deceptively healthy) |
-| Gunicorn worker mode | Matches workload profile and capacity | `sync` workers saturated by long-running calls |
-| Platform lifecycle | Infrequent stop/start events | Recurrent container termination/restart correlation |
-| CPU vs memory trend | CPU and memory proportional to load | CPU moderate, memory elevated and climbing |
-
-## Related Labs (Evidence Drills)
+### Related Labs
 
 - [Lab: Memory Pressure and Worker Degradation](../../lab-guides/memory-pressure.md)
 
-## See Also
+### Related Labs (Evidence Drills)
+
+- [Lab: Memory Pressure and Worker Degradation](../../lab-guides/memory-pressure.md)
 
 - [Performance (First 10 Minutes)](../../first-10-minutes/performance.md)
 - [Memory Pressure Lab](../../lab-guides/memory-pressure.md)
 
 ## Sources
+
 - [Monitor Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/monitor-app-service)
 - [Azure App Service plan overview](https://learn.microsoft.com/en-us/azure/app-service/overview-hosting-plans)
 - [Scale up an app in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/manage-scale-up)

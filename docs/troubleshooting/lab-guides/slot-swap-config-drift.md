@@ -6,15 +6,13 @@ This Level 3 lab guide reproduces a slot swap on Azure App Service Linux and pro
 
 ## Lab Metadata
 
-| Field | Value |
+| Attribute | Value |
 |---|---|
-| Primary scenario | Slot swap with mixed sticky/non-sticky settings |
-| Runtime | Python 3.11 (Gunicorn/Flask) |
-| Infrastructure | App Service Plan S1 + production/staging slots |
-| Sticky setting under test | `DB_CONNECTION_STRING` |
-| Non-sticky setting under test | `FEATURE_FLAG` |
-| Artifact root | `labs/slot-swap-config-drift/artifacts-sanitized/` |
-| Validation channels | Runtime endpoint snapshots + HTTP logs + Console logs + Platform logs |
+| Difficulty | Intermediate |
+| Estimated Duration | 45-60 minutes |
+| Tier | Standard |
+| Failure Mode | Apparent post-swap config drift caused by misunderstanding sticky versus non-sticky app settings |
+| Skills Practiced | Deployment slot troubleshooting, sticky-setting validation, pre/post swap comparison, lifecycle log interpretation |
 
 !!! info "Lab outcome summary"
     The artifacts show an exact textbook result:
@@ -461,18 +459,7 @@ flowchart TD
     H --> J[Review slotConfigNames and deployment pipeline]
 ```
 
-### 3.14 Cleanup
-
-```bash
-az group delete \
-  --name "$RG" \
-  --yes \
-  --no-wait
-```
-
----
-
-## 4) Experiment Log (Artifact-Based)
+## 4) Experiment Log
 
 All data below is sourced from:
 
@@ -784,6 +771,12 @@ graph LR
     If you observe healthy HTTP 200 behavior with post-swap configuration values that follow sticky/non-sticky rules (`FEATURE_FLAG` swapped, `DB_CONNECTION_STRING` remained slot-bound), the hypothesis is CONFIRMED because the platform executed swap correctly and the perceived drift comes from slot-setting semantics.
     
     If you do NOT observe this pattern (for example sticky values swap unexpectedly or swap fails operationally), the hypothesis is FALSIFIED — consider alternatives such as missing `slotConfigNames`, manual config mutation, or incomplete swap execution.
+
+## Clean Up
+
+```bash
+az group delete --name "$RG" --yes --no-wait
+```
 
 ## Related Playbook
 

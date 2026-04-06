@@ -6,15 +6,13 @@ This Level 3 lab guide reproduces a slow-start scenario on Azure App Service Lin
 
 ## Lab Metadata
 
-| Field | Value |
+| Attribute | Value |
 |---|---|
-| Lab focus | Startup availability and latency interpretation |
-| Runtime | Python 3.11 on App Service Linux |
-| Plan profile | B1 Linux (Always On disabled in this lab) |
-| Trigger mechanism | Zip deployment + restart cycle |
-| Key endpoints | `/`, `/fast`, `/timing`, `/diag/stats`, `/diag/env`, `/health` |
-| Diagnostic categories | `AppServiceHTTPLogs`, `AppServiceConsoleLogs`, `AppServicePlatformLogs` |
-| Artifact root | `labs/slow-start-cold-start/artifacts-sanitized/` |
+| Difficulty | Intermediate |
+| Estimated Duration | 45-60 minutes |
+| Tier | Basic |
+| Failure Mode | Slow startup initialization is mistaken for steady-state performance regression |
+| Skills Practiced | Cold-start analysis, startup-vs-request latency separation, platform lifecycle interpretation, KQL timing correlation |
 
 !!! info "What this lab is designed to prove"
     This lab is intentionally built to challenge a common assumption: "slow first hit means app regression."
@@ -232,18 +230,12 @@ This section is execution-oriented and uses long-form Azure CLI flags only.
 ### 3.2 Variables
 
 ```bash
-export $RG="rg-lab-coldstart"
-export $LOCATION="koreacentral"
-export $BASE_NAME="labcold"
+export RG="rg-lab-coldstart"
+export LOCATION="koreacentral"
+export BASE_NAME="labcold"
 ```
 
-Because shell variable names cannot include `$` in declaration syntax, use this practical pattern:
-
-```bash
-RG="rg-lab-coldstart"
-LOCATION="koreacentral"
-BASE_NAME="labcold"
-```
+Use these variables in subsequent commands:
 
 ### 3.3 Deploy infrastructure
 
@@ -434,18 +426,7 @@ flowchart TD
     F --> H[Open app/dependency performance investigation]
 ```
 
-### 3.11 Cleanup
-
-```bash
-az group delete \
-  --name "$RG" \
-  --yes \
-  --no-wait
-```
-
----
-
-## 4) Experiment Log (Artifact-Based)
+## 4) Experiment Log
 
 This section uses only captured data under:
 
@@ -689,6 +670,12 @@ graph LR
     If you observe a long startup duration (~31.499s) during cold start, platform startup-probe success events, and then rapid warm-path request timings (for example 11-41ms), the hypothesis is CONFIRMED because initialization cost is front-loaded into container/runtime startup rather than persistent request execution.
     
     If you do NOT observe warm-path recovery (for example requests remain slow after startup stabilizes), the hypothesis is FALSIFIED — consider alternatives such as real app regression, dependency latency, CPU pressure, or plan capacity limits.
+
+## Clean Up
+
+```bash
+az group delete --name "$RG" --yes --no-wait
+```
 
 ## Related Playbook
 

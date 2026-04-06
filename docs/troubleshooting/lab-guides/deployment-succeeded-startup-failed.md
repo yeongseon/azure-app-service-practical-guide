@@ -10,19 +10,19 @@ The lab is intentionally designed to prove one specific distinction:
 
 ---
 
-## Lab Scope and Learning Outcome
+This guide helps you explain why `az webapp deploy` can succeed while the app still fails at runtime, trace the Linux startup lifecycle, detect `wrong_module:app` failures from logs, validate recovery after correcting the startup command to `app:app`, and produce an artifact-backed incident narrative.
 
-By the end of this guide, you will be able to:
+## Lab Metadata
 
-1. Explain why `az webapp deploy` can succeed while the app still fails at runtime.
-2. Trace App Service Linux startup lifecycle from package deployment to warmup probing.
-3. Detect module-resolution startup failure (`wrong_module:app`) from console and platform logs.
-4. Validate recovery after correcting startup command to `app:app`.
-5. Produce an artifact-backed incident narrative suitable for RCA documentation.
+| Attribute | Value |
+|---|---|
+| Difficulty | Intermediate |
+| Estimated Duration | 45-60 minutes |
+| Tier | Basic |
+| Failure Mode | Deployment succeeds, but the app fails startup because Gunicorn references a non-existent module |
+| Skills Practiced | Startup command validation, deployment-vs-runtime analysis, console and platform log correlation, recovery verification |
 
----
-
-## Section 1: Background
+## 1) Background
 
 ### 1.1 Why this lab exists
 
@@ -213,7 +213,7 @@ not only deployment rollback.
 
 ---
 
-## Section 2: Hypothesis
+## 2) Hypothesis
 
 ### 2.1 Primary hypothesis (this lab)
 
@@ -287,7 +287,7 @@ Any one condition disproves the hypothesis:
 
 ---
 
-## Section 3: Runbook
+## 3) Runbook
 
 This runbook is deterministic and maps to the artifacts captured in:
 
@@ -303,14 +303,6 @@ This runbook is deterministic and maps to the artifacts captured in:
 | jq (optional for formatting) | `jq --version` |
 
 ### 3.2 Environment variables
-
-```bash
-export $RG="rg-lab-startup"
-export $LOCATION="koreacentral"
-```
-
-Because shell variables cannot literally include `$` in names,
-use the operational form below in real execution:
 
 ```bash
 export RG="rg-lab-startup"
@@ -511,18 +503,7 @@ Then verify:
 curl --silent --show-error --fail "$APP_URL/health"
 ```
 
-### 3.12 Cleanup
-
-```bash
-az group delete \
-  --name "$RG" \
-  --yes \
-  --no-wait
-```
-
----
-
-## Section 4: Experiment Log (Artifact-backed)
+## 4) Experiment Log
 
 This section is a factual record from:
 
@@ -843,6 +824,12 @@ graph LR
     If you observe deployment success signals (200/202), concurrent 503s with long request times, zero console rows, and platform startup-probe timeout/cancellation messages, the hypothesis is CONFIRMED because code deployment succeeded but runtime never became healthy due to a bad WSGI entrypoint.
     
     If you do NOT observe this pattern (for example console shows normal app boot and request handling), the hypothesis is FALSIFIED — consider alternatives such as port binding mismatch, dependency startup failure, or networking path issues.
+
+## Clean Up
+
+```bash
+az group delete --name "$RG" --yes --no-wait
+```
 
 ## Related Playbook
 

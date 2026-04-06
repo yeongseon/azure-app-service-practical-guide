@@ -23,6 +23,15 @@ graph TD
     I --> H4[H4: Split-brain DNS and cache effects]
 ```
 
+### Scope and limitations
+- This playbook focuses on Azure App Service **Linux** and OSS workloads only.
+- It does not provide exhaustive Windows-specific DNS client behavior.
+- It assumes Log Analytics ingestion is available for App Service HTTP/console telemetry.
+- Hybrid/on-prem conditional forwarding nuances vary by enterprise DNS implementation and are validated case by case.
+
+### Quick conclusion
+When DNS failures occur in a VNet-integrated App Service Linux app, treat resolver path, private DNS linkage, and app-level DNS overrides as equally likely suspects until disproven. The fastest durable resolution is to prove each hypothesis with concrete in-app lookup evidence, App Service logs, and Azure DNS configuration checks, then standardize DNS architecture to eliminate drift and split-brain surprises.
+
 ## 2. Common Misreadings
 - "VNet integration is enabled, so DNS must already be correct."
 - "The private endpoint exists, therefore name resolution cannot be the issue."
@@ -53,6 +62,13 @@ graph TD
 - Private Endpoint + Private DNS zone linkage health.
 - Azure DNS Private Resolver inbound/outbound endpoint path (if used).
 
+### Investigation Notes
+- Regional VNet integration provides a network path, but does not automatically enable route-all or make all outbound traffic private. DNS outcome depends on resolver configuration and zone linkage, while routing outcome depends on `vnetRouteAllEnabled` and subnet route tables — these are separate checks.
+- A successful `nslookup` once does not prove resolver stability; perform repeated checks across time and instances.
+- Private Endpoint connectivity requires both route reachability and correct DNS resolution to the private IP.
+- Linux workloads may surface DNS exceptions differently by runtime (Python, Node.js, Java), but lookup-layer signatures are comparable.
+- Avoid embedding resolver IP assumptions in application code; keep resolver control in platform/network configuration.
+
 ## 5. Evidence to Collect
 ### Required Evidence
 - Exact failing FQDN(s), error text, and UTC timestamps for at least 3-5 incidents.
@@ -66,6 +82,144 @@ graph TD
 - Whether custom DNS is implemented via domain controllers, BIND/Infoblox, or Azure DNS Private Resolver.
 - Recent changes: zone record edits, resolver patching, subnet NSG/UDR updates, scale events, slot swaps.
 - Expected split-horizon behavior (public answer externally, private answer internally) documented by design.
+
+### Sample Log Patterns
+#### AppServiceHTTPLogs (dns-vnet lab)
+
+```text
+[AppServiceHTTPLogs]
+2026-04-04T11:23:04Z  GET  /diag/env    200    15
+2026-04-04T11:23:03Z  GET  /diag/stats  200    24
+2026-04-04T11:22:19Z  GET  /connect     200    975
+2026-04-04T11:22:18Z  GET  /resolve     200    512
+2026-04-04T11:18:02Z  GET  /            200    148
+2026-04-04T11:17:12Z  GET  /diag/stats  499    24400
+```
+
+#### AppServiceConsoleLogs (dns-vnet lab)
+
+```text
+[AppServiceConsoleLogs]
+0 rows returned for incident window.
+```
+
+#### AppServicePlatformLogs (dns-vnet lab)
+
+```text
+[AppServicePlatformLogs]
+2026-04-04T11:17:11Z  Informational  Site is running with patch version PYTHON 3.11.14
+2026-04-04T11:17:11Z  Informational  State: Started, Action: None, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00
+2026-04-04T11:17:11Z  Informational  Site started.
+2026-04-04T11:17:11Z  Informational  Site is running with deployment version: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+2026-04-04T11:17:10Z  Informational  State: Starting, Action: WarmUpProbeSucceeded
+2026-04-04T11:17:10Z  Informational  Site startup probe succeeded after 36.3947007 seconds.
+```
+
+!!! tip "How to Read This"
+    This pattern shows the app process is healthy (`Site started`) while DNS-dependent endpoints show abnormal latency and occasional client-disconnect (`499`). That combination strongly suggests dependency resolution/path issues, not app startup failure.
+
+### KQL Queries with Example Output
+#### Query 1: Endpoint behavior around DNS tests
+
+```kusto
+AppServiceHTTPLogs
+| where TimeGenerated between (datetime(2026-04-04 11:17:00) .. datetime(2026-04-04 11:24:00))
+| where CsUriStem in ("/resolve", "/connect", "/diag/stats", "/diag/env")
+| project TimeGenerated, CsMethod, CsUriStem, ScStatus, TimeTaken
+| order by TimeGenerated desc
+```
+
+**Example Output:**
+
+| TimeGenerated | CsMethod | CsUriStem | ScStatus | TimeTaken |
+|---|---|---|---|---|
+| 2026-04-04 11:23:04 | GET | /diag/env | 200 | 15 |
+| 2026-04-04 11:23:03 | GET | /diag/stats | 200 | 24 |
+| 2026-04-04 11:22:19 | GET | /connect | 200 | 975 |
+| 2026-04-04 11:22:18 | GET | /resolve | 200 | 512 |
+| 2026-04-04 11:17:12 | GET | /diag/stats | 499 | 24400 |
+
+!!! tip "How to Read This"
+    `200` alone does not mean DNS is correct. Focus on `/resolve` and `/connect` latency patterns and payload evidence. Here, `/resolve` and `/connect` are significantly slower than baseline health endpoints, indicating external dependency lookup/connect path stress.
+
+#### Query 2: Platform startup health vs DNS incident window
+
+```kusto
+AppServicePlatformLogs
+| where TimeGenerated between (datetime(2026-04-04 11:17:00) .. datetime(2026-04-04 11:18:00))
+| project TimeGenerated, Level, Message
+| order by TimeGenerated asc
+```
+
+**Example Output:**
+
+| TimeGenerated | Level | Message |
+|---|---|---|
+| 2026-04-04 11:17:10 | Informational | Site startup probe succeeded after 36.3947007 seconds. |
+| 2026-04-04 11:17:10 | Informational | State: Starting, Action: WarmUpProbeSucceeded |
+| 2026-04-04 11:17:11 | Informational | Site is running with deployment version: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx |
+| 2026-04-04 11:17:11 | Informational | Site started. |
+
+!!! tip "How to Read This"
+    Clean startup telemetry eliminates startup regression hypotheses. Keep focus on DNS resolver path, private zone linking, and split-horizon resolution outcomes.
+
+#### Query 3: Console log presence check
+
+```kusto
+AppServiceConsoleLogs
+| where TimeGenerated between (datetime(2026-04-04 11:17:00) .. datetime(2026-04-04 11:24:00))
+| project TimeGenerated, Level, ResultDescription
+| order by TimeGenerated asc
+```
+
+**Example Output:**
+
+| TimeGenerated | Level | ResultDescription |
+|---|---|---|
+| _No rows_ |  |  |
+
+!!! tip "How to Read This"
+    No console rows plus healthy platform startup usually means app process started, but diagnostic detail must come from HTTP endpoint behavior and Azure DNS configuration data.
+
+### CLI Investigation Commands
+
+```bash
+# Check app VNet integration and route-all state
+az webapp show --resource-group <resource-group> --name <app-name> --query "{virtualNetworkSubnetId:virtualNetworkSubnetId,vnetRouteAllEnabled:siteConfig.vnetRouteAllEnabled}" --output table
+
+# Check DNS override settings on app
+az webapp config appsettings list --resource-group <resource-group> --name <app-name> --query "[?name=='WEBSITE_DNS_SERVER' || name=='WEBSITE_DNS_ALT_SERVER'].{name:name,value:value}" --output table
+
+# Check private DNS VNet links for blob private zone
+az network private-dns link vnet list --resource-group <dns-resource-group> --zone-name privatelink.blob.core.windows.net --output table
+
+# Check A records for storage account in private zone
+az network private-dns record-set a list --resource-group <dns-resource-group> --zone-name privatelink.blob.core.windows.net --output table
+```
+
+**Example Output:**
+
+```text
+VirtualNetworkSubnetId                                                                                                        VnetRouteAllEnabled
+----------------------------------------------------------------------------------------------------------------------------  -------------------
+/subscriptions/<subscription-id>/resourceGroups/<resource-group>/providers/Microsoft.Network/virtualNetworks/<vnet>/subnets/<subnet>  true
+
+Name                 Value
+-------------------  -----
+WEBSITE_DNS_SERVER
+WEBSITE_DNS_ALT_SERVER
+
+Name                      VirtualNetwork
+------------------------  ------------------------------------------------------------------------------
+link-hub-vnet             /subscriptions/<subscription-id>/resourceGroups/<resource-group>/providers/Microsoft.Network/virtualNetworks/<hub-vnet>
+
+Name                 IPv4Address
+-------------------  ----------------
+stlabdnsvnet         10.20.2.4
+```
+
+!!! tip "How to Read This"
+    If private zone links or A records are missing/incorrect, the app can resolve to public IPs even with VNet integration enabled. VNet integration confirms network path, not DNS correctness.
 
 ## 6. Validation and Disproof by Hypothesis
 
@@ -186,6 +340,16 @@ AppServiceConsoleLogs
 az monitor metrics list --resource "/subscriptions/<subscription-id>/resourceGroups/$RG/providers/Microsoft.Web/sites/$APP_NAME" --metric "Http5xx" --interval PT5M --aggregation Total
 ```
 
+### Normal vs Abnormal Comparison
+
+| Signal | Normal DNS-private path | Abnormal (dns-vnet incident pattern) |
+|---|---|---|
+| `/resolve` result | `*.privatelink.blob.core.windows.net` resolves to private IP (for example 10.x) | `*.privatelink.blob.core.windows.net` resolves to public IP `20.60.200.161` |
+| `/connect` result | TLS/connect succeeds to private endpoint path | SSL/connect error against privatelink URL due to public endpoint routing |
+| `/diag/env` and `/diag/stats` | Low latency, consistent 200 | Mostly 200 but occasional 499/high latency spikes |
+| Platform startup logs | `Site started`, no startup errors | Same (healthy startup), proving issue is post-start dependency path |
+| Interpretation | Private DNS + route chain is aligned | Private DNS zone link/record path is misconfigured (H2/H3 focus) |
+
 ## 7. Likely Root Cause Patterns
 - Pattern A: Custom DNS forwarders do not forward Azure private zones (for example `privatelink.*`) to the proper upstream path.
 - Pattern B: Private DNS zone exists but VNet link is missing for the app integration VNet, so app resolves wrong or no records.
@@ -199,196 +363,19 @@ az monitor metrics list --resource "/subscriptions/<subscription-id>/resourceGro
 - Reduce DNS volatility by aligning TTLs with expected failover behavior and avoiding ultra-low TTL unless required. **Risk: low-medium**.
 - If using Azure DNS Private Resolver, validate and repair inbound/outbound endpoint forwarding rules. **Risk: medium**.
 
-## 9. Long-term Fixes
+## 9. Prevention
 - Standardize DNS architecture for App Service VNet integration (authoritative zones, forwarding hierarchy, ownership model).
 - Use infrastructure-as-code for private DNS zones, links, and record lifecycle to prevent configuration drift.
 - Establish resolver health monitoring and synthetic DNS probes from representative app subnets.
 - Document split-brain design explicitly (which resolver should return public vs private answers and why).
 - Add deployment guardrails: change-review checks for DNS app settings and private DNS link integrity.
 
-## 10. Investigation Notes
-- Regional VNet integration provides a network path, but does not automatically enable route-all or make all outbound traffic private. DNS outcome depends on resolver configuration and zone linkage, while routing outcome depends on `vnetRouteAllEnabled` and subnet route tables — these are separate checks.
-- A successful `nslookup` once does not prove resolver stability; perform repeated checks across time and instances.
-- Private Endpoint connectivity requires both route reachability and correct DNS resolution to the private IP.
-- Linux workloads may surface DNS exceptions differently by runtime (Python, Node.js, Java), but lookup-layer signatures are comparable.
-- Avoid embedding resolver IP assumptions in application code; keep resolver control in platform/network configuration.
-
-## 11. Related Queries
+## See Also
 - [`../../kql/http/5xx-trend-over-time.md`](../../kql/http/5xx-trend-over-time.md)
 - [`../../kql/http/latency-trend-by-status-code.md`](../../kql/http/latency-trend-by-status-code.md)
 - [`../../kql/correlation/latency-vs-errors.md`](../../kql/correlation/latency-vs-errors.md)
-
-## 12. Related Checklists
 - [`../../first-10-minutes/outbound-network.md`](../../first-10-minutes/outbound-network.md)
-
-## 13. Related Labs
 - [Lab: DNS Resolution (VNet)](../../lab-guides/dns-vnet-resolution.md)
-
-## 14. Limitations
-- This playbook focuses on Azure App Service **Linux** and OSS workloads only.
-- It does not provide exhaustive Windows-specific DNS client behavior.
-- It assumes Log Analytics ingestion is available for App Service HTTP/console telemetry.
-- Hybrid/on-prem conditional forwarding nuances vary by enterprise DNS implementation and are validated case by case.
-
-## 15. Quick Conclusion
-When DNS failures occur in a VNet-integrated App Service Linux app, treat resolver path, private DNS linkage, and app-level DNS overrides as equally likely suspects until disproven. The fastest durable resolution is to prove each hypothesis with concrete in-app lookup evidence, App Service logs, and Azure DNS configuration checks, then standardize DNS architecture to eliminate drift and split-brain surprises.
-
-## Sample Log Patterns
-
-### AppServiceHTTPLogs (dns-vnet lab)
-
-```text
-[AppServiceHTTPLogs]
-2026-04-04T11:23:04Z  GET  /diag/env    200    15
-2026-04-04T11:23:03Z  GET  /diag/stats  200    24
-2026-04-04T11:22:19Z  GET  /connect     200    975
-2026-04-04T11:22:18Z  GET  /resolve     200    512
-2026-04-04T11:18:02Z  GET  /            200    148
-2026-04-04T11:17:12Z  GET  /diag/stats  499    24400
-```
-
-### AppServiceConsoleLogs (dns-vnet lab)
-
-```text
-[AppServiceConsoleLogs]
-0 rows returned for incident window.
-```
-
-### AppServicePlatformLogs (dns-vnet lab)
-
-```text
-[AppServicePlatformLogs]
-2026-04-04T11:17:11Z  Informational  Site is running with patch version PYTHON 3.11.14
-2026-04-04T11:17:11Z  Informational  State: Started, Action: None, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00
-2026-04-04T11:17:11Z  Informational  Site started.
-2026-04-04T11:17:11Z  Informational  Site is running with deployment version: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
-2026-04-04T11:17:10Z  Informational  State: Starting, Action: WarmUpProbeSucceeded
-2026-04-04T11:17:10Z  Informational  Site startup probe succeeded after 36.3947007 seconds.
-```
-
-!!! tip "How to Read This"
-    This pattern shows the app process is healthy (`Site started`) while DNS-dependent endpoints show abnormal latency and occasional client-disconnect (`499`). That combination strongly suggests dependency resolution/path issues, not app startup failure.
-
-## KQL Queries with Example Output
-
-### Query 1: Endpoint behavior around DNS tests
-
-```kusto
-AppServiceHTTPLogs
-| where TimeGenerated between (datetime(2026-04-04 11:17:00) .. datetime(2026-04-04 11:24:00))
-| where CsUriStem in ("/resolve", "/connect", "/diag/stats", "/diag/env")
-| project TimeGenerated, CsMethod, CsUriStem, ScStatus, TimeTaken
-| order by TimeGenerated desc
-```
-
-**Example Output:**
-
-| TimeGenerated | CsMethod | CsUriStem | ScStatus | TimeTaken |
-|---|---|---|---|---|
-| 2026-04-04 11:23:04 | GET | /diag/env | 200 | 15 |
-| 2026-04-04 11:23:03 | GET | /diag/stats | 200 | 24 |
-| 2026-04-04 11:22:19 | GET | /connect | 200 | 975 |
-| 2026-04-04 11:22:18 | GET | /resolve | 200 | 512 |
-| 2026-04-04 11:17:12 | GET | /diag/stats | 499 | 24400 |
-
-!!! tip "How to Read This"
-    `200` alone does not mean DNS is correct. Focus on `/resolve` and `/connect` latency patterns and payload evidence. Here, `/resolve` and `/connect` are significantly slower than baseline health endpoints, indicating external dependency lookup/connect path stress.
-
-### Query 2: Platform startup health vs DNS incident window
-
-```kusto
-AppServicePlatformLogs
-| where TimeGenerated between (datetime(2026-04-04 11:17:00) .. datetime(2026-04-04 11:18:00))
-| project TimeGenerated, Level, Message
-| order by TimeGenerated asc
-```
-
-**Example Output:**
-
-| TimeGenerated | Level | Message |
-|---|---|---|
-| 2026-04-04 11:17:10 | Informational | Site startup probe succeeded after 36.3947007 seconds. |
-| 2026-04-04 11:17:10 | Informational | State: Starting, Action: WarmUpProbeSucceeded |
-| 2026-04-04 11:17:11 | Informational | Site is running with deployment version: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx |
-| 2026-04-04 11:17:11 | Informational | Site started. |
-
-!!! tip "How to Read This"
-    Clean startup telemetry eliminates startup regression hypotheses. Keep focus on DNS resolver path, private zone linking, and split-horizon resolution outcomes.
-
-### Query 3: Console log presence check
-
-```kusto
-AppServiceConsoleLogs
-| where TimeGenerated between (datetime(2026-04-04 11:17:00) .. datetime(2026-04-04 11:24:00))
-| project TimeGenerated, Level, ResultDescription
-| order by TimeGenerated asc
-```
-
-**Example Output:**
-
-| TimeGenerated | Level | ResultDescription |
-|---|---|---|
-| _No rows_ |  |  |
-
-!!! tip "How to Read This"
-    No console rows plus healthy platform startup usually means app process started, but diagnostic detail must come from HTTP endpoint behavior and Azure DNS configuration data.
-
-## CLI Investigation Commands
-
-```bash
-# Check app VNet integration and route-all state
-az webapp show --resource-group <resource-group> --name <app-name> --query "{virtualNetworkSubnetId:virtualNetworkSubnetId,vnetRouteAllEnabled:siteConfig.vnetRouteAllEnabled}" --output table
-
-# Check DNS override settings on app
-az webapp config appsettings list --resource-group <resource-group> --name <app-name> --query "[?name=='WEBSITE_DNS_SERVER' || name=='WEBSITE_DNS_ALT_SERVER'].{name:name,value:value}" --output table
-
-# Check private DNS VNet links for blob private zone
-az network private-dns link vnet list --resource-group <dns-resource-group> --zone-name privatelink.blob.core.windows.net --output table
-
-# Check A records for storage account in private zone
-az network private-dns record-set a list --resource-group <dns-resource-group> --zone-name privatelink.blob.core.windows.net --output table
-```
-
-**Example Output:**
-
-```text
-VirtualNetworkSubnetId                                                                                                        VnetRouteAllEnabled
-----------------------------------------------------------------------------------------------------------------------------  -------------------
-/subscriptions/<subscription-id>/resourceGroups/<resource-group>/providers/Microsoft.Network/virtualNetworks/<vnet>/subnets/<subnet>  true
-
-Name                 Value
--------------------  -----
-WEBSITE_DNS_SERVER
-WEBSITE_DNS_ALT_SERVER
-
-Name                      VirtualNetwork
-------------------------  ------------------------------------------------------------------------------
-link-hub-vnet             /subscriptions/<subscription-id>/resourceGroups/<resource-group>/providers/Microsoft.Network/virtualNetworks/<hub-vnet>
-
-Name                 IPv4Address
--------------------  ----------------
-stlabdnsvnet         10.20.2.4
-```
-
-!!! tip "How to Read This"
-    If private zone links or A records are missing/incorrect, the app can resolve to public IPs even with VNet integration enabled. VNet integration confirms network path, not DNS correctness.
-
-## Normal vs Abnormal Comparison
-
-| Signal | Normal DNS-private path | Abnormal (dns-vnet incident pattern) |
-|---|---|---|
-| `/resolve` result | `*.privatelink.blob.core.windows.net` resolves to private IP (for example 10.x) | `*.privatelink.blob.core.windows.net` resolves to public IP `20.60.200.161` |
-| `/connect` result | TLS/connect succeeds to private endpoint path | SSL/connect error against privatelink URL due to public endpoint routing |
-| `/diag/env` and `/diag/stats` | Low latency, consistent 200 | Mostly 200 but occasional 499/high latency spikes |
-| Platform startup logs | `Site started`, no startup errors | Same (healthy startup), proving issue is post-start dependency path |
-| Interpretation | Private DNS + route chain is aligned | Private DNS zone link/record path is misconfigured (H2/H3 focus) |
-
-## Related Labs
-
-- [Lab: DNS Resolution (VNet)](../../lab-guides/dns-vnet-resolution.md)
-
-## See Also
-
 - [Outbound Network (First 10 Minutes)](../../first-10-minutes/outbound-network.md)
 - [DNS VNet Resolution Lab](../../lab-guides/dns-vnet-resolution.md)
 

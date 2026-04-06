@@ -6,17 +6,13 @@ This lab is a full diagnostic reference for reproducing and proving outbound SNA
 
 ## Lab Metadata
 
-| Field | Value |
+| Attribute | Value |
 |---|---|
-| Lab name | `snat-exhaustion` |
-| Platform | Azure App Service (Linux) |
-| Runtime | Python 3.11 + Gunicorn |
-| App path | `labs/snat-exhaustion/app/app.py` |
-| Trigger script | `labs/snat-exhaustion/trigger.sh` |
-| Artifact root | `labs/snat-exhaustion/artifacts-sanitized/` |
-| Focus | Outbound connection churn without pooling |
-| Expected anti-pattern | New TCP connection per outbound call |
-| Expected symptom family | 499/503, timeout bodies, worker churn, SIGKILL events |
+| Difficulty | Advanced |
+| Estimated Duration | 60-75 minutes |
+| Tier | Basic |
+| Failure Mode | Outbound connection churn without pooling drives SNAT pressure, timeouts, and worker instability |
+| Skills Practiced | Outbound dependency troubleshooting, SNAT-pressure analysis, network diagnostics, HTTP and console log correlation |
 
 !!! info "What this guide is"
     This is a troubleshooting **reference lab guide** intended for engineers who need repeatable, evidence-driven diagnosis. It is not a quickstart.
@@ -424,15 +420,7 @@ curl --silent --show-error "$APP_URL/health"
 
 If reachable and stable after pressure window, recovery evidence is present.
 
-### 3.11 Cleanup
-
-```bash
-az group delete --name "$RG" --yes --no-wait
-```
-
----
-
-## 4) Experiment Log (Artifact-backed)
+## 4) Experiment Log
 
 This section is derived from actual sanitized lab artifacts:
 
@@ -729,6 +717,14 @@ graph LR
     If you observe long `TimeTaken` `499` patterns on `/outbound` and even `/diag/stats`, plus worker timeout/kill churn in the same window, the hypothesis is CONFIRMED because outbound connection churn is stalling request processing in a SNAT-pressure cascade.
     
     If you do NOT observe timeout clustering, diagnostic endpoint stall, or worker churn under equivalent outbound concurrency, the hypothesis is FALSIFIED — consider upstream dependency outages or non-SNAT network constraints.
+
+---
+
+## Clean Up
+
+```bash
+az group delete --name "$RG" --yes --no-wait
+```
 
 ---
 

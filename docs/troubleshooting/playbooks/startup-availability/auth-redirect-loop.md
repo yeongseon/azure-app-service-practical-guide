@@ -82,6 +82,20 @@ sequenceDiagram
 - "This is always an app code bug." (most loops are auth/proxy/host/protocol configuration issues)
 - "If production works, staging config differences do not matter." (slot swap can promote bad auth settings)
 
+### Common Misdiagnoses
+
+- "Identity provider is down." (loop usually results from config mismatch, not provider outage)
+- "User password or MFA failure." (credentials can be correct while callback/session handling is broken)
+- "Clearing browser cookies is the fix." (may temporarily mask symptoms but not configuration root cause)
+- "This is always an app code bug." (most loops are auth/proxy/host/protocol configuration issues)
+- "If production works, staging config differences do not matter." (slot swap can promote bad auth settings)
+
+- [Authentication and authorization in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization)
+- [Configure your App Service or Azure Functions app to use Microsoft Entra sign-in](https://learn.microsoft.com/en-us/azure/app-service/configure-authentication-provider-aad)
+- [Configure Azure App Service authentication settings by using the Azure CLI](https://learn.microsoft.com/en-us/azure/app-service/configure-authentication-api-version)
+- [Azure Front Door origin and routing architecture](https://learn.microsoft.com/en-us/azure/frontdoor/front-door-routing-architecture)
+- [Application Gateway request routing rules overview](https://learn.microsoft.com/en-us/azure/application-gateway/configuration-request-routing-rules)
+
 ## 3. Competing Hypotheses
 
 - **H1: Redirect URI mismatch** — App registration redirect URI does not match the app's actual public URL (for example custom domain vs `azurewebsites.net`).
@@ -165,6 +179,148 @@ AppServiceAuthenticationLogs
 | order by TimeGenerated desc
 ```
 
+### Sample Log Patterns
+
+> These examples are **illustrative synthetic patterns** (no dedicated live lab dataset currently exists for this scenario).
+
+### CLI Investigation Commands
+
+```bash
+# Inspect effective auth settings
+az webapp auth show --resource-group <resource-group> --name <app-name> --output json
+
+# Check HTTPS enforcement and host-related configuration
+az webapp show --resource-group <resource-group> --name <app-name> --query "{defaultHostName:defaultHostName,httpsOnly:httpsOnly,hostNames:hostNames}" --output json
+
+# Compare production and staging auth-relevant app settings
+az webapp config appsettings list --resource-group <resource-group> --name <app-name> --slot production --query "[?name=='WEBSITE_AUTH_ENABLED' || name=='WEBSITE_AUTH_DEFAULT_PROVIDER' || name=='WEBSITE_AUTH_CLIENT_ID' || name=='WEBSITE_AUTH_OPENID_ISSUER'].{name:name,value:value}" --output table
+az webapp config appsettings list --resource-group <resource-group> --name <app-name> --slot <staging-slot> --query "[?name=='WEBSITE_AUTH_ENABLED' || name=='WEBSITE_AUTH_DEFAULT_PROVIDER' || name=='WEBSITE_AUTH_CLIENT_ID' || name=='WEBSITE_AUTH_OPENID_ISSUER'].{name:name,value:value}" --output table
+```
+
+**Example Output (illustrative):**
+
+```text
+{
+  "enabled": true,
+  "defaultProvider": "azureactivedirectory",
+  "unauthenticatedClientAction": "RedirectToLoginPage"
+}
+
+{
+  "defaultHostName": "<app-name>.azurewebsites.net",
+  "httpsOnly": true,
+  "hostNames": [
+    "<app-name>.azurewebsites.net",
+    "app.contoso.com"
+  ]
+}
+
+Name                           Value
+-----------------------------  -----------------------------------------------
+WEBSITE_AUTH_ENABLED           True
+WEBSITE_AUTH_DEFAULT_PROVIDER  AzureActiveDirectory
+WEBSITE_AUTH_CLIENT_ID         <masked>
+WEBSITE_AUTH_OPENID_ISSUER     https://login.microsoftonline.com/<tenant-id>/v2.0
+```
+
+!!! tip "How to Read This"
+    CLI output should prove host/scheme/auth settings are internally consistent across slots. If they are not, fix config parity first; app-code changes rarely resolve redirect loops caused by auth configuration drift.
+
+### AppServiceHTTPLogs (illustrative redirect-loop signature)
+
+```text
+[AppServiceHTTPLogs]
+2026-04-04T12:01:14Z  GET  /                       302  21
+2026-04-04T12:01:14Z  GET  /.auth/login/aad/callback 302  33
+2026-04-04T12:01:15Z  GET  /                       302  19
+2026-04-04T12:01:15Z  GET  /.auth/login/aad/callback 302  30
+2026-04-04T12:01:16Z  GET  /                       302  20
+2026-04-04T12:01:16Z  GET  /.auth/login/aad/callback 302  29
+```
+
+### AppServiceAuthenticationLogs (illustrative auth-module signal)
+
+```text
+[AppServiceAuthenticationLogs]
+2026-04-04T12:01:14Z  Warning  Correlation cookie validation failed for callback request.
+2026-04-04T12:01:14Z  Warning  redirect_uri mismatch. Expected https://app.contoso.com/.auth/login/aad/callback
+2026-04-04T12:01:15Z  Warning  Nonce validation failed. Authentication handshake restarting.
+2026-04-04T12:01:16Z  Warning  Token persisted = false. Re-challenging user.
+```
+
+### Reverse proxy header mismatch pattern (illustrative)
+
+```text
+[Proxy Access Logs]
+2026-04-04T12:01:14Z  host=app.contoso.com  x-forwarded-proto=http   upstream_status=302
+2026-04-04T12:01:15Z  host=app.contoso.com  x-forwarded-proto=http   upstream_status=302
+```
+
+!!! tip "How to Read This"
+    Repeating `302` on both `/` and callback path with nonce/state/correlation warnings indicates handshake never reaches stable session establishment. Prioritize H1/H2/H4 before changing application business logic.
+
+### Query 1: Detect redirect-loop bursts
+
+```kusto
+AppServiceHTTPLogs
+| where TimeGenerated > ago(6h)
+| where ScStatus == 302
+| summarize redirects=count(), distinctPaths=dcount(CsUriStem), distinctClients=dcount(CIp) by bin(TimeGenerated, 1m)
+| where redirects >= 20
+| order by TimeGenerated asc
+```
+
+**Example Output (illustrative):**
+
+| TimeGenerated | redirects | distinctPaths | distinctClients |
+|---|---|---|---|
+| 2026-04-04 12:01:00 | 48 | 2 | 3 |
+| 2026-04-04 12:02:00 | 57 | 2 | 4 |
+| 2026-04-04 12:03:00 | 51 | 2 | 3 |
+
+!!! tip "How to Read This"
+    Very high per-minute `302` counts with only 1-2 active paths are classic loop telemetry. Normal sign-in flow produces short redirect bursts, not sustained high-rate repetition.
+
+### Query 2: Isolate callback/auth-validation failure messages
+
+```kusto
+AppServiceAuthenticationLogs
+| where TimeGenerated > ago(6h)
+| where ResultDescription has_any ("redirect_uri", "nonce", "state", "correlation", "token", "cookie")
+| summarize failures=count() by ResultDescription, bin(TimeGenerated, 5m)
+| order by TimeGenerated asc
+```
+
+**Example Output (illustrative):**
+
+| TimeGenerated | ResultDescription | failures |
+|---|---|---|
+| 2026-04-04 12:00:00 | redirect_uri mismatch. Expected https://app.contoso.com/.auth/login/aad/callback | 26 |
+| 2026-04-04 12:00:00 | Correlation cookie validation failed for callback request. | 18 |
+| 2026-04-04 12:05:00 | Nonce validation failed. Authentication handshake restarting. | 22 |
+
+!!! tip "How to Read This"
+    If failure text is dominated by redirect URI or correlation/nonce errors, root cause is usually configuration/proxy/session handling, not user credential issues.
+
+### Query 3: Confirm callback endpoint keeps returning 302 instead of stabilizing
+
+```kusto
+AppServiceHTTPLogs
+| where TimeGenerated > ago(6h)
+| where CsUriStem in ("/", "/.auth/login/aad/callback")
+| summarize requests=count(), redirects=countif(ScStatus == 302), success=countif(ScStatus == 200) by CsUriStem, bin(TimeGenerated, 2m)
+| order by TimeGenerated asc
+```
+
+**Example Output (illustrative):**
+
+| TimeGenerated | CsUriStem | requests | redirects | success |
+|---|---|---|---|---|
+| 2026-04-04 12:02:00 | / | 30 | 30 | 0 |
+| 2026-04-04 12:02:00 | /.auth/login/aad/callback | 29 | 29 | 0 |
+
+!!! tip "How to Read This"
+    Callback requests should eventually transition to a post-auth `200` flow. Persistent callback `302` with zero success is loop confirmation.
 ## 6. Validation and Disproof by Hypothesis
 
 ### H1: Redirect URI mismatch
@@ -232,6 +388,16 @@ AppServiceAuthenticationLogs
     1. Diff production/staging slot settings and auth config snapshots.
     2. Confirm slot-sticky settings include all auth-sensitive values.
 
+### Normal vs Abnormal Comparison
+
+| Signal | Normal Authentication Flow | Redirect Loop Scenario |
+|---|---|---|
+| HTTP redirect count per sign-in | Few redirects then stable `200` | Sustained high-rate `302` bursts |
+| Callback endpoint outcome | Callback consumed, session established | Callback repeatedly re-challenges |
+| Auth log content | Occasional informational entries | Repeated nonce/state/correlation/redirect_uri warnings |
+| Scheme/host consistency | `https` and canonical host preserved | Mixed host/proto or mismatched redirect URI |
+| User experience | Sign-in completes and app loads | Browser ends with too-many-redirects error |
+
 ## 7. Likely Root Cause Patterns
 
 - **Redirect URI and host mismatch**: IdP callback registration does not match the actual public hostname/scheme used by users.
@@ -255,172 +421,15 @@ AppServiceAuthenticationLogs
 - Add alerting on `AppServiceAuthenticationLogs` spikes for redirect/correlation/token failures.
 - Include a synthetic sign-in test in release validation to catch redirect loops before user impact.
 
-## Sample Log Patterns
+## See Also
 
-> These examples are **illustrative synthetic patterns** (no dedicated live lab dataset currently exists for this scenario).
-
-### AppServiceHTTPLogs (illustrative redirect-loop signature)
-
-```text
-[AppServiceHTTPLogs]
-2026-04-04T12:01:14Z  GET  /                       302  21
-2026-04-04T12:01:14Z  GET  /.auth/login/aad/callback 302  33
-2026-04-04T12:01:15Z  GET  /                       302  19
-2026-04-04T12:01:15Z  GET  /.auth/login/aad/callback 302  30
-2026-04-04T12:01:16Z  GET  /                       302  20
-2026-04-04T12:01:16Z  GET  /.auth/login/aad/callback 302  29
-```
-
-### AppServiceAuthenticationLogs (illustrative auth-module signal)
-
-```text
-[AppServiceAuthenticationLogs]
-2026-04-04T12:01:14Z  Warning  Correlation cookie validation failed for callback request.
-2026-04-04T12:01:14Z  Warning  redirect_uri mismatch. Expected https://app.contoso.com/.auth/login/aad/callback
-2026-04-04T12:01:15Z  Warning  Nonce validation failed. Authentication handshake restarting.
-2026-04-04T12:01:16Z  Warning  Token persisted = false. Re-challenging user.
-```
-
-### Reverse proxy header mismatch pattern (illustrative)
-
-```text
-[Proxy Access Logs]
-2026-04-04T12:01:14Z  host=app.contoso.com  x-forwarded-proto=http   upstream_status=302
-2026-04-04T12:01:15Z  host=app.contoso.com  x-forwarded-proto=http   upstream_status=302
-```
-
-!!! tip "How to Read This"
-    Repeating `302` on both `/` and callback path with nonce/state/correlation warnings indicates handshake never reaches stable session establishment. Prioritize H1/H2/H4 before changing application business logic.
-
-## KQL Queries with Example Output
-
-### Query 1: Detect redirect-loop bursts
-
-```kusto
-AppServiceHTTPLogs
-| where TimeGenerated > ago(6h)
-| where ScStatus == 302
-| summarize redirects=count(), distinctPaths=dcount(CsUriStem), distinctClients=dcount(CIp) by bin(TimeGenerated, 1m)
-| where redirects >= 20
-| order by TimeGenerated asc
-```
-
-**Example Output (illustrative):**
-
-| TimeGenerated | redirects | distinctPaths | distinctClients |
-|---|---|---|---|
-| 2026-04-04 12:01:00 | 48 | 2 | 3 |
-| 2026-04-04 12:02:00 | 57 | 2 | 4 |
-| 2026-04-04 12:03:00 | 51 | 2 | 3 |
-
-!!! tip "How to Read This"
-    Very high per-minute `302` counts with only 1-2 active paths are classic loop telemetry. Normal sign-in flow produces short redirect bursts, not sustained high-rate repetition.
-
-### Query 2: Isolate callback/auth-validation failure messages
-
-```kusto
-AppServiceAuthenticationLogs
-| where TimeGenerated > ago(6h)
-| where ResultDescription has_any ("redirect_uri", "nonce", "state", "correlation", "token", "cookie")
-| summarize failures=count() by ResultDescription, bin(TimeGenerated, 5m)
-| order by TimeGenerated asc
-```
-
-**Example Output (illustrative):**
-
-| TimeGenerated | ResultDescription | failures |
-|---|---|---|
-| 2026-04-04 12:00:00 | redirect_uri mismatch. Expected https://app.contoso.com/.auth/login/aad/callback | 26 |
-| 2026-04-04 12:00:00 | Correlation cookie validation failed for callback request. | 18 |
-| 2026-04-04 12:05:00 | Nonce validation failed. Authentication handshake restarting. | 22 |
-
-!!! tip "How to Read This"
-    If failure text is dominated by redirect URI or correlation/nonce errors, root cause is usually configuration/proxy/session handling, not user credential issues.
-
-### Query 3: Confirm callback endpoint keeps returning 302 instead of stabilizing
-
-```kusto
-AppServiceHTTPLogs
-| where TimeGenerated > ago(6h)
-| where CsUriStem in ("/", "/.auth/login/aad/callback")
-| summarize requests=count(), redirects=countif(ScStatus == 302), success=countif(ScStatus == 200) by CsUriStem, bin(TimeGenerated, 2m)
-| order by TimeGenerated asc
-```
-
-**Example Output (illustrative):**
-
-| TimeGenerated | CsUriStem | requests | redirects | success |
-|---|---|---|---|---|
-| 2026-04-04 12:02:00 | / | 30 | 30 | 0 |
-| 2026-04-04 12:02:00 | /.auth/login/aad/callback | 29 | 29 | 0 |
-
-!!! tip "How to Read This"
-    Callback requests should eventually transition to a post-auth `200` flow. Persistent callback `302` with zero success is loop confirmation.
-
-## CLI Investigation Commands
-
-```bash
-# Inspect effective auth settings
-az webapp auth show --resource-group <resource-group> --name <app-name> --output json
-
-# Check HTTPS enforcement and host-related configuration
-az webapp show --resource-group <resource-group> --name <app-name> --query "{defaultHostName:defaultHostName,httpsOnly:httpsOnly,hostNames:hostNames}" --output json
-
-# Compare production and staging auth-relevant app settings
-az webapp config appsettings list --resource-group <resource-group> --name <app-name> --slot production --query "[?name=='WEBSITE_AUTH_ENABLED' || name=='WEBSITE_AUTH_DEFAULT_PROVIDER' || name=='WEBSITE_AUTH_CLIENT_ID' || name=='WEBSITE_AUTH_OPENID_ISSUER'].{name:name,value:value}" --output table
-az webapp config appsettings list --resource-group <resource-group> --name <app-name> --slot <staging-slot> --query "[?name=='WEBSITE_AUTH_ENABLED' || name=='WEBSITE_AUTH_DEFAULT_PROVIDER' || name=='WEBSITE_AUTH_CLIENT_ID' || name=='WEBSITE_AUTH_OPENID_ISSUER'].{name:name,value:value}" --output table
-```
-
-**Example Output (illustrative):**
-
-```text
-{
-  "enabled": true,
-  "defaultProvider": "azureactivedirectory",
-  "unauthenticatedClientAction": "RedirectToLoginPage"
-}
-
-{
-  "defaultHostName": "<app-name>.azurewebsites.net",
-  "httpsOnly": true,
-  "hostNames": [
-    "<app-name>.azurewebsites.net",
-    "app.contoso.com"
-  ]
-}
-
-Name                           Value
------------------------------  -----------------------------------------------
-WEBSITE_AUTH_ENABLED           True
-WEBSITE_AUTH_DEFAULT_PROVIDER  AzureActiveDirectory
-WEBSITE_AUTH_CLIENT_ID         <masked>
-WEBSITE_AUTH_OPENID_ISSUER     https://login.microsoftonline.com/<tenant-id>/v2.0
-```
-
-!!! tip "How to Read This"
-    CLI output should prove host/scheme/auth settings are internally consistent across slots. If they are not, fix config parity first; app-code changes rarely resolve redirect loops caused by auth configuration drift.
-
-## Normal vs Abnormal Comparison
-
-| Signal | Normal Authentication Flow | Redirect Loop Scenario |
-|---|---|---|
-| HTTP redirect count per sign-in | Few redirects then stable `200` | Sustained high-rate `302` bursts |
-| Callback endpoint outcome | Callback consumed, session established | Callback repeatedly re-challenges |
-| Auth log content | Occasional informational entries | Repeated nonce/state/correlation/redirect_uri warnings |
-| Scheme/host consistency | `https` and canonical host preserved | Mixed host/proto or mismatched redirect URI |
-| User experience | Sign-in completes and app loads | Browser ends with too-many-redirects error |
-
-## Common Misdiagnoses
-
-- "Identity provider is down." (loop usually results from config mismatch, not provider outage)
-- "User password or MFA failure." (credentials can be correct while callback/session handling is broken)
-- "Clearing browser cookies is the fix." (may temporarily mask symptoms but not configuration root cause)
-- "This is always an app code bug." (most loops are auth/proxy/host/protocol configuration issues)
-- "If production works, staging config differences do not matter." (slot swap can promote bad auth settings)
-
-## Related Labs
+### Related Labs
 
 No dedicated lab for this scenario.
+
+- [Slot Swap Config Drift](slot-swap-config-drift.md)
+- [Deployment Succeeded, Startup Failed](deployment-succeeded-startup-failed.md)
+- [Troubleshooting KQL Queries](../../kql/index.md)
 
 ## Sources
 
@@ -429,9 +438,3 @@ No dedicated lab for this scenario.
 - [Configure Azure App Service authentication settings by using the Azure CLI](https://learn.microsoft.com/en-us/azure/app-service/configure-authentication-api-version)
 - [Azure Front Door origin and routing architecture](https://learn.microsoft.com/en-us/azure/frontdoor/front-door-routing-architecture)
 - [Application Gateway request routing rules overview](https://learn.microsoft.com/en-us/azure/application-gateway/configuration-request-routing-rules)
-
-## See Also
-
-- [Slot Swap Config Drift](slot-swap-config-drift.md)
-- [Deployment Succeeded, Startup Failed](deployment-succeeded-startup-failed.md)
-- [Troubleshooting KQL Queries](../../kql/index.md)

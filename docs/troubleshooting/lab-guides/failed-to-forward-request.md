@@ -6,16 +6,13 @@ This lab is a full reference investigation for the App Service Linux startup/bin
 
 ## Lab Metadata
 
-| Field | Value |
+| Attribute | Value |
 |---|---|
-| Lab name | `failed-to-forward-request` |
-| Platform | Azure App Service (Linux) |
-| Runtime | Python 3.11 + Gunicorn |
-| App path | `labs/failed-to-forward-request/app/app.py` |
-| Trigger script | `labs/failed-to-forward-request/trigger.sh` |
-| Artifact root | `labs/failed-to-forward-request/artifacts-sanitized/` |
-| Primary anti-pattern | Gunicorn bind on `127.0.0.1:8000` |
-| Recovery action | Change startup command to `--bind=0.0.0.0:8000` |
+| Difficulty | Intermediate |
+| Estimated Duration | 45-60 minutes |
+| Tier | Basic |
+| Failure Mode | Reverse proxy forwarding fails because Gunicorn listens on `127.0.0.1` instead of `0.0.0.0` |
+| Skills Practiced | Startup command validation, bind-address diagnostics, platform and console log correlation, recovery verification |
 
 !!! info "Audience"
     This document targets incident responders, platform engineers, and support engineers who need a **forensic-quality** runbook for this failure mode.
@@ -388,15 +385,7 @@ Expected post-fix:
 - `/health` returns HTTP 200.
 - `/diag/bind` infers `gunicorn_bind_from_cmdline` as `0.0.0.0:8000`.
 
-### 3.11 Cleanup
-
-```bash
-az group delete --name "$RG" --yes --no-wait
-```
-
----
-
-## 4) Experiment Log (Artifact-backed)
+## 4) Experiment Log
 
 This section uses real files from:
 
@@ -701,6 +690,12 @@ graph LR
     If you observe deployment success, console logs showing Gunicorn listening on `127.0.0.1:8000`, and platform startup timeout/cancellation signals, the hypothesis is CONFIRMED because the app process is running but unreachable to the App Service forwarding/warmup path.
     
     If you do NOT observe localhost-only bind evidence (for example bind is already `0.0.0.0`), the hypothesis is FALSIFIED — consider alternatives such as wrong startup module, port mismatch, or image/runtime startup failure.
+
+## Clean Up
+
+```bash
+az group delete --name "$RG" --yes --no-wait
+```
 
 ## Related Playbook
 

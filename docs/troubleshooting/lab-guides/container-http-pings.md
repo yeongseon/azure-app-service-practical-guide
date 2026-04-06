@@ -9,7 +9,17 @@ This is a valid scientific result and an important platform-behavior discovery.
 
 ---
 
-## Section 1: Background
+## Lab Metadata
+
+| Attribute | Value |
+|---|---|
+| Difficulty | Advanced |
+| Estimated Duration | 60-75 minutes |
+| Tier | Basic |
+| Failure Mode | Startup ping investigation with `WEBSITES_PORT` and runtime listen-port mismatch on Linux App Service |
+| Skills Practiced | Startup probe analysis, port diagnostics, runtime environment correlation, KQL evidence correlation |
+
+## 1) Background
 
 ### 1.1 Why this lab exists
 
@@ -132,7 +142,7 @@ It does not claim identical behavior for:
 
 ---
 
-## Section 2: Hypothesis
+## 2) Hypothesis
 
 ### 2.1 Original hypothesis
 
@@ -209,7 +219,7 @@ To avoid overfitting one signal, always collect:
 
 ---
 
-## Section 3: Runbook
+## 3) Runbook
 
 This runbook is structured for reproducibility and log-quality evidence capture.
 All commands use long flags only.
@@ -226,10 +236,10 @@ All commands use long flags only.
 ### 3.2 Environment variables
 
 ```bash
-export $RG="rg-lab-pings"
-export $LOCATION="koreacentral"
-export $APP_NAME=""
-export $APP_URL=""
+export RG="rg-lab-pings"
+export LOCATION="koreacentral"
+export APP_NAME=""
+export APP_URL=""
 ```
 
 !!! note "Variable naming in this repository"
@@ -394,18 +404,7 @@ az webapp restart \
     The artifact finding in this lab is Linux-specific.
     Do not generalize directly to Windows containers.
 
-### 3.15 Cleanup
-
-```bash
-az group delete \
-    --name "$RG" \
-    --yes \
-    --no-wait
-```
-
----
-
-## Section 4: Experiment Log
+## 4) Experiment Log
 
 This log is derived from real files in:
 
@@ -737,6 +736,14 @@ graph LR
     If you observe sustained 200 responses with low `TimeTaken` (`10-32 ms`) before, during, and after the test window, the hypothesis is CONFIRMED because this run demonstrates a healthy startup/ping baseline rather than a port-mismatch failure.
     
     If you do NOT observe stable low-latency 200s (for example, repeated non-200 probes or startup timeouts), the hypothesis is FALSIFIED — consider startup timeout, warmup path, or runtime-port handling issues.
+
+---
+
+## Clean Up
+
+```bash
+az group delete --name "$RG" --yes --no-wait
+```
 
 ---
 

@@ -86,6 +86,14 @@ sequenceDiagram
 - "Adding `*` to CORS is the safest quick fix." (`*` is incompatible with credentialed requests and can create new failures.)
 - "If Postman works, browser should also work." (Browser enforces preflight/CORS; Postman does not.)
 
+### Common Misdiagnoses
+
+- "Browser says CORS, so token is fine." (CORS may hide underlying 401/403 auth details.)
+- "401 always means expired token." (Could be audience/issuer mismatch or missing credentials mode.)
+- "403 means CORS denied." (403 is usually authorization/policy denial after auth pipeline.)
+- "Adding `*` to CORS is the safest quick fix." (`*` is incompatible with credentialed requests and can create new failures.)
+- "If Postman works, browser should also work." (Browser enforces preflight/CORS; Postman does not.)
+
 ## 3. Competing Hypotheses
 
 - **H1: CORS not configured or misconfigured** — Allowed origins do not include frontend domain, or wildcard (`*`) is combined with credentials.
@@ -166,6 +174,157 @@ AppServiceAuthenticationLogs
 | project TimeGenerated, OperationName, ResultDescription
 | order by TimeGenerated desc
 ```
+
+### Sample Log Patterns
+
+> The following patterns are illustrative (synthetic) examples that mirror real-world App Service CORS/token incidents.
+
+### AppServiceHTTPLogs (preflight rejected with 401/403)
+
+```text
+[AppServiceHTTPLogs]
+2026-04-04T10:31:02Z  OPTIONS  /api/orders   401    38
+2026-04-04T10:31:02Z  GET      /api/orders   401    112
+2026-04-04T10:31:18Z  OPTIONS  /api/orders   403    44
+2026-04-04T10:31:18Z  GET      /api/orders   403    129
+2026-04-04T10:32:01Z  OPTIONS  /api/profile  204    16
+2026-04-04T10:32:01Z  GET      /api/profile  200    84
+```
+
+### AppServiceAuthenticationLogs (token validation failures)
+
+```text
+[AppServiceAuthenticationLogs]
+2026-04-04T10:31:02Z  ValidateToken  IDX10223: Lifetime validation failed. The token is expired.
+2026-04-04T10:31:18Z  ValidateToken  IDX10214: Audience validation failed. Audiences: api://<wrong-api-app-id>
+2026-04-04T10:31:19Z  Challenge      Unauthorized due to invalid token.
+2026-04-04T10:33:11Z  ValidateToken  Token validation succeeded for audience api://<expected-api-app-id>
+```
+
+### Header conflict pattern (browser/network capture)
+
+```text
+HTTP/1.1 200 OK
+Access-Control-Allow-Origin: https://spa.contoso.com
+Access-Control-Allow-Origin: https://staging-spa.contoso.com
+Access-Control-Allow-Credentials: true
+Vary: Origin
+```
+
+!!! tip "How to Read This"
+    `OPTIONS` with `401/403` is a strong indicator that preflight is being challenged before CORS handling. Authentication failures (`token expired`, `audience validation failed`) point to auth/token root causes. Duplicate `Access-Control-Allow-Origin` headers indicate double CORS ownership.
+
+### KQL Queries with Example Output
+
+### Query 1: Detect OPTIONS 401/403 spikes by endpoint
+
+```kusto
+AppServiceHTTPLogs
+| where TimeGenerated > ago(6h)
+| where CsMethod == "OPTIONS"
+| summarize total=count(), s401=countif(ScStatus == 401), s403=countif(ScStatus == 403), s2xx=countif(ScStatus between (200 .. 299)) by bin(TimeGenerated, 5m), CsUriStem
+| order by TimeGenerated asc
+```
+
+**Example Output:**
+
+| TimeGenerated | CsUriStem | total | s401 | s403 | s2xx |
+|---|---|---|---|---|---|
+| 2026-04-04 10:30:00 | /api/orders | 12 | 8 | 3 | 1 |
+| 2026-04-04 10:35:00 | /api/orders | 10 | 0 | 0 | 10 |
+| 2026-04-04 10:35:00 | /api/profile | 6 | 0 | 0 | 6 |
+
+!!! tip "How to Read This"
+    High `s401/s403` on `OPTIONS` indicates preflight/auth pipeline ordering issues (H2). A later return to all `s2xx` usually means policy/middleware alignment was fixed.
+
+### Query 2: Classify 401/403 by method and route
+
+```kusto
+AppServiceHTTPLogs
+| where TimeGenerated > ago(6h)
+| where ScStatus in (401, 403)
+| summarize hits=count() by CsMethod, CsUriStem, ScStatus
+| order by hits desc
+```
+
+**Example Output:**
+
+| CsMethod | CsUriStem | ScStatus | hits |
+|---|---|---|---|
+| OPTIONS | /api/orders | 401 | 44 |
+| GET | /api/orders | 401 | 31 |
+| OPTIONS | /api/orders | 403 | 19 |
+| GET | /api/admin | 403 | 14 |
+
+!!! tip "How to Read This"
+    If `OPTIONS` dominates, treat CORS/preflight handling as first suspect. If only `GET/POST` fail with `403` while `OPTIONS` is healthy, shift focus to role/claim authorization policy.
+
+### Query 3: Token error signatures in auth logs
+
+```kusto
+AppServiceAuthenticationLogs
+| where TimeGenerated > ago(6h)
+| where ResultDescription has_any ("expired", "audience", "issuer", "signature", "unauthorized", "forbidden")
+| summarize failures=count() by bin(TimeGenerated, 5m), ResultDescription
+| order by TimeGenerated asc
+```
+
+**Example Output:**
+
+| TimeGenerated | ResultDescription | failures |
+|---|---|---|
+| 2026-04-04 10:30:00 | IDX10223: Lifetime validation failed. The token is expired. | 27 |
+| 2026-04-04 10:30:00 | IDX10214: Audience validation failed. | 11 |
+| 2026-04-04 10:35:00 | Unauthorized due to invalid token. | 6 |
+
+!!! tip "How to Read This"
+    Expired-token clusters aligned with token TTL support H3. Audience/issuer errors support H5 (domain/audience mismatch) more than pure CORS misconfiguration.
+
+### CLI Investigation Commands
+
+```bash
+# Check platform CORS configuration
+az webapp cors show --resource-group <resource-group> --name <app-name> --output json
+
+# Check App Service authentication/authorization config
+az webapp auth show --resource-group <resource-group> --name <app-name> --output json
+
+# Inspect app settings that commonly impact auth flows
+az webapp config appsettings list --resource-group <resource-group> --name <app-name> --query "[?name=='WEBSITE_AUTH_ENABLED' || name=='WEBSITE_AUTH_DEFAULT_PROVIDER' || contains(name, 'AUTH_')].{name:name,value:value}" --output table
+```
+
+**Example Output:**
+
+```text
+allowedOrigins
+-------------------------------------------------
+https://spa.contoso.com
+https://admin.contoso.com
+
+globalValidation
+-----------------------------------------------
+{"requireAuthentication": true, "unauthenticatedClientAction": "Return401"}
+
+Name                              Value
+--------------------------------  -----------------------------
+WEBSITE_AUTH_ENABLED              True
+WEBSITE_AUTH_DEFAULT_PROVIDER     AzureActiveDirectory
+WEBSITE_AUTH_ALLOWED_AUDIENCES    api://<expected-api-app-id>
+```
+
+!!! tip "How to Read This"
+    Validate exact origin strings (scheme + host + port). Then validate auth audience/issuer expectations. CORS and token settings must match the same domain and API identity strategy.
+
+### Normal vs Abnormal Comparison
+
+| Signal | Normal | Abnormal (CORS/token incident) |
+|---|---|---|
+| OPTIONS preflight status | Mostly 200/204 | Frequent 401/403 |
+| Access-Control-Allow-Origin | Single origin value matching request origin | Missing, wrong, or duplicated/conflicting values |
+| GET/POST with valid token | 200/2xx expected | 401 (expired/invalid token) or 403 (policy/role denial) |
+| Auth log signatures | Occasional normal validation entries | Repeated `expired`, `audience`, `issuer`, or `invalid token` failures |
+| Browser behavior | API response visible in network panel | Browser blocks response as CORS error despite backend 401/403 details |
+| Interpretation | CORS and auth contract aligned | Preflight/auth sequencing issue, token issue, or both |
 
 ## 6. Validation and Disproof by Hypothesis
 
@@ -257,168 +416,15 @@ AppServiceAuthenticationLogs
 - Keep domain migration runbooks explicit: default domain and custom domain must not be mixed unintentionally.
 - Version-control CORS and auth config with environment-specific review gates.
 
-## Sample Log Patterns
+## See Also
 
-> The following patterns are illustrative (synthetic) examples that mirror real-world App Service CORS/token incidents.
-
-### AppServiceHTTPLogs (preflight rejected with 401/403)
-
-```text
-[AppServiceHTTPLogs]
-2026-04-04T10:31:02Z  OPTIONS  /api/orders   401    38
-2026-04-04T10:31:02Z  GET      /api/orders   401    112
-2026-04-04T10:31:18Z  OPTIONS  /api/orders   403    44
-2026-04-04T10:31:18Z  GET      /api/orders   403    129
-2026-04-04T10:32:01Z  OPTIONS  /api/profile  204    16
-2026-04-04T10:32:01Z  GET      /api/profile  200    84
-```
-
-### AppServiceAuthenticationLogs (token validation failures)
-
-```text
-[AppServiceAuthenticationLogs]
-2026-04-04T10:31:02Z  ValidateToken  IDX10223: Lifetime validation failed. The token is expired.
-2026-04-04T10:31:18Z  ValidateToken  IDX10214: Audience validation failed. Audiences: api://<wrong-api-app-id>
-2026-04-04T10:31:19Z  Challenge      Unauthorized due to invalid token.
-2026-04-04T10:33:11Z  ValidateToken  Token validation succeeded for audience api://<expected-api-app-id>
-```
-
-### Header conflict pattern (browser/network capture)
-
-```text
-HTTP/1.1 200 OK
-Access-Control-Allow-Origin: https://spa.contoso.com
-Access-Control-Allow-Origin: https://staging-spa.contoso.com
-Access-Control-Allow-Credentials: true
-Vary: Origin
-```
-
-!!! tip "How to Read This"
-    `OPTIONS` with `401/403` is a strong indicator that preflight is being challenged before CORS handling. Authentication failures (`token expired`, `audience validation failed`) point to auth/token root causes. Duplicate `Access-Control-Allow-Origin` headers indicate double CORS ownership.
-
-## KQL Queries with Example Output
-
-### Query 1: Detect OPTIONS 401/403 spikes by endpoint
-
-```kusto
-AppServiceHTTPLogs
-| where TimeGenerated > ago(6h)
-| where CsMethod == "OPTIONS"
-| summarize total=count(), s401=countif(ScStatus == 401), s403=countif(ScStatus == 403), s2xx=countif(ScStatus between (200 .. 299)) by bin(TimeGenerated, 5m), CsUriStem
-| order by TimeGenerated asc
-```
-
-**Example Output:**
-
-| TimeGenerated | CsUriStem | total | s401 | s403 | s2xx |
-|---|---|---|---|---|---|
-| 2026-04-04 10:30:00 | /api/orders | 12 | 8 | 3 | 1 |
-| 2026-04-04 10:35:00 | /api/orders | 10 | 0 | 0 | 10 |
-| 2026-04-04 10:35:00 | /api/profile | 6 | 0 | 0 | 6 |
-
-!!! tip "How to Read This"
-    High `s401/s403` on `OPTIONS` indicates preflight/auth pipeline ordering issues (H2). A later return to all `s2xx` usually means policy/middleware alignment was fixed.
-
-### Query 2: Classify 401/403 by method and route
-
-```kusto
-AppServiceHTTPLogs
-| where TimeGenerated > ago(6h)
-| where ScStatus in (401, 403)
-| summarize hits=count() by CsMethod, CsUriStem, ScStatus
-| order by hits desc
-```
-
-**Example Output:**
-
-| CsMethod | CsUriStem | ScStatus | hits |
-|---|---|---|---|
-| OPTIONS | /api/orders | 401 | 44 |
-| GET | /api/orders | 401 | 31 |
-| OPTIONS | /api/orders | 403 | 19 |
-| GET | /api/admin | 403 | 14 |
-
-!!! tip "How to Read This"
-    If `OPTIONS` dominates, treat CORS/preflight handling as first suspect. If only `GET/POST` fail with `403` while `OPTIONS` is healthy, shift focus to role/claim authorization policy.
-
-### Query 3: Token error signatures in auth logs
-
-```kusto
-AppServiceAuthenticationLogs
-| where TimeGenerated > ago(6h)
-| where ResultDescription has_any ("expired", "audience", "issuer", "signature", "unauthorized", "forbidden")
-| summarize failures=count() by bin(TimeGenerated, 5m), ResultDescription
-| order by TimeGenerated asc
-```
-
-**Example Output:**
-
-| TimeGenerated | ResultDescription | failures |
-|---|---|---|
-| 2026-04-04 10:30:00 | IDX10223: Lifetime validation failed. The token is expired. | 27 |
-| 2026-04-04 10:30:00 | IDX10214: Audience validation failed. | 11 |
-| 2026-04-04 10:35:00 | Unauthorized due to invalid token. | 6 |
-
-!!! tip "How to Read This"
-    Expired-token clusters aligned with token TTL support H3. Audience/issuer errors support H5 (domain/audience mismatch) more than pure CORS misconfiguration.
-
-## CLI Investigation Commands
-
-```bash
-# Check platform CORS configuration
-az webapp cors show --resource-group <resource-group> --name <app-name> --output json
-
-# Check App Service authentication/authorization config
-az webapp auth show --resource-group <resource-group> --name <app-name> --output json
-
-# Inspect app settings that commonly impact auth flows
-az webapp config appsettings list --resource-group <resource-group> --name <app-name> --query "[?name=='WEBSITE_AUTH_ENABLED' || name=='WEBSITE_AUTH_DEFAULT_PROVIDER' || contains(name, 'AUTH_')].{name:name,value:value}" --output table
-```
-
-**Example Output:**
-
-```text
-allowedOrigins
--------------------------------------------------
-https://spa.contoso.com
-https://admin.contoso.com
-
-globalValidation
------------------------------------------------
-{"requireAuthentication": true, "unauthenticatedClientAction": "Return401"}
-
-Name                              Value
---------------------------------  -----------------------------
-WEBSITE_AUTH_ENABLED              True
-WEBSITE_AUTH_DEFAULT_PROVIDER     AzureActiveDirectory
-WEBSITE_AUTH_ALLOWED_AUDIENCES    api://<expected-api-app-id>
-```
-
-!!! tip "How to Read This"
-    Validate exact origin strings (scheme + host + port). Then validate auth audience/issuer expectations. CORS and token settings must match the same domain and API identity strategy.
-
-## Normal vs Abnormal Comparison
-
-| Signal | Normal | Abnormal (CORS/token incident) |
-|---|---|---|
-| OPTIONS preflight status | Mostly 200/204 | Frequent 401/403 |
-| Access-Control-Allow-Origin | Single origin value matching request origin | Missing, wrong, or duplicated/conflicting values |
-| GET/POST with valid token | 200/2xx expected | 401 (expired/invalid token) or 403 (policy/role denial) |
-| Auth log signatures | Occasional normal validation entries | Repeated `expired`, `audience`, `issuer`, or `invalid token` failures |
-| Browser behavior | API response visible in network panel | Browser blocks response as CORS error despite backend 401/403 details |
-| Interpretation | CORS and auth contract aligned | Preflight/auth sequencing issue, token issue, or both |
-
-## Common Misdiagnoses
-
-- "Browser says CORS, so token is fine." (CORS may hide underlying 401/403 auth details.)
-- "401 always means expired token." (Could be audience/issuer mismatch or missing credentials mode.)
-- "403 means CORS denied." (403 is usually authorization/policy denial after auth pipeline.)
-- "Adding `*` to CORS is the safest quick fix." (`*` is incompatible with credentialed requests and can create new failures.)
-- "If Postman works, browser should also work." (Browser enforces preflight/CORS; Postman does not.)
-
-## Related Labs
+### Related Labs
 
 - No dedicated lab for this scenario.
+
+- [Intermittent 5xx Under Load](intermittent-5xx-under-load.md)
+- [Slow Response but Low CPU](slow-response-but-low-cpu.md)
+- [Troubleshooting KQL Queries](../../kql/index.md)
 
 ## Sources
 
@@ -427,9 +433,3 @@ WEBSITE_AUTH_ALLOWED_AUDIENCES    api://<expected-api-app-id>
 - [Use OAuth 2.0 authorization code flow with Microsoft identity platform](https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-auth-code-flow)
 - [Browser cookies and SameSite guidance for identity scenarios](https://learn.microsoft.com/en-us/entra/identity-platform/howto-handle-samesite-cookie-changes-chrome-browser)
 - [Troubleshoot HTTP 401 and 403 errors in Azure App Service](https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/diagnostic-information)
-
-## See Also
-
-- [Intermittent 5xx Under Load](intermittent-5xx-under-load.md)
-- [Slow Response but Low CPU](slow-response-but-low-cpu.md)
-- [Troubleshooting KQL Queries](../../kql/index.md)

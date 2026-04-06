@@ -19,20 +19,17 @@ graph LR
     F --> G[Confirm worker starvation causal chain]
 ```
 
-## Objective
+This guide is designed to diagnose intermittent 5xx-like customer symptoms where the root cause is worker pool saturation and request queueing rather than random platform instability, using a B1 Linux Python 3.11 app with Gunicorn `sync`, `--workers 2`, `--timeout 30`, a trigger of 20 concurrent `/slow` requests followed by 10 `/fast` requests, and sanitized artifacts from a real run.
 
-Create a reference-quality, reproducible guide for diagnosing intermittent 5xx-like customer symptoms where the root cause is worker pool saturation and request queueing (not random platform instability).
+## Lab Metadata
 
-## Lab Scope
-
-- Platform: Azure App Service Linux
-- SKU: B1
-- Runtime: Python 3.11
-- Gunicorn model: `sync`, `--workers 2`, `--timeout 30`
-- Trigger model:
-    - 20 concurrent `/slow` requests with `curl --max-time 45`
-    - 10 `/fast` requests sent immediately after
-- Evidence: sanitized artifacts from real run
+| Attribute | Value |
+|---|---|
+| Difficulty | Intermediate |
+| Estimated Duration | 45-60 minutes |
+| Tier | Basic |
+| Failure Mode | Intermittent request failures caused by sync-worker starvation and request queueing under mixed slow and fast load |
+| Skills Practiced | Load-pattern analysis, worker-model troubleshooting, HTTP log interpretation, queueing correlation |
 
 !!! info "Status code interpretation"
     The artifact run primarily shows HTTP `499` in App Service HTTP logs for timed-out client-side requests.
@@ -41,7 +38,7 @@ Create a reference-quality, reproducible guide for diagnosing intermittent 5xx-l
 
 ---
 
-## Section 1: Background
+## 1) Background
 
 ### 1.1 Mechanism overview
 
@@ -158,7 +155,7 @@ If fast endpoints fail only when slow endpoints are concurrent, investigate work
 
 ---
 
-## Section 2: Hypothesis
+## 2) Hypothesis
 
 ### 2.1 Falsifiable hypothesis statement
 
@@ -257,7 +254,7 @@ Any of these weaken/disprove starvation hypothesis:
 
 ---
 
-## Section 3: Runbook
+## 3) Runbook
 
 ### 3.1 Prerequisites
 
@@ -486,7 +483,7 @@ flowchart TD
 
 ---
 
-## Section 4: Experiment Log (Real Artifact Data)
+## 4) Experiment Log
 
 ### 4.1 Artifact inventory used
 

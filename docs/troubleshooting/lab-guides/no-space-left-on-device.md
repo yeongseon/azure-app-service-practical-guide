@@ -14,20 +14,19 @@ That combination is the core troubleshooting lesson.
 
 ---
 
-## Lab Scope and Learning Outcome
+This guide helps you explain App Service Linux storage surfaces and quota behavior, differentiate persistent-storage exhaustion from runtime health failures, prove `ENOSPC` with application and telemetry evidence, validate that `/health` can remain 200 while business writes fail, and build a disk-pressure runbook.
 
-After completing this guide,
-you should be able to:
+## Lab Metadata
 
-1. Explain App Service Linux storage surfaces and quota behavior.
-2. Differentiate persistent-storage exhaustion from runtime health failures.
-3. Prove `ENOSPC` using application, HTTP, and console telemetry together.
-4. Validate that `/health` can remain 200 while business writes fail.
-5. Build a runbook for disk-pressure incidents using artifact-backed evidence.
+| Attribute | Value |
+|---|---|
+| Difficulty | Intermediate |
+| Estimated Duration | 45-60 minutes |
+| Tier | Basic |
+| Failure Mode | Persistent `/home` storage exhausts and write operations fail with `ENOSPC` while lightweight health probes stay healthy |
+| Skills Practiced | Filesystem pressure analysis, health-vs-functional probe comparison, HTTP and console log correlation, remediation planning |
 
----
-
-## Section 1: Background
+## 1) Background
 
 ### 1.1 Why this failure mode is often misdiagnosed
 
@@ -203,7 +202,7 @@ not only app-level up/down checks.
 
 ---
 
-## Section 2: Hypothesis
+## 2) Hypothesis
 
 ### 2.1 Primary hypothesis (this lab)
 
@@ -273,7 +272,7 @@ Any one condition disproves the hypothesis:
 
 ---
 
-## Section 3: Runbook
+## 3) Runbook
 
 This runbook maps directly to artifacts in:
 
@@ -479,18 +478,7 @@ Operational options in real incidents:
 3. Stream data to external durable storage (Blob Storage) instead of local disk.
 4. Add app-level write guards and quota telemetry alerts.
 
-### 3.13 Cleanup resources
-
-```bash
-az group delete \
-  --name "$RG" \
-  --yes \
-  --no-wait
-```
-
----
-
-## Section 4: Experiment Log (Artifact-backed)
+## 4) Experiment Log
 
 All findings in this section come from:
 
@@ -887,6 +875,14 @@ graph LR
     If you observe rising `/home` and `/tmp` usage during fill operations, slower write endpoints, and persistence differences after restart (`/tmp` clears, `/home` persists), the hypothesis is CONFIRMED because the incident is storage-surface behavior, not generic app unavailability.
     
     If you do NOT observe usage growth or persistence differences across restart boundaries, the hypothesis is FALSIFIED — consider non-storage latency sources or incorrect write-path targeting.
+
+---
+
+## Clean Up
+
+```bash
+az group delete --name "$RG" --yes --no-wait
+```
 
 ---
 
