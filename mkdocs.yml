@@ -223,6 +223,11 @@ nav:
       - troubleshooting/first-10-minutes/outbound-network.md
     - Playbooks:
       - troubleshooting/playbooks/index.md
+      - troubleshooting/playbooks/deployment-failures.md
+      - troubleshooting/playbooks/app-startup-failures.md
+      - troubleshooting/playbooks/performance-degradation.md
+      - troubleshooting/playbooks/ssl-certificate-issues.md
+      - troubleshooting/playbooks/authentication-failures.md
       - Startup & Availability:
         - troubleshooting/playbooks/startup-availability/container-didnt-respond-to-http-pings.md
         - troubleshooting/playbooks/startup-availability/deployment-succeeded-startup-failed.md

@@ -32,11 +32,21 @@ graph TD
 
 | Playbook | Symptom |
 |----------|---------|
+| [Performance Degradation](performance-degradation.md) | Slow response times, latency spikes, CPU or memory stress |
 | [Slow Response but Low CPU](performance/slow-response-but-low-cpu.md) | High latency with CPU below saturation |
 | [Memory Pressure & Worker Degradation](performance/memory-pressure-and-worker-degradation.md) | Gradual slowdown without CPU spikes |
 | [Intermittent 5xx Under Load](performance/intermittent-5xx-under-load.md) | Sporadic server errors during traffic bursts |
 | [No Space Left on Device](performance/no-space-left-on-device.md) | Disk full errors from /home or /tmp exhaustion |
 | [Slow Start / Cold Start vs Regression](performance/slow-start-cold-start.md) | First request slow after deploy or idle — cold start or real problem? |
+
+## Core Platform Playbooks
+
+| Playbook | Symptom |
+|----------|---------|
+| [Deployment Failures](deployment-failures.md) | Failed deployments, slot issues, or swap failures |
+| [App Startup Failures](app-startup-failures.md) | Application or container never becomes ready |
+| [SSL Certificate Issues](ssl-certificate-issues.md) | Custom domain TLS binding, renewal, or hostname mismatch problems |
+| [Authentication Failures](authentication-failures.md) | Easy Auth, Entra ID, or identity-related sign-in failures |
 
 ## Outbound / Network
 
