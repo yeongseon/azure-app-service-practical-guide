@@ -1,3 +1,31 @@
+---
+title: Deployment Succeeded but Startup Failed
+slug: deployment-succeeded-startup-failed
+doc_type: playbook
+section: troubleshooting
+topics:
+  - startup
+  - deployment
+  - availability
+products:
+  - azure-app-service
+prerequisites:
+  - mental-model
+related:
+  - container-didnt-respond-to-http-pings
+  - failed-to-forward-request
+validated_by_lab:
+  - lab-deployment-succeeded-startup-failed
+investigated_with_kql:
+  - startup-errors
+  - repeated-startup-attempts
+evidence:
+  - kql
+  - lab
+summary: Diagnose when deployment completes but application fails to start.
+status: stable
+last_reviewed: 2026-04-08
+---
 # Deployment Succeeded but Startup Failed (Azure App Service Linux)
 
 ## 1. Summary

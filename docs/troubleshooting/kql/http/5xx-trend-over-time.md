@@ -1,3 +1,20 @@
+---
+title: 5xx Trend Over Time
+slug: 5xx-trend-over-time
+doc_type: kql
+section: troubleshooting
+topics:
+  - kql
+  - http
+  - 5xx
+products:
+  - azure-app-service
+used_in:
+  - intermittent-5xx-under-load
+summary: KQL query to visualize 5xx error trends over time.
+status: stable
+last_reviewed: 2026-04-08
+---
 # 5xx Trend Over Time
 
 **Scenario**: Intermittent or sustained server-side errors reported by customers.

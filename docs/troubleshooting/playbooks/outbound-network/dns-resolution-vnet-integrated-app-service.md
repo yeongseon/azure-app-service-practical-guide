@@ -1,3 +1,28 @@
+---
+title: DNS Resolution with VNet-Integrated App Service
+slug: dns-resolution-vnet-integrated-app-service
+doc_type: playbook
+section: troubleshooting
+topics:
+  - networking
+  - dns
+  - vnet
+products:
+  - azure-app-service
+prerequisites:
+  - networking
+related:
+  - private-endpoint-custom-dns-route-confusion
+  - snat-or-application-issue
+validated_by_lab:
+  - lab-dns-vnet-resolution
+evidence:
+  - kql
+  - lab
+summary: Diagnose DNS resolution failures in VNet-integrated App Service apps.
+status: stable
+last_reviewed: 2026-04-08
+---
 # DNS Resolution with VNet-Integrated App Service (Azure App Service Linux)
 
 ## 1. Summary

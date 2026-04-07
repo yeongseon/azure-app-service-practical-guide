@@ -1,3 +1,24 @@
+---
+title: Troubleshooting Decision Tree
+slug: decision-tree
+doc_type: map
+section: troubleshooting
+topics:
+  - troubleshooting
+  - methodology
+  - navigation
+products:
+  - azure-app-service
+prerequisites:
+  - mental-model
+related:
+  - evidence-map
+  - quick-diagnosis-cards
+  - troubleshooting-architecture-overview
+summary: Step-by-step decision flow to route symptoms to the correct playbook.
+status: stable
+last_reviewed: 2026-04-08
+---
 # Troubleshooting Decision Tree
 
 Use this page when you need to triage quickly from symptom to likely failure category and then open the right playbook.

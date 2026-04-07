@@ -39,10 +39,14 @@ theme:
 
 extra_css:
   - stylesheets/extra.css
+  - stylesheets/document-graph.css
 
 extra_javascript:
   - https://unpkg.com/mermaid@10/dist/mermaid.min.js
   - javascripts/mermaid-zoom.js
+  - https://unpkg.com/cytoscape@3/dist/cytoscape.min.js
+  - javascripts/document-graph.js
+  - javascripts/troubleshooting-map.js
 
 plugins:
   - search
@@ -93,6 +97,7 @@ nav:
     - start-here/overview.md
     - start-here/learning-paths.md
     - start-here/repository-map.md
+    - About: about.md
   - Platform:
     - platform/index.md
     - platform/how-app-service-works.md
@@ -288,3 +293,10 @@ nav:
     - reference/platform-limits.md
     - reference/troubleshooting.md
     - reference/kudu-queries.md
+  - Visualization:
+    - visualization/index.md
+    - visualization/core-knowledge-graph.md
+    - visualization/troubleshooting-map.md
+    - visualization/learning-paths.md
+  - Meta:
+    - meta/taxonomy.md

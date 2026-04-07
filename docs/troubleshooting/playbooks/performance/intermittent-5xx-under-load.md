@@ -1,3 +1,32 @@
+---
+title: Intermittent 5xx Under Load
+slug: intermittent-5xx-under-load
+doc_type: playbook
+section: troubleshooting
+topics:
+  - performance
+  - 5xx
+  - load
+products:
+  - azure-app-service
+prerequisites:
+  - mental-model
+  - request-lifecycle
+related:
+  - memory-pressure-and-worker-degradation
+  - slow-response-but-low-cpu
+validated_by_lab:
+  - lab-intermittent-5xx
+investigated_with_kql:
+  - 5xx-trend-over-time
+  - latency-vs-errors
+evidence:
+  - kql
+  - metrics
+summary: Diagnose 5xx errors that appear under load but not at baseline traffic.
+status: stable
+last_reviewed: 2026-04-08
+---
 # Intermittent 5xx Under Load (Azure App Service Linux)
 
 ## 1. Summary

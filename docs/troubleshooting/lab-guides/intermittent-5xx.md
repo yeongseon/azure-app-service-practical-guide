@@ -1,3 +1,24 @@
+---
+title: "Lab: Intermittent 5xx Under Load"
+slug: lab-intermittent-5xx
+doc_type: lab
+section: troubleshooting
+topics:
+  - performance
+  - 5xx
+  - lab
+products:
+  - azure-app-service
+prerequisites:
+  - intermittent-5xx-under-load
+evidence:
+  - kql
+  - metrics
+  - lab
+summary: Hands-on lab to reproduce and diagnose intermittent 5xx errors under load.
+status: stable
+last_reviewed: 2026-04-08
+---
 # Lab: Intermittent 5xx Under Load
 
 This lab reproduces intermittent request failures caused by **sync worker starvation** on Azure App Service Linux.

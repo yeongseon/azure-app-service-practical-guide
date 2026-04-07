@@ -1,0 +1,997 @@
+{
+  "elements": [
+    {
+      "data": {
+        "id": "production-baseline",
+        "label": "Production Baseline",
+        "type": "best_practice",
+        "section": "best-practices",
+        "href": "best-practices/production-baseline/",
+        "topics": [
+          "production",
+          "reliability",
+          "security"
+        ],
+        "products": [
+          "azure-app-service"
+        ]
+      }
+    },
+    {
+      "data": {
+        "id": "scaling",
+        "label": "Scaling",
+        "type": "concept",
+        "section": "platform",
+        "href": "platform/scaling/",
+        "topics": [
+          "scaling",
+          "performance",
+          "autoscale"
+        ],
+        "products": [
+          "azure-app-service"
+        ]
+      }
+    },
+    {
+      "data": {
+        "id": "networking",
+        "label": "Networking",
+        "type": "concept",
+        "section": "platform",
+        "href": "platform/networking/",
+        "topics": [
+          "networking",
+          "security",
+          "vnet"
+        ],
+        "products": [
+          "azure-app-service"
+        ]
+      }
+    },
+    {
+      "data": {
+        "id": "request-lifecycle",
+        "label": "Request Lifecycle",
+        "type": "concept",
+        "section": "platform",
+        "href": "platform/request-lifecycle/",
+        "topics": [
+          "architecture",
+          "networking",
+          "performance"
+        ],
+        "products": [
+          "azure-app-service"
+        ]
+      }
+    },
+    {
+      "data": {
+        "id": "how-app-service-works",
+        "label": "How App Service Works",
+        "type": "concept",
+        "section": "platform",
+        "href": "platform/how-app-service-works/",
+        "topics": [
+          "architecture",
+          "platform",
+          "internals"
+        ],
+        "products": [
+          "azure-app-service"
+        ]
+      }
+    },
+    {
+      "data": {
+        "id": "quick-diagnosis-cards",
+        "label": "Quick Diagnosis Cards",
+        "type": "map",
+        "section": "troubleshooting",
+        "href": "troubleshooting/quick-diagnosis-cards/",
+        "topics": [
+          "troubleshooting",
+          "quick-reference",
+          "diagnostics"
+        ],
+        "products": [
+          "azure-app-service"
+        ]
+      }
+    },
+    {
+      "data": {
+        "id": "troubleshooting-architecture-overview",
+        "label": "Troubleshooting Architecture Overview",
+        "type": "map",
+        "section": "troubleshooting",
+        "href": "troubleshooting/architecture-overview/",
+        "topics": [
+          "troubleshooting",
+          "architecture",
+          "diagnostics"
+        ],
+        "products": [
+          "azure-app-service"
+        ]
+      }
+    },
+    {
+      "data": {
+        "id": "evidence-map",
+        "label": "Evidence Map for App Service Troubleshooting",
+        "type": "map",
+        "section": "troubleshooting",
+        "href": "troubleshooting/evidence-map/",
+        "topics": [
+          "troubleshooting",
+          "evidence",
+          "diagnostics"
+        ],
+        "products": [
+          "azure-app-service"
+        ]
+      }
+    },
+    {
+      "data": {
+        "id": "mental-model",
+        "label": "Troubleshooting Mental Model",
+        "type": "map",
+        "section": "troubleshooting",
+        "href": "troubleshooting/mental-model/",
+        "topics": [
+          "troubleshooting",
+          "methodology",
+          "classification"
+        ],
+        "products": [
+          "azure-app-service"
+        ]
+      }
+    },
+    {
+      "data": {
+        "id": "decision-tree",
+        "label": "Troubleshooting Decision Tree",
+        "type": "map",
+        "section": "troubleshooting",
+        "href": "troubleshooting/decision-tree/",
+        "topics": [
+          "troubleshooting",
+          "methodology",
+          "navigation"
+        ],
+        "products": [
+          "azure-app-service"
+        ]
+      }
+    },
+    {
+      "data": {
+        "id": "taxonomy",
+        "label": "Documentation Taxonomy",
+        "type": "reference",
+        "section": "meta",
+        "href": "meta/taxonomy/",
+        "topics": [
+          "documentation",
+          "standards",
+          "metadata"
+        ],
+        "products": [
+          "azure-app-service"
+        ]
+      }
+    },
+    {
+      "data": {
+        "id": "core-knowledge-graph",
+        "label": "Core Knowledge Graph",
+        "type": "map",
+        "section": "visualization",
+        "href": "visualization/core-knowledge-graph/",
+        "topics": [
+          "navigation",
+          "knowledge-graph",
+          "architecture"
+        ],
+        "products": [
+          "azure-app-service"
+        ]
+      }
+    },
+    {
+      "data": {
+        "id": "learning-paths-visualization",
+        "label": "Learning Paths",
+        "type": "map",
+        "section": "visualization",
+        "href": "visualization/learning-paths/",
+        "topics": [
+          "learning",
+          "navigation",
+          "tutorials"
+        ],
+        "products": [
+          "azure-app-service"
+        ]
+      }
+    },
+    {
+      "data": {
+        "id": "visualization-index",
+        "label": "Visualization",
+        "type": "map",
+        "section": "visualization",
+        "href": "visualization/",
+        "topics": [
+          "navigation",
+          "knowledge-graph",
+          "learning"
+        ],
+        "products": [
+          "azure-app-service"
+        ]
+      }
+    },
+    {
+      "data": {
+        "id": "troubleshooting-map",
+        "label": "Troubleshooting Map",
+        "type": "map",
+        "section": "visualization",
+        "href": "visualization/troubleshooting-map/",
+        "topics": [
+          "troubleshooting",
+          "navigation",
+          "diagnostics"
+        ],
+        "products": [
+          "azure-app-service"
+        ]
+      }
+    },
+    {
+      "data": {
+        "id": "lab-intermittent-5xx",
+        "label": "Lab: Intermittent 5xx Under Load",
+        "type": "lab",
+        "section": "troubleshooting",
+        "href": "troubleshooting/lab-guides/intermittent-5xx/",
+        "topics": [
+          "performance",
+          "5xx",
+          "lab"
+        ],
+        "products": [
+          "azure-app-service"
+        ]
+      }
+    },
+    {
+      "data": {
+        "id": "lab-memory-pressure",
+        "label": "Lab: Memory Pressure",
+        "type": "lab",
+        "section": "troubleshooting",
+        "href": "troubleshooting/lab-guides/memory-pressure/",
+        "topics": [
+          "performance",
+          "memory",
+          "lab"
+        ],
+        "products": [
+          "azure-app-service"
+        ]
+      }
+    },
+    {
+      "data": {
+        "id": "lab-deployment-succeeded-startup-failed",
+        "label": "Lab: Deployment Succeeded Startup Failed",
+        "type": "lab",
+        "section": "troubleshooting",
+        "href": "troubleshooting/lab-guides/deployment-succeeded-startup-failed/",
+        "topics": [
+          "startup",
+          "deployment",
+          "lab"
+        ],
+        "products": [
+          "azure-app-service"
+        ]
+      }
+    },
+    {
+      "data": {
+        "id": "lab-container-http-pings",
+        "label": "Lab: Container HTTP Pings",
+        "type": "lab",
+        "section": "troubleshooting",
+        "href": "troubleshooting/lab-guides/container-http-pings/",
+        "topics": [
+          "startup",
+          "container",
+          "lab"
+        ],
+        "products": [
+          "azure-app-service"
+        ]
+      }
+    },
+    {
+      "data": {
+        "id": "startup-errors",
+        "label": "Startup Errors",
+        "type": "kql",
+        "section": "troubleshooting",
+        "href": "troubleshooting/kql/console/startup-errors/",
+        "topics": [
+          "kql",
+          "startup",
+          "console"
+        ],
+        "products": [
+          "azure-app-service"
+        ]
+      }
+    },
+    {
+      "data": {
+        "id": "restart-timing-correlation",
+        "label": "Restart Timing Correlation",
+        "type": "kql",
+        "section": "troubleshooting",
+        "href": "troubleshooting/kql/restarts/restart-timing-correlation/",
+        "topics": [
+          "kql",
+          "restarts",
+          "correlation"
+        ],
+        "products": [
+          "azure-app-service"
+        ]
+      }
+    },
+    {
+      "data": {
+        "id": "5xx-trend-over-time",
+        "label": "5xx Trend Over Time",
+        "type": "kql",
+        "section": "troubleshooting",
+        "href": "troubleshooting/kql/http/5xx-trend-over-time/",
+        "topics": [
+          "kql",
+          "http",
+          "5xx"
+        ],
+        "products": [
+          "azure-app-service"
+        ]
+      }
+    },
+    {
+      "data": {
+        "id": "snat-or-application-issue",
+        "label": "SNAT or Application Issue",
+        "type": "playbook",
+        "section": "troubleshooting",
+        "href": "troubleshooting/playbooks/outbound-network/snat-or-application-issue/",
+        "topics": [
+          "networking",
+          "snat",
+          "connections"
+        ],
+        "products": [
+          "azure-app-service"
+        ]
+      }
+    },
+    {
+      "data": {
+        "id": "dns-resolution-vnet-integrated-app-service",
+        "label": "DNS Resolution with VNet-Integrated App Service",
+        "type": "playbook",
+        "section": "troubleshooting",
+        "href": "troubleshooting/playbooks/outbound-network/dns-resolution-vnet-integrated-app-service/",
+        "topics": [
+          "networking",
+          "dns",
+          "vnet"
+        ],
+        "products": [
+          "azure-app-service"
+        ]
+      }
+    },
+    {
+      "data": {
+        "id": "failed-to-forward-request",
+        "label": "Failed to Forward Request",
+        "type": "playbook",
+        "section": "troubleshooting",
+        "href": "troubleshooting/playbooks/startup-availability/failed-to-forward-request/",
+        "topics": [
+          "startup",
+          "routing",
+          "availability"
+        ],
+        "products": [
+          "azure-app-service"
+        ]
+      }
+    },
+    {
+      "data": {
+        "id": "deployment-succeeded-startup-failed",
+        "label": "Deployment Succeeded but Startup Failed",
+        "type": "playbook",
+        "section": "troubleshooting",
+        "href": "troubleshooting/playbooks/startup-availability/deployment-succeeded-startup-failed/",
+        "topics": [
+          "startup",
+          "deployment",
+          "availability"
+        ],
+        "products": [
+          "azure-app-service"
+        ]
+      }
+    },
+    {
+      "data": {
+        "id": "container-didnt-respond-to-http-pings",
+        "label": "Container Didn't Respond to HTTP Pings",
+        "type": "playbook",
+        "section": "troubleshooting",
+        "href": "troubleshooting/playbooks/startup-availability/container-didnt-respond-to-http-pings/",
+        "topics": [
+          "startup",
+          "container",
+          "availability"
+        ],
+        "products": [
+          "azure-app-service"
+        ]
+      }
+    },
+    {
+      "data": {
+        "id": "intermittent-5xx-under-load",
+        "label": "Intermittent 5xx Under Load",
+        "type": "playbook",
+        "section": "troubleshooting",
+        "href": "troubleshooting/playbooks/performance/intermittent-5xx-under-load/",
+        "topics": [
+          "performance",
+          "5xx",
+          "load"
+        ],
+        "products": [
+          "azure-app-service"
+        ]
+      }
+    },
+    {
+      "data": {
+        "id": "memory-pressure-and-worker-degradation",
+        "label": "Memory Pressure and Worker Degradation",
+        "type": "playbook",
+        "section": "troubleshooting",
+        "href": "troubleshooting/playbooks/performance/memory-pressure-and-worker-degradation/",
+        "topics": [
+          "performance",
+          "memory",
+          "worker"
+        ],
+        "products": [
+          "azure-app-service"
+        ]
+      }
+    },
+    {
+      "data": {
+        "id": "no-space-left-on-device",
+        "label": "No Space Left on Device",
+        "type": "playbook",
+        "section": "troubleshooting",
+        "href": "troubleshooting/playbooks/performance/no-space-left-on-device/",
+        "topics": [
+          "performance",
+          "disk",
+          "storage"
+        ],
+        "products": [
+          "azure-app-service"
+        ]
+      }
+    },
+    {
+      "data": {
+        "source": "how-app-service-works",
+        "target": "production-baseline",
+        "type": "prerequisite"
+      }
+    },
+    {
+      "data": {
+        "source": "scaling",
+        "target": "networking",
+        "type": "related"
+      }
+    },
+    {
+      "data": {
+        "source": "how-app-service-works",
+        "target": "scaling",
+        "type": "prerequisite"
+      }
+    },
+    {
+      "data": {
+        "source": "networking",
+        "target": "scaling",
+        "type": "related"
+      }
+    },
+    {
+      "data": {
+        "source": "how-app-service-works",
+        "target": "networking",
+        "type": "prerequisite"
+      }
+    },
+    {
+      "data": {
+        "source": "request-lifecycle",
+        "target": "networking",
+        "type": "related"
+      }
+    },
+    {
+      "data": {
+        "source": "request-lifecycle",
+        "target": "troubleshooting-architecture-overview",
+        "type": "related"
+      }
+    },
+    {
+      "data": {
+        "source": "how-app-service-works",
+        "target": "request-lifecycle",
+        "type": "prerequisite"
+      }
+    },
+    {
+      "data": {
+        "source": "how-app-service-works",
+        "target": "request-lifecycle",
+        "type": "related"
+      }
+    },
+    {
+      "data": {
+        "source": "how-app-service-works",
+        "target": "scaling",
+        "type": "related"
+      }
+    },
+    {
+      "data": {
+        "source": "quick-diagnosis-cards",
+        "target": "decision-tree",
+        "type": "related"
+      }
+    },
+    {
+      "data": {
+        "source": "quick-diagnosis-cards",
+        "target": "evidence-map",
+        "type": "related"
+      }
+    },
+    {
+      "data": {
+        "source": "quick-diagnosis-cards",
+        "target": "mental-model",
+        "type": "related"
+      }
+    },
+    {
+      "data": {
+        "source": "troubleshooting-architecture-overview",
+        "target": "mental-model",
+        "type": "related"
+      }
+    },
+    {
+      "data": {
+        "source": "troubleshooting-architecture-overview",
+        "target": "evidence-map",
+        "type": "related"
+      }
+    },
+    {
+      "data": {
+        "source": "troubleshooting-architecture-overview",
+        "target": "decision-tree",
+        "type": "related"
+      }
+    },
+    {
+      "data": {
+        "source": "how-app-service-works",
+        "target": "troubleshooting-architecture-overview",
+        "type": "prerequisite"
+      }
+    },
+    {
+      "data": {
+        "source": "request-lifecycle",
+        "target": "troubleshooting-architecture-overview",
+        "type": "prerequisite"
+      }
+    },
+    {
+      "data": {
+        "source": "evidence-map",
+        "target": "troubleshooting-architecture-overview",
+        "type": "related"
+      }
+    },
+    {
+      "data": {
+        "source": "evidence-map",
+        "target": "decision-tree",
+        "type": "related"
+      }
+    },
+    {
+      "data": {
+        "source": "evidence-map",
+        "target": "quick-diagnosis-cards",
+        "type": "related"
+      }
+    },
+    {
+      "data": {
+        "source": "mental-model",
+        "target": "evidence-map",
+        "type": "prerequisite"
+      }
+    },
+    {
+      "data": {
+        "source": "mental-model",
+        "target": "troubleshooting-architecture-overview",
+        "type": "related"
+      }
+    },
+    {
+      "data": {
+        "source": "mental-model",
+        "target": "evidence-map",
+        "type": "related"
+      }
+    },
+    {
+      "data": {
+        "source": "mental-model",
+        "target": "decision-tree",
+        "type": "related"
+      }
+    },
+    {
+      "data": {
+        "source": "how-app-service-works",
+        "target": "mental-model",
+        "type": "prerequisite"
+      }
+    },
+    {
+      "data": {
+        "source": "request-lifecycle",
+        "target": "mental-model",
+        "type": "prerequisite"
+      }
+    },
+    {
+      "data": {
+        "source": "decision-tree",
+        "target": "evidence-map",
+        "type": "related"
+      }
+    },
+    {
+      "data": {
+        "source": "decision-tree",
+        "target": "quick-diagnosis-cards",
+        "type": "related"
+      }
+    },
+    {
+      "data": {
+        "source": "decision-tree",
+        "target": "troubleshooting-architecture-overview",
+        "type": "related"
+      }
+    },
+    {
+      "data": {
+        "source": "mental-model",
+        "target": "decision-tree",
+        "type": "prerequisite"
+      }
+    },
+    {
+      "data": {
+        "source": "core-knowledge-graph",
+        "target": "troubleshooting-map",
+        "type": "related"
+      }
+    },
+    {
+      "data": {
+        "source": "learning-paths-visualization",
+        "target": "core-knowledge-graph",
+        "type": "related"
+      }
+    },
+    {
+      "data": {
+        "source": "troubleshooting-map",
+        "target": "core-knowledge-graph",
+        "type": "related"
+      }
+    },
+    {
+      "data": {
+        "source": "troubleshooting-map",
+        "target": "decision-tree",
+        "type": "related"
+      }
+    },
+    {
+      "data": {
+        "source": "troubleshooting-map",
+        "target": "evidence-map",
+        "type": "related"
+      }
+    },
+    {
+      "data": {
+        "source": "troubleshooting-map",
+        "target": "mental-model",
+        "type": "related"
+      }
+    },
+    {
+      "data": {
+        "source": "troubleshooting-architecture-overview",
+        "target": "troubleshooting-map",
+        "type": "prerequisite"
+      }
+    },
+    {
+      "data": {
+        "source": "intermittent-5xx-under-load",
+        "target": "lab-intermittent-5xx",
+        "type": "prerequisite"
+      }
+    },
+    {
+      "data": {
+        "source": "memory-pressure-and-worker-degradation",
+        "target": "lab-memory-pressure",
+        "type": "prerequisite"
+      }
+    },
+    {
+      "data": {
+        "source": "deployment-succeeded-startup-failed",
+        "target": "lab-deployment-succeeded-startup-failed",
+        "type": "prerequisite"
+      }
+    },
+    {
+      "data": {
+        "source": "container-didnt-respond-to-http-pings",
+        "target": "lab-container-http-pings",
+        "type": "prerequisite"
+      }
+    },
+    {
+      "data": {
+        "source": "startup-errors",
+        "target": "container-didnt-respond-to-http-pings",
+        "type": "used_in"
+      }
+    },
+    {
+      "data": {
+        "source": "startup-errors",
+        "target": "deployment-succeeded-startup-failed",
+        "type": "used_in"
+      }
+    },
+    {
+      "data": {
+        "source": "restart-timing-correlation",
+        "target": "memory-pressure-and-worker-degradation",
+        "type": "used_in"
+      }
+    },
+    {
+      "data": {
+        "source": "5xx-trend-over-time",
+        "target": "intermittent-5xx-under-load",
+        "type": "used_in"
+      }
+    },
+    {
+      "data": {
+        "source": "snat-or-application-issue",
+        "target": "dns-resolution-vnet-integrated-app-service",
+        "type": "related"
+      }
+    },
+    {
+      "data": {
+        "source": "networking",
+        "target": "snat-or-application-issue",
+        "type": "prerequisite"
+      }
+    },
+    {
+      "data": {
+        "source": "dns-resolution-vnet-integrated-app-service",
+        "target": "snat-or-application-issue",
+        "type": "related"
+      }
+    },
+    {
+      "data": {
+        "source": "networking",
+        "target": "dns-resolution-vnet-integrated-app-service",
+        "type": "prerequisite"
+      }
+    },
+    {
+      "data": {
+        "source": "failed-to-forward-request",
+        "target": "container-didnt-respond-to-http-pings",
+        "type": "related"
+      }
+    },
+    {
+      "data": {
+        "source": "failed-to-forward-request",
+        "target": "deployment-succeeded-startup-failed",
+        "type": "related"
+      }
+    },
+    {
+      "data": {
+        "source": "mental-model",
+        "target": "failed-to-forward-request",
+        "type": "prerequisite"
+      }
+    },
+    {
+      "data": {
+        "source": "request-lifecycle",
+        "target": "failed-to-forward-request",
+        "type": "prerequisite"
+      }
+    },
+    {
+      "data": {
+        "source": "deployment-succeeded-startup-failed",
+        "target": "container-didnt-respond-to-http-pings",
+        "type": "related"
+      }
+    },
+    {
+      "data": {
+        "source": "deployment-succeeded-startup-failed",
+        "target": "failed-to-forward-request",
+        "type": "related"
+      }
+    },
+    {
+      "data": {
+        "source": "mental-model",
+        "target": "deployment-succeeded-startup-failed",
+        "type": "prerequisite"
+      }
+    },
+    {
+      "data": {
+        "source": "container-didnt-respond-to-http-pings",
+        "target": "deployment-succeeded-startup-failed",
+        "type": "related"
+      }
+    },
+    {
+      "data": {
+        "source": "container-didnt-respond-to-http-pings",
+        "target": "failed-to-forward-request",
+        "type": "related"
+      }
+    },
+    {
+      "data": {
+        "source": "mental-model",
+        "target": "container-didnt-respond-to-http-pings",
+        "type": "prerequisite"
+      }
+    },
+    {
+      "data": {
+        "source": "how-app-service-works",
+        "target": "container-didnt-respond-to-http-pings",
+        "type": "prerequisite"
+      }
+    },
+    {
+      "data": {
+        "source": "intermittent-5xx-under-load",
+        "target": "memory-pressure-and-worker-degradation",
+        "type": "related"
+      }
+    },
+    {
+      "data": {
+        "source": "mental-model",
+        "target": "intermittent-5xx-under-load",
+        "type": "prerequisite"
+      }
+    },
+    {
+      "data": {
+        "source": "request-lifecycle",
+        "target": "intermittent-5xx-under-load",
+        "type": "prerequisite"
+      }
+    },
+    {
+      "data": {
+        "source": "memory-pressure-and-worker-degradation",
+        "target": "intermittent-5xx-under-load",
+        "type": "related"
+      }
+    },
+    {
+      "data": {
+        "source": "mental-model",
+        "target": "memory-pressure-and-worker-degradation",
+        "type": "prerequisite"
+      }
+    },
+    {
+      "data": {
+        "source": "how-app-service-works",
+        "target": "memory-pressure-and-worker-degradation",
+        "type": "prerequisite"
+      }
+    },
+    {
+      "data": {
+        "source": "no-space-left-on-device",
+        "target": "memory-pressure-and-worker-degradation",
+        "type": "related"
+      }
+    },
+    {
+      "data": {
+        "source": "mental-model",
+        "target": "no-space-left-on-device",
+        "type": "prerequisite"
+      }
+    }
+  ]
+}

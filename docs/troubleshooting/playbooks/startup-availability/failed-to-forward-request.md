@@ -1,3 +1,31 @@
+---
+title: Failed to Forward Request
+slug: failed-to-forward-request
+doc_type: playbook
+section: troubleshooting
+topics:
+  - startup
+  - routing
+  - availability
+products:
+  - azure-app-service
+prerequisites:
+  - mental-model
+  - request-lifecycle
+related:
+  - container-didnt-respond-to-http-pings
+  - deployment-succeeded-startup-failed
+validated_by_lab:
+  - lab-failed-to-forward-request
+investigated_with_kql:
+  - startup-errors
+evidence:
+  - kql
+  - lab
+summary: Diagnose request forwarding failures between frontend and worker.
+status: stable
+last_reviewed: 2026-04-08
+---
 # Failed to Forward Request (Azure App Service Linux)
 
 ## 1. Summary

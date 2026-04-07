@@ -1,3 +1,25 @@
+---
+title: Troubleshooting Mental Model
+slug: mental-model
+doc_type: map
+section: troubleshooting
+topics:
+  - troubleshooting
+  - methodology
+  - classification
+products:
+  - azure-app-service
+prerequisites:
+  - how-app-service-works
+  - request-lifecycle
+related:
+  - troubleshooting-architecture-overview
+  - evidence-map
+  - decision-tree
+summary: Classification model for App Service incidents - request path, startup, degradation, dependency, deployment.
+status: stable
+last_reviewed: 2026-04-08
+---
 # Troubleshooting Mental Model
 
 This page provides a classification model for App Service incidents so you can start with the correct evidence source instead of guessing.

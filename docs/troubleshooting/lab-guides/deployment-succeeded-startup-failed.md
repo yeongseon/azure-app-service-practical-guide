@@ -1,3 +1,23 @@
+---
+title: "Lab: Deployment Succeeded Startup Failed"
+slug: lab-deployment-succeeded-startup-failed
+doc_type: lab
+section: troubleshooting
+topics:
+  - startup
+  - deployment
+  - lab
+products:
+  - azure-app-service
+prerequisites:
+  - deployment-succeeded-startup-failed
+evidence:
+  - kql
+  - lab
+summary: Hands-on lab to reproduce deployment success with startup failure.
+status: stable
+last_reviewed: 2026-04-08
+---
 # Lab: Deployment Succeeded, Startup Failed (Wrong Module in Startup Command)
 
 This lab reproduces a high-frequency Azure App Service Linux incident pattern:

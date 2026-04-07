@@ -1,3 +1,33 @@
+---
+title: Memory Pressure and Worker Degradation
+slug: memory-pressure-and-worker-degradation
+doc_type: playbook
+section: troubleshooting
+topics:
+  - performance
+  - memory
+  - worker
+products:
+  - azure-app-service
+prerequisites:
+  - mental-model
+  - how-app-service-works
+related:
+  - intermittent-5xx-under-load
+  - slow-response-but-low-cpu
+validated_by_lab:
+  - lab-memory-pressure
+investigated_with_kql:
+  - latency-vs-errors
+  - restarts-vs-latency
+evidence:
+  - kql
+  - detector
+  - lab
+summary: Diagnose worker-level memory pressure, degradation patterns, and recovery.
+status: stable
+last_reviewed: 2026-04-08
+---
 # Memory Pressure and Worker Degradation (Azure App Service Linux)
 
 ## 1. Summary

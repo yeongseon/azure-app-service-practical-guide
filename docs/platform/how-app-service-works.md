@@ -1,3 +1,22 @@
+---
+title: How App Service Works
+slug: how-app-service-works
+doc_type: concept
+section: platform
+topics:
+  - architecture
+  - platform
+  - internals
+products:
+  - azure-app-service
+related:
+  - request-lifecycle
+  - hosting-models
+  - scaling
+summary: Internal architecture of Azure App Service - control plane, data plane, frontends, workers, and storage.
+status: stable
+last_reviewed: 2026-04-08
+---
 # How App Service Works
 
 Azure App Service is a managed hosting platform for web apps and APIs. You focus on application behavior, while Microsoft operates fleet management, patching, frontend routing, and worker lifecycle. This page builds the mental model you need for design reviews, deployment decisions, and production troubleshooting.

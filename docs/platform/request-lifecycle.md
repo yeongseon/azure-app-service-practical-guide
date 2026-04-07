@@ -1,3 +1,23 @@
+---
+title: Request Lifecycle
+slug: request-lifecycle
+doc_type: concept
+section: platform
+topics:
+  - architecture
+  - networking
+  - performance
+products:
+  - azure-app-service
+prerequisites:
+  - how-app-service-works
+related:
+  - networking
+  - troubleshooting-architecture-overview
+summary: End-to-end request path from client through Azure frontends to application process.
+status: stable
+last_reviewed: 2026-04-08
+---
 # Request Lifecycle
 
 Every request to Azure App Service travels through multiple platform layers before reaching your application process. Understanding this lifecycle is essential for troubleshooting latency, timeout behavior, routing issues, and scale-related anomalies.

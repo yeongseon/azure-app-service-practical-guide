@@ -1,3 +1,23 @@
+---
+title: "Lab: Container HTTP Pings"
+slug: lab-container-http-pings
+doc_type: lab
+section: troubleshooting
+topics:
+  - startup
+  - container
+  - lab
+products:
+  - azure-app-service
+prerequisites:
+  - container-didnt-respond-to-http-pings
+evidence:
+  - kql
+  - lab
+summary: Hands-on lab to reproduce container startup ping failures.
+status: stable
+last_reviewed: 2026-04-08
+---
 # Lab: Container HTTP Ping Behavior on Linux App Service (Port-Mismatch Experiment)
 
 This Level 3 lab records a startup-ping experiment on Azure App Service Linux designed to test port mismatch behavior.

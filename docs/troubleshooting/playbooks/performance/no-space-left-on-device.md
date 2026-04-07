@@ -1,3 +1,27 @@
+---
+title: No Space Left on Device
+slug: no-space-left-on-device
+doc_type: playbook
+section: troubleshooting
+topics:
+  - performance
+  - disk
+  - storage
+products:
+  - azure-app-service
+prerequisites:
+  - mental-model
+related:
+  - memory-pressure-and-worker-degradation
+validated_by_lab:
+  - lab-no-space-left-on-device
+evidence:
+  - kql
+  - lab
+summary: Diagnose and resolve disk space exhaustion on App Service workers.
+status: stable
+last_reviewed: 2026-04-08
+---
 # No Space Left on Device / Ephemeral Storage Pressure (Azure App Service Linux)
 
 ## 1. Summary

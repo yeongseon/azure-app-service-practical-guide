@@ -1,3 +1,24 @@
+---
+title: Evidence Map for App Service Troubleshooting
+slug: evidence-map
+doc_type: map
+section: troubleshooting
+topics:
+  - troubleshooting
+  - evidence
+  - diagnostics
+products:
+  - azure-app-service
+prerequisites:
+  - mental-model
+related:
+  - troubleshooting-architecture-overview
+  - decision-tree
+  - quick-diagnosis-cards
+summary: Maps investigation questions to evidence sources, CLI commands, and KQL queries.
+status: stable
+last_reviewed: 2026-04-08
+---
 # Evidence Map for App Service Troubleshooting
 
 This page maps common investigation questions to the best evidence source, the CLI command to run, and the KQL table/query to use.

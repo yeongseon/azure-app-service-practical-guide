@@ -1,3 +1,21 @@
+---
+title: Startup Errors
+slug: startup-errors
+doc_type: kql
+section: troubleshooting
+topics:
+  - kql
+  - startup
+  - console
+products:
+  - azure-app-service
+used_in:
+  - container-didnt-respond-to-http-pings
+  - deployment-succeeded-startup-failed
+summary: KQL query to find container and application startup errors in console logs.
+status: stable
+last_reviewed: 2026-04-08
+---
 # Startup Errors
 
 **Scenario**: Container startup fails or app never becomes healthy after deployment/restart.

@@ -1,3 +1,32 @@
+---
+title: Container Didn't Respond to HTTP Pings
+slug: container-didnt-respond-to-http-pings
+doc_type: playbook
+section: troubleshooting
+topics:
+  - startup
+  - container
+  - availability
+products:
+  - azure-app-service
+prerequisites:
+  - mental-model
+  - how-app-service-works
+related:
+  - deployment-succeeded-startup-failed
+  - failed-to-forward-request
+validated_by_lab:
+  - lab-container-http-pings
+investigated_with_kql:
+  - startup-errors
+  - container-binding-errors
+evidence:
+  - kql
+  - lab
+summary: Diagnose container startup failures when HTTP ping health check fails.
+status: stable
+last_reviewed: 2026-04-08
+---
 # Container Didn't Respond to HTTP Pings (Azure App Service Linux)
 
 ## 1. Summary

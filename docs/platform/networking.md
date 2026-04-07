@@ -1,3 +1,23 @@
+---
+title: Networking
+slug: networking
+doc_type: concept
+section: platform
+topics:
+  - networking
+  - security
+  - vnet
+products:
+  - azure-app-service
+prerequisites:
+  - how-app-service-works
+related:
+  - scaling
+  - networking-best-practices
+summary: Inbound and outbound networking controls - access restrictions, private endpoints, VNet integration.
+status: stable
+last_reviewed: 2026-04-08
+---
 # Networking
 
 Azure App Service networking controls define who can reach your application and how your application reaches downstream services. Correct networking design is fundamental for security, compliance, and predictable performance.

@@ -1,3 +1,22 @@
+---
+title: Quick Diagnosis Cards
+slug: quick-diagnosis-cards
+doc_type: map
+section: troubleshooting
+topics:
+  - troubleshooting
+  - quick-reference
+  - diagnostics
+products:
+  - azure-app-service
+related:
+  - decision-tree
+  - evidence-map
+  - mental-model
+summary: Rapid symptom-to-action cards for common App Service issues.
+status: stable
+last_reviewed: 2026-04-08
+---
 # Quick Diagnosis Cards
 
 One-page reference cards for rapid incident triage. Each card maps: **Symptom → First Query → Platform Segment → Playbook**.

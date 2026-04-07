@@ -1,3 +1,24 @@
+---
+title: "Lab: Memory Pressure"
+slug: lab-memory-pressure
+doc_type: lab
+section: troubleshooting
+topics:
+  - performance
+  - memory
+  - lab
+products:
+  - azure-app-service
+prerequisites:
+  - memory-pressure-and-worker-degradation
+evidence:
+  - kql
+  - detector
+  - lab
+summary: Hands-on lab to reproduce and diagnose memory pressure scenarios.
+status: stable
+last_reviewed: 2026-04-08
+---
 # Lab: Memory Pressure and Worker Degradation
 
 This lab reproduces memory pressure behavior on Azure App Service (Linux, B1) using a Python Flask app that intentionally grows heap allocations (`/leak`) and triggers CPU/memory-intensive work (`/heavy`).

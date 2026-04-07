@@ -1,3 +1,24 @@
+---
+title: Production Baseline
+slug: production-baseline
+doc_type: best_practice
+section: best-practices
+topics:
+  - production
+  - reliability
+  - security
+products:
+  - azure-app-service
+prerequisites:
+  - how-app-service-works
+related:
+  - scaling-best-practices
+  - networking-best-practices
+  - security-best-practices
+summary: Minimum production baseline settings for App Service - tier, health checks, observability, configuration.
+status: stable
+last_reviewed: 2026-04-08
+---
 # Production Baseline
 
 This guide defines a minimum production baseline for Azure App Service workloads. Use it to establish consistent defaults before language-specific implementation and before environment-specific optimization.

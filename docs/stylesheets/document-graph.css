@@ -1,0 +1,234 @@
+/**
+ * Document Graph Styles
+ * 
+ * Styles for the Cytoscape.js graph visualizations.
+ * Uses CSS variables from Material for MkDocs where possible.
+ */
+
+/* Graph container shared styles */
+#core-graph-container,
+#troubleshooting-map-container {
+  margin: 1.5rem 0;
+}
+
+/* Graph controls */
+#graph-controls,
+#ts-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  background: var(--md-code-bg-color, #f5f5f5);
+  border-radius: 4px;
+}
+
+[data-md-color-scheme="slate"] #graph-controls,
+[data-md-color-scheme="slate"] #ts-controls {
+  background: var(--md-code-bg-color, #2d2d2d);
+}
+
+/* Search input */
+#graph-search,
+#ts-search {
+  flex: 1;
+  min-width: 200px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  font-family: var(--md-text-font-family, Roboto, sans-serif);
+  color: var(--md-default-fg-color, #333);
+  background: var(--md-default-bg-color, #fff);
+  border: 1px solid var(--md-default-fg-color--lightest, #ddd);
+  border-radius: 4px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+#graph-search:focus,
+#ts-search:focus {
+  border-color: var(--md-primary-fg-color, #1976d2);
+  box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.2);
+}
+
+/* Filter dropdowns */
+#graph-filter,
+#ts-category,
+#ts-type {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  font-family: var(--md-text-font-family, Roboto, sans-serif);
+  color: var(--md-default-fg-color, #333);
+  background: var(--md-default-bg-color, #fff);
+  border: 1px solid var(--md-default-fg-color--lightest, #ddd);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Reset button */
+#graph-reset,
+#ts-reset {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-family: var(--md-text-font-family, Roboto, sans-serif);
+  font-weight: 500;
+  color: var(--md-primary-fg-color, #1976d2);
+  background: transparent;
+  border: 1px solid var(--md-primary-fg-color, #1976d2);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+#graph-reset:hover,
+#ts-reset:hover {
+  background: var(--md-primary-fg-color, #1976d2);
+  color: #fff;
+}
+
+/* Graph canvas */
+#core-graph,
+#troubleshooting-graph {
+  background: var(--md-default-bg-color, #fff);
+  border-radius: 4px;
+}
+
+[data-md-color-scheme="slate"] #core-graph,
+[data-md-color-scheme="slate"] #troubleshooting-graph {
+  background: var(--md-code-bg-color, #1e1e1e);
+}
+
+/* Info panel */
+#graph-info,
+#ts-info {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background: var(--md-code-bg-color, #f5f5f5);
+  border-radius: 4px;
+  font-size: 0.875rem;
+}
+
+[data-md-color-scheme="slate"] #graph-info,
+[data-md-color-scheme="slate"] #ts-info {
+  background: var(--md-code-bg-color, #2d2d2d);
+}
+
+#graph-info p,
+#ts-info p {
+  margin: 0.25rem 0;
+}
+
+#selected-node,
+#ts-selected-node {
+  font-weight: 500;
+  color: var(--md-primary-fg-color, #1976d2);
+}
+
+/* Legend styles */
+.graph-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin: 1rem 0;
+  padding: 1rem;
+  background: var(--md-code-bg-color, #f5f5f5);
+  border-radius: 4px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.legend-dot.concept { background: #1976d2; }
+.legend-dot.best_practice { background: #388e3c; }
+.legend-dot.playbook { background: #f57c00; }
+.legend-dot.lab { background: #d32f2f; }
+.legend-dot.kql { background: #7b1fa2; }
+.legend-dot.map { background: #00796b; }
+.legend-dot.reference { background: #616161; }
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  #graph-controls,
+  #ts-controls {
+    flex-direction: column;
+  }
+
+  #graph-search,
+  #ts-search {
+    min-width: 100%;
+  }
+
+  #core-graph,
+  #troubleshooting-graph {
+    height: 400px !important;
+  }
+}
+
+/* Learning path containers */
+#python-path-container,
+#nodejs-path-container,
+#java-path-container,
+#dotnet-path-container {
+  margin: 1.5rem 0;
+}
+
+#python-graph,
+#nodejs-graph,
+#java-graph,
+#dotnet-graph {
+  background: var(--md-default-bg-color, #fff);
+  border: 1px solid var(--md-default-fg-color--lightest, #ddd);
+  border-radius: 4px;
+}
+
+[data-md-color-scheme="slate"] #python-graph,
+[data-md-color-scheme="slate"] #nodejs-graph,
+[data-md-color-scheme="slate"] #java-graph,
+[data-md-color-scheme="slate"] #dotnet-graph {
+  background: var(--md-code-bg-color, #1e1e1e);
+}
+
+/* Cytoscape canvas cursor */
+.cytoscape-container {
+  cursor: grab;
+}
+
+.cytoscape-container:active {
+  cursor: grabbing;
+}
+
+/* Node hover tooltip (if implemented) */
+.cy-tooltip {
+  position: absolute;
+  z-index: 1000;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8125rem;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.85);
+  border-radius: 4px;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+/* Print styles */
+@media print {
+  #graph-controls,
+  #ts-controls {
+    display: none;
+  }
+
+  #core-graph,
+  #troubleshooting-graph {
+    border: 1px solid #ddd;
+    page-break-inside: avoid;
+  }
+}

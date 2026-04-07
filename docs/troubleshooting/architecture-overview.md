@@ -1,3 +1,25 @@
+---
+title: Troubleshooting Architecture Overview
+slug: troubleshooting-architecture-overview
+doc_type: map
+section: troubleshooting
+topics:
+  - troubleshooting
+  - architecture
+  - diagnostics
+products:
+  - azure-app-service
+prerequisites:
+  - how-app-service-works
+  - request-lifecycle
+related:
+  - mental-model
+  - evidence-map
+  - decision-tree
+summary: Request path, runtime, deployment, and network failure points for troubleshooting classification.
+status: stable
+last_reviewed: 2026-04-08
+---
 # Troubleshooting Architecture Overview
 
 This page answers one practical question first: **where can this fail?**

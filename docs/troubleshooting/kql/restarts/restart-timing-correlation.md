@@ -1,3 +1,20 @@
+---
+title: Restart Timing Correlation
+slug: restart-timing-correlation
+doc_type: kql
+section: troubleshooting
+topics:
+  - kql
+  - restarts
+  - correlation
+products:
+  - azure-app-service
+used_in:
+  - memory-pressure-and-worker-degradation
+summary: KQL query to correlate restart events with latency and error spikes.
+status: stable
+last_reviewed: 2026-04-08
+---
 # Restart Timing Correlation
 
 **Scenario**: Latency/error spikes appear to align with restarts.

@@ -1,3 +1,23 @@
+---
+title: Scaling
+slug: scaling
+doc_type: concept
+section: platform
+topics:
+  - scaling
+  - performance
+  - autoscale
+products:
+  - azure-app-service
+prerequisites:
+  - how-app-service-works
+related:
+  - networking
+  - scaling-best-practices
+summary: Scale up vs scale out, autoscale rules, and capacity planning for App Service.
+status: stable
+last_reviewed: 2026-04-08
+---
 # Scaling
 
 Scaling in Azure App Service is the process of adjusting compute capacity to meet traffic demand while balancing reliability and cost. Effective scaling combines platform features (scale up/out, autoscale) with application architecture (statelessness, externalized state, dependency resilience).

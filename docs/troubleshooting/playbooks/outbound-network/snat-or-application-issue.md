@@ -1,3 +1,28 @@
+---
+title: SNAT or Application Issue
+slug: snat-or-application-issue
+doc_type: playbook
+section: troubleshooting
+topics:
+  - networking
+  - snat
+  - connections
+products:
+  - azure-app-service
+prerequisites:
+  - networking
+related:
+  - dns-resolution-vnet-integrated-app-service
+  - private-endpoint-custom-dns-route-confusion
+validated_by_lab:
+  - lab-snat-exhaustion
+evidence:
+  - kql
+  - lab
+summary: Distinguish between SNAT port exhaustion and application-level connection issues.
+status: stable
+last_reviewed: 2026-04-08
+---
 # SNAT or Application Issue? (Azure App Service Linux)
 
 ## 1. Summary
