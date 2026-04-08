@@ -8,6 +8,16 @@
 (function() {
   'use strict';
 
+  /**
+   * Resolve URL relative to site base path
+   */
+  function resolveSiteUrl(path) {
+    if (!path) return null;
+    if (/^https?:\/\//.test(path)) return path;
+    var basePath = typeof __md_scope !== 'undefined' ? __md_scope.href : '/';
+    return new URL(path.replace(/^\//, ''), basePath).href;
+  }
+
   // Node type colors (matching Material theme)
   const NODE_COLORS = {
     concept: '#1976d2',       // Blue - Platform concepts
@@ -210,10 +220,11 @@
 
     // Click to navigate
     cy.on('tap', 'node', function(evt) {
-      const node = evt.target;
-      const href = node.data('href') || node.data('link');
-      if (href) {
-        window.location.href = href;
+      var node = evt.target;
+      var href = node.data('href') || node.data('link');
+      var resolvedUrl = resolveSiteUrl(href);
+      if (resolvedUrl) {
+        window.location.href = resolvedUrl;
       }
     });
 

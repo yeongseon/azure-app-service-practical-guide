@@ -54,7 +54,10 @@ Navigate the troubleshooting documentation visually. This map shows how symptoms
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   if (typeof initTroubleshootingMap === 'function') {
-    initTroubleshootingMap('troubleshooting-graph', '/assets/graph/troubleshooting-map.json');
+    // Resolve path relative to site base using MkDocs Material's __md_scope
+    var basePath = typeof __md_scope !== 'undefined' ? __md_scope.href : '/';
+    var dataUrl = new URL('assets/graph/troubleshooting-map.json', basePath).href;
+    initTroubleshootingMap('troubleshooting-graph', dataUrl);
   }
 });
 </script>

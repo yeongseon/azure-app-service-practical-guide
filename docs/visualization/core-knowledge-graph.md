@@ -46,7 +46,10 @@ The Core Knowledge Graph provides a bird's-eye view of the entire Azure App Serv
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   if (typeof initCoreKnowledgeGraph === 'function') {
-    initCoreKnowledgeGraph('core-graph', '/assets/graph/core-knowledge.json');
+    // Resolve path relative to site base using MkDocs Material's __md_scope
+    var basePath = typeof __md_scope !== 'undefined' ? __md_scope.href : '/';
+    var dataUrl = new URL('assets/graph/core-knowledge.json', basePath).href;
+    initCoreKnowledgeGraph('core-graph', dataUrl);
   }
 });
 </script>
