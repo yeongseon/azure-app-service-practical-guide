@@ -250,13 +250,15 @@ def main():
     print("Building core knowledge graph...")
     core_graph = build_core_knowledge_graph(documents)
     core_path = OUTPUT_DIR / "core-knowledge.json"
-    core_path.write_text(json.dumps(core_graph, indent=2), encoding="utf-8")
+    core_path.write_text(
+        json.dumps(core_graph, indent=2, sort_keys=True), encoding="utf-8"
+    )
     print(f"  Wrote {core_path} ({len(core_graph['elements'])} elements)")
 
     print("Building troubleshooting map...")
     ts_graph = build_troubleshooting_map(documents)
     ts_path = OUTPUT_DIR / "troubleshooting-map.json"
-    ts_path.write_text(json.dumps(ts_graph, indent=2), encoding="utf-8")
+    ts_path.write_text(json.dumps(ts_graph, indent=2, sort_keys=True), encoding="utf-8")
     print(f"  Wrote {ts_path} ({len(ts_graph['elements'])} elements)")
 
     print("Done!")

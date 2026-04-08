@@ -10,7 +10,7 @@
 
   function resolveSiteUrl(path) {
     if (!path) return null;
-    if (/^https?:\/\//.test(path)) return path;
+    if (/^https?:\/\//.test(path)) return null;
     var basePath = typeof __md_scope !== 'undefined' ? __md_scope.href : '/';
     return new URL(path.replace(/^\//, ''), basePath).href;
   }

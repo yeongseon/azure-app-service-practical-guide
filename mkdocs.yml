@@ -42,9 +42,9 @@ extra_css:
   - stylesheets/document-graph.css
 
 extra_javascript:
-  - https://unpkg.com/mermaid@10/dist/mermaid.min.js
+  - https://unpkg.com/mermaid@10.9.1/dist/mermaid.min.js
   - javascripts/mermaid-zoom.js
-  - https://unpkg.com/cytoscape@3/dist/cytoscape.min.js
+  - https://unpkg.com/cytoscape@3.30.4/dist/cytoscape.min.js
   - javascripts/document-graph.js
   - javascripts/troubleshooting-map.js
 
