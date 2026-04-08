@@ -35,8 +35,8 @@ Scaling in Azure App Service is the process of adjusting compute capacity to mee
 ```mermaid
 graph TD
     Traffic[Traffic Change] --> Choice{Scaling Strategy}
-    Choice --> Up[Scale Up (Vertical)]
-    Choice --> Out[Scale Out (Horizontal)]
+    Choice --> Up["Scale Up (Vertical)"]
+    Choice --> Out["Scale Out (Horizontal)"]
     Up --> Bigger[Bigger Instance Size]
     Out --> More[More Instance Count]
 ```

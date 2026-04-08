@@ -20,7 +20,7 @@ graph TD
     E --> F[Memory rises with uptime; restart helps]
     E --> G[Spikes after restart/scale or outbound-heavy windows]
     F --> H3[H3: Memory pressure causing degradation]
-    G --> H4[H4: Platform-side delays (cold start/SNAT/I/O)]
+    G --> H4["H4: Platform-side delays (cold start/SNAT/I/O)"]
 ```
 
 ## 2. Common Misreadings

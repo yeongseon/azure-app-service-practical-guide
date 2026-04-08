@@ -171,7 +171,7 @@ flowchart LR
     E --> F[First customer request]
     F --> G[Observed HTTP latency]
 
-    C --> H[App startup_duration metric (~31s)]
+    C --> H["App startup_duration metric (~31s)"]
     D --> I[Platform warm-up success signal]
     G --> J[Request-level TimeTaken in HTTP logs]
 ```
