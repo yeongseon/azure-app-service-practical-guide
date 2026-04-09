@@ -18,6 +18,29 @@ last_reviewed: 2026-04-08
 
 Explore the Azure App Service Practical Guide through interactive knowledge graphs and visual maps.
 
+```mermaid
+flowchart TD
+    subgraph Graphs["Available Visualizations"]
+        KG["Core Knowledge Graph"]
+        TM["Troubleshooting Map"]
+        LP["Learning Paths"]
+    end
+    subgraph Nodes["Node Types"]
+        CON["Concept (Blue)"]
+        BP["Best Practice (Green)"]
+        PB["Playbook (Orange)"]
+        LAB["Lab (Red)"]
+        KQL["KQL (Purple)"]
+    end
+    KG --> CON
+    KG --> BP
+    TM --> PB
+    TM --> LAB
+    TM --> KQL
+    LP --> CON
+    LP --> BP
+```
+
 ## Why Visual Navigation?
 
 Traditional documentation navigation relies on hierarchical menus and search. Visual graphs offer:

@@ -2,6 +2,27 @@
 
 The Azure App Service Practical Guide is a unified hub for platform architecture, best practices, and troubleshooting methodology.
 
+```mermaid
+flowchart LR
+    subgraph Legacy["Original Lab Repos"]
+        L1["lab-memory-pressure"]
+        L2["lab-node-memory-pressure"]
+        L3["dns-vnet-resolution"]
+    end
+    subgraph Unified["Azure App Service Practical Guide"]
+        P["Platform"]
+        BP["Best Practices"]
+        TS["Troubleshooting"]
+        LG["Language Guides"]
+    end
+    L1 --> TS
+    L2 --> TS
+    L3 --> TS
+    P --- BP
+    BP --- TS
+    TS --- LG
+```
+
 ## History of Consolidation
 
 This project started as a series of individual troubleshooting labs, each focused on a specific symptom or service. While these labs were valuable, they were difficult to maintain and search collectively.

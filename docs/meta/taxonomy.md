@@ -18,6 +18,36 @@ last_reviewed: 2026-04-08
 
 This document defines the standard taxonomy used across the Azure App Service Practical Guide for document classification, relationships, and frontmatter metadata.
 
+```mermaid
+flowchart TD
+    subgraph "Document Types"
+        CONCEPT["concept"]
+        BP["best_practice"]
+        TUT["tutorial"]
+        OP["operation"]
+        PB["playbook"]
+        REF["reference"]
+        LAB["lab"]
+        MAP["map"]
+        KQL["kql"]
+    end
+    subgraph "Relationships"
+        PREREQ["prerequisite"]
+        RELATED["related"]
+        USED["used_in"]
+        DEEP["deep_dive_for"]
+        TROUBLE["troubleshooting_for"]
+        VALID["validated_by_lab"]
+        INVEST["investigated_with_kql"]
+    end
+    CONCEPT --> PREREQ
+    PB --> TROUBLE
+    PB --> VALID
+    PB --> INVEST
+    LAB --> VALID
+    KQL --> INVEST
+```
+
 ## Document Types (`doc_type`)
 
 | Type | Description | Examples |
