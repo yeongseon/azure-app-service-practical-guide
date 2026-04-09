@@ -241,6 +241,9 @@ nav:
         - troubleshooting/playbooks/startup-availability/slot-swap-failed-during-warmup.md
         - troubleshooting/playbooks/startup-availability/warmup-vs-health-check.md
         - troubleshooting/playbooks/startup-availability/auth-redirect-loop.md
+        - troubleshooting/playbooks/startup-availability/windows-iis-webconfig-startup.md
+        - troubleshooting/playbooks/startup-availability/windows-container-health-probes.md
+        - troubleshooting/playbooks/startup-availability/windows-kudu-diagnostics.md
       - Performance:
         - troubleshooting/playbooks/performance/intermittent-5xx-under-load.md
         - troubleshooting/playbooks/performance/memory-pressure-and-worker-degradation.md
@@ -248,6 +251,8 @@ nav:
         - troubleshooting/playbooks/performance/slow-response-but-low-cpu.md
         - troubleshooting/playbooks/performance/slow-start-cold-start.md
         - troubleshooting/playbooks/performance/cors-and-token-errors.md
+        - troubleshooting/playbooks/performance/windows-memory-pressure-worker-recycling.md
+        - troubleshooting/playbooks/performance/windows-filesystem-quotas.md
       - Outbound Network:
         - troubleshooting/playbooks/outbound-network/dns-resolution-vnet-integrated-app-service.md
         - troubleshooting/playbooks/outbound-network/private-endpoint-custom-dns-route-confusion.md
