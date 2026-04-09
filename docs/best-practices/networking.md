@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Networking Best Practices
 
 Networking design in Azure App Service is primarily about controlling direction and trust boundaries: private inbound paths, predictable outbound paths, and reliable DNS behavior across those paths.

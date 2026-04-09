@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # 07 - Custom Domain and SSL on App Service
 
 This final tutorial binds your Flask app to a custom domain and enables HTTPS certificates. It covers DNS validation, hostname binding, and certificate verification.

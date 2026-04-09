@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Reference
 
 Quick lookup documentation for Azure App Service platform operations and diagnostics.

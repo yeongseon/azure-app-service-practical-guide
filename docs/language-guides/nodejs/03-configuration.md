@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # 03. Configuration
 
 **Time estimate: 20 minutes**

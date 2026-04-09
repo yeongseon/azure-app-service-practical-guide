@@ -1,4 +1,6 @@
 ---
+hide:
+  - toc
 title: "Lab: Memory Pressure"
 slug: lab-memory-pressure
 doc_type: lab

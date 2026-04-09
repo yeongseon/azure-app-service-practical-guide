@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Azure CLI App Service Cheatsheet
 
 Language-agnostic quick reference for Azure App Service operations with long flags only.

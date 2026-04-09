@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Health and Recovery Operations
 
 Maintain availability by combining health checks, automatic remediation, and diagnostics. This guide focuses on platform-native recovery controls for Azure App Service.

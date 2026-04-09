@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Key Vault References (No Code Changes)
 
 Use App Service Key Vault References to inject secrets into environment variables without changing Spring Boot application code.

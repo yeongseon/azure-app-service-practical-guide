@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # 07. Custom Domain & SSL
 
 Map a custom domain to your Java App Service app and secure it with a managed TLS certificate.

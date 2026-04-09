@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Latency vs Errors
 
 **Scenario**: Need to confirm whether rising latency and 5xx error rate are coupled.

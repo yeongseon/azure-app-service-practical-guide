@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Deployment Slots Validation
 
 Use staging slots to validate deployments before production swap, with health checks and automated safeguards in Azure DevOps.

@@ -1,4 +1,6 @@
 ---
+hide:
+  - toc
 title: Startup Errors
 slug: startup-errors
 doc_type: kql

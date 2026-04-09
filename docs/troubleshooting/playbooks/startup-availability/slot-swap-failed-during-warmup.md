@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Slot Swap Failed During Warm-up (Azure App Service Linux)
 
 ## 1. Summary

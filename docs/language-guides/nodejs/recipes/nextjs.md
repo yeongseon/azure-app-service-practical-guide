@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Next.js on App Service
 
 This recipe covers deploying a Next.js application to Azure App Service using the standalone build feature and SSR configuration.

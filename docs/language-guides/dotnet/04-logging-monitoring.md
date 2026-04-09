@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # 04. Logging & Monitoring
 
 Instrument ASP.NET Core 8 on Azure App Service with `ILogger` and Application Insights, then query operational signals using KQL.

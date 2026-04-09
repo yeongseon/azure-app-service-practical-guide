@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # 02. First Deploy
 
 Deploy the ASP.NET Core 8 app to Azure App Service (Windows) using Bicep infrastructure and zip-based code deployment.

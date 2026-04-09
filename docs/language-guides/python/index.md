@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Python Guide
 
 This guide walks from local Flask development to production-ready deployment and operations on Azure App Service.

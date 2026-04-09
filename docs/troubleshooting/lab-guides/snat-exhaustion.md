@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Lab Guide (Level 3): SNAT Exhaustion on Azure App Service Linux
 
 This lab is a full diagnostic reference for reproducing and proving outbound SNAT pressure on Azure App Service Linux using a Python/Flask workload. It expands the original scaffold into a complete investigation package with architecture background, falsifiable hypothesis, deterministic runbook, and artifact-backed experiment log.

@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Native Dependencies
 
 This recipe explains how to manage native Node.js modules like `sharp` and `bcrypt` on Azure App Service using multi-stage Docker builds.

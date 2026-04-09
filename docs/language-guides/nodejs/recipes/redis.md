@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Azure Cache for Redis Integration
 
 This recipe shows how to integrate Azure Cache for Redis with a Node.js Express application for session storage and data caching.

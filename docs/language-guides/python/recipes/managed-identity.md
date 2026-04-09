@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Managed Identity
 
 Use managed identity to access Azure resources from Flask without storing passwords, client secrets, or connection strings.

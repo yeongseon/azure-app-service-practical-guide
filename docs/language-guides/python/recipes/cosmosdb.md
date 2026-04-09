@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Cosmos DB with azure-cosmos SDK
 
 Integrate Flask with Azure Cosmos DB (NoSQL API) using passwordless authentication through Managed Identity.

@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Native Dependencies on App Service Linux
 
 Handle Python packages with C/C++ extensions reliably on Azure App Service Linux.

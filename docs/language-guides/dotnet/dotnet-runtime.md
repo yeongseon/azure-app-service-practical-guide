@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # .NET Runtime on Windows App Service (.NET 8)
 
 Runtime alignment is critical for startup reliability. This reference summarizes .NET 8 runtime settings, environment variables, `web.config` behavior, and startup conventions for this guide.

@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Hands-on Labs
 
 Bicep-based reproduction environments for each troubleshooting scenario. Deploy to your Azure subscription, trigger the symptom, observe signals, then clean up.

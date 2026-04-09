@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # 01. Local Run
 
 Run the Spring Boot reference app locally using the same runtime assumptions Azure App Service uses in production.

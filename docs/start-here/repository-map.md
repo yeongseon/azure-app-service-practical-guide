@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Repository Map
 
 This page maps the unified repository layout so you can quickly locate architecture guidance, runtime-specific tutorials, operational runbooks, and hands-on labs. Use it as a navigation reference while moving across docs and sample workloads.

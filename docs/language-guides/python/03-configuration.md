@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # 03 - Configure Flask App Settings on App Service
 
 This guide standardizes runtime configuration for Flask on Azure App Service. You will set environment settings, separate dev/prod behavior, and secure secrets with Key Vault references.

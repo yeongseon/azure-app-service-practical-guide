@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # 07. Custom Domain & SSL
 
 Map a custom domain to your Windows App Service app, validate ownership, and secure traffic with a managed TLS certificate.

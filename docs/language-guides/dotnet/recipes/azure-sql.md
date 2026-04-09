@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Azure SQL
 
 Connect ASP.NET Core 8 to Azure SQL using Entity Framework Core and managed identity authentication for passwordless production access.

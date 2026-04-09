@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Azure SQL Integration
 
 This recipe shows how to connect a Node.js application running on Azure App Service to an Azure SQL Database using a passwordless Managed Identity approach.

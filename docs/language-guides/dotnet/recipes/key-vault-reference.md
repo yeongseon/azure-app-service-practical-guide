@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Key Vault References
 
 Use Azure App Service Key Vault References to inject secrets into configuration without embedding secret values in code or pipeline variables.

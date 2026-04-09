@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # 01. Local Run
 
 Run the ASP.NET Core 8 reference API locally using the same port and environment conventions expected by Azure App Service on Windows.

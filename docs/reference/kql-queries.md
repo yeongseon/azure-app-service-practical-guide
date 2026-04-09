@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # KQL Queries Reference
 
 Language-agnostic KQL queries for Azure App Service monitoring, diagnostics, and operations.

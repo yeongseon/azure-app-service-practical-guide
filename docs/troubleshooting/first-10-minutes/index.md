@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Checklists
 
 Fast triage guides for the first 10 minutes of an investigation.

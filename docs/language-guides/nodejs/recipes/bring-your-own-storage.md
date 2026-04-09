@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Bring Your Own Storage (BYOS)
 
 Mount Azure Blob Storage or Azure Files to your App Service instance as a custom storage path. BYOS lets you serve large files — assets, ML models, shared configs — directly from the filesystem without changing your application code.

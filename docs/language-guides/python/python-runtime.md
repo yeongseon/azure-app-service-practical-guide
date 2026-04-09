@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Python Runtime
 
 Quick lookup reference.

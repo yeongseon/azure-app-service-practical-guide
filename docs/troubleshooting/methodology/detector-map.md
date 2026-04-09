@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Detector Map
 
 Quick reference for Azure App Service Diagnostics detectors relevant to Linux/OSS troubleshooting.

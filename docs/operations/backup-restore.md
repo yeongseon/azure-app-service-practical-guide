@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Backup and Restore Operations
 
 Protect production workloads with scheduled backups, restore drills, and disaster recovery procedures. This guide covers App Service backup capabilities and complementary operational patterns.

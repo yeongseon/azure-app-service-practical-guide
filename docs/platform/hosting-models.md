@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Hosting Models
 
 Choosing the right hosting model in Azure App Service determines your operational control, scalability envelope, networking options, and total cost. This document explains how to choose plan tiers and deployment models without relying on language-specific assumptions.

@@ -1,4 +1,6 @@
 ---
+hide:
+  - toc
 title: Request Lifecycle
 slug: request-lifecycle
 doc_type: concept

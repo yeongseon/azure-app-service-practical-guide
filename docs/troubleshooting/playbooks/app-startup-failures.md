@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # App Startup Failures
 
 ## 1. Summary

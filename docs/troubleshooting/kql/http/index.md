@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # HTTP Queries
 
 Use these queries to quickly establish request latency patterns, error concentration, and endpoint-level hotspots on Azure App Service Linux.

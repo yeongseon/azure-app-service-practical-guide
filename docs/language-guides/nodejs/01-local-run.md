@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # 01. Local Run
 
 **Time estimate: 10 minutes**

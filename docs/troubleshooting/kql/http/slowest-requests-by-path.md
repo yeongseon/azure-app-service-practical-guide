@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Slowest Requests by Path
 
 **Scenario**: Users report slowness, but only for some endpoints.

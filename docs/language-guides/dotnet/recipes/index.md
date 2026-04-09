@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Recipes
 
 Use these production-oriented recipes to integrate common Azure services with ASP.NET Core 8 on Windows App Service.

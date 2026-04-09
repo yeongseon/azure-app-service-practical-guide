@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Slow Start / Cold Start vs Real Regression (Azure App Service Linux)
 
 ## 1. Summary

@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Warm-up vs Health Check (Azure App Service Linux)
 
 ## 1. Summary

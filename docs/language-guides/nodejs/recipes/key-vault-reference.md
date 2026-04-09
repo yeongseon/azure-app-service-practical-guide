@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Key Vault References
 
 Key Vault references allow App Service to access secrets directly from Azure Key Vault through environment variables. This eliminates the need to store sensitive data in application settings and simplifies secret rotation.

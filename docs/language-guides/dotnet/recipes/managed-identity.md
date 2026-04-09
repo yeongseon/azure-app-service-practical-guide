@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Managed Identity
 
 Use App Service managed identity with `Azure.Identity` and `DefaultAzureCredential` to access Azure resources without storing credentials.

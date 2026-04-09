@@ -1,4 +1,6 @@
 ---
+hide:
+  - toc
 title: "Lab: Intermittent 5xx Under Load"
 slug: lab-intermittent-5xx
 doc_type: lab

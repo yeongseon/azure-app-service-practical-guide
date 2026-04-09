@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Authentication Redirect Loop (Azure App Service Linux)
 
 ## 1. Summary

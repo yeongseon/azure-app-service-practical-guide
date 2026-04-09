@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Lab Guide: Slow Start (Cold Start) vs Real Regression
 
 This Level 3 lab guide reproduces a slow-start scenario on Azure App Service Linux and shows how to separate platform/container startup cost from steady-state request latency. The experiment uses a Python Flask app that intentionally sleeps for 30 seconds during startup and captures HTTP, platform, and app-level evidence.

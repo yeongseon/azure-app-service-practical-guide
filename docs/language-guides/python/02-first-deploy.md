@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # 02 - First Deployment to Azure App Service
 
 This chapter deploys a Flask app to Azure App Service using Python build automation. It focuses on `requirements.txt`, Oryx build detection, and explicit startup command settings.

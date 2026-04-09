@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Slow Response but Low CPU (Azure App Service Linux)
 
 ## 1. Summary

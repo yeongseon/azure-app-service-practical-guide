@@ -1,4 +1,6 @@
 ---
+hide:
+  - toc
 title: "Lab: Container HTTP Pings"
 slug: lab-container-http-pings
 doc_type: lab

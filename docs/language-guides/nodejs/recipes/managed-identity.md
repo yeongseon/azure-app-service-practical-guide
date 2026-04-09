@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Managed Identity for App Service
 
 Managed Identity provides an automatically managed identity for Azure App Service to access other Azure resources like Key Vault, Storage, and SQL databases without needing secret management.

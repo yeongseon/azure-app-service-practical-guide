@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Correlation Queries
 
 Use these queries to correlate major signals (latency, error rate, and restart events) in one timeline.

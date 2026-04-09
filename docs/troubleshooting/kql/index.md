@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Query Library
 
 Reusable KQL queries for Azure App Service Linux investigations.

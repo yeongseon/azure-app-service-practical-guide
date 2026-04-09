@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Recipes
 
 Use these production-focused recipes to integrate common Azure services and operational patterns with Spring Boot on App Service.

@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Networking Operations
 
 Secure traffic paths by controlling inbound access, private inbound endpoints, and outbound connectivity to private resources. This guide provides operational patterns for App Service networking in production.

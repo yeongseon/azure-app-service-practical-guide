@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Azure Cache for Redis
 
 Use Azure Cache for Redis with Spring Boot to reduce database load, accelerate reads, and share session state across scaled-out App Service instances.

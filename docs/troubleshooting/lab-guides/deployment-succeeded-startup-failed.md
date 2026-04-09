@@ -1,4 +1,6 @@
 ---
+hide:
+  - toc
 title: "Lab: Deployment Succeeded Startup Failed"
 slug: lab-deployment-succeeded-startup-failed
 doc_type: lab

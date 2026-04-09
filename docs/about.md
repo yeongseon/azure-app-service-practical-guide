@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # About
 
 The Azure App Service Practical Guide is a unified hub for platform architecture, best practices, and troubleshooting methodology.

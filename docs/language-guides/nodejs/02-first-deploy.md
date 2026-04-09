@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # 02. Deploy Application
 
 **Time estimate: 15-20 minutes**

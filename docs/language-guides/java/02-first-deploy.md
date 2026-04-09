@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # 02. First Deploy
 
 Deploy the Java guide application to Azure App Service using Bicep for infrastructure and Maven Plugin for code deployment.

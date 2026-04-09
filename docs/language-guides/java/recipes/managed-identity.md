@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Managed Identity (Passwordless Access)
 
 Use system-assigned managed identity with `DefaultAzureCredential` so your Spring Boot app accesses Azure resources without embedded secrets.

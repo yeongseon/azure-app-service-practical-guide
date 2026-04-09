@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Lab Guide (Level 3): Failed to Forward Request on Azure App Service Linux
 
 This lab is a full reference investigation for the App Service Linux startup/binding failure pattern where the app process listens on loopback (`127.0.0.1`) and the platform reverse proxy cannot reach it. The guide includes deep background, a falsifiable hypothesis, a deterministic runbook, and an artifact-backed experiment log.

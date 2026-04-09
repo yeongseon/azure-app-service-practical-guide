@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Private Endpoints
 
 Connect App Service to backend services over private networking using VNet integration and private endpoints for SQL, Redis, and Storage.

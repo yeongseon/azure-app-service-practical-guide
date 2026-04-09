@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Redis Cache
 
 Use Azure Cache for Redis with ASP.NET Core 8 for distributed caching and session state, including TLS-first configuration for production.

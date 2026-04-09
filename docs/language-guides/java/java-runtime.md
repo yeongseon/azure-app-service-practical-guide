@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Java Runtime
 
 Runtime reference for Java 17 on Azure App Service Linux with Spring Boot 3.2.x. Use this document as the Java equivalent of a runtime compatibility and tuning sheet.

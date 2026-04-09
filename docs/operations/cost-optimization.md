@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Cost Optimization Operations
 
 Control App Service spend without sacrificing reliability by right-sizing plans, tuning scaling behavior, and removing operational waste. This guide focuses on practical, language-agnostic cost controls.

@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Security Operations
 
 Protect App Service workloads with layered controls: identity, authentication, transport security, network boundaries, and operational governance. This guide focuses on language-agnostic hardening steps.

@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # 05. Infrastructure as Code
 
 Use Bicep to provision reproducible Windows App Service infrastructure for ASP.NET Core 8, including diagnostics and deployment-ready outputs.

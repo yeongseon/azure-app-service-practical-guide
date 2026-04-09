@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Playbooks
 
 Symptom-oriented troubleshooting guides for Azure App Service Linux.

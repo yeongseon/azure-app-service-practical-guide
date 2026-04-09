@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Slot Swap Restart / Config Drift / Warm-up Race (Azure App Service Linux)
 
 ## 1. Summary

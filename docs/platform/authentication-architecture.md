@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Authentication Architecture
 
 Azure App Service Authentication/Authorization (commonly called **Easy Auth**) implements a platform-level authentication layer that executes before your application code. This document explains the runtime architecture, request flows, token lifecycle, and design boundaries you must account for in production systems.

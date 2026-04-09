@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # 05 - Infrastructure as Code for Python App Service
 
 This tutorial provisions Flask hosting infrastructure with Bicep for repeatable environments. It defines Python runtime settings, startup command, and worker-related app settings as code.

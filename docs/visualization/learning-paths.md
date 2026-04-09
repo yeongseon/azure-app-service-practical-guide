@@ -1,4 +1,6 @@
 ---
+hide:
+  - toc
 title: Learning Paths
 slug: learning-paths-visualization
 doc_type: map

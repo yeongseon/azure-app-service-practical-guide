@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # CORS Failures and Token Errors (Azure App Service Linux)
 
 ## 1. Summary

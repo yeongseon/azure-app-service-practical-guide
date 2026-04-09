@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Azure SQL with Managed Identity
 
 Connect Flask to Azure SQL Database using `pyodbc` and Microsoft Entra authentication via Managed Identity.

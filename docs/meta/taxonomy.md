@@ -1,4 +1,6 @@
 ---
+hide:
+  - toc
 title: Documentation Taxonomy
 slug: taxonomy
 doc_type: reference

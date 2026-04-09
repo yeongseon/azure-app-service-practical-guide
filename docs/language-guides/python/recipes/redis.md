@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Redis Cache with redis-py
 
 Use Azure Cache for Redis from Flask with secure configuration and optional Microsoft Entra authentication.

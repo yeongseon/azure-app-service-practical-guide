@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # 01 - Run Flask Locally with App Service Parity
 
 This guide sets up a local Flask workflow that mirrors Azure App Service behavior. You will run both development and production-style servers to reduce deployment surprises.

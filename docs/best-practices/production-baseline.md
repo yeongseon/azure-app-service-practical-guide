@@ -1,4 +1,6 @@
 ---
+hide:
+  - toc
 title: Production Baseline
 slug: production-baseline
 doc_type: best_practice

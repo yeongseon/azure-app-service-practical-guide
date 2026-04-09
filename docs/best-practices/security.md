@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Security Best Practices
 
 Security in Azure App Service is strongest when controls are layered: identity, secret management, authentication, network isolation, edge protection, and strict application policy. This guide defines practical defaults for production architecture decisions.

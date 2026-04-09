@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Key Vault References
 
 Inject secrets directly into App Service environment variables using Key Vault References, while keeping Flask code simple.

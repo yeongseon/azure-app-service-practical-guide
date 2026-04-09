@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Cosmos DB Integration
 
 This recipe shows how to connect a Node.js application to Azure Cosmos DB for NoSQL using the `@azure/cosmos` SDK and passwordless Managed Identity.

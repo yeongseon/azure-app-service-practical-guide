@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Recipes
 
 Practical patterns for common Azure App Service scenarios in Python and Flask.

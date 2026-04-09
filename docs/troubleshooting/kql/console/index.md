@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Console Queries
 
 Use these queries to identify startup/runtime failures from container console output in Azure App Service Linux.

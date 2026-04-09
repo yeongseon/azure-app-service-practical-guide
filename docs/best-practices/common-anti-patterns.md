@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Common Anti-Patterns
 
 This document catalogs high-impact App Service anti-patterns that frequently cause outages, security incidents, cost spikes, and difficult troubleshooting cycles. Use it as a review checklist during design, architecture review, and release readiness gates.

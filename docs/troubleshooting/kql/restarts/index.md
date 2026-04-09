@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Restart Queries
 
 Use these queries to confirm restart timing, startup loops, and restart correlation with incident windows.

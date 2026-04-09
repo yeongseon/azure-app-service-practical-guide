@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # .NET Guide
 
 This guide covers the end-to-end path for running ASP.NET Core applications on Azure App Service.

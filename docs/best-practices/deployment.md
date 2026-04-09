@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Deployment Best Practices
 
 This guide provides design-level deployment guidance for Azure App Service workloads. Use it after platform fundamentals and before language-specific implementation so you can choose a deployment approach that minimizes risk and downtime.

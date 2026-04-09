@@ -1,4 +1,6 @@
 ---
+hide:
+  - toc
 title: DNS Resolution with VNet-Integrated App Service
 slug: dns-resolution-vnet-integrated-app-service
 doc_type: playbook

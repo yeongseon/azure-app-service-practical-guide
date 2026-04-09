@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Performance Degradation
 
 ## 1. Summary

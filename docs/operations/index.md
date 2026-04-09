@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Operations
 
 Production operations and day-2 practices for Azure App Service. This section is language-agnostic and focuses on platform behavior, reliability, security, and cost control.

@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Easy Auth
 
 Protect your ASP.NET Core app with Azure App Service built-in authentication (Easy Auth), and consume identity claims from platform-injected headers.

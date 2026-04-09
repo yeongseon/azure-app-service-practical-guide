@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Concepts
 
 This section explains Azure App Service platform behavior in a language-agnostic way. Use these documents to understand architecture, scaling, networking, and dependency relationships before diving into language-specific implementation details.

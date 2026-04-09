@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # 05. Infrastructure as Code with Bicep
 
 ⏱️ **Time**: 30 minutes  

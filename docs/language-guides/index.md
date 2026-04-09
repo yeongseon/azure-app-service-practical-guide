@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Language Guides
 
 This section covers deploying web applications to Azure App Service in four languages: Python, Node.js, Java, and .NET.

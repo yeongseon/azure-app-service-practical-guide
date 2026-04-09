@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # 03. Configuration
 
 Manage ASP.NET Core configuration safely in Azure App Service using App Settings, Connection Strings, environment-specific files, and slot-sticky values.

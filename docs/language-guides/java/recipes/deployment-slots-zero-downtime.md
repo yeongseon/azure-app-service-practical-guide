@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Deployment Slots for Zero-Downtime Releases
 
 Use App Service deployment slots to validate Java releases in staging, then swap traffic to production with near-zero downtime.

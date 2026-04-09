@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Container Binding Errors
 
 **Scenario**: App starts but is unreachable, or startup fails with bind/listen issues.

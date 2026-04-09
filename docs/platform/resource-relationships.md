@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Resource Relationships
 
 Azure App Service is usually one component in a broader Azure architecture that includes identity, networking, secrets, data, storage, and monitoring resources. This document maps the most common platform relationships and explains why each relationship exists.

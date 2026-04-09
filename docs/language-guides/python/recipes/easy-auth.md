@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Easy Auth
 
 Protect Flask endpoints using App Service built-in authentication and consume authenticated user context from request headers.

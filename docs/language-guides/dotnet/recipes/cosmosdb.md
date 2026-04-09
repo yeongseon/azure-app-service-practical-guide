@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Cosmos DB
 
 Integrate Azure Cosmos DB (NoSQL) with ASP.NET Core 8 using the `Microsoft.Azure.Cosmos` SDK and production-safe client lifecycle patterns.

@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Learning Paths
 
 Choose a role-based path to get productive quickly on Azure App Service. Each path is sequenced from fundamentals to execution so you can move from understanding to validated outcomes.

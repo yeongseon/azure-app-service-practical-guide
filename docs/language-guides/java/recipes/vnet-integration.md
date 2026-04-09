@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # VNet Integration
 
 Enable VNet Integration so your App Service app can reach private backend services through controlled outbound networking.

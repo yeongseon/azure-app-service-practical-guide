@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # 06. CI/CD
 
 Implement GitHub Actions CI/CD for repeatable Java builds and controlled deployments to Azure App Service.

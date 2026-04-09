@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Private Endpoint / Custom DNS / Route Confusion (Azure App Service Linux)
 
 ## 1. Summary

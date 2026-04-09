@@ -1,4 +1,6 @@
 ---
+hide:
+  - toc
 title: Intermittent 5xx Under Load
 slug: intermittent-5xx-under-load
 doc_type: playbook

@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Lab Guide: Slot Swap Config Drift (Sticky vs Non-Sticky Settings)
 
 This Level 3 lab guide reproduces a slot swap on Azure App Service Linux and proves, using real artifacts, how configuration behaves across swap boundaries. The lab shows why teams often perceive "drift" after a healthy swap.

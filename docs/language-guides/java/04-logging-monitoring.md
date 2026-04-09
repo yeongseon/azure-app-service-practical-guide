@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # 04. Logging & Monitoring
 
 Instrument your Spring Boot app for production observability using Logback JSON logs, Azure Monitor, and Application Insights.

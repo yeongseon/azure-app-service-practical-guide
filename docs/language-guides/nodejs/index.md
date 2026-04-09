@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Node.js Guide
 
 This guide covers the full path for building, deploying, and operating Express apps on Azure App Service.

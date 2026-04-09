@@ -1,4 +1,6 @@
 ---
+hide:
+  - toc
 title: Failed to Forward Request
 slug: failed-to-forward-request
 doc_type: playbook

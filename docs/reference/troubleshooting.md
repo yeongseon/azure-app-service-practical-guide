@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Troubleshooting
 
 Platform-level troubleshooting reference for Azure App Service across runtimes.

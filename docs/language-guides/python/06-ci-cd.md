@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # 06 - CI/CD with GitHub Actions for Flask App Service
 
 This tutorial automates build and deployment for Flask using GitHub Actions. It uses `actions/setup-python`, pip dependency caching, and Azure Web App deployment.

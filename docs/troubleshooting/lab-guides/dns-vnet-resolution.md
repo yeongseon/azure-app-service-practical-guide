@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Lab: DNS Resolution Behavior for App Service Before and After VNet Integration
 
 This Level 3 lab guide documents how DNS behaves in Azure App Service Linux when the app is not VNet-integrated, and how failures emerge after introducing VNet integration with misconfigured DNS components.

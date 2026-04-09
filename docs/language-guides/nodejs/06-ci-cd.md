@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # 06. CI/CD with GitHub Actions
 
 ⏱️ **Time**: 45 minutes  

@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Azure SQL with Managed Identity
 
 Connect Spring Boot to Azure SQL Database using passwordless authentication through Managed Identity and Microsoft Entra tokens.

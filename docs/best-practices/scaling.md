@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Scaling Best Practices
 
 Scaling guidance in App Service is a design decision, not only an operational toggle. This document helps you choose the right scaling model based on workload characteristics, architecture constraints, and cost boundaries.

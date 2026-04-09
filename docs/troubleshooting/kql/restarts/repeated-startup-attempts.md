@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Repeated Startup Attempts
 
 **Scenario**: Suspected start/fail loop where the container repeatedly attempts startup.

@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # 04. Logging & Monitoring
 
 **Time estimate: 30 minutes**

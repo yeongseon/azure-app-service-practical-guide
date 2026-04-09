@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # 03. Configuration
 
 Configure runtime behavior, secrets, and identity for your Spring Boot app on Azure App Service without rebuilding the JAR.

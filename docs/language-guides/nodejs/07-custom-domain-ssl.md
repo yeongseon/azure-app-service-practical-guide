@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # 07. Custom Domains and SSL (OPTIONAL)
 
 ⏱️ **Time**: 30 minutes  

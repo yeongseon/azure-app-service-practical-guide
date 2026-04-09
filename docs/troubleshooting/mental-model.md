@@ -1,4 +1,6 @@
 ---
+hide:
+  - toc
 title: Troubleshooting Mental Model
 slug: mental-model
 doc_type: map

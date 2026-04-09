@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Deployment Failures
 
 ## 1. Summary

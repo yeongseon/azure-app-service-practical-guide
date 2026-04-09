@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Cosmos DB Integration
 
 Integrate Spring Boot with Azure Cosmos DB for globally distributed, low-latency NoSQL workloads on App Service.

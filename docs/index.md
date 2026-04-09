@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Azure App Service Practical Guide
 
 Comprehensive, practical documentation for building, deploying, operating, and troubleshooting web applications on Azure App Service.

@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Node.js Runtime Details
 
 Quick lookup for the Node.js runtime environment on Azure App Service (Linux).

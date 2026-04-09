@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Authentication Failures
 
 ## 1. Summary

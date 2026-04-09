@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Recipes
 
 Practical guides for common scenarios and integrations.

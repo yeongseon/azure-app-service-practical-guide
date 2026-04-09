@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # 05. Infrastructure as Code
 
 Use Bicep to deploy repeatable, reviewable Azure infrastructure for your Java App Service workload.

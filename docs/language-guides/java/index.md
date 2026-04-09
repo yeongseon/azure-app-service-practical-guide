@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Java Guide
 
 This guide takes you from local Spring Boot development through production deployment and operations on Azure App Service.

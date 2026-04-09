@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Kudu API Reference
 
 Quick reference for Kudu (SCM) endpoints used to diagnose and operate Azure App Service apps.

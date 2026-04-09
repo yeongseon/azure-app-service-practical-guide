@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # 06. CI/CD with Azure DevOps
 
 Implement continuous integration and deployment for the .NET guide using **Azure DevOps Pipelines** as the primary delivery workflow.

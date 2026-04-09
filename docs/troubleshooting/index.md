@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # App Service OSS Troubleshooting
 
 A hypothesis-driven troubleshooting guide for Azure App Service OSS workloads.

@@ -1,4 +1,6 @@
 ---
+hide:
+  - toc
 title: How App Service Works
 slug: how-app-service-works
 doc_type: concept

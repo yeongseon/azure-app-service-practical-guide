@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # SSL Certificate Issues
 
 ## 1. Summary

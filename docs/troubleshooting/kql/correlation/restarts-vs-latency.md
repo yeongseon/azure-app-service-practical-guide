@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Restarts vs Latency
 
 **Scenario**: Determine whether restart events align with latency degradation windows.

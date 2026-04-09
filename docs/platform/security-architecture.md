@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Security Architecture
 
 Azure App Service security is built as a layered control system rather than a single perimeter. Production-grade deployments combine identity-bound access, network segmentation, encryption, policy enforcement, and continuous monitoring to implement defense-in-depth and Zero Trust principles across the entire request and data path.

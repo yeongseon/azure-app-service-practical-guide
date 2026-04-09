@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Platform Limits & Quotas
 
 Quick reference for common Azure App Service platform limits and quota-related behaviors.

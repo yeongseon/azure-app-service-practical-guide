@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Lab: No Space Left on Device (Persistent `/home` Exhaustion vs Ephemeral `/tmp` Pressure)
 
 This lab reproduces App Service Linux filesystem pressure and makes one critical diagnostic distinction:

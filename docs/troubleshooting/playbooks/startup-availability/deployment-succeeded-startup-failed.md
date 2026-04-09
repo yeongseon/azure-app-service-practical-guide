@@ -1,4 +1,6 @@
 ---
+hide:
+  - toc
 title: Deployment Succeeded but Startup Failed
 slug: deployment-succeeded-startup-failed
 doc_type: playbook

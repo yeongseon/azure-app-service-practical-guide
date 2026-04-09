@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Custom Container (Docker + Gunicorn + SSH)
 
 Run Flask on App Service with a custom Linux container when you need full OS/package control.

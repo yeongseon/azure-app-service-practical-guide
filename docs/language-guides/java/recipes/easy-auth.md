@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Easy Auth (Built-in Authentication)
 
 Enable App Service built-in authentication/authorization (Easy Auth) to protect your Java app at the platform edge with minimal code changes.

@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Reliability Best Practices
 
 Reliability in Azure App Service comes from deliberate architecture and operational discipline. This guide focuses on practical design decisions that reduce outage frequency, shorten recovery time, and improve user trust.

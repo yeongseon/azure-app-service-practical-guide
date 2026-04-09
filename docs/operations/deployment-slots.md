@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Deployment Slots Operations
 
 Use deployment slots to deliver releases with minimal risk, perform validation before production exposure, and roll back quickly when needed. This guide covers slot lifecycle, swap patterns, and operational safeguards.

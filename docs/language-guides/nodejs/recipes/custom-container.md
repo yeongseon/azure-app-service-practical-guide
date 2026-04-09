@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Custom Container Deployment
 
 This recipe explains how to deploy a Node.js application as a custom Docker container on Azure App Service for Linux, including SSH access for debugging.
