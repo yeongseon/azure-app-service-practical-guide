@@ -219,6 +219,98 @@ az deployment group what-if \
 
 Split resources into modules and expose explicit outputs/inputs to avoid implicit timing assumptions.
 
+## CLI Alternative (No Bicep)
+
+Use this imperative path when you need quick provisioning without changing your Bicep workflow.
+
+### Step 1: Set variables
+
+```bash
+SUBSCRIPTION_ID="<subscription-id>"
+RG="rg-dotnet-tutorial"
+LOCATION="koreacentral"
+PLAN_NAME="plan-dotnet-tutorial-s1"
+APP_NAME="app-dotnet-tutorial-abc123"
+VNET_NAME="vnet-dotnet-tutorial"
+INTEGRATION_SUBNET_NAME="snet-appsvc-integration"
+```
+
+???+ example "Expected output"
+    ```text
+    Variables are set for deployment:
+    RG=rg-dotnet-tutorial
+    PLAN_NAME=plan-dotnet-tutorial-s1
+    APP_NAME=app-dotnet-tutorial-abc123
+    ```
+
+### Step 2: Create resource group, plan, and app
+
+```bash
+az account set --subscription $SUBSCRIPTION_ID
+az group create --name $RG --location $LOCATION
+az appservice plan create --resource-group $RG --name $PLAN_NAME --sku S1
+az webapp create --resource-group $RG --plan $PLAN_NAME --name $APP_NAME --runtime "DOTNETCORE|8.0"
+```
+
+???+ example "Expected output"
+    ```json
+    {
+      "defaultHostName": "app-dotnet-tutorial-abc123.azurewebsites.net",
+      "state": "Running"
+    }
+    ```
+
+### Step 3: Configure app settings
+
+```bash
+az webapp config appsettings set --resource-group $RG --name $APP_NAME --settings ASPNETCORE_ENVIRONMENT=Production WEBSITE_RUN_FROM_PACKAGE=1
+```
+
+???+ example "Expected output"
+    ```json
+    [
+      {
+        "name": "ASPNETCORE_ENVIRONMENT",
+        "value": "Production"
+      },
+      {
+        "name": "WEBSITE_RUN_FROM_PACKAGE",
+        "value": "1"
+      }
+    ]
+    ```
+
+### Step 4 (Optional): Add VNet integration
+
+```bash
+az network vnet create --resource-group $RG --name $VNET_NAME --location $LOCATION --address-prefixes 10.0.0.0/16
+az network vnet subnet create --resource-group $RG --vnet-name $VNET_NAME --name $INTEGRATION_SUBNET_NAME --address-prefixes 10.0.1.0/24 --delegations Microsoft.Web/serverFarms
+az webapp vnet-integration add --resource-group $RG --name $APP_NAME --vnet $VNET_NAME --subnet $INTEGRATION_SUBNET_NAME
+```
+
+???+ example "Expected output"
+    ```json
+    {
+      "isSwift": true,
+      "subnetResourceId": "/subscriptions/<subscription-id>/resourceGroups/rg-dotnet-tutorial/providers/Microsoft.Network/virtualNetworks/vnet-dotnet-tutorial/subnets/snet-appsvc-integration"
+    }
+    ```
+
+### Step 5: Validate effective configuration
+
+```bash
+az webapp config show --resource-group $RG --name $APP_NAME --query "{netFrameworkVersion:netFrameworkVersion, windowsFxVersion:windowsFxVersion}" --output json
+az webapp config appsettings list --resource-group $RG --name $APP_NAME --query "[?name=='ASPNETCORE_ENVIRONMENT' || name=='WEBSITE_RUN_FROM_PACKAGE']" --output json
+```
+
+???+ example "Expected output"
+    ```json
+    {
+      "netFrameworkVersion": "v8.0",
+      "windowsFxVersion": null
+    }
+    ```
+
 ## See Also
 
 - [06. CI/CD](./06-ci-cd.md)

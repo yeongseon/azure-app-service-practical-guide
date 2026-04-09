@@ -218,6 +218,94 @@ Now that your infrastructure is ready, proceed to **[06-ci-cd.md](./06-ci-cd.md)
     - Azure Developer CLI (azd) integration
 - [Contribute](https://github.com/yeongseon/azure-app-service-practical-guide/issues)
 
+## CLI Alternative (No Bicep)
+
+Use these commands when you need an imperative deployment path without changing the existing Bicep workflow.
+
+### Step 1: Set variables
+
+```bash
+RG="rg-express-tutorial"
+LOCATION="koreacentral"
+PLAN_NAME="plan-express-tutorial-s1"
+APP_NAME="app-express-tutorial-abc123"
+VNET_NAME="vnet-express-tutorial"
+INTEGRATION_SUBNET_NAME="snet-appsvc-integration"
+```
+
+???+ example "Expected output"
+    ```text
+    Variables loaded for resource group, App Service plan, app name, and VNet integration.
+    ```
+
+### Step 2: Create resource group, plan, and app
+
+```bash
+az group create --name $RG --location $LOCATION
+az appservice plan create --resource-group $RG --name $PLAN_NAME --is-linux --sku S1
+az webapp create --resource-group $RG --plan $PLAN_NAME --name $APP_NAME --runtime "NODE|18-lts"
+```
+
+???+ example "Expected output"
+    ```json
+    {
+      "defaultHostName": "app-express-tutorial-abc123.azurewebsites.net",
+      "state": "Running"
+    }
+    ```
+
+### Step 3: Configure app settings and startup command
+
+```bash
+az webapp config appsettings set --resource-group $RG --name $APP_NAME --settings SCM_DO_BUILD_DURING_DEPLOYMENT=true NODE_ENV=production
+az webapp config set --resource-group $RG --name $APP_NAME --startup-file "node server.js"
+```
+
+???+ example "Expected output"
+    ```json
+    [
+      {
+        "name": "SCM_DO_BUILD_DURING_DEPLOYMENT",
+        "value": "true"
+      },
+      {
+        "name": "NODE_ENV",
+        "value": "production"
+      }
+    ]
+    ```
+
+### Step 4 (Optional): Add VNet integration
+
+```bash
+az network vnet create --resource-group $RG --name $VNET_NAME --location $LOCATION --address-prefixes 10.0.0.0/16
+az network vnet subnet create --resource-group $RG --vnet-name $VNET_NAME --name $INTEGRATION_SUBNET_NAME --address-prefixes 10.0.1.0/24 --delegations Microsoft.Web/serverFarms
+az webapp vnet-integration add --resource-group $RG --name $APP_NAME --vnet $VNET_NAME --subnet $INTEGRATION_SUBNET_NAME
+```
+
+???+ example "Expected output"
+    ```json
+    {
+      "isSwift": true,
+      "subnetResourceId": "/subscriptions/<subscription-id>/resourceGroups/rg-express-tutorial/providers/Microsoft.Network/virtualNetworks/vnet-express-tutorial/subnets/snet-appsvc-integration"
+    }
+    ```
+
+### Step 5: Validate effective configuration
+
+```bash
+az webapp config show --resource-group $RG --name $APP_NAME --query "{linuxFxVersion:linuxFxVersion, appCommandLine:appCommandLine}" --output json
+az webapp config appsettings list --resource-group $RG --name $APP_NAME --query "[?name=='NODE_ENV' || name=='SCM_DO_BUILD_DURING_DEPLOYMENT']" --output json
+```
+
+???+ example "Expected output"
+    ```json
+    {
+      "linuxFxVersion": "NODE|18-lts",
+      "appCommandLine": "node server.js"
+    }
+    ```
+
 ## See Also
 - [Operations Scaling](../../operations/scaling.md)
 

@@ -140,7 +140,9 @@ nav:
         - language-guides/python/recipes/key-vault-reference.md
         - language-guides/python/recipes/managed-identity.md
         - language-guides/python/recipes/native-dependencies.md
+        - Private Endpoints: language-guides/python/recipes/private-endpoints.md
         - language-guides/python/recipes/redis.md
+        - VNet Integration: language-guides/python/recipes/vnet-integration.md
     - Node.js:
       - language-guides/nodejs/index.md
       - language-guides/nodejs/01-local-run.md
@@ -163,7 +165,9 @@ nav:
         - language-guides/nodejs/recipes/managed-identity.md
         - language-guides/nodejs/recipes/native-dependencies.md
         - language-guides/nodejs/recipes/nextjs.md
+        - Private Endpoints: language-guides/nodejs/recipes/private-endpoints.md
         - language-guides/nodejs/recipes/redis.md
+        - VNet Integration: language-guides/nodejs/recipes/vnet-integration.md
     - Java:
       - language-guides/java/index.md
       - language-guides/java/01-local-run.md
@@ -205,6 +209,7 @@ nav:
         - language-guides/dotnet/recipes/managed-identity.md
         - language-guides/dotnet/recipes/private-endpoints.md
         - language-guides/dotnet/recipes/redis.md
+        - VNet Integration: language-guides/dotnet/recipes/vnet-integration.md
   - Operations:
     - operations/index.md
     - operations/scaling.md

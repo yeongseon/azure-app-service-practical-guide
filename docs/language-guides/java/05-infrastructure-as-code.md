@@ -201,6 +201,94 @@ Check App Service runtime in portal or CLI; confirm `linuxFxVersion` is `JAVA|17
 
 Confirm `/health` endpoint exists and startup command still forwards `--server.port=$PORT`.
 
+## CLI Alternative (No Bicep)
+
+Use these commands when you need an imperative deployment path without changing the existing Bicep workflow.
+
+### Step 1: Set variables
+
+```bash
+RG="rg-springboot-tutorial"
+LOCATION="koreacentral"
+PLAN_NAME="plan-springboot-tutorial-s1"
+APP_NAME="app-springboot-tutorial-abc123"
+VNET_NAME="vnet-springboot-tutorial"
+INTEGRATION_SUBNET_NAME="snet-appsvc-integration"
+```
+
+???+ example "Expected output"
+    ```text
+    Variables prepared for rg-springboot-tutorial and app-springboot-tutorial-abc123.
+    ```
+
+### Step 2: Create RG, plan, app
+
+```bash
+az group create --name $RG --location $LOCATION
+az appservice plan create --resource-group $RG --name $PLAN_NAME --is-linux --sku S1
+az webapp create --resource-group $RG --plan $PLAN_NAME --name $APP_NAME --runtime "JAVA|17-java17"
+```
+
+???+ example "Expected output"
+    ```json
+    {
+      "defaultHostName": "app-springboot-tutorial-abc123.azurewebsites.net",
+      "state": "Running"
+    }
+    ```
+
+### Step 3: Configure app settings and startup command
+
+```bash
+az webapp config appsettings set --resource-group $RG --name $APP_NAME --settings SCM_DO_BUILD_DURING_DEPLOYMENT=true SPRING_PROFILES_ACTIVE=production
+az webapp config set --resource-group $RG --name $APP_NAME --startup-file "java -jar /home/site/wwwroot/app.jar --server.port=$PORT"
+```
+
+???+ example "Expected output"
+    ```json
+    [
+      {
+        "name": "SCM_DO_BUILD_DURING_DEPLOYMENT",
+        "value": "true"
+      },
+      {
+        "name": "SPRING_PROFILES_ACTIVE",
+        "value": "production"
+      }
+    ]
+    ```
+
+### Step 4 (Optional): Add VNet integration
+
+```bash
+az network vnet create --resource-group $RG --name $VNET_NAME --location $LOCATION --address-prefixes 10.10.0.0/16
+az network vnet subnet create --resource-group $RG --vnet-name $VNET_NAME --name $INTEGRATION_SUBNET_NAME --address-prefixes 10.10.1.0/24 --delegations Microsoft.Web/serverFarms
+az webapp vnet-integration add --resource-group $RG --name $APP_NAME --vnet $VNET_NAME --subnet $INTEGRATION_SUBNET_NAME
+```
+
+???+ example "Expected output"
+    ```json
+    {
+      "isSwift": true,
+      "subnetResourceId": "/subscriptions/<subscription-id>/resourceGroups/rg-springboot-tutorial/providers/Microsoft.Network/virtualNetworks/vnet-springboot-tutorial/subnets/snet-appsvc-integration"
+    }
+    ```
+
+### Step 5: Validate effective configuration
+
+```bash
+az webapp config show --resource-group $RG --name $APP_NAME --query "{linuxFxVersion:linuxFxVersion, appCommandLine:appCommandLine}" --output json
+az webapp config appsettings list --resource-group $RG --name $APP_NAME --query "[?name=='SCM_DO_BUILD_DURING_DEPLOYMENT' || name=='SPRING_PROFILES_ACTIVE']" --output json
+```
+
+???+ example "Expected output"
+    ```json
+    {
+      "linuxFxVersion": "JAVA|17-java17",
+      "appCommandLine": "java -jar /home/site/wwwroot/app.jar --server.port=$PORT"
+    }
+    ```
+
 ## See Also
 
 - [06. CI/CD](06-ci-cd.md)

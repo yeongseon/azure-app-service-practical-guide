@@ -51,12 +51,11 @@ Deploy the ASP.NET Core 8 app to Azure App Service (Windows) using Bicep infrast
 
 ```mermaid
 flowchart LR
-    A[Set variables] --> B[Create resource group]
-    B --> C[Deploy Bicep infra]
-    C --> D[dotnet publish]
-    D --> E[Zip artifacts]
-    E --> F[az webapp deploy]
-    F --> G[Verify app endpoint]
+    A[Set RG APP PLAN variables] --> B[Create group plan web app]
+    B --> C[dotnet publish]
+    C --> D[Zip artifacts]
+    D --> E[az webapp deploy]
+    E --> F[Verify health endpoint]
 ```
 
 ## Prerequisites
@@ -68,114 +67,251 @@ flowchart LR
 ## What you'll learn
 
 - Create a resource group with Azure CLI
-- Deploy infrastructure using Bicep
+- Provision Windows App Service infrastructure with Azure CLI
 - Publish the app with `dotnet publish`
 - Deploy zip package with `az webapp deploy`
 
-## Main content
+## Main Content
 
-### 1) Set deployment variables
-
-```bash
-export RESOURCE_GROUP_NAME="rg-dotnet-guide"
-export LOCATION="eastus"
-export BASE_NAME="dotnetguide"
-```
-
-### 2) Create resource group
+### Step 1: Prepare deployment variables
 
 ```bash
-az group create \
-  --name "$RESOURCE_GROUP_NAME" \
-  --location "$LOCATION" \
-  --output table
+SUBSCRIPTION_ID="<subscription-id>"
+RG="rg-dotnet-tutorial"
+LOCATION="koreacentral"
+PLAN_NAME="plan-dotnet-tutorial-s1"
+APP_NAME="app-dotnet-tutorial-abc123"
+VNET_NAME="vnet-dotnet-tutorial"
+INTEGRATION_SUBNET_NAME="snet-appsvc-integration"
+PE_SUBNET_NAME="snet-private-endpoints"
+STORAGE_NAME="stdotnettutorialabc123"
 ```
 
-### 3) Deploy Bicep (Windows App Service)
+???+ example "Expected output"
+    ```text
+    Variables are set for deployment:
+    RG=rg-dotnet-tutorial
+    PLAN_NAME=plan-dotnet-tutorial-s1
+    APP_NAME=app-dotnet-tutorial-abc123
+    ```
+
+### Step 2: Select the target subscription
 
 ```bash
-az deployment group create \
-  --resource-group "$RESOURCE_GROUP_NAME" \
-  --template-file "infra/main.bicep" \
-  --parameters baseName="$BASE_NAME" location="$LOCATION" \
-  --output json
+az account set --subscription $SUBSCRIPTION_ID
+az account show --query "{subscriptionId:id, tenantId:tenantId, user:user.name}" --output json
 ```
 
-Capture outputs:
+???+ example "Expected output"
+    ```json
+    {
+      "subscriptionId": "<subscription-id>",
+      "tenantId": "<tenant-id>",
+      "user": "user@example.com"
+    }
+    ```
+
+### Step 3: Create resource group, App Service plan, and web app
 
 ```bash
-export WEB_APP_NAME=$(az deployment group show \
-  --resource-group "$RESOURCE_GROUP_NAME" \
-  --name "main" \
-  --query "properties.outputs.webAppName.value" \
-  --output tsv)
+az group create --name $RG --location $LOCATION
+az appservice plan create --resource-group $RG --name $PLAN_NAME --sku S1
+az webapp create --resource-group $RG --plan $PLAN_NAME --name $APP_NAME --runtime "DOTNETCORE|8.0"
 ```
 
-If your deployment name differs, use the name returned by your command output.
+???+ example "Expected output"
+    ```json
+    {
+      "defaultHostName": "app-dotnet-tutorial-abc123.azurewebsites.net",
+      "enabledHostNames": [
+        "app-dotnet-tutorial-abc123.azurewebsites.net",
+        "app-dotnet-tutorial-abc123.scm.azurewebsites.net"
+      ],
+      "state": "Running"
+    }
+    ```
 
-### 4) Publish application
+### Step 4: Create VNet and delegated integration subnet
 
 ```bash
-dotnet publish "app/GuideApi/GuideApi.csproj" \
-  --configuration Release \
-  --output "app/GuideApi/publish"
+az network vnet create --resource-group $RG --name $VNET_NAME --location $LOCATION --address-prefixes 10.0.0.0/16
+az network vnet subnet create --resource-group $RG --vnet-name $VNET_NAME --name $INTEGRATION_SUBNET_NAME --address-prefixes 10.0.1.0/24 --delegations Microsoft.Web/serverFarms
 ```
 
-### 5) Zip publish output
+???+ example "Expected output"
+    ```json
+    {
+      "addressPrefix": "10.0.1.0/24",
+      "delegations": [
+        {
+          "serviceName": "Microsoft.Web/serverFarms"
+        }
+      ],
+      "name": "snet-appsvc-integration"
+    }
+    ```
+
+### Step 5: Create private endpoint subnet
 
 ```bash
-cd "app/GuideApi/publish"
-zip --recurse-paths --quiet "../guideapi.zip" .
+az network vnet subnet create --resource-group $RG --vnet-name $VNET_NAME --name $PE_SUBNET_NAME --address-prefixes 10.0.2.0/24 --disable-private-endpoint-network-policies true
 ```
 
-### 6) Deploy to App Service
+???+ example "Expected output"
+    ```json
+    {
+      "addressPrefix": "10.0.2.0/24",
+      "name": "snet-private-endpoints",
+      "privateEndpointNetworkPolicies": "Disabled"
+    }
+    ```
+
+### Step 6: Integrate the web app with the VNet
 
 ```bash
-az webapp deploy \
-  --resource-group "$RESOURCE_GROUP_NAME" \
-  --name "$WEB_APP_NAME" \
-  --src-path "app/GuideApi/guideapi.zip" \
-  --type zip \
-  --output json
+az webapp vnet-integration add --resource-group $RG --name $APP_NAME --vnet $VNET_NAME --subnet $INTEGRATION_SUBNET_NAME
 ```
 
-### 7) Validate app startup assumptions
+???+ example "Expected output"
+    ```json
+    {
+      "isSwift": true,
+      "subnetResourceId": "/subscriptions/<subscription-id>/resourceGroups/rg-dotnet-tutorial/providers/Microsoft.Network/virtualNetworks/vnet-dotnet-tutorial/subnets/snet-appsvc-integration"
+    }
+    ```
 
-The app binds correctly because `Program.cs` respects platform port variables:
+### Step 7: Assign managed identity to the web app
 
-```csharp
-var port = Environment.GetEnvironmentVariable("HTTP_PLATFORM_PORT")
-    ?? Environment.GetEnvironmentVariable("PORT")
-    ?? "5000";
-builder.WebHost.UseUrls($"http://+:{port}");
+```bash
+az webapp identity assign --resource-group $RG --name $APP_NAME
 ```
 
-### 8) Azure DevOps equivalent deployment task
+???+ example "Expected output"
+    ```json
+    {
+      "principalId": "<object-id>",
+      "tenantId": "<tenant-id>",
+      "type": "SystemAssigned"
+    }
+    ```
 
-```yaml
-- task: AzureWebApp@1
-  inputs:
-    azureSubscription: $(azureSubscription)
-    appType: webApp
-    appName: $(webAppName)
-    package: '$(Pipeline.Workspace)/drop/**/*.zip'
+### Step 8: Build and publish the application
+
+```bash
+dotnet publish app/GuideApi/GuideApi.csproj --configuration Release --output ./publish
 ```
 
-!!! note "Manual deploy and pipeline deploy should be equivalent"
-    Keep your publish profile and runtime assumptions identical so that local/manual deploys and Azure DevOps deploys produce the same behavior.
+???+ example "Expected output"
+    ```text
+    Determining projects to restore...
+    All projects are up-to-date for restore.
+    GuideApi -> /.../publish/GuideApi.dll
+    ```
+
+### Step 9: Deploy to App Service
+
+```bash
+zip --recurse-paths publish.zip ./publish
+az webapp deploy --resource-group $RG --name $APP_NAME --src-path publish.zip --type zip
+```
+
+???+ example "Expected output"
+    ```json
+    {
+      "active": true,
+      "complete": true,
+      "status": "Build successful"
+    }
+    ```
+
+### Step 10: Verify URL, health, and deployment history
+
+```bash
+WEB_APP_URL="https://$(az webapp show --resource-group $RG --name $APP_NAME --query defaultHostName --output tsv)"
+curl $WEB_APP_URL/health
+az webapp log deployment list --resource-group $RG --name $APP_NAME --output table
+```
+
+???+ example "Expected output"
+    ```text
+    {"status":"ok"}
+
+    Id    Status   Author     Message
+    ----  -------  ---------  ----------------------
+    1234  Success  N/A        deployment successful
+    ```
+
+### Step 11 (Optional): Create a private endpoint for Storage
+
+```bash
+az storage account create --resource-group $RG --name $STORAGE_NAME --location $LOCATION --sku Standard_LRS --kind StorageV2
+STORAGE_ID="$(az storage account show --resource-group $RG --name $STORAGE_NAME --query id --output tsv)"
+az network private-endpoint create --resource-group $RG --name pe-storage-blob --vnet-name $VNET_NAME --subnet $PE_SUBNET_NAME --private-connection-resource-id $STORAGE_ID --group-id blob --connection-name pe-storage-blob-connection
+```
+
+???+ example "Expected output"
+    ```json
+    {
+      "name": "pe-storage-blob",
+      "privateLinkServiceConnections": [
+        {
+          "groupIds": [
+            "blob"
+          ],
+          "privateLinkServiceId": "/subscriptions/<subscription-id>/resourceGroups/rg-dotnet-tutorial/providers/Microsoft.Storage/storageAccounts/stdotnettutorialabc123"
+        }
+      ]
+    }
+    ```
+
+### Step 12: Stream live logs
+
+```bash
+az webapp log config --resource-group $RG --name $APP_NAME --application-logging filesystem --level information
+az webapp log tail --resource-group $RG --name $APP_NAME
+```
+
+???+ example "Expected output"
+    ```text
+    2026-04-09T03:11:22  Connected to log-streaming service.
+    2026-04-09T03:11:23  Request: GET /health 200 12ms
+    ```
+
+### Step 13: Inspect files in Kudu (SCM)
+
+```bash
+SCM_URL="https://$(az webapp show --resource-group $RG --name $APP_NAME --query name --output tsv).scm.azurewebsites.net"
+printf "SCM URL: %s\n" "$SCM_URL"
+az webapp deployment list-publishing-profiles --resource-group $RG --name $APP_NAME --output table
+```
+
+???+ example "Expected output"
+    ```text
+    SCM URL: https://app-dotnet-tutorial-abc123.scm.azurewebsites.net
+
+    Name    PublishMethod    PublishUrl
+    ------  ---------------  ---------------------------------------------------
+    app-dotnet-tutorial-abc123  MSDeploy  app-dotnet-tutorial-abc123.scm.azurewebsites.net:443
+    ```
+
+## Advanced Topics
+
+Use slot-based deployments for zero-downtime swaps, prebuild deterministic release artifacts in CI, and combine VNet integration with private endpoints to keep outbound traffic on private network paths.
 
 ## Verification
 
 ```bash
-curl --include "https://$WEB_APP_NAME.azurewebsites.net/health"
-curl --silent "https://$WEB_APP_NAME.azurewebsites.net/info"
+WEB_APP_URL="https://$(az webapp show --resource-group $RG --name $APP_NAME --query defaultHostName --output tsv)"
+curl --include $WEB_APP_URL/health
 ```
 
-Expected:
+???+ example "Expected output"
+    ```text
+    HTTP/1.1 200 OK
+    Content-Type: application/json; charset=utf-8
 
-- HTTP 200 from `/health`
-- JSON payload with `status: healthy`
-- `/info` indicates production environment
+    {"status":"ok"}
+    ```
 
 ## Troubleshooting
 
@@ -190,7 +326,7 @@ Expected:
 Use a globally unique base name, for example:
 
 ```bash
-export BASE_NAME="dotnetguide$RANDOM"
+APP_NAME="app-dotnet-tutorial-$RANDOM"
 ```
 
 ### Incorrect runtime stack
@@ -198,7 +334,7 @@ export BASE_NAME="dotnetguide$RANDOM"
 Validate App Service configuration after deployment:
 
 ```bash
-az webapp config show --resource-group "$RESOURCE_GROUP_NAME" --name "$WEB_APP_NAME" --output json
+az webapp config show --resource-group $RG --name $APP_NAME --output json
 ```
 
 ## See Also

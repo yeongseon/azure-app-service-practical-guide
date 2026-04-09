@@ -55,13 +55,11 @@ Deploy your Node.js application to Azure App Service using various methods and l
 
 ```mermaid
 flowchart LR
-    A[Source Code] --> B[npm install]
-    B --> C[zip package]
-    C --> D[az webapp deploy]
-    D --> E[App Service]
-    E --> F[npm install<br/>on server]
-    F --> G[npm start]
-    G --> H[✅ Running]
+    A[Set RG APP PLAN variables] --> B[Create group plan web app]
+    B --> C[Enable SCM_DO_BUILD_DURING_DEPLOYMENT]
+    C --> D[Set startup command]
+    D --> E[Deploy source package]
+    E --> F[Verify health endpoint]
 ```
 
 ## Prerequisites
@@ -71,130 +69,206 @@ flowchart LR
 - A resource group and App Service Plan provisioned (see [05. Infrastructure as Code](./05-infrastructure-as-code.md) for automated setup, or create manually below)
 - Deployment outputs loaded: `source infra/.deploy-output.env`
 
-## What you'll learn
+## Main Content
 
-- Multiple ways to deploy code to App Service
-- How to verify a successful deployment
-- How to rollback to a previous version
-
-## Deployment Methods
-
-App Service supports multiple deployment methods. Choose the one that best fits your workflow.
-
-### 1. ZIP Deploy (Recommended for CLI/Scripts)
-
-ZIP deploy is the most reliable method for manual or scripted deployments. It pushes a ZIP file to the `/home/site/wwwroot` directory.
-
-#### Step 1: Package the Application
+### Step 1: Prepare deployment variables
 
 ```bash
-cd app
-# We exclude node_modules to let Azure build them specifically for the Linux environment
-zip -r ../app.zip . -x "node_modules/*"
-cd ..
+SUBSCRIPTION_ID="<subscription-id>"
+RG="rg-express-tutorial"
+LOCATION="koreacentral"
+PLAN_NAME="plan-express-tutorial-s1"
+APP_NAME="app-express-tutorial-abc123"
+VNET_NAME="vnet-express-tutorial"
+INTEGRATION_SUBNET_NAME="snet-appsvc-integration"
+PE_SUBNET_NAME="snet-private-endpoints"
+STORAGE_NAME="stexpresstutorialabc123"
 ```
 
-#### Step 2: Deploy using Azure CLI
+???+ example "Expected output"
+    ```text
+    Variables loaded for subscription, compute, network, and storage resources.
+    ```
+
+### Step 2: Select the target subscription
 
 ```bash
-source infra/.deploy-output.env
-
-az webapp deploy \
-  --resource-group $RG \
-  --name $APP_NAME \
-  --src-path app.zip \
-  --type zip \
-  --output json
+az account set --subscription $SUBSCRIPTION_ID
+az account show --query "{subscriptionId:id, tenantId:tenantId, user:user.name}" --output json
 ```
 
-**Example output:**
-```json
-{
-  "complete": true,
-  "deployer": "ZipDeploy",
-  "id": "abc12345-6789-abcd-efgh-ijklmnopqrst",
-  "message": "Deployment successful",
-  "progress": "",
-  "provisioningState": "Succeeded",
-  "receivedTime": "2026-04-01T12:00:00Z",
-  "siteName": "app-myapp-abc123",
-  "startTime": "2026-04-01T12:00:05Z",
-  "status": 4,
-  "status_text": "Deployment successful"
-}
-```
+???+ example "Expected output"
+    ```json
+    {
+      "subscriptionId": "<subscription-id>",
+      "tenantId": "<tenant-id>",
+      "user": "user@example.com"
+    }
+    ```
 
-### 2. Git Deploy (Local Git)
-
-You can push code directly from your local git repository to a git endpoint hosted by App Service.
-
-#### Step 1: Configure Deployment User (One-time)
+### Step 3: Create resource group, App Service plan, and web app
 
 ```bash
-az webapp deployment user set --user-name <unique-username> --password <strong-password>
+az group create --name $RG --location $LOCATION
+az appservice plan create --resource-group $RG --name $PLAN_NAME --is-linux --sku S1
+az webapp create --resource-group $RG --plan $PLAN_NAME --name $APP_NAME --runtime "NODE|18-lts"
 ```
 
-#### Step 2: Add Git Remote and Push
+???+ example "Expected output"
+    ```json
+    {
+      "defaultHostName": "app-express-tutorial-abc123.azurewebsites.net",
+      "enabledHostNames": [
+        "app-express-tutorial-abc123.azurewebsites.net",
+        "app-express-tutorial-abc123.scm.azurewebsites.net"
+      ],
+      "state": "Running"
+    }
+    ```
+
+### Step 4: Create VNet and delegated integration subnet
 
 ```bash
-# Get the deployment URL
-DEPLOY_URL=$(az webapp deployment source config-local-git \
-  --name $APP_NAME \
-  --resource-group $RG \
-  --query url --output json | jq -r '.')
-
-git remote add azure $DEPLOY_URL
-git push azure main
+az network vnet create --resource-group $RG --name $VNET_NAME --location $LOCATION --address-prefixes 10.0.0.0/16
+az network vnet subnet create --resource-group $RG --vnet-name $VNET_NAME --name $INTEGRATION_SUBNET_NAME --address-prefixes 10.0.1.0/24 --delegations Microsoft.Web/serverFarms
 ```
 
-### 3. VS Code Extension
+???+ example "Expected output"
+    ```json
+    {
+      "addressPrefix": "10.0.1.0/24",
+      "delegations": [
+        {
+          "serviceName": "Microsoft.Web/serverFarms"
+        }
+      ],
+      "name": "snet-appsvc-integration"
+    }
+    ```
 
-1. Install the **Azure Resources** and **Azure App Service** extensions.
-2. Sign in to your Azure account.
-3. Right-click the `app` folder in the explorer.
-4. Select **Deploy to Web App...** and follow the prompts.
-
-## Verification
-
-After any deployment, always verify the application state:
-
-### 1. Find Your App URL
-
-The app is reachable at `https://<app-name>.azurewebsites.net` as soon as the deployment completes.
-
-To retrieve it via CLI:
+### Step 5: Create private endpoint subnet
 
 ```bash
-az webapp show \
-  --resource-group $RG \
-  --name $APP_NAME \
-  --query defaultHostName --output tsv
+az network vnet subnet create --resource-group $RG --vnet-name $VNET_NAME --name $PE_SUBNET_NAME --address-prefixes 10.0.2.0/24 --disable-private-endpoint-network-policies true
 ```
 
-In the **Azure Portal**: navigate to your App Service → **Overview** → **Default domain**.
+???+ example "Expected output"
+    ```json
+    {
+      "addressPrefix": "10.0.2.0/24",
+      "name": "snet-private-endpoints",
+      "privateEndpointNetworkPolicies": "Disabled"
+    }
+    ```
 
-### 2. Check Health Endpoint
+### Step 6: Integrate the web app with the VNet
+
+```bash
+az webapp vnet-integration add --resource-group $RG --name $APP_NAME --vnet $VNET_NAME --subnet $INTEGRATION_SUBNET_NAME
+```
+
+???+ example "Expected output"
+    ```json
+    {
+      "isSwift": true,
+      "subnetResourceId": "/subscriptions/<subscription-id>/resourceGroups/rg-express-tutorial/providers/Microsoft.Network/virtualNetworks/vnet-express-tutorial/subnets/snet-appsvc-integration"
+    }
+    ```
+
+### Step 7: Assign managed identity to the web app
+
+```bash
+az webapp identity assign --resource-group $RG --name $APP_NAME
+```
+
+???+ example "Expected output"
+    ```json
+    {
+      "principalId": "<object-id>",
+      "tenantId": "<tenant-id>",
+      "type": "SystemAssigned"
+    }
+    ```
+
+### Step 8: Enable build automation and set startup command
+
+```bash
+az webapp config appsettings set --resource-group $RG --name $APP_NAME --settings SCM_DO_BUILD_DURING_DEPLOYMENT=true NODE_ENV=production
+az webapp config set --resource-group $RG --name $APP_NAME --startup-file "node server.js"
+```
+
+???+ example "Expected output"
+    ```json
+    [
+      {
+        "name": "SCM_DO_BUILD_DURING_DEPLOYMENT",
+        "value": "true"
+      },
+      {
+        "name": "NODE_ENV",
+        "value": "production"
+      }
+    ]
+    ```
+
+### Step 9: Deploy from local source
+
+```bash
+az webapp up --resource-group $RG --name $APP_NAME --runtime "NODE:18-lts"
+```
+
+???+ example "Expected output"
+    ```text
+    {"status":"Build successful"}
+    {"status":"Deployment successful"}
+    You can launch the app at http://app-express-tutorial-abc123.azurewebsites.net
+    ```
+
+### Step 10: Verify URL, health, and deployment history
+
 ```bash
 WEB_APP_URL="https://$(az webapp show --resource-group $RG --name $APP_NAME --query defaultHostName --output tsv)"
 curl $WEB_APP_URL/health
+az webapp log deployment list --resource-group $RG --name $APP_NAME --output table
 ```
 
-**Example output:**
-```json
-{
-  "status": "healthy",
-  "timestamp": "2026-04-01T12:05:00.000Z"
-}
+???+ example "Expected output"
+    ```text
+    {"status":"healthy"}
+
+    Id    Status   Author     Message
+    ----  -------  ---------  ----------------------
+    1234  Success  N/A        deployment successful
+    ```
+
+### Step 11 (Optional): Create a private endpoint for Storage
+
+```bash
+az storage account create --resource-group $RG --name $STORAGE_NAME --location $LOCATION --sku Standard_LRS --kind StorageV2
+STORAGE_ID="$(az storage account show --resource-group $RG --name $STORAGE_NAME --query id --output tsv)"
+az network private-endpoint create --resource-group $RG --name pe-storage-blob --vnet-name $VNET_NAME --subnet $PE_SUBNET_NAME --private-connection-resource-id $STORAGE_ID --group-id blob --connection-name pe-storage-blob-connection
 ```
 
-### 3. View Deployment Status in the Portal
+???+ example "Expected output"
+    ```json
+    {
+      "name": "pe-storage-blob",
+      "privateLinkServiceConnections": [
+        {
+          "groupIds": [
+            "blob"
+          ],
+          "privateLinkServiceId": "/subscriptions/<subscription-id>/resourceGroups/rg-express-tutorial/providers/Microsoft.Storage/storageAccounts/stexpresstutorialabc123"
+        }
+      ]
+    }
+    ```
 
-In the **Azure Portal**: App Service → **Deployment Center** — shows deployment history, status, and build logs (commit-level detail is available for source-control-connected deployments).
-
-### 4. Stream Live Logs
+### Step 12: Stream live logs
 
 !!! note "Enable logging first"
-    `az webapp log tail` only streams output if application logging is enabled. If the stream appears empty, enable it first:
+    `az webapp log tail` only streams output if application logging is enabled.
+
     ```bash
     az webapp log config --resource-group $RG --name $APP_NAME --application-logging filesystem --level information
     ```
@@ -203,58 +277,29 @@ In the **Azure Portal**: App Service → **Deployment Center** — shows deploym
 az webapp log tail --resource-group $RG --name $APP_NAME
 ```
 
-In the **Azure Portal**: App Service → **Monitoring → Log stream** — streams stdout/stderr in real time.
+???+ example "Expected output"
+    ```text
+    2026-04-09T12:10:26  Connected to log stream.
+    2026-04-09T12:10:30  GET /health 200 4.123 ms
+    ```
 
-### 5. Inspect Files via Kudu (SCM)
+### Step 13: Inspect files in Kudu (SCM)
 
-Open `https://<app-name>.scm.azurewebsites.net` in a browser. Kudu provides:
-
-- **File browser** — browse `/home/site/wwwroot` and verify deployed files
-- **Bash console** — run commands inside the container
-- **Log stream** — view raw platform and app logs
-
-### 6. View Deployment History
 ```bash
-az webapp log deployment list \
-  --resource-group $RG \
-  --name $APP_NAME \
-  --output table
+SCM_HOSTNAME="$(az webapp show --resource-group $RG --name $APP_NAME --query \"enabledHostNames[?contains(@, '.scm.azurewebsites.net')] | [0]\" --output tsv)"
+az webapp deployment list-publishing-profiles --resource-group $RG --name $APP_NAME --xml
+echo "https://$SCM_HOSTNAME"
 ```
 
-## Rollback
+???+ example "Expected output"
+    ```text
+    Publishing profile retrieved.
+    Open https://app-express-tutorial-abc123.scm.azurewebsites.net in your browser to inspect /home/site/wwwroot.
+    ```
 
-If a deployment introduces a bug, you can quickly revert to a previous version.
+## Advanced Topics
 
-### List Previous Deployments
-```bash
-az webapp deployment show-container-settings \
-  --resource-group $RG \
-  --name $APP_NAME \
-  --output json
-```
-
-Note: For standard ZIP/Git deployments, rollback is typically managed by re-deploying a previous known-good commit or artifact. If using **Deployment Slots**, you can swap back immediately.
-
-## Troubleshooting
-
-### Deployment Success but 404/500 Error
-- Verify `process.env.PORT` usage (see [01. Local Run](./01-local-run.md)).
-- Check `package.json` has a `"start"` script.
-- Ensure `SCM_DO_BUILD_DURING_DEPLOYMENT` is set to `true` in App Settings.
-
-## Next Steps
-
-- [03. Configuration](./03-configuration.md) - Manage environment variables and secrets.
-- [04. Logging & Monitoring](./04-logging-monitoring.md) - View logs and track performance.
-
----
-
-## Advanced Options
-
-!!! info "Coming Soon"
-    - Blue-Green deployments with Slots
-    - Docker container deployments
-- [Contribute](https://github.com/yeongseon/azure-app-service-practical-guide/issues)
+Use Zip Deploy when you need immutable artifacts for release promotion, and pin Node.js dependencies with a committed lock file to keep Oryx build outcomes deterministic across environments.
 
 ## See Also
 - [06. CI/CD](./06-ci-cd.md)
