@@ -298,6 +298,7 @@ nav:
       - troubleshooting/lab-guides/snat-exhaustion.md
   - Reference:
     - reference/index.md
+    - Validation Status: reference/validation-status.md
     - reference/cli-cheatsheet.md
     - reference/kql-queries.md
     - reference/platform-limits.md
