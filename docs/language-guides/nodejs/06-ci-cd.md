@@ -10,6 +10,48 @@ hide:
 
 Automating your deployment pipeline ensures consistent and reliable releases. This tutorial shows how to use GitHub Actions with OIDC (OpenID Connect) for secure, passwordless authentication.
 
+!!! info "Infrastructure Context"
+    **Service**: App Service (Linux, Standard S1) | **Network**: VNet integrated | **VNet**: ✅
+
+    This tutorial assumes a production-ready App Service deployment with VNet integration, private endpoints for backend services, and managed identity for authentication.
+
+    ```mermaid
+    flowchart TD
+        INET[Internet] -->|HTTPS| WA["Web App\nApp Service S1\nLinux Node 18 LTS"]
+
+        subgraph VNET["VNet 10.0.0.0/16"]
+            subgraph INT_SUB["Integration Subnet 10.0.1.0/24\nDelegation: Microsoft.Web/serverFarms"]
+                WA
+            end
+            subgraph PE_SUB["Private Endpoint Subnet 10.0.2.0/24"]
+                PE_KV[PE: Key Vault]
+                PE_SQL[PE: Azure SQL]
+                PE_ST[PE: Storage]
+            end
+        end
+
+        PE_KV --> KV[Key Vault]
+        PE_SQL --> SQL[Azure SQL]
+        PE_ST --> ST[Storage Account]
+
+        subgraph DNS[Private DNS Zones]
+            DNS_KV[privatelink.vaultcore.azure.net]
+            DNS_SQL[privatelink.database.windows.net]
+            DNS_ST[privatelink.blob.core.windows.net]
+        end
+
+        PE_KV -.-> DNS_KV
+        PE_SQL -.-> DNS_SQL
+        PE_ST -.-> DNS_ST
+
+        WA -.->|System-Assigned MI| ENTRA[Microsoft Entra ID]
+        WA --> AI[Application Insights]
+
+        style WA fill:#0078d4,color:#fff
+        style VNET fill:#E8F5E9,stroke:#4CAF50
+        style DNS fill:#E3F2FD
+    ```
+
 ## What you'll learn
 - How OIDC authentication works with Azure
 - Building and packaging a Node.js app in GitHub Actions
