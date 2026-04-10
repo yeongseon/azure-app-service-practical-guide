@@ -63,7 +63,7 @@ flowchart TD
 <!-- diagram-id: diagram-2 -->
 ```mermaid
 flowchart LR
-    A[Define Bicep resources] --> B[Set linuxFxVersion PYTHON|3.11]
+    A[Define Bicep resources] --> B[Set linuxFxVersion PYTHON 3.11]
     B --> C[Set gunicorn startup command]
     C --> D[Apply app settings and workers]
     D --> E[Deploy template]

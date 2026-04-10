@@ -20,7 +20,7 @@ graph TD
     B --> C[Spring Boot JAR process]
     C --> D[server.port uses PORT]
     E[JAVA_OPTS memory and GC] --> C
-    F[linuxFxVersion JAVA|17-java17] --> B
+    F[linuxFxVersion JAVA 17-java17] --> B
 ```
 
 ## Supported baseline in this guide
