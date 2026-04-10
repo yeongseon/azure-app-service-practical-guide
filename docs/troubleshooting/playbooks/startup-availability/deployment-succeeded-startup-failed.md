@@ -30,6 +30,111 @@ last_reviewed: 2026-04-08
 ---
 # Deployment Succeeded but Startup Failed (Azure App Service Linux)
 
+## 0. Architecture & Baseline
+
+### Network Architecture
+
+The following diagram shows the request flow in Azure App Service Linux. When deployment succeeds but startup fails, the failure occurs in the **Container Startup** phase (highlighted).
+
+```mermaid
+flowchart LR
+    subgraph Internet
+        Client[Client]
+    end
+
+    subgraph Azure["Azure App Service"]
+        FrontEnd[Front End<br/>Load Balancer]
+        
+        subgraph Worker["Worker Instance"]
+            Platform[Platform<br/>Orchestrator]
+            Container[Container<br/>Runtime]
+            App[Application<br/>Process]
+        end
+    end
+
+    subgraph Backend["Backend Services"]
+        Storage[(Azure Storage<br/>/home mount)]
+        AppInsights[Application<br/>Insights]
+        KeyVault[Key Vault]
+    end
+
+    Client -->|HTTPS| FrontEnd
+    FrontEnd -->|Route| Platform
+    Platform -->|"1. Pull artifact"| Storage
+    Platform -->|"2. Start container"| Container
+    Container -->|"3. Execute startup cmd"| App
+    App -.->|Telemetry| AppInsights
+    App -.->|Secrets| KeyVault
+    Platform -->|"4. HTTP ping probe"| App
+
+    style Container stroke:#ff6b6b,stroke-width:3px
+    style App stroke:#ff6b6b,stroke-width:3px
+```
+
+!!! warning "Failure Point"
+    In this scenario, steps 1-2 succeed (deployment completes), but step 3-4 fails: the application process either crashes immediately, listens on wrong port, or never reaches probe-ready state.
+
+### Baseline: Healthy State Reference
+
+#### 1. Correct Configuration (Settings)
+
+```bash
+# Startup command - explicit module path and port binding
+STARTUP_COMMAND="gunicorn --bind 0.0.0.0:8000 --workers 4 src.app:app"
+
+# Required app settings
+SCM_DO_BUILD_DURING_DEPLOYMENT=true   # or false if using prebuilt artifacts
+WEBSITES_PORT=8000                     # must match --bind port
+WEBSITES_CONTAINER_START_TIME_LIMIT=230
+```
+
+| Setting | Correct Value | Common Mistake |
+|---------|---------------|----------------|
+| `linuxFxVersion` | `PYTHON\|3.11` | Version mismatch with code |
+| `appCommandLine` | `gunicorn --bind 0.0.0.0:8000 src.app:app` | `app:app` when code is in `src/` |
+| `WEBSITES_PORT` | `8000` | Different from `--bind` port |
+| `SCM_DO_BUILD_DURING_DEPLOYMENT` | `true` or `false` (consistent) | Changed without matching artifact |
+
+#### 2. Correct Project Structure
+
+```text
+/home/site/wwwroot/
+├── requirements.txt          # Dependencies manifest
+├── src/
+│   ├── __init__.py
+│   └── app.py               # Flask/FastAPI app with `app` object
+├── gunicorn.conf.py         # Optional: Gunicorn config
+└── startup.sh               # Optional: Custom startup script
+```
+
+#### 3. Healthy Startup Logs (Expected)
+
+```text
+[AppServicePlatformLogs]
+2026-04-04T10:00:00Z  Informational  Starting container for site <app-name>
+2026-04-04T10:00:05Z  Informational  Pulling image from registry
+2026-04-04T10:00:15Z  Informational  Container started successfully
+2026-04-04T10:00:20Z  Informational  Site started successfully
+
+[AppServiceConsoleLogs]
+2026-04-04T10:00:16Z  [INFO] Starting Gunicorn 21.2.0
+2026-04-04T10:00:16Z  [INFO] Listening at: http://0.0.0.0:8000 (1)
+2026-04-04T10:00:16Z  [INFO] Using worker: sync
+2026-04-04T10:00:16Z  [INFO] Booting worker with pid: 10
+2026-04-04T10:00:17Z  [INFO] Booting worker with pid: 11
+```
+
+#### 4. Healthy Metrics Baseline
+
+| Metric | Healthy Range | Alert Threshold |
+|--------|---------------|-----------------|
+| Startup time | < 30 seconds | > 60 seconds |
+| HTTP 503 during startup | 0-2 requests | > 10 requests |
+| Container restart count | 0-1 per day | > 3 per hour |
+| Memory at startup | < 50% of plan | > 80% of plan |
+
+---
+
 ## 1. Summary
 
 ### Symptom
