@@ -64,6 +64,7 @@ flowchart TD
 | Recipe | Problem solved | Key technologies |
 |---|---|---|
 | [VNet Integration](vnet-integration.md) | Private outbound connectivity | Delegated subnet, NSG, private endpoints |
+| [Private Network Deploy](private-network-deploy.md) | End-to-end private connectivity with identity | VNet integration, private endpoint, managed identity |
 
 ### Deployment recipes
 

@@ -116,6 +116,34 @@ content_sources:
 3. **Evidence Integrity**: Ensure every troubleshooting lab has a "Falsification" step that proves the hypothesis.
 4. **Content Source Validation**: All diagrams and platform content must have documented MSLearn sources.
 
+## Mandatory Oracle Review (AI Agent Rule)
+
+**ALL work performed by AI agents MUST undergo Oracle quality review before completion.**
+
+### Review Protocol
+1. **Work Completion**: Agent completes assigned task
+2. **Build Verification**: Run `mkdocs build --strict` (must pass)
+3. **Oracle Review Request**: Submit all changes to Oracle for quality review
+4. **Quality Criteria**:
+   - MSLearn-first policy compliance
+   - Code explanation tables present for all CLI commands
+   - Mermaid diagrams with proper `<!-- diagram-id: -->` comments
+   - Long CLI flags only (no `-g`, `-n` shortcuts)
+   - No PII in examples
+   - Proper frontmatter with `content_sources`
+5. **Iteration**: If Oracle identifies issues → fix and re-submit
+6. **Completion**: Only mark done when Oracle approves (100% quality)
+
+### Review Loop
+```
+while not oracle_approved:
+    fix_identified_issues()
+    run_build_verification()
+    submit_to_oracle()
+```
+
+**NO WORK IS CONSIDERED COMPLETE WITHOUT ORACLE APPROVAL.**
+
 ## Build & Contribution
 - **Build Command**: `pip install mkdocs-material mkdocs-minify-plugin && mkdocs build`
 - **Development Server**: `mkdocs serve`

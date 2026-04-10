@@ -43,6 +43,7 @@ Pick the recipe that matches your immediate requirement:
 - [Native dependencies on Linux App Service](./native-dependencies.md)
 - [Easy Auth](./easy-auth.md)
 - [Managed Identity](./managed-identity.md)
+- [Private Network Deployment](./private-network-deploy.md)
 - [Key Vault References](./key-vault-reference.md)
 - [Bring Your Own Storage](./bring-your-own-storage.md)
 

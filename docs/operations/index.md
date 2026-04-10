@@ -34,6 +34,7 @@ flowchart TD
 | Document | Description |
 |---|---|
 | [Scaling](./scaling.md) | Scale up, scale out, autoscale profiles, and operational verification |
+| [Deployment Methods](./deployment/index.md) | ZIP deploy, GitHub Actions, container delivery, and slot-based promotion choices |
 | [Deployment Slots](./deployment-slots.md) | Staging slots, swap workflows, canary routing, and rollback patterns |
 | [Health and Recovery](./health-recovery.md) | Health checks, auto-heal, runbooks, and incident recovery controls |
 | [Backup and Restore](./backup-restore.md) | Scheduled backup configuration, restore drills, and DR planning |

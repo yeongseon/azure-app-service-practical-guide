@@ -140,6 +140,7 @@ nav:
         - language-guides/python/recipes/key-vault-reference.md
         - language-guides/python/recipes/managed-identity.md
         - language-guides/python/recipes/native-dependencies.md
+        - Private Network Deployment: language-guides/python/recipes/private-network-deploy.md
         - Private Endpoints: language-guides/python/recipes/private-endpoints.md
         - language-guides/python/recipes/redis.md
         - VNet Integration: language-guides/python/recipes/vnet-integration.md
@@ -165,6 +166,7 @@ nav:
         - language-guides/nodejs/recipes/managed-identity.md
         - language-guides/nodejs/recipes/native-dependencies.md
         - language-guides/nodejs/recipes/nextjs.md
+        - Private Network Deployment: language-guides/nodejs/recipes/private-network-deploy.md
         - Private Endpoints: language-guides/nodejs/recipes/private-endpoints.md
         - language-guides/nodejs/recipes/redis.md
         - VNet Integration: language-guides/nodejs/recipes/vnet-integration.md
@@ -186,6 +188,7 @@ nav:
         - language-guides/java/recipes/easy-auth.md
         - language-guides/java/recipes/key-vault-reference.md
         - language-guides/java/recipes/managed-identity.md
+        - Private Network Deployment: language-guides/java/recipes/private-network-deploy.md
         - language-guides/java/recipes/private-endpoints.md
         - language-guides/java/recipes/redis.md
         - language-guides/java/recipes/vnet-integration.md
@@ -207,12 +210,19 @@ nav:
         - language-guides/dotnet/recipes/easy-auth.md
         - language-guides/dotnet/recipes/key-vault-reference.md
         - language-guides/dotnet/recipes/managed-identity.md
+        - Private Network Deployment: language-guides/dotnet/recipes/private-network-deploy.md
         - language-guides/dotnet/recipes/private-endpoints.md
         - language-guides/dotnet/recipes/redis.md
         - VNet Integration: language-guides/dotnet/recipes/vnet-integration.md
   - Operations:
     - operations/index.md
     - operations/scaling.md
+    - Deployment Methods:
+      - operations/deployment/index.md
+      - operations/deployment/zip-deploy.md
+      - operations/deployment/github-actions.md
+      - operations/deployment/slots-and-swap.md
+      - operations/deployment/container-deploy.md
     - operations/deployment-slots.md
     - operations/health-recovery.md
     - operations/backup-restore.md
