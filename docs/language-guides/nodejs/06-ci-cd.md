@@ -26,42 +26,42 @@ Automating your deployment pipeline ensures consistent and reliable releases. Th
     This tutorial assumes a production-ready App Service deployment with VNet integration, private endpoints for backend services, and managed identity for authentication.
 
 <!-- diagram-id: diagram-1 -->
-    ```mermaid
-    flowchart TD
-        INET[Internet] -->|HTTPS| WA["Web App\nApp Service S1\nLinux Node 18 LTS"]
+```mermaid
+flowchart TD
+    INET[Internet] -->|HTTPS| WA["Web App\nApp Service S1\nLinux Node 18 LTS"]
 
-        subgraph VNET["VNet 10.0.0.0/16"]
-            subgraph INT_SUB["Integration Subnet 10.0.1.0/24\nDelegation: Microsoft.Web/serverFarms"]
-                WA
-            end
-            subgraph PE_SUB["Private Endpoint Subnet 10.0.2.0/24"]
-                PE_KV[PE: Key Vault]
-                PE_SQL[PE: Azure SQL]
-                PE_ST[PE: Storage]
-            end
+    subgraph VNET["VNet 10.0.0.0/16"]
+        subgraph INT_SUB["Integration Subnet 10.0.1.0/24\nDelegation: Microsoft.Web/serverFarms"]
+            WA
         end
-
-        PE_KV --> KV[Key Vault]
-        PE_SQL --> SQL[Azure SQL]
-        PE_ST --> ST[Storage Account]
-
-        subgraph DNS[Private DNS Zones]
-            DNS_KV[privatelink.vaultcore.azure.net]
-            DNS_SQL[privatelink.database.windows.net]
-            DNS_ST[privatelink.blob.core.windows.net]
+        subgraph PE_SUB["Private Endpoint Subnet 10.0.2.0/24"]
+            PE_KV[PE: Key Vault]
+            PE_SQL[PE: Azure SQL]
+            PE_ST[PE: Storage]
         end
+    end
 
-        PE_KV -.-> DNS_KV
-        PE_SQL -.-> DNS_SQL
-        PE_ST -.-> DNS_ST
+    PE_KV --> KV[Key Vault]
+    PE_SQL --> SQL[Azure SQL]
+    PE_ST --> ST[Storage Account]
 
-        WA -.->|System-Assigned MI| ENTRA[Microsoft Entra ID]
-        WA --> AI[Application Insights]
+    subgraph DNS[Private DNS Zones]
+        DNS_KV[privatelink.vaultcore.azure.net]
+        DNS_SQL[privatelink.database.windows.net]
+        DNS_ST[privatelink.blob.core.windows.net]
+    end
 
-        style WA fill:#0078d4,color:#fff
-        style VNET fill:#E8F5E9,stroke:#4CAF50
-        style DNS fill:#E3F2FD
-    ```
+    PE_KV -.-> DNS_KV
+    PE_SQL -.-> DNS_SQL
+    PE_ST -.-> DNS_ST
+
+    WA -.->|System-Assigned MI| ENTRA[Microsoft Entra ID]
+    WA --> AI[Application Insights]
+
+    style WA fill:#0078d4,color:#fff
+    style VNET fill:#E8F5E9,stroke:#4CAF50
+    style DNS fill:#E3F2FD
+```
 
 ## What you'll learn
 - How OIDC authentication works with Azure
