@@ -21,6 +21,15 @@ related:
 summary: Classification model for App Service incidents - request path, startup, degradation, dependency, deployment.
 status: stable
 last_reviewed: 2026-04-08
+content_sources:
+  diagrams:
+    - id: troubleshooting-mental-model-diagram-1
+      type: flowchart
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
 ---
 # Troubleshooting Mental Model
 
@@ -40,6 +49,7 @@ This classification helps you avoid looking at the wrong logs from the start.
 
 ## Classification flowchart
 
+<!-- diagram-id: troubleshooting-mental-model-diagram-1 -->
 ```mermaid
 flowchart TD
     A[Observed symptom] --> B{Primary failure signal}

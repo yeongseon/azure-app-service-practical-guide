@@ -1,14 +1,23 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: troubleshooting-kql-http-slowest-requests-by-path-diagram-1
+      type: graph
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/azure-monitor/logs/get-started-queries
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
 ---
-
 # Slowest Requests by Path
 
 **Scenario**: Users report slowness, but only for some endpoints.
 **Data Source**: AppServiceHTTPLogs
 **Purpose**: Ranks request paths by tail latency to identify endpoint-level hotspots.
 
+<!-- diagram-id: troubleshooting-kql-http-slowest-requests-by-path-diagram-1 -->
 ```mermaid
 graph LR
     A[AppServiceHTTPLogs] --> B[Group by CsUriStem]

@@ -17,8 +17,30 @@ related:
 summary: Visual learning progressions for each language guide, showing the recommended order and relationships between tutorials.
 status: stable
 last_reviewed: 2026-04-08
+content_sources:
+  diagrams:
+    - id: visualization-learning-paths-diagram-1
+      type: graph
+      source: self-generated
+      justification: "Self-generated visualization synthesized from official Azure App Service documentation to explain guide structure and relationships."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/overview
+        - https://learn.microsoft.com/en-us/azure/app-service/environment/overview
+    - id: visualization-learning-paths-diagram-2
+      type: graph
+      source: self-generated
+      justification: "Self-generated visualization synthesized from official Azure App Service documentation to explain guide structure and relationships."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/overview
+        - https://learn.microsoft.com/en-us/azure/app-service/environment/overview
+    - id: visualization-learning-paths-diagram-3
+      type: graph
+      source: self-generated
+      justification: "Self-generated visualization synthesized from official Azure App Service documentation to explain guide structure and relationships."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/overview
+        - https://learn.microsoft.com/en-us/azure/app-service/environment/overview
 ---
-
 # Learning Paths
 
 Visual representations of the recommended learning progressions for each language guide. These graphs show how tutorials build on each other and connect to platform concepts and recipes.
@@ -27,6 +49,7 @@ Visual representations of the recommended learning progressions for each languag
 
 Each language guide follows a consistent structure from local development to production deployment:
 
+<!-- diagram-id: visualization-learning-paths-diagram-1 -->
 ```mermaid
 graph LR
     subgraph Foundation
@@ -75,6 +98,7 @@ graph LR
 
 After completing the core path, explore recipes based on your needs:
 
+<!-- diagram-id: visualization-learning-paths-diagram-2 -->
 ```mermaid
 graph TD
     Core[Core Path Complete] --> Data[Data Storage]
@@ -178,6 +202,7 @@ graph TD
 
 Regardless of language, all paths connect to these platform concepts:
 
+<!-- diagram-id: visualization-learning-paths-diagram-3 -->
 ```mermaid
 graph TD
     subgraph Language Guides

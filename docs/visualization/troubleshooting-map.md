@@ -21,8 +21,44 @@ prerequisites:
 summary: Visual navigation map for troubleshooting workflows, showing connections between playbooks, labs, KQL queries, and evidence patterns.
 status: stable
 last_reviewed: 2026-04-08
+content_sources:
+  diagrams:
+    - id: visualization-troubleshooting-map-diagram-1
+      type: graph
+      source: self-generated
+      justification: "Self-generated visualization synthesized from official Azure App Service documentation to explain guide structure and relationships."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/overview
+        - https://learn.microsoft.com/en-us/azure/app-service/environment/overview
+    - id: visualization-troubleshooting-map-diagram-2
+      type: graph
+      source: self-generated
+      justification: "Self-generated visualization synthesized from official Azure App Service documentation to explain guide structure and relationships."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/overview
+        - https://learn.microsoft.com/en-us/azure/app-service/environment/overview
+    - id: visualization-troubleshooting-map-diagram-3
+      type: graph
+      source: self-generated
+      justification: "Self-generated visualization synthesized from official Azure App Service documentation to explain guide structure and relationships."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/overview
+        - https://learn.microsoft.com/en-us/azure/app-service/environment/overview
+    - id: visualization-troubleshooting-map-diagram-4
+      type: graph
+      source: self-generated
+      justification: "Self-generated visualization synthesized from official Azure App Service documentation to explain guide structure and relationships."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/overview
+        - https://learn.microsoft.com/en-us/azure/app-service/environment/overview
+    - id: visualization-troubleshooting-map-diagram-5
+      type: graph
+      source: self-generated
+      justification: "Self-generated visualization synthesized from official Azure App Service documentation to explain guide structure and relationships."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/overview
+        - https://learn.microsoft.com/en-us/azure/app-service/environment/overview
 ---
-
 # Troubleshooting Map
 
 Navigate the troubleshooting documentation visually. This map shows how symptoms lead to playbooks, how playbooks connect to labs and KQL queries, and how evidence patterns validate hypotheses.
@@ -70,6 +106,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 Start your troubleshooting journey from these entry points:
 
+<!-- diagram-id: visualization-troubleshooting-map-diagram-1 -->
 ```mermaid
 graph TD
     subgraph Entry Points
@@ -97,6 +134,7 @@ graph TD
 
 ### Startup & Availability
 
+<!-- diagram-id: visualization-troubleshooting-map-diagram-2 -->
 ```mermaid
 graph LR
     subgraph Playbooks
@@ -132,6 +170,7 @@ graph LR
 
 ### Performance
 
+<!-- diagram-id: visualization-troubleshooting-map-diagram-3 -->
 ```mermaid
 graph LR
     subgraph Playbooks
@@ -170,6 +209,7 @@ graph LR
 
 ### Outbound Network
 
+<!-- diagram-id: visualization-troubleshooting-map-diagram-4 -->
 ```mermaid
 graph LR
     subgraph Playbooks
@@ -191,6 +231,7 @@ graph LR
 
 Each playbook hypothesis is validated through a chain of evidence:
 
+<!-- diagram-id: visualization-troubleshooting-map-diagram-5 -->
 ```mermaid
 graph TD
     subgraph Hypothesis

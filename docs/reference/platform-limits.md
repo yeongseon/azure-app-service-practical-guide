@@ -1,14 +1,23 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: reference-platform-limits-diagram-1
+      type: graph
+      source: self-generated
+      justification: "Self-generated reference diagram synthesized from official Azure App Service documentation for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/overview
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
 ---
-
 # Platform Limits & Quotas
 
 Quick reference for common Azure App Service platform limits and quota-related behaviors.
 
 ## Overview
 
+<!-- diagram-id: reference-platform-limits-diagram-1 -->
 ```mermaid
 graph TD
     A[Subscription Quota] --> B[App Service Plan]

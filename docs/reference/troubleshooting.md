@@ -1,14 +1,23 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: reference-troubleshooting-diagram-1
+      type: flowchart
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
 ---
-
 # Troubleshooting
 
 Platform-level troubleshooting reference for Azure App Service across runtimes.
 
 ## Overview
 
+<!-- diagram-id: reference-troubleshooting-diagram-1 -->
 ```mermaid
 flowchart TD
     A[Incident Symptom] --> B[Collect Baseline]

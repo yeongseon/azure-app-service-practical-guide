@@ -1,8 +1,15 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: index-diagram-1
+      type: flowchart
+      source: self-generated
+      justification: "Self-generated navigation diagram synthesized from official Azure App Service overview documentation for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/overview
 ---
-
 # Azure App Service Practical Guide
 
 Comprehensive, practical documentation for building, deploying, operating, and troubleshooting web applications on Azure App Service.
@@ -53,6 +60,7 @@ For orientation and study order, start with [Start Here](start-here/overview.md)
 
 ## Learning flow
 
+<!-- diagram-id: index-diagram-1 -->
 ```mermaid
 flowchart LR
     A[Start Here] --> B[Platform]

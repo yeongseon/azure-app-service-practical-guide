@@ -113,6 +113,10 @@ Use the built-in endpoint:
 curl "https://$APP_NAME.azurewebsites.net/api/requests/log-levels?userId=monitor-demo"
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `curl "https://$APP_NAME.azurewebsites.net/api/requests/log-levels?userId=monitor-demo"` | Calls the sample endpoint that emits predictable logs across multiple severities. |
+
 The endpoint emits one log per severity (DEBUG/INFO/WARN/ERROR).
 
 ### Stream logs in real time
@@ -122,6 +126,12 @@ az webapp log tail \
   --resource-group "$RG" \
   --name "$APP_NAME"
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp log tail` | Opens the live App Service log stream. |
+| `--resource-group "$RG"` | Targets the resource group that contains the app. |
+| `--name "$APP_NAME"` | Selects the web app whose logs should be streamed. |
 
 If log stream is empty, ensure application logging is enabled.
 
@@ -135,6 +145,13 @@ az webapp log config \
   --level information \
   --output json
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp log config` | Configures App Service application logging behavior. |
+| `--application-logging filesystem` | Writes application logs to the local App Service filesystem. |
+| `--level information` | Captures logs at information level and above. |
+| `--output json` | Returns the logging configuration as JSON. |
 
 !!! note "Production guidance"
     Prefer central telemetry in Application Insights for long-term analytics. Filesystem logs are best for short-lived debugging.
@@ -234,6 +251,12 @@ az webapp config appsettings set \
   --settings LOGGING_LEVEL_COM_EXAMPLE_GUIDE=DEBUG \
   --output json
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp config appsettings set` | Updates app settings to temporarily increase logging detail. |
+| `--settings LOGGING_LEVEL_COM_EXAMPLE_GUIDE=DEBUG` | Raises the sample package log level to DEBUG. |
+| `--output json` | Returns the updated app settings in JSON format. |
 
 ### KQL table names differ in your workspace
 

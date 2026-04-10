@@ -1,12 +1,21 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: troubleshooting-lab-guides-index-diagram-1
+      type: graph
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
 ---
-
 # Hands-on Labs
 
 Bicep-based reproduction environments for each troubleshooting scenario. Deploy to your Azure subscription, trigger the symptom, observe signals, then clean up.
 
+<!-- diagram-id: troubleshooting-lab-guides-index-diagram-1 -->
 ```mermaid
 graph TD
     A[Hands-on Labs] --> B[Performance]

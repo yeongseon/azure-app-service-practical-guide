@@ -96,6 +96,12 @@ npm install
 npm start
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `cd app` | Moves into the sample Node.js application directory |
+| `npm install` | Installs the dependencies declared in `package.json` |
+| `npm start` | Starts the application by running the package start script |
+
 Visit http://localhost:3000
 
 ## App Service-Safe Defaults
@@ -116,6 +122,12 @@ app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `const PORT = process.env.PORT || 3000;` | Uses the App Service-provided port in Azure and falls back to `3000` locally |
+| `app.listen(PORT, ...)` | Starts the Express server on the selected port |
+| ``console.log(`Server running on port ${PORT}`);`` | Writes a startup message so you can confirm the active port |
 
 !!! warning "Common Mistake"
     Never hardcode ports like `3000` or bind to `localhost` (127.0.0.1) only. App Service expects the app to listen on `0.0.0.0:PORT`.
@@ -140,6 +152,10 @@ Test production mode locally:
 NODE_ENV=production npm start
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `NODE_ENV=production npm start` | Starts the app in production mode to test Azure-like behavior locally |
+
 This enables:
 - JSON log format (instead of colored dev logs)
 - Production error messages (no stack traces in responses)
@@ -152,6 +168,10 @@ This enables:
 curl http://localhost:3000/health
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `curl http://localhost:3000/health` | Calls the health endpoint to confirm the local app is responding |
+
 Expected response:
 ```json
 {
@@ -160,11 +180,20 @@ Expected response:
 }
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `status` | Shows the application reported itself as healthy |
+| `timestamp` | Records when the health response was generated |
+
 ### App Info
 
 ```bash
 curl http://localhost:3000/info
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `curl http://localhost:3000/info` | Retrieves runtime metadata from the sample app |
 
 Expected response:
 ```json
@@ -177,6 +206,14 @@ Expected response:
 }
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `name` | Identifies the application package |
+| `version` | Shows the deployed app version |
+| `node` | Shows the active Node.js runtime version |
+| `environment` | Confirms whether the app is running in development or production mode |
+| `telemetryMode` | Shows which logging/telemetry configuration is active |
+
 !!! note "Production vs Development"
     When running on Azure, `environment` will show `"production"` instead of `"development"`.
 
@@ -186,12 +223,23 @@ Expected response:
 curl "http://localhost:3000/api/requests/log-levels?userId=local-user"
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `curl "http://localhost:3000/api/requests/log-levels?userId=local-user"` | Triggers the demo endpoint so the app emits sample logs with a test user ID |
+
 **Example output:**
 ```json
 {"level":"info","message":"Log level test requested","userId":"local-user","timestamp":"2026-04-01T14:00:00.000Z"}
 {"level":"error","message":"Sample error log","userId":"local-user","timestamp":"2026-04-01T14:00:00.005Z"}
 {"level":"warn","message":"Sample warning log","userId":"local-user","timestamp":"2026-04-01T14:00:00.010Z"}
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `level` | Indicates the severity of each generated log entry |
+| `message` | Describes the event that was logged |
+| `userId` | Carries the request context into each log record |
+| `timestamp` | Shows when each log entry was emitted |
 
 Check terminal output for structured logs at all severity levels.
 
@@ -205,6 +253,11 @@ lsof -i :3000
 kill -9 <PID>
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `lsof -i :3000` | Finds the process currently using port `3000` |
+| `kill -9 <PID>` | Force-stops the process that is blocking the local server port |
+
 ### Module Not Found
 
 ```bash
@@ -212,6 +265,12 @@ cd app
 rm -rf node_modules package-lock.json
 npm install
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `cd app` | Moves back into the sample application directory |
+| `rm -rf node_modules package-lock.json` | Removes installed packages and the lock file to reset the local dependency state |
+| `npm install` | Reinstalls dependencies from scratch |
 
 ## Next Steps
 

@@ -1,14 +1,23 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: troubleshooting-kql-http-latency-trend-by-status-code-diagram-1
+      type: graph
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/azure-monitor/logs/get-started-queries
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
 ---
-
 # Latency Trend by Status Code
 
 **Scenario**: Performance degradation where you need to distinguish normal successful traffic from failing traffic latency.
 **Data Source**: AppServiceHTTPLogs
 **Purpose**: Shows P50/P95/P99 latency trends split by HTTP status code to identify whether specific status groups are driving tail latency.
 
+<!-- diagram-id: troubleshooting-kql-http-latency-trend-by-status-code-diagram-1 -->
 ```mermaid
 graph LR
     A[AppServiceHTTPLogs] --> B[Percentile Calc per Status]

@@ -1,8 +1,23 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: troubleshooting-index-diagram-1
+      type: graph
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+    - id: troubleshooting-index-diagram-2
+      type: graph
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
 ---
-
 # App Service OSS Troubleshooting
 
 A hypothesis-driven troubleshooting guide for Azure App Service OSS workloads.
@@ -17,6 +32,7 @@ This is **not** a general Azure tutorial. It is designed to help engineers move 
 
 ## How It Works
 
+<!-- diagram-id: troubleshooting-index-diagram-1 -->
 ```mermaid
 graph LR
     A[Observe Symptom] --> B[List Hypotheses]
@@ -52,6 +68,7 @@ Every playbook follows this flow:
 
 Use this to route to the right playbook in under 60 seconds:
 
+<!-- diagram-id: troubleshooting-index-diagram-2 -->
 ```mermaid
 graph TD
     A[Symptom Observed] --> B{App returns HTTP errors?}

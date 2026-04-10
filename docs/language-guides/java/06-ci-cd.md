@@ -179,6 +179,23 @@ jobs:
           curl --fail "https://${{ vars.APP_NAME }}.azurewebsites.net/info"
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `on.push.branches: [ "main" ]` | Triggers the workflow automatically for pushes to `main`. |
+| `on.pull_request.branches: [ "main" ]` | Runs CI validation for pull requests targeting `main`. |
+| `actions/checkout@v4` | Checks out the repository so the workflow can build and deploy it. |
+| `actions/setup-java@v4` | Installs JDK 17 and configures Maven caching for the workflow. |
+| `run: ./mvnw --batch-mode clean verify` | Builds the app and runs tests in CI using Maven Wrapper. |
+| `clean` | Removes previous Maven build artifacts before verification. |
+| `verify` | Executes the Maven lifecycle up to verification, including tests. |
+| `azure/login@v2` | Authenticates the workflow to Azure before deployment. |
+| `run: ./mvnw --batch-mode clean package -DskipTests` | Packages the deployable JAR in the deployment job. |
+| `package` | Creates the Spring Boot JAR artifact for deployment. |
+| `-DskipTests` | Skips tests in the deploy stage because validation already ran in the build stage. |
+| `run: ./mvnw --batch-mode azure-webapp:deploy` | Deploys the app to Azure App Service using the Maven plugin configuration. |
+| `curl --fail "https://${{ vars.APP_NAME }}.azurewebsites.net/health"` | Fails the workflow if the deployed app health endpoint is unavailable. |
+| `curl --fail "https://${{ vars.APP_NAME }}.azurewebsites.net/info"` | Validates that the deployed app serves runtime metadata after deployment. |
+
 ### Why deploy with Maven plugin in CI
 
 - Reuses the same deployment contract defined in `pom.xml`

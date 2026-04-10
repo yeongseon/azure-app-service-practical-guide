@@ -14,12 +14,20 @@ products:
 summary: Standard taxonomy for document types, relationship fields, and frontmatter schema.
 status: stable
 last_reviewed: 2026-04-08
+content_sources:
+  diagrams:
+    - id: meta-taxonomy-diagram-1
+      type: flowchart
+      source: self-generated
+      justification: "Self-generated navigation diagram synthesized from official Azure App Service overview documentation for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/overview
 ---
-
 # Documentation Taxonomy
 
 This document defines the standard taxonomy used across the Azure App Service Practical Guide for document classification, relationships, and frontmatter metadata.
 
+<!-- diagram-id: meta-taxonomy-diagram-1 -->
 ```mermaid
 flowchart TD
     subgraph "Document Types"

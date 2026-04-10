@@ -94,11 +94,20 @@ builder.Services.AddApplicationInsightsTelemetry();
 builder.Services.AddControllers();
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `builder.Services.AddApplicationInsightsTelemetry();` | Registers Application Insights telemetry collection for the ASP.NET Core app. |
+| `builder.Services.AddControllers();` | Adds controller support to the dependency injection container. |
+
 Package reference in project:
 
 ```xml
 <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.22.0" />
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `<PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.22.0" />` | Adds the ASP.NET Core Application Insights SDK package to the project. |
 
 ### 2) Add structured request logging
 
@@ -119,6 +128,13 @@ public sealed class RequestLogController : ControllerBase
 }
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `[Route("api/requests")]` | Maps the controller under the `/api/requests` route prefix. |
+| `private readonly ILogger<RequestLogController> _logger;` | Injects a typed logger for structured application logs. |
+| `_logger.LogInformation("Sample request received for {UserId}", userId);` | Writes a structured informational log entry that includes the user ID. |
+| `return Ok(new { status = "ok", userId, timestamp = DateTime.UtcNow });` | Returns a response that confirms the sample request was handled. |
+
 ### 3) Enable/verify App Service diagnostics logs
 
 ```bash
@@ -131,11 +147,19 @@ az webapp log config \
   --output json
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp log config --resource-group "$RESOURCE_GROUP_NAME" --name "$WEB_APP_NAME" --application-logging filesystem --level information --web-server-logging filesystem --output json` | Enables application and web server filesystem logging for the web app. |
+
 Stream logs live:
 
 ```bash
 az webapp log tail --resource-group "$RESOURCE_GROUP_NAME" --name "$WEB_APP_NAME"
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp log tail --resource-group "$RESOURCE_GROUP_NAME" --name "$WEB_APP_NAME"` | Streams live App Service logs to the terminal. |
 
 ### 4) Understand automatic collection
 
@@ -173,6 +197,13 @@ public sealed class BusinessTelemetryService
     }
 }
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `using Microsoft.ApplicationInsights;` | Imports the `TelemetryClient` API used for custom telemetry. |
+| `private readonly TelemetryClient _telemetryClient;` | Stores the Application Insights client for reuse in the service. |
+| `_telemetryClient.TrackEvent("CheckoutCompleted", new() { ["region"] = region });` | Sends a custom business event with region metadata. |
+| `_telemetryClient.TrackMetric("CheckoutAmount", (double)amount);` | Records a numeric metric for checkout amount. |
 
 ### 6) KQL for .NET app operations
 
@@ -228,6 +259,10 @@ exceptions
 curl --silent "https://$WEB_APP_NAME.azurewebsites.net/api/requests/sample?userId=ops-check"
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `curl --silent "https://$WEB_APP_NAME.azurewebsites.net/api/requests/sample?userId=ops-check"` | Triggers a request that should generate request telemetry and log entries. |
+
 Then confirm:
 
 1. Request appears in Application Insights `requests` table.
@@ -252,6 +287,10 @@ az webapp config appsettings set \
   --name "$WEB_APP_NAME" \
   --settings Logging__LogLevel__Default=Warning Logging__LogLevel__Microsoft.AspNetCore=Warning
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp config appsettings set --resource-group "$RESOURCE_GROUP_NAME" --name "$WEB_APP_NAME" --settings Logging__LogLevel__Default=Warning Logging__LogLevel__Microsoft.AspNetCore=Warning` | Raises log level thresholds to reduce noisy application logging. |
 
 ### Missing dependency telemetry
 

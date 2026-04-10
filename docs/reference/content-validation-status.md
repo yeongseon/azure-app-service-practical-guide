@@ -1,3 +1,22 @@
+---
+content_sources:
+  diagrams:
+    - id: reference-content-validation-status-diagram-1
+      type: pie
+      source: self-generated
+      justification: "Self-generated reference diagram synthesized from official Azure App Service documentation for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/overview
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+    - id: architecture-overview
+      type: flowchart
+      source: self-generated
+      justification: "Self-generated reference diagram synthesized from official Azure App Service documentation for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/overview
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+---
+
 # Content Source Validation Status
 
 This page tracks the source validation status of all documentation content, including diagrams and text content. All content must be traceable to official Microsoft Learn documentation.
@@ -17,6 +36,7 @@ This page tracks the source validation status of all documentation content, incl
     1. Linked to an official MSLearn URL, OR
     2. Marked as `self-generated` with clear justification
 
+<!-- diagram-id: reference-content-validation-status-diagram-1 -->
 ```mermaid
 pie title Content Source Status
     "Not Validated" : 66

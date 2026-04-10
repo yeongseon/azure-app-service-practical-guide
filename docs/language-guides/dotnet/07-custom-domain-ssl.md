@@ -103,6 +103,10 @@ az webapp show \
   --output tsv
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp show --resource-group "$RESOURCE_GROUP_NAME" --name "$WEB_APP_NAME" --query "defaultHostName" --output tsv` | Returns the default Azure-hosted hostname for the web app. |
+
 ### 3) Add DNS records
 
 For subdomain (`api.contoso.com`), add CNAME:
@@ -122,6 +126,10 @@ az webapp config hostname add \
   --output json
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp config hostname add --resource-group "$RESOURCE_GROUP_NAME" --webapp-name "$WEB_APP_NAME" --hostname "api.contoso.com" --output json` | Adds the custom hostname binding to the App Service app. |
+
 If validation fails, wait for DNS propagation and retry.
 
 ### 5) Create managed certificate
@@ -134,6 +142,10 @@ az webapp config ssl create \
   --output json
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp config ssl create --resource-group "$RESOURCE_GROUP_NAME" --name "$WEB_APP_NAME" --hostname "api.contoso.com" --output json` | Requests an App Service managed certificate for the custom domain. |
+
 ### 6) Bind certificate to hostname
 
 ```bash
@@ -145,6 +157,10 @@ az webapp config ssl bind \
   --output json
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp config ssl bind --resource-group "$RESOURCE_GROUP_NAME" --name "$WEB_APP_NAME" --certificate-thumbprint "<thumbprint>" --ssl-type SNI --output json` | Binds the issued certificate to the hostname using SNI-based TLS. |
+
 ### 7) Enforce HTTPS-only
 
 ```bash
@@ -154,6 +170,10 @@ az webapp update \
   --https-only true \
   --output json
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp update --resource-group "$RESOURCE_GROUP_NAME" --name "$WEB_APP_NAME" --https-only true --output json` | Forces the app to accept only HTTPS traffic. |
 
 ### 8) Keep app behavior host-agnostic
 
@@ -165,6 +185,13 @@ app.MapGet("/info", (HttpContext context) => Results.Ok(new
     environment = app.Environment.EnvironmentName
 }));
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `app.MapGet("/info", ...)` | Adds a lightweight endpoint for checking host and scheme values at runtime. |
+| `context.Request.Host.Value` | Returns the hostname used by the incoming request. |
+| `context.Request.Scheme` | Returns whether the request arrived over HTTP or HTTPS. |
+| `app.Environment.EnvironmentName` | Returns the current ASP.NET Core environment name. |
 
 This helps verify traffic is actually reaching the expected domain over HTTPS.
 
@@ -192,6 +219,11 @@ curl --include "https://api.contoso.com/health"
 curl --silent "https://api.contoso.com/info"
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `curl --include "https://api.contoso.com/health"` | Verifies HTTPS connectivity and the health endpoint response. |
+| `curl --silent "https://api.contoso.com/info"` | Checks that the app reports the expected custom host and scheme. |
+
 Validate:
 
 - TLS handshake succeeds with valid certificate chain
@@ -213,6 +245,10 @@ List certificates and use exact thumbprint:
 ```bash
 az webapp config ssl list --resource-group "$RESOURCE_GROUP_NAME" --output table
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp config ssl list --resource-group "$RESOURCE_GROUP_NAME" --output table` | Lists available certificates so you can confirm the correct thumbprint. |
 
 ### Intermittent 404 after domain cutover
 

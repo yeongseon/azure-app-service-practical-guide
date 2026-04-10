@@ -92,6 +92,10 @@ az webapp config appsettings list \
   --output table
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp config appsettings list --resource-group "$RESOURCE_GROUP_NAME" --name "$WEB_APP_NAME" --output table` | Lists the current App Service application settings in table form. |
+
 Use App Settings for non-secret and secret values, but prefer managed identity where possible.
 
 ### 2) Set environment and app-level options
@@ -104,6 +108,10 @@ az webapp config appsettings set \
   --output json
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp config appsettings set --resource-group "$RESOURCE_GROUP_NAME" --name "$WEB_APP_NAME" --settings ASPNETCORE_ENVIRONMENT=Production Logging__LogLevel__Default=Information FeatureFlags__UseBeta=false --output json` | Sets environment and application configuration values for the web app. |
+
 In ASP.NET Core, `__` maps to `:` in hierarchical keys.
 
 ### 3) Configure Connection Strings (typed)
@@ -115,6 +123,10 @@ az webapp config connection-string set \
   --connection-string-type SQLAzure \
   --settings MainDb="Server=tcp:<server>.database.windows.net,1433;Database=<db>;Authentication=Active Directory Managed Identity;Encrypt=True;TrustServerCertificate=False;"
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp config connection-string set --resource-group "$RESOURCE_GROUP_NAME" --name "$WEB_APP_NAME" --connection-string-type SQLAzure --settings MainDb="..."` | Adds a typed Azure SQL connection string to the web app configuration. |
 
 App Service exposes this as `SQLAZURECONNSTR_MainDb` to the process.
 
@@ -147,6 +159,11 @@ builder.Services.Configure<FeatureFlags>(
     builder.Configuration.GetSection("FeatureFlags"));
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `public sealed record FeatureFlags(bool UseBeta);` | Defines a strongly typed configuration model for feature flags. |
+| `builder.Services.Configure<FeatureFlags>(builder.Configuration.GetSection("FeatureFlags"));` | Binds the `FeatureFlags` configuration section to the typed options model. |
+
 ```csharp
 public sealed class InfoController : ControllerBase
 {
@@ -163,6 +180,12 @@ public sealed class InfoController : ControllerBase
 }
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `_configuration["ASPNETCORE_ENVIRONMENT"] ?? "Production"` | Reads the effective environment name with a production fallback. |
+| `_configuration["FeatureFlags:UseBeta"]` | Reads a nested feature flag value from configuration. |
+| `Ok(new { ... })` | Returns the resolved configuration values in the API response. |
+
 ### 6) Slot-sticky settings
 
 Use slot settings for values that must stay with a slot during swap (for example, staging database connection).
@@ -174,6 +197,10 @@ az webapp config appsettings set \
   --slot "staging" \
   --slot-settings ConnectionStrings__MainDb="Server=tcp:<staging-server>.database.windows.net,1433;Database=<staging-db>;Authentication=Active Directory Managed Identity;Encrypt=True;"
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp config appsettings set --resource-group "$RESOURCE_GROUP_NAME" --name "$WEB_APP_NAME" --slot "staging" --slot-settings ConnectionStrings__MainDb="..."` | Sets a staging-slot-only setting that stays with the slot during swaps. |
 
 !!! warning "Never let staging data source swap into production"
     Mark environment-specific endpoints and credentials as slot-sticky.
@@ -206,6 +233,11 @@ az webapp config appsettings list --resource-group "$RESOURCE_GROUP_NAME" --name
 curl --silent "https://$WEB_APP_NAME.azurewebsites.net/info"
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp config appsettings list --resource-group "$RESOURCE_GROUP_NAME" --name "$WEB_APP_NAME" --output table` | Verifies the configured App Settings on the deployed app. |
+| `curl --silent "https://$WEB_APP_NAME.azurewebsites.net/info"` | Calls the app endpoint to confirm configuration values are being read at runtime. |
+
 Check that:
 
 - `ASPNETCORE_ENVIRONMENT` is `Production`
@@ -221,6 +253,10 @@ Restart app after major config updates:
 ```bash
 az webapp restart --resource-group "$RESOURCE_GROUP_NAME" --name "$WEB_APP_NAME" --output none
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp restart --resource-group "$RESOURCE_GROUP_NAME" --name "$WEB_APP_NAME" --output none` | Restarts the web app so configuration changes are fully applied. |
 
 ### Connection string not found
 

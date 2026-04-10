@@ -1,8 +1,44 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: troubleshooting-lab-guides-dns-vnet-resolution-diagram-1
+      type: flowchart
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+    - id: troubleshooting-lab-guides-dns-vnet-resolution-diagram-2
+      type: sequenceDiagram
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+    - id: troubleshooting-lab-guides-dns-vnet-resolution-diagram-3
+      type: sequenceDiagram
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+    - id: troubleshooting-lab-guides-dns-vnet-resolution-diagram-4
+      type: flowchart
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+    - id: troubleshooting-lab-guides-dns-vnet-resolution-diagram-5
+      type: graph
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
 ---
-
 # Lab: DNS Resolution Behavior for App Service Before and After VNet Integration
 
 This Level 3 lab guide documents how DNS behaves in Azure App Service Linux when the app is not VNet-integrated, and how failures emerge after introducing VNet integration with misconfigured DNS components.
@@ -83,6 +119,7 @@ If private zone linkage is missing, results may degrade to:
 
 ### 1.6 Diagram: end-to-end resolution and connect path
 
+<!-- diagram-id: troubleshooting-lab-guides-dns-vnet-resolution-diagram-1 -->
 ```mermaid
 flowchart LR
     A[App code calls requests.get or socket.getaddrinfo] --> B[Container resolver 127.0.0.11]
@@ -100,6 +137,7 @@ flowchart LR
 
 ### 1.7 Diagram: non-VNet baseline behavior in this experiment
 
+<!-- diagram-id: troubleshooting-lab-guides-dns-vnet-resolution-diagram-2 -->
 ```mermaid
 sequenceDiagram
     participant App as App Service app
@@ -117,6 +155,7 @@ sequenceDiagram
 
 ### 1.8 Diagram: VNet-integrated failure mode (target scenario)
 
+<!-- diagram-id: troubleshooting-lab-guides-dns-vnet-resolution-diagram-3 -->
 ```mermaid
 sequenceDiagram
     participant App as App Service app (VNet-integrated)
@@ -274,6 +313,7 @@ Control approach:
 
 ### 2.8 Decision tree for investigators
 
+<!-- diagram-id: troubleshooting-lab-guides-dns-vnet-resolution-diagram-4 -->
 ```mermaid
 flowchart TD
     A[/resolve success?] -->|No| B[DNS failure confirmed]
@@ -818,6 +858,7 @@ This section defines what you SHOULD observe at each phase of the lab. Use it to
 
 ### Evidence Timeline
 
+<!-- diagram-id: troubleshooting-lab-guides-dns-vnet-resolution-diagram-5 -->
 ```mermaid
 graph LR
     A[Baseline Capture] --> B[Trigger Fault]

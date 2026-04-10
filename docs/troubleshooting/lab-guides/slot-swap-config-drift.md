@@ -1,8 +1,51 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: troubleshooting-lab-guides-slot-swap-config-drift-diagram-1
+      type: flowchart
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+    - id: troubleshooting-lab-guides-slot-swap-config-drift-diagram-2
+      type: sequenceDiagram
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+    - id: troubleshooting-lab-guides-slot-swap-config-drift-diagram-3
+      type: flowchart
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+    - id: troubleshooting-lab-guides-slot-swap-config-drift-diagram-4
+      type: flowchart
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+    - id: troubleshooting-lab-guides-slot-swap-config-drift-diagram-5
+      type: flowchart
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+    - id: troubleshooting-lab-guides-slot-swap-config-drift-diagram-6
+      type: graph
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
 ---
-
 # Lab Guide: Slot Swap Config Drift (Sticky vs Non-Sticky Settings)
 
 This Level 3 lab guide reproduces a slot swap on Azure App Service Linux and proves, using real artifacts, how configuration behaves across swap boundaries. The lab shows why teams often perceive "drift" after a healthy swap.
@@ -43,6 +86,7 @@ To troubleshoot accurately, you must separate:
 
 Each slot is a separate runtime endpoint with its own hostname and runtime lifecycle.
 
+<!-- diagram-id: troubleshooting-lab-guides-slot-swap-config-drift-diagram-1 -->
 ```mermaid
 flowchart LR
     subgraph AppService[Single App Service App]
@@ -59,6 +103,7 @@ Even when slots share plan resources, they maintain independent runtime state an
 
 Swap can be thought of as **role exchange** with warm-up safeguards, not just a file copy.
 
+<!-- diagram-id: troubleshooting-lab-guides-slot-swap-config-drift-diagram-2 -->
 ```mermaid
 sequenceDiagram
     participant Ops as Operator
@@ -120,6 +165,7 @@ resource slotConfigNames 'Microsoft.Web/sites/config@2023-12-01' = {
 
 ### 1.6 Expected before/after state map
 
+<!-- diagram-id: troubleshooting-lab-guides-slot-swap-config-drift-diagram-3 -->
 ```mermaid
 flowchart TB
     subgraph BeforeSwap[Before Swap]
@@ -167,6 +213,7 @@ This lab provides an evidence-driven method to answer all four.
 
 ### 2.2 Causal chain
 
+<!-- diagram-id: troubleshooting-lab-guides-slot-swap-config-drift-diagram-4 -->
 ```mermaid
 flowchart LR
     A[Pre-swap config divergence by slot] --> B[Swap staging to production]
@@ -449,6 +496,7 @@ HTTP verification calls:
 
 ### 3.13 Decision tree for incident responders
 
+<!-- diagram-id: troubleshooting-lab-guides-slot-swap-config-drift-diagram-5 -->
 ```mermaid
 flowchart TD
     A[Post-swap config surprise] --> B{Is setting sticky?}
@@ -762,6 +810,7 @@ This section defines what you SHOULD observe at each phase of the lab. Use it to
 
 ### Evidence Timeline
 
+<!-- diagram-id: troubleshooting-lab-guides-slot-swap-config-drift-diagram-6 -->
 ```mermaid
 graph LR
     A[Baseline Capture] --> B[Trigger Fault]

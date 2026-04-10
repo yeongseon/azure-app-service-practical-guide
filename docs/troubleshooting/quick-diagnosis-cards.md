@@ -18,6 +18,15 @@ related:
 summary: Rapid symptom-to-action cards for common App Service issues.
 status: stable
 last_reviewed: 2026-04-08
+content_sources:
+  diagrams:
+    - id: troubleshooting-quick-diagnosis-cards-diagram-1
+      type: graph
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
 ---
 # Quick Diagnosis Cards
 
@@ -29,6 +38,7 @@ Use these when you have 60 seconds to identify the failure category.
 
 ## Card 1: App Returns 503 After Deployment
 
+<!-- diagram-id: troubleshooting-quick-diagnosis-cards-diagram-1 -->
 ```mermaid
 graph LR
     A[503 after deploy] --> B[First Query]

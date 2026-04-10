@@ -85,6 +85,13 @@ az webapp config appsettings set \
   --settings FLASK_ENV=production APP_ENV=production LOG_LEVEL=INFO
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp config appsettings set` | Creates or updates environment variables for the App Service app. |
+| `--resource-group $RG` | Targets the resource group that contains the web app. |
+| `--name $APP_NAME` | Selects the web app whose settings should be updated. |
+| `--settings FLASK_ENV=production APP_ENV=production LOG_LEVEL=INFO` | Sets production runtime values for Flask environment, app environment, and log level. |
+
 In Flask code, read settings from environment variables:
 
 ```python
@@ -94,6 +101,13 @@ FLASK_ENV = os.getenv("FLASK_ENV", "production")
 APP_ENV = os.getenv("APP_ENV", "production")
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
 ```
+
+| Code | Purpose |
+|------|---------|
+| `import os` | Loads Python's standard library module for reading environment variables. |
+| `os.getenv("FLASK_ENV", "production")` | Reads `FLASK_ENV` and falls back to `production` when it is not set. |
+| `os.getenv("APP_ENV", "production")` | Reads the custom application environment setting with a safe default. |
+| `os.getenv("LOG_LEVEL", "INFO")` | Reads the configured log level and defaults to `INFO`. |
 
 ### Use environment strategy for local vs cloud
 
@@ -114,11 +128,26 @@ az webapp config appsettings set \
   --settings "DB_PASSWORD=@Microsoft.KeyVault(SecretUri=https://$KEYVAULT_NAME.vault.azure.net/secrets/$SECRET_NAME/)"
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `KEYVAULT_NAME="kv-flask-tutorial"` | Stores the Key Vault name used to build the secret reference. |
+| `SECRET_NAME="DbPassword"` | Stores the Key Vault secret name. |
+| `az webapp config appsettings set` | Adds or updates an app setting on the web app. |
+| `--resource-group $RG` | Targets the correct resource group. |
+| `--name $APP_NAME` | Applies the setting to the selected web app. |
+| `--settings "DB_PASSWORD=@Microsoft.KeyVault(...)"` | Configures `DB_PASSWORD` as an App Service Key Vault reference instead of a plain-text secret. |
+
 ### Validate effective settings
 
 ```bash
 az webapp config appsettings list --resource-group $RG --name $APP_NAME
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az webapp config appsettings list --resource-group $RG --name $APP_NAME` | Lists the effective application settings currently configured on the web app. |
+| `--resource-group $RG` | Reads settings from the target resource group. |
+| `--name $APP_NAME` | Reads settings for the specified App Service app. |
 
 Masked example:
 

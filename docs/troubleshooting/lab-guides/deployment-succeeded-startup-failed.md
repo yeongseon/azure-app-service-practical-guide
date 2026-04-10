@@ -19,6 +19,36 @@ evidence:
 summary: Hands-on lab to reproduce deployment success with startup failure.
 status: stable
 last_reviewed: 2026-04-08
+content_sources:
+  diagrams:
+    - id: troubleshooting-lab-guides-deployment-succeeded-startup-failed-diagram-1
+      type: flowchart
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+    - id: troubleshooting-lab-guides-deployment-succeeded-startup-failed-diagram-2
+      type: sequenceDiagram
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+    - id: troubleshooting-lab-guides-deployment-succeeded-startup-failed-diagram-3
+      type: graph
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+    - id: troubleshooting-lab-guides-deployment-succeeded-startup-failed-diagram-4
+      type: graph
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
 ---
 # Lab: Deployment Succeeded, Startup Failed (Wrong Module in Startup Command)
 
@@ -75,6 +105,7 @@ Use this mental model:
 
 Deployment success does **not** imply runtime success.
 
+<!-- diagram-id: troubleshooting-lab-guides-deployment-succeeded-startup-failed-diagram-1 -->
 ```mermaid
 flowchart TD
     A[Client invokes az webapp deploy] --> B[Kudu ZIP Deploy API accepts package]
@@ -119,6 +150,7 @@ Gunicorn exits,
 container cannot become healthy,
 and probes keep failing until timeout / restart.
 
+<!-- diagram-id: troubleshooting-lab-guides-deployment-succeeded-startup-failed-diagram-2 -->
 ```mermaid
 sequenceDiagram
     participant Dev as Operator
@@ -201,6 +233,7 @@ Interpretation:
 
 ### 1.8 Diagram: control-plane success with data-plane failure
 
+<!-- diagram-id: troubleshooting-lab-guides-deployment-succeeded-startup-failed-diagram-3 -->
 ```mermaid
 graph LR
     subgraph ControlPlane[Control Plane / Deployment]
@@ -832,6 +865,7 @@ This section defines what you SHOULD observe at each phase of the lab. Use it to
 
 ### Evidence Timeline
 
+<!-- diagram-id: troubleshooting-lab-guides-deployment-succeeded-startup-failed-diagram-4 -->
 ```mermaid
 graph LR
     A[Baseline Capture] --> B[Trigger Fault]

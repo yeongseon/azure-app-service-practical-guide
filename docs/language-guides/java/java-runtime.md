@@ -43,6 +43,14 @@ az webapp config set \
   --output json
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp config set` | Updates the App Service runtime configuration. |
+| `--resource-group $RG` | Targets the resource group that contains the web app. |
+| `--name $APP_NAME` | Selects the web app whose runtime will be changed. |
+| `--linux-fx-version "JAVA|17-java17"` | Sets the Linux runtime stack to Java 17. |
+| `--output json` | Returns the runtime configuration change in JSON format. |
+
 Inspect runtime settings:
 
 ```bash
@@ -52,6 +60,12 @@ az webapp config show \
   --query "{linuxFxVersion:linuxFxVersion,alwaysOn:alwaysOn,healthCheckPath:healthCheckPath}" \
   --output json
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp config show` | Reads the effective runtime configuration for the app. |
+| `--query "{linuxFxVersion:linuxFxVersion,alwaysOn:alwaysOn,healthCheckPath:healthCheckPath}"` | Limits the output to the most important runtime and health settings. |
+| `--output json` | Returns the selected configuration fields as JSON. |
 
 ## `JAVA_OPTS` reference
 
@@ -71,6 +85,12 @@ az webapp config appsettings set \
   --output json
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp config appsettings set` | Stores JVM tuning values as App Service application settings. |
+| `--settings "JAVA_OPTS=-XX:InitialRAMPercentage=25.0 -XX:MaxRAMPercentage=70.0 -XX:+UseG1GC -XX:+ExitOnOutOfMemoryError"` | Applies the recommended heap sizing, GC, and OOM behavior flags. |
+| `--output json` | Returns the updated app settings in JSON format. |
+
 ## Startup command patterns
 
 Most Java SE deployments can use platform defaults. For explicit startup control:
@@ -83,6 +103,12 @@ az webapp config set \
   --output json
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp config set` | Sets an explicit startup command for the Java app. |
+| `--startup-file "java $JAVA_OPTS -jar /home/site/wwwroot/*.jar --server.port=\$PORT"` | Launches the deployed JAR with `JAVA_OPTS` and binds it to the App Service port. |
+| `--output json` | Returns the startup command update in JSON format. |
+
 ## Spring Boot runtime essentials
 
 Required properties:
@@ -93,12 +119,23 @@ server.shutdown=graceful
 spring.lifecycle.timeout-per-shutdown-phase=20s
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `server.port=${PORT:8080}` | Uses the App Service-assigned port in Azure and falls back to `8080` locally. |
+| `server.shutdown=graceful` | Enables graceful shutdown handling for in-flight requests. |
+| `spring.lifecycle.timeout-per-shutdown-phase=20s` | Gives Spring components up to 20 seconds to stop cleanly. |
+
 Optional production-oriented settings:
 
 ```properties
 management.endpoints.web.exposure.include=health,info
 spring.main.banner-mode=off
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `management.endpoints.web.exposure.include=health,info` | Exposes the health and info management endpoints over HTTP. |
+| `spring.main.banner-mode=off` | Disables the Spring Boot startup banner in logs. |
 
 ## Memory defaults and tuning heuristics
 
@@ -126,6 +163,11 @@ Leave remaining memory for non-heap allocations and platform overhead.
 az webapp config appsettings list --resource-group $RG --name $APP_NAME --output table
 az webapp log tail --resource-group $RG --name $APP_NAME
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp config appsettings list --resource-group $RG --name $APP_NAME --output table` | Reviews the applied App Service settings, including `JAVA_OPTS`. |
+| `az webapp log tail --resource-group $RG --name $APP_NAME` | Streams startup logs so you can confirm Java version, profile, and port binding. |
 
 Look for startup logs confirming Java version, active profiles, and listening port.
 

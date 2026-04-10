@@ -45,6 +45,13 @@ graph TD
 </Project>
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `<Project Sdk="Microsoft.NET.Sdk.Web">` | Declares the project as an ASP.NET Core web application. |
+| `<TargetFramework>net8.0</TargetFramework>` | Targets the .NET 8 runtime for build and deployment. |
+| `<Nullable>enable</Nullable>` | Enables nullable reference type analysis in the project. |
+| `<ImplicitUsings>enable</ImplicitUsings>` | Automatically includes common .NET namespaces. |
+
 ## Port and startup binding contract
 
 Windows App Service commonly provides `HTTP_PLATFORM_PORT` to child process hosts.
@@ -59,6 +66,13 @@ var port = Environment.GetEnvironmentVariable("HTTP_PLATFORM_PORT")
 builder.WebHost.UseUrls($"http://+:{port}");
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `Environment.GetEnvironmentVariable("HTTP_PLATFORM_PORT")` | Reads the port assigned by Windows App Service hosting. |
+| `Environment.GetEnvironmentVariable("PORT")` | Falls back to another common hosting port variable. |
+| `?? "5000"` | Uses `5000` as the local default when no hosting variable is present. |
+| `builder.WebHost.UseUrls($"http://+:{port}")` | Binds the app to the resolved port for Kestrel startup. |
+
 This pattern is safe for both App Service Windows and local fallback.
 
 ## `ASPNETCORE_ENVIRONMENT` guidance
@@ -72,6 +86,10 @@ Set via CLI:
 ```bash
 az webapp config appsettings set --resource-group $RESOURCE_GROUP_NAME --name $WEB_APP_NAME --settings ASPNETCORE_ENVIRONMENT=Production --output json
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp config appsettings set --resource-group $RESOURCE_GROUP_NAME --name $WEB_APP_NAME --settings ASPNETCORE_ENVIRONMENT=Production --output json` | Sets the production ASP.NET Core environment in App Service settings. |
 
 ## `web.config` on Windows App Service
 
@@ -100,6 +118,11 @@ builder.WebHost.ConfigureKestrel(options =>
 });
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `builder.WebHost.ConfigureKestrel(options => { ... })` | Customizes Kestrel server behavior during startup. |
+| `options.AddServerHeader = false;` | Removes the default server header from HTTP responses. |
+
 ## Startup command notes
 
 For standard .NET code deployments, App Service starts from site configuration and artifact metadata; custom startup commands are less common than container scenarios.
@@ -113,6 +136,12 @@ az webapp config show --resource-group $RESOURCE_GROUP_NAME --name $WEB_APP_NAME
 az webapp list-runtimes --os windows --output table
 az webapp show --resource-group $RESOURCE_GROUP_NAME --name $WEB_APP_NAME --output json
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp config show --resource-group $RESOURCE_GROUP_NAME --name $WEB_APP_NAME --output json` | Shows the effective runtime configuration for the web app. |
+| `az webapp list-runtimes --os windows --output table` | Lists the Windows runtimes supported by App Service. |
+| `az webapp show --resource-group $RESOURCE_GROUP_NAME --name $WEB_APP_NAME --output json` | Retrieves the web app resource metadata for inspection. |
 
 ## Production runtime checklist
 

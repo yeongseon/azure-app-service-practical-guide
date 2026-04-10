@@ -110,12 +110,25 @@ Get verification ID:
 az webapp show --resource-group $RG --name $APP_NAME --query customDomainVerificationId --output tsv
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp show --resource-group $RG --name $APP_NAME --query customDomainVerificationId --output tsv` | Retrieves the domain verification ID required for the `asuid` TXT record. |
+| `--query customDomainVerificationId` | Extracts only the custom domain verification value from the response. |
+| `--output tsv` | Returns the verification ID as plain text for easy copy/paste into DNS. |
+
 ### Bind custom hostname
 
 ```bash
 CUSTOM_HOSTNAME="www.contoso.example"
 az webapp config hostname add --resource-group $RG --webapp-name $APP_NAME --hostname $CUSTOM_HOSTNAME
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `CUSTOM_HOSTNAME="www.contoso.example"` | Stores the custom hostname you want to bind to the web app. |
+| `az webapp config hostname add --resource-group $RG --webapp-name $APP_NAME --hostname $CUSTOM_HOSTNAME` | Adds the custom domain binding to the App Service app. |
+| `--webapp-name $APP_NAME` | Selects the target web app for the hostname binding. |
+| `--hostname $CUSTOM_HOSTNAME` | Specifies the exact custom domain name to add. |
 
 ### Create managed certificate and bind SSL
 
@@ -127,17 +140,38 @@ THUMBPRINT=$(az webapp config ssl list --resource-group $RG --query "[?hostNames
 az webapp config ssl bind --resource-group $RG --name $APP_NAME --certificate-thumbprint $THUMBPRINT --ssl-type SNI
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp config ssl create --resource-group $RG --name $APP_NAME --hostname $CUSTOM_HOSTNAME` | Requests an App Service managed certificate for the custom hostname. |
+| `--hostname $CUSTOM_HOSTNAME` | Tells Azure which hostname the certificate should cover. |
+| `THUMBPRINT=$(az webapp config ssl list --resource-group $RG --query "[?hostNames && contains(join(',', hostNames), '$CUSTOM_HOSTNAME')].thumbprint | [0]" --output tsv)` | Captures the certificate thumbprint for the hostname that was just created. |
+| `az webapp config ssl list` | Lists SSL certificates available to the web app. |
+| `--query "[?hostNames && contains(join(',', hostNames), '$CUSTOM_HOSTNAME')].thumbprint | [0]"` | Filters the certificate list to the first thumbprint matching the custom hostname. |
+| `az webapp config ssl bind --resource-group $RG --name $APP_NAME --certificate-thumbprint $THUMBPRINT --ssl-type SNI` | Binds the selected certificate to the web app hostname. |
+| `--certificate-thumbprint $THUMBPRINT` | Identifies which certificate to bind. |
+| `--ssl-type SNI` | Uses SNI-based TLS binding for the hostname. |
+
 ### Enforce HTTPS-only traffic
 
 ```bash
 az webapp update --resource-group $RG --name $APP_NAME --https-only true
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp update --resource-group $RG --name $APP_NAME --https-only true` | Forces the web app to redirect HTTP traffic to HTTPS. |
+| `--https-only true` | Enables the HTTPS-only setting on App Service. |
+
 ### Validate certificate and endpoint health
 
 ```bash
 curl -I https://$CUSTOM_HOSTNAME/health
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `curl -I https://$CUSTOM_HOSTNAME/health` | Sends a HEAD request to confirm the custom domain and certificate are working. |
+| `-I` | Returns response headers only, which is useful for quick HTTPS validation. |
 
 Masked certificate inventory example:
 

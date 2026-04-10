@@ -1,14 +1,23 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: troubleshooting-first-10-minutes-index-diagram-1
+      type: graph
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
 ---
-
 # Checklists
 
 Fast triage guides for the first 10 minutes of an investigation.
 
 These checklists help you quickly narrow down the problem category and identify which playbook to follow for deeper analysis.
 
+<!-- diagram-id: troubleshooting-first-10-minutes-index-diagram-1 -->
 ```mermaid
 graph TD
     A[Initial incident signal] --> B{Choose first-response checklist}

@@ -93,6 +93,11 @@ cd app
 ./mvnw spring-boot:run
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `cd app` | Moves into the Spring Boot app directory before running Maven commands. |
+| `./mvnw spring-boot:run` | Starts the application locally with the Maven Wrapper and Spring Boot plugin. |
+
 Expected startup behavior:
 
 - Spring Boot starts on `8080` when `PORT` is unset
@@ -106,6 +111,10 @@ The app uses this property:
 ```properties
 server.port=${PORT:8080}
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `server.port=${PORT:8080}` | Binds the app to the App Service `PORT` value when present, or falls back to local port `8080`. |
 
 This gives two safe modes:
 
@@ -124,6 +133,12 @@ curl http://localhost:8080/health
 curl http://localhost:8080/info
 curl "http://localhost:8080/api/requests/log-levels?userId=local-user"
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `curl http://localhost:8080/health` | Checks that the health endpoint responds locally. |
+| `curl http://localhost:8080/info` | Verifies runtime and environment metadata exposed by the app. |
+| `curl "http://localhost:8080/api/requests/log-levels?userId=local-user"` | Triggers sample requests that emit logs at multiple severity levels. |
 
 Typical `/health` response:
 
@@ -157,6 +172,13 @@ logger.warn("warn log emitted for userId={}", userId);
 logger.error("error log emitted for userId={} at={}", userId, Instant.now());
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `logger.debug(...)` | Emits a DEBUG log entry for low-level diagnostic detail. |
+| `logger.info(...)` | Emits an INFO log entry for normal application activity. |
+| `logger.warn(...)` | Emits a WARN log entry for recoverable or suspicious conditions. |
+| `logger.error(...)` | Emits an ERROR log entry with a timestamp for failure tracking. |
+
 Call the endpoint and inspect terminal output for all severities.
 
 ### Run in production profile locally
@@ -167,6 +189,11 @@ Test production log formatting and profile behavior:
 SPRING_PROFILES_ACTIVE=production ./mvnw spring-boot:run
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `SPRING_PROFILES_ACTIVE=production` | Forces the app to use the production Spring profile during local execution. |
+| `./mvnw spring-boot:run` | Starts the app with Maven Wrapper so you can test production profile behavior locally. |
+
 In production profile, `logback-spring.xml` switches to JSON console output suitable for ingestion by Application Insights.
 
 ### Optional: emulate App Service port locally
@@ -175,6 +202,13 @@ In production profile, `logback-spring.xml` switches to JSON console output suit
 PORT=8181 SPRING_PROFILES_ACTIVE=production ./mvnw spring-boot:run
 curl http://localhost:8181/health
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `PORT=8181` | Simulates the platform-provided port assignment locally. |
+| `SPRING_PROFILES_ACTIVE=production` | Runs the app with the same profile expected in App Service. |
+| `./mvnw spring-boot:run` | Launches the app with the simulated port and profile settings. |
+| `curl http://localhost:8181/health` | Confirms the app listens successfully on the injected port. |
 
 !!! tip "Why this test matters"
     This validates the same startup contract used by App Service (`PORT`, production profile, structured logs) before your first deployment.
@@ -200,12 +234,22 @@ Stop the conflicting process or run with another port:
 PORT=8181 ./mvnw spring-boot:run
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `PORT=8181` | Overrides the default local port to avoid conflicts. |
+| `./mvnw spring-boot:run` | Restarts the app on the alternate port using Maven Wrapper. |
+
 ### `./mvnw` permission denied
 
 ```bash
 chmod +x ./mvnw
 ./mvnw spring-boot:run
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `chmod +x ./mvnw` | Makes the Maven Wrapper executable on Unix-like systems. |
+| `./mvnw spring-boot:run` | Runs the app again after fixing wrapper permissions. |
 
 ### Endpoint returns 404
 

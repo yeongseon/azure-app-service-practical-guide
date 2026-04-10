@@ -16,6 +16,15 @@ used_in:
 summary: KQL query to visualize 5xx error trends over time.
 status: stable
 last_reviewed: 2026-04-08
+content_sources:
+  diagrams:
+    - id: troubleshooting-kql-http-5xx-trend-over-time-diagram-1
+      type: graph
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/azure-monitor/logs/get-started-queries
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
 ---
 # 5xx Trend Over Time
 
@@ -23,6 +32,7 @@ last_reviewed: 2026-04-08
 **Data Source**: AppServiceHTTPLogs
 **Purpose**: Tracks 5xx volume over time and separates by status code to detect spikes and dominant failure types.
 
+<!-- diagram-id: troubleshooting-kql-http-5xx-trend-over-time-diagram-1 -->
 ```mermaid
 graph LR
     A[AppServiceHTTPLogs] -->|ScStatus >= 500| B[Filter 5xx]

@@ -138,6 +138,13 @@ az webapp config appsettings set \
   --settings TELEMETRY_MODE=advanced
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp config appsettings set` | Creates or updates application settings for the web app. |
+| `--resource-group $RG` | Targets the resource group that contains the App Service app. |
+| `--name $APP_NAME` | Selects the web app whose settings you want to update. |
+| `--settings TELEMETRY_MODE=advanced` | Enables the advanced telemetry mode used by the sample app. |
+
 ## Step 2 — Structured JSON Logging
 
 `app/src/config/telemetry.py` configures a root logger that emits newline-delimited JSON to stdout,
@@ -183,6 +190,17 @@ def log_levels_demo():
         "severity": "high",
     }})
 ```
+
+| Code | Purpose |
+|------|---------|
+| `logger = logging.getLogger(__name__)` | Creates a module-specific logger for structured application logs. |
+| `@requests_bp.get("/log-levels")` | Registers a demo HTTP GET endpoint that emits logs at multiple levels. |
+| `request.args.get("userId", "demo-user-123")` | Reads `userId` from the query string and falls back to a demo value. |
+| `logger.debug(..., extra={"custom_dimensions": {...}})` | Emits a debug log with structured metadata such as cache status and endpoint. |
+| `logger.info(..., extra={"custom_dimensions": {...}})` | Emits an informational log for normal request processing. |
+| `logger.warning(..., extra={"custom_dimensions": {...}})` | Emits a warning log that signals a potential issue. |
+| `logger.error(..., extra={"custom_dimensions": {...}})` | Emits an error log with structured fields that can be queried later. |
+| `extra={"custom_dimensions": {...}}` | Adds custom properties to the JSON log payload and Application Insights record. |
 
 **stdout — one JSON line per call:**
 
@@ -232,6 +250,22 @@ def external_dependency_demo():
         return jsonify({"error": "Service Unavailable"}), 503
 ```
 
+| Code | Purpose |
+|------|---------|
+| `import requests` | Imports the HTTP client library used for outbound API calls. |
+| `from time import perf_counter` | Imports a high-resolution timer for request duration measurement. |
+| `@dependencies_bp.get("/external")` | Registers a demo route that calls an external dependency. |
+| `api_url = "https://jsonplaceholder.typicode.com/posts/1"` | Defines the external API endpoint used in the example. |
+| `start = perf_counter()` | Captures the start time for latency calculation. |
+| `timeout = current_app.config["APP_SETTINGS"].external_api_timeout_seconds` | Reads the configured timeout from the application settings object. |
+| `response = requests.get(api_url, timeout=timeout)` | Sends the outbound HTTP request with a timeout. |
+| `duration_ms = round((perf_counter() - start) * 1000, 2)` | Converts the elapsed time into milliseconds for logging. |
+| `response.raise_for_status()` | Raises an exception if the external API returned an error status code. |
+| `logger.info("External API call successful", extra={"custom_dimensions": {...}})` | Logs a successful dependency call with URL, status code, and duration. |
+| `logger.error("External API call failed", exc_info=True, extra={"custom_dimensions": {...}})` | Logs dependency failures with stack trace and structured error details. |
+| `exc_info=True` | Includes the full Python exception traceback in the emitted log record. |
+| `return jsonify({"error": "Service Unavailable"}), 503` | Returns an HTTP 503 response when the dependency call fails. |
+
 **stdout on timeout (exc_info=True appends the full stack trace):**
 
 ```json
@@ -277,6 +311,18 @@ def handle_exception(error: Exception):
     }), status
 ```
 
+| Code | Purpose |
+|------|---------|
+| `@app.errorhandler(Exception)` | Registers a global Flask handler for uncaught exceptions. |
+| `def handle_exception(error: Exception):` | Defines the function that converts unexpected errors into a response. |
+| `status = getattr(error, "status", 500)` | Reuses an existing status code when present, otherwise defaults to HTTP 500. |
+| `logger.error("Unhandled error", exc_info=True, extra={"custom_dimensions": {...}})` | Writes a structured error log with traceback and request context. |
+| `request.path` | Captures the failing request URL path for diagnostics. |
+| `request.method` | Captures the HTTP method that triggered the error. |
+| `jsonify({...})` | Returns a JSON error payload to the client. |
+| `"message": "An error occurred" if settings.environment == "production" else str(error)` | Hides internal details in production but exposes the real error in non-production environments. |
+| `get_correlation_id()` | Returns the per-request correlation ID so the client can reference it. |
+
 In `advanced` mode this entry lands in `AppTraces` (SeverityLevel 3). Separate exception
 telemetry may also appear in `AppExceptions` when the OTel SDK captures the error object,
 but the two records are not guaranteed to be identical or always co-emitted.
@@ -295,6 +341,13 @@ if settings.telemetry_mode == "advanced":
             connection_string=settings.applicationinsights_connection_string
         )
 ```
+
+| Code | Purpose |
+|------|---------|
+| `if settings.telemetry_mode == "advanced":` | Enables Azure Monitor setup only when advanced telemetry mode is selected. |
+| `if settings.applicationinsights_connection_string and configure_azure_monitor:` | Verifies that both the connection string and Azure Monitor helper are available. |
+| `configure_azure_monitor(...)` | Initializes OpenTelemetry export to Application Insights. |
+| `connection_string=settings.applicationinsights_connection_string` | Supplies the Application Insights connection string used for telemetry export. |
 
 The `logger.info("Order created", ...)` call above lands in Application Insights as:
 
@@ -363,6 +416,14 @@ az webapp config appsettings set \
   --settings LOG_LEVEL=DEBUG
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp config appsettings set` | Updates the App Service application settings. |
+| `--resource-group $RG` | Targets the web app's resource group. |
+| `--name $APP_NAME` | Selects the web app whose log level should change. |
+| `--settings LOG_LEVEL=WARNING` | Reduces emitted logs to warnings and errors in production. |
+| `--settings LOG_LEVEL=DEBUG` | Temporarily enables verbose debug logging during investigations. |
+
 !!! tip "Remember to revert after debugging"
     DEBUG level can emit sensitive data and significantly increase Application Insights ingestion costs.
     Set `LOG_LEVEL=INFO` or `WARNING` again once the incident is resolved.
@@ -427,6 +488,15 @@ az webapp log config \
   --output json
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp log config` | Configures how App Service captures application logs. |
+| `--resource-group $RG` | Targets the resource group that contains the web app. |
+| `--name $APP_NAME` | Selects the App Service app to configure. |
+| `--application-logging filesystem` | Persists application logs to the App Service filesystem. |
+| `--level verbose` | Captures verbose-level application logs in filesystem storage. |
+| `--output json` | Returns the resulting logging configuration in JSON format. |
+
 **Example output:**
 
 ```json
@@ -456,6 +526,12 @@ az webapp log tail \
   --name $APP_NAME
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp log tail` | Streams live application and platform logs to the terminal. |
+| `--resource-group $RG` | Reads logs from the target resource group. |
+| `--name $APP_NAME` | Reads logs from the selected web app. |
+
 Press `Ctrl+C` to exit. Your JSON log lines appear interleaved with Gunicorn access logs
 and platform events (health probes, container restarts).
 
@@ -467,6 +543,12 @@ az webapp log tail \
   --name $APP_NAME \
   | grep --line-buffered '"level"'
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az webapp log tail` | Streams live logs from App Service. |
+| `| grep --line-buffered '"level"'` | Filters the live stream to lines that look like JSON application logs. |
+| `--line-buffered` | Flushes matching lines immediately so the live stream stays responsive. |
 
 ## Step 6 — Browse Logs on the Filesystem
 
@@ -502,6 +584,15 @@ az webapp log download \
 unzip logs.zip -d ./logs
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp log download` | Downloads the App Service log archive as a zip file. |
+| `--resource-group $RG` | Targets the correct resource group. |
+| `--name $APP_NAME` | Downloads logs for the selected web app. |
+| `--log-file ./logs.zip` | Saves the downloaded archive to `./logs.zip`. |
+| `unzip logs.zip -d ./logs` | Extracts the downloaded logs into the local `./logs` directory. |
+| `-d ./logs` | Writes extracted files into the specified output directory. |
+
 **SSH and tail live:**
 
 ```bash
@@ -510,6 +601,12 @@ az webapp ssh --resource-group $RG --name $APP_NAME
 # Inside the container:
 tail -f /home/LogFiles/*_docker.log
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az webapp ssh --resource-group $RG --name $APP_NAME` | Opens an interactive SSH session into the running App Service container. |
+| `tail -f /home/LogFiles/*_docker.log` | Follows container log output directly from inside the app environment. |
+| `-f` | Keeps the log command running and streams new entries as they arrive. |
 
 ## Step 7 — Application Insights
 
@@ -545,6 +642,13 @@ az webapp config appsettings list \
   --name $APP_NAME \
   --query "[?name=='APPLICATIONINSIGHTS_CONNECTION_STRING']"
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az webapp config appsettings list` | Lists app settings configured on the web app. |
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Selects the web app whose settings should be inspected. |
+| `--query "[?name=='APPLICATIONINSIGHTS_CONNECTION_STRING']"` | Filters the settings list to only the Application Insights connection string entry. |
 
 ### Access Application Insights
 
@@ -614,6 +718,12 @@ az webapp log tail \
   | grep --line-buffered a1b2c3d4
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp log tail` | Streams live logs while reproducing the reported issue. |
+| `| grep --line-buffered a1b2c3d4` | Filters the stream to log lines that contain the reported correlation ID. |
+| `--line-buffered` | Ensures matching lines appear immediately in the terminal. |
+
 **2. If the error occurred earlier — query Application Insights:**
 
 ```kql
@@ -654,11 +764,19 @@ union traces, requests
     curl https://$APP_NAME.azurewebsites.net/api/requests/log-levels
     ```
 
+    | Command | Purpose |
+    |---------|---------|
+    | `curl https://$APP_NAME.azurewebsites.net/api/requests/log-levels` | Calls the demo endpoint that emits logs at multiple severity levels. |
+
 2. **Confirm JSON lines appear** in the log stream:
 
     ```bash
     az webapp log tail --resource-group $RG --name $APP_NAME
     ```
+
+    | Command | Purpose |
+    |---------|---------|
+    | `az webapp log tail --resource-group $RG --name $APP_NAME` | Streams logs so you can confirm the generated JSON records appear live. |
 
 3. **Wait 2–3 minutes**, then run a KQL query to confirm data reached Application Insights:
 
@@ -696,6 +814,14 @@ az webapp log config \
   --level verbose
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp log config` | Enables App Service filesystem log capture for the deployed app. |
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Selects the web app whose logging settings should change. |
+| `--application-logging filesystem` | Persists application logs to the App Service file system. |
+| `--level verbose` | Captures verbose application log output. |
+
 **Output:**
 ```json
 {
@@ -719,6 +845,10 @@ az webapp log config \
 ```bash
 az webapp log tail --resource-group $RG --name $APP_NAME
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az webapp log tail --resource-group $RG --name $APP_NAME` | Streams the live log output used to confirm JSON logs are reaching the filesystem. |
 
 **Sample output from `/home/LogFiles/2026_04_02_lw1sdlwk0007R3_default_docker.log`:**
 ```

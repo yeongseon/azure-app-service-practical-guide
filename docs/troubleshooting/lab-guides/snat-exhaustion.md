@@ -1,8 +1,51 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: troubleshooting-lab-guides-snat-exhaustion-diagram-1
+      type: flowchart
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+    - id: troubleshooting-lab-guides-snat-exhaustion-diagram-2
+      type: sequenceDiagram
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+    - id: troubleshooting-lab-guides-snat-exhaustion-diagram-3
+      type: flowchart
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+    - id: troubleshooting-lab-guides-snat-exhaustion-diagram-4
+      type: flowchart
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+    - id: troubleshooting-lab-guides-snat-exhaustion-diagram-5
+      type: timeline
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+    - id: troubleshooting-lab-guides-snat-exhaustion-diagram-6
+      type: graph
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
 ---
-
 # Lab Guide (Level 3): SNAT Exhaustion on Azure App Service Linux
 
 This lab is a full diagnostic reference for reproducing and proving outbound SNAT pressure on Azure App Service Linux using a Python/Flask workload. It expands the original scaffold into a complete investigation package with architecture background, falsifiable hypothesis, deterministic runbook, and artifact-backed experiment log.
@@ -43,6 +86,7 @@ SNAT exhaustion on App Service is rarely a single-event failure. It is usually a
 
 The following logical flow explains where SNAT sits in the path:
 
+<!-- diagram-id: troubleshooting-lab-guides-snat-exhaustion-diagram-1 -->
 ```mermaid
 flowchart LR
     A[Client Request] --> B[App Service Front End]
@@ -84,6 +128,7 @@ Operationally relevant concepts:
 
 ### 1.4 Causal mechanics with TCP states
 
+<!-- diagram-id: troubleshooting-lab-guides-snat-exhaustion-diagram-2 -->
 ```mermaid
 sequenceDiagram
     participant W as Worker Thread
@@ -133,6 +178,7 @@ Outbound instability can surface as inbound errors:
 
 ### 1.8 Diagram: healthy vs exhausted behavior
 
+<!-- diagram-id: troubleshooting-lab-guides-snat-exhaustion-diagram-3 -->
 ```mermaid
 flowchart TD
     A[Inbound request] --> B{Outbound call mode}
@@ -187,6 +233,7 @@ When a Python/Flask app creates a new outbound TCP connection per request withou
 
 ### 2.2 Causal chain under test
 
+<!-- diagram-id: troubleshooting-lab-guides-snat-exhaustion-diagram-4 -->
 ```mermaid
 flowchart LR
     A[No pooling in /outbound] --> B[High outbound socket churn]
@@ -631,6 +678,7 @@ This indicates process turnover occurred during the trigger window.
 
 ### 4.10 Failure cascade timeline (reconstructed)
 
+<!-- diagram-id: troubleshooting-lab-guides-snat-exhaustion-diagram-5 -->
 ```mermaid
 timeline
     title SNAT Lab Failure Cascade (artifact reconstruction)
@@ -710,6 +758,7 @@ This section defines what you SHOULD observe at each phase of the lab. Use it to
 
 ### Evidence Timeline
 
+<!-- diagram-id: troubleshooting-lab-guides-snat-exhaustion-diagram-6 -->
 ```mermaid
 graph LR
     A[Baseline Capture] --> B[Trigger Fault]

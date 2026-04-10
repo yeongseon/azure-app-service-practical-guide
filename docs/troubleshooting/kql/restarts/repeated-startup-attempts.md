@@ -1,14 +1,23 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: troubleshooting-kql-restarts-repeated-startup-attempts-diagram-1
+      type: graph
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/azure-monitor/logs/get-started-queries
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
 ---
-
 # Repeated Startup Attempts
 
 **Scenario**: Suspected start/fail loop where the container repeatedly attempts startup.
 **Data Source**: AppServicePlatformLogs
 **Purpose**: Shows start/stop/fail operation sequences to detect rapid startup cycling.
 
+<!-- diagram-id: troubleshooting-kql-restarts-repeated-startup-attempts-diagram-1 -->
 ```mermaid
 graph LR
     A[AppServicePlatformLogs] -->|OperationName Filter| B[start / stop / fail Events]

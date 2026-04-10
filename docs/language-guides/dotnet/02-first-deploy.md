@@ -99,6 +99,13 @@ PE_SUBNET_NAME="snet-private-endpoints"
 STORAGE_NAME="stdotnettutorialabc123"
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `SUBSCRIPTION_ID="<subscription-id>"` | Stores the Azure subscription that will receive the deployment. |
+| `RG`, `LOCATION`, `PLAN_NAME`, `APP_NAME` | Define the core resource group, region, App Service plan, and web app names. |
+| `VNET_NAME`, `INTEGRATION_SUBNET_NAME`, `PE_SUBNET_NAME` | Define the virtual network and subnet names used for integration and private endpoints. |
+| `STORAGE_NAME="stdotnettutorialabc123"` | Sets the storage account name used in the optional private endpoint step. |
+
 ???+ example "Expected output"
     ```text
     Variables are set for deployment:
@@ -113,6 +120,11 @@ STORAGE_NAME="stdotnettutorialabc123"
 az account set --subscription $SUBSCRIPTION_ID
 az account show --query "{subscriptionId:id, tenantId:tenantId, user:user.name}" --output json
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `az account set --subscription $SUBSCRIPTION_ID` | Switches the Azure CLI context to the target subscription. |
+| `az account show --query "{subscriptionId:id, tenantId:tenantId, user:user.name}" --output json` | Displays the active subscription, tenant, and signed-in user for verification. |
 
 ???+ example "Expected output"
     ```json
@@ -130,6 +142,12 @@ az group create --name $RG --location $LOCATION
 az appservice plan create --resource-group $RG --name $PLAN_NAME --sku S1
 az webapp create --resource-group $RG --plan $PLAN_NAME --name $APP_NAME --runtime "DOTNETCORE|8.0"
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `az group create --name $RG --location $LOCATION` | Creates the resource group that will contain the deployment resources. |
+| `az appservice plan create --resource-group $RG --name $PLAN_NAME --sku S1` | Creates the Windows App Service plan that hosts the web app. |
+| `az webapp create --resource-group $RG --plan $PLAN_NAME --name $APP_NAME --runtime "DOTNETCORE\|8.0"` | Creates the App Service web app configured for .NET 8. |
 
 ???+ example "Expected output"
     ```json
@@ -150,6 +168,11 @@ az network vnet create --resource-group $RG --name $VNET_NAME --location $LOCATI
 az network vnet subnet create --resource-group $RG --vnet-name $VNET_NAME --name $INTEGRATION_SUBNET_NAME --address-prefixes 10.0.1.0/24 --delegations Microsoft.Web/serverFarms
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `az network vnet create --resource-group $RG --name $VNET_NAME --location $LOCATION --address-prefixes 10.0.0.0/16` | Creates the virtual network used by the App Service environment. |
+| `az network vnet subnet create --resource-group $RG --vnet-name $VNET_NAME --name $INTEGRATION_SUBNET_NAME --address-prefixes 10.0.1.0/24 --delegations Microsoft.Web/serverFarms` | Creates the delegated subnet required for App Service VNet integration. |
+
 ???+ example "Expected output"
     ```json
     {
@@ -169,6 +192,10 @@ az network vnet subnet create --resource-group $RG --vnet-name $VNET_NAME --name
 az network vnet subnet create --resource-group $RG --vnet-name $VNET_NAME --name $PE_SUBNET_NAME --address-prefixes 10.0.2.0/24 --disable-private-endpoint-network-policies true
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `az network vnet subnet create --resource-group $RG --vnet-name $VNET_NAME --name $PE_SUBNET_NAME --address-prefixes 10.0.2.0/24 --disable-private-endpoint-network-policies true` | Creates the subnet that can host private endpoints. |
+
 ???+ example "Expected output"
     ```json
     {
@@ -184,6 +211,10 @@ az network vnet subnet create --resource-group $RG --vnet-name $VNET_NAME --name
 az webapp vnet-integration add --resource-group $RG --name $APP_NAME --vnet $VNET_NAME --subnet $INTEGRATION_SUBNET_NAME
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp vnet-integration add --resource-group $RG --name $APP_NAME --vnet $VNET_NAME --subnet $INTEGRATION_SUBNET_NAME` | Connects the web app to the delegated VNet integration subnet. |
+
 ???+ example "Expected output"
     ```json
     {
@@ -197,6 +228,10 @@ az webapp vnet-integration add --resource-group $RG --name $APP_NAME --vnet $VNE
 ```bash
 az webapp identity assign --resource-group $RG --name $APP_NAME
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp identity assign --resource-group $RG --name $APP_NAME` | Enables a system-assigned managed identity for the web app. |
 
 ???+ example "Expected output"
     ```json
@@ -213,6 +248,10 @@ az webapp identity assign --resource-group $RG --name $APP_NAME
 dotnet publish app/GuideApi/GuideApi.csproj --configuration Release --output ./publish
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `dotnet publish app/GuideApi/GuideApi.csproj --configuration Release --output ./publish` | Builds the app and writes deployable publish artifacts to the `publish` folder. |
+
 ???+ example "Expected output"
     ```text
     Determining projects to restore...
@@ -226,6 +265,11 @@ dotnet publish app/GuideApi/GuideApi.csproj --configuration Release --output ./p
 zip --recurse-paths publish.zip ./publish
 az webapp deploy --resource-group $RG --name $APP_NAME --src-path publish.zip --type zip
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `zip --recurse-paths publish.zip ./publish` | Packages the published app files into a zip archive for deployment. |
+| `az webapp deploy --resource-group $RG --name $APP_NAME --src-path publish.zip --type zip` | Uploads and deploys the zip package to Azure App Service. |
 
 ???+ example "Expected output"
     ```json
@@ -244,6 +288,12 @@ curl $WEB_APP_URL/health
 az webapp log deployment list --resource-group $RG --name $APP_NAME --output table
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `WEB_APP_URL="https://$(az webapp show --resource-group $RG --name $APP_NAME --query defaultHostName --output tsv)"` | Captures the deployed app's default HTTPS URL in a variable. |
+| `curl $WEB_APP_URL/health` | Calls the deployed health endpoint to verify the app is responding. |
+| `az webapp log deployment list --resource-group $RG --name $APP_NAME --output table` | Shows recent App Service deployment history entries. |
+
 ???+ example "Expected output"
     ```text
     {"status":"ok"}
@@ -260,6 +310,12 @@ az storage account create --resource-group $RG --name $STORAGE_NAME --location $
 STORAGE_ID="$(az storage account show --resource-group $RG --name $STORAGE_NAME --query id --output tsv)"
 az network private-endpoint create --resource-group $RG --name pe-storage-blob --vnet-name $VNET_NAME --subnet $PE_SUBNET_NAME --private-connection-resource-id $STORAGE_ID --group-id blob --connection-name pe-storage-blob-connection
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `az storage account create --resource-group $RG --name $STORAGE_NAME --location $LOCATION --sku Standard_LRS --kind StorageV2` | Creates the storage account used for the private endpoint example. |
+| `STORAGE_ID="$(az storage account show --resource-group $RG --name $STORAGE_NAME --query id --output tsv)"` | Retrieves and stores the storage account resource ID. |
+| `az network private-endpoint create --resource-group $RG --name pe-storage-blob --vnet-name $VNET_NAME --subnet $PE_SUBNET_NAME --private-connection-resource-id $STORAGE_ID --group-id blob --connection-name pe-storage-blob-connection` | Creates a private endpoint that connects the VNet to the storage blob service. |
 
 ???+ example "Expected output"
     ```json
@@ -283,6 +339,11 @@ az webapp log config --resource-group $RG --name $APP_NAME --application-logging
 az webapp log tail --resource-group $RG --name $APP_NAME
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp log config --resource-group $RG --name $APP_NAME --application-logging filesystem --level information` | Enables filesystem-based application logging for the web app. |
+| `az webapp log tail --resource-group $RG --name $APP_NAME` | Streams live application logs from App Service. |
+
 ???+ example "Expected output"
     ```text
     2026-04-09T03:11:22  Connected to log-streaming service.
@@ -296,6 +357,12 @@ SCM_URL="https://$(az webapp show --resource-group $RG --name $APP_NAME --query 
 printf "SCM URL: %s\n" "$SCM_URL"
 az webapp deployment list-publishing-profiles --resource-group $RG --name $APP_NAME --output table
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `SCM_URL="https://$(az webapp show --resource-group $RG --name $APP_NAME --query name --output tsv).scm.azurewebsites.net"` | Builds the Kudu/SCM site URL for the deployed app. |
+| `printf "SCM URL: %s\n" "$SCM_URL"` | Prints the SCM URL so you can open or copy it easily. |
+| `az webapp deployment list-publishing-profiles --resource-group $RG --name $APP_NAME --output table` | Lists publishing profiles and deployment endpoints for the web app. |
 
 ???+ example "Expected output"
     ```text
@@ -316,6 +383,11 @@ Use slot-based deployments for zero-downtime swaps, prebuild deterministic relea
 WEB_APP_URL="https://$(az webapp show --resource-group $RG --name $APP_NAME --query defaultHostName --output tsv)"
 curl --include $WEB_APP_URL/health
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `WEB_APP_URL="https://$(az webapp show --resource-group $RG --name $APP_NAME --query defaultHostName --output tsv)"` | Resolves the deployed app URL for the verification check. |
+| `curl --include $WEB_APP_URL/health` | Verifies the health endpoint and returns response headers plus status. |
 
 ???+ example "Expected output"
     ```text
@@ -341,6 +413,10 @@ Use a globally unique base name, for example:
 APP_NAME="app-dotnet-tutorial-$RANDOM"
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `APP_NAME="app-dotnet-tutorial-$RANDOM"` | Generates a more unique web app name to avoid global naming collisions. |
+
 ### Incorrect runtime stack
 
 Validate App Service configuration after deployment:
@@ -348,6 +424,10 @@ Validate App Service configuration after deployment:
 ```bash
 az webapp config show --resource-group $RG --name $APP_NAME --output json
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp config show --resource-group $RG --name $APP_NAME --output json` | Displays the effective runtime and site configuration for troubleshooting. |
 
 ## See Also
 

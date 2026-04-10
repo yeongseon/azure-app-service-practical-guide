@@ -1,14 +1,23 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: troubleshooting-kql-correlation-restarts-vs-latency-diagram-1
+      type: graph
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/azure-monitor/logs/get-started-queries
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
 ---
-
 # Restarts vs Latency
 
 **Scenario**: Determine whether restart events align with latency degradation windows.
 **Data Source**: AppServiceHTTPLogs and AppServicePlatformLogs
 **Purpose**: Combines latency and restart-event signals in a single timeline using `union`.
 
+<!-- diagram-id: troubleshooting-kql-correlation-restarts-vs-latency-diagram-1 -->
 ```mermaid
 graph LR
     A[AppServiceHTTPLogs] --> B[Avg Latency Series]

@@ -20,6 +20,15 @@ related:
 summary: Maps investigation questions to evidence sources, CLI commands, and KQL queries.
 status: stable
 last_reviewed: 2026-04-08
+content_sources:
+  diagrams:
+    - id: troubleshooting-evidence-map-diagram-1
+      type: flowchart
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
 ---
 # Evidence Map for App Service Troubleshooting
 
@@ -27,6 +36,7 @@ This page maps common investigation questions to the best evidence source, the C
 
 Use it when you know **what you need to answer** but not **where to collect proof**.
 
+<!-- diagram-id: troubleshooting-evidence-map-diagram-1 -->
 ```mermaid
 flowchart LR
     Q[Investigation Question] --> S[Evidence Source]

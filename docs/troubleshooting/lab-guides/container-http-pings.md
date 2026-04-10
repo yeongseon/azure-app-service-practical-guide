@@ -19,6 +19,43 @@ evidence:
 summary: Hands-on lab to reproduce container startup ping failures.
 status: stable
 last_reviewed: 2026-04-08
+content_sources:
+  diagrams:
+    - id: troubleshooting-lab-guides-container-http-pings-diagram-1
+      type: flowchart
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+    - id: troubleshooting-lab-guides-container-http-pings-diagram-2
+      type: sequenceDiagram
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+    - id: troubleshooting-lab-guides-container-http-pings-diagram-3
+      type: sequenceDiagram
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+    - id: troubleshooting-lab-guides-container-http-pings-diagram-4
+      type: flowchart
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+    - id: troubleshooting-lab-guides-container-http-pings-diagram-5
+      type: graph
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
 ---
 # Lab: Container HTTP Ping Behavior on Linux App Service (Port-Mismatch Experiment)
 
@@ -91,6 +128,7 @@ This means startup watchdog logic is active regardless of observed successful ex
 
 ### 1.6 Diagram: startup lifecycle and probes
 
+<!-- diagram-id: troubleshooting-lab-guides-container-http-pings-diagram-1 -->
 ```mermaid
 flowchart TD
     A[Container created] --> B[Environment variables injected]
@@ -103,6 +141,7 @@ flowchart TD
 
 ### 1.7 Diagram: expected port-mismatch failure model (classic assumption)
 
+<!-- diagram-id: troubleshooting-lab-guides-container-http-pings-diagram-2 -->
 ```mermaid
 sequenceDiagram
     participant Platform as App Service platform
@@ -117,6 +156,7 @@ sequenceDiagram
 
 ### 1.8 Diagram: observed Linux behavior in this artifact set
 
+<!-- diagram-id: troubleshooting-lab-guides-container-http-pings-diagram-3 -->
 ```mermaid
 sequenceDiagram
     participant Config as App settings
@@ -220,6 +260,7 @@ On Linux App Service, effective startup-probe reachability may depend on runtime
 
 ### 2.8 Decision diagram for hypothesis status
 
+<!-- diagram-id: troubleshooting-lab-guides-container-http-pings-diagram-4 -->
 ```mermaid
 flowchart TD
     A[WEBSITES_PORT mismatch detected] --> B{Probe results}
@@ -746,6 +787,7 @@ This section defines what you SHOULD observe at each phase of the lab. Use it to
 
 ### Evidence Timeline
 
+<!-- diagram-id: troubleshooting-lab-guides-container-http-pings-diagram-5 -->
 ```mermaid
 graph LR
     A[Baseline Capture] --> B[Trigger Fault]

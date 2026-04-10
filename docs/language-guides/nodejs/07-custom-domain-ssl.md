@@ -113,6 +113,10 @@ Azure uses a TXT record to verify domain ownership before allowing the mapping.
 az webapp show --name $APP_NAME --resource-group $RG --query customDomainVerificationId --output json | jq -r '.'
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp show --name $APP_NAME --resource-group $RG --query customDomainVerificationId --output json | jq -r '.'` | Retrieves the domain ownership verification ID required for the DNS TXT record |
+
 **Example output:**
 ```
 ABC123DEF456GHI789JKL012MNO345PQR678STU901VWX234YZ
@@ -133,6 +137,10 @@ az webapp config hostname add \
   --output json
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp config hostname add ... --hostname www.yourdomain.com --output json` | Adds the custom hostname binding to the App Service app |
+
 **Example output:**
 ```json
 {
@@ -141,6 +149,12 @@ az webapp config hostname add \
   "siteName": "app-myapp-abc123"
 }
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `hostName` | Shows the verified custom domain that was bound |
+| `hostNameType` | Shows the hostname verification state |
+| `siteName` | Shows which App Service app owns the binding |
 
 ## 3. SSL/TLS Configuration
 Once the domain is mapped, secure it with a free Managed Certificate.
@@ -154,6 +168,10 @@ az webapp config ssl create \
   --output json
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp config ssl create ... --hostname www.yourdomain.com --output json` | Requests an App Service managed certificate for the custom domain |
+
 ### Bind the Certificate
 ```bash
 # Get the certificate thumbprint from the previous command output or:
@@ -166,6 +184,11 @@ az webapp config ssl bind \
   --ssl-type SniEnabled \
   --output json
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `THUMBPRINT=$(az webapp config ssl list ... | jq -r '.')` | Looks up the certificate thumbprint for the custom domain |
+| `az webapp config ssl bind ... --certificate-thumbprint $THUMBPRINT --ssl-type SniEnabled --output json` | Binds the certificate to the custom hostname using SNI-based TLS |
 
 ## 4. Security Hardening
 Ensure all traffic uses HTTPS and modern TLS versions.
@@ -186,6 +209,11 @@ az webapp config set \
   --output json
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp update ... --https-only true --output json` | Redirects all HTTP traffic to HTTPS |
+| `az webapp config set ... --min-tls-version 1.2 --output json` | Requires clients to use TLS 1.2 or newer |
+
 ## Verification
 Test your new domain using `curl`:
 
@@ -196,6 +224,11 @@ curl -I http://www.yourdomain.com
 # Verify the SSL certificate is valid
 curl -v https://www.yourdomain.com/health 2>&1 | grep "SSL certificate verify ok"
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `curl -I http://www.yourdomain.com` | Checks whether plain HTTP requests are redirected |
+| `curl -v https://www.yourdomain.com/health 2>&1 | grep "SSL certificate verify ok"` | Verifies the HTTPS certificate is trusted during the health request |
 
 ## Troubleshooting
 - **DNS Propagation**: Changes can take anywhere from a few minutes to 48 hours to propagate. Use `dig` or `nslookup` to verify your records are live.

@@ -20,6 +20,22 @@ related:
 summary: Step-by-step decision flow to route symptoms to the correct playbook.
 status: stable
 last_reviewed: 2026-04-08
+content_sources:
+  diagrams:
+    - id: troubleshooting-decision-tree-diagram-1
+      type: flowchart
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+    - id: troubleshooting-decision-tree-diagram-2
+      type: flowchart
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
 ---
 # Troubleshooting Decision Tree
 
@@ -29,6 +45,7 @@ The tree is intentionally symptom-first and optimized for the first 10–15 minu
 
 ## Main triage decision tree
 
+<!-- diagram-id: troubleshooting-decision-tree-diagram-1 -->
 ```mermaid
 flowchart TD
     S[Incident starts: user-visible impact] --> Q1{Is it a 5xx issue?}
@@ -70,6 +87,7 @@ flowchart TD
 
 ## 5xx branch deep-dive tree
 
+<!-- diagram-id: troubleshooting-decision-tree-diagram-2 -->
 ```mermaid
 flowchart LR
     A[Observed 5xx] --> B{Status pattern}

@@ -20,6 +20,50 @@ evidence:
 summary: Hands-on lab to reproduce and diagnose intermittent 5xx errors under load.
 status: stable
 last_reviewed: 2026-04-08
+content_sources:
+  diagrams:
+    - id: troubleshooting-lab-guides-intermittent-5xx-diagram-1
+      type: graph
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+    - id: troubleshooting-lab-guides-intermittent-5xx-diagram-2
+      type: flowchart
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+    - id: troubleshooting-lab-guides-intermittent-5xx-diagram-3
+      type: sequenceDiagram
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+    - id: troubleshooting-lab-guides-intermittent-5xx-diagram-4
+      type: flowchart
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+    - id: troubleshooting-lab-guides-intermittent-5xx-diagram-5
+      type: flowchart
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+    - id: troubleshooting-lab-guides-intermittent-5xx-diagram-6
+      type: graph
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
 ---
 # Lab: Intermittent 5xx Under Load
 
@@ -32,6 +76,7 @@ The app intentionally mixes slow and fast endpoints:
 
 When a burst of concurrent slow requests occupies the limited Gunicorn sync workers, fast requests queue behind them and start timing out.
 
+<!-- diagram-id: troubleshooting-lab-guides-intermittent-5xx-diagram-1 -->
 ```mermaid
 graph LR
     A[Deploy B1 Linux app with 2 sync workers] --> B[Launch 20 concurrent /slow requests]
@@ -88,6 +133,7 @@ With `sync` workers, a worker handles one request at a time. If two workers are 
 
 ### 1.3 Request starvation diagram
 
+<!-- diagram-id: troubleshooting-lab-guides-intermittent-5xx-diagram-2 -->
 ```mermaid
 flowchart TD
     A[20 concurrent /slow requests] --> B[Worker 1 busy]
@@ -125,6 +171,7 @@ That pattern matches this lab's mixed-success output under constrained workers.
 
 ### 1.6 Internal queueing timeline
 
+<!-- diagram-id: troubleshooting-lab-guides-intermittent-5xx-diagram-3 -->
 ```mermaid
 sequenceDiagram
     participant ClientA as Slow Clients (x20)
@@ -197,6 +244,7 @@ which confirms worker starvation and queueing.
 3. Client-side timeout thresholds are reached (`15s` for fast, `45s` for slow in trigger artifacts).
 4. Timed-out requests surface as status `000` in trigger output and `499` in App Service HTTP logs.
 
+<!-- diagram-id: troubleshooting-lab-guides-intermittent-5xx-diagram-4 -->
 ```mermaid
 flowchart LR
     A[Limited sync workers=2] --> B[Concurrent /slow saturates workers]
@@ -493,6 +541,7 @@ AppServicePlatformLogs
 
 ### 3.13 Decision tree for incident triage
 
+<!-- diagram-id: troubleshooting-lab-guides-intermittent-5xx-diagram-5 -->
 ```mermaid
 flowchart TD
     A[Observe intermittent failures] --> B{Are slow endpoints active concurrently?}
@@ -759,6 +808,7 @@ This section defines what you SHOULD observe at each phase of the lab. Use it to
 
 ### Evidence Timeline
 
+<!-- diagram-id: troubleshooting-lab-guides-intermittent-5xx-diagram-6 -->
 ```mermaid
 graph LR
     A[Baseline Capture] --> B[Trigger Fault]

@@ -1,8 +1,37 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: troubleshooting-lab-guides-no-space-left-on-device-diagram-1
+      type: flowchart
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+    - id: troubleshooting-lab-guides-no-space-left-on-device-diagram-2
+      type: sequenceDiagram
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+    - id: troubleshooting-lab-guides-no-space-left-on-device-diagram-3
+      type: graph
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+    - id: troubleshooting-lab-guides-no-space-left-on-device-diagram-4
+      type: graph
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
 ---
-
 # Lab: No Space Left on Device (Persistent `/home` Exhaustion vs Ephemeral `/tmp` Pressure)
 
 This lab reproduces App Service Linux filesystem pressure and makes one critical diagnostic distinction:
@@ -95,6 +124,7 @@ This is exactly what the artifact set shows.
 
 ### 1.6 Storage architecture diagram
 
+<!-- diagram-id: troubleshooting-lab-guides-no-space-left-on-device-diagram-1 -->
 ```mermaid
 flowchart TD
     A[Incoming HTTP Request] --> B{Endpoint type}
@@ -119,6 +149,7 @@ flowchart TD
 
 ### 1.7 Lifecycle of disk pressure in this lab
 
+<!-- diagram-id: troubleshooting-lab-guides-no-space-left-on-device-diagram-2 -->
 ```mermaid
 sequenceDiagram
     participant Operator
@@ -158,6 +189,7 @@ Reality:
 
 ### 1.9 Diagram: symptom matrix by endpoint behavior
 
+<!-- diagram-id: troubleshooting-lab-guides-no-space-left-on-device-diagram-3 -->
 ```mermaid
 graph LR
     A[/health/] --> A1[No large write]
@@ -868,6 +900,7 @@ This section defines what you SHOULD observe at each phase of the lab. Use it to
 
 ### Evidence Timeline
 
+<!-- diagram-id: troubleshooting-lab-guides-no-space-left-on-device-diagram-4 -->
 ```mermaid
 graph LR
     A[Baseline Capture] --> B[Trigger Fault]

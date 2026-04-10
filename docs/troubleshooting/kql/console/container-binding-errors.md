@@ -1,14 +1,23 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: troubleshooting-kql-console-container-binding-errors-diagram-1
+      type: graph
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/azure-monitor/logs/get-started-queries
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
 ---
-
 # Container Binding Errors
 
 **Scenario**: App starts but is unreachable, or startup fails with bind/listen issues.
 **Data Source**: AppServiceConsoleLogs
 **Purpose**: Detects log lines related to port binding, listen socket conflicts, and loopback binding mistakes.
 
+<!-- diagram-id: troubleshooting-kql-console-container-binding-errors-diagram-1 -->
 ```mermaid
 graph LR
     A[AppServiceConsoleLogs] -->|Keyword Filter| B[bind / listen / port / EADDRINUSE]

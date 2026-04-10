@@ -187,6 +187,13 @@ app.MapControllers();
 app.Run();
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `builder.Services.AddControllers();` | Registers controller support for the API application. |
+| `builder.Services.AddApplicationInsightsTelemetry();` | Enables telemetry collection in deployed environments. |
+| `app.MapControllers();` | Maps attribute-routed controller endpoints into the request pipeline. |
+| `app.Run();` | Starts the ASP.NET Core application. |
+
 Because pipeline deploys published binaries, startup behavior must not depend on local-only files.
 
 ### 8) Optional smoke test in pipeline
@@ -211,6 +218,11 @@ dotnet publish "app/GuideApi/GuideApi.csproj" --configuration Release --output "
 az webapp deploy --resource-group "$RESOURCE_GROUP_NAME" --name "$WEB_APP_NAME" --src-path "/tmp/guideapi.zip" --type zip --output json
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `dotnet publish "app/GuideApi/GuideApi.csproj" --configuration Release --output "/tmp/guideapi-publish"` | Produces release-ready publish output outside the pipeline for debugging. |
+| `az webapp deploy --resource-group "$RESOURCE_GROUP_NAME" --name "$WEB_APP_NAME" --src-path "/tmp/guideapi.zip" --type zip --output json` | Deploys a zip package manually to App Service. |
+
 !!! tip "Why Azure DevOps is the differentiator"
     This guide is intentionally Azure DevOps-first.
     Keep your YAML as the source of truth for repeatable enterprise deployment.
@@ -227,6 +239,10 @@ After a successful run:
 ```bash
 curl --include "https://$WEB_APP_NAME.azurewebsites.net/health"
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `curl --include "https://$WEB_APP_NAME.azurewebsites.net/health"` | Verifies the deployed app health endpoint and returns HTTP headers. |
 
 ## Troubleshooting
 

@@ -76,6 +76,12 @@ python -m venv .venv
 source .venv/bin/activate
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `cd app` | Moves into the Flask application directory before creating the environment. |
+| `python -m venv .venv` | Creates an isolated Python virtual environment in `.venv`. |
+| `source .venv/bin/activate` | Activates the virtual environment in the current shell session. |
+
 On Windows:
 
 ```powershell
@@ -89,6 +95,11 @@ pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `pip install --upgrade pip` | Updates `pip` to the latest available version in the virtual environment. |
+| `pip install -r requirements.txt` | Installs all Python packages required by the Flask app. |
+
 ### Run with Flask CLI for development
 
 `flask run` provides fast iteration and debug-friendly behavior:
@@ -99,11 +110,22 @@ export FLASK_ENV=development
 flask run --port 8000
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `export FLASK_APP=src.app:app` | Points Flask CLI to the application object exposed by `src.app`. |
+| `export FLASK_ENV=development` | Enables Flask development-friendly behavior for local work. |
+| `flask run --port 8000` | Starts the Flask development server on port `8000`. |
+| `--port 8000` | Binds the local development server to TCP port `8000`. |
+
 Verify:
 
 ```bash
 curl http://localhost:8000/health
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `curl http://localhost:8000/health` | Sends a test request to the health endpoint to confirm the app is responding. |
 
 ### Run with Gunicorn for production parity
 
@@ -114,6 +136,13 @@ export PORT=8000
 gunicorn --bind=0.0.0.0:$PORT src.app:app
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `export PORT=8000` | Sets the port variable that matches how App Service passes the listening port. |
+| `gunicorn --bind=0.0.0.0:$PORT src.app:app` | Starts the Flask app with Gunicorn for production-style local testing. |
+| `--bind=0.0.0.0:$PORT` | Listens on all network interfaces using the port stored in `PORT`. |
+| `src.app:app` | Tells Gunicorn which Python module and WSGI app object to load. |
+
 ### Validate worker and timeout behavior
 
 Tune worker and timeout values to simulate production load:
@@ -121,6 +150,13 @@ Tune worker and timeout values to simulate production load:
 ```bash
 gunicorn --bind=0.0.0.0:$PORT --workers 2 --timeout 120 src.app:app
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `gunicorn --bind=0.0.0.0:$PORT --workers 2 --timeout 120 src.app:app` | Runs Gunicorn with explicit worker and timeout settings to simulate production behavior. |
+| `--bind=0.0.0.0:$PORT` | Exposes the service on the configured host and port. |
+| `--workers 2` | Starts two worker processes to handle concurrent requests. |
+| `--timeout 120` | Restarts workers if a request takes longer than 120 seconds. |
 
 <!-- diagram-id: validate-worker-and-timeout-behavior -->
 ```mermaid

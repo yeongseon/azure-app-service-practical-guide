@@ -17,6 +17,15 @@ used_in:
 summary: KQL query to find container and application startup errors in console logs.
 status: stable
 last_reviewed: 2026-04-08
+content_sources:
+  diagrams:
+    - id: troubleshooting-kql-console-startup-errors-diagram-1
+      type: graph
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/azure-monitor/logs/get-started-queries
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
 ---
 # Startup Errors
 
@@ -24,6 +33,7 @@ last_reviewed: 2026-04-08
 **Data Source**: AppServiceConsoleLogs
 **Purpose**: Surfaces recent startup/runtime error signatures from console output.
 
+<!-- diagram-id: troubleshooting-kql-console-startup-errors-diagram-1 -->
 ```mermaid
 graph LR
     A[AppServiceConsoleLogs] -->|Keyword Filter| B[error / exception / traceback]

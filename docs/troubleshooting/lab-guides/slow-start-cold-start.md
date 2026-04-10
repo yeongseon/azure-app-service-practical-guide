@@ -1,8 +1,44 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: troubleshooting-lab-guides-slow-start-cold-start-diagram-1
+      type: flowchart
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+    - id: troubleshooting-lab-guides-slow-start-cold-start-diagram-2
+      type: sequenceDiagram
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+    - id: troubleshooting-lab-guides-slow-start-cold-start-diagram-3
+      type: flowchart
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+    - id: troubleshooting-lab-guides-slow-start-cold-start-diagram-4
+      type: flowchart
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+    - id: troubleshooting-lab-guides-slow-start-cold-start-diagram-5
+      type: graph
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
 ---
-
 # Lab Guide: Slow Start (Cold Start) vs Real Regression
 
 This Level 3 lab guide reproduces a slow-start scenario on Azure App Service Linux and shows how to separate platform/container startup cost from steady-state request latency. The experiment uses a Python Flask app that intentionally sleeps for 30 seconds during startup and captures HTTP, platform, and app-level evidence.
@@ -44,6 +80,7 @@ For accurate troubleshooting, you must identify **where time is spent**:
 
 ### 1.1 Cold-start phase model
 
+<!-- diagram-id: troubleshooting-lab-guides-slow-start-cold-start-diagram-1 -->
 ```mermaid
 flowchart TD
     A[Trigger: deploy/restart/recycle/scale-out] --> B[Worker selected and site state enters Starting]
@@ -98,6 +135,7 @@ But a first customer request can also be **fast** if startup cost was already pa
 
 ### 1.5 Timeline diagram: where cold-start latency can hide
 
+<!-- diagram-id: troubleshooting-lab-guides-slow-start-cold-start-diagram-2 -->
 ```mermaid
 sequenceDiagram
     participant Client as Client
@@ -167,6 +205,7 @@ Links are listed in [Sources](#sources).
 
 ### 2.2 Causal chain
 
+<!-- diagram-id: troubleshooting-lab-guides-slow-start-cold-start-diagram-3 -->
 ```mermaid
 flowchart LR
     A[Restart or deployment trigger] --> B[Container lifecycle starts]
@@ -420,6 +459,7 @@ Use this table while running the lab:
 
 ### 3.10 Decision logic during triage
 
+<!-- diagram-id: troubleshooting-lab-guides-slow-start-cold-start-diagram-4 -->
 ```mermaid
 flowchart TD
     A[Slow first-hit complaint] --> B{Startup lifecycle events near issue window?}
@@ -661,6 +701,7 @@ This section defines what you SHOULD observe at each phase of the lab. Use it to
 
 ### Evidence Timeline
 
+<!-- diagram-id: troubleshooting-lab-guides-slow-start-cold-start-diagram-5 -->
 ```mermaid
 graph LR
     A[Baseline Capture] --> B[Trigger Fault]

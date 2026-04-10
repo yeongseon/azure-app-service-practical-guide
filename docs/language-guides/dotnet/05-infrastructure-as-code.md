@@ -93,6 +93,10 @@ az deployment group create \
   --output table
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `az deployment group create --resource-group "$RESOURCE_GROUP_NAME" --template-file "infra/main.bicep" --parameters baseName="$BASE_NAME" location="$LOCATION" appServicePlanSku="B1" --output table` | Deploys the Bicep template to the target resource group with the supplied parameters. |
+
 ### 2) Windows App Service plan essentials
 
 In Bicep, Windows App Service must **not** be marked as Linux reserved.
@@ -111,6 +115,13 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2023-01-01' = {
   }
 }
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `resource appServicePlan 'Microsoft.Web/serverfarms@2023-01-01'` | Declares the App Service plan resource in Bicep. |
+| `sku: { name: appServicePlanSku tier: 'Basic' }` | Sets the pricing SKU and tier for the hosting plan. |
+| `kind: 'app'` | Marks the plan as an App Service plan for web apps. |
+| `reserved: false` | Ensures the plan is created as Windows, not Linux. |
 
 ### 3) Web app runtime settings for .NET 8
 
@@ -134,6 +145,13 @@ resource webApp 'Microsoft.Web/sites@2023-01-01' = {
 }
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `resource webApp 'Microsoft.Web/sites@2023-01-01'` | Declares the App Service site resource in Bicep. |
+| `serverFarmId: appServicePlan.id` | Links the web app to the App Service plan created earlier. |
+| `netFrameworkVersion: 'v8.0'` | Configures the Windows App Service runtime for .NET 8. |
+| `metadata: [{ name: 'CURRENT_STACK' value: 'dotnet' }]` | Sets stack metadata so the portal reflects the intended runtime. |
+
 These fields keep the portal/runtime aligned with the intended stack for Windows-hosted .NET apps.
 
 ### 4) App settings defined as code
@@ -149,6 +167,13 @@ resource appSettings 'Microsoft.Web/sites/config@2023-01-01' = {
 }
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `resource appSettings 'Microsoft.Web/sites/config@2023-01-01'` | Declares the App Settings configuration resource for the web app. |
+| `ASPNETCORE_ENVIRONMENT: 'Production'` | Sets the app to run with production configuration by default. |
+| `WEBSITE_RUN_FROM_PACKAGE: '1'` | Tells App Service to run the app from a deployed package. |
+| `APPLICATIONINSIGHTS_CONNECTION_STRING: appInsights.properties.ConnectionString` | Injects the Application Insights connection string into app settings. |
+
 ### 5) Outputs for downstream automation
 
 ```bicep
@@ -156,6 +181,12 @@ output webAppName string = webApp.name
 output webAppUrl string = 'https://${webApp.properties.defaultHostName}'
 output appInsightsName string = appInsights.name
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `output webAppName string = webApp.name` | Exposes the deployed web app name for downstream scripts or pipelines. |
+| `output webAppUrl string = 'https://${webApp.properties.defaultHostName}'` | Exposes the default HTTPS URL of the deployed web app. |
+| `output appInsightsName string = appInsights.name` | Exposes the Application Insights resource name for later steps. |
 
 Outputs are consumed by deployment scripts and pipeline variable mapping.
 
@@ -169,6 +200,13 @@ var port = Environment.GetEnvironmentVariable("HTTP_PLATFORM_PORT")
 builder.WebHost.UseUrls($"http://+:{port}");
 builder.Services.AddApplicationInsightsTelemetry();
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `Environment.GetEnvironmentVariable("HTTP_PLATFORM_PORT")` | Reads the platform-provided port used by Windows App Service. |
+| `Environment.GetEnvironmentVariable("PORT")` | Falls back to another common hosting port variable. |
+| `builder.WebHost.UseUrls($"http://+:{port}")` | Binds the app to the resolved port so infrastructure and app agree. |
+| `builder.Services.AddApplicationInsightsTelemetry();` | Enables telemetry collection that matches the provisioned monitoring resources. |
 
 Infrastructure and code should agree on runtime assumptions: port injection, telemetry connection string, and production environment.
 
@@ -203,6 +241,10 @@ Infrastructure and code should agree on runtime assumptions: port injection, tel
 az webapp show --resource-group "$RESOURCE_GROUP_NAME" --name "$WEB_APP_NAME" --output json
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp show --resource-group "$RESOURCE_GROUP_NAME" --name "$WEB_APP_NAME" --output json` | Retrieves the deployed web app resource definition for verification. |
+
 Check:
 
 - App Service Plan kind is `app` (Windows)
@@ -227,6 +269,10 @@ az deployment group what-if \
   --parameters baseName="$BASE_NAME" location="$LOCATION"
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `az deployment group what-if --resource-group "$RESOURCE_GROUP_NAME" --template-file "infra/main.bicep" --parameters baseName="$BASE_NAME" location="$LOCATION"` | Previews infrastructure changes before applying the Bicep deployment. |
+
 ### Hidden dependency ordering issue
 
 Split resources into modules and expose explicit outputs/inputs to avoid implicit timing assumptions.
@@ -247,6 +293,12 @@ VNET_NAME="vnet-dotnet-tutorial"
 INTEGRATION_SUBNET_NAME="snet-appsvc-integration"
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `SUBSCRIPTION_ID="<subscription-id>"` | Stores the Azure subscription used for imperative provisioning. |
+| `RG`, `LOCATION`, `PLAN_NAME`, `APP_NAME` | Define the core resource group, region, plan, and web app names. |
+| `VNET_NAME`, `INTEGRATION_SUBNET_NAME` | Define the networking resources used for VNet integration. |
+
 ???+ example "Expected output"
     ```text
     Variables are set for deployment:
@@ -264,6 +316,13 @@ az appservice plan create --resource-group $RG --name $PLAN_NAME --sku S1
 az webapp create --resource-group $RG --plan $PLAN_NAME --name $APP_NAME --runtime "DOTNETCORE|8.0"
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `az account set --subscription $SUBSCRIPTION_ID` | Sets the active subscription for the CLI session. |
+| `az group create --name $RG --location $LOCATION` | Creates the resource group for the manual deployment path. |
+| `az appservice plan create --resource-group $RG --name $PLAN_NAME --sku S1` | Creates the App Service plan that will host the app. |
+| `az webapp create --resource-group $RG --plan $PLAN_NAME --name $APP_NAME --runtime "DOTNETCORE\|8.0"` | Creates the .NET 8 App Service instance. |
+
 ???+ example "Expected output"
     ```json
     {
@@ -277,6 +336,10 @@ az webapp create --resource-group $RG --plan $PLAN_NAME --name $APP_NAME --runti
 ```bash
 az webapp config appsettings set --resource-group $RG --name $APP_NAME --settings ASPNETCORE_ENVIRONMENT=Production WEBSITE_RUN_FROM_PACKAGE=1
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp config appsettings set --resource-group $RG --name $APP_NAME --settings ASPNETCORE_ENVIRONMENT=Production WEBSITE_RUN_FROM_PACKAGE=1` | Applies production environment and package-based deployment settings to the app. |
 
 ???+ example "Expected output"
     ```json
@@ -300,6 +363,12 @@ az network vnet subnet create --resource-group $RG --vnet-name $VNET_NAME --name
 az webapp vnet-integration add --resource-group $RG --name $APP_NAME --vnet $VNET_NAME --subnet $INTEGRATION_SUBNET_NAME
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `az network vnet create --resource-group $RG --name $VNET_NAME --location $LOCATION --address-prefixes 10.0.0.0/16` | Creates the virtual network for the manual provisioning path. |
+| `az network vnet subnet create --resource-group $RG --vnet-name $VNET_NAME --name $INTEGRATION_SUBNET_NAME --address-prefixes 10.0.1.0/24 --delegations Microsoft.Web/serverFarms` | Creates the delegated subnet required by App Service VNet integration. |
+| `az webapp vnet-integration add --resource-group $RG --name $APP_NAME --vnet $VNET_NAME --subnet $INTEGRATION_SUBNET_NAME` | Attaches the web app to the integration subnet. |
+
 ???+ example "Expected output"
     ```json
     {
@@ -314,6 +383,11 @@ az webapp vnet-integration add --resource-group $RG --name $APP_NAME --vnet $VNE
 az webapp config show --resource-group $RG --name $APP_NAME --query "{netFrameworkVersion:netFrameworkVersion, windowsFxVersion:windowsFxVersion}" --output json
 az webapp config appsettings list --resource-group $RG --name $APP_NAME --query "[?name=='ASPNETCORE_ENVIRONMENT' || name=='WEBSITE_RUN_FROM_PACKAGE']" --output json
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp config show --resource-group $RG --name $APP_NAME --query "{netFrameworkVersion:netFrameworkVersion, windowsFxVersion:windowsFxVersion}" --output json` | Checks the effective runtime stack configuration on the deployed app. |
+| `az webapp config appsettings list --resource-group $RG --name $APP_NAME --query "[?name=='ASPNETCORE_ENVIRONMENT' || name=='WEBSITE_RUN_FROM_PACKAGE']" --output json` | Verifies the key App Settings applied to the app. |
 
 ???+ example "Expected output"
     ```json

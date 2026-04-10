@@ -1,14 +1,23 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: reference-cli-cheatsheet-diagram-1
+      type: flowchart
+      source: self-generated
+      justification: "Self-generated reference diagram synthesized from official Azure App Service documentation for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/overview
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
 ---
-
 # Azure CLI App Service Cheatsheet
 
 Language-agnostic quick reference for Azure App Service operations with long flags only.
 
 ## Overview
 
+<!-- diagram-id: reference-cli-cheatsheet-diagram-1 -->
 ```mermaid
 flowchart TD
     A[Azure CLI Cheatsheet] --> B[Lifecycle]

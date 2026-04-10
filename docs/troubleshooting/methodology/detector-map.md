@@ -1,12 +1,21 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: troubleshooting-methodology-detector-map-diagram-1
+      type: graph
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
 ---
-
 # Detector Map
 
 Quick reference for Azure App Service Diagnostics detectors relevant to Linux/OSS troubleshooting.
 
+<!-- diagram-id: troubleshooting-methodology-detector-map-diagram-1 -->
 ```mermaid
 graph TD
     A[Troubleshooting scenario] --> B{Scenario type}

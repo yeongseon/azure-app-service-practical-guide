@@ -136,6 +136,11 @@ az webapp config appsettings set \
   --settings TELEMETRY_MODE=advanced
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp config appsettings set ...` | Updates application settings for the web app |
+| `TELEMETRY_MODE=advanced` | Enables the advanced telemetry path that exports to Application Insights |
+
 ## Step 2 — Structured JSON Logging
 
 Both modes emit newline-delimited JSON to stdout. In `advanced` mode the OTel SDK also
@@ -188,6 +193,14 @@ router.post('/user-login', (req, res) => {
 });
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `router.get('/log-levels', ...)` | Exposes a demo endpoint that emits logs at multiple levels |
+| `logger.debug/info/warn/error(...)` | Writes structured log entries with different severities |
+| `router.post('/user-login', ...)` | Demonstrates request-scoped logging during a POST operation |
+| `req.logger.info(...)` | Writes a log entry with the request `correlationId` already attached |
+| `res.json({ correlationId: req.correlationId })` | Returns the correlation ID so the request can be traced later |
+
 **stdout — one JSON line per call:**
 
 ```json
@@ -196,6 +209,14 @@ router.post('/user-login', (req, res) => {
 {"timestamp":"2025-01-02T10:30:34.102Z","level":"warn","message":"Rate limit approaching","service":"app-service-reference","environment":"production","correlationId":"a1b2c3d4","userId":"demo-user-123","remaining":3}
 {"timestamp":"2025-01-02T10:30:34.103Z","level":"error","message":"Quota exceeded","service":"app-service-reference","environment":"production","correlationId":"a1b2c3d4","userId":"demo-user-123","errorCode":"QUOTA_EXCEEDED"}
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `timestamp` | Shows when each log event was emitted |
+| `level` | Shows the severity of the log event |
+| `message` | Contains the main event description |
+| `correlationId` | Links all log lines that belong to the same request |
+| `userId` and other custom fields | Preserve business context for filtering in KQL |
 
 ### Pattern 2 — External Dependency Tracking
 
@@ -231,6 +252,15 @@ router.get('/external', async (req, res) => {
 });
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `router.get('/external', ...)` | Defines a demo endpoint that calls an external API |
+| `const start = Date.now();` | Captures the start time so request duration can be measured |
+| `await fetch(apiUrl, { signal: AbortSignal.timeout(10_000) })` | Calls the external dependency with a 10-second timeout |
+| `req.logger.info(...)` | Records a successful dependency call with timing and status details |
+| `req.logger.error(...)` | Records a failed dependency call with error context |
+| `res.status(503).json(...)` | Returns a failure response when the dependency call does not succeed |
+
 **stdout on timeout:**
 
 ```json
@@ -246,6 +276,14 @@ router.get('/external', async (req, res) => {
   "duration": 10043
 }
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `timestamp` | Shows when the dependency failure was logged |
+| `level` | Indicates the event is an error |
+| `message` | Describes the failed external call |
+| `correlationId` | Links the dependency failure to the original request |
+| `url`, `error`, `duration` | Capture the failing dependency, error detail, and elapsed time |
 
 ### Pattern 3 — Unhandled Exception Logging
 
@@ -278,6 +316,13 @@ process.on('unhandledRejection', (reason) => {
   });
 });
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `app.use((err, req, res, next) => { ... })` | Handles uncaught Express errors in one place |
+| `logger.error('Unhandled error', ...)` | Logs the error with request context before returning a response |
+| `res.status(err.status || 500).json(...)` | Sends a safe HTTP error response to the client |
+| `process.on('unhandledRejection', ...)` | Captures rejected promises that were not otherwise handled |
 
 In `advanced` mode this entry lands in `AppTraces` (SeverityLevel 3). Separate exception
 telemetry may also appear in `AppExceptions` when the OTel SDK captures the error object,
@@ -352,6 +397,11 @@ az webapp config appsettings set \
   --settings LOG_LEVEL=debug
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp config appsettings set ... --settings LOG_LEVEL=warn` | Lowers log volume in production by suppressing lower-severity entries |
+| `az webapp config appsettings set ... --settings LOG_LEVEL=debug` | Temporarily enables verbose logs during an incident investigation |
+
 !!! tip "Remember to revert after debugging"
     `debug` level can emit sensitive data and significantly increase Application Insights ingestion costs.
     Set `LOG_LEVEL=info` or `warn` again once the incident is resolved.
@@ -393,6 +443,10 @@ az webapp log config \
   --output json
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp log config ... --application-logging filesystem --level verbose --output json` | Enables verbose filesystem logging and returns the applied configuration |
+
 **Example output:**
 
 ```json
@@ -412,6 +466,12 @@ az webapp log config \
 }
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `applicationLogs.fileSystem.level` | Shows the filesystem log verbosity level |
+| `httpLogs.fileSystem.enabled` | Shows whether HTTP access logging is enabled |
+| `retentionInDays` / `retentionInMb` | Show how long and how much log data App Service keeps |
+
 ## Step 4 — Real-time Log Stream
 
 Tail live logs directly in your terminal — useful during deployments and smoke tests:
@@ -421,6 +481,10 @@ az webapp log tail \
   --resource-group $RG \
   --name $APP_NAME
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp log tail --resource-group $RG --name $APP_NAME` | Streams live logs from the App Service instance |
 
 Press `Ctrl+C` to exit. Your JSON log lines appear interleaved with platform events
 (health probes, container restarts, etc).
@@ -433,6 +497,11 @@ az webapp log tail \
   --name $APP_NAME \
   | grep --line-buffered '"level"'
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp log tail ...` | Streams live platform and application logs |
+| `grep --line-buffered '"level"'` | Filters the stream to JSON application log lines that include a log level |
 
 ## Step 5 — Browse Logs on the Filesystem
 
@@ -468,6 +537,11 @@ az webapp log download \
 unzip logs.zip -d ./logs
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp log download ... --log-file ./logs.zip` | Downloads the current App Service logs as a zip archive |
+| `unzip logs.zip -d ./logs` | Extracts the downloaded logs into a local folder |
+
 **SSH and tail live:**
 
 ```bash
@@ -476,6 +550,11 @@ az webapp ssh --resource-group $RG --name $APP_NAME
 # Inside the container:
 tail -f /home/LogFiles/*_docker.log
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp ssh --resource-group $RG --name $APP_NAME` | Opens an interactive SSH session into the running App Service container |
+| `tail -f /home/LogFiles/*_docker.log` | Follows the live container log file from inside the container |
 
 ## Step 6 — Application Insights
 
@@ -511,6 +590,10 @@ az webapp config appsettings list \
   --name $APP_NAME \
   --query "[?name=='APPLICATIONINSIGHTS_CONNECTION_STRING']"
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp config appsettings list ... --query "[?name=='APPLICATIONINSIGHTS_CONNECTION_STRING']"` | Checks whether the App Insights connection string is configured |
 
 ### Access Application Insights
 
@@ -580,6 +663,11 @@ az webapp log tail \
   | grep --line-buffered a1b2c3d4
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp log tail ...` | Streams current logs from the web app |
+| `grep --line-buffered a1b2c3d4` | Filters the stream to log lines for one correlation ID |
+
 **2. If the error occurred earlier — query Application Insights:**
 
 ```kql
@@ -620,11 +708,19 @@ union traces, requests
     curl https://$APP_NAME.azurewebsites.net/api/requests/log-levels
     ```
 
+    | Command/Code | Purpose |
+    |--------------|---------|
+    | `curl https://$APP_NAME.azurewebsites.net/api/requests/log-levels` | Generates sample logs in the deployed app for verification |
+
 2. **Confirm JSON lines appear** in the log stream:
 
     ```bash
     az webapp log tail --resource-group $RG --name $APP_NAME
     ```
+
+    | Command/Code | Purpose |
+    |--------------|---------|
+    | `az webapp log tail --resource-group $RG --name $APP_NAME` | Confirms the generated logs appear in the live stream |
 
 3. **Wait 2–3 minutes**, then run a KQL query to confirm data reached Application Insights:
 
@@ -662,6 +758,10 @@ az webapp log config \
   --level verbose
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp log config ... --application-logging filesystem --level verbose` | Enables verbose filesystem logging during the deployment test |
+
 **Output:**
 ```json
 {
@@ -681,6 +781,12 @@ az webapp log config \
 }
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `applicationLogs.fileSystem.level` | Confirms the application log level stored on disk |
+| `httpLogs.fileSystem` | Shows whether HTTP log capture is enabled and its limits |
+| `detailedErrorMessages` / `failedRequestsTracing` | Show the state of other diagnostic features |
+
 ---
 
 ### Step 2 — Confirm JSON Logs in Filesystem
@@ -688,6 +794,10 @@ az webapp log config \
 ```bash
 az webapp log tail --resource-group $RG --name $APP_NAME
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp log tail --resource-group $RG --name $APP_NAME` | Streams the live log output used in the deployment test |
 
 **Sample output from `/home/LogFiles/2026_04_02_lw1sdlwk00086E_default_docker.log`:**
 ```
@@ -773,6 +883,13 @@ curl -X POST \
   https://$APP_NAME.azurewebsites.net/api/requests/create-order
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `CORR_ID="verify-corr-$(date +%s)"` | Creates a unique correlation ID for the test run |
+| `curl -X POST ... /api/requests/user-login` | Sends a login request tagged with the shared correlation ID |
+| `curl -X POST ... /api/requests/create-order` | Sends an order request using the same correlation ID |
+| `-H "X-Correlation-ID: $CORR_ID"` | Forces both requests to share the same trace identifier |
+
 **Response (user-login):**
 ```json
 {
@@ -781,6 +898,12 @@ curl -X POST \
   "correlationId": "verify-corr-1775138644"
 }
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `message` | Confirms the login operation succeeded |
+| `userId` | Returns the generated user identifier from the sample app |
+| `correlationId` | Returns the trace ID used to connect related operations |
 
 **Response (create-order):**
 ```json
@@ -792,6 +915,14 @@ curl -X POST \
   "correlationId": "verify-corr-1775138644"
 }
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `message` | Confirms the order operation succeeded |
+| `orderId` | Returns the generated order identifier |
+| `itemCount` | Shows how many items were submitted |
+| `totalAmount` | Shows the order total processed by the route |
+| `correlationId` | Confirms the order used the same trace ID as the login request |
 
 After 2–3 minutes, query by correlationId in KQL:
 

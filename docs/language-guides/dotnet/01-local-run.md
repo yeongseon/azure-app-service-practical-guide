@@ -91,6 +91,11 @@ dotnet restore "app/GuideApi/GuideApi.csproj"
 dotnet run --project "app/GuideApi/GuideApi.csproj"
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `dotnet restore "app/GuideApi/GuideApi.csproj"` | Restores the NuGet packages required by the Guide API project. |
+| `dotnet run --project "app/GuideApi/GuideApi.csproj"` | Builds and starts the ASP.NET Core app locally. |
+
 By default, the app listens on port `5000` if no environment variable is provided.
 
 ### 2) Understand port binding logic
@@ -104,6 +109,13 @@ var port = Environment.GetEnvironmentVariable("HTTP_PLATFORM_PORT")
 
 builder.WebHost.UseUrls($"http://+:{port}");
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `Environment.GetEnvironmentVariable("HTTP_PLATFORM_PORT")` | Reads the Windows App Service port provided by IIS integration. |
+| `Environment.GetEnvironmentVariable("PORT")` | Falls back to a generic hosting port variable when `HTTP_PLATFORM_PORT` is not set. |
+| `?? "5000"` | Uses port `5000` as the local default when no platform variable exists. |
+| `builder.WebHost.UseUrls($"http://+:{port}")` | Configures Kestrel to listen on the resolved port for local and hosted traffic. |
 
 - `HTTP_PLATFORM_PORT`: provided by IIS integration on Windows App Service
 - `PORT`: fallback used in some hosting environments
@@ -119,6 +131,11 @@ builder.WebHost.UseUrls($"http://+:{port}");
 curl --silent "http://localhost:5000/health"
 curl --silent "http://localhost:5000/info"
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `curl --silent "http://localhost:5000/health"` | Calls the health endpoint to confirm the app is running. |
+| `curl --silent "http://localhost:5000/info"` | Calls the info endpoint to inspect runtime metadata such as environment. |
 
 Expected `/health` shape:
 
@@ -137,11 +154,19 @@ Run in Development:
 ASPNETCORE_ENVIRONMENT=Development dotnet run --project "app/GuideApi/GuideApi.csproj"
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `ASPNETCORE_ENVIRONMENT=Development dotnet run --project "app/GuideApi/GuideApi.csproj"` | Starts the app with Development settings and middleware enabled. |
+
 Run in Production:
 
 ```bash
 ASPNETCORE_ENVIRONMENT=Production dotnet run --project "app/GuideApi/GuideApi.csproj"
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `ASPNETCORE_ENVIRONMENT=Production dotnet run --project "app/GuideApi/GuideApi.csproj"` | Starts the app with Production configuration for local parity checks. |
 
 Typical differences:
 
@@ -156,6 +181,10 @@ If your app includes sample logging routes, invoke them now to create telemetry 
 ```bash
 curl --silent "http://localhost:5000/api/requests/log-levels?userId=local-user"
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `curl --silent "http://localhost:5000/api/requests/log-levels?userId=local-user"` | Sends a sample request that can generate log entries before deployment. |
 
 ### 6) Azure DevOps context (why this matters)
 
@@ -178,6 +207,10 @@ Local behavior should mirror pipeline-produced artifacts. A minimal pipeline ste
 curl --include --request GET "http://localhost:5000/health"
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `curl --include --request GET "http://localhost:5000/health"` | Verifies the health endpoint response including HTTP headers and status code. |
+
 ## Troubleshooting
 
 ### Port already in use
@@ -188,11 +221,19 @@ Stop the previous process and rerun, or test with platform-style port simulation
 HTTP_PLATFORM_PORT=5050 dotnet run --project "app/GuideApi/GuideApi.csproj"
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `HTTP_PLATFORM_PORT=5050 dotnet run --project "app/GuideApi/GuideApi.csproj"` | Simulates the port injection behavior used by Windows App Service. |
+
 ### Missing .NET SDK
 
 ```bash
 dotnet --list-sdks
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `dotnet --list-sdks` | Lists installed .NET SDK versions on the local machine. |
 
 Install .NET 8 SDK if not listed.
 
@@ -203,6 +244,10 @@ Print current environment at startup:
 ```csharp
 Console.WriteLine($"ASPNETCORE_ENVIRONMENT={builder.Environment.EnvironmentName}");
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `Console.WriteLine($"ASPNETCORE_ENVIRONMENT={builder.Environment.EnvironmentName}");` | Prints the effective ASP.NET Core environment during startup for debugging. |
 
 ## See Also
 

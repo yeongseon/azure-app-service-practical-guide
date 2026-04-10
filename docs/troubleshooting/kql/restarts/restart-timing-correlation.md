@@ -16,6 +16,15 @@ used_in:
 summary: KQL query to correlate restart events with latency and error spikes.
 status: stable
 last_reviewed: 2026-04-08
+content_sources:
+  diagrams:
+    - id: troubleshooting-kql-restarts-restart-timing-correlation-diagram-1
+      type: graph
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/azure-monitor/logs/get-started-queries
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
 ---
 # Restart Timing Correlation
 
@@ -23,6 +32,7 @@ last_reviewed: 2026-04-08
 **Data Source**: AppServicePlatformLogs
 **Purpose**: Lists restart-related platform events to correlate with incident timelines.
 
+<!-- diagram-id: troubleshooting-kql-restarts-restart-timing-correlation-diagram-1 -->
 ```mermaid
 graph LR
     A[AppServicePlatformLogs] -->|ContainerRestart| B[Restart Events]

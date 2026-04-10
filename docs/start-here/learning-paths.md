@@ -1,8 +1,27 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: start-here-learning-paths-diagram-1
+      type: graph
+      source: self-generated
+      justification: "Self-generated navigation diagram synthesized from official Azure App Service overview documentation for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/overview
+    - id: start-here-learning-paths-diagram-2
+      type: graph
+      source: self-generated
+      justification: "Self-generated navigation diagram synthesized from official Azure App Service overview documentation for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/overview
+    - id: start-here-learning-paths-diagram-3
+      type: graph
+      source: self-generated
+      justification: "Self-generated navigation diagram synthesized from official Azure App Service overview documentation for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/overview
 ---
-
 # Learning Paths
 
 Choose a role-based path to get productive quickly on Azure App Service. Each path is sequenced from fundamentals to execution so you can move from understanding to validated outcomes.
@@ -17,6 +36,7 @@ Choose a role-based path to get productive quickly on Azure App Service. Each pa
 
 ## Developer Path
 
+<!-- diagram-id: start-here-learning-paths-diagram-1 -->
 ```mermaid
 graph LR
     A[Start Here] --> B[Platform Basics]
@@ -43,6 +63,7 @@ Read in order:
 
 ## Operator Path
 
+<!-- diagram-id: start-here-learning-paths-diagram-2 -->
 ```mermaid
 graph LR
     A[Start Here] --> B[Platform Deep-Dive]
@@ -69,6 +90,7 @@ Read in order:
 
 ## Troubleshooter Path
 
+<!-- diagram-id: start-here-learning-paths-diagram-3 -->
 ```mermaid
 graph LR
     A[Start Here] --> B[Architecture Overview]

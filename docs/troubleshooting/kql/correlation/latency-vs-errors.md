@@ -1,14 +1,23 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: troubleshooting-kql-correlation-latency-vs-errors-diagram-1
+      type: graph
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/azure-monitor/logs/get-started-queries
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
 ---
-
 # Latency vs Errors
 
 **Scenario**: Need to confirm whether rising latency and 5xx error rate are coupled.
 **Data Source**: AppServiceHTTPLogs
 **Purpose**: Correlates average latency, error rate, and request volume over the same bins.
 
+<!-- diagram-id: troubleshooting-kql-correlation-latency-vs-errors-diagram-1 -->
 ```mermaid
 graph LR
     A[AppServiceHTTPLogs] --> B[Avg Latency per 5m]

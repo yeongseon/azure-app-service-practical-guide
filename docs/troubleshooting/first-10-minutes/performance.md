@@ -1,13 +1,22 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: troubleshooting-first-10-minutes-performance-diagram-1
+      type: graph
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
 ---
-
 # First 10 Minutes: Performance
 
 ## Quick Context
 Use this checklist when users report slow responses, intermittent 5xx, or throughput drops on Azure App Service Linux. In the first 10 minutes, establish whether the primary pressure is compute (CPU/memory), app/runtime instability (restarts/deployments), or dependency/network latency.
 
+<!-- diagram-id: troubleshooting-first-10-minutes-performance-diagram-1 -->
 ```mermaid
 graph TD
     A[Symptom: Slow responses or 5xx] --> B{CPU or Memory saturated?}

@@ -1,8 +1,15 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: start-here-repository-map-diagram-1
+      type: graph
+      source: self-generated
+      justification: "Self-generated navigation diagram synthesized from official Azure App Service overview documentation for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/overview
 ---
-
 # Repository Map
 
 This page maps the unified repository layout so you can quickly locate architecture guidance, runtime-specific tutorials, operational runbooks, and hands-on labs. Use it as a navigation reference while moving across docs and sample workloads.
@@ -42,6 +49,7 @@ azure-app-service-practical-guide/
 - `apps/` — Reference applications (python-flask, nodejs, java-springboot, dotnet-aspnetcore)
 - `labs/` — Hands-on troubleshooting labs with Bicep templates
 
+<!-- diagram-id: start-here-repository-map-diagram-1 -->
 ```mermaid
 graph TD
     A[docs/start-here] --> B[docs/platform]

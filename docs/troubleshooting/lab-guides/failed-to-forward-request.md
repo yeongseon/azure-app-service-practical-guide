@@ -1,8 +1,51 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: troubleshooting-lab-guides-failed-to-forward-request-diagram-1
+      type: flowchart
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+    - id: troubleshooting-lab-guides-failed-to-forward-request-diagram-2
+      type: sequenceDiagram
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+    - id: troubleshooting-lab-guides-failed-to-forward-request-diagram-3
+      type: flowchart
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+    - id: troubleshooting-lab-guides-failed-to-forward-request-diagram-4
+      type: flowchart
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+    - id: troubleshooting-lab-guides-failed-to-forward-request-diagram-5
+      type: timeline
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+    - id: troubleshooting-lab-guides-failed-to-forward-request-diagram-6
+      type: graph
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
 ---
-
 # Lab Guide (Level 3): Failed to Forward Request on Azure App Service Linux
 
 This lab is a full reference investigation for the App Service Linux startup/binding failure pattern where the app process listens on loopback (`127.0.0.1`) and the platform reverse proxy cannot reach it. The guide includes deep background, a falsifiable hypothesis, a deterministic runbook, and an artifact-backed experiment log.
@@ -37,6 +80,7 @@ If your app listens only on loopback (`127.0.0.1`) inside the container, proxy-t
 
 ### 1.2 Request forwarding chain
 
+<!-- diagram-id: troubleshooting-lab-guides-failed-to-forward-request-diagram-1 -->
 ```mermaid
 flowchart LR
     A[Client] --> B[App Service Front End]
@@ -75,6 +119,7 @@ If startup command explicitly hardcodes `--bind=127.0.0.1:8000`, it can override
 
 ### 1.5 Causal path with warmup probes
 
+<!-- diagram-id: troubleshooting-lab-guides-failed-to-forward-request-diagram-2 -->
 ```mermaid
 sequenceDiagram
     participant FE as Front End / Proxy
@@ -110,6 +155,7 @@ This is why naive “process started = app reachable” assumptions fail.
 
 ### 1.7 Diagram: bind decision outcomes
 
+<!-- diagram-id: troubleshooting-lab-guides-failed-to-forward-request-diagram-3 -->
 ```mermaid
 flowchart TD
     A[Startup command parsed] --> B{Bind address}
@@ -163,6 +209,7 @@ When a Gunicorn process binds to `127.0.0.1` instead of `0.0.0.0`, the App Servi
 
 ### 2.2 Causal chain under test
 
+<!-- diagram-id: troubleshooting-lab-guides-failed-to-forward-request-diagram-4 -->
 ```mermaid
 flowchart LR
     A[Startup command uses 127.0.0.1] --> B[Gunicorn reachable only on loopback]
@@ -594,6 +641,7 @@ Source: `postfix/diag-stats-20260404T055117Z.json`
 
 ### 4.8 Experiment timeline (reconstructed)
 
+<!-- diagram-id: troubleshooting-lab-guides-failed-to-forward-request-diagram-5 -->
 ```mermaid
 timeline
     title Failed-to-forward-request lab timeline
@@ -681,6 +729,7 @@ This section defines what you SHOULD observe at each phase of the lab. Use it to
 
 ### Evidence Timeline
 
+<!-- diagram-id: troubleshooting-lab-guides-failed-to-forward-request-diagram-6 -->
 ```mermaid
 graph LR
     A[Baseline Capture] --> B[Trigger Fault]

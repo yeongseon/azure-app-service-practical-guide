@@ -31,6 +31,10 @@ App Service supports current LTS versions. Check available versions via CLI:
 az webapp list-runtimes --linux --output table
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp list-runtimes --linux --output table` | Lists the Linux runtime stacks available in Azure App Service |
+
 | Version | Status |
 | :--- | :--- |
 | **Node.js 20 (LTS)** | Current |
@@ -65,6 +69,12 @@ server.listen(PORT, () => {
 });
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `const PORT = process.env.PORT || 3000;` | Uses the App Service-assigned port in Azure and `3000` locally |
+| `server.listen(PORT, ...)` | Starts the Node.js server on the selected port |
+| ``console.log(`Server listening on port ${PORT}`);`` | Writes a startup message that confirms the listening port |
+
 ### Protocol Handling
 *   App Service handles HTTPS termination at the front-end.
 *   The application receives requests via HTTP on the assigned `PORT`.
@@ -95,6 +105,11 @@ az webapp config set \
   --startup-file "node dist/server.js"
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp config show ... --query "{runtime:linuxFxVersion, startup:appCommandLine}" --output json` | Shows the configured runtime stack and startup command |
+| `az webapp config set ... --startup-file "node dist/server.js"` | Sets a custom startup command for the app |
+
 **Common Startup Commands:**
 *   `node server.js` - Direct execution (fastest startup)
 *   `npm start` - Uses your `package.json` start script
@@ -122,6 +137,13 @@ process.on('SIGTERM', () => {
 });
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `process.on('SIGTERM', ...)` | Registers a graceful shutdown handler for platform restarts and scale events |
+| `server.close(() => { ... })` | Stops accepting new HTTP connections and closes the server cleanly |
+| `process.exit(0)` | Exits successfully after cleanup completes |
+| `setTimeout(() => { ... }, 10000)` | Forces the process to exit if graceful shutdown takes too long |
+
 **Why this matters:**
 *   Prevents dropped HTTP connections during deployments
 *   Ensures database connection pools are closed correctly
@@ -139,6 +161,10 @@ az webapp config set \
   --resource-group $RG \
   --generic-configurations '{"healthCheckPath": "/health"}'
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp config set ... --generic-configurations '{"healthCheckPath": "/health"}'` | Configures App Service to probe the `/health` endpoint |
 
 **Platform Behavior:**
 *   **Probing:** The platform probes your health path every 1 minute.
@@ -174,6 +200,10 @@ Cold starts occur when an app scales out or starts after being idle.
       "node": ">=20.0.0"
     }
     ```
+
+    | Command/Code | Purpose |
+    |--------------|---------|
+    | `engines.node` | Tells Oryx and other tooling which Node.js version range the app expects |
 *   **`scripts.start`:** The primary way App Service knows how to run your app.
 *   **Dependencies:** Ensure all required modules are listed in `dependencies`.
 

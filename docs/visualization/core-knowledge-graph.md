@@ -17,8 +17,30 @@ related:
 summary: Interactive visualization of the entire documentation structure showing relationships between concepts, best practices, and troubleshooting resources.
 status: stable
 last_reviewed: 2026-04-08
+content_sources:
+  diagrams:
+    - id: visualization-core-knowledge-graph-diagram-1
+      type: graph
+      source: self-generated
+      justification: "Self-generated visualization synthesized from official Azure App Service documentation to explain guide structure and relationships."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/overview
+        - https://learn.microsoft.com/en-us/azure/app-service/environment/overview
+    - id: visualization-core-knowledge-graph-diagram-2
+      type: graph
+      source: self-generated
+      justification: "Self-generated visualization synthesized from official Azure App Service documentation to explain guide structure and relationships."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/overview
+        - https://learn.microsoft.com/en-us/azure/app-service/environment/overview
+    - id: visualization-core-knowledge-graph-diagram-3
+      type: graph
+      source: self-generated
+      justification: "Self-generated visualization synthesized from official Azure App Service documentation to explain guide structure and relationships."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/overview
+        - https://learn.microsoft.com/en-us/azure/app-service/environment/overview
 ---
-
 # Core Knowledge Graph
 
 The Core Knowledge Graph provides a bird's-eye view of the entire Azure App Service Practical Guide. It shows how platform concepts, best practices, troubleshooting playbooks, and reference materials interconnect.
@@ -62,6 +84,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 The platform concepts form the foundation of the knowledge graph:
 
+<!-- diagram-id: visualization-core-knowledge-graph-diagram-1 -->
 ```mermaid
 graph LR
     A[How App Service Works] --> B[Request Lifecycle]
@@ -80,6 +103,7 @@ These documents explain **what App Service is and how it works**. Understanding 
 
 Best practices build on platform concepts and provide operational guidance:
 
+<!-- diagram-id: visualization-core-knowledge-graph-diagram-2 -->
 ```mermaid
 graph TD
     subgraph Platform
@@ -111,6 +135,7 @@ graph TD
 
 Troubleshooting content connects platform knowledge to real-world problem-solving:
 
+<!-- diagram-id: visualization-core-knowledge-graph-diagram-3 -->
 ```mermaid
 graph TD
     subgraph Platform

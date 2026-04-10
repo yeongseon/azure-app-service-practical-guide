@@ -119,6 +119,15 @@ az webapp config hostname add \
   --output json
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `export CUSTOM_HOSTNAME="www.example.com"` | Stores the custom hostname so later commands can reuse it. |
+| `az webapp config hostname add` | Adds the custom domain binding to the App Service app. |
+| `--resource-group "$RG"` | Targets the resource group that contains the app. |
+| `--webapp-name "$APP_NAME"` | Selects the App Service app that will receive the hostname. |
+| `--hostname "$CUSTOM_HOSTNAME"` | Specifies the DNS hostname to map to the app. |
+| `--output json` | Returns hostname binding details in JSON format. |
+
 List current hostnames:
 
 ```bash
@@ -127,6 +136,13 @@ az webapp config hostname list \
   --webapp-name "$APP_NAME" \
   --output table
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp config hostname list` | Lists the hostnames currently bound to the web app. |
+| `--resource-group "$RG"` | Targets the app's resource group. |
+| `--webapp-name "$APP_NAME"` | Selects the App Service app to inspect. |
+| `--output table` | Displays the hostname list in a readable table format. |
 
 ### Step 4: create App Service Managed Certificate
 
@@ -138,6 +154,14 @@ az webapp config ssl create \
   --output json
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp config ssl create` | Requests an App Service Managed Certificate for the custom hostname. |
+| `--resource-group "$RG"` | Targets the resource group that contains the app. |
+| `--name "$APP_NAME"` | Selects the web app that will own the certificate. |
+| `--hostname "$CUSTOM_HOSTNAME"` | Specifies the validated hostname for certificate issuance. |
+| `--output json` | Returns certificate creation details in JSON format. |
+
 Then list available certs:
 
 ```bash
@@ -145,6 +169,12 @@ az webapp config ssl list \
   --resource-group "$RG" \
   --output table
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp config ssl list` | Lists available certificates in the resource group. |
+| `--resource-group "$RG"` | Restricts the certificate list to the target resource group. |
+| `--output table` | Shows certificate details in a compact table view. |
 
 Capture certificate thumbprint (masked example below):
 
@@ -163,6 +193,13 @@ az webapp config ssl bind \
   --output json
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp config ssl bind` | Binds the issued certificate to the app's custom hostname. |
+| `--certificate-thumbprint "$THUMBPRINT"` | Selects the certificate to bind by thumbprint. |
+| `--ssl-type SNI` | Uses Server Name Indication for hostname-based TLS binding. |
+| `--output json` | Returns binding details in JSON format. |
+
 ### Step 6: enforce HTTPS only
 
 ```bash
@@ -173,12 +210,23 @@ az webapp update \
   --output json
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp update` | Updates general web app settings after certificate binding. |
+| `--https-only true` | Forces the app to accept only HTTPS traffic. |
+| `--output json` | Returns the updated web app configuration in JSON format. |
+
 ### Verify endpoint behavior on custom domain
 
 ```bash
 curl "https://$CUSTOM_HOSTNAME/health"
 curl "https://$CUSTOM_HOSTNAME/info"
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `curl "https://$CUSTOM_HOSTNAME/health"` | Confirms the custom domain resolves and the health endpoint returns successfully over TLS. |
+| `curl "https://$CUSTOM_HOSTNAME/info"` | Verifies the app serves runtime metadata on the custom domain over HTTPS. |
 
 You should get HTTP 200 and a valid certificate chain.
 

@@ -107,6 +107,11 @@ AAD_APP_NAME="github-actions-$GITHUB_REPO"
 CLIENT_ID=$(az ad app create --display-name "$AAD_APP_NAME" --query appId --output json | jq -r '.')
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `GITHUB_ORG`, `GITHUB_REPO`, `AAD_APP_NAME` | Define the GitHub repo and Entra app registration names used for OIDC |
+| `CLIENT_ID=$(az ad app create ... | jq -r '.')` | Creates the Entra app registration and stores its application ID |
+
 ### Create Federated Credential
 This tells Azure to trust tokens issued by GitHub for your specific repository and branch.
 ```bash
@@ -120,6 +125,13 @@ az ad app federated-credential create \
   }' \
   --output json
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `az ad app federated-credential create ...` | Adds a GitHub OIDC trust configuration to the Entra app |
+| `--id $CLIENT_ID` | Targets the app registration created for GitHub Actions |
+| `subject` | Restricts token trust to one repository and branch |
+| `audiences` | Declares the expected token audience for Azure token exchange |
 
 ### Grant Azure Permissions
 ```bash
@@ -136,6 +148,13 @@ az role assignment create \
   --scope "/subscriptions/$SUBSCRIPTION_ID/resourceGroups/$RG" \
   --output json
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `SUBSCRIPTION_ID=$(az account show ... | jq -r '.')` | Captures the current Azure subscription ID |
+| `RG="rg-myapp"` | Sets the resource group that the workflow may deploy to |
+| `az ad sp create --id $CLIENT_ID --output json` | Creates a service principal for the app registration |
+| `az role assignment create ... --role "Contributor" ...` | Grants the service principal Contributor access to the resource group |
 
 ## 2. Configure GitHub Secrets
 In your GitHub repository, go to **Settings → Secrets and variables → Actions** and add:
@@ -198,6 +217,10 @@ az webapp deployment slot create \
   --output json
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp deployment slot create ... --slot staging --output json` | Creates a staging deployment slot for safer releases |
+
 The `.github/workflows/deploy-slot.yml` in this repo demonstrates this pattern:
 1. Deploy to the staging slot.
 2. Run health checks against the staging URL.
@@ -210,6 +233,10 @@ The `.github/workflows/deploy-slot.yml` in this repo demonstrates this pattern:
    ```bash
     curl -f "https://app-myapp-abc123.azurewebsites.net/health"
    ```
+
+   | Command/Code | Purpose |
+   |--------------|---------|
+   | `curl -f "https://app-myapp-abc123.azurewebsites.net/health"` | Fails if the deployed app does not return a successful health response |
 
 ## Troubleshooting
 - **OIDC Connection**: If login fails, check that the `subject` in your federated credential exactly matches the repository and branch path.

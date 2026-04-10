@@ -1,8 +1,16 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: troubleshooting-methodology-troubleshooting-method-diagram-1
+      type: graph
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
 ---
-
 # Troubleshooting Method
 
 Troubleshooting complex issues in Azure App Service Linux requires more than just a list of steps. It requires a mindset that treats every failure as a mystery to be solved with evidence. The hypothesis-driven method documented here is designed to move you from ambiguous symptoms to concrete, data-backed conclusions. This structured approach is essential for identifying root causes in a platform where platform-level events can often look like application-level errors.
@@ -87,6 +95,7 @@ Document the entire process from symptom to final remediation to ensure that the
 
 ## Methodology Flowchart
 
+<!-- diagram-id: troubleshooting-methodology-troubleshooting-method-diagram-1 -->
 ```mermaid
 graph TD
     Start[Observe Symptom] --> Hypotheses[List Competing Hypotheses]

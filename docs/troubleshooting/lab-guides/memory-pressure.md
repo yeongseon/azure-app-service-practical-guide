@@ -20,6 +20,57 @@ evidence:
 summary: Hands-on lab to reproduce and diagnose memory pressure scenarios.
 status: stable
 last_reviewed: 2026-04-08
+content_sources:
+  diagrams:
+    - id: troubleshooting-lab-guides-memory-pressure-diagram-1
+      type: graph
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+    - id: troubleshooting-lab-guides-memory-pressure-diagram-2
+      type: flowchart
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+    - id: troubleshooting-lab-guides-memory-pressure-diagram-3
+      type: sequenceDiagram
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+    - id: troubleshooting-lab-guides-memory-pressure-diagram-4
+      type: graph
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+    - id: troubleshooting-lab-guides-memory-pressure-diagram-5
+      type: flowchart
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+    - id: troubleshooting-lab-guides-memory-pressure-diagram-6
+      type: flowchart
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+    - id: troubleshooting-lab-guides-memory-pressure-diagram-7
+      type: graph
+      source: self-generated
+      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
 ---
 # Lab: Memory Pressure and Worker Degradation
 
@@ -27,6 +78,7 @@ This lab reproduces memory pressure behavior on Azure App Service (Linux, B1) us
 
 The goal is not only to "cause load," but to understand the full chain from user traffic to Gunicorn process behavior to Linux memory reclaim and App Service platform signals.
 
+<!-- diagram-id: troubleshooting-lab-guides-memory-pressure-diagram-1 -->
 ```mermaid
 graph LR
     A[Deploy B1 Linux App Service] --> B[Deploy Flask memory-lab app]
@@ -86,6 +138,7 @@ Because B1 is constrained and this app uses `--workers=4`, memory fragmentation 
 
 ### 1.3 Failure progression model
 
+<!-- diagram-id: troubleshooting-lab-guides-memory-pressure-diagram-2 -->
 ```mermaid
 flowchart TD
     A[/leak requests append large lists/] --> B[Per-worker RSS rises]
@@ -106,6 +159,7 @@ flowchart TD
 
 ### 1.4 Request path and where memory accumulates
 
+<!-- diagram-id: troubleshooting-lab-guides-memory-pressure-diagram-3 -->
 ```mermaid
 sequenceDiagram
     participant Client
@@ -160,6 +214,7 @@ From the app code (`/diag/proc`) and artifacts:
 
 ### 1.8 Architectural context diagram
 
+<!-- diagram-id: troubleshooting-lab-guides-memory-pressure-diagram-4 -->
 ```mermaid
 graph TD
     subgraph Azure
@@ -214,6 +269,7 @@ even if HTTP 5xx does not immediately appear.
 4. `/heavy` runs under less headroom and produces longer tail latency.
 5. Platform may still return mostly HTTP 200 during this intermediate state.
 
+<!-- diagram-id: troubleshooting-lab-guides-memory-pressure-diagram-5 -->
 ```mermaid
 flowchart LR
     A[/leak accumulation/] --> B[Low headroom]
@@ -540,6 +596,7 @@ Use this checklist to determine whether the lab produced useful memory-pressure 
 
 ### 3.14 Runbook decision tree
 
+<!-- diagram-id: troubleshooting-lab-guides-memory-pressure-diagram-6 -->
 ```mermaid
 flowchart TD
     A[Run trigger.sh] --> B{Did /leak and /heavy return 200 mostly?}
@@ -824,6 +881,7 @@ This section defines what you SHOULD observe at each phase of the lab. Use it to
 
 ### Evidence Timeline
 
+<!-- diagram-id: troubleshooting-lab-guides-memory-pressure-diagram-7 -->
 ```mermaid
 graph LR
     A[Baseline Capture] --> B[Trigger Fault]

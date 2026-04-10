@@ -114,6 +114,26 @@ jobs:
           package: app
 ```
 
+| YAML | Purpose |
+|------|---------|
+| `name: deploy-flask-appservice` | Names the GitHub Actions workflow. |
+| `on: push: branches: [ main ]` | Triggers the workflow whenever code is pushed to the `main` branch. |
+| `jobs: build-and-deploy` | Defines the CI/CD job that will build and deploy the app. |
+| `runs-on: ubuntu-latest` | Uses the latest Ubuntu GitHub-hosted runner. |
+| `uses: actions/checkout@v4` | Checks out the repository contents into the runner. |
+| `uses: actions/setup-python@v5` | Installs and configures Python on the runner. |
+| `python-version: '3.11'` | Pins the workflow to Python 3.11. |
+| `cache: 'pip'` | Enables dependency caching for `pip` packages. |
+| `cache-dependency-path: app/requirements.txt` | Uses the Python requirements file to calculate the cache key. |
+| `python -m pip install --upgrade pip` | Upgrades `pip` before installing dependencies. |
+| `pip install -r app/requirements.txt` | Installs the Flask app dependencies in the workflow. |
+| `run: pytest` | Runs the test suite before deployment. |
+| `uses: azure/login@v2` | Authenticates the workflow to Azure. |
+| `client-id`, `tenant-id`, `subscription-id` | Reads Azure identity values from GitHub secrets. |
+| `uses: azure/webapps-deploy@v3` | Deploys the application package to Azure App Service. |
+| `app-name: app-flask-tutorial-abc123` | Identifies the target App Service app. |
+| `package: app` | Deploys the contents of the `app` directory. |
+
 ### Configure startup command and app settings once
 
 ```bash
@@ -121,11 +141,22 @@ az webapp config set --resource-group $RG --name $APP_NAME --startup-file "gunic
 az webapp config appsettings set --resource-group $RG --name $APP_NAME --settings SCM_DO_BUILD_DURING_DEPLOYMENT=true
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp config set --resource-group $RG --name $APP_NAME --startup-file "gunicorn --bind=0.0.0.0:$PORT src.app:app"` | Sets the startup command App Service should use after each deployment. |
+| `--startup-file "gunicorn --bind=0.0.0.0:$PORT src.app:app"` | Runs the Flask app with Gunicorn on the App Service-assigned port. |
+| `az webapp config appsettings set --resource-group $RG --name $APP_NAME --settings SCM_DO_BUILD_DURING_DEPLOYMENT=true` | Enables Oryx build automation for source-based deployments. |
+| `--settings SCM_DO_BUILD_DURING_DEPLOYMENT=true` | Tells App Service to install dependencies during deployment. |
+
 ### Verify deployment from workflow run
 
 ```bash
 curl https://$APP_NAME.azurewebsites.net/health
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `curl https://$APP_NAME.azurewebsites.net/health` | Calls the deployed health endpoint to confirm the workflow deployment succeeded. |
 
 <!-- diagram-id: verify-deployment-from-workflow-run -->
 ```mermaid

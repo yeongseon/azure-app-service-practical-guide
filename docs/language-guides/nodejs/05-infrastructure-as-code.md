@@ -126,6 +126,15 @@ module webApp 'modules/webapp.bicep' = {
 }
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `param location string = resourceGroup().location` | Defaults the deployment region to the current resource group's location |
+| `param baseName string = 'nodejs-ref'` | Sets the base naming prefix used across resources |
+| `param appServicePlanSku string = 'B1'` | Sets the default App Service plan SKU |
+| `module appServicePlan ...` | Deploys the App Service plan module |
+| `module webApp ...` | Deploys the web app module and links it to the plan output |
+| `uniqueString(resourceGroup().id)` | Generates a globally unique suffix for the web app name |
+
 Key patterns used here:
 - **`uniqueString()`**: Ensures your web app name is globally unique by hashing the resource group ID.
 - **Output passing**: The `appServicePlanId` for the Web App is retrieved from the `appServicePlan` module output.
@@ -140,6 +149,13 @@ param baseName = 'nodesimple'
 param appServicePlanSku = 'B1'
 param telemetryMode = 'basic'
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `using '../main.bicep'` | Tells the parameter file which Bicep template it configures |
+| `param baseName = 'nodesimple'` | Sets the environment-specific base resource name |
+| `param appServicePlanSku = 'B1'` | Overrides the App Service plan size for this profile |
+| `param telemetryMode = 'basic'` | Sets the tutorial app's telemetry mode for this deployment |
 
 ## 3. Deployment
 Deploy the infrastructure to a resource group. If you don't have a resource group yet, create one first:
@@ -156,6 +172,12 @@ az deployment group create \
   --output json
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `az group create --name rg-myapp --location eastus --output json` | Creates the resource group that will hold the Bicep deployment |
+| `az deployment group create ... --template-file infra/main.bicep ...` | Deploys the main Bicep template to the resource group |
+| `baseName=myapp appServicePlanSku=B1` | Supplies inline parameter values for naming and SKU selection |
+
 Or use a parameter file:
 ```bash
 az deployment group create \
@@ -165,6 +187,10 @@ az deployment group create \
   --output json
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `az deployment group create ... --parameters infra/profiles/minimal.bicepparam` | Deploys the Bicep template using a reusable parameter file |
+
 ## Verification
 After the command completes, verify the resources exist:
 
@@ -173,6 +199,10 @@ After the command completes, verify the resources exist:
    ```bash
    az resource list --resource-group $RG --output table
    ```
+
+   | Command/Code | Purpose |
+   |--------------|---------|
+   | `az resource list --resource-group $RG --output table` | Lists all resources created in the target resource group |
    
    **Example output:**
    ```
@@ -188,6 +218,10 @@ After the command completes, verify the resources exist:
    ```bash
    az webapp show --name $APP_NAME --resource-group $RG --query defaultHostName --output tsv
    ```
+
+   | Command/Code | Purpose |
+   |--------------|---------|
+   | `az webapp show --name $APP_NAME --resource-group $RG --query defaultHostName --output tsv` | Retrieves the default hostname for the deployed web app |
    
    **Example output:**
    ```
@@ -198,14 +232,23 @@ After the command completes, verify the resources exist:
    ```bash
    curl https://$APP_NAME.azurewebsites.net/health
    ```
-   
-   **Example output:**
-   ```json
-   {
-     "status": "healthy",
-     "timestamp": "2026-04-01T13:59:14.151Z"
-   }
-   ```
+
+   | Command/Code | Purpose |
+   |--------------|---------|
+   | `curl https://$APP_NAME.azurewebsites.net/health` | Confirms the deployed app is serving health responses |
+
+    **Example output:**
+    ```json
+    {
+      "status": "healthy",
+      "timestamp": "2026-04-01T13:59:14.151Z"
+    }
+    ```
+
+    | Command/Code | Purpose |
+    |--------------|---------|
+    | `status` | Shows the application reports itself as healthy |
+    | `timestamp` | Shows when the health check response was generated |
 
 ## Troubleshooting
 - **Name Availability**: Web app names must be globally unique. If deployment fails with a "Conflict", change your `baseName`.
@@ -217,6 +260,10 @@ Don't forget to delete resources when done to avoid ongoing charges:
 ```bash
 az group delete --name rg-myapp --yes --no-wait --output json
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `az group delete --name rg-myapp --yes --no-wait --output json` | Starts deleting the tutorial resource group without prompting |
 
 ## Next Steps
 Now that your infrastructure is ready, proceed to **[06-ci-cd.md](./06-ci-cd.md)** to automate your application deployments.
@@ -245,6 +292,11 @@ VNET_NAME="vnet-express-tutorial"
 INTEGRATION_SUBNET_NAME="snet-appsvc-integration"
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `RG`, `LOCATION`, `PLAN_NAME`, `APP_NAME` | Define the core resource names for the CLI deployment path |
+| `VNET_NAME`, `INTEGRATION_SUBNET_NAME` | Define the networking resources for optional VNet integration |
+
 ???+ example "Expected output"
     ```text
     Variables loaded for resource group, App Service plan, app name, and VNet integration.
@@ -258,13 +310,24 @@ az appservice plan create --resource-group $RG --name $PLAN_NAME --is-linux --sk
 az webapp create --resource-group $RG --plan $PLAN_NAME --name $APP_NAME --runtime "NODE|18-lts"
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `az group create ...` | Creates the resource group for the imperative deployment |
+| `az appservice plan create ...` | Creates the Linux App Service plan |
+| `az webapp create ... --runtime "NODE\|18-lts"` | Creates the Node.js web app |
+
 ???+ example "Expected output"
-    ```json
-    {
-      "defaultHostName": "app-express-tutorial-abc123.azurewebsites.net",
-      "state": "Running"
-    }
-    ```
+```json
+{
+  "defaultHostName": "app-express-tutorial-abc123.azurewebsites.net",
+  "state": "Running"
+}
+```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `defaultHostName` | Shows the hostname assigned to the new app |
+| `state` | Confirms the web app is running |
 
 ### Step 3: Configure app settings and startup command
 
@@ -273,19 +336,29 @@ az webapp config appsettings set --resource-group $RG --name $APP_NAME --setting
 az webapp config set --resource-group $RG --name $APP_NAME --startup-file "node server.js"
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp config appsettings set ...` | Enables remote build and sets production mode |
+| `az webapp config set ... --startup-file "node server.js"` | Configures the startup command for the app |
+
 ???+ example "Expected output"
-    ```json
-    [
-      {
-        "name": "SCM_DO_BUILD_DURING_DEPLOYMENT",
-        "value": "true"
-      },
-      {
-        "name": "NODE_ENV",
-        "value": "production"
-      }
-    ]
-    ```
+```json
+[
+  {
+    "name": "SCM_DO_BUILD_DURING_DEPLOYMENT",
+    "value": "true"
+  },
+  {
+    "name": "NODE_ENV",
+    "value": "production"
+  }
+]
+```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `SCM_DO_BUILD_DURING_DEPLOYMENT` | Enables build automation during deployment |
+| `NODE_ENV` | Sets the runtime environment to production |
 
 ### Step 4 (Optional): Add VNet integration
 
@@ -295,13 +368,24 @@ az network vnet subnet create --resource-group $RG --vnet-name $VNET_NAME --name
 az webapp vnet-integration add --resource-group $RG --name $APP_NAME --vnet $VNET_NAME --subnet $INTEGRATION_SUBNET_NAME
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `az network vnet create ...` | Creates the virtual network for the app |
+| `az network vnet subnet create ... --delegations Microsoft.Web/serverFarms` | Creates the delegated subnet used for App Service integration |
+| `az webapp vnet-integration add ...` | Connects the web app to the integration subnet |
+
 ???+ example "Expected output"
-    ```json
-    {
-      "isSwift": true,
-      "subnetResourceId": "/subscriptions/<subscription-id>/resourceGroups/rg-express-tutorial/providers/Microsoft.Network/virtualNetworks/vnet-express-tutorial/subnets/snet-appsvc-integration"
-    }
-    ```
+```json
+{
+  "isSwift": true,
+  "subnetResourceId": "/subscriptions/<subscription-id>/resourceGroups/rg-express-tutorial/providers/Microsoft.Network/virtualNetworks/vnet-express-tutorial/subnets/snet-appsvc-integration"
+}
+```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `isSwift` | Confirms regional VNet integration is active |
+| `subnetResourceId` | Shows the subnet attached to the app |
 
 ### Step 5: Validate effective configuration
 
@@ -310,13 +394,23 @@ az webapp config show --resource-group $RG --name $APP_NAME --query "{linuxFxVer
 az webapp config appsettings list --resource-group $RG --name $APP_NAME --query "[?name=='NODE_ENV' || name=='SCM_DO_BUILD_DURING_DEPLOYMENT']" --output json
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp config show ...` | Displays the effective runtime and startup command |
+| `az webapp config appsettings list ...` | Confirms key application settings were applied |
+
 ???+ example "Expected output"
-    ```json
-    {
-      "linuxFxVersion": "NODE|18-lts",
-      "appCommandLine": "node server.js"
-    }
-    ```
+```json
+{
+  "linuxFxVersion": "NODE|18-lts",
+  "appCommandLine": "node server.js"
+}
+```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `linuxFxVersion` | Shows the configured Node.js runtime stack |
+| `appCommandLine` | Shows the startup command App Service will run |
 
 ## See Also
 - [Operations Scaling](../../operations/scaling.md)

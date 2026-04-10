@@ -96,6 +96,10 @@ az webapp config appsettings list \
   --output table
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp config appsettings list ... --output table` | Lists the current App Service application settings in table form |
+
 **Example output:**
 ```
 Name                                        SlotSetting    Value
@@ -119,6 +123,12 @@ az webapp config appsettings set \
   --output json
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp config appsettings set ...` | Adds or updates application settings for the web app |
+| `LOG_LEVEL=debug` | Raises the application log verbosity |
+| `CUSTOM_VAR=value` | Demonstrates storing a custom environment variable |
+
 ### Verification
 After setting a value, it should be reflected in the app's environment. You can verify this by checking the `/info` endpoint of the sample app if available, or using Log Stream to see logs influenced by these settings.
 
@@ -135,6 +145,12 @@ az webapp config connection-string set \
   --output json
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp config connection-string set ...` | Creates or updates a typed connection string in App Service |
+| `--connection-string-type Custom` | Stores the connection string as a custom value |
+| `DATABASE_URL="mongodb://example.com"` | Sets the sample database connection string value |
+
 In Node.js, this is accessed as `process.env.CUSTOMCONNSTR_DATABASE_URL`.
 
 ## Managed Identity Basics
@@ -148,6 +164,10 @@ az webapp identity assign \
   --name $APP_NAME \
   --output json
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp identity assign ... --output json` | Enables a system-assigned managed identity and returns its details |
 
 For detailed security setup and authentication, see [Security & Authentication (Easy Auth)](../../operations/security.md).
 
@@ -168,6 +188,11 @@ az webapp config appsettings set \
   --output json
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp config appsettings set ... --slot-settings ...` | Creates settings that stay with the slot during swaps |
+| `ENVIRONMENT_NAME=production` | Stores an environment-specific slot-sticky value |
+
 ## Verification
 
 1. **Check values** in the [Azure Portal](https://portal.azure.com) under your App Service → Configuration.
@@ -175,6 +200,10 @@ az webapp config appsettings set \
    ```bash
    az webapp restart --name $APP_NAME --resource-group $RG --output json
    ```
+
+   | Command/Code | Purpose |
+   |--------------|---------|
+   | `az webapp restart --name $APP_NAME --resource-group $RG --output json` | Restarts the web app so configuration changes are fully applied |
 
 ## Next Steps
 

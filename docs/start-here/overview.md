@@ -1,8 +1,15 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: start-here-overview-diagram-1
+      type: graph
+      source: self-generated
+      justification: "Self-generated navigation diagram synthesized from official Azure App Service overview documentation for this guide."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/overview
 ---
-
 # Azure App Service Practical Guide
 
 This repository is a comprehensive practical guide for building, deploying, operating, and troubleshooting web applications on Azure App Service. Use this Start Here section to understand the guide layout and choose the right path for your role.
@@ -31,6 +38,7 @@ The documentation is organized into seven core sections:
 | Troubleshooting | Methodology, playbooks, KQL, and lab scenarios | [Troubleshooting](../troubleshooting/index.md) |
 | Reference | CLI cheatsheet, KQL queries, platform limits | [Reference](../reference/index.md) |
 
+<!-- diagram-id: start-here-overview-diagram-1 -->
 ```mermaid
 graph TD
     A[Start Here] --> B[Platform]

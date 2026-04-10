@@ -14,12 +14,21 @@ products:
 summary: Interactive visual maps for navigating the Azure App Service documentation.
 status: stable
 last_reviewed: 2026-04-08
+content_sources:
+  diagrams:
+    - id: visualization-index-diagram-1
+      type: flowchart
+      source: self-generated
+      justification: "Self-generated visualization synthesized from official Azure App Service documentation to explain guide structure and relationships."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/overview
+        - https://learn.microsoft.com/en-us/azure/app-service/environment/overview
 ---
-
 # Visualization
 
 Explore the Azure App Service Practical Guide through interactive knowledge graphs and visual maps.
 
+<!-- diagram-id: visualization-index-diagram-1 -->
 ```mermaid
 flowchart TD
     subgraph Graphs["Available Visualizations"]

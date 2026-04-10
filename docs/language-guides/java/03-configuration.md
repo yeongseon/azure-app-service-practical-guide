@@ -103,6 +103,13 @@ az webapp config appsettings list \
   --output table
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp config appsettings list` | Lists the current App Service application settings. |
+| `--resource-group "$RG"` | Targets the resource group that contains the app. |
+| `--name "$APP_NAME"` | Selects the web app whose settings you want to inspect. |
+| `--output table` | Displays the settings in a readable table format. |
+
 You should see values like `SPRING_PROFILES_ACTIVE=production`, `JAVA_OPTS=...`, and `APPLICATIONINSIGHTS_CONNECTION_STRING`.
 
 ### Update runtime settings with long flags
@@ -117,6 +124,14 @@ az webapp config appsettings set \
     JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -Djava.security.egd=file:/dev/./urandom" \
   --output json
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp config appsettings set` | Updates App Service application settings without rebuilding the app. |
+| `LOGGING_LEVEL_COM_EXAMPLE_GUIDE=INFO` | Sets the application logger level for the sample package. |
+| `SPRING_PROFILES_ACTIVE=production` | Forces the deployed app to use the production Spring profile. |
+| `JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -Djava.security.egd=file:/dev/./urandom"` | Applies JVM options tuned for container-aware memory usage and startup behavior. |
+| `--output json` | Returns the updated settings as JSON for confirmation. |
 
 !!! tip "Spring relaxed binding"
     Spring maps uppercase underscore environment keys to dotted properties. Example: `LOGGING_LEVEL_ROOT` maps to `logging.level.root`.
@@ -134,6 +149,13 @@ az webapp config connection-string set \
   --output json
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp config connection-string set` | Stores a connection string in the App Service configuration store. |
+| `--connection-string-type Custom` | Marks the value as a custom connection string instead of a built-in database type. |
+| `--settings APP_DB="Server=tcp:<server>.database.windows.net,1433;Database=<db>;"` | Saves the database connection string under the `APP_DB` key. |
+| `--output json` | Shows the resulting connection string configuration in JSON format. |
+
 In Java, this appears as `CUSTOMCONNSTR_APP_DB`.
 
 ### Managed Identity basics
@@ -146,6 +168,13 @@ az webapp identity assign \
   --name "$APP_NAME" \
   --output json
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp identity assign` | Enables a system-assigned managed identity for the web app. |
+| `--resource-group "$RG"` | Targets the resource group that owns the app. |
+| `--name "$APP_NAME"` | Selects the web app that should receive the identity. |
+| `--output json` | Returns the identity details for later RBAC configuration. |
 
 Example masked output:
 
@@ -176,6 +205,11 @@ Test profile switch quickly:
 SPRING_PROFILES_ACTIVE=production ./mvnw spring-boot:run
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `SPRING_PROFILES_ACTIVE=production` | Sets the active Spring profile for this local test run. |
+| `./mvnw spring-boot:run` | Starts the app with Maven Wrapper so you can validate production-profile behavior. |
+
 ### Slot-sticky settings for safer swaps
 
 For staging/production slot workflows, make environment-specific settings sticky:
@@ -189,6 +223,14 @@ az webapp config appsettings set \
     API_BASE_URL=https://api.example.internal \
   --output json
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp config appsettings set` | Updates App Service settings and marks selected values as slot-sticky. |
+| `--slot-settings` | Makes the listed settings stay with the deployment slot during swaps. |
+| `SPRING_PROFILES_ACTIVE=production` | Keeps the production profile fixed to the slot that needs it. |
+| `API_BASE_URL=https://api.example.internal` | Stores an environment-specific backend URL as a sticky setting. |
+| `--output json` | Returns the updated slot settings in JSON format. |
 
 !!! warning "Do not store secrets in source control"
     Keep secrets in Key Vault and expose them via Key Vault References in App Settings.
@@ -207,6 +249,11 @@ az webapp config appsettings list \
 curl "https://$APP_NAME.azurewebsites.net/info"
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp config appsettings list ... --output table` | Re-checks the deployed app settings after configuration changes. |
+| `curl "https://$APP_NAME.azurewebsites.net/info"` | Verifies that runtime metadata reflects the expected configuration in Azure. |
+
 Confirm expected profile and config-driven behavior.
 
 ## Troubleshooting
@@ -221,6 +268,13 @@ az webapp restart \
   --name "$APP_NAME" \
   --output json
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp restart` | Restarts the web app so configuration changes take effect in a new process. |
+| `--resource-group "$RG"` | Targets the app's resource group. |
+| `--name "$APP_NAME"` | Selects the web app to restart. |
+| `--output json` | Returns restart operation details in JSON format. |
 
 ### JVM memory pressure after scaling down
 

@@ -100,6 +100,18 @@ PE_SUBNET_NAME="snet-private-endpoints"
 STORAGE_NAME="stspringboottutorialabc123"
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `SUBSCRIPTION_ID="<subscription-id>"` | Stores the target Azure subscription ID for deployment commands. |
+| `RG="rg-springboot-tutorial"` | Defines the resource group name used throughout the tutorial. |
+| `LOCATION="koreacentral"` | Sets the Azure region for new resources. |
+| `PLAN_NAME="plan-springboot-tutorial-s1"` | Names the App Service plan that hosts the web app. |
+| `APP_NAME="app-springboot-tutorial-abc123"` | Sets the globally unique App Service app name. |
+| `VNET_NAME="vnet-springboot-tutorial"` | Defines the virtual network name for integration and private endpoints. |
+| `INTEGRATION_SUBNET_NAME="snet-appsvc-integration"` | Names the delegated subnet used for App Service VNet integration. |
+| `PE_SUBNET_NAME="snet-private-endpoints"` | Names the subnet reserved for private endpoints. |
+| `STORAGE_NAME="stspringboottutorialabc123"` | Sets the globally unique storage account name for the optional private endpoint step. |
+
 ???+ example "Expected output"
     ```text
     Variables prepared for resource group rg-springboot-tutorial and app app-springboot-tutorial-abc123.
@@ -111,6 +123,11 @@ STORAGE_NAME="stspringboottutorialabc123"
 az account set --subscription $SUBSCRIPTION_ID
 az account show --query "{subscriptionId:id, tenantId:tenantId, user:user.name}" --output json
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `az account set --subscription $SUBSCRIPTION_ID` | Selects the Azure subscription that will receive the deployment. |
+| `az account show --query "{subscriptionId:id, tenantId:tenantId, user:user.name}" --output json` | Verifies the active subscription, tenant, and signed-in user context. |
 
 ???+ example "Expected output"
     ```json
@@ -128,6 +145,12 @@ az group create --name $RG --location $LOCATION
 az appservice plan create --resource-group $RG --name $PLAN_NAME --is-linux --sku S1
 az webapp create --resource-group $RG --plan $PLAN_NAME --name $APP_NAME --runtime "JAVA|17-java17"
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `az group create --name $RG --location $LOCATION` | Creates the resource group that contains the tutorial resources. |
+| `az appservice plan create --resource-group $RG --name $PLAN_NAME --is-linux --sku S1` | Creates a Linux App Service plan on the S1 pricing tier. |
+| `az webapp create --resource-group $RG --plan $PLAN_NAME --name $APP_NAME --runtime "JAVA|17-java17"` | Creates the Java 17 web app in the App Service plan. |
 
 ???+ example "Expected output"
     ```json
@@ -148,6 +171,11 @@ az network vnet create --resource-group $RG --name $VNET_NAME --location $LOCATI
 az network vnet subnet create --resource-group $RG --vnet-name $VNET_NAME --name $INTEGRATION_SUBNET_NAME --address-prefixes 10.10.1.0/24 --delegations Microsoft.Web/serverFarms
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `az network vnet create --resource-group $RG --name $VNET_NAME --location $LOCATION --address-prefixes 10.10.0.0/16` | Creates the virtual network used by the app and related private resources. |
+| `az network vnet subnet create --resource-group $RG --vnet-name $VNET_NAME --name $INTEGRATION_SUBNET_NAME --address-prefixes 10.10.1.0/24 --delegations Microsoft.Web/serverFarms` | Creates a delegated subnet for App Service VNet integration. |
+
 ???+ example "Expected output"
     ```json
     {
@@ -167,6 +195,10 @@ az network vnet subnet create --resource-group $RG --vnet-name $VNET_NAME --name
 az network vnet subnet create --resource-group $RG --vnet-name $VNET_NAME --name $PE_SUBNET_NAME --address-prefixes 10.10.2.0/24 --disable-private-endpoint-network-policies true
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `az network vnet subnet create --resource-group $RG --vnet-name $VNET_NAME --name $PE_SUBNET_NAME --address-prefixes 10.10.2.0/24 --disable-private-endpoint-network-policies true` | Creates a subnet that allows private endpoint resources. |
+
 ???+ example "Expected output"
     ```json
     {
@@ -182,6 +214,10 @@ az network vnet subnet create --resource-group $RG --vnet-name $VNET_NAME --name
 az webapp vnet-integration add --resource-group $RG --name $APP_NAME --vnet $VNET_NAME --subnet $INTEGRATION_SUBNET_NAME
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp vnet-integration add --resource-group $RG --name $APP_NAME --vnet $VNET_NAME --subnet $INTEGRATION_SUBNET_NAME` | Connects the web app to the delegated VNet subnet for outbound private access. |
+
 ???+ example "Expected output"
     ```json
     {
@@ -195,6 +231,10 @@ az webapp vnet-integration add --resource-group $RG --name $APP_NAME --vnet $VNE
 ```bash
 az webapp identity assign --resource-group $RG --name $APP_NAME
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp identity assign --resource-group $RG --name $APP_NAME` | Enables a system-assigned managed identity for the web app. |
 
 ???+ example "Expected output"
     ```json
@@ -212,6 +252,14 @@ az webapp identity assign --resource-group $RG --name $APP_NAME
 az webapp config set --resource-group $RG --name $APP_NAME --startup-file "java -jar /home/site/wwwroot/app.jar --server.port=$PORT"
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `./mvnw clean package -DskipTests` | Builds the Spring Boot JAR with Maven Wrapper without running tests. |
+| `clean` | Removes previous build artifacts so a fresh package is created. |
+| `package` | Produces the deployable JAR artifact in the `target/` directory. |
+| `-DskipTests` | Skips test execution to speed up this packaging step. |
+| `az webapp config set --resource-group $RG --name $APP_NAME --startup-file "java -jar /home/site/wwwroot/app.jar --server.port=$PORT"` | Configures the startup command so App Service runs the JAR on the platform-assigned port. |
+
 ???+ example "Expected output"
     ```text
     [INFO] BUILD SUCCESS
@@ -226,6 +274,10 @@ az webapp config set --resource-group $RG --name $APP_NAME --startup-file "java 
 ```bash
 az webapp deploy --resource-group $RG --name $APP_NAME --src-path target/*.jar --type jar
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp deploy --resource-group $RG --name $APP_NAME --src-path target/*.jar --type jar` | Uploads the built JAR from `target/` and deploys it to the web app. |
 
 ???+ example "Expected output"
     ```json
@@ -245,6 +297,12 @@ curl $WEB_APP_URL/health
 az webapp log deployment list --resource-group $RG --name $APP_NAME --output table
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `WEB_APP_URL="https://$(az webapp show --resource-group $RG --name $APP_NAME --query defaultHostName --output tsv)"` | Builds the app URL dynamically from the deployed web app hostname. |
+| `curl $WEB_APP_URL/health` | Confirms the deployed app responds successfully on its health endpoint. |
+| `az webapp log deployment list --resource-group $RG --name $APP_NAME --output table` | Shows recent deployment history for validation and troubleshooting. |
+
 ???+ example "Expected output"
     ```text
     {"status":"UP"}
@@ -261,6 +319,12 @@ az storage account create --resource-group $RG --name $STORAGE_NAME --location $
 STORAGE_ID="$(az storage account show --resource-group $RG --name $STORAGE_NAME --query id --output tsv)"
 az network private-endpoint create --resource-group $RG --name pe-storage-blob --vnet-name $VNET_NAME --subnet $PE_SUBNET_NAME --private-connection-resource-id $STORAGE_ID --group-id blob --connection-name pe-storage-blob-connection
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `az storage account create --resource-group $RG --name $STORAGE_NAME --location $LOCATION --sku Standard_LRS --kind StorageV2` | Creates a storage account to demonstrate private endpoint connectivity. |
+| `STORAGE_ID="$(az storage account show --resource-group $RG --name $STORAGE_NAME --query id --output tsv)"` | Captures the storage account resource ID for the private endpoint command. |
+| `az network private-endpoint create --resource-group $RG --name pe-storage-blob --vnet-name $VNET_NAME --subnet $PE_SUBNET_NAME --private-connection-resource-id $STORAGE_ID --group-id blob --connection-name pe-storage-blob-connection` | Creates a blob private endpoint inside the private endpoint subnet. |
 
 ???+ example "Expected output"
     ```json
@@ -286,9 +350,17 @@ az network private-endpoint create --resource-group $RG --name pe-storage-blob -
     az webapp log config --resource-group $RG --name $APP_NAME --application-logging filesystem --level information
     ```
 
+    | Command/Code | Purpose |
+    |--------------|---------|
+    | `az webapp log config --resource-group $RG --name $APP_NAME --application-logging filesystem --level information` | Enables filesystem application logging so live log streaming works. |
+
 ```bash
 az webapp log tail --resource-group $RG --name $APP_NAME
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp log tail --resource-group $RG --name $APP_NAME` | Streams live application logs from the running web app. |
 
 ???+ example "Expected output"
     ```text
@@ -301,6 +373,10 @@ az webapp log tail --resource-group $RG --name $APP_NAME
 ```bash
 az webapp show --resource-group $RG --name $APP_NAME --query "{defaultHostName:defaultHostName, scmHost:repositorySiteName}" --output json
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp show --resource-group $RG --name $APP_NAME --query "{defaultHostName:defaultHostName, scmHost:repositorySiteName}" --output json` | Retrieves the main site and SCM hostnames used for app access and Kudu inspection. |
 
 ???+ example "Expected output"
     ```json
@@ -334,6 +410,10 @@ Confirm environment variables are set in the same shell:
 echo "$RESOURCE_GROUP_NAME $APP_NAME $LOCATION"
 ```
 
+| Command/Code | Purpose |
+|--------------|---------|
+| `echo "$RESOURCE_GROUP_NAME $APP_NAME $LOCATION"` | Prints the key deployment variables so you can verify they are set in the current shell. |
+
 ### `az deployment group create` fails with naming conflict
 
 Use a more unique `BASE_NAME`; App Service host names must be globally unique.
@@ -347,6 +427,12 @@ az webapp log tail \
   --resource-group "$RG" \
   --name "$APP_NAME"
 ```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp log tail` | Starts the live App Service log stream for troubleshooting. |
+| `--resource-group "$RG"` | Targets the resource group that contains the app. |
+| `--name "$APP_NAME"` | Selects the specific web app whose logs you want to inspect. |
 
 ## See Also
 
