@@ -1,6 +1,20 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: diagram-1
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/app-service-web-tutorial-custom-domain
+    - id: how-custom-domains-work
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/app-service-web-tutorial-custom-domain
+    - id: how-https-binding-works
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/app-service-web-tutorial-custom-domain
 ---
 
 # 07. Custom Domains and SSL (OPTIONAL)
@@ -15,6 +29,7 @@ By default, your app is accessible at `*.azurewebsites.net`. For production, you
 
     This tutorial assumes a production-ready App Service deployment with VNet integration, private endpoints for backend services, and managed identity for authentication.
 
+<!-- diagram-id: diagram-1 -->
     ```mermaid
     flowchart TD
         INET[Internet] -->|HTTPS| WA["Web App\nApp Service S1\nLinux Node 18 LTS"]
@@ -62,6 +77,7 @@ By default, your app is accessible at `*.azurewebsites.net`. For production, you
 
 ## How Custom Domains Work
 
+<!-- diagram-id: how-custom-domains-work -->
 ```mermaid
 flowchart LR
     Client[Client] --> DNS[Public DNS]
@@ -73,6 +89,7 @@ Azure verifies domain ownership via a TXT record before allowing the hostname bi
 
 ## How HTTPS Binding Works
 
+<!-- diagram-id: how-https-binding-works -->
 ```mermaid
 flowchart LR
     Client[Client] -->|HTTPS| Domain[Custom Domain]

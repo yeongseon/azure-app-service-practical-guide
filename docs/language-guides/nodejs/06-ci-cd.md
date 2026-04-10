@@ -1,6 +1,16 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: diagram-1
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/deploy-continuous-deployment
+    - id: ci-cd-pipeline-flow
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/deploy-continuous-deployment
 ---
 
 # 06. CI/CD with GitHub Actions
@@ -15,6 +25,7 @@ Automating your deployment pipeline ensures consistent and reliable releases. Th
 
     This tutorial assumes a production-ready App Service deployment with VNet integration, private endpoints for backend services, and managed identity for authentication.
 
+<!-- diagram-id: diagram-1 -->
     ```mermaid
     flowchart TD
         INET[Internet] -->|HTTPS| WA["Web App\nApp Service S1\nLinux Node 18 LTS"]
@@ -60,6 +71,7 @@ Automating your deployment pipeline ensures consistent and reliable releases. Th
 
 ## CI/CD Pipeline Flow
 
+<!-- diagram-id: ci-cd-pipeline-flow -->
 ```mermaid
 flowchart LR
     subgraph GitHub

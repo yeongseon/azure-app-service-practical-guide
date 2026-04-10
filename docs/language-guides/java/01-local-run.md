@@ -1,6 +1,16 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: 01-local-run
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
+    - id: diagram-2
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
 ---
 
 # 01. Local Run
@@ -12,6 +22,7 @@ Run the Spring Boot reference app locally using the same runtime assumptions Azu
 
     This tutorial assumes a production-ready App Service deployment with VNet integration, private endpoints for backend services, and managed identity for authentication.
 
+<!-- diagram-id: 01-local-run -->
     ```mermaid
     flowchart TD
         INET[Internet] -->|HTTPS| WA["Web App\nApp Service S1\nLinux Java 17"]
@@ -49,6 +60,7 @@ Run the Spring Boot reference app locally using the same runtime assumptions Azu
         style DNS fill:#E3F2FD
     ```
 
+<!-- diagram-id: diagram-2 -->
 ```mermaid
 flowchart LR
     A[Run ./mvnw spring-boot:run] --> B[Bind server.port to PORT or 8080]

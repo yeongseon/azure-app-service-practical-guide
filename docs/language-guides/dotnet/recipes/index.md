@@ -1,12 +1,19 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: recipes
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
 ---
 
 # Recipes
 
 Use these production-oriented recipes to integrate common Azure services with ASP.NET Core 8 on Windows App Service.
 
+<!-- diagram-id: recipes -->
 ```mermaid
 flowchart TD
     A[.NET Recipes] --> B[Database]

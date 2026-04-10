@@ -1,12 +1,19 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: azure-sql
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/azure-sql/database/connect-query-python
 ---
 
 # Azure SQL
 
 Connect ASP.NET Core 8 to Azure SQL using Entity Framework Core and managed identity authentication for passwordless production access.
 
+<!-- diagram-id: azure-sql -->
 ```mermaid
 flowchart LR
     A[Enable managed identity] --> B[Grant SQL access]

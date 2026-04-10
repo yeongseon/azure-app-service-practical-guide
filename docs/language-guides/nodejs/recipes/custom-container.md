@@ -1,12 +1,23 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: custom-container-deployment
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container
+    - id: architecture
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container
 ---
 
 # Custom Container Deployment
 
 This recipe explains how to deploy a Node.js application as a custom Docker container on Azure App Service for Linux, including SSH access for debugging.
 
+<!-- diagram-id: custom-container-deployment -->
 ```mermaid
 flowchart LR
     Build[Build Image] --> Push[Push to ACR]
@@ -23,6 +34,7 @@ Custom containers offer full control over your application's environment, includ
 
 ## Architecture
 
+<!-- diagram-id: architecture -->
 ```mermaid
 flowchart LR
     Acr[Azure Container Registry] --> App[App Service runtime]

@@ -1,6 +1,12 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: architecture
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview-managed-identity
 ---
 
 # Managed Identity (Passwordless Access)
@@ -25,6 +31,7 @@ Managed identity removes credential rotation burden from application code:
 
 ### Architecture
 
+<!-- diagram-id: architecture -->
 ```mermaid
 flowchart LR
     A[Spring Boot App Service] --> B[DefaultAzureCredential]

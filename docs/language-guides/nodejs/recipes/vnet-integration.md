@@ -1,12 +1,19 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: vnet-integration
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration
 ---
 
 # VNet Integration
 
 Enable VNet integration for an Express app on App Service so outbound dependency traffic flows over private network paths.
 
+<!-- diagram-id: vnet-integration -->
 ```mermaid
 flowchart LR
     A[Express app on App Service] --> B[VNet integration subnet]

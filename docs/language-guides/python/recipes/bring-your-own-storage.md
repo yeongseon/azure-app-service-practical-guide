@@ -1,6 +1,12 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: architecture
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-python
 ---
 
 # Bring Your Own Storage (BYOS)
@@ -9,6 +15,7 @@ Mount Azure Blob Storage or Azure Files to your App Service instance as a custom
 
 ## Architecture
 
+<!-- diagram-id: architecture -->
 ```mermaid
 flowchart LR
     Platform[App Service platform] -->|Mount Azure Files share| Mount[/Mounted path\/mnt\/appdata/]

@@ -1,6 +1,16 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: diagram-1
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
+    - id: overview
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
 ---
 
 # 01. Local Run
@@ -14,6 +24,7 @@ Run the application locally with App Service-safe defaults before deploying to A
 
     This tutorial assumes a production-ready App Service deployment with VNet integration, private endpoints for backend services, and managed identity for authentication.
 
+<!-- diagram-id: diagram-1 -->
     ```mermaid
     flowchart TD
         INET[Internet] -->|HTTPS| WA["Web App\nApp Service S1\nLinux Node 18 LTS"]
@@ -53,6 +64,7 @@ Run the application locally with App Service-safe defaults before deploying to A
 
 ## Overview
 
+<!-- diagram-id: overview -->
 ```mermaid
 flowchart LR
     A[Clone Repo] --> B[npm install]

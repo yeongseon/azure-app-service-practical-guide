@@ -1,12 +1,19 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: node-js-runtime-details
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
 ---
 
 # Node.js Runtime Details
 
 Quick lookup for the Node.js runtime environment on Azure App Service (Linux).
 
+<!-- diagram-id: node-js-runtime-details -->
 ```mermaid
 graph TD
     A[Client HTTPS Request] --> B[App Service Front End]

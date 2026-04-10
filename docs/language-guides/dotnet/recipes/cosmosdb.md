@@ -1,12 +1,19 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: cosmos-db
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/quickstart-python
 ---
 
 # Cosmos DB
 
 Integrate Azure Cosmos DB (NoSQL) with ASP.NET Core 8 using the `Microsoft.Azure.Cosmos` SDK and production-safe client lifecycle patterns.
 
+<!-- diagram-id: cosmos-db -->
 ```mermaid
 flowchart LR
     A[Set Cosmos endpoint and database settings] --> B[Create singleton CosmosClient]

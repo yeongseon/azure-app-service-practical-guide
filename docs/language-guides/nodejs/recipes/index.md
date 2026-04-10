@@ -1,12 +1,19 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: recipes
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
 ---
 
 # Recipes
 
 Practical guides for common scenarios and integrations.
 
+<!-- diagram-id: recipes -->
 ```mermaid
 flowchart TD
     A[Node.js Recipes] --> B[Database Integrations]

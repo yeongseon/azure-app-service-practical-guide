@@ -1,6 +1,12 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: architecture
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/app-service-key-vault-references
 ---
 
 # Key Vault References
@@ -9,6 +15,7 @@ Inject secrets directly into App Service environment variables using Key Vault R
 
 ## Architecture
 
+<!-- diagram-id: architecture -->
 ```mermaid
 flowchart LR
     App[App Service platform]

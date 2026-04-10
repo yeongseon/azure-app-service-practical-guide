@@ -1,6 +1,12 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: architecture
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container
 ---
 
 # Custom Container (Docker + Gunicorn + SSH)
@@ -9,6 +15,7 @@ Run Flask on App Service with a custom Linux container when you need full OS/pac
 
 ## Architecture
 
+<!-- diagram-id: architecture -->
 ```mermaid
 flowchart LR
     Client[Client] --> Runtime[App Service container runtime]

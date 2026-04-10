@@ -1,12 +1,19 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: native-dependencies-on-app-service-linux
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
 ---
 
 # Native Dependencies on App Service Linux
 
 Handle Python packages with C/C++ extensions reliably on Azure App Service Linux.
 
+<!-- diagram-id: native-dependencies-on-app-service-linux -->
 ```mermaid
 flowchart LR
     A[Select wheel-first packages] --> B[Deploy with Oryx build]

@@ -1,6 +1,16 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: 06-ci-cd-with-azure-devops
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/deploy-continuous-deployment
+    - id: diagram-2
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/deploy-continuous-deployment
 ---
 
 # 06. CI/CD with Azure DevOps
@@ -12,6 +22,7 @@ Implement continuous integration and deployment for the .NET guide using **Azure
 
     This tutorial assumes a production-ready App Service deployment with VNet integration, private endpoints for backend services, and managed identity for authentication.
 
+<!-- diagram-id: 06-ci-cd-with-azure-devops -->
     ```mermaid
     flowchart TD
         INET[Internet] -->|HTTPS| WA["Web App\nApp Service S1\nWindows .NET 8"]
@@ -49,6 +60,7 @@ Implement continuous integration and deployment for the .NET guide using **Azure
         style DNS fill:#E3F2FD
     ```
 
+<!-- diagram-id: diagram-2 -->
 ```mermaid
 flowchart LR
     A[Commit to main] --> B[Build stage restore/build/test]

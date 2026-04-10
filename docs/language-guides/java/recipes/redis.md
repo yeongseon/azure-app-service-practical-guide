@@ -1,6 +1,12 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: architecture
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/azure-cache-for-redis/cache-python-get-started
 ---
 
 # Azure Cache for Redis
@@ -17,6 +23,7 @@ Use Azure Cache for Redis with Spring Boot to reduce database load, accelerate r
 
 ### Architecture
 
+<!-- diagram-id: architecture -->
 ```mermaid
 flowchart LR
     C[Client] --> A[App Service Spring Boot]

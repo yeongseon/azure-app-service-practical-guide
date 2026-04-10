@@ -1,6 +1,12 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: architecture
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-python
 ---
 
 # Bring Your Own Storage (BYOS)
@@ -24,6 +30,7 @@ BYOS lets you add a **third category**: your own Azure Blob container or Azure F
 
 ## Architecture
 
+<!-- diagram-id: architecture -->
 ```mermaid
 flowchart LR
     Platform[App Service platform] --> Share[Azure Files share mount]

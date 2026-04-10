@@ -1,12 +1,19 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: recipes
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
 ---
 
 # Recipes
 
 Practical patterns for common Azure App Service scenarios in Python and Flask.
 
+<!-- diagram-id: recipes -->
 ```mermaid
 flowchart TD
     A[Python Flask Recipes] --> B[Identity and Secrets]

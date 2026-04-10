@@ -1,6 +1,16 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: 03-configuration
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/configure-common
+    - id: diagram-2
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/configure-common
 ---
 
 # 03. Configuration
@@ -12,6 +22,7 @@ Configure runtime behavior, secrets, and identity for your Spring Boot app on Az
 
     This tutorial assumes a production-ready App Service deployment with VNet integration, private endpoints for backend services, and managed identity for authentication.
 
+<!-- diagram-id: 03-configuration -->
     ```mermaid
     flowchart TD
         INET[Internet] -->|HTTPS| WA["Web App\nApp Service S1\nLinux Java 17"]
@@ -49,6 +60,7 @@ Configure runtime behavior, secrets, and identity for your Spring Boot app on Az
         style DNS fill:#E3F2FD
     ```
 
+<!-- diagram-id: diagram-2 -->
 ```mermaid
 flowchart LR
     A[List current App Settings] --> B[Update runtime and JAVA_OPTS]

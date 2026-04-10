@@ -1,12 +1,19 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: vnet-integration
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration
 ---
 
 # VNet Integration
 
 Enable VNet integration for an ASP.NET Core 8 app so outbound calls to SQL, Redis, and Key Vault stay on private network paths.
 
+<!-- diagram-id: vnet-integration -->
 ```mermaid
 flowchart LR
     A[ASP.NET Core app on App Service] --> B[VNet integration subnet]

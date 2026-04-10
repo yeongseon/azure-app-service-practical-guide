@@ -1,6 +1,12 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: architecture
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/quickstart-python
 ---
 
 # Cosmos DB with azure-cosmos SDK
@@ -9,6 +15,7 @@ Integrate Flask with Azure Cosmos DB (NoSQL API) using passwordless authenticati
 
 ## Architecture
 
+<!-- diagram-id: architecture -->
 ```mermaid
 flowchart LR
     Client[Client] --> App[App Service]

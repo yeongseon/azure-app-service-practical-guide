@@ -1,6 +1,12 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: architecture
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/app-service-key-vault-references
 ---
 
 # Key Vault References
@@ -13,6 +19,7 @@ Azure App Service can automatically resolve secrets from Key Vault and inject th
 
 ## Architecture
 
+<!-- diagram-id: architecture -->
 ```mermaid
 flowchart LR
     Platform[App Service platform] --> Resolve[Resolve Key Vault reference]

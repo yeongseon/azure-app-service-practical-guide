@@ -1,6 +1,16 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: 03-configure-flask-app-settings-on-app-service
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/configure-common
+    - id: diagram-2
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/configure-common
 ---
 
 # 03 - Configure Flask App Settings on App Service
@@ -12,6 +22,7 @@ This guide standardizes runtime configuration for Flask on Azure App Service. Yo
 
     This tutorial assumes a production-ready App Service deployment with VNet integration, private endpoints for backend services, and managed identity for authentication.
 
+<!-- diagram-id: 03-configure-flask-app-settings-on-app-service -->
     ```mermaid
     flowchart TD
         INET[Internet] -->|HTTPS| WA[Web App\nApp Service S1\nLinux Python 3.11]
@@ -49,6 +60,7 @@ This guide standardizes runtime configuration for Flask on Azure App Service. Yo
         style DNS fill:#E3F2FD
     ```
 
+<!-- diagram-id: diagram-2 -->
 ```mermaid
 flowchart LR
     A[Set App Settings] --> B[Read env vars in Flask]

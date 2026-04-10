@@ -1,6 +1,12 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: architecture-pattern
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/azure-sql/database/connect-query-python
 ---
 
 # Azure SQL with Managed Identity
@@ -18,6 +24,7 @@ Connect Spring Boot to Azure SQL Database using passwordless authentication thro
 
 ### Architecture pattern
 
+<!-- diagram-id: architecture-pattern -->
 ```mermaid
 flowchart LR
     A[Spring Boot on App Service] --> B[Microsoft Entra token]

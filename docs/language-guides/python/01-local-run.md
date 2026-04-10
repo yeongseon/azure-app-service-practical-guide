@@ -1,6 +1,16 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: 01-run-flask-locally-with-app-service-parity
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
+    - id: validate-worker-and-timeout-behavior
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
 ---
 
 # 01 - Run Flask Locally with App Service Parity
@@ -12,6 +22,7 @@ This guide sets up a local Flask workflow that mirrors Azure App Service behavio
 
     This tutorial assumes a production-ready App Service deployment with VNet integration, private endpoints for backend services, and managed identity for authentication.
 
+<!-- diagram-id: 01-run-flask-locally-with-app-service-parity -->
     ```mermaid
     flowchart TD
         INET[Internet] -->|HTTPS| WA[Web App\nApp Service S1\nLinux Python 3.11]
@@ -111,6 +122,7 @@ Tune worker and timeout values to simulate production load:
 gunicorn --bind=0.0.0.0:$PORT --workers 2 --timeout 120 src.app:app
 ```
 
+<!-- diagram-id: validate-worker-and-timeout-behavior -->
 ```mermaid
 sequenceDiagram
     participant Dev as Developer

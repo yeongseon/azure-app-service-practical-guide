@@ -1,6 +1,16 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: 05-infrastructure-as-code-for-python-app-service
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
+    - id: diagram-2
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
 ---
 
 # 05 - Infrastructure as Code for Python App Service
@@ -12,6 +22,7 @@ This tutorial provisions Flask hosting infrastructure with Bicep for repeatable 
 
     This tutorial assumes a production-ready App Service deployment with VNet integration, private endpoints for backend services, and managed identity for authentication.
 
+<!-- diagram-id: 05-infrastructure-as-code-for-python-app-service -->
     ```mermaid
     flowchart TD
         INET[Internet] -->|HTTPS| WA[Web App\nApp Service S1\nLinux Python 3.11]
@@ -49,6 +60,7 @@ This tutorial provisions Flask hosting infrastructure with Bicep for repeatable 
         style DNS fill:#E3F2FD
     ```
 
+<!-- diagram-id: diagram-2 -->
 ```mermaid
 flowchart LR
     A[Define Bicep resources] --> B[Set linuxFxVersion PYTHON|3.11]

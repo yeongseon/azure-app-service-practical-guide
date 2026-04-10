@@ -1,12 +1,19 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: key-vault-references
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/app-service-key-vault-references
 ---
 
 # Key Vault References
 
 Use Azure App Service Key Vault References to inject secrets into configuration without embedding secret values in code or pipeline variables.
 
+<!-- diagram-id: key-vault-references -->
 ```mermaid
 sequenceDiagram
     participant APP as App Service App

@@ -1,12 +1,19 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: private-endpoints
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/networking/private-endpoint
 ---
 
 # Private Endpoints
 
 Connect a Flask app on App Service to Azure SQL, Azure Cache for Redis, and Key Vault through private endpoints while keeping standard service hostnames.
 
+<!-- diagram-id: private-endpoints -->
 ```mermaid
 flowchart LR
     A[Flask app on App Service with VNet integration] --> B[Private DNS zones]

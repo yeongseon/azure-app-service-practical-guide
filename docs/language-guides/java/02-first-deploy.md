@@ -1,6 +1,16 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: 02-first-deploy
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/quickstart-python
+    - id: main-content
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/quickstart-python
 ---
 
 # 02. First Deploy
@@ -12,6 +22,7 @@ Deploy the Java guide application to Azure App Service using Bicep for infrastru
 
     This tutorial assumes a production-ready App Service deployment with VNet integration, private endpoints for backend services, and managed identity for authentication.
 
+<!-- diagram-id: 02-first-deploy -->
     ```mermaid
     flowchart TD
         INET[Internet] -->|HTTPS| WA["Web App\nApp Service S1\nLinux Java 17"]
@@ -65,6 +76,7 @@ Deploy the Java guide application to Azure App Service using Bicep for infrastru
 
 ## Main Content
 
+<!-- diagram-id: main-content -->
 ```mermaid
 flowchart LR
     A[Set RG APP PLAN variables] --> B[Create group plan web app]

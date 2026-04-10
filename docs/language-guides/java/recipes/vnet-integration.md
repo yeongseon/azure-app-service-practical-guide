@@ -1,6 +1,12 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: networking-pattern
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration
 ---
 
 # VNet Integration
@@ -17,6 +23,7 @@ Enable VNet Integration so your App Service app can reach private backend servic
 
 ### Networking pattern
 
+<!-- diagram-id: networking-pattern -->
 ```mermaid
 flowchart LR
     A[App Service] --> B[VNet Integration Subnet]

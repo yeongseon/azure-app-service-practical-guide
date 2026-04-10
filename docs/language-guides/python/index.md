@@ -1,6 +1,24 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: main-content
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
+    - id: basic-tier-b1-simple-public-endpoint
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
+    - id: standard-premium-tier-s1-p1v3-vnet-integrated
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
+    - id: isolated-tier-ase-v3-full-network-isolation
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
 ---
 
 # Python Guide
@@ -9,6 +27,7 @@ This guide walks from local Flask development to production-ready deployment and
 
 ## Main Content
 
+<!-- diagram-id: main-content -->
 ```mermaid
 flowchart LR
     A[01 Local Run] --> B[02 First Deploy]
@@ -33,6 +52,7 @@ Azure App Service offers three main hosting tiers, each with distinct networking
 
 ### Basic Tier (B1) — Simple Public Endpoint
 
+<!-- diagram-id: basic-tier-b1-simple-public-endpoint -->
 ```mermaid
 graph TB
     Internet[Internet] -->|Public Endpoint| AppSvc["App Service<br/>(Basic B1, Linux)"]
@@ -51,6 +71,7 @@ graph TB
 
 ### Standard/Premium Tier (S1/P1v3) — VNet Integrated
 
+<!-- diagram-id: standard-premium-tier-s1-p1v3-vnet-integrated -->
 ```mermaid
 graph TB
     Internet[Internet] -->|Public Endpoint| AppSvc["App Service<br/>(Standard S1 or Premium P1v3)"]
@@ -82,6 +103,7 @@ graph TB
 
 ### Isolated Tier (ASE v3) — Full Network Isolation
 
+<!-- diagram-id: isolated-tier-ase-v3-full-network-isolation -->
 ```mermaid
 graph TB
     OnPrem["On-Premises"]

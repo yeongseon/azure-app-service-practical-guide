@@ -1,6 +1,12 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: architecture
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview-managed-identity
 ---
 
 # Managed Identity for App Service
@@ -18,6 +24,7 @@ Azure provides two types of managed identities:
 
 ## Architecture
 
+<!-- diagram-id: architecture -->
 ```mermaid
 flowchart LR
     App[App Service] --> Sql[Azure SQL Database]

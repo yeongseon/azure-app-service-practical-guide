@@ -1,6 +1,12 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: reference-architecture
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/quickstart-python
 ---
 
 # Cosmos DB Integration
@@ -17,6 +23,7 @@ Integrate Spring Boot with Azure Cosmos DB for globally distributed, low-latency
 
 ### Reference architecture
 
+<!-- diagram-id: reference-architecture -->
 ```mermaid
 flowchart LR
     A[Spring Boot App] --> B[Spring Data Cosmos]

@@ -1,12 +1,19 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: easy-auth
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization
 ---
 
 # Easy Auth
 
 Protect Flask endpoints using App Service built-in authentication and consume authenticated user context from request headers.
 
+<!-- diagram-id: easy-auth -->
 ```mermaid
 sequenceDiagram
     participant U as User

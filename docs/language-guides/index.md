@@ -1,6 +1,12 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: main-content
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
 ---
 
 # Language Guides
@@ -16,6 +22,7 @@ This section covers deploying web applications to Azure App Service in four lang
 | Java | Spring Boot | Java 17 | [Java Guide](java/index.md) |
 | .NET | ASP.NET Core | .NET 8 | [.NET Guide](dotnet/index.md) |
 
+<!-- diagram-id: main-content -->
 ```mermaid
 flowchart LR
     A[Local Run] --> B[First Deploy]

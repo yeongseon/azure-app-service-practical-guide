@@ -1,6 +1,16 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: 07-custom-domain-ssl
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/app-service-web-tutorial-custom-domain
+    - id: domain-and-certificate-flow
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/app-service-web-tutorial-custom-domain
 ---
 
 # 07. Custom Domain & SSL
@@ -12,6 +22,7 @@ Map a custom domain to your Java App Service app and secure it with a managed TL
 
     This tutorial assumes a production-ready App Service deployment with VNet integration, private endpoints for backend services, and managed identity for authentication.
 
+<!-- diagram-id: 07-custom-domain-ssl -->
     ```mermaid
     flowchart TD
         INET[Internet] -->|HTTPS| WA["Web App\nApp Service S1\nLinux Java 17"]
@@ -66,6 +77,7 @@ Map a custom domain to your Java App Service app and secure it with a managed TL
 
 ### Domain and certificate flow
 
+<!-- diagram-id: domain-and-certificate-flow -->
 ```mermaid
 flowchart LR
     A[Create DNS record] --> B[Add hostname to App Service]

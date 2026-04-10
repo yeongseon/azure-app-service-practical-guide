@@ -1,6 +1,16 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: 04-logging-monitoring
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+    - id: diagram-2
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
 ---
 
 # 04. Logging & Monitoring
@@ -12,6 +22,7 @@ Instrument ASP.NET Core 8 on Azure App Service with `ILogger` and Application In
 
     This tutorial assumes a production-ready App Service deployment with VNet integration, private endpoints for backend services, and managed identity for authentication.
 
+<!-- diagram-id: 04-logging-monitoring -->
     ```mermaid
     flowchart TD
         INET[Internet] -->|HTTPS| WA["Web App\nApp Service S1\nWindows .NET 8"]
@@ -49,6 +60,7 @@ Instrument ASP.NET Core 8 on Azure App Service with `ILogger` and Application In
         style DNS fill:#E3F2FD
     ```
 
+<!-- diagram-id: diagram-2 -->
 ```mermaid
 flowchart LR
     A[App request] --> B[ILogger structured logs]

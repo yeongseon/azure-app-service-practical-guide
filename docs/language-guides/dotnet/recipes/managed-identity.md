@@ -1,12 +1,19 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: managed-identity
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview-managed-identity
 ---
 
 # Managed Identity
 
 Use App Service managed identity with `Azure.Identity` and `DefaultAzureCredential` to access Azure resources without storing credentials.
 
+<!-- diagram-id: managed-identity -->
 ```mermaid
 flowchart LR
     A[Enable system-assigned identity] --> B[Get principal ID]

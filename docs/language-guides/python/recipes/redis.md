@@ -1,6 +1,12 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: architecture
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/azure-cache-for-redis/cache-python-get-started
 ---
 
 # Redis Cache with redis-py
@@ -9,6 +15,7 @@ Use Azure Cache for Redis from Flask with secure configuration and optional Micr
 
 ## Architecture
 
+<!-- diagram-id: architecture -->
 ```mermaid
 flowchart LR
     Client[Client] --> App[App Service]

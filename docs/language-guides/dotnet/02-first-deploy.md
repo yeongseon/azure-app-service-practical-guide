@@ -1,6 +1,16 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: 02-first-deploy
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/quickstart-python
+    - id: diagram-2
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/quickstart-python
 ---
 
 # 02. First Deploy
@@ -12,6 +22,7 @@ Deploy the ASP.NET Core 8 app to Azure App Service (Windows) using Bicep infrast
 
     This tutorial assumes a production-ready App Service deployment with VNet integration, private endpoints for backend services, and managed identity for authentication.
 
+<!-- diagram-id: 02-first-deploy -->
     ```mermaid
     flowchart TD
         INET[Internet] -->|HTTPS| WA["Web App\nApp Service S1\nWindows .NET 8"]
@@ -49,6 +60,7 @@ Deploy the ASP.NET Core 8 app to Azure App Service (Windows) using Bicep infrast
         style DNS fill:#E3F2FD
     ```
 
+<!-- diagram-id: diagram-2 -->
 ```mermaid
 flowchart LR
     A[Set RG APP PLAN variables] --> B[Create group plan web app]

@@ -1,6 +1,12 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: architecture
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/azure-cache-for-redis/cache-python-get-started
 ---
 
 # Azure Cache for Redis Integration
@@ -13,6 +19,7 @@ Redis is an in-memory data store frequently used as a cache or session provider.
 
 ## Architecture
 
+<!-- diagram-id: architecture -->
 ```mermaid
 flowchart LR
     Client[Client] --> App[App Service]

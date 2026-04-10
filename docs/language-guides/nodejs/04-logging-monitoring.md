@@ -1,6 +1,28 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: diagram-1
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+    - id: how-logs-flow
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+    - id: log-levels-filtering
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+    - id: correlation-id-tracing-a-single-request
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+    - id: what-gets-collected
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
 ---
 
 # 04. Logging & Monitoring
@@ -14,6 +36,7 @@ Monitor your Node.js application's health, track performance, and diagnose issue
 
     This tutorial assumes a production-ready App Service deployment with VNet integration, private endpoints for backend services, and managed identity for authentication.
 
+<!-- diagram-id: diagram-1 -->
     ```mermaid
     flowchart TD
         INET[Internet] -->|HTTPS| WA["Web App\nApp Service S1\nLinux Node 18 LTS"]
@@ -61,6 +84,7 @@ Monitor your Node.js application's health, track performance, and diagnose issue
 Understanding where your logs end up is the foundation of any debugging workflow.
 Every `console.log` or Winston statement your app emits follows this path:
 
+<!-- diagram-id: how-logs-flow -->
 ```mermaid
 flowchart TD
     A["Node.js Process\nconsole.log / Winston"] --> B["stdout / stderr"]
@@ -272,6 +296,7 @@ but the two records are not guaranteed to be identical or always co-emitted.
 There are **two independent filters** that control what you see. Confusing one for the other
 is a common source of "I can't see my logs" issues.
 
+<!-- diagram-id: log-levels-filtering -->
 ```mermaid
 flowchart LR
     subgraph APP ["1 · Your App  LOG_LEVEL=warn"]
@@ -336,6 +361,7 @@ az webapp config appsettings set \
 `app/src/middleware/correlation.js` injects a unique `correlationId` into every request and
 binds it to `req.logger` so all log lines for the same request share the same ID automatically:
 
+<!-- diagram-id: correlation-id-tracing-a-single-request -->
 ```mermaid
 sequenceDiagram
     participant Client
@@ -468,6 +494,7 @@ Setting `APPLICATIONINSIGHTS_CONNECTION_STRING` alone is not sufficient — tele
 
 ### What Gets Collected
 
+<!-- diagram-id: what-gets-collected -->
 ```mermaid
 graph LR
     A["logger.info / warn / error\nWinston"] -->|"OTel SDK export\n(advanced mode)"| B["AppTraces"]

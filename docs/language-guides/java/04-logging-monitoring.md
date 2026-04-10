@@ -1,6 +1,16 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: 04-logging-monitoring
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+    - id: logging-architecture-for-this-guide
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
 ---
 
 # 04. Logging & Monitoring
@@ -12,6 +22,7 @@ Instrument your Spring Boot app for production observability using Logback JSON 
 
     This tutorial assumes a production-ready App Service deployment with VNet integration, private endpoints for backend services, and managed identity for authentication.
 
+<!-- diagram-id: 04-logging-monitoring -->
     ```mermaid
     flowchart TD
         INET[Internet] -->|HTTPS| WA["Web App\nApp Service S1\nLinux Java 17"]
@@ -66,6 +77,7 @@ Instrument your Spring Boot app for production observability using Logback JSON 
 
 ### Logging architecture for this guide
 
+<!-- diagram-id: logging-architecture-for-this-guide -->
 ```mermaid
 flowchart LR
     A[Spring Boot App] --> B[Console Logback Output]

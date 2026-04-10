@@ -1,12 +1,19 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: next-js-on-app-service
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
 ---
 
 # Next.js on App Service
 
 This recipe covers deploying a Next.js application to Azure App Service using the standalone build feature and SSR configuration.
 
+<!-- diagram-id: next-js-on-app-service -->
 ```mermaid
 flowchart LR
     A[Configure output: standalone] --> B[npm run build]

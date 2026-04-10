@@ -1,12 +1,19 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: easy-auth
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization
 ---
 
 # Easy Auth
 
 Protect your ASP.NET Core app with Azure App Service built-in authentication (Easy Auth), and consume identity claims from platform-injected headers.
 
+<!-- diagram-id: easy-auth -->
 ```mermaid
 sequenceDiagram
     participant U as User

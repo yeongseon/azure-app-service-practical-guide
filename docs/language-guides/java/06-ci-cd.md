@@ -1,6 +1,16 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: 06-ci-cd
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/deploy-continuous-deployment
+    - id: pipeline-design
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/deploy-continuous-deployment
 ---
 
 # 06. CI/CD
@@ -12,6 +22,7 @@ Implement GitHub Actions CI/CD for repeatable Java builds and controlled deploym
 
     This tutorial assumes a production-ready App Service deployment with VNet integration, private endpoints for backend services, and managed identity for authentication.
 
+<!-- diagram-id: 06-ci-cd -->
     ```mermaid
     flowchart TD
         INET[Internet] -->|HTTPS| WA["Web App\nApp Service S1\nLinux Java 17"]
@@ -67,6 +78,7 @@ Implement GitHub Actions CI/CD for repeatable Java builds and controlled deploym
 
 ### Pipeline design
 
+<!-- diagram-id: pipeline-design -->
 ```mermaid
 flowchart LR
     A[Push / PR] --> B[Build + Unit Tests]

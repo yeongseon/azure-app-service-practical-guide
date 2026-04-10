@@ -1,6 +1,16 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: 05-infrastructure-as-code
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
+    - id: bicep-architecture-in-this-repository
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
 ---
 
 # 05. Infrastructure as Code
@@ -12,6 +22,7 @@ Use Bicep to deploy repeatable, reviewable Azure infrastructure for your Java Ap
 
     This tutorial assumes a production-ready App Service deployment with VNet integration, private endpoints for backend services, and managed identity for authentication.
 
+<!-- diagram-id: 05-infrastructure-as-code -->
     ```mermaid
     flowchart TD
         INET[Internet] -->|HTTPS| WA["Web App\nApp Service S1\nLinux Java 17"]
@@ -66,6 +77,7 @@ Use Bicep to deploy repeatable, reviewable Azure infrastructure for your Java Ap
 
 ### Bicep architecture in this repository
 
+<!-- diagram-id: bicep-architecture-in-this-repository -->
 ```mermaid
 flowchart TD
     M[main.bicep] --> LA[modules/log-analytics.bicep]

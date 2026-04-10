@@ -1,12 +1,19 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: key-vault-references-no-code-changes
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/app-service-key-vault-references
 ---
 
 # Key Vault References (No Code Changes)
 
 Use App Service Key Vault References to inject secrets into environment variables without changing Spring Boot application code.
 
+<!-- diagram-id: key-vault-references-no-code-changes -->
 ```mermaid
 sequenceDiagram
     participant APP as App Service App

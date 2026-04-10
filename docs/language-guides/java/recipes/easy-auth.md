@@ -1,6 +1,12 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: how-easy-auth-fits-the-request-path
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization
 ---
 
 # Easy Auth (Built-in Authentication)
@@ -17,6 +23,7 @@ Enable App Service built-in authentication/authorization (Easy Auth) to protect 
 
 ### How Easy Auth fits the request path
 
+<!-- diagram-id: how-easy-auth-fits-the-request-path -->
 ```mermaid
 flowchart LR
     U[User] --> A[App Service Auth Module]

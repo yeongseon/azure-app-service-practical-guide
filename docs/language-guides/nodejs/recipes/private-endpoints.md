@@ -1,12 +1,19 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: private-endpoints
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/networking/private-endpoint
 ---
 
 # Private Endpoints
 
 Connect an Express app on App Service to SQL, Redis, and Key Vault over private endpoints while preserving standard Azure service DNS names.
 
+<!-- diagram-id: private-endpoints -->
 ```mermaid
 flowchart LR
     A[Express app on App Service with VNet integration] --> B[Private DNS zones]

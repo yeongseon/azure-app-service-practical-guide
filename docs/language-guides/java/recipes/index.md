@@ -1,6 +1,12 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: recipe-categories
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
 ---
 
 # Recipes
@@ -17,6 +23,7 @@ Use these production-focused recipes to integrate common Azure services and oper
 
 ### Recipe categories
 
+<!-- diagram-id: recipe-categories -->
 ```mermaid
 flowchart TD
     R[Recipes] --> D[Database]

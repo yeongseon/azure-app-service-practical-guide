@@ -1,6 +1,12 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: main-content
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
 ---
 
 # .NET Guide
@@ -9,6 +15,7 @@ This guide covers the end-to-end path for running ASP.NET Core applications on A
 
 ## Main Content
 
+<!-- diagram-id: main-content -->
 ```mermaid
 flowchart LR
     A[01 Local Run] --> B[02 First Deploy]

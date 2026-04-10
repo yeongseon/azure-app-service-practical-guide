@@ -1,12 +1,19 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: deployment-slots-validation
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/quickstart-python
 ---
 
 # Deployment Slots Validation
 
 Use staging slots to validate deployments before production swap, with health checks and automated safeguards in GitHub Actions.
 
+<!-- diagram-id: deployment-slots-validation -->
 ```mermaid
 flowchart LR
     A[Create staging slot] --> B[Set slot-sticky config]

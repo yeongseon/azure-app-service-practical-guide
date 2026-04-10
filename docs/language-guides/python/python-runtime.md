@@ -1,12 +1,19 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: python-runtime
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
 ---
 
 # Python Runtime
 
 Quick lookup reference.
 
+<!-- diagram-id: python-runtime -->
 ```mermaid
 graph TD
     A[Zip Deploy or Source Deploy] --> B[Oryx detects requirements.txt]

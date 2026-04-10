@@ -1,12 +1,19 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: app-service-built-in-authentication-easy-auth
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization
 ---
 
 # App Service Built-in Authentication (Easy Auth)
 
 App Service provides a built-in authentication and authorization service, often called Easy Auth. This platform-level feature handles user logins and provides identity information to your Node.js application through HTTP headers.
 
+<!-- diagram-id: app-service-built-in-authentication-easy-auth -->
 ```mermaid
 sequenceDiagram
     participant U as User

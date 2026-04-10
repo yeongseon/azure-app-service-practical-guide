@@ -1,12 +1,19 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: native-dependencies
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
 ---
 
 # Native Dependencies
 
 This recipe explains how to manage native Node.js modules like `sharp` and `bcrypt` on Azure App Service using multi-stage Docker builds.
 
+<!-- diagram-id: native-dependencies -->
 ```mermaid
 flowchart LR
     A[Source with native modules] --> B[Builder image with compilers]

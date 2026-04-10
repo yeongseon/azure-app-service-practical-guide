@@ -1,6 +1,12 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: architecture
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/azure-sql/database/connect-query-python
 ---
 
 # Azure SQL with Managed Identity
@@ -9,6 +15,7 @@ Connect Flask to Azure SQL Database using `pyodbc` and Microsoft Entra authentic
 
 ## Architecture
 
+<!-- diagram-id: architecture -->
 ```mermaid
 flowchart LR
     Client[Client] --> App[App Service]

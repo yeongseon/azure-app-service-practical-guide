@@ -1,12 +1,19 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: redis-cache
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/azure-cache-for-redis/cache-python-get-started
 ---
 
 # Redis Cache
 
 Use Azure Cache for Redis with ASP.NET Core 8 for distributed caching and session state, including TLS-first configuration for production.
 
+<!-- diagram-id: redis-cache -->
 ```mermaid
 flowchart LR
     A[Set Redis connection setting] --> B[Register IDistributedCache]

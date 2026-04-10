@@ -1,6 +1,12 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: main-content
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
 ---
 
 # Java Guide
@@ -9,6 +15,7 @@ This guide takes you from local Spring Boot development through production deplo
 
 ## Main Content
 
+<!-- diagram-id: main-content -->
 ```mermaid
 flowchart LR
     A[01 Local Run] --> B[02 First Deploy]

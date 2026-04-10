@@ -1,6 +1,28 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: diagram-1
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+    - id: how-logs-flow
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+    - id: log-levels-filtering
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+    - id: correlation-id-tracing-a-single-request
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+    - id: what-gets-collected
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
 ---
 
 # 04. Logging & Monitoring
@@ -14,6 +36,7 @@ Monitor your Flask application's health, track performance, and diagnose issues 
 
     This tutorial assumes a production-ready App Service deployment with VNet integration, private endpoints for backend services, and managed identity for authentication.
 
+<!-- diagram-id: diagram-1 -->
     ```mermaid
     flowchart TD
         INET[Internet] -->|HTTPS| WA[Web App\nApp Service S1\nLinux Python 3.11]
@@ -61,6 +84,7 @@ Monitor your Flask application's health, track performance, and diagnose issues 
 Understanding where your logs end up is the foundation of any debugging workflow.
 Every `logger.info()` call or Gunicorn access log follows this path:
 
+<!-- diagram-id: how-logs-flow -->
 ```mermaid
 flowchart TD
     A["Flask Application\nlogging.getLogger / logger.info"] --> B["stdout / stderr"]
@@ -283,6 +307,7 @@ The `logger.info("Order created", ...)` call above lands in Application Insights
 There are **two independent filters** that control what you see. Confusing one for the other
 is a common source of "I can't see my logs" issues.
 
+<!-- diagram-id: log-levels-filtering -->
 ```mermaid
 flowchart LR
     subgraph APP ["1 · Your App  LOG_LEVEL=WARNING"]
@@ -348,6 +373,7 @@ az webapp config appsettings set \
 a `contextvars.ContextVar`, which is then picked up by `CorrelationIdFilter` and stamped onto
 **every** log line emitted during that request:
 
+<!-- diagram-id: correlation-id-tracing-a-single-request -->
 ```mermaid
 sequenceDiagram
     participant Client
@@ -502,6 +528,7 @@ Setting `APPLICATIONINSIGHTS_CONNECTION_STRING` alone is not sufficient — tele
 
 ### What Gets Collected
 
+<!-- diagram-id: what-gets-collected -->
 ```mermaid
 graph LR
     A["logger.info / warning / error\nFlask / Python logging"] -->|"OTel SDK export\n(advanced mode)"| B["AppTraces"]

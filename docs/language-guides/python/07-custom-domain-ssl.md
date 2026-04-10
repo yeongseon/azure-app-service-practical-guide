@@ -1,6 +1,20 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: 07-custom-domain-and-ssl-on-app-service
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/app-service-web-tutorial-custom-domain
+    - id: how-custom-domains-work
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/app-service-web-tutorial-custom-domain
+    - id: how-https-binding-works
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/app-service-web-tutorial-custom-domain
 ---
 
 # 07 - Custom Domain and SSL on App Service
@@ -12,6 +26,7 @@ This final tutorial binds your Flask app to a custom domain and enables HTTPS ce
 
     This tutorial assumes a production-ready App Service deployment with VNet integration, private endpoints for backend services, and managed identity for authentication.
 
+<!-- diagram-id: 07-custom-domain-and-ssl-on-app-service -->
     ```mermaid
     flowchart TD
         INET[Internet] -->|HTTPS| WA[Web App\nApp Service S1\nLinux Python 3.11]
@@ -51,6 +66,7 @@ This final tutorial binds your Flask app to a custom domain and enables HTTPS ce
 
 ## How Custom Domains Work
 
+<!-- diagram-id: how-custom-domains-work -->
 ```mermaid
 flowchart LR
     Client[Client] --> DNS[Public DNS zone]
@@ -62,6 +78,7 @@ App Service validates domain ownership with the `asuid` TXT record before hostna
 
 ## How HTTPS Binding Works
 
+<!-- diagram-id: how-https-binding-works -->
 ```mermaid
 flowchart LR
     ClientHttps[Client HTTPS request] --> Domain[Custom domain hostname]

@@ -1,6 +1,16 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: 06-ci-cd-with-github-actions-for-flask-app-service
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/deploy-continuous-deployment
+    - id: verify-deployment-from-workflow-run
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/deploy-continuous-deployment
 ---
 
 # 06 - CI/CD with GitHub Actions for Flask App Service
@@ -12,6 +22,7 @@ This tutorial automates build and deployment for Flask using GitHub Actions. It 
 
     This tutorial assumes a production-ready App Service deployment with VNet integration, private endpoints for backend services, and managed identity for authentication.
 
+<!-- diagram-id: 06-ci-cd-with-github-actions-for-flask-app-service -->
     ```mermaid
     flowchart TD
         INET[Internet] -->|HTTPS| WA[Web App\nApp Service S1\nLinux Python 3.11]
@@ -116,6 +127,7 @@ az webapp config appsettings set --resource-group $RG --name $APP_NAME --setting
 curl https://$APP_NAME.azurewebsites.net/health
 ```
 
+<!-- diagram-id: verify-deployment-from-workflow-run -->
 ```mermaid
 flowchart LR
     A[Push to main] --> B[setup-python]

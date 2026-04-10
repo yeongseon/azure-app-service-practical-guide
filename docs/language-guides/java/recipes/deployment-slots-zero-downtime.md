@@ -1,6 +1,12 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: slot-based-release-flow
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/quickstart-python
 ---
 
 # Deployment Slots for Zero-Downtime Releases
@@ -17,6 +23,7 @@ Use App Service deployment slots to validate Java releases in staging, then swap
 
 ### Slot-based release flow
 
+<!-- diagram-id: slot-based-release-flow -->
 ```mermaid
 flowchart LR
     A[Deploy new build to staging slot] --> B[Run smoke tests on staging URL]

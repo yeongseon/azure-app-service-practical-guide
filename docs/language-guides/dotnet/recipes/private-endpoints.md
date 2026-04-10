@@ -1,12 +1,19 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: private-endpoints
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/networking/private-endpoint
 ---
 
 # Private Endpoints
 
 Connect App Service to backend services over private networking using VNet integration and private endpoints for SQL, Redis, and Storage.
 
+<!-- diagram-id: private-endpoints -->
 ```mermaid
 flowchart LR
     A[App Service VNet integration subnet] --> B[Private DNS resolution]
