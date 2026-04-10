@@ -299,6 +299,7 @@ nav:
   - Reference:
     - reference/index.md
     - Validation Status: reference/validation-status.md
+    - Content Validation: reference/content-validation-status.md
     - reference/cli-cheatsheet.md
     - reference/kql-queries.md
     - reference/platform-limits.md
