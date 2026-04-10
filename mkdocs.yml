@@ -108,6 +108,7 @@ nav:
     - platform/resource-relationships.md
     - platform/authentication-architecture.md
     - platform/security-architecture.md
+    - platform/deployment-scenarios.md
   - Best Practices:
     - best-practices/index.md
     - best-practices/production-baseline.md
