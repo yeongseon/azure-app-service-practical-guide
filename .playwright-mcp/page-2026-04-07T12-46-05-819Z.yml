@@ -1,0 +1,706 @@
+- generic [active] [ref=e1]:
+  - link "Skip to content" [ref=e2] [cursor=pointer]:
+    - /url: "#memory-pressure-on-app-service"
+  - banner [ref=e3]:
+    - navigation "Header" [ref=e4]:
+      - img [ref=e6] [cursor=pointer]
+      - generic [ref=e9]:
+        - generic [ref=e11]: Azure PaaS Troubleshooting Labs
+        - generic:
+          - generic: Overview
+      - dialog [ref=e12]:
+        - search [ref=e13]:
+          - generic [ref=e14]:
+            - textbox "Search" [ref=e15]
+            - generic:
+              - img
+            - navigation "Search":
+              - button "Clear":
+                - img
+          - generic [ref=e17]: Initializing search
+      - link "GitHub 0 0" [ref=e19] [cursor=pointer]:
+        - /url: https://github.com/yeongseon/azure-paas-troubleshooting-labs
+        - img [ref=e21]
+        - generic [ref=e23]:
+          - text: GitHub
+          - list [ref=e24]:
+            - listitem [ref=e25]: "0"
+            - listitem [ref=e26]: "0"
+  - generic [ref=e27]:
+    - main [ref=e28]:
+      - generic [ref=e29]:
+        - navigation "Navigation" [ref=e32]:
+          - generic [ref=e33] [cursor=pointer]:
+            - link "Azure PaaS Troubleshooting Labs" [ref=e34]:
+              - /url: ../../..
+              - img [ref=e35]
+            - text: Azure PaaS Troubleshooting Labs
+          - list [ref=e37]:
+            - listitem [ref=e38]:
+              - link "Home" [ref=e39] [cursor=pointer]:
+                - /url: ../../..
+                - generic [ref=e40]: Home
+            - listitem [ref=e41]:
+              - link "About" [ref=e42] [cursor=pointer]:
+                - /url: ../../../about/
+                - generic [ref=e43]: About
+            - listitem [ref=e44]:
+              - generic [ref=e46]: Methodology
+              - navigation "Methodology" [ref=e48]:
+                - generic [ref=e49] [cursor=pointer]: Methodology
+                - list [ref=e51]:
+                  - listitem [ref=e52]:
+                    - link "Experiment Framework" [ref=e53] [cursor=pointer]:
+                      - /url: ../../../methodology/experiment-framework/
+                      - generic [ref=e54]: Experiment Framework
+                  - listitem [ref=e55]:
+                    - link "Evidence Levels" [ref=e56] [cursor=pointer]:
+                      - /url: ../../../methodology/evidence-levels/
+                      - generic [ref=e57]: Evidence Levels
+                  - listitem [ref=e58]:
+                    - link "Platform vs App Boundary" [ref=e59] [cursor=pointer]:
+                      - /url: ../../../methodology/platform-vs-app-boundary/
+                      - generic [ref=e60]: Platform vs App Boundary
+                  - listitem [ref=e61]:
+                    - link "Interpretation Guidelines" [ref=e62] [cursor=pointer]:
+                      - /url: ../../../methodology/interpretation-guidelines/
+                      - generic [ref=e63]: Interpretation Guidelines
+            - listitem [ref=e64]:
+              - generic [ref=e66]: App Service
+              - navigation "App Service" [ref=e68]:
+                - generic [ref=e69] [cursor=pointer]: App Service
+                - list [ref=e71]:
+                  - listitem [ref=e72]:
+                    - link "Overview" [ref=e73] [cursor=pointer]:
+                      - /url: ../../
+                      - generic [ref=e74]: Overview
+                  - listitem [ref=e75]:
+                    - generic [ref=e77]: Memory Pressure
+                    - navigation "Memory Pressure" [ref=e79]:
+                      - generic [ref=e80] [cursor=pointer]: Memory Pressure
+                      - list [ref=e82]:
+                        - listitem [ref=e83]:
+                          - generic [ref=e85]: Overview
+                          - navigation "Table of contents" [ref=e87]:
+                            - generic [ref=e88] [cursor=pointer]: Table of contents
+                            - list [ref=e89]:
+                              - listitem [ref=e90]:
+                                - link "1. Question" [ref=e91] [cursor=pointer]:
+                                  - /url: "#1-question"
+                                  - generic [ref=e92]: 1. Question
+                              - listitem [ref=e93]:
+                                - link "2. Why this matters" [ref=e94] [cursor=pointer]:
+                                  - /url: "#2-why-this-matters"
+                                  - generic [ref=e95]: 2. Why this matters
+                              - listitem [ref=e96]:
+                                - link "3. Customer symptom" [ref=e97] [cursor=pointer]:
+                                  - /url: "#3-customer-symptom"
+                                  - generic [ref=e98]: 3. Customer symptom
+                              - listitem [ref=e99]:
+                                - link "4. Hypothesis" [ref=e100] [cursor=pointer]:
+                                  - /url: "#4-hypothesis"
+                                  - generic [ref=e101]: 4. Hypothesis
+                              - listitem [ref=e102]:
+                                - link "5. Environment" [ref=e103] [cursor=pointer]:
+                                  - /url: "#5-environment"
+                                  - generic [ref=e104]: 5. Environment
+                              - listitem [ref=e105]:
+                                - link "6. Variables" [ref=e106] [cursor=pointer]:
+                                  - /url: "#6-variables"
+                                  - generic [ref=e107]: 6. Variables
+                                - navigation "6. Variables" [ref=e108]:
+                                  - list [ref=e109]:
+                                    - listitem [ref=e110]:
+                                      - link "Controlled" [ref=e111] [cursor=pointer]:
+                                        - /url: "#controlled"
+                                        - generic [ref=e112]: Controlled
+                                    - listitem [ref=e113]:
+                                      - link "Observed" [ref=e114] [cursor=pointer]:
+                                        - /url: "#observed"
+                                        - generic [ref=e115]: Observed
+                              - listitem [ref=e116]:
+                                - link "7. Instrumentation" [ref=e117] [cursor=pointer]:
+                                  - /url: "#7-instrumentation"
+                                  - generic [ref=e118]: 7. Instrumentation
+                                - navigation "7. Instrumentation" [ref=e119]:
+                                  - list [ref=e120]:
+                                    - listitem [ref=e121]:
+                                      - 'link "KQL: detect plan memory pressure over time" [ref=e122] [cursor=pointer]':
+                                        - /url: "#kql-detect-plan-memory-pressure-over-time"
+                                        - generic [ref=e123]: "KQL: detect plan memory pressure over time"
+                                    - listitem [ref=e124]:
+                                      - 'link "KQL: correlate startup-time 503 failures" [ref=e125] [cursor=pointer]':
+                                        - /url: "#kql-correlate-startup-time-503-failures"
+                                        - generic [ref=e126]: "KQL: correlate startup-time 503 failures"
+                                    - listitem [ref=e127]:
+                                      - 'link "KQL: identify restart or crash-loop periods" [ref=e128] [cursor=pointer]':
+                                        - /url: "#kql-identify-restart-or-crash-loop-periods"
+                                        - generic [ref=e129]: "KQL: identify restart or crash-loop periods"
+                              - listitem [ref=e130]:
+                                - link "8. Procedure" [ref=e131] [cursor=pointer]:
+                                  - /url: "#8-procedure"
+                                  - generic [ref=e132]: 8. Procedure
+                              - listitem [ref=e133]:
+                                - link "9. Expected signal" [ref=e134] [cursor=pointer]:
+                                  - /url: "#9-expected-signal"
+                                  - generic [ref=e135]: 9. Expected signal
+                              - listitem [ref=e136]:
+                                - link "10. Results" [ref=e137] [cursor=pointer]:
+                                  - /url: "#10-results"
+                                  - generic [ref=e138]: 10. Results
+                                - navigation "10. Results" [ref=e139]:
+                                  - list [ref=e140]:
+                                    - listitem [ref=e141]:
+                                      - link "Flask / ZIP deploy results" [ref=e142] [cursor=pointer]:
+                                        - /url: "#flask-zip-deploy-results"
+                                        - generic [ref=e143]: Flask / ZIP deploy results
+                                    - listitem [ref=e144]:
+                                      - link "Node.js / custom container results" [ref=e145] [cursor=pointer]:
+                                        - /url: "#nodejs-custom-container-results"
+                                        - generic [ref=e146]: Node.js / custom container results
+                                    - listitem [ref=e147]:
+                                      - link "Degradation zones observed for Flask / ZIP deploy" [ref=e148] [cursor=pointer]:
+                                        - /url: "#degradation-zones-observed-for-flask-zip-deploy"
+                                        - generic [ref=e149]: Degradation zones observed for Flask / ZIP deploy
+                                    - listitem [ref=e150]:
+                                      - link "Degradation progression" [ref=e151] [cursor=pointer]:
+                                        - /url: "#degradation-progression"
+                                        - generic [ref=e152]: Degradation progression
+                              - listitem [ref=e153]:
+                                - link "11. Interpretation" [ref=e154] [cursor=pointer]:
+                                  - /url: "#11-interpretation"
+                                  - generic [ref=e155]: 11. Interpretation
+                              - listitem [ref=e156]:
+                                - link "12. What this proves" [ref=e157] [cursor=pointer]:
+                                  - /url: "#12-what-this-proves"
+                                  - generic [ref=e158]: 12. What this proves
+                              - listitem [ref=e159]:
+                                - link "13. What this does NOT prove" [ref=e160] [cursor=pointer]:
+                                  - /url: "#13-what-this-does-not-prove"
+                                  - generic [ref=e161]: 13. What this does NOT prove
+                              - listitem [ref=e162]:
+                                - link "14. Support takeaway" [ref=e163] [cursor=pointer]:
+                                  - /url: "#14-support-takeaway"
+                                  - generic [ref=e164]: 14. Support takeaway
+                              - listitem [ref=e165]:
+                                - link "15. Reproduction notes" [ref=e166] [cursor=pointer]:
+                                  - /url: "#15-reproduction-notes"
+                                  - generic [ref=e167]: 15. Reproduction notes
+                              - listitem [ref=e168]:
+                                - link "16. Related guide / official docs" [ref=e169] [cursor=pointer]:
+                                  - /url: "#16-related-guide-official-docs"
+                                  - generic [ref=e170]: 16. Related guide / official docs
+                  - listitem [ref=e171]:
+                    - generic [ref=e173]: procfs Interpretation
+                    - navigation "procfs Interpretation" [ref=e175]:
+                      - generic [ref=e176] [cursor=pointer]: procfs Interpretation
+                      - list [ref=e178]:
+                        - listitem [ref=e179]:
+                          - link "Overview" [ref=e180] [cursor=pointer]:
+                            - /url: ../../procfs-interpretation/overview/
+                            - generic [ref=e181]: Overview
+                  - listitem [ref=e182]:
+                    - generic [ref=e184]: Slow Requests
+                    - navigation "Slow Requests" [ref=e186]:
+                      - generic [ref=e187] [cursor=pointer]: Slow Requests
+                      - list [ref=e189]:
+                        - listitem [ref=e190]:
+                          - link "Overview" [ref=e191] [cursor=pointer]:
+                            - /url: ../../slow-requests/overview/
+                            - generic [ref=e192]: Overview
+                  - listitem [ref=e193]:
+                    - generic [ref=e195]: Zip vs Container
+                    - navigation "Zip vs Container" [ref=e197]:
+                      - generic [ref=e198] [cursor=pointer]: Zip vs Container
+                      - list [ref=e200]:
+                        - listitem [ref=e201]:
+                          - link "Overview" [ref=e202] [cursor=pointer]:
+                            - /url: ../../zip-vs-container/overview/
+                            - generic [ref=e203]: Overview
+            - listitem [ref=e204]:
+              - generic [ref=e206]: Functions
+              - navigation "Functions" [ref=e208]:
+                - generic [ref=e209] [cursor=pointer]: Functions
+                - list [ref=e211]:
+                  - listitem [ref=e212]:
+                    - link "Overview" [ref=e213] [cursor=pointer]:
+                      - /url: ../../../functions/
+                      - generic [ref=e214]: Overview
+                  - listitem [ref=e215]:
+                    - generic [ref=e217]: Flex Consumption Storage
+                    - navigation "Flex Consumption Storage" [ref=e219]:
+                      - generic [ref=e220] [cursor=pointer]: Flex Consumption Storage
+                      - list [ref=e222]:
+                        - listitem [ref=e223]:
+                          - link "Overview" [ref=e224] [cursor=pointer]:
+                            - /url: ../../../functions/flex-consumption-storage/overview/
+                            - generic [ref=e225]: Overview
+                  - listitem [ref=e226]:
+                    - generic [ref=e228]: Cold Start
+                    - navigation "Cold Start" [ref=e230]:
+                      - generic [ref=e231] [cursor=pointer]: Cold Start
+                      - list [ref=e233]:
+                        - listitem [ref=e234]:
+                          - link "Overview" [ref=e235] [cursor=pointer]:
+                            - /url: ../../../functions/cold-start/overview/
+                            - generic [ref=e236]: Overview
+                  - listitem [ref=e237]:
+                    - generic [ref=e239]: Dependency Visibility
+                    - navigation "Dependency Visibility" [ref=e241]:
+                      - generic [ref=e242] [cursor=pointer]: Dependency Visibility
+                      - list [ref=e244]:
+                        - listitem [ref=e245]:
+                          - link "Overview" [ref=e246] [cursor=pointer]:
+                            - /url: ../../../functions/dependency-visibility/overview/
+                            - generic [ref=e247]: Overview
+            - listitem [ref=e248]:
+              - generic [ref=e250]: Container Apps
+              - navigation "Container Apps" [ref=e252]:
+                - generic [ref=e253] [cursor=pointer]: Container Apps
+                - list [ref=e255]:
+                  - listitem [ref=e256]:
+                    - link "Overview" [ref=e257] [cursor=pointer]:
+                      - /url: ../../../container-apps/
+                      - generic [ref=e258]: Overview
+                  - listitem [ref=e259]:
+                    - generic [ref=e261]: Ingress SNI / Host Header
+                    - navigation "Ingress SNI / Host Header" [ref=e263]:
+                      - generic [ref=e264] [cursor=pointer]: Ingress SNI / Host Header
+                      - list [ref=e266]:
+                        - listitem [ref=e267]:
+                          - link "Overview" [ref=e268] [cursor=pointer]:
+                            - /url: ../../../container-apps/ingress-sni-host-header/overview/
+                            - generic [ref=e269]: Overview
+                  - listitem [ref=e270]:
+                    - generic [ref=e272]: Private Endpoint FQDN vs IP
+                    - navigation "Private Endpoint FQDN vs IP" [ref=e274]:
+                      - generic [ref=e275] [cursor=pointer]: Private Endpoint FQDN vs IP
+                      - list [ref=e277]:
+                        - listitem [ref=e278]:
+                          - link "Overview" [ref=e279] [cursor=pointer]:
+                            - /url: ../../../container-apps/private-endpoint-fqdn-vs-ip/overview/
+                            - generic [ref=e280]: Overview
+                  - listitem [ref=e281]:
+                    - generic [ref=e283]: Startup Probes
+                    - navigation "Startup Probes" [ref=e285]:
+                      - generic [ref=e286] [cursor=pointer]: Startup Probes
+                      - list [ref=e288]:
+                        - listitem [ref=e289]:
+                          - link "Overview" [ref=e290] [cursor=pointer]:
+                            - /url: ../../../container-apps/startup-probes/overview/
+                            - generic [ref=e291]: Overview
+            - listitem [ref=e292]:
+              - generic [ref=e294]: Patterns
+              - navigation "Patterns" [ref=e296]:
+                - generic [ref=e297] [cursor=pointer]: Patterns
+                - list [ref=e299]:
+                  - listitem [ref=e300]:
+                    - link "Symptom to Hypothesis" [ref=e301] [cursor=pointer]:
+                      - /url: ../../../patterns/symptom-to-hypothesis/
+                      - generic [ref=e302]: Symptom to Hypothesis
+                  - listitem [ref=e303]:
+                    - link "False Positives" [ref=e304] [cursor=pointer]:
+                      - /url: ../../../patterns/false-positives/
+                      - generic [ref=e305]: False Positives
+                  - listitem [ref=e306]:
+                    - link "Metric Misreads" [ref=e307] [cursor=pointer]:
+                      - /url: ../../../patterns/metric-misreads/
+                      - generic [ref=e308]: Metric Misreads
+        - article [ref=e310]:
+          - heading "Memory Pressure on App Service ¶" [level=1] [ref=e311]:
+            - text: Memory Pressure on App Service
+            - link "¶" [ref=e312] [cursor=pointer]:
+              - /url: "#memory-pressure-on-app-service"
+          - paragraph [ref=e314]: "Status: Published (실험 완료)"
+          - heading "1. Question ¶" [level=2] [ref=e315]:
+            - text: 1. Question
+            - link "¶" [ref=e316] [cursor=pointer]:
+              - /url: "#1-question"
+          - paragraph [ref=e317]: How does plan-level memory pressure on a shared Azure App Service Linux plan affect startup success, cold-start duration, and stability, and does the behavior differ between Flask apps deployed with ZIP deploy and Node.js apps deployed as custom containers?
+          - heading "2. Why this matters ¶" [level=2] [ref=e318]:
+            - text: 2. Why this matters
+            - link "¶" [ref=e319] [cursor=pointer]:
+              - /url: "#2-why-this-matters"
+          - paragraph [ref=e320]: Memory pressure is one of the fastest ways to turn a seemingly healthy App Service plan into a multi-app incident. Support cases often begin as “some apps are slow” and then escalate into “new apps do not start” or “apps keep restarting for no clear reason.”
+          - paragraph [ref=e321]: "This experiment matters because it isolates a common support question: whether plan-level memory saturation causes predictable degradation patterns, and whether the same patterns appear equally for built-in runtime/ZIP deploy apps and custom container apps."
+          - heading "3. Customer symptom ¶" [level=2] [ref=e322]:
+            - text: 3. Customer symptom
+            - link "¶" [ref=e323] [cursor=pointer]:
+              - /url: "#3-customer-symptom"
+          - paragraph [ref=e324]: "Typical customer reports matched the following patterns:"
+          - list [ref=e325]:
+            - listitem [ref=e326]: “The app was fine earlier, but after scaling app count on the same B1 plan, new apps return 503.”
+            - listitem [ref=e327]: “Cold start suddenly takes several minutes even though code did not change.”
+            - listitem [ref=e328]: “Apps keep restarting and never recover once memory gets tight.”
+            - listitem [ref=e329]: “Containerized apps on the same SKU do not show the same failure pattern.”
+          - heading "4. Hypothesis ¶" [level=2] [ref=e330]:
+            - text: 4. Hypothesis
+            - link "¶" [ref=e331] [cursor=pointer]:
+              - /url: "#4-hypothesis"
+          - paragraph [ref=e332]: "If shared-plan memory usage rises high enough on App Service Linux, Flask apps deployed through ZIP deploy will move through distinct degradation zones:"
+          - list [ref=e333]:
+            - listitem [ref=e334]: Stable operation below a plan-memory threshold.
+            - listitem [ref=e335]: Startup delay as memory approaches saturation.
+            - listitem [ref=e336]: Startup failure for newly added apps once memory crosses a higher threshold.
+            - listitem [ref=e337]: A restart-driven death spiral once the plan remains above the critical threshold.
+          - paragraph [ref=e338]: The parallel hypothesis is that Node.js custom containers on the same B1 Linux SKU will not expose the same external memory pattern because container memory accounting differs from ZIP deploy apps.
+          - heading "5. Environment ¶" [level=2] [ref=e339]:
+            - text: 5. Environment
+            - link "¶" [ref=e340] [cursor=pointer]:
+              - /url: "#5-environment"
+          - table [ref=e343]:
+            - rowgroup [ref=e344]:
+              - row "Service SKU Region Runtime OS Date" [ref=e345]:
+                - columnheader "Service" [ref=e346]
+                - columnheader "SKU" [ref=e347]
+                - columnheader "Region" [ref=e348]
+                - columnheader "Runtime" [ref=e349]
+                - columnheader "OS" [ref=e350]
+                - columnheader "Date" [ref=e351]
+            - rowgroup [ref=e352]:
+              - row "Azure App Service B1 koreacentral Flask (ZIP deploy) Linux 2026-04-02" [ref=e353]:
+                - cell "Azure App Service" [ref=e354]
+                - cell "B1" [ref=e355]
+                - cell "koreacentral" [ref=e356]
+                - cell "Flask (ZIP deploy)" [ref=e357]
+                - cell "Linux" [ref=e358]
+                - cell "2026-04-02" [ref=e359]
+              - row "Azure App Service B1 koreacentral Node.js (Custom Container) Linux 2026-04-02" [ref=e360]:
+                - cell "Azure App Service" [ref=e361]
+                - cell "B1" [ref=e362]
+                - cell "koreacentral" [ref=e363]
+                - cell "Node.js (Custom Container)" [ref=e364]
+                - cell "Linux" [ref=e365]
+                - cell "2026-04-02" [ref=e366]
+          - heading "6. Variables ¶" [level=2] [ref=e367]:
+            - text: 6. Variables
+            - link "¶" [ref=e368] [cursor=pointer]:
+              - /url: "#6-variables"
+          - heading "Controlled ¶" [level=3] [ref=e369]:
+            - text: Controlled
+            - link "¶" [ref=e370] [cursor=pointer]:
+              - /url: "#controlled"
+          - table [ref=e373]:
+            - rowgroup [ref=e374]:
+              - row "Variable Value / Range" [ref=e375]:
+                - columnheader "Variable" [ref=e376]
+                - columnheader "Value / Range" [ref=e377]
+            - rowgroup [ref=e378]:
+              - row "Plan SKU B1" [ref=e379]:
+                - cell "Plan SKU" [ref=e380]
+                - cell "B1" [ref=e381]
+              - row "Region koreacentral" [ref=e382]:
+                - cell "Region" [ref=e383]
+                - cell "koreacentral" [ref=e384]
+              - row "Operating system Linux" [ref=e385]:
+                - cell "Operating system" [ref=e386]
+                - cell "Linux" [ref=e387]
+              - row "Test date 2026-04-02" [ref=e388]:
+                - cell "Test date" [ref=e389]
+                - cell "2026-04-02" [ref=e390]
+              - row "Deployment styles compared Flask with ZIP deploy, Node.js with custom container" [ref=e391]:
+                - cell "Deployment styles compared" [ref=e392]
+                - cell "Flask with ZIP deploy, Node.js with custom container" [ref=e393]
+              - row "App count and per-app memory targets 2×100 MB, 8×50 MB, 4×175 MB, 6×75 MB" [ref=e394]:
+                - cell "App count and per-app memory targets" [ref=e395]
+                - cell "2×100 MB, 8×50 MB, 4×175 MB, 6×75 MB" [ref=e396]
+          - heading "Observed ¶" [level=3] [ref=e397]:
+            - text: Observed
+            - link "¶" [ref=e398] [cursor=pointer]:
+              - /url: "#observed"
+          - table [ref=e401]:
+            - rowgroup [ref=e402]:
+              - row "Variable Meaning" [ref=e403]:
+                - columnheader "Variable" [ref=e404]
+                - columnheader "Meaning" [ref=e405]
+            - rowgroup [ref=e406]:
+              - row "Plan memory percentage Shared memory utilization on the B1 worker" [ref=e407]:
+                - cell "Plan memory percentage" [ref=e408]
+                - cell "Shared memory utilization on the B1 worker" [ref=e409]
+              - row "Startup outcome Successful start vs. failed start with 503" [ref=e410]:
+                - cell "Startup outcome" [ref=e411]
+                - cell "Successful start vs. failed start with 503" [ref=e412]
+              - row "Cold-start duration Time to become responsive after deployment/start" [ref=e413]:
+                - cell "Cold-start duration" [ref=e414]
+                - cell "Time to become responsive after deployment/start" [ref=e415]
+              - row "Restart behavior Stable, repeated restart, or crash loop" [ref=e416]:
+                - cell "Restart behavior" [ref=e417]
+                - cell "Stable, repeated restart, or crash loop" [ref=e418]
+              - row "HTTP failures Presence of 5xx responses" [ref=e419]:
+                - cell "HTTP failures" [ref=e420]
+                - cell "Presence of 5xx responses" [ref=e421]
+          - heading "7. Instrumentation ¶" [level=2] [ref=e422]:
+            - text: 7. Instrumentation
+            - link "¶" [ref=e423] [cursor=pointer]:
+              - /url: "#7-instrumentation"
+          - paragraph [ref=e424]: "The experiment relied on App Service platform and workload signals that are available during real incidents:"
+          - list [ref=e425]:
+            - listitem [ref=e426]: Azure Monitor plan metrics for memory and CPU trend correlation.
+            - listitem [ref=e427]: HTTP outcome tracking to identify 503 failures during startup and scale-out attempts.
+            - listitem [ref=e428]: App Service restart/startup observations to detect crash-loop behavior.
+            - listitem [ref=e429]: Side-by-side comparison between Flask/ZIP deploy and Node.js/container deployments on the same B1 Linux context.
+          - 'heading "KQL: detect plan memory pressure over time ¶" [level=3] [ref=e430]':
+            - text: "KQL: detect plan memory pressure over time"
+            - link "¶" [ref=e431] [cursor=pointer]:
+              - /url: "#kql-detect-plan-memory-pressure-over-time"
+          - generic [ref=e433]:
+            - navigation [ref=e434]:
+              - button "Copy to clipboard" [ref=e435] [cursor=pointer]
+            - code [ref=e436]: AzureMetrics | where ResourceProvider == "MICROSOFT.WEB" | where MetricName in ("MemoryPercentage", "CpuPercentage") | summarize AvgValue = avg(Total) by MetricName, bin(TimeGenerated, 5m), Resource | order by TimeGenerated asc
+          - 'heading "KQL: correlate startup-time 503 failures ¶" [level=3] [ref=e437]':
+            - text: "KQL: correlate startup-time 503 failures"
+            - link "¶" [ref=e438] [cursor=pointer]:
+              - /url: "#kql-correlate-startup-time-503-failures"
+          - generic [ref=e440]:
+            - navigation [ref=e441]:
+              - button "Copy to clipboard" [ref=e442] [cursor=pointer]
+            - code [ref=e443]: AppServiceHTTPLogs | where ScStatus == 503 | summarize Failures = count() by SiteName, bin(TimeGenerated, 5m) | order by TimeGenerated asc
+          - 'heading "KQL: identify restart or crash-loop periods ¶" [level=3] [ref=e444]':
+            - text: "KQL: identify restart or crash-loop periods"
+            - link "¶" [ref=e445] [cursor=pointer]:
+              - /url: "#kql-identify-restart-or-crash-loop-periods"
+          - generic [ref=e447]:
+            - navigation [ref=e448]:
+              - button "Copy to clipboard" [ref=e449] [cursor=pointer]
+            - code [ref=e450]: AppServiceConsoleLogs | where Message has_any ("restart", "stopping site", "starting site", "container", "failed") | project TimeGenerated, SiteName, Message | order by TimeGenerated asc
+          - heading "8. Procedure ¶" [level=2] [ref=e451]:
+            - text: 8. Procedure
+            - link "¶" [ref=e452] [cursor=pointer]:
+              - /url: "#8-procedure"
+          - list [ref=e453]:
+            - listitem [ref=e454]: Provision a shared B1 Linux App Service plan in koreacentral.
+            - listitem [ref=e455]: Deploy the Flask application using ZIP deploy and establish a baseline with 2 apps allocating 100 MB each.
+            - listitem [ref=e456]:
+              - text: "Increase app count and memory patterns across these configurations for Flask/ZIP deploy:"
+              - list [ref=e457]:
+                - listitem [ref=e458]: 8 apps × 50 MB
+                - listitem [ref=e459]: 4 apps × 175 MB
+                - listitem [ref=e460]: 6 apps × 75 MB
+            - listitem [ref=e461]: Record plan memory percentage, startup outcome, average response time, and 5xx behavior for each Flask scenario.
+            - listitem [ref=e462]:
+              - text: "Repeat comparable high-density scenarios using Node.js custom containers:"
+              - list [ref=e463]:
+                - listitem [ref=e464]: 8 apps × 50 MB
+                - listitem [ref=e465]: 4 apps × 175 MB
+            - listitem [ref=e466]: Compare stability, visible memory percentage, and error behavior between the two deployment models.
+          - heading "9. Expected signal ¶" [level=2] [ref=e467]:
+            - text: 9. Expected signal
+            - link "¶" [ref=e468] [cursor=pointer]:
+              - /url: "#9-expected-signal"
+          - paragraph [ref=e469]: "If the hypothesis is correct, the signal should look like this:"
+          - list [ref=e470]:
+            - listitem [ref=e471]: Flask/ZIP deploy stays healthy in a lower memory zone.
+            - listitem [ref=e472]: Cold-start time increases sharply before outright startup failure.
+            - listitem [ref=e473]: At a higher threshold, newly started apps fail with 503 rather than degrading gracefully.
+            - listitem [ref=e474]: Once the plan is both highly saturated and restarting, the system does not self-recover quickly and enters a crash loop.
+            - listitem [ref=e475]: Node.js/custom container results do not mirror the same visible memory curve even when per-app allocations are configured similarly.
+          - heading "10. Results ¶" [level=2] [ref=e476]:
+            - text: 10. Results
+            - link "¶" [ref=e477] [cursor=pointer]:
+              - /url: "#10-results"
+          - heading "Flask / ZIP deploy results ¶" [level=3] [ref=e478]:
+            - text: Flask / ZIP deploy results
+            - link "¶" [ref=e479] [cursor=pointer]:
+              - /url: "#flask-zip-deploy-results"
+          - table [ref=e482]:
+            - rowgroup [ref=e483]:
+              - row "Scenario Outcome Memory Avg response 5xx" [ref=e484]:
+                - columnheader "Scenario" [ref=e485]
+                - columnheader "Outcome" [ref=e486]
+                - columnheader "Memory" [ref=e487]
+                - columnheader "Avg response" [ref=e488]
+                - columnheader "5xx" [ref=e489]
+            - rowgroup [ref=e490]:
+              - row "2 apps × 100 MB Baseline stable 76% 934 ms 0" [ref=e491]:
+                - cell "2 apps × 100 MB" [ref=e492]
+                - cell "Baseline stable" [ref=e493]
+                - cell "76%" [ref=e494]
+                - cell "934 ms" [ref=e495]
+                - cell "0" [ref=e496]
+              - row "8 apps × 50 MB Apps 1-6 started; apps 7-8 failed Not separately stated Not separately stated 503 on apps 7-8" [ref=e497]:
+                - cell "8 apps × 50 MB" [ref=e498]
+                - cell "Apps 1-6 started; apps 7-8 failed" [ref=e499]
+                - cell "Not separately stated" [ref=e500]
+                - cell "Not separately stated" [ref=e501]
+                - cell "503 on apps 7-8" [ref=e502]
+              - row "4 apps × 175 MB Stable but severely delayed startup 95% Cold start 6 min Not stated" [ref=e503]:
+                - cell "4 apps × 175 MB" [ref=e504]
+                - cell "Stable but severely delayed startup" [ref=e505]
+                - cell "95%" [ref=e506]
+                - cell "Cold start 6 min" [ref=e507]
+                - cell "Not stated" [ref=e508]
+              - row "6 apps × 75 MB Crash loop / death spiral 93%+ Not stable enough for comparable average Restart-driven failure" [ref=e509]:
+                - cell "6 apps × 75 MB" [ref=e510]
+                - cell "Crash loop / death spiral" [ref=e511]
+                - cell "93%+" [ref=e512]
+                - cell "Not stable enough for comparable average" [ref=e513]
+                - cell "Restart-driven failure" [ref=e514]
+          - heading "Node.js / custom container results ¶" [level=3] [ref=e515]:
+            - text: Node.js / custom container results
+            - link "¶" [ref=e516] [cursor=pointer]:
+              - /url: "#nodejs-custom-container-results"
+          - table [ref=e519]:
+            - rowgroup [ref=e520]:
+              - row "Scenario Outcome Memory Errors" [ref=e521]:
+                - columnheader "Scenario" [ref=e522]
+                - columnheader "Outcome" [ref=e523]
+                - columnheader "Memory" [ref=e524]
+                - columnheader "Errors" [ref=e525]
+            - rowgroup [ref=e526]:
+              - row "8 apps × 50 MB Stable 73-77% 0" [ref=e527]:
+                - cell "8 apps × 50 MB" [ref=e528]
+                - cell "Stable" [ref=e529]
+                - cell "73-77%" [ref=e530]
+                - cell "0" [ref=e531]
+              - row "4 apps × 175 MB Stable 73-77% 0" [ref=e532]:
+                - cell "4 apps × 175 MB" [ref=e533]
+                - cell "Stable" [ref=e534]
+                - cell "73-77%" [ref=e535]
+                - cell "0" [ref=e536]
+          - heading "Degradation zones observed for Flask / ZIP deploy ¶" [level=3] [ref=e537]:
+            - text: Degradation zones observed for Flask / ZIP deploy
+            - link "¶" [ref=e538] [cursor=pointer]:
+              - /url: "#degradation-zones-observed-for-flask-zip-deploy"
+          - table [ref=e541]:
+            - rowgroup [ref=e542]:
+              - row "Zone Threshold Observed behavior" [ref=e543]:
+                - columnheader "Zone" [ref=e544]
+                - columnheader "Threshold" [ref=e545]
+                - columnheader "Observed behavior" [ref=e546]
+            - rowgroup [ref=e547]:
+              - row "Safe Memory < 86%, CPU < 30% Stable performance" [ref=e548]:
+                - cell "Safe" [ref=e549]
+                - cell "Memory < 86%, CPU < 30%" [ref=e550]
+                - cell "Stable performance" [ref=e551]
+              - row "Warning Memory 86-92% Cold starts increased to roughly 2-5 minutes" [ref=e552]:
+                - cell "Warning" [ref=e553]
+                - cell "Memory 86-92%" [ref=e554]
+                - cell "Cold starts increased to roughly 2-5 minutes" [ref=e555]
+              - row "Danger Memory > 92% New apps failed to start" [ref=e556]:
+                - cell "Danger" [ref=e557]
+                - cell "Memory > 92%" [ref=e558]
+                - cell "New apps failed to start" [ref=e559]
+              - row "Critical Memory > 93% with restarts Death spiral / crash loop" [ref=e560]:
+                - cell "Critical" [ref=e561]
+                - cell "Memory > 93% with restarts" [ref=e562]
+                - cell "Death spiral / crash loop" [ref=e563]
+          - heading "Degradation progression ¶" [level=3] [ref=e564]:
+            - text: Degradation progression
+            - link "¶" [ref=e565] [cursor=pointer]:
+              - /url: "#degradation-progression"
+          - generic [ref=e567]:
+            - navigation [ref=e568]:
+              - button "Copy to clipboard" [ref=e569] [cursor=pointer]
+            - code [ref=e570]: flowchart LR A[Safe<br/>Memory < 86%<br/>CPU < 30%] --> B[Warning<br/>Memory 86-92%<br/>Cold starts 2-5 min] B --> C[Danger<br/>Memory > 92%<br/>New apps fail to start] C --> D[Critical<br/>Memory > 93% + restarts<br/>Death spiral]
+          - heading "11. Interpretation ¶" [level=2] [ref=e571]:
+            - text: 11. Interpretation
+            - link "¶" [ref=e572] [cursor=pointer]:
+              - /url: "#11-interpretation"
+          - list [ref=e573]:
+            - listitem [ref=e574]:
+              - strong [ref=e575]: "[Measured]"
+              - text: The Flask baseline at 2 apps × 100 MB remained stable at 76% memory, 934 ms average response time, and 0 5xx, establishing that the B1 Linux plan could handle moderate shared memory pressure without visible failure.
+            - listitem [ref=e576]:
+              - strong [ref=e577]: "[Observed]"
+              - text: In the Flask 8 apps × 50 MB scenario, apps 7 and 8 failed with 503 instead of all apps degrading evenly. This is a capacity cliff pattern, not a smooth performance decline.
+            - listitem [ref=e578]:
+              - strong [ref=e579]: "[Measured]"
+              - text: In the Flask 4 apps × 175 MB scenario, memory reached 95% and cold start increased to 6 minutes compared with a roughly 60-second baseline. This shows startup delay appears before total startup failure.
+            - listitem [ref=e580]:
+              - strong [ref=e581]: "[Observed]"
+              - text: In the Flask 6 apps × 75 MB scenario, the plan entered a crash loop once memory stayed above 93% and restarts began.
+            - listitem [ref=e582]:
+              - strong [ref=e583]: "[Correlated]"
+              - text: "The Flask degradation zones align with progressive operational impact: first latency, then startup failure, then restart-driven instability."
+            - listitem [ref=e584]:
+              - strong [ref=e585]: "[Measured]"
+              - text: Node.js custom containers stayed within 73-77% observed memory across both 8×50 MB and 4×175 MB scenarios, with 0 errors in both cases.
+            - listitem [ref=e586]:
+              - strong [ref=e587]: "[Correlated]"
+              - text: The absence of visible saturation and errors in the Node.js container runs, despite comparable scenario structure, indicates materially different memory accounting or isolation behavior versus Flask/ZIP deploy on the same SKU family.
+            - listitem [ref=e588]:
+              - strong [ref=e589]: "[Inferred]"
+              - text: For ZIP deploy apps on B1 Linux, plan memory percentage is a useful leading indicator for incident progression because the warning, danger, and critical zones aligned with distinct operational outcomes.
+            - listitem [ref=e590]:
+              - strong [ref=e591]: "[Strongly Suggested]"
+              - text: Support engineers should not assume that memory behavior observed in custom containers will predict memory behavior for built-in runtime or ZIP deploy workloads on the same plan type.
+          - heading "12. What this proves ¶" [level=2] [ref=e592]:
+            - text: 12. What this proves
+            - link "¶" [ref=e593] [cursor=pointer]:
+              - /url: "#12-what-this-proves"
+          - paragraph [ref=e594]: "This experiment proves the following within the tested environment:"
+          - list [ref=e595]:
+            - listitem [ref=e596]: Shared-plan memory pressure on B1 Linux can produce clear degradation zones for Flask apps deployed through ZIP deploy.
+            - listitem [ref=e597]: "For Flask/ZIP deploy, the degradation sequence was observable as: stable baseline → slow cold start → startup failure → death spiral."
+            - listitem [ref=e598]: Startup failure can occur before every existing app shows an obvious steady-state performance collapse.
+            - listitem [ref=e599]: In the tested scenarios, Node.js custom containers did not reproduce the same visible memory saturation or failure pattern.
+          - heading "13. What this does NOT prove ¶" [level=2] [ref=e600]:
+            - text: 13. What this does NOT prove
+            - link "¶" [ref=e601] [cursor=pointer]:
+              - /url: "#13-what-this-does-not-prove"
+          - paragraph [ref=e602]:
+            - text: This experiment does
+            - strong [ref=e603]: not
+            - text: "prove the following:"
+          - list [ref=e604]:
+            - listitem [ref=e605]: That the same thresholds apply to all SKUs, especially Premium or memory-optimized SKUs.
+            - listitem [ref=e606]: That every Linux runtime behaves exactly like Flask/ZIP deploy.
+            - listitem [ref=e607]: That container workloads are immune to memory pressure; only that the tested container scenarios remained stable and exposed different observed accounting.
+            - listitem [ref=e608]: That CPU was irrelevant in every case; only that memory thresholds were the dominant differentiator in this experiment.
+            - listitem [ref=e609]: That the exact 86%, 92%, and 93% thresholds are universal outside the tested B1 koreacentral environment on 2026-04-02.
+          - heading "14. Support takeaway ¶" [level=2] [ref=e610]:
+            - text: 14. Support takeaway
+            - link "¶" [ref=e611] [cursor=pointer]:
+              - /url: "#14-support-takeaway"
+          - paragraph [ref=e612]: "For support triage on App Service Linux B1 plans:"
+          - list [ref=e613]:
+            - listitem [ref=e614]: If Flask or similar ZIP deploy apps begin showing long cold starts once plan memory enters the high-80% range, treat that as an early warning rather than waiting for outright failure.
+            - listitem [ref=e615]: If memory exceeds roughly 92%, investigate shared-plan saturation immediately because new app starts may fail with 503.
+            - listitem [ref=e616]: If memory exceeds 93% and restarts begin, prioritize mitigation over deep investigation because the system may already be in a death spiral.
+            - listitem [ref=e617]: Do not transfer conclusions from custom container tests directly onto ZIP deploy incidents without checking how memory is actually being reported and enforced.
+          - heading "15. Reproduction notes ¶" [level=2] [ref=e618]:
+            - text: 15. Reproduction notes
+            - link "¶" [ref=e619] [cursor=pointer]:
+              - /url: "#15-reproduction-notes"
+          - list [ref=e620]:
+            - listitem [ref=e621]: "Keep the environment consistent: B1 Linux, koreacentral, same-day comparative runs where possible."
+            - listitem [ref=e622]: Reproduce Flask and Node.js scenarios separately but on equivalent plan settings.
+            - listitem [ref=e623]:
+              - text: "Preserve the tested scenario sets exactly when comparing outcomes:"
+              - list [ref=e624]:
+                - listitem [ref=e625]: "Flask baseline: 2×100 MB"
+                - listitem [ref=e626]: "Flask density test: 8×50 MB"
+                - listitem [ref=e627]: "Flask high-allocation test: 4×175 MB"
+                - listitem [ref=e628]: "Flask instability test: 6×75 MB"
+                - listitem [ref=e629]: "Node.js container tests: 8×50 MB and 4×175 MB"
+            - listitem [ref=e630]: Compare memory percentage, startup time, 503 count, and restart frequency rather than relying on only one signal.
+            - listitem [ref=e631]: Treat the Flask degradation zones as environment-specific reproduction guidance, not as universal platform guarantees.
+          - heading "16. Related guide / official docs ¶" [level=2] [ref=e632]:
+            - text: 16. Related guide / official docs
+            - link "¶" [ref=e633] [cursor=pointer]:
+              - /url: "#16-related-guide-official-docs"
+          - list [ref=e634]:
+            - listitem [ref=e635]:
+              - link "lab-memory-pressure" [ref=e636] [cursor=pointer]:
+                - /url: https://github.com/yeongseon/lab-memory-pressure
+            - listitem [ref=e637]:
+              - link "azure-app-service-practical-guide" [ref=e638] [cursor=pointer]:
+                - /url: https://github.com/yeongseon/azure-app-service-practical-guide
+            - listitem [ref=e639]:
+              - 'link "Microsoft Learn: Monitor App Service instances by using metrics" [ref=e640] [cursor=pointer]':
+                - /url: https://learn.microsoft.com/en-us/azure/app-service/web-sites-monitor
+            - listitem [ref=e641]:
+              - 'link "Microsoft Learn: Diagnose memory leaks on Azure App Service" [ref=e642] [cursor=pointer]':
+                - /url: https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/capture-memory-dumps-app-service
+            - listitem [ref=e643]:
+              - 'link "Microsoft Learn: Configure a custom Linux container for Azure App Service" [ref=e644] [cursor=pointer]':
+                - /url: https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container
+    - contentinfo [ref=e645]:
+      - generic [ref=e647]:
+        - generic [ref=e648]:
+          - text: Made with
+          - link "Material for MkDocs" [ref=e649] [cursor=pointer]:
+            - /url: https://squidfunk.github.io/mkdocs-material/
+        - link "github.com" [ref=e651] [cursor=pointer]:
+          - /url: https://github.com/yeongseon/azure-paas-troubleshooting-labs
+          - img [ref=e652]

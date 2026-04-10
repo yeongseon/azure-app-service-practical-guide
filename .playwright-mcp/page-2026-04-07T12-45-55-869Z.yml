@@ -1,0 +1,462 @@
+- generic [active] [ref=e1]:
+  - link "Skip to content" [ref=e2] [cursor=pointer]:
+    - /url: "#azure-paas-troubleshooting-labs"
+  - banner [ref=e3]:
+    - navigation "Header" [ref=e4]:
+      - img [ref=e6] [cursor=pointer]
+      - generic [ref=e9]:
+        - generic [ref=e11]: Azure PaaS Troubleshooting Labs
+        - generic:
+          - generic: Home
+      - dialog [ref=e12]:
+        - search [ref=e13]:
+          - generic [ref=e14]:
+            - textbox "Search" [ref=e15]
+            - generic:
+              - img
+            - navigation "Search":
+              - button "Clear":
+                - img
+          - generic [ref=e17]: Initializing search
+      - link "GitHub" [ref=e19] [cursor=pointer]:
+        - /url: https://github.com/yeongseon/azure-paas-troubleshooting-labs
+        - img [ref=e21]
+        - generic [ref=e23]: GitHub
+  - generic [ref=e24]:
+    - main [ref=e25]:
+      - generic [ref=e26]:
+        - navigation "Navigation" [ref=e29]:
+          - generic [ref=e30] [cursor=pointer]:
+            - link "Azure PaaS Troubleshooting Labs" [ref=e31]:
+              - /url: .
+              - img [ref=e32]
+            - text: Azure PaaS Troubleshooting Labs
+          - list [ref=e34]:
+            - listitem [ref=e35]:
+              - generic [ref=e37]: Home
+              - navigation "Table of contents" [ref=e39]:
+                - generic [ref=e40] [cursor=pointer]: Table of contents
+                - list [ref=e41]:
+                  - listitem [ref=e42]:
+                    - link "Experiment Status Overview" [ref=e43] [cursor=pointer]:
+                      - /url: "#experiment-status-overview"
+                      - generic [ref=e44]: Experiment Status Overview
+                  - listitem [ref=e45]:
+                    - link "Getting Started" [ref=e46] [cursor=pointer]:
+                      - /url: "#getting-started"
+                      - generic [ref=e47]: Getting Started
+                  - listitem [ref=e48]:
+                    - link "Quick Links" [ref=e49] [cursor=pointer]:
+                      - /url: "#quick-links"
+                      - generic [ref=e50]: Quick Links
+                  - listitem [ref=e51]:
+                    - link "Site Map" [ref=e52] [cursor=pointer]:
+                      - /url: "#site-map"
+                      - generic [ref=e53]: Site Map
+                    - navigation "Site Map" [ref=e54]:
+                      - list [ref=e55]:
+                        - listitem [ref=e56]:
+                          - link "Methodology" [ref=e57] [cursor=pointer]:
+                            - /url: "#methodology"
+                            - generic [ref=e58]: Methodology
+                        - listitem [ref=e59]:
+                          - link "App Service Labs" [ref=e60] [cursor=pointer]:
+                            - /url: "#app-service-labs"
+                            - generic [ref=e61]: App Service Labs
+                        - listitem [ref=e62]:
+                          - link "Functions Labs" [ref=e63] [cursor=pointer]:
+                            - /url: "#functions-labs"
+                            - generic [ref=e64]: Functions Labs
+                        - listitem [ref=e65]:
+                          - link "Container Apps Labs" [ref=e66] [cursor=pointer]:
+                            - /url: "#container-apps-labs"
+                            - generic [ref=e67]: Container Apps Labs
+                        - listitem [ref=e68]:
+                          - link "Patterns" [ref=e69] [cursor=pointer]:
+                            - /url: "#patterns"
+                            - generic [ref=e70]: Patterns
+                  - listitem [ref=e71]:
+                    - link "Background" [ref=e72] [cursor=pointer]:
+                      - /url: "#background"
+                      - generic [ref=e73]: Background
+            - listitem [ref=e74]:
+              - link "About" [ref=e75] [cursor=pointer]:
+                - /url: about/
+                - generic [ref=e76]: About
+            - listitem [ref=e77]:
+              - generic [ref=e79]: Methodology
+              - navigation "Methodology" [ref=e81]:
+                - generic [ref=e82] [cursor=pointer]: Methodology
+                - list [ref=e84]:
+                  - listitem [ref=e85]:
+                    - link "Experiment Framework" [ref=e86] [cursor=pointer]:
+                      - /url: methodology/experiment-framework/
+                      - generic [ref=e87]: Experiment Framework
+                  - listitem [ref=e88]:
+                    - link "Evidence Levels" [ref=e89] [cursor=pointer]:
+                      - /url: methodology/evidence-levels/
+                      - generic [ref=e90]: Evidence Levels
+                  - listitem [ref=e91]:
+                    - link "Platform vs App Boundary" [ref=e92] [cursor=pointer]:
+                      - /url: methodology/platform-vs-app-boundary/
+                      - generic [ref=e93]: Platform vs App Boundary
+                  - listitem [ref=e94]:
+                    - link "Interpretation Guidelines" [ref=e95] [cursor=pointer]:
+                      - /url: methodology/interpretation-guidelines/
+                      - generic [ref=e96]: Interpretation Guidelines
+            - listitem [ref=e97]:
+              - generic [ref=e99]: App Service
+              - navigation "App Service" [ref=e101]:
+                - generic [ref=e102] [cursor=pointer]: App Service
+                - list [ref=e104]:
+                  - listitem [ref=e105]:
+                    - link "Overview" [ref=e106] [cursor=pointer]:
+                      - /url: app-service/
+                      - generic [ref=e107]: Overview
+                  - listitem [ref=e108]:
+                    - generic [ref=e110]: Memory Pressure
+                    - navigation "Memory Pressure" [ref=e112]:
+                      - generic [ref=e113] [cursor=pointer]: Memory Pressure
+                      - list [ref=e115]:
+                        - listitem [ref=e116]:
+                          - link "Overview" [ref=e117] [cursor=pointer]:
+                            - /url: app-service/memory-pressure/overview/
+                            - generic [ref=e118]: Overview
+                  - listitem [ref=e119]:
+                    - generic [ref=e121]: procfs Interpretation
+                    - navigation "procfs Interpretation" [ref=e123]:
+                      - generic [ref=e124] [cursor=pointer]: procfs Interpretation
+                      - list [ref=e126]:
+                        - listitem [ref=e127]:
+                          - link "Overview" [ref=e128] [cursor=pointer]:
+                            - /url: app-service/procfs-interpretation/overview/
+                            - generic [ref=e129]: Overview
+                  - listitem [ref=e130]:
+                    - generic [ref=e132]: Slow Requests
+                    - navigation "Slow Requests" [ref=e134]:
+                      - generic [ref=e135] [cursor=pointer]: Slow Requests
+                      - list [ref=e137]:
+                        - listitem [ref=e138]:
+                          - link "Overview" [ref=e139] [cursor=pointer]:
+                            - /url: app-service/slow-requests/overview/
+                            - generic [ref=e140]: Overview
+                  - listitem [ref=e141]:
+                    - generic [ref=e143]: Zip vs Container
+                    - navigation "Zip vs Container" [ref=e145]:
+                      - generic [ref=e146] [cursor=pointer]: Zip vs Container
+                      - list [ref=e148]:
+                        - listitem [ref=e149]:
+                          - link "Overview" [ref=e150] [cursor=pointer]:
+                            - /url: app-service/zip-vs-container/overview/
+                            - generic [ref=e151]: Overview
+            - listitem [ref=e152]:
+              - generic [ref=e154]: Functions
+              - navigation "Functions" [ref=e156]:
+                - generic [ref=e157] [cursor=pointer]: Functions
+                - list [ref=e159]:
+                  - listitem [ref=e160]:
+                    - link "Overview" [ref=e161] [cursor=pointer]:
+                      - /url: functions/
+                      - generic [ref=e162]: Overview
+                  - listitem [ref=e163]:
+                    - generic [ref=e165]: Flex Consumption Storage
+                    - navigation "Flex Consumption Storage" [ref=e167]:
+                      - generic [ref=e168] [cursor=pointer]: Flex Consumption Storage
+                      - list [ref=e170]:
+                        - listitem [ref=e171]:
+                          - link "Overview" [ref=e172] [cursor=pointer]:
+                            - /url: functions/flex-consumption-storage/overview/
+                            - generic [ref=e173]: Overview
+                  - listitem [ref=e174]:
+                    - generic [ref=e176]: Cold Start
+                    - navigation "Cold Start" [ref=e178]:
+                      - generic [ref=e179] [cursor=pointer]: Cold Start
+                      - list [ref=e181]:
+                        - listitem [ref=e182]:
+                          - link "Overview" [ref=e183] [cursor=pointer]:
+                            - /url: functions/cold-start/overview/
+                            - generic [ref=e184]: Overview
+                  - listitem [ref=e185]:
+                    - generic [ref=e187]: Dependency Visibility
+                    - navigation "Dependency Visibility" [ref=e189]:
+                      - generic [ref=e190] [cursor=pointer]: Dependency Visibility
+                      - list [ref=e192]:
+                        - listitem [ref=e193]:
+                          - link "Overview" [ref=e194] [cursor=pointer]:
+                            - /url: functions/dependency-visibility/overview/
+                            - generic [ref=e195]: Overview
+            - listitem [ref=e196]:
+              - generic [ref=e198]: Container Apps
+              - navigation "Container Apps" [ref=e200]:
+                - generic [ref=e201] [cursor=pointer]: Container Apps
+                - list [ref=e203]:
+                  - listitem [ref=e204]:
+                    - link "Overview" [ref=e205] [cursor=pointer]:
+                      - /url: container-apps/
+                      - generic [ref=e206]: Overview
+                  - listitem [ref=e207]:
+                    - generic [ref=e209]: Ingress SNI / Host Header
+                    - navigation "Ingress SNI / Host Header" [ref=e211]:
+                      - generic [ref=e212] [cursor=pointer]: Ingress SNI / Host Header
+                      - list [ref=e214]:
+                        - listitem [ref=e215]:
+                          - link "Overview" [ref=e216] [cursor=pointer]:
+                            - /url: container-apps/ingress-sni-host-header/overview/
+                            - generic [ref=e217]: Overview
+                  - listitem [ref=e218]:
+                    - generic [ref=e220]: Private Endpoint FQDN vs IP
+                    - navigation "Private Endpoint FQDN vs IP" [ref=e222]:
+                      - generic [ref=e223] [cursor=pointer]: Private Endpoint FQDN vs IP
+                      - list [ref=e225]:
+                        - listitem [ref=e226]:
+                          - link "Overview" [ref=e227] [cursor=pointer]:
+                            - /url: container-apps/private-endpoint-fqdn-vs-ip/overview/
+                            - generic [ref=e228]: Overview
+                  - listitem [ref=e229]:
+                    - generic [ref=e231]: Startup Probes
+                    - navigation "Startup Probes" [ref=e233]:
+                      - generic [ref=e234] [cursor=pointer]: Startup Probes
+                      - list [ref=e236]:
+                        - listitem [ref=e237]:
+                          - link "Overview" [ref=e238] [cursor=pointer]:
+                            - /url: container-apps/startup-probes/overview/
+                            - generic [ref=e239]: Overview
+            - listitem [ref=e240]:
+              - generic [ref=e242]: Patterns
+              - navigation "Patterns" [ref=e244]:
+                - generic [ref=e245] [cursor=pointer]: Patterns
+                - list [ref=e247]:
+                  - listitem [ref=e248]:
+                    - link "Symptom to Hypothesis" [ref=e249] [cursor=pointer]:
+                      - /url: patterns/symptom-to-hypothesis/
+                      - generic [ref=e250]: Symptom to Hypothesis
+                  - listitem [ref=e251]:
+                    - link "False Positives" [ref=e252] [cursor=pointer]:
+                      - /url: patterns/false-positives/
+                      - generic [ref=e253]: False Positives
+                  - listitem [ref=e254]:
+                    - link "Metric Misreads" [ref=e255] [cursor=pointer]:
+                      - /url: patterns/metric-misreads/
+                      - generic [ref=e256]: Metric Misreads
+        - article [ref=e258]:
+          - heading "Azure PaaS Troubleshooting Labs ¶" [level=1] [ref=e259]:
+            - text: Azure PaaS Troubleshooting Labs
+            - link "¶" [ref=e260] [cursor=pointer]:
+              - /url: "#azure-paas-troubleshooting-labs"
+          - paragraph [ref=e261]: Reproducible experiments for Azure App Service, Azure Functions, and Azure Container Apps.
+          - paragraph [ref=e262]: By Yeongseon Choe
+          - separator [ref=e263]
+          - paragraph [ref=e264]: This site documents hypothesis-driven experiments that reproduce failure modes, performance edge cases, and platform boundary ambiguities in Azure PaaS services. Each experiment records what was observed, what can be concluded, and what remains unproven.
+          - paragraph [ref=e265]: The target audience is Azure support engineers, escalation engineers, and platform operators who need to distinguish between platform-side and application-side issues under real-world conditions.
+          - paragraph [ref=e266]:
+            - text: This site is the troubleshooting companion to the
+            - link "practical guide series" [ref=e267] [cursor=pointer]:
+              - /url: https://github.com/yeongseon?tab=repositories&q=practical-guide
+            - text: ", not a replacement. The guides cover broad reference material; these labs cover deep, narrow investigation."
+          - heading "Experiment Status Overview ¶" [level=2] [ref=e268]:
+            - text: Experiment Status Overview
+            - link "¶" [ref=e269] [cursor=pointer]:
+              - /url: "#experiment-status-overview"
+          - table [ref=e272]:
+            - rowgroup [ref=e273]:
+              - row "Service Experiment Status Last Updated" [ref=e274]:
+                - columnheader "Service" [ref=e275]
+                - columnheader "Experiment" [ref=e276]
+                - columnheader "Status" [ref=e277]
+                - columnheader "Last Updated" [ref=e278]
+            - rowgroup [ref=e279]:
+              - row "App Service Memory Pressure Published 2025-07" [ref=e280]:
+                - cell "App Service" [ref=e281]
+                - cell "Memory Pressure" [ref=e282]:
+                  - link "Memory Pressure" [ref=e283] [cursor=pointer]:
+                    - /url: app-service/memory-pressure/overview/
+                - cell "Published" [ref=e284]:
+                  - strong [ref=e285]: Published
+                - cell "2025-07" [ref=e286]
+              - row "Functions Cold Start Draft — Awaiting Execution —" [ref=e287]:
+                - cell "Functions" [ref=e288]
+                - cell "Cold Start" [ref=e289]:
+                  - link "Cold Start" [ref=e290] [cursor=pointer]:
+                    - /url: functions/cold-start/overview/
+                - cell "Draft — Awaiting Execution" [ref=e291]
+                - cell "—" [ref=e292]
+              - row "Container Apps Startup Probes Draft — Awaiting Execution —" [ref=e293]:
+                - cell "Container Apps" [ref=e294]
+                - cell "Startup Probes" [ref=e295]:
+                  - link "Startup Probes" [ref=e296] [cursor=pointer]:
+                    - /url: container-apps/startup-probes/overview/
+                - cell "Draft — Awaiting Execution" [ref=e297]
+                - cell "—" [ref=e298]
+          - generic [ref=e299]:
+            - paragraph [ref=e300]: MVP Milestone
+            - paragraph [ref=e301]:
+              - text: The first experiment —
+              - strong [ref=e302]: App Service Memory Pressure
+              - text: — is complete. It covers plan-level degradation, swap thrashing, and kernel page reclaim effects on shared Linux plans.
+          - heading "Getting Started ¶" [level=2] [ref=e303]:
+            - text: Getting Started
+            - link "¶" [ref=e304] [cursor=pointer]:
+              - /url: "#getting-started"
+          - paragraph [ref=e305]: "New to this project? Start here:"
+          - list [ref=e306]:
+            - listitem [ref=e307]:
+              - strong [ref=e308]: Read the methodology
+              - text: —
+              - link "Experiment Framework" [ref=e309] [cursor=pointer]:
+                - /url: methodology/experiment-framework/
+              - text: explains the standardized structure every experiment follows.
+            - listitem [ref=e310]:
+              - strong [ref=e311]: Understand evidence levels
+              - text: —
+              - link "Evidence Levels" [ref=e312] [cursor=pointer]:
+                - /url: methodology/evidence-levels/
+              - text: defines how findings are tagged with calibrated confidence.
+            - listitem [ref=e313]:
+              - strong [ref=e314]: Try the published experiment
+              - text: —
+              - link "Memory Pressure" [ref=e315] [cursor=pointer]:
+                - /url: app-service/memory-pressure/overview/
+              - text: is the first completed experiment; start there for a concrete example.
+          - heading "Quick Links ¶" [level=2] [ref=e316]:
+            - text: Quick Links
+            - link "¶" [ref=e317] [cursor=pointer]:
+              - /url: "#quick-links"
+          - list [ref=e318]:
+            - listitem [ref=e319]:
+              - strong [ref=e320]:
+                - link "App Service Labs" [ref=e321] [cursor=pointer]:
+                  - /url: app-service/
+              - text: — Memory pressure, procfs, slow requests, deployment methods
+            - listitem [ref=e322]:
+              - strong [ref=e323]:
+                - link "Functions Labs" [ref=e324] [cursor=pointer]:
+                  - /url: functions/
+              - text: — Cold start, storage edge cases, dependency visibility
+            - listitem [ref=e325]:
+              - strong [ref=e326]:
+                - link "Container Apps Labs" [ref=e327] [cursor=pointer]:
+                  - /url: container-apps/
+              - text: — Ingress routing, private endpoints, probe interactions
+            - listitem [ref=e328]:
+              - strong [ref=e329]:
+                - link "Methodology" [ref=e330] [cursor=pointer]:
+                  - /url: methodology/experiment-framework/
+              - text: — Experiment framework, evidence model, interpretation guidelines
+          - heading "Site Map ¶" [level=2] [ref=e331]:
+            - text: Site Map
+            - link "¶" [ref=e332] [cursor=pointer]:
+              - /url: "#site-map"
+          - heading "Methodology ¶" [level=3] [ref=e333]:
+            - text: Methodology
+            - link "¶" [ref=e334] [cursor=pointer]:
+              - /url: "#methodology"
+          - list [ref=e335]:
+            - listitem [ref=e336]:
+              - link "Experiment Framework" [ref=e337] [cursor=pointer]:
+                - /url: methodology/experiment-framework/
+              - text: — standardized structure for all experiments
+            - listitem [ref=e338]:
+              - link "Evidence Levels" [ref=e339] [cursor=pointer]:
+                - /url: methodology/evidence-levels/
+              - text: — tagging system for calibrated confidence
+            - listitem [ref=e340]:
+              - link "Platform vs App Boundary" [ref=e341] [cursor=pointer]:
+                - /url: methodology/platform-vs-app-boundary/
+              - text: — framework for boundary analysis
+            - listitem [ref=e342]:
+              - link "Interpretation Guidelines" [ref=e343] [cursor=pointer]:
+                - /url: methodology/interpretation-guidelines/
+              - text: — how to read and communicate results
+          - heading "App Service Labs ¶" [level=3] [ref=e344]:
+            - text: App Service Labs
+            - link "¶" [ref=e345] [cursor=pointer]:
+              - /url: "#app-service-labs"
+          - list [ref=e346]:
+            - listitem [ref=e347]:
+              - link "Memory Pressure" [ref=e348] [cursor=pointer]:
+                - /url: app-service/memory-pressure/overview/
+              - text: — plan-level degradation, swap thrashing, kernel page reclaim —
+              - strong [ref=e349]: Published
+            - listitem [ref=e350]:
+              - link "procfs Interpretation" [ref=e351] [cursor=pointer]:
+                - /url: app-service/procfs-interpretation/overview/
+              - text: — /proc reliability and limits in Linux containers
+            - listitem [ref=e352]:
+              - link "Slow Requests" [ref=e353] [cursor=pointer]:
+                - /url: app-service/slow-requests/overview/
+              - text: — frontend timeout vs. worker-side delay vs. dependency latency
+            - listitem [ref=e354]:
+              - link "Zip Deploy vs Container" [ref=e355] [cursor=pointer]:
+                - /url: app-service/zip-vs-container/overview/
+              - text: — deployment method behavioral differences
+          - heading "Functions Labs ¶" [level=3] [ref=e356]:
+            - text: Functions Labs
+            - link "¶" [ref=e357] [cursor=pointer]:
+              - /url: "#functions-labs"
+          - list [ref=e358]:
+            - listitem [ref=e359]:
+              - link "Flex Consumption Storage" [ref=e360] [cursor=pointer]:
+                - /url: functions/flex-consumption-storage/overview/
+              - text: — storage identity misconfiguration edge cases
+            - listitem [ref=e361]:
+              - link "Cold Start" [ref=e362] [cursor=pointer]:
+                - /url: functions/cold-start/overview/
+              - text: — dependency initialization and cold start duration breakdown —
+              - emphasis [ref=e363]: Draft
+            - listitem [ref=e364]:
+              - link "Dependency Visibility" [ref=e365] [cursor=pointer]:
+                - /url: functions/dependency-visibility/overview/
+              - text: — outbound dependency observability limits
+          - heading "Container Apps Labs ¶" [level=3] [ref=e366]:
+            - text: Container Apps Labs
+            - link "¶" [ref=e367] [cursor=pointer]:
+              - /url: "#container-apps-labs"
+          - list [ref=e368]:
+            - listitem [ref=e369]:
+              - link "Ingress SNI / Host Header" [ref=e370] [cursor=pointer]:
+                - /url: container-apps/ingress-sni-host-header/overview/
+              - text: — SNI and host header routing behavior
+            - listitem [ref=e371]:
+              - link "Private Endpoint FQDN vs IP" [ref=e372] [cursor=pointer]:
+                - /url: container-apps/private-endpoint-fqdn-vs-ip/overview/
+              - text: — FQDN vs. direct IP access differences
+            - listitem [ref=e373]:
+              - link "Startup Probes" [ref=e374] [cursor=pointer]:
+                - /url: container-apps/startup-probes/overview/
+              - text: — probe interaction and failure patterns —
+              - emphasis [ref=e375]: Draft
+          - heading "Patterns ¶" [level=3] [ref=e376]:
+            - text: Patterns
+            - link "¶" [ref=e377] [cursor=pointer]:
+              - /url: "#patterns"
+          - list [ref=e378]:
+            - listitem [ref=e379]:
+              - link "Symptom to Hypothesis" [ref=e380] [cursor=pointer]:
+                - /url: patterns/symptom-to-hypothesis/
+              - text: — common symptoms and investigation starting points
+            - listitem [ref=e381]:
+              - link "False Positives" [ref=e382] [cursor=pointer]:
+                - /url: patterns/false-positives/
+              - text: — signals that suggest problems that don't exist
+            - listitem [ref=e383]:
+              - link "Metric Misreads" [ref=e384] [cursor=pointer]:
+                - /url: patterns/metric-misreads/
+              - text: — commonly misinterpreted Azure metrics
+          - heading "Background ¶" [level=2] [ref=e385]:
+            - text: Background
+            - link "¶" [ref=e386] [cursor=pointer]:
+              - /url: "#background"
+          - paragraph [ref=e387]:
+            - text: See
+            - link "About" [ref=e388] [cursor=pointer]:
+              - /url: about/
+            - text: for the full motivation, goals, and positioning of this project.
+    - contentinfo [ref=e389]:
+      - generic [ref=e391]:
+        - generic [ref=e392]:
+          - text: Made with
+          - link "Material for MkDocs" [ref=e393] [cursor=pointer]:
+            - /url: https://squidfunk.github.io/mkdocs-material/
+        - link "github.com" [ref=e395] [cursor=pointer]:
+          - /url: https://github.com/yeongseon/azure-paas-troubleshooting-labs
+          - img [ref=e396]

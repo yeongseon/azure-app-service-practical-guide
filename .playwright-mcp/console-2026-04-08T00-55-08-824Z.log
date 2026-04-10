@@ -1,0 +1,4 @@
+[     756ms] [WARNING] You have set a custom wheel sensitivity.  This will make your app zoom unnaturally when using mainstream mice.  You should change this value from the default only if you can guarantee that all your users will use the same hardware and OS configuration as your current machine. @ https://unpkg.com/cytoscape@3/dist/cytoscape.min.js:22
+[     766ms] [WARNING] The style property `font-family: var(--md-text-font-family, Roboto, sans-serif)` is invalid @ https://unpkg.com/cytoscape@3/dist/cytoscape.min.js:22
+[     767ms] [WARNING] The style property `color: var(--md-default-fg-color, #333)` is invalid @ https://unpkg.com/cytoscape@3/dist/cytoscape.min.js:22
+[     769ms] [WARNING] The selector `node:hover`is invalid @ https://unpkg.com/cytoscape@3/dist/cytoscape.min.js:22

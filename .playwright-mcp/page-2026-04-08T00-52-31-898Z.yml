@@ -1,0 +1,834 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - navigation "Header" [ref=e3]:
+      - img [ref=e5] [cursor=pointer]
+      - generic [ref=e10]: Azure App Service Practical Guide
+      - generic [ref=e11]:
+        - radio "Switch to dark mode"
+        - generic "Switch to dark mode" [ref=e12] [cursor=pointer]:
+          - img [ref=e13]
+        - radio "Switch to light mode"
+      - dialog [ref=e15]:
+        - search [ref=e16]:
+          - generic [ref=e17]:
+            - textbox "Search" [ref=e18]
+            - generic:
+              - img
+            - navigation "Search":
+              - button "Clear":
+                - img
+          - generic [ref=e21]: Initializing search
+      - link "yeongseon/azure-app-service-practical-guide" [ref=e23] [cursor=pointer]:
+        - /url: https://github.com/yeongseon/azure-app-service-practical-guide
+        - img [ref=e25]
+        - generic [ref=e27]: yeongseon/azure-app-service-practical-guide
+  - generic [ref=e28]:
+    - main [ref=e29]:
+      - generic [ref=e30]:
+        - navigation "Navigation" [ref=e33]:
+          - generic [ref=e34] [cursor=pointer]:
+            - link "Azure App Service Practical Guide" [ref=e35]:
+              - /url: /azure-app-service-practical-guide/.
+              - img "logo" [ref=e36]
+            - text: Azure App Service Practical Guide
+          - list [ref=e37]:
+            - listitem [ref=e38]:
+              - link "Home" [ref=e39] [cursor=pointer]:
+                - /url: /azure-app-service-practical-guide/.
+                - generic [ref=e40]: Home
+            - listitem [ref=e41]:
+              - generic [ref=e43]: Start Here
+              - navigation "Start Here" [ref=e45]:
+                - generic [ref=e46] [cursor=pointer]: Start Here
+                - list [ref=e48]:
+                  - listitem [ref=e49]:
+                    - link "Azure App Service Practical Guide" [ref=e50] [cursor=pointer]:
+                      - /url: /azure-app-service-practical-guide/start-here/overview/
+                      - generic [ref=e51]: Azure App Service Practical Guide
+                  - listitem [ref=e52]:
+                    - link "Learning Paths" [ref=e53] [cursor=pointer]:
+                      - /url: /azure-app-service-practical-guide/start-here/learning-paths/
+                      - generic [ref=e54]: Learning Paths
+                  - listitem [ref=e55]:
+                    - link "Repository Map" [ref=e56] [cursor=pointer]:
+                      - /url: /azure-app-service-practical-guide/start-here/repository-map/
+                      - generic [ref=e57]: Repository Map
+            - listitem [ref=e58]:
+              - link "Platform" [ref=e60] [cursor=pointer]:
+                - /url: /azure-app-service-practical-guide/platform/
+                - generic [ref=e61]: Platform
+              - navigation [ref=e64]:
+                - generic [ref=e65] [cursor=pointer]: Platform
+                - list [ref=e67]:
+                  - listitem [ref=e68]:
+                    - link "How App Service Works" [ref=e69] [cursor=pointer]:
+                      - /url: /azure-app-service-practical-guide/platform/how-app-service-works/
+                      - generic [ref=e70]: How App Service Works
+                  - listitem [ref=e71]:
+                    - link "Hosting Models" [ref=e72] [cursor=pointer]:
+                      - /url: /azure-app-service-practical-guide/platform/hosting-models/
+                      - generic [ref=e73]: Hosting Models
+                  - listitem [ref=e74]:
+                    - link "Request Lifecycle" [ref=e75] [cursor=pointer]:
+                      - /url: /azure-app-service-practical-guide/platform/request-lifecycle/
+                      - generic [ref=e76]: Request Lifecycle
+                  - listitem [ref=e77]:
+                    - link "Scaling" [ref=e78] [cursor=pointer]:
+                      - /url: /azure-app-service-practical-guide/platform/scaling/
+                      - generic [ref=e79]: Scaling
+                  - listitem [ref=e80]:
+                    - link "Networking" [ref=e81] [cursor=pointer]:
+                      - /url: /azure-app-service-practical-guide/platform/networking/
+                      - generic [ref=e82]: Networking
+                  - listitem [ref=e83]:
+                    - link "Resource Relationships" [ref=e84] [cursor=pointer]:
+                      - /url: /azure-app-service-practical-guide/platform/resource-relationships/
+                      - generic [ref=e85]: Resource Relationships
+                  - listitem [ref=e86]:
+                    - link "Authentication Architecture" [ref=e87] [cursor=pointer]:
+                      - /url: /azure-app-service-practical-guide/platform/authentication-architecture/
+                      - generic [ref=e88]: Authentication Architecture
+                  - listitem [ref=e89]:
+                    - link "Security Architecture" [ref=e90] [cursor=pointer]:
+                      - /url: /azure-app-service-practical-guide/platform/security-architecture/
+                      - generic [ref=e91]: Security Architecture
+            - listitem [ref=e92]:
+              - link "Best Practices" [ref=e94] [cursor=pointer]:
+                - /url: /azure-app-service-practical-guide/best-practices/
+                - generic [ref=e95]: Best Practices
+              - navigation [ref=e98]:
+                - generic [ref=e99] [cursor=pointer]: Best Practices
+                - list [ref=e101]:
+                  - listitem [ref=e102]:
+                    - link "Production Baseline" [ref=e103] [cursor=pointer]:
+                      - /url: /azure-app-service-practical-guide/best-practices/production-baseline/
+                      - generic [ref=e104]: Production Baseline
+                  - listitem [ref=e105]:
+                    - link "Networking Best Practices" [ref=e106] [cursor=pointer]:
+                      - /url: /azure-app-service-practical-guide/best-practices/networking/
+                      - generic [ref=e107]: Networking Best Practices
+                  - listitem [ref=e108]:
+                    - link "Security Best Practices" [ref=e109] [cursor=pointer]:
+                      - /url: /azure-app-service-practical-guide/best-practices/security/
+                      - generic [ref=e110]: Security Best Practices
+                  - listitem [ref=e111]:
+                    - link "Deployment Best Practices" [ref=e112] [cursor=pointer]:
+                      - /url: /azure-app-service-practical-guide/best-practices/deployment/
+                      - generic [ref=e113]: Deployment Best Practices
+                  - listitem [ref=e114]:
+                    - link "Scaling Best Practices" [ref=e115] [cursor=pointer]:
+                      - /url: /azure-app-service-practical-guide/best-practices/scaling/
+                      - generic [ref=e116]: Scaling Best Practices
+                  - listitem [ref=e117]:
+                    - link "Reliability Best Practices" [ref=e118] [cursor=pointer]:
+                      - /url: /azure-app-service-practical-guide/best-practices/reliability/
+                      - generic [ref=e119]: Reliability Best Practices
+                  - listitem [ref=e120]:
+                    - link "Common Anti-Patterns" [ref=e121] [cursor=pointer]:
+                      - /url: /azure-app-service-practical-guide/best-practices/common-anti-patterns/
+                      - generic [ref=e122]: Common Anti-Patterns
+            - listitem [ref=e123]:
+              - link "Language Guides" [ref=e125] [cursor=pointer]:
+                - /url: /azure-app-service-practical-guide/language-guides/
+                - generic [ref=e126]: Language Guides
+              - navigation [ref=e129]:
+                - generic [ref=e130] [cursor=pointer]: Language Guides
+                - list [ref=e132]:
+                  - listitem [ref=e133]:
+                    - link "Python" [ref=e135] [cursor=pointer]:
+                      - /url: /azure-app-service-practical-guide/language-guides/python/
+                      - generic [ref=e136]: Python
+                    - navigation [ref=e139]:
+                      - generic [ref=e140] [cursor=pointer]: Python
+                      - list [ref=e142]:
+                        - listitem [ref=e143]:
+                          - link "01 - Run Flask Locally with App Service Parity" [ref=e144] [cursor=pointer]:
+                            - /url: /azure-app-service-practical-guide/language-guides/python/01-local-run/
+                            - generic [ref=e145]: 01 - Run Flask Locally with App Service Parity
+                        - listitem [ref=e146]:
+                          - link "02 - First Deployment to Azure App Service" [ref=e147] [cursor=pointer]:
+                            - /url: /azure-app-service-practical-guide/language-guides/python/02-first-deploy/
+                            - generic [ref=e148]: 02 - First Deployment to Azure App Service
+                        - listitem [ref=e149]:
+                          - link "03 - Configure Flask App Settings on App Service" [ref=e150] [cursor=pointer]:
+                            - /url: /azure-app-service-practical-guide/language-guides/python/03-configuration/
+                            - generic [ref=e151]: 03 - Configure Flask App Settings on App Service
+                        - listitem [ref=e152]:
+                          - link "04. Logging & Monitoring" [ref=e153] [cursor=pointer]:
+                            - /url: /azure-app-service-practical-guide/language-guides/python/04-logging-monitoring/
+                            - generic [ref=e154]: 04. Logging & Monitoring
+                        - listitem [ref=e155]:
+                          - link "05 - Infrastructure as Code for Python App Service" [ref=e156] [cursor=pointer]:
+                            - /url: /azure-app-service-practical-guide/language-guides/python/05-infrastructure-as-code/
+                            - generic [ref=e157]: 05 - Infrastructure as Code for Python App Service
+                        - listitem [ref=e158]:
+                          - link "06 - CI/CD with GitHub Actions for Flask App Service" [ref=e159] [cursor=pointer]:
+                            - /url: /azure-app-service-practical-guide/language-guides/python/06-ci-cd/
+                            - generic [ref=e160]: 06 - CI/CD with GitHub Actions for Flask App Service
+                        - listitem [ref=e161]:
+                          - link "07 - Custom Domain and SSL on App Service" [ref=e162] [cursor=pointer]:
+                            - /url: /azure-app-service-practical-guide/language-guides/python/07-custom-domain-ssl/
+                            - generic [ref=e163]: 07 - Custom Domain and SSL on App Service
+                        - listitem [ref=e164]:
+                          - link "Python Runtime" [ref=e165] [cursor=pointer]:
+                            - /url: /azure-app-service-practical-guide/language-guides/python/python-runtime/
+                            - generic [ref=e166]: Python Runtime
+                        - listitem [ref=e167]:
+                          - link "Python Recipes" [ref=e169] [cursor=pointer]:
+                            - /url: /azure-app-service-practical-guide/language-guides/python/recipes/
+                            - generic [ref=e170]: Python Recipes
+                          - navigation [ref=e173]:
+                            - generic [ref=e174] [cursor=pointer]: Python Recipes
+                            - list [ref=e176]:
+                              - listitem [ref=e177]:
+                                - link "Azure SQL with Managed Identity" [ref=e178] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/language-guides/python/recipes/azure-sql/
+                                  - generic [ref=e179]: Azure SQL with Managed Identity
+                              - listitem [ref=e180]:
+                                - link "Bring Your Own Storage (BYOS)" [ref=e181] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/language-guides/python/recipes/bring-your-own-storage/
+                                  - generic [ref=e182]: Bring Your Own Storage (BYOS)
+                              - listitem [ref=e183]:
+                                - link "Cosmos DB with azure-cosmos SDK" [ref=e184] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/language-guides/python/recipes/cosmosdb/
+                                  - generic [ref=e185]: Cosmos DB with azure-cosmos SDK
+                              - listitem [ref=e186]:
+                                - link "Custom Container (Docker + Gunicorn + SSH)" [ref=e187] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/language-guides/python/recipes/custom-container/
+                                  - generic [ref=e188]: Custom Container (Docker + Gunicorn + SSH)
+                              - listitem [ref=e189]:
+                                - link "Deployment Slots Validation" [ref=e190] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/language-guides/python/recipes/deployment-slots-validation/
+                                  - generic [ref=e191]: Deployment Slots Validation
+                              - listitem [ref=e192]:
+                                - link "Easy Auth" [ref=e193] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/language-guides/python/recipes/easy-auth/
+                                  - generic [ref=e194]: Easy Auth
+                              - listitem [ref=e195]:
+                                - link "Key Vault References" [ref=e196] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/language-guides/python/recipes/key-vault-reference/
+                                  - generic [ref=e197]: Key Vault References
+                              - listitem [ref=e198]:
+                                - link "Managed Identity" [ref=e199] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/language-guides/python/recipes/managed-identity/
+                                  - generic [ref=e200]: Managed Identity
+                              - listitem [ref=e201]:
+                                - link "Native Dependencies on App Service Linux" [ref=e202] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/language-guides/python/recipes/native-dependencies/
+                                  - generic [ref=e203]: Native Dependencies on App Service Linux
+                              - listitem [ref=e204]:
+                                - link "Redis Cache with redis-py" [ref=e205] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/language-guides/python/recipes/redis/
+                                  - generic [ref=e206]: Redis Cache with redis-py
+                  - listitem [ref=e207]:
+                    - link "Node.js" [ref=e209] [cursor=pointer]:
+                      - /url: /azure-app-service-practical-guide/language-guides/nodejs/
+                      - generic [ref=e210]: Node.js
+                    - navigation [ref=e213]:
+                      - generic [ref=e214] [cursor=pointer]: Node.js
+                      - list [ref=e216]:
+                        - listitem [ref=e217]:
+                          - link "01. Local Run" [ref=e218] [cursor=pointer]:
+                            - /url: /azure-app-service-practical-guide/language-guides/nodejs/01-local-run/
+                            - generic [ref=e219]: 01. Local Run
+                        - listitem [ref=e220]:
+                          - link "02. Deploy Application" [ref=e221] [cursor=pointer]:
+                            - /url: /azure-app-service-practical-guide/language-guides/nodejs/02-first-deploy/
+                            - generic [ref=e222]: 02. Deploy Application
+                        - listitem [ref=e223]:
+                          - link "03. Configuration" [ref=e224] [cursor=pointer]:
+                            - /url: /azure-app-service-practical-guide/language-guides/nodejs/03-configuration/
+                            - generic [ref=e225]: 03. Configuration
+                        - listitem [ref=e226]:
+                          - link "04. Logging & Monitoring" [ref=e227] [cursor=pointer]:
+                            - /url: /azure-app-service-practical-guide/language-guides/nodejs/04-logging-monitoring/
+                            - generic [ref=e228]: 04. Logging & Monitoring
+                        - listitem [ref=e229]:
+                          - link "05. Infrastructure as Code with Bicep" [ref=e230] [cursor=pointer]:
+                            - /url: /azure-app-service-practical-guide/language-guides/nodejs/05-infrastructure-as-code/
+                            - generic [ref=e231]: 05. Infrastructure as Code with Bicep
+                        - listitem [ref=e232]:
+                          - link "06. CI/CD with GitHub Actions" [ref=e233] [cursor=pointer]:
+                            - /url: /azure-app-service-practical-guide/language-guides/nodejs/06-ci-cd/
+                            - generic [ref=e234]: 06. CI/CD with GitHub Actions
+                        - listitem [ref=e235]:
+                          - link "07. Custom Domains and SSL (OPTIONAL)" [ref=e236] [cursor=pointer]:
+                            - /url: /azure-app-service-practical-guide/language-guides/nodejs/07-custom-domain-ssl/
+                            - generic [ref=e237]: 07. Custom Domains and SSL (OPTIONAL)
+                        - listitem [ref=e238]:
+                          - link "Node.js Runtime Details" [ref=e239] [cursor=pointer]:
+                            - /url: /azure-app-service-practical-guide/language-guides/nodejs/nodejs-runtime/
+                            - generic [ref=e240]: Node.js Runtime Details
+                        - listitem [ref=e241]:
+                          - link "Node.js Recipes" [ref=e243] [cursor=pointer]:
+                            - /url: /azure-app-service-practical-guide/language-guides/nodejs/recipes/
+                            - generic [ref=e244]: Node.js Recipes
+                          - navigation [ref=e247]:
+                            - generic [ref=e248] [cursor=pointer]: Node.js Recipes
+                            - list [ref=e250]:
+                              - listitem [ref=e251]:
+                                - link "Azure SQL Integration" [ref=e252] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/language-guides/nodejs/recipes/azure-sql/
+                                  - generic [ref=e253]: Azure SQL Integration
+                              - listitem [ref=e254]:
+                                - link "Bring Your Own Storage (BYOS)" [ref=e255] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/language-guides/nodejs/recipes/bring-your-own-storage/
+                                  - generic [ref=e256]: Bring Your Own Storage (BYOS)
+                              - listitem [ref=e257]:
+                                - link "Cosmos DB Integration" [ref=e258] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/language-guides/nodejs/recipes/cosmosdb/
+                                  - generic [ref=e259]: Cosmos DB Integration
+                              - listitem [ref=e260]:
+                                - link "Custom Container Deployment" [ref=e261] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/language-guides/nodejs/recipes/custom-container/
+                                  - generic [ref=e262]: Custom Container Deployment
+                              - listitem [ref=e263]:
+                                - link "Deployment Slots Validation" [ref=e264] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/language-guides/nodejs/recipes/deployment-slots-validation/
+                                  - generic [ref=e265]: Deployment Slots Validation
+                              - listitem [ref=e266]:
+                                - link "App Service Built-in Authentication (Easy Auth)" [ref=e267] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/language-guides/nodejs/recipes/easy-auth/
+                                  - generic [ref=e268]: App Service Built-in Authentication (Easy Auth)
+                              - listitem [ref=e269]:
+                                - link "Key Vault References" [ref=e270] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/language-guides/nodejs/recipes/key-vault-reference/
+                                  - generic [ref=e271]: Key Vault References
+                              - listitem [ref=e272]:
+                                - link "Managed Identity for App Service" [ref=e273] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/language-guides/nodejs/recipes/managed-identity/
+                                  - generic [ref=e274]: Managed Identity for App Service
+                              - listitem [ref=e275]:
+                                - link "Native Dependencies" [ref=e276] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/language-guides/nodejs/recipes/native-dependencies/
+                                  - generic [ref=e277]: Native Dependencies
+                              - listitem [ref=e278]:
+                                - link "Next.js on App Service" [ref=e279] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/language-guides/nodejs/recipes/nextjs/
+                                  - generic [ref=e280]: Next.js on App Service
+                              - listitem [ref=e281]:
+                                - link "Azure Cache for Redis Integration" [ref=e282] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/language-guides/nodejs/recipes/redis/
+                                  - generic [ref=e283]: Azure Cache for Redis Integration
+                  - listitem [ref=e284]:
+                    - link "Java" [ref=e286] [cursor=pointer]:
+                      - /url: /azure-app-service-practical-guide/language-guides/java/
+                      - generic [ref=e287]: Java
+                    - navigation [ref=e290]:
+                      - generic [ref=e291] [cursor=pointer]: Java
+                      - list [ref=e293]:
+                        - listitem [ref=e294]:
+                          - link "01. Local Run" [ref=e295] [cursor=pointer]:
+                            - /url: /azure-app-service-practical-guide/language-guides/java/01-local-run/
+                            - generic [ref=e296]: 01. Local Run
+                        - listitem [ref=e297]:
+                          - link "02. First Deploy" [ref=e298] [cursor=pointer]:
+                            - /url: /azure-app-service-practical-guide/language-guides/java/02-first-deploy/
+                            - generic [ref=e299]: 02. First Deploy
+                        - listitem [ref=e300]:
+                          - link "03. Configuration" [ref=e301] [cursor=pointer]:
+                            - /url: /azure-app-service-practical-guide/language-guides/java/03-configuration/
+                            - generic [ref=e302]: 03. Configuration
+                        - listitem [ref=e303]:
+                          - link "04. Logging & Monitoring" [ref=e304] [cursor=pointer]:
+                            - /url: /azure-app-service-practical-guide/language-guides/java/04-logging-monitoring/
+                            - generic [ref=e305]: 04. Logging & Monitoring
+                        - listitem [ref=e306]:
+                          - link "05. Infrastructure as Code" [ref=e307] [cursor=pointer]:
+                            - /url: /azure-app-service-practical-guide/language-guides/java/05-infrastructure-as-code/
+                            - generic [ref=e308]: 05. Infrastructure as Code
+                        - listitem [ref=e309]:
+                          - link "06. CI/CD" [ref=e310] [cursor=pointer]:
+                            - /url: /azure-app-service-practical-guide/language-guides/java/06-ci-cd/
+                            - generic [ref=e311]: 06. CI/CD
+                        - listitem [ref=e312]:
+                          - link "07. Custom Domain & SSL" [ref=e313] [cursor=pointer]:
+                            - /url: /azure-app-service-practical-guide/language-guides/java/07-custom-domain-ssl/
+                            - generic [ref=e314]: 07. Custom Domain & SSL
+                        - listitem [ref=e315]:
+                          - link "Java Runtime" [ref=e316] [cursor=pointer]:
+                            - /url: /azure-app-service-practical-guide/language-guides/java/java-runtime/
+                            - generic [ref=e317]: Java Runtime
+                        - listitem [ref=e318]:
+                          - link "Java Recipes" [ref=e320] [cursor=pointer]:
+                            - /url: /azure-app-service-practical-guide/language-guides/java/recipes/
+                            - generic [ref=e321]: Java Recipes
+                          - navigation [ref=e324]:
+                            - generic [ref=e325] [cursor=pointer]: Java Recipes
+                            - list [ref=e327]:
+                              - listitem [ref=e328]:
+                                - link "Azure SQL with Managed Identity" [ref=e329] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/language-guides/java/recipes/azure-sql/
+                                  - generic [ref=e330]: Azure SQL with Managed Identity
+                              - listitem [ref=e331]:
+                                - link "Cosmos DB Integration" [ref=e332] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/language-guides/java/recipes/cosmosdb/
+                                  - generic [ref=e333]: Cosmos DB Integration
+                              - listitem [ref=e334]:
+                                - link "Deployment Slots for Zero-Downtime Releases" [ref=e335] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/language-guides/java/recipes/deployment-slots-zero-downtime/
+                                  - generic [ref=e336]: Deployment Slots for Zero-Downtime Releases
+                              - listitem [ref=e337]:
+                                - link "Easy Auth (Built-in Authentication)" [ref=e338] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/language-guides/java/recipes/easy-auth/
+                                  - generic [ref=e339]: Easy Auth (Built-in Authentication)
+                              - listitem [ref=e340]:
+                                - link "Key Vault References (No Code Changes)" [ref=e341] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/language-guides/java/recipes/key-vault-reference/
+                                  - generic [ref=e342]: Key Vault References (No Code Changes)
+                              - listitem [ref=e343]:
+                                - link "Managed Identity (Passwordless Access)" [ref=e344] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/language-guides/java/recipes/managed-identity/
+                                  - generic [ref=e345]: Managed Identity (Passwordless Access)
+                              - listitem [ref=e346]:
+                                - link "Private Endpoints" [ref=e347] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/language-guides/java/recipes/private-endpoints/
+                                  - generic [ref=e348]: Private Endpoints
+                              - listitem [ref=e349]:
+                                - link "Azure Cache for Redis" [ref=e350] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/language-guides/java/recipes/redis/
+                                  - generic [ref=e351]: Azure Cache for Redis
+                              - listitem [ref=e352]:
+                                - link "VNet Integration" [ref=e353] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/language-guides/java/recipes/vnet-integration/
+                                  - generic [ref=e354]: VNet Integration
+                  - listitem [ref=e355]:
+                    - link ".NET" [ref=e357] [cursor=pointer]:
+                      - /url: /azure-app-service-practical-guide/language-guides/dotnet/
+                      - generic [ref=e358]: .NET
+                    - navigation [ref=e361]:
+                      - generic [ref=e362] [cursor=pointer]: .NET
+                      - list [ref=e364]:
+                        - listitem [ref=e365]:
+                          - link "01. Local Run" [ref=e366] [cursor=pointer]:
+                            - /url: /azure-app-service-practical-guide/language-guides/dotnet/01-local-run/
+                            - generic [ref=e367]: 01. Local Run
+                        - listitem [ref=e368]:
+                          - link "02. First Deploy" [ref=e369] [cursor=pointer]:
+                            - /url: /azure-app-service-practical-guide/language-guides/dotnet/02-first-deploy/
+                            - generic [ref=e370]: 02. First Deploy
+                        - listitem [ref=e371]:
+                          - link "03. Configuration" [ref=e372] [cursor=pointer]:
+                            - /url: /azure-app-service-practical-guide/language-guides/dotnet/03-configuration/
+                            - generic [ref=e373]: 03. Configuration
+                        - listitem [ref=e374]:
+                          - link "04. Logging & Monitoring" [ref=e375] [cursor=pointer]:
+                            - /url: /azure-app-service-practical-guide/language-guides/dotnet/04-logging-monitoring/
+                            - generic [ref=e376]: 04. Logging & Monitoring
+                        - listitem [ref=e377]:
+                          - link "05. Infrastructure as Code" [ref=e378] [cursor=pointer]:
+                            - /url: /azure-app-service-practical-guide/language-guides/dotnet/05-infrastructure-as-code/
+                            - generic [ref=e379]: 05. Infrastructure as Code
+                        - listitem [ref=e380]:
+                          - link "06. CI/CD with Azure DevOps" [ref=e381] [cursor=pointer]:
+                            - /url: /azure-app-service-practical-guide/language-guides/dotnet/06-ci-cd/
+                            - generic [ref=e382]: 06. CI/CD with Azure DevOps
+                        - listitem [ref=e383]:
+                          - link "07. Custom Domain & SSL" [ref=e384] [cursor=pointer]:
+                            - /url: /azure-app-service-practical-guide/language-guides/dotnet/07-custom-domain-ssl/
+                            - generic [ref=e385]: 07. Custom Domain & SSL
+                        - listitem [ref=e386]:
+                          - link ".NET Runtime on Windows App Service (.NET 8)" [ref=e387] [cursor=pointer]:
+                            - /url: /azure-app-service-practical-guide/language-guides/dotnet/dotnet-runtime/
+                            - generic [ref=e388]: .NET Runtime on Windows App Service (.NET 8)
+                        - listitem [ref=e389]:
+                          - link ".NET Recipes" [ref=e391] [cursor=pointer]:
+                            - /url: /azure-app-service-practical-guide/language-guides/dotnet/recipes/
+                            - generic [ref=e392]: .NET Recipes
+                          - navigation [ref=e395]:
+                            - generic [ref=e396] [cursor=pointer]: .NET Recipes
+                            - list [ref=e398]:
+                              - listitem [ref=e399]:
+                                - link "Azure SQL" [ref=e400] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/language-guides/dotnet/recipes/azure-sql/
+                                  - generic [ref=e401]: Azure SQL
+                              - listitem [ref=e402]:
+                                - link "Cosmos DB" [ref=e403] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/language-guides/dotnet/recipes/cosmosdb/
+                                  - generic [ref=e404]: Cosmos DB
+                              - listitem [ref=e405]:
+                                - link "Deployment Slots Validation" [ref=e406] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/language-guides/dotnet/recipes/deployment-slots-validation/
+                                  - generic [ref=e407]: Deployment Slots Validation
+                              - listitem [ref=e408]:
+                                - link "Easy Auth" [ref=e409] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/language-guides/dotnet/recipes/easy-auth/
+                                  - generic [ref=e410]: Easy Auth
+                              - listitem [ref=e411]:
+                                - link "Key Vault References" [ref=e412] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/language-guides/dotnet/recipes/key-vault-reference/
+                                  - generic [ref=e413]: Key Vault References
+                              - listitem [ref=e414]:
+                                - link "Managed Identity" [ref=e415] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/language-guides/dotnet/recipes/managed-identity/
+                                  - generic [ref=e416]: Managed Identity
+                              - listitem [ref=e417]:
+                                - link "Private Endpoints" [ref=e418] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/language-guides/dotnet/recipes/private-endpoints/
+                                  - generic [ref=e419]: Private Endpoints
+                              - listitem [ref=e420]:
+                                - link "Redis Cache" [ref=e421] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/language-guides/dotnet/recipes/redis/
+                                  - generic [ref=e422]: Redis Cache
+            - listitem [ref=e423]:
+              - link "Operations" [ref=e425] [cursor=pointer]:
+                - /url: /azure-app-service-practical-guide/operations/
+                - generic [ref=e426]: Operations
+              - navigation [ref=e429]:
+                - generic [ref=e430] [cursor=pointer]: Operations
+                - list [ref=e432]:
+                  - listitem [ref=e433]:
+                    - link "Scaling Operations" [ref=e434] [cursor=pointer]:
+                      - /url: /azure-app-service-practical-guide/operations/scaling/
+                      - generic [ref=e435]: Scaling Operations
+                  - listitem [ref=e436]:
+                    - link "Deployment Slots Operations" [ref=e437] [cursor=pointer]:
+                      - /url: /azure-app-service-practical-guide/operations/deployment-slots/
+                      - generic [ref=e438]: Deployment Slots Operations
+                  - listitem [ref=e439]:
+                    - link "Health and Recovery Operations" [ref=e440] [cursor=pointer]:
+                      - /url: /azure-app-service-practical-guide/operations/health-recovery/
+                      - generic [ref=e441]: Health and Recovery Operations
+                  - listitem [ref=e442]:
+                    - link "Backup and Restore Operations" [ref=e443] [cursor=pointer]:
+                      - /url: /azure-app-service-practical-guide/operations/backup-restore/
+                      - generic [ref=e444]: Backup and Restore Operations
+                  - listitem [ref=e445]:
+                    - link "Networking Operations" [ref=e446] [cursor=pointer]:
+                      - /url: /azure-app-service-practical-guide/operations/networking/
+                      - generic [ref=e447]: Networking Operations
+                  - listitem [ref=e448]:
+                    - link "Security Operations" [ref=e449] [cursor=pointer]:
+                      - /url: /azure-app-service-practical-guide/operations/security/
+                      - generic [ref=e450]: Security Operations
+                  - listitem [ref=e451]:
+                    - link "Cost Optimization Operations" [ref=e452] [cursor=pointer]:
+                      - /url: /azure-app-service-practical-guide/operations/cost-optimization/
+                      - generic [ref=e453]: Cost Optimization Operations
+            - listitem [ref=e454]:
+              - link "Troubleshooting" [ref=e456] [cursor=pointer]:
+                - /url: /azure-app-service-practical-guide/troubleshooting/
+                - generic [ref=e457]: Troubleshooting
+              - navigation [ref=e460]:
+                - generic [ref=e461] [cursor=pointer]: Troubleshooting
+                - list [ref=e463]:
+                  - listitem [ref=e464]:
+                    - link "Quick Diagnosis Cards" [ref=e465] [cursor=pointer]:
+                      - /url: /azure-app-service-practical-guide/troubleshooting/quick-diagnosis-cards/
+                      - generic [ref=e466]: Quick Diagnosis Cards
+                  - listitem [ref=e467]:
+                    - link "Troubleshooting Architecture Overview" [ref=e468] [cursor=pointer]:
+                      - /url: /azure-app-service-practical-guide/troubleshooting/architecture-overview/
+                      - generic [ref=e469]: Troubleshooting Architecture Overview
+                  - listitem [ref=e470]:
+                    - link "Troubleshooting Decision Tree" [ref=e471] [cursor=pointer]:
+                      - /url: /azure-app-service-practical-guide/troubleshooting/decision-tree/
+                      - generic [ref=e472]: Troubleshooting Decision Tree
+                  - listitem [ref=e473]:
+                    - link "Troubleshooting Mental Model" [ref=e474] [cursor=pointer]:
+                      - /url: /azure-app-service-practical-guide/troubleshooting/mental-model/
+                      - generic [ref=e475]: Troubleshooting Mental Model
+                  - listitem [ref=e476]:
+                    - link "Evidence Map for App Service Troubleshooting" [ref=e477] [cursor=pointer]:
+                      - /url: /azure-app-service-practical-guide/troubleshooting/evidence-map/
+                      - generic [ref=e478]: Evidence Map for App Service Troubleshooting
+                  - listitem [ref=e479]:
+                    - link "First 10 Minutes" [ref=e481] [cursor=pointer]:
+                      - /url: /azure-app-service-practical-guide/troubleshooting/first-10-minutes/
+                      - generic [ref=e482]: First 10 Minutes
+                    - navigation [ref=e485]:
+                      - generic [ref=e486] [cursor=pointer]: First 10 Minutes
+                      - list [ref=e488]:
+                        - listitem [ref=e489]:
+                          - 'link "First 10 Minutes: Startup / Availability" [ref=e490] [cursor=pointer]':
+                            - /url: /azure-app-service-practical-guide/troubleshooting/first-10-minutes/startup-availability/
+                            - generic [ref=e491]: "First 10 Minutes: Startup / Availability"
+                        - listitem [ref=e492]:
+                          - 'link "First 10 Minutes: Performance" [ref=e493] [cursor=pointer]':
+                            - /url: /azure-app-service-practical-guide/troubleshooting/first-10-minutes/performance/
+                            - generic [ref=e494]: "First 10 Minutes: Performance"
+                        - listitem [ref=e495]:
+                          - 'link "First 10 Minutes: Outbound / Network" [ref=e496] [cursor=pointer]':
+                            - /url: /azure-app-service-practical-guide/troubleshooting/first-10-minutes/outbound-network/
+                            - generic [ref=e497]: "First 10 Minutes: Outbound / Network"
+                  - listitem [ref=e498]:
+                    - link "Playbooks" [ref=e500] [cursor=pointer]:
+                      - /url: /azure-app-service-practical-guide/troubleshooting/playbooks/
+                      - generic [ref=e501]: Playbooks
+                    - navigation [ref=e504]:
+                      - generic [ref=e505] [cursor=pointer]: Playbooks
+                      - list [ref=e507]:
+                        - listitem [ref=e508]:
+                          - link "Deployment Failures" [ref=e509] [cursor=pointer]:
+                            - /url: /azure-app-service-practical-guide/troubleshooting/playbooks/deployment-failures/
+                            - generic [ref=e510]: Deployment Failures
+                        - listitem [ref=e511]:
+                          - link "App Startup Failures" [ref=e512] [cursor=pointer]:
+                            - /url: /azure-app-service-practical-guide/troubleshooting/playbooks/app-startup-failures/
+                            - generic [ref=e513]: App Startup Failures
+                        - listitem [ref=e514]:
+                          - link "Performance Degradation" [ref=e515] [cursor=pointer]:
+                            - /url: /azure-app-service-practical-guide/troubleshooting/playbooks/performance-degradation/
+                            - generic [ref=e516]: Performance Degradation
+                        - listitem [ref=e517]:
+                          - link "SSL Certificate Issues" [ref=e518] [cursor=pointer]:
+                            - /url: /azure-app-service-practical-guide/troubleshooting/playbooks/ssl-certificate-issues/
+                            - generic [ref=e519]: SSL Certificate Issues
+                        - listitem [ref=e520]:
+                          - link "Authentication Failures" [ref=e521] [cursor=pointer]:
+                            - /url: /azure-app-service-practical-guide/troubleshooting/playbooks/authentication-failures/
+                            - generic [ref=e522]: Authentication Failures
+                        - listitem [ref=e523]:
+                          - generic [ref=e525]: Startup & Availability
+                          - navigation "Startup & Availability" [ref=e527]:
+                            - generic [ref=e528] [cursor=pointer]: Startup & Availability
+                            - list [ref=e530]:
+                              - listitem [ref=e531]:
+                                - link "Container Didn't Respond to HTTP Pings (Azure App Service Linux)" [ref=e532] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/troubleshooting/playbooks/startup-availability/container-didnt-respond-to-http-pings/
+                                  - generic [ref=e533]: Container Didn't Respond to HTTP Pings (Azure App Service Linux)
+                              - listitem [ref=e534]:
+                                - link "Deployment Succeeded but Startup Failed (Azure App Service Linux)" [ref=e535] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/troubleshooting/playbooks/startup-availability/deployment-succeeded-startup-failed/
+                                  - generic [ref=e536]: Deployment Succeeded but Startup Failed (Azure App Service Linux)
+                              - listitem [ref=e537]:
+                                - link "Failed to Forward Request (Azure App Service Linux)" [ref=e538] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/troubleshooting/playbooks/startup-availability/failed-to-forward-request/
+                                  - generic [ref=e539]: Failed to Forward Request (Azure App Service Linux)
+                              - listitem [ref=e540]:
+                                - link "Slot Swap Restart / Config Drift / Warm-up Race (Azure App Service Linux)" [ref=e541] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/troubleshooting/playbooks/startup-availability/slot-swap-config-drift/
+                                  - generic [ref=e542]: Slot Swap Restart / Config Drift / Warm-up Race (Azure App Service Linux)
+                              - listitem [ref=e543]:
+                                - link "Slot Swap Failed During Warm-up (Azure App Service Linux)" [ref=e544] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/troubleshooting/playbooks/startup-availability/slot-swap-failed-during-warmup/
+                                  - generic [ref=e545]: Slot Swap Failed During Warm-up (Azure App Service Linux)
+                              - listitem [ref=e546]:
+                                - link "Warm-up vs Health Check (Azure App Service Linux)" [ref=e547] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/troubleshooting/playbooks/startup-availability/warmup-vs-health-check/
+                                  - generic [ref=e548]: Warm-up vs Health Check (Azure App Service Linux)
+                              - listitem [ref=e549]:
+                                - link "Authentication Redirect Loop (Azure App Service Linux)" [ref=e550] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/troubleshooting/playbooks/startup-availability/auth-redirect-loop/
+                                  - generic [ref=e551]: Authentication Redirect Loop (Azure App Service Linux)
+                        - listitem [ref=e552]:
+                          - generic [ref=e554]: Performance
+                          - navigation "Performance" [ref=e556]:
+                            - generic [ref=e557] [cursor=pointer]: Performance
+                            - list [ref=e559]:
+                              - listitem [ref=e560]:
+                                - link "Intermittent 5xx Under Load (Azure App Service Linux)" [ref=e561] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/troubleshooting/playbooks/performance/intermittent-5xx-under-load/
+                                  - generic [ref=e562]: Intermittent 5xx Under Load (Azure App Service Linux)
+                              - listitem [ref=e563]:
+                                - link "Memory Pressure and Worker Degradation (Azure App Service Linux)" [ref=e564] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/troubleshooting/playbooks/performance/memory-pressure-and-worker-degradation/
+                                  - generic [ref=e565]: Memory Pressure and Worker Degradation (Azure App Service Linux)
+                              - listitem [ref=e566]:
+                                - link "No Space Left on Device / Ephemeral Storage Pressure (Azure App Service Linux)" [ref=e567] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/troubleshooting/playbooks/performance/no-space-left-on-device/
+                                  - generic [ref=e568]: No Space Left on Device / Ephemeral Storage Pressure (Azure App Service Linux)
+                              - listitem [ref=e569]:
+                                - link "Slow Response but Low CPU (Azure App Service Linux)" [ref=e570] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/troubleshooting/playbooks/performance/slow-response-but-low-cpu/
+                                  - generic [ref=e571]: Slow Response but Low CPU (Azure App Service Linux)
+                              - listitem [ref=e572]:
+                                - link "Slow Start / Cold Start vs Real Regression (Azure App Service Linux)" [ref=e573] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/troubleshooting/playbooks/performance/slow-start-cold-start/
+                                  - generic [ref=e574]: Slow Start / Cold Start vs Real Regression (Azure App Service Linux)
+                              - listitem [ref=e575]:
+                                - link "CORS Failures and Token Errors (Azure App Service Linux)" [ref=e576] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/troubleshooting/playbooks/performance/cors-and-token-errors/
+                                  - generic [ref=e577]: CORS Failures and Token Errors (Azure App Service Linux)
+                        - listitem [ref=e578]:
+                          - generic [ref=e580]: Outbound Network
+                          - navigation "Outbound Network" [ref=e582]:
+                            - generic [ref=e583] [cursor=pointer]: Outbound Network
+                            - list [ref=e585]:
+                              - listitem [ref=e586]:
+                                - link "DNS Resolution with VNet-Integrated App Service (Azure App Service Linux)" [ref=e587] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/troubleshooting/playbooks/outbound-network/dns-resolution-vnet-integrated-app-service/
+                                  - generic [ref=e588]: DNS Resolution with VNet-Integrated App Service (Azure App Service Linux)
+                              - listitem [ref=e589]:
+                                - link "Private Endpoint / Custom DNS / Route Confusion (Azure App Service Linux)" [ref=e590] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/troubleshooting/playbooks/outbound-network/private-endpoint-custom-dns-route-confusion/
+                                  - generic [ref=e591]: Private Endpoint / Custom DNS / Route Confusion (Azure App Service Linux)
+                              - listitem [ref=e592]:
+                                - link "SNAT or Application Issue? (Azure App Service Linux)" [ref=e593] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/troubleshooting/playbooks/outbound-network/snat-or-application-issue/
+                                  - generic [ref=e594]: SNAT or Application Issue? (Azure App Service Linux)
+                  - listitem [ref=e595]:
+                    - generic [ref=e597]: Methodology
+                    - navigation "Methodology" [ref=e599]:
+                      - generic [ref=e600] [cursor=pointer]: Methodology
+                      - list [ref=e602]:
+                        - listitem [ref=e603]:
+                          - link "Troubleshooting Method" [ref=e604] [cursor=pointer]:
+                            - /url: /azure-app-service-practical-guide/troubleshooting/methodology/troubleshooting-method/
+                            - generic [ref=e605]: Troubleshooting Method
+                        - listitem [ref=e606]:
+                          - link "Detector Map" [ref=e607] [cursor=pointer]:
+                            - /url: /azure-app-service-practical-guide/troubleshooting/methodology/detector-map/
+                            - generic [ref=e608]: Detector Map
+                  - listitem [ref=e609]:
+                    - link "KQL Queries" [ref=e611] [cursor=pointer]:
+                      - /url: /azure-app-service-practical-guide/troubleshooting/kql/
+                      - generic [ref=e612]: KQL Queries
+                    - navigation [ref=e615]:
+                      - generic [ref=e616] [cursor=pointer]: KQL Queries
+                      - list [ref=e618]:
+                        - listitem [ref=e619]:
+                          - link "HTTP" [ref=e621] [cursor=pointer]:
+                            - /url: /azure-app-service-practical-guide/troubleshooting/kql/http/
+                            - generic [ref=e622]: HTTP
+                          - navigation [ref=e625]:
+                            - generic [ref=e626] [cursor=pointer]: HTTP
+                            - list [ref=e628]:
+                              - listitem [ref=e629]:
+                                - link "5xx Trend Over Time" [ref=e630] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/troubleshooting/kql/http/5xx-trend-over-time/
+                                  - generic [ref=e631]: 5xx Trend Over Time
+                              - listitem [ref=e632]:
+                                - link "Latency Trend by Status Code" [ref=e633] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/troubleshooting/kql/http/latency-trend-by-status-code/
+                                  - generic [ref=e634]: Latency Trend by Status Code
+                              - listitem [ref=e635]:
+                                - link "Slowest Requests by Path" [ref=e636] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/troubleshooting/kql/http/slowest-requests-by-path/
+                                  - generic [ref=e637]: Slowest Requests by Path
+                        - listitem [ref=e638]:
+                          - link "Console" [ref=e640] [cursor=pointer]:
+                            - /url: /azure-app-service-practical-guide/troubleshooting/kql/console/
+                            - generic [ref=e641]: Console
+                          - navigation [ref=e644]:
+                            - generic [ref=e645] [cursor=pointer]: Console
+                            - list [ref=e647]:
+                              - listitem [ref=e648]:
+                                - link "Container Binding Errors" [ref=e649] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/troubleshooting/kql/console/container-binding-errors/
+                                  - generic [ref=e650]: Container Binding Errors
+                              - listitem [ref=e651]:
+                                - link "Startup Errors" [ref=e652] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/troubleshooting/kql/console/startup-errors/
+                                  - generic [ref=e653]: Startup Errors
+                        - listitem [ref=e654]:
+                          - link "Restarts" [ref=e656] [cursor=pointer]:
+                            - /url: /azure-app-service-practical-guide/troubleshooting/kql/restarts/
+                            - generic [ref=e657]: Restarts
+                          - navigation [ref=e660]:
+                            - generic [ref=e661] [cursor=pointer]: Restarts
+                            - list [ref=e663]:
+                              - listitem [ref=e664]:
+                                - link "Repeated Startup Attempts" [ref=e665] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/troubleshooting/kql/restarts/repeated-startup-attempts/
+                                  - generic [ref=e666]: Repeated Startup Attempts
+                              - listitem [ref=e667]:
+                                - link "Restart Timing Correlation" [ref=e668] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/troubleshooting/kql/restarts/restart-timing-correlation/
+                                  - generic [ref=e669]: Restart Timing Correlation
+                        - listitem [ref=e670]:
+                          - link "Correlation" [ref=e672] [cursor=pointer]:
+                            - /url: /azure-app-service-practical-guide/troubleshooting/kql/correlation/
+                            - generic [ref=e673]: Correlation
+                          - navigation [ref=e676]:
+                            - generic [ref=e677] [cursor=pointer]: Correlation
+                            - list [ref=e679]:
+                              - listitem [ref=e680]:
+                                - link "Latency vs Errors" [ref=e681] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/troubleshooting/kql/correlation/latency-vs-errors/
+                                  - generic [ref=e682]: Latency vs Errors
+                              - listitem [ref=e683]:
+                                - link "Restarts vs Latency" [ref=e684] [cursor=pointer]:
+                                  - /url: /azure-app-service-practical-guide/troubleshooting/kql/correlation/restarts-vs-latency/
+                                  - generic [ref=e685]: Restarts vs Latency
+                  - listitem [ref=e686]:
+                    - link "Lab Guides" [ref=e688] [cursor=pointer]:
+                      - /url: /azure-app-service-practical-guide/troubleshooting/lab-guides/
+                      - generic [ref=e689]: Lab Guides
+                    - navigation [ref=e692]:
+                      - generic [ref=e693] [cursor=pointer]: Lab Guides
+                      - list [ref=e695]:
+                        - listitem [ref=e696]:
+                          - 'link "Lab: Container HTTP Ping Behavior on Linux App Service (Port-Mismatch Experiment)" [ref=e697] [cursor=pointer]':
+                            - /url: /azure-app-service-practical-guide/troubleshooting/lab-guides/container-http-pings/
+                            - generic [ref=e698]: "Lab: Container HTTP Ping Behavior on Linux App Service (Port-Mismatch Experiment)"
+                        - listitem [ref=e699]:
+                          - 'link "Lab: Deployment Succeeded, Startup Failed (Wrong Module in Startup Command)" [ref=e700] [cursor=pointer]':
+                            - /url: /azure-app-service-practical-guide/troubleshooting/lab-guides/deployment-succeeded-startup-failed/
+                            - generic [ref=e701]: "Lab: Deployment Succeeded, Startup Failed (Wrong Module in Startup Command)"
+                        - listitem [ref=e702]:
+                          - 'link "Lab: DNS Resolution Behavior for App Service Before and After VNet Integration" [ref=e703] [cursor=pointer]':
+                            - /url: /azure-app-service-practical-guide/troubleshooting/lab-guides/dns-vnet-resolution/
+                            - generic [ref=e704]: "Lab: DNS Resolution Behavior for App Service Before and After VNet Integration"
+                        - listitem [ref=e705]:
+                          - 'link "Lab Guide (Level 3): Failed to Forward Request on Azure App Service Linux" [ref=e706] [cursor=pointer]':
+                            - /url: /azure-app-service-practical-guide/troubleshooting/lab-guides/failed-to-forward-request/
+                            - generic [ref=e707]: "Lab Guide (Level 3): Failed to Forward Request on Azure App Service Linux"
+                        - listitem [ref=e708]:
+                          - 'link "Lab: Intermittent 5xx Under Load" [ref=e709] [cursor=pointer]':
+                            - /url: /azure-app-service-practical-guide/troubleshooting/lab-guides/intermittent-5xx/
+                            - generic [ref=e710]: "Lab: Intermittent 5xx Under Load"
+                        - listitem [ref=e711]:
+                          - 'link "Lab: Memory Pressure and Worker Degradation" [ref=e712] [cursor=pointer]':
+                            - /url: /azure-app-service-practical-guide/troubleshooting/lab-guides/memory-pressure/
+                            - generic [ref=e713]: "Lab: Memory Pressure and Worker Degradation"
+                        - listitem [ref=e714]:
+                          - 'link "Lab: No Space Left on Device (Persistent /home Exhaustion vs Ephemeral /tmp Pressure)" [ref=e715] [cursor=pointer]':
+                            - /url: /azure-app-service-practical-guide/troubleshooting/lab-guides/no-space-left-on-device/
+                            - generic [ref=e716]: "Lab: No Space Left on Device (Persistent /home Exhaustion vs Ephemeral /tmp Pressure)"
+                        - listitem [ref=e717]:
+                          - 'link "Lab Guide: Slot Swap Config Drift (Sticky vs Non-Sticky Settings)" [ref=e718] [cursor=pointer]':
+                            - /url: /azure-app-service-practical-guide/troubleshooting/lab-guides/slot-swap-config-drift/
+                            - generic [ref=e719]: "Lab Guide: Slot Swap Config Drift (Sticky vs Non-Sticky Settings)"
+                        - listitem [ref=e720]:
+                          - 'link "Lab Guide: Slow Start (Cold Start) vs Real Regression" [ref=e721] [cursor=pointer]':
+                            - /url: /azure-app-service-practical-guide/troubleshooting/lab-guides/slow-start-cold-start/
+                            - generic [ref=e722]: "Lab Guide: Slow Start (Cold Start) vs Real Regression"
+                        - listitem [ref=e723]:
+                          - 'link "Lab Guide (Level 3): SNAT Exhaustion on Azure App Service Linux" [ref=e724] [cursor=pointer]':
+                            - /url: /azure-app-service-practical-guide/troubleshooting/lab-guides/snat-exhaustion/
+                            - generic [ref=e725]: "Lab Guide (Level 3): SNAT Exhaustion on Azure App Service Linux"
+            - listitem [ref=e726]:
+              - link "Reference" [ref=e728] [cursor=pointer]:
+                - /url: /azure-app-service-practical-guide/reference/
+                - generic [ref=e729]: Reference
+              - navigation [ref=e732]:
+                - generic [ref=e733] [cursor=pointer]: Reference
+                - list [ref=e735]:
+                  - listitem [ref=e736]:
+                    - link "Azure CLI App Service Cheatsheet" [ref=e737] [cursor=pointer]:
+                      - /url: /azure-app-service-practical-guide/reference/cli-cheatsheet/
+                      - generic [ref=e738]: Azure CLI App Service Cheatsheet
+                  - listitem [ref=e739]:
+                    - link "KQL Queries Reference" [ref=e740] [cursor=pointer]:
+                      - /url: /azure-app-service-practical-guide/reference/kql-queries/
+                      - generic [ref=e741]: KQL Queries Reference
+                  - listitem [ref=e742]:
+                    - link "Platform Limits & Quotas" [ref=e743] [cursor=pointer]:
+                      - /url: /azure-app-service-practical-guide/reference/platform-limits/
+                      - generic [ref=e744]: Platform Limits & Quotas
+                  - listitem [ref=e745]:
+                    - link "Troubleshooting" [ref=e746] [cursor=pointer]:
+                      - /url: /azure-app-service-practical-guide/reference/troubleshooting/
+                      - generic [ref=e747]: Troubleshooting
+                  - listitem [ref=e748]:
+                    - link "Kudu API Reference" [ref=e749] [cursor=pointer]:
+                      - /url: /azure-app-service-practical-guide/reference/kudu-queries/
+                      - generic [ref=e750]: Kudu API Reference
+        - generic [ref=e752]:
+          - generic:
+            - navigation "Table of contents"
+        - article [ref=e754]:
+          - heading "404 - Not found" [level=1] [ref=e755]
+      - button "Back to top":
+        - img
+        - text: Back to top
+    - contentinfo [ref=e756]:
+      - generic [ref=e758]:
+        - generic [ref=e759]:
+          - text: Made with
+          - link "Material for MkDocs" [ref=e760] [cursor=pointer]:
+            - /url: https://squidfunk.github.io/mkdocs-material/
+        - link "github.com" [ref=e762] [cursor=pointer]:
+          - /url: https://github.com/yeongseon/azure-app-service-practical-guide
+          - img [ref=e763]

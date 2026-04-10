@@ -1,0 +1,1118 @@
+- generic [active] [ref=e1]:
+  - link "Skip to content" [ref=e2] [cursor=pointer]:
+    - /url: "#visualization"
+  - banner [ref=e3]:
+    - navigation "Header" [ref=e4]:
+      - img [ref=e6] [cursor=pointer]
+      - generic [ref=e9]:
+        - generic [ref=e11]: Azure App Service Practical Guide
+        - generic:
+          - generic: Visualization
+      - generic [ref=e12]:
+        - radio "Switch to dark mode"
+        - generic "Switch to dark mode" [ref=e13] [cursor=pointer]:
+          - img [ref=e14]
+        - radio "Switch to light mode"
+      - dialog [ref=e16]:
+        - search [ref=e17]:
+          - generic [ref=e18]:
+            - textbox "Search" [ref=e19]
+            - generic:
+              - img
+            - navigation "Search":
+              - button "Clear":
+                - img
+          - generic [ref=e22]: Initializing search
+      - link "yeongseon/azure-app-service-practical-guide 1 0" [ref=e24] [cursor=pointer]:
+        - /url: https://github.com/yeongseon/azure-app-service-practical-guide
+        - img [ref=e26]
+        - generic [ref=e28]:
+          - text: yeongseon/azure-app-service-practical-guide
+          - list [ref=e29]:
+            - listitem [ref=e30]: "1"
+            - listitem [ref=e31]: "0"
+  - generic [ref=e32]:
+    - main [ref=e33]:
+      - generic [ref=e34]:
+        - navigation "Navigation" [ref=e37]:
+          - generic [ref=e38] [cursor=pointer]:
+            - link "Azure App Service Practical Guide" [ref=e39]:
+              - /url: ..
+              - img "logo" [ref=e40]
+            - text: Azure App Service Practical Guide
+          - list [ref=e41]:
+            - listitem [ref=e42]:
+              - link "Home" [ref=e43] [cursor=pointer]:
+                - /url: ..
+                - generic [ref=e44]: Home
+            - listitem [ref=e45]:
+              - generic [ref=e47]: Start Here
+              - navigation "Start Here" [ref=e49]:
+                - generic [ref=e50] [cursor=pointer]: Start Here
+                - list [ref=e52]:
+                  - listitem [ref=e53]:
+                    - link "Azure App Service Practical Guide" [ref=e54] [cursor=pointer]:
+                      - /url: ../start-here/overview/
+                      - generic [ref=e55]: Azure App Service Practical Guide
+                  - listitem [ref=e56]:
+                    - link "Learning Paths" [ref=e57] [cursor=pointer]:
+                      - /url: ../start-here/learning-paths/
+                      - generic [ref=e58]: Learning Paths
+                  - listitem [ref=e59]:
+                    - link "Repository Map" [ref=e60] [cursor=pointer]:
+                      - /url: ../start-here/repository-map/
+                      - generic [ref=e61]: Repository Map
+                  - listitem [ref=e62]:
+                    - link "About" [ref=e63] [cursor=pointer]:
+                      - /url: ../about/
+                      - generic [ref=e64]: About
+            - listitem [ref=e65]:
+              - link "Platform" [ref=e67] [cursor=pointer]:
+                - /url: ../platform/
+                - generic [ref=e68]: Platform
+              - navigation [ref=e71]:
+                - generic [ref=e72] [cursor=pointer]: Platform
+                - list [ref=e74]:
+                  - listitem [ref=e75]:
+                    - link "How App Service Works" [ref=e76] [cursor=pointer]:
+                      - /url: ../platform/how-app-service-works/
+                      - generic [ref=e77]: How App Service Works
+                  - listitem [ref=e79]:
+                    - link "Hosting Models" [ref=e80] [cursor=pointer]:
+                      - /url: ../platform/hosting-models/
+                      - generic [ref=e81]: Hosting Models
+                  - listitem [ref=e82]:
+                    - link "Request Lifecycle" [ref=e83] [cursor=pointer]:
+                      - /url: ../platform/request-lifecycle/
+                      - generic [ref=e84]: Request Lifecycle
+                  - listitem [ref=e86]:
+                    - link "Scaling" [ref=e87] [cursor=pointer]:
+                      - /url: ../platform/scaling/
+                      - generic [ref=e88]: Scaling
+                  - listitem [ref=e90]:
+                    - link "Networking" [ref=e91] [cursor=pointer]:
+                      - /url: ../platform/networking/
+                      - generic [ref=e92]: Networking
+                  - listitem [ref=e94]:
+                    - link "Resource Relationships" [ref=e95] [cursor=pointer]:
+                      - /url: ../platform/resource-relationships/
+                      - generic [ref=e96]: Resource Relationships
+                  - listitem [ref=e97]:
+                    - link "Authentication Architecture" [ref=e98] [cursor=pointer]:
+                      - /url: ../platform/authentication-architecture/
+                      - generic [ref=e99]: Authentication Architecture
+                  - listitem [ref=e100]:
+                    - link "Security Architecture" [ref=e101] [cursor=pointer]:
+                      - /url: ../platform/security-architecture/
+                      - generic [ref=e102]: Security Architecture
+            - listitem [ref=e103]:
+              - link "Best Practices" [ref=e105] [cursor=pointer]:
+                - /url: ../best-practices/
+                - generic [ref=e106]: Best Practices
+              - navigation [ref=e109]:
+                - generic [ref=e110] [cursor=pointer]: Best Practices
+                - list [ref=e112]:
+                  - listitem [ref=e113]:
+                    - link "Production Baseline" [ref=e114] [cursor=pointer]:
+                      - /url: ../best-practices/production-baseline/
+                      - generic [ref=e115]: Production Baseline
+                  - listitem [ref=e117]:
+                    - link "Networking Best Practices" [ref=e118] [cursor=pointer]:
+                      - /url: ../best-practices/networking/
+                      - generic [ref=e119]: Networking Best Practices
+                  - listitem [ref=e120]:
+                    - link "Security Best Practices" [ref=e121] [cursor=pointer]:
+                      - /url: ../best-practices/security/
+                      - generic [ref=e122]: Security Best Practices
+                  - listitem [ref=e123]:
+                    - link "Deployment Best Practices" [ref=e124] [cursor=pointer]:
+                      - /url: ../best-practices/deployment/
+                      - generic [ref=e125]: Deployment Best Practices
+                  - listitem [ref=e126]:
+                    - link "Scaling Best Practices" [ref=e127] [cursor=pointer]:
+                      - /url: ../best-practices/scaling/
+                      - generic [ref=e128]: Scaling Best Practices
+                  - listitem [ref=e129]:
+                    - link "Reliability Best Practices" [ref=e130] [cursor=pointer]:
+                      - /url: ../best-practices/reliability/
+                      - generic [ref=e131]: Reliability Best Practices
+                  - listitem [ref=e132]:
+                    - link "Common Anti-Patterns" [ref=e133] [cursor=pointer]:
+                      - /url: ../best-practices/common-anti-patterns/
+                      - generic [ref=e134]: Common Anti-Patterns
+            - listitem [ref=e135]:
+              - link "Language Guides" [ref=e137] [cursor=pointer]:
+                - /url: ../language-guides/
+                - generic [ref=e138]: Language Guides
+              - navigation [ref=e141]:
+                - generic [ref=e142] [cursor=pointer]: Language Guides
+                - list [ref=e144]:
+                  - listitem [ref=e145]:
+                    - link "Python" [ref=e147] [cursor=pointer]:
+                      - /url: ../language-guides/python/
+                      - generic [ref=e148]: Python
+                    - navigation [ref=e151]:
+                      - generic [ref=e152] [cursor=pointer]: Python
+                      - list [ref=e154]:
+                        - listitem [ref=e155]:
+                          - link "01 - Run Flask Locally with App Service Parity" [ref=e156] [cursor=pointer]:
+                            - /url: ../language-guides/python/01-local-run/
+                            - generic [ref=e157]: 01 - Run Flask Locally with App Service Parity
+                        - listitem [ref=e158]:
+                          - link "02 - First Deployment to Azure App Service" [ref=e159] [cursor=pointer]:
+                            - /url: ../language-guides/python/02-first-deploy/
+                            - generic [ref=e160]: 02 - First Deployment to Azure App Service
+                        - listitem [ref=e161]:
+                          - link "03 - Configure Flask App Settings on App Service" [ref=e162] [cursor=pointer]:
+                            - /url: ../language-guides/python/03-configuration/
+                            - generic [ref=e163]: 03 - Configure Flask App Settings on App Service
+                        - listitem [ref=e164]:
+                          - link "04. Logging & Monitoring" [ref=e165] [cursor=pointer]:
+                            - /url: ../language-guides/python/04-logging-monitoring/
+                            - generic [ref=e166]: 04. Logging & Monitoring
+                        - listitem [ref=e167]:
+                          - link "05 - Infrastructure as Code for Python App Service" [ref=e168] [cursor=pointer]:
+                            - /url: ../language-guides/python/05-infrastructure-as-code/
+                            - generic [ref=e169]: 05 - Infrastructure as Code for Python App Service
+                        - listitem [ref=e170]:
+                          - link "06 - CI/CD with GitHub Actions for Flask App Service" [ref=e171] [cursor=pointer]:
+                            - /url: ../language-guides/python/06-ci-cd/
+                            - generic [ref=e172]: 06 - CI/CD with GitHub Actions for Flask App Service
+                        - listitem [ref=e173]:
+                          - link "07 - Custom Domain and SSL on App Service" [ref=e174] [cursor=pointer]:
+                            - /url: ../language-guides/python/07-custom-domain-ssl/
+                            - generic [ref=e175]: 07 - Custom Domain and SSL on App Service
+                        - listitem [ref=e176]:
+                          - link "Python Runtime" [ref=e177] [cursor=pointer]:
+                            - /url: ../language-guides/python/python-runtime/
+                            - generic [ref=e178]: Python Runtime
+                        - listitem [ref=e179]:
+                          - link "Python Recipes" [ref=e181] [cursor=pointer]:
+                            - /url: ../language-guides/python/recipes/
+                            - generic [ref=e182]: Python Recipes
+                          - navigation [ref=e185]:
+                            - generic [ref=e186] [cursor=pointer]: Python Recipes
+                            - list [ref=e188]:
+                              - listitem [ref=e189]:
+                                - link "Azure SQL with Managed Identity" [ref=e190] [cursor=pointer]:
+                                  - /url: ../language-guides/python/recipes/azure-sql/
+                                  - generic [ref=e191]: Azure SQL with Managed Identity
+                              - listitem [ref=e192]:
+                                - link "Bring Your Own Storage (BYOS)" [ref=e193] [cursor=pointer]:
+                                  - /url: ../language-guides/python/recipes/bring-your-own-storage/
+                                  - generic [ref=e194]: Bring Your Own Storage (BYOS)
+                              - listitem [ref=e195]:
+                                - link "Cosmos DB with azure-cosmos SDK" [ref=e196] [cursor=pointer]:
+                                  - /url: ../language-guides/python/recipes/cosmosdb/
+                                  - generic [ref=e197]: Cosmos DB with azure-cosmos SDK
+                              - listitem [ref=e198]:
+                                - link "Custom Container (Docker + Gunicorn + SSH)" [ref=e199] [cursor=pointer]:
+                                  - /url: ../language-guides/python/recipes/custom-container/
+                                  - generic [ref=e200]: Custom Container (Docker + Gunicorn + SSH)
+                              - listitem [ref=e201]:
+                                - link "Deployment Slots Validation" [ref=e202] [cursor=pointer]:
+                                  - /url: ../language-guides/python/recipes/deployment-slots-validation/
+                                  - generic [ref=e203]: Deployment Slots Validation
+                              - listitem [ref=e204]:
+                                - link "Easy Auth" [ref=e205] [cursor=pointer]:
+                                  - /url: ../language-guides/python/recipes/easy-auth/
+                                  - generic [ref=e206]: Easy Auth
+                              - listitem [ref=e207]:
+                                - link "Key Vault References" [ref=e208] [cursor=pointer]:
+                                  - /url: ../language-guides/python/recipes/key-vault-reference/
+                                  - generic [ref=e209]: Key Vault References
+                              - listitem [ref=e210]:
+                                - link "Managed Identity" [ref=e211] [cursor=pointer]:
+                                  - /url: ../language-guides/python/recipes/managed-identity/
+                                  - generic [ref=e212]: Managed Identity
+                              - listitem [ref=e213]:
+                                - link "Native Dependencies on App Service Linux" [ref=e214] [cursor=pointer]:
+                                  - /url: ../language-guides/python/recipes/native-dependencies/
+                                  - generic [ref=e215]: Native Dependencies on App Service Linux
+                              - listitem [ref=e216]:
+                                - link "Redis Cache with redis-py" [ref=e217] [cursor=pointer]:
+                                  - /url: ../language-guides/python/recipes/redis/
+                                  - generic [ref=e218]: Redis Cache with redis-py
+                  - listitem [ref=e219]:
+                    - link "Node.js" [ref=e221] [cursor=pointer]:
+                      - /url: ../language-guides/nodejs/
+                      - generic [ref=e222]: Node.js
+                    - navigation [ref=e225]:
+                      - generic [ref=e226] [cursor=pointer]: Node.js
+                      - list [ref=e228]:
+                        - listitem [ref=e229]:
+                          - link "01. Local Run" [ref=e230] [cursor=pointer]:
+                            - /url: ../language-guides/nodejs/01-local-run/
+                            - generic [ref=e231]: 01. Local Run
+                        - listitem [ref=e232]:
+                          - link "02. Deploy Application" [ref=e233] [cursor=pointer]:
+                            - /url: ../language-guides/nodejs/02-first-deploy/
+                            - generic [ref=e234]: 02. Deploy Application
+                        - listitem [ref=e235]:
+                          - link "03. Configuration" [ref=e236] [cursor=pointer]:
+                            - /url: ../language-guides/nodejs/03-configuration/
+                            - generic [ref=e237]: 03. Configuration
+                        - listitem [ref=e238]:
+                          - link "04. Logging & Monitoring" [ref=e239] [cursor=pointer]:
+                            - /url: ../language-guides/nodejs/04-logging-monitoring/
+                            - generic [ref=e240]: 04. Logging & Monitoring
+                        - listitem [ref=e241]:
+                          - link "05. Infrastructure as Code with Bicep" [ref=e242] [cursor=pointer]:
+                            - /url: ../language-guides/nodejs/05-infrastructure-as-code/
+                            - generic [ref=e243]: 05. Infrastructure as Code with Bicep
+                        - listitem [ref=e244]:
+                          - link "06. CI/CD with GitHub Actions" [ref=e245] [cursor=pointer]:
+                            - /url: ../language-guides/nodejs/06-ci-cd/
+                            - generic [ref=e246]: 06. CI/CD with GitHub Actions
+                        - listitem [ref=e247]:
+                          - link "07. Custom Domains and SSL (OPTIONAL)" [ref=e248] [cursor=pointer]:
+                            - /url: ../language-guides/nodejs/07-custom-domain-ssl/
+                            - generic [ref=e249]: 07. Custom Domains and SSL (OPTIONAL)
+                        - listitem [ref=e250]:
+                          - link "Node.js Runtime Details" [ref=e251] [cursor=pointer]:
+                            - /url: ../language-guides/nodejs/nodejs-runtime/
+                            - generic [ref=e252]: Node.js Runtime Details
+                        - listitem [ref=e253]:
+                          - link "Node.js Recipes" [ref=e255] [cursor=pointer]:
+                            - /url: ../language-guides/nodejs/recipes/
+                            - generic [ref=e256]: Node.js Recipes
+                          - navigation [ref=e259]:
+                            - generic [ref=e260] [cursor=pointer]: Node.js Recipes
+                            - list [ref=e262]:
+                              - listitem [ref=e263]:
+                                - link "Azure SQL Integration" [ref=e264] [cursor=pointer]:
+                                  - /url: ../language-guides/nodejs/recipes/azure-sql/
+                                  - generic [ref=e265]: Azure SQL Integration
+                              - listitem [ref=e266]:
+                                - link "Bring Your Own Storage (BYOS)" [ref=e267] [cursor=pointer]:
+                                  - /url: ../language-guides/nodejs/recipes/bring-your-own-storage/
+                                  - generic [ref=e268]: Bring Your Own Storage (BYOS)
+                              - listitem [ref=e269]:
+                                - link "Cosmos DB Integration" [ref=e270] [cursor=pointer]:
+                                  - /url: ../language-guides/nodejs/recipes/cosmosdb/
+                                  - generic [ref=e271]: Cosmos DB Integration
+                              - listitem [ref=e272]:
+                                - link "Custom Container Deployment" [ref=e273] [cursor=pointer]:
+                                  - /url: ../language-guides/nodejs/recipes/custom-container/
+                                  - generic [ref=e274]: Custom Container Deployment
+                              - listitem [ref=e275]:
+                                - link "Deployment Slots Validation" [ref=e276] [cursor=pointer]:
+                                  - /url: ../language-guides/nodejs/recipes/deployment-slots-validation/
+                                  - generic [ref=e277]: Deployment Slots Validation
+                              - listitem [ref=e278]:
+                                - link "App Service Built-in Authentication (Easy Auth)" [ref=e279] [cursor=pointer]:
+                                  - /url: ../language-guides/nodejs/recipes/easy-auth/
+                                  - generic [ref=e280]: App Service Built-in Authentication (Easy Auth)
+                              - listitem [ref=e281]:
+                                - link "Key Vault References" [ref=e282] [cursor=pointer]:
+                                  - /url: ../language-guides/nodejs/recipes/key-vault-reference/
+                                  - generic [ref=e283]: Key Vault References
+                              - listitem [ref=e284]:
+                                - link "Managed Identity for App Service" [ref=e285] [cursor=pointer]:
+                                  - /url: ../language-guides/nodejs/recipes/managed-identity/
+                                  - generic [ref=e286]: Managed Identity for App Service
+                              - listitem [ref=e287]:
+                                - link "Native Dependencies" [ref=e288] [cursor=pointer]:
+                                  - /url: ../language-guides/nodejs/recipes/native-dependencies/
+                                  - generic [ref=e289]: Native Dependencies
+                              - listitem [ref=e290]:
+                                - link "Next.js on App Service" [ref=e291] [cursor=pointer]:
+                                  - /url: ../language-guides/nodejs/recipes/nextjs/
+                                  - generic [ref=e292]: Next.js on App Service
+                              - listitem [ref=e293]:
+                                - link "Azure Cache for Redis Integration" [ref=e294] [cursor=pointer]:
+                                  - /url: ../language-guides/nodejs/recipes/redis/
+                                  - generic [ref=e295]: Azure Cache for Redis Integration
+                  - listitem [ref=e296]:
+                    - link "Java" [ref=e298] [cursor=pointer]:
+                      - /url: ../language-guides/java/
+                      - generic [ref=e299]: Java
+                    - navigation [ref=e302]:
+                      - generic [ref=e303] [cursor=pointer]: Java
+                      - list [ref=e305]:
+                        - listitem [ref=e306]:
+                          - link "01. Local Run" [ref=e307] [cursor=pointer]:
+                            - /url: ../language-guides/java/01-local-run/
+                            - generic [ref=e308]: 01. Local Run
+                        - listitem [ref=e309]:
+                          - link "02. First Deploy" [ref=e310] [cursor=pointer]:
+                            - /url: ../language-guides/java/02-first-deploy/
+                            - generic [ref=e311]: 02. First Deploy
+                        - listitem [ref=e312]:
+                          - link "03. Configuration" [ref=e313] [cursor=pointer]:
+                            - /url: ../language-guides/java/03-configuration/
+                            - generic [ref=e314]: 03. Configuration
+                        - listitem [ref=e315]:
+                          - link "04. Logging & Monitoring" [ref=e316] [cursor=pointer]:
+                            - /url: ../language-guides/java/04-logging-monitoring/
+                            - generic [ref=e317]: 04. Logging & Monitoring
+                        - listitem [ref=e318]:
+                          - link "05. Infrastructure as Code" [ref=e319] [cursor=pointer]:
+                            - /url: ../language-guides/java/05-infrastructure-as-code/
+                            - generic [ref=e320]: 05. Infrastructure as Code
+                        - listitem [ref=e321]:
+                          - link "06. CI/CD" [ref=e322] [cursor=pointer]:
+                            - /url: ../language-guides/java/06-ci-cd/
+                            - generic [ref=e323]: 06. CI/CD
+                        - listitem [ref=e324]:
+                          - link "07. Custom Domain & SSL" [ref=e325] [cursor=pointer]:
+                            - /url: ../language-guides/java/07-custom-domain-ssl/
+                            - generic [ref=e326]: 07. Custom Domain & SSL
+                        - listitem [ref=e327]:
+                          - link "Java Runtime" [ref=e328] [cursor=pointer]:
+                            - /url: ../language-guides/java/java-runtime/
+                            - generic [ref=e329]: Java Runtime
+                        - listitem [ref=e330]:
+                          - link "Java Recipes" [ref=e332] [cursor=pointer]:
+                            - /url: ../language-guides/java/recipes/
+                            - generic [ref=e333]: Java Recipes
+                          - navigation [ref=e336]:
+                            - generic [ref=e337] [cursor=pointer]: Java Recipes
+                            - list [ref=e339]:
+                              - listitem [ref=e340]:
+                                - link "Azure SQL with Managed Identity" [ref=e341] [cursor=pointer]:
+                                  - /url: ../language-guides/java/recipes/azure-sql/
+                                  - generic [ref=e342]: Azure SQL with Managed Identity
+                              - listitem [ref=e343]:
+                                - link "Cosmos DB Integration" [ref=e344] [cursor=pointer]:
+                                  - /url: ../language-guides/java/recipes/cosmosdb/
+                                  - generic [ref=e345]: Cosmos DB Integration
+                              - listitem [ref=e346]:
+                                - link "Deployment Slots for Zero-Downtime Releases" [ref=e347] [cursor=pointer]:
+                                  - /url: ../language-guides/java/recipes/deployment-slots-zero-downtime/
+                                  - generic [ref=e348]: Deployment Slots for Zero-Downtime Releases
+                              - listitem [ref=e349]:
+                                - link "Easy Auth (Built-in Authentication)" [ref=e350] [cursor=pointer]:
+                                  - /url: ../language-guides/java/recipes/easy-auth/
+                                  - generic [ref=e351]: Easy Auth (Built-in Authentication)
+                              - listitem [ref=e352]:
+                                - link "Key Vault References (No Code Changes)" [ref=e353] [cursor=pointer]:
+                                  - /url: ../language-guides/java/recipes/key-vault-reference/
+                                  - generic [ref=e354]: Key Vault References (No Code Changes)
+                              - listitem [ref=e355]:
+                                - link "Managed Identity (Passwordless Access)" [ref=e356] [cursor=pointer]:
+                                  - /url: ../language-guides/java/recipes/managed-identity/
+                                  - generic [ref=e357]: Managed Identity (Passwordless Access)
+                              - listitem [ref=e358]:
+                                - link "Private Endpoints" [ref=e359] [cursor=pointer]:
+                                  - /url: ../language-guides/java/recipes/private-endpoints/
+                                  - generic [ref=e360]: Private Endpoints
+                              - listitem [ref=e361]:
+                                - link "Azure Cache for Redis" [ref=e362] [cursor=pointer]:
+                                  - /url: ../language-guides/java/recipes/redis/
+                                  - generic [ref=e363]: Azure Cache for Redis
+                              - listitem [ref=e364]:
+                                - link "VNet Integration" [ref=e365] [cursor=pointer]:
+                                  - /url: ../language-guides/java/recipes/vnet-integration/
+                                  - generic [ref=e366]: VNet Integration
+                  - listitem [ref=e367]:
+                    - link ".NET" [ref=e369] [cursor=pointer]:
+                      - /url: ../language-guides/dotnet/
+                      - generic [ref=e370]: .NET
+                    - navigation [ref=e373]:
+                      - generic [ref=e374] [cursor=pointer]: .NET
+                      - list [ref=e376]:
+                        - listitem [ref=e377]:
+                          - link "01. Local Run" [ref=e378] [cursor=pointer]:
+                            - /url: ../language-guides/dotnet/01-local-run/
+                            - generic [ref=e379]: 01. Local Run
+                        - listitem [ref=e380]:
+                          - link "02. First Deploy" [ref=e381] [cursor=pointer]:
+                            - /url: ../language-guides/dotnet/02-first-deploy/
+                            - generic [ref=e382]: 02. First Deploy
+                        - listitem [ref=e383]:
+                          - link "03. Configuration" [ref=e384] [cursor=pointer]:
+                            - /url: ../language-guides/dotnet/03-configuration/
+                            - generic [ref=e385]: 03. Configuration
+                        - listitem [ref=e386]:
+                          - link "04. Logging & Monitoring" [ref=e387] [cursor=pointer]:
+                            - /url: ../language-guides/dotnet/04-logging-monitoring/
+                            - generic [ref=e388]: 04. Logging & Monitoring
+                        - listitem [ref=e389]:
+                          - link "05. Infrastructure as Code" [ref=e390] [cursor=pointer]:
+                            - /url: ../language-guides/dotnet/05-infrastructure-as-code/
+                            - generic [ref=e391]: 05. Infrastructure as Code
+                        - listitem [ref=e392]:
+                          - link "06. CI/CD with Azure DevOps" [ref=e393] [cursor=pointer]:
+                            - /url: ../language-guides/dotnet/06-ci-cd/
+                            - generic [ref=e394]: 06. CI/CD with Azure DevOps
+                        - listitem [ref=e395]:
+                          - link "07. Custom Domain & SSL" [ref=e396] [cursor=pointer]:
+                            - /url: ../language-guides/dotnet/07-custom-domain-ssl/
+                            - generic [ref=e397]: 07. Custom Domain & SSL
+                        - listitem [ref=e398]:
+                          - link ".NET Runtime on Windows App Service (.NET 8)" [ref=e399] [cursor=pointer]:
+                            - /url: ../language-guides/dotnet/dotnet-runtime/
+                            - generic [ref=e400]: .NET Runtime on Windows App Service (.NET 8)
+                        - listitem [ref=e401]:
+                          - link ".NET Recipes" [ref=e403] [cursor=pointer]:
+                            - /url: ../language-guides/dotnet/recipes/
+                            - generic [ref=e404]: .NET Recipes
+                          - navigation [ref=e407]:
+                            - generic [ref=e408] [cursor=pointer]: .NET Recipes
+                            - list [ref=e410]:
+                              - listitem [ref=e411]:
+                                - link "Azure SQL" [ref=e412] [cursor=pointer]:
+                                  - /url: ../language-guides/dotnet/recipes/azure-sql/
+                                  - generic [ref=e413]: Azure SQL
+                              - listitem [ref=e414]:
+                                - link "Cosmos DB" [ref=e415] [cursor=pointer]:
+                                  - /url: ../language-guides/dotnet/recipes/cosmosdb/
+                                  - generic [ref=e416]: Cosmos DB
+                              - listitem [ref=e417]:
+                                - link "Deployment Slots Validation" [ref=e418] [cursor=pointer]:
+                                  - /url: ../language-guides/dotnet/recipes/deployment-slots-validation/
+                                  - generic [ref=e419]: Deployment Slots Validation
+                              - listitem [ref=e420]:
+                                - link "Easy Auth" [ref=e421] [cursor=pointer]:
+                                  - /url: ../language-guides/dotnet/recipes/easy-auth/
+                                  - generic [ref=e422]: Easy Auth
+                              - listitem [ref=e423]:
+                                - link "Key Vault References" [ref=e424] [cursor=pointer]:
+                                  - /url: ../language-guides/dotnet/recipes/key-vault-reference/
+                                  - generic [ref=e425]: Key Vault References
+                              - listitem [ref=e426]:
+                                - link "Managed Identity" [ref=e427] [cursor=pointer]:
+                                  - /url: ../language-guides/dotnet/recipes/managed-identity/
+                                  - generic [ref=e428]: Managed Identity
+                              - listitem [ref=e429]:
+                                - link "Private Endpoints" [ref=e430] [cursor=pointer]:
+                                  - /url: ../language-guides/dotnet/recipes/private-endpoints/
+                                  - generic [ref=e431]: Private Endpoints
+                              - listitem [ref=e432]:
+                                - link "Redis Cache" [ref=e433] [cursor=pointer]:
+                                  - /url: ../language-guides/dotnet/recipes/redis/
+                                  - generic [ref=e434]: Redis Cache
+            - listitem [ref=e435]:
+              - link "Operations" [ref=e437] [cursor=pointer]:
+                - /url: ../operations/
+                - generic [ref=e438]: Operations
+              - navigation [ref=e441]:
+                - generic [ref=e442] [cursor=pointer]: Operations
+                - list [ref=e444]:
+                  - listitem [ref=e445]:
+                    - link "Scaling Operations" [ref=e446] [cursor=pointer]:
+                      - /url: ../operations/scaling/
+                      - generic [ref=e447]: Scaling Operations
+                  - listitem [ref=e448]:
+                    - link "Deployment Slots Operations" [ref=e449] [cursor=pointer]:
+                      - /url: ../operations/deployment-slots/
+                      - generic [ref=e450]: Deployment Slots Operations
+                  - listitem [ref=e451]:
+                    - link "Health and Recovery Operations" [ref=e452] [cursor=pointer]:
+                      - /url: ../operations/health-recovery/
+                      - generic [ref=e453]: Health and Recovery Operations
+                  - listitem [ref=e454]:
+                    - link "Backup and Restore Operations" [ref=e455] [cursor=pointer]:
+                      - /url: ../operations/backup-restore/
+                      - generic [ref=e456]: Backup and Restore Operations
+                  - listitem [ref=e457]:
+                    - link "Networking Operations" [ref=e458] [cursor=pointer]:
+                      - /url: ../operations/networking/
+                      - generic [ref=e459]: Networking Operations
+                  - listitem [ref=e460]:
+                    - link "Security Operations" [ref=e461] [cursor=pointer]:
+                      - /url: ../operations/security/
+                      - generic [ref=e462]: Security Operations
+                  - listitem [ref=e463]:
+                    - link "Cost Optimization Operations" [ref=e464] [cursor=pointer]:
+                      - /url: ../operations/cost-optimization/
+                      - generic [ref=e465]: Cost Optimization Operations
+            - listitem [ref=e466]:
+              - link "Troubleshooting" [ref=e468] [cursor=pointer]:
+                - /url: ../troubleshooting/
+                - generic [ref=e469]: Troubleshooting
+              - navigation [ref=e472]:
+                - generic [ref=e473] [cursor=pointer]: Troubleshooting
+                - list [ref=e475]:
+                  - listitem [ref=e476]:
+                    - link "Quick Diagnosis Cards" [ref=e477] [cursor=pointer]:
+                      - /url: ../troubleshooting/quick-diagnosis-cards/
+                      - generic [ref=e478]: Quick Diagnosis Cards
+                  - listitem [ref=e480]:
+                    - link "Troubleshooting Architecture Overview" [ref=e481] [cursor=pointer]:
+                      - /url: ../troubleshooting/architecture-overview/
+                      - generic [ref=e482]: Troubleshooting Architecture Overview
+                  - listitem [ref=e484]:
+                    - link "Troubleshooting Decision Tree" [ref=e485] [cursor=pointer]:
+                      - /url: ../troubleshooting/decision-tree/
+                      - generic [ref=e486]: Troubleshooting Decision Tree
+                  - listitem [ref=e488]:
+                    - link "Troubleshooting Mental Model" [ref=e489] [cursor=pointer]:
+                      - /url: ../troubleshooting/mental-model/
+                      - generic [ref=e490]: Troubleshooting Mental Model
+                  - listitem [ref=e492]:
+                    - link "Evidence Map for App Service Troubleshooting" [ref=e493] [cursor=pointer]:
+                      - /url: ../troubleshooting/evidence-map/
+                      - generic [ref=e494]: Evidence Map for App Service Troubleshooting
+                  - listitem [ref=e496]:
+                    - link "First 10 Minutes" [ref=e498] [cursor=pointer]:
+                      - /url: ../troubleshooting/first-10-minutes/
+                      - generic [ref=e499]: First 10 Minutes
+                    - navigation [ref=e502]:
+                      - generic [ref=e503] [cursor=pointer]: First 10 Minutes
+                      - list [ref=e505]:
+                        - listitem [ref=e506]:
+                          - 'link "First 10 Minutes: Startup / Availability" [ref=e507] [cursor=pointer]':
+                            - /url: ../troubleshooting/first-10-minutes/startup-availability/
+                            - generic [ref=e508]: "First 10 Minutes: Startup / Availability"
+                        - listitem [ref=e509]:
+                          - 'link "First 10 Minutes: Performance" [ref=e510] [cursor=pointer]':
+                            - /url: ../troubleshooting/first-10-minutes/performance/
+                            - generic [ref=e511]: "First 10 Minutes: Performance"
+                        - listitem [ref=e512]:
+                          - 'link "First 10 Minutes: Outbound / Network" [ref=e513] [cursor=pointer]':
+                            - /url: ../troubleshooting/first-10-minutes/outbound-network/
+                            - generic [ref=e514]: "First 10 Minutes: Outbound / Network"
+                  - listitem [ref=e515]:
+                    - link "Playbooks" [ref=e517] [cursor=pointer]:
+                      - /url: ../troubleshooting/playbooks/
+                      - generic [ref=e518]: Playbooks
+                    - navigation [ref=e521]:
+                      - generic [ref=e522] [cursor=pointer]: Playbooks
+                      - list [ref=e524]:
+                        - listitem [ref=e525]:
+                          - link "Deployment Failures" [ref=e526] [cursor=pointer]:
+                            - /url: ../troubleshooting/playbooks/deployment-failures/
+                            - generic [ref=e527]: Deployment Failures
+                        - listitem [ref=e528]:
+                          - link "App Startup Failures" [ref=e529] [cursor=pointer]:
+                            - /url: ../troubleshooting/playbooks/app-startup-failures/
+                            - generic [ref=e530]: App Startup Failures
+                        - listitem [ref=e531]:
+                          - link "Performance Degradation" [ref=e532] [cursor=pointer]:
+                            - /url: ../troubleshooting/playbooks/performance-degradation/
+                            - generic [ref=e533]: Performance Degradation
+                        - listitem [ref=e534]:
+                          - link "SSL Certificate Issues" [ref=e535] [cursor=pointer]:
+                            - /url: ../troubleshooting/playbooks/ssl-certificate-issues/
+                            - generic [ref=e536]: SSL Certificate Issues
+                        - listitem [ref=e537]:
+                          - link "Authentication Failures" [ref=e538] [cursor=pointer]:
+                            - /url: ../troubleshooting/playbooks/authentication-failures/
+                            - generic [ref=e539]: Authentication Failures
+                        - listitem [ref=e540]:
+                          - generic [ref=e542]: Startup & Availability
+                          - navigation "Startup & Availability" [ref=e544]:
+                            - generic [ref=e545] [cursor=pointer]: Startup & Availability
+                            - list [ref=e547]:
+                              - listitem [ref=e548]:
+                                - link "Container Didn't Respond to HTTP Pings" [ref=e549] [cursor=pointer]:
+                                  - /url: ../troubleshooting/playbooks/startup-availability/container-didnt-respond-to-http-pings/
+                                  - generic [ref=e550]: Container Didn't Respond to HTTP Pings
+                              - listitem [ref=e552]:
+                                - link "Deployment Succeeded but Startup Failed" [ref=e553] [cursor=pointer]:
+                                  - /url: ../troubleshooting/playbooks/startup-availability/deployment-succeeded-startup-failed/
+                                  - generic [ref=e554]: Deployment Succeeded but Startup Failed
+                              - listitem [ref=e556]:
+                                - link "Failed to Forward Request" [ref=e557] [cursor=pointer]:
+                                  - /url: ../troubleshooting/playbooks/startup-availability/failed-to-forward-request/
+                                  - generic [ref=e558]: Failed to Forward Request
+                              - listitem [ref=e560]:
+                                - link "Slot Swap Restart / Config Drift / Warm-up Race (Azure App Service Linux)" [ref=e561] [cursor=pointer]:
+                                  - /url: ../troubleshooting/playbooks/startup-availability/slot-swap-config-drift/
+                                  - generic [ref=e562]: Slot Swap Restart / Config Drift / Warm-up Race (Azure App Service Linux)
+                              - listitem [ref=e563]:
+                                - link "Slot Swap Failed During Warm-up (Azure App Service Linux)" [ref=e564] [cursor=pointer]:
+                                  - /url: ../troubleshooting/playbooks/startup-availability/slot-swap-failed-during-warmup/
+                                  - generic [ref=e565]: Slot Swap Failed During Warm-up (Azure App Service Linux)
+                              - listitem [ref=e566]:
+                                - link "Warm-up vs Health Check (Azure App Service Linux)" [ref=e567] [cursor=pointer]:
+                                  - /url: ../troubleshooting/playbooks/startup-availability/warmup-vs-health-check/
+                                  - generic [ref=e568]: Warm-up vs Health Check (Azure App Service Linux)
+                              - listitem [ref=e569]:
+                                - link "Authentication Redirect Loop (Azure App Service Linux)" [ref=e570] [cursor=pointer]:
+                                  - /url: ../troubleshooting/playbooks/startup-availability/auth-redirect-loop/
+                                  - generic [ref=e571]: Authentication Redirect Loop (Azure App Service Linux)
+                        - listitem [ref=e572]:
+                          - generic [ref=e574]: Performance
+                          - navigation "Performance" [ref=e576]:
+                            - generic [ref=e577] [cursor=pointer]: Performance
+                            - list [ref=e579]:
+                              - listitem [ref=e580]:
+                                - link "Intermittent 5xx Under Load" [ref=e581] [cursor=pointer]:
+                                  - /url: ../troubleshooting/playbooks/performance/intermittent-5xx-under-load/
+                                  - generic [ref=e582]: Intermittent 5xx Under Load
+                              - listitem [ref=e584]:
+                                - link "Memory Pressure and Worker Degradation" [ref=e585] [cursor=pointer]:
+                                  - /url: ../troubleshooting/playbooks/performance/memory-pressure-and-worker-degradation/
+                                  - generic [ref=e586]: Memory Pressure and Worker Degradation
+                              - listitem [ref=e588]:
+                                - link "No Space Left on Device" [ref=e589] [cursor=pointer]:
+                                  - /url: ../troubleshooting/playbooks/performance/no-space-left-on-device/
+                                  - generic [ref=e590]: No Space Left on Device
+                              - listitem [ref=e592]:
+                                - link "Slow Response but Low CPU (Azure App Service Linux)" [ref=e593] [cursor=pointer]:
+                                  - /url: ../troubleshooting/playbooks/performance/slow-response-but-low-cpu/
+                                  - generic [ref=e594]: Slow Response but Low CPU (Azure App Service Linux)
+                              - listitem [ref=e595]:
+                                - link "Slow Start / Cold Start vs Real Regression (Azure App Service Linux)" [ref=e596] [cursor=pointer]:
+                                  - /url: ../troubleshooting/playbooks/performance/slow-start-cold-start/
+                                  - generic [ref=e597]: Slow Start / Cold Start vs Real Regression (Azure App Service Linux)
+                              - listitem [ref=e598]:
+                                - link "CORS Failures and Token Errors (Azure App Service Linux)" [ref=e599] [cursor=pointer]:
+                                  - /url: ../troubleshooting/playbooks/performance/cors-and-token-errors/
+                                  - generic [ref=e600]: CORS Failures and Token Errors (Azure App Service Linux)
+                        - listitem [ref=e601]:
+                          - generic [ref=e603]: Outbound Network
+                          - navigation "Outbound Network" [ref=e605]:
+                            - generic [ref=e606] [cursor=pointer]: Outbound Network
+                            - list [ref=e608]:
+                              - listitem [ref=e609]:
+                                - link "DNS Resolution with VNet-Integrated App Service" [ref=e610] [cursor=pointer]:
+                                  - /url: ../troubleshooting/playbooks/outbound-network/dns-resolution-vnet-integrated-app-service/
+                                  - generic [ref=e611]: DNS Resolution with VNet-Integrated App Service
+                              - listitem [ref=e613]:
+                                - link "Private Endpoint / Custom DNS / Route Confusion (Azure App Service Linux)" [ref=e614] [cursor=pointer]:
+                                  - /url: ../troubleshooting/playbooks/outbound-network/private-endpoint-custom-dns-route-confusion/
+                                  - generic [ref=e615]: Private Endpoint / Custom DNS / Route Confusion (Azure App Service Linux)
+                              - listitem [ref=e616]:
+                                - link "SNAT or Application Issue" [ref=e617] [cursor=pointer]:
+                                  - /url: ../troubleshooting/playbooks/outbound-network/snat-or-application-issue/
+                                  - generic [ref=e618]: SNAT or Application Issue
+                  - listitem [ref=e620]:
+                    - generic [ref=e622]: Methodology
+                    - navigation "Methodology" [ref=e624]:
+                      - generic [ref=e625] [cursor=pointer]: Methodology
+                      - list [ref=e627]:
+                        - listitem [ref=e628]:
+                          - link "Troubleshooting Method" [ref=e629] [cursor=pointer]:
+                            - /url: ../troubleshooting/methodology/troubleshooting-method/
+                            - generic [ref=e630]: Troubleshooting Method
+                        - listitem [ref=e631]:
+                          - link "Detector Map" [ref=e632] [cursor=pointer]:
+                            - /url: ../troubleshooting/methodology/detector-map/
+                            - generic [ref=e633]: Detector Map
+                  - listitem [ref=e634]:
+                    - link "KQL Queries" [ref=e636] [cursor=pointer]:
+                      - /url: ../troubleshooting/kql/
+                      - generic [ref=e637]: KQL Queries
+                    - navigation [ref=e640]:
+                      - generic [ref=e641] [cursor=pointer]: KQL Queries
+                      - list [ref=e643]:
+                        - listitem [ref=e644]:
+                          - link "HTTP" [ref=e646] [cursor=pointer]:
+                            - /url: ../troubleshooting/kql/http/
+                            - generic [ref=e647]: HTTP
+                          - navigation [ref=e650]:
+                            - generic [ref=e651] [cursor=pointer]: HTTP
+                            - list [ref=e653]:
+                              - listitem [ref=e654]:
+                                - link "5xx Trend Over Time" [ref=e655] [cursor=pointer]:
+                                  - /url: ../troubleshooting/kql/http/5xx-trend-over-time/
+                                  - generic [ref=e656]: 5xx Trend Over Time
+                              - listitem [ref=e658]:
+                                - link "Latency Trend by Status Code" [ref=e659] [cursor=pointer]:
+                                  - /url: ../troubleshooting/kql/http/latency-trend-by-status-code/
+                                  - generic [ref=e660]: Latency Trend by Status Code
+                              - listitem [ref=e661]:
+                                - link "Slowest Requests by Path" [ref=e662] [cursor=pointer]:
+                                  - /url: ../troubleshooting/kql/http/slowest-requests-by-path/
+                                  - generic [ref=e663]: Slowest Requests by Path
+                        - listitem [ref=e664]:
+                          - link "Console" [ref=e666] [cursor=pointer]:
+                            - /url: ../troubleshooting/kql/console/
+                            - generic [ref=e667]: Console
+                          - navigation [ref=e670]:
+                            - generic [ref=e671] [cursor=pointer]: Console
+                            - list [ref=e673]:
+                              - listitem [ref=e674]:
+                                - link "Container Binding Errors" [ref=e675] [cursor=pointer]:
+                                  - /url: ../troubleshooting/kql/console/container-binding-errors/
+                                  - generic [ref=e676]: Container Binding Errors
+                              - listitem [ref=e677]:
+                                - link "Startup Errors" [ref=e678] [cursor=pointer]:
+                                  - /url: ../troubleshooting/kql/console/startup-errors/
+                                  - generic [ref=e679]: Startup Errors
+                        - listitem [ref=e681]:
+                          - link "Restarts" [ref=e683] [cursor=pointer]:
+                            - /url: ../troubleshooting/kql/restarts/
+                            - generic [ref=e684]: Restarts
+                          - navigation [ref=e687]:
+                            - generic [ref=e688] [cursor=pointer]: Restarts
+                            - list [ref=e690]:
+                              - listitem [ref=e691]:
+                                - link "Repeated Startup Attempts" [ref=e692] [cursor=pointer]:
+                                  - /url: ../troubleshooting/kql/restarts/repeated-startup-attempts/
+                                  - generic [ref=e693]: Repeated Startup Attempts
+                              - listitem [ref=e694]:
+                                - link "Restart Timing Correlation" [ref=e695] [cursor=pointer]:
+                                  - /url: ../troubleshooting/kql/restarts/restart-timing-correlation/
+                                  - generic [ref=e696]: Restart Timing Correlation
+                        - listitem [ref=e698]:
+                          - link "Correlation" [ref=e700] [cursor=pointer]:
+                            - /url: ../troubleshooting/kql/correlation/
+                            - generic [ref=e701]: Correlation
+                          - navigation [ref=e704]:
+                            - generic [ref=e705] [cursor=pointer]: Correlation
+                            - list [ref=e707]:
+                              - listitem [ref=e708]:
+                                - link "Latency vs Errors" [ref=e709] [cursor=pointer]:
+                                  - /url: ../troubleshooting/kql/correlation/latency-vs-errors/
+                                  - generic [ref=e710]: Latency vs Errors
+                              - listitem [ref=e711]:
+                                - link "Restarts vs Latency" [ref=e712] [cursor=pointer]:
+                                  - /url: ../troubleshooting/kql/correlation/restarts-vs-latency/
+                                  - generic [ref=e713]: Restarts vs Latency
+                  - listitem [ref=e714]:
+                    - link "Lab Guides" [ref=e716] [cursor=pointer]:
+                      - /url: ../troubleshooting/lab-guides/
+                      - generic [ref=e717]: Lab Guides
+                    - navigation [ref=e720]:
+                      - generic [ref=e721] [cursor=pointer]: Lab Guides
+                      - list [ref=e723]:
+                        - listitem [ref=e724]:
+                          - 'link "Lab: Container HTTP Pings" [ref=e725] [cursor=pointer]':
+                            - /url: ../troubleshooting/lab-guides/container-http-pings/
+                            - generic [ref=e726]: "Lab: Container HTTP Pings"
+                        - listitem [ref=e728]:
+                          - 'link "Lab: Deployment Succeeded Startup Failed" [ref=e729] [cursor=pointer]':
+                            - /url: ../troubleshooting/lab-guides/deployment-succeeded-startup-failed/
+                            - generic [ref=e730]: "Lab: Deployment Succeeded Startup Failed"
+                        - listitem [ref=e732]:
+                          - 'link "Lab: DNS Resolution Behavior for App Service Before and After VNet Integration" [ref=e733] [cursor=pointer]':
+                            - /url: ../troubleshooting/lab-guides/dns-vnet-resolution/
+                            - generic [ref=e734]: "Lab: DNS Resolution Behavior for App Service Before and After VNet Integration"
+                        - listitem [ref=e735]:
+                          - 'link "Lab Guide (Level 3): Failed to Forward Request on Azure App Service Linux" [ref=e736] [cursor=pointer]':
+                            - /url: ../troubleshooting/lab-guides/failed-to-forward-request/
+                            - generic [ref=e737]: "Lab Guide (Level 3): Failed to Forward Request on Azure App Service Linux"
+                        - listitem [ref=e738]:
+                          - 'link "Lab: Intermittent 5xx Under Load" [ref=e739] [cursor=pointer]':
+                            - /url: ../troubleshooting/lab-guides/intermittent-5xx/
+                            - generic [ref=e740]: "Lab: Intermittent 5xx Under Load"
+                        - listitem [ref=e742]:
+                          - 'link "Lab: Memory Pressure" [ref=e743] [cursor=pointer]':
+                            - /url: ../troubleshooting/lab-guides/memory-pressure/
+                            - generic [ref=e744]: "Lab: Memory Pressure"
+                        - listitem [ref=e746]:
+                          - 'link "Lab: No Space Left on Device (Persistent /home Exhaustion vs Ephemeral /tmp Pressure)" [ref=e747] [cursor=pointer]':
+                            - /url: ../troubleshooting/lab-guides/no-space-left-on-device/
+                            - generic [ref=e748]: "Lab: No Space Left on Device (Persistent /home Exhaustion vs Ephemeral /tmp Pressure)"
+                        - listitem [ref=e749]:
+                          - 'link "Lab Guide: Slot Swap Config Drift (Sticky vs Non-Sticky Settings)" [ref=e750] [cursor=pointer]':
+                            - /url: ../troubleshooting/lab-guides/slot-swap-config-drift/
+                            - generic [ref=e751]: "Lab Guide: Slot Swap Config Drift (Sticky vs Non-Sticky Settings)"
+                        - listitem [ref=e752]:
+                          - 'link "Lab Guide: Slow Start (Cold Start) vs Real Regression" [ref=e753] [cursor=pointer]':
+                            - /url: ../troubleshooting/lab-guides/slow-start-cold-start/
+                            - generic [ref=e754]: "Lab Guide: Slow Start (Cold Start) vs Real Regression"
+                        - listitem [ref=e755]:
+                          - 'link "Lab Guide (Level 3): SNAT Exhaustion on Azure App Service Linux" [ref=e756] [cursor=pointer]':
+                            - /url: ../troubleshooting/lab-guides/snat-exhaustion/
+                            - generic [ref=e757]: "Lab Guide (Level 3): SNAT Exhaustion on Azure App Service Linux"
+            - listitem [ref=e758]:
+              - link "Reference" [ref=e760] [cursor=pointer]:
+                - /url: ../reference/
+                - generic [ref=e761]: Reference
+              - navigation [ref=e764]:
+                - generic [ref=e765] [cursor=pointer]: Reference
+                - list [ref=e767]:
+                  - listitem [ref=e768]:
+                    - link "Azure CLI App Service Cheatsheet" [ref=e769] [cursor=pointer]:
+                      - /url: ../reference/cli-cheatsheet/
+                      - generic [ref=e770]: Azure CLI App Service Cheatsheet
+                  - listitem [ref=e771]:
+                    - link "KQL Queries Reference" [ref=e772] [cursor=pointer]:
+                      - /url: ../reference/kql-queries/
+                      - generic [ref=e773]: KQL Queries Reference
+                  - listitem [ref=e774]:
+                    - link "Platform Limits & Quotas" [ref=e775] [cursor=pointer]:
+                      - /url: ../reference/platform-limits/
+                      - generic [ref=e776]: Platform Limits & Quotas
+                  - listitem [ref=e777]:
+                    - link "Troubleshooting" [ref=e778] [cursor=pointer]:
+                      - /url: ../reference/troubleshooting/
+                      - generic [ref=e779]: Troubleshooting
+                  - listitem [ref=e780]:
+                    - link "Kudu API Reference" [ref=e781] [cursor=pointer]:
+                      - /url: ../reference/kudu-queries/
+                      - generic [ref=e782]: Kudu API Reference
+            - listitem [ref=e783]:
+              - link "Visualization" [ref=e785] [cursor=pointer]:
+                - /url: ./
+                - generic [ref=e786]: Visualization
+              - navigation [ref=e790]:
+                - generic [ref=e791] [cursor=pointer]: Visualization
+                - list [ref=e793]:
+                  - listitem [ref=e794]:
+                    - link "Core Knowledge Graph" [ref=e795] [cursor=pointer]:
+                      - /url: core-knowledge-graph/
+                      - generic [ref=e796]: Core Knowledge Graph
+                  - listitem [ref=e798]:
+                    - link "Troubleshooting Map" [ref=e799] [cursor=pointer]:
+                      - /url: troubleshooting-map/
+                      - generic [ref=e800]: Troubleshooting Map
+                  - listitem [ref=e802]:
+                    - link "Learning Paths" [ref=e803] [cursor=pointer]:
+                      - /url: learning-paths/
+                      - generic [ref=e804]: Learning Paths
+            - listitem [ref=e806]:
+              - generic [ref=e808]: Meta
+              - navigation "Meta" [ref=e810]:
+                - generic [ref=e811] [cursor=pointer]: Meta
+                - list [ref=e813]:
+                  - listitem [ref=e814]:
+                    - link "Documentation Taxonomy" [ref=e815] [cursor=pointer]:
+                      - /url: ../meta/taxonomy/
+                      - generic [ref=e816]: Documentation Taxonomy
+        - navigation "Table of contents" [ref=e821]:
+          - generic [ref=e822]: Table of contents
+          - list [ref=e823]:
+            - listitem [ref=e824]:
+              - link "Why Visual Navigation?" [ref=e825] [cursor=pointer]:
+                - /url: "#why-visual-navigation"
+                - generic [ref=e826]: Why Visual Navigation?
+            - listitem [ref=e827]:
+              - link "Available Visualizations" [ref=e828] [cursor=pointer]:
+                - /url: "#available-visualizations"
+                - generic [ref=e829]: Available Visualizations
+            - listitem [ref=e830]:
+              - link "Graph Legend" [ref=e831] [cursor=pointer]:
+                - /url: "#graph-legend"
+                - generic [ref=e832]: Graph Legend
+              - navigation "Graph Legend" [ref=e833]:
+                - list [ref=e834]:
+                  - listitem [ref=e835]:
+                    - link "Node Types" [ref=e836] [cursor=pointer]:
+                      - /url: "#node-types"
+                      - generic [ref=e837]: Node Types
+                  - listitem [ref=e838]:
+                    - link "Edge Types" [ref=e839] [cursor=pointer]:
+                      - /url: "#edge-types"
+                      - generic [ref=e840]: Edge Types
+            - listitem [ref=e841]:
+              - link "How Graphs Are Built" [ref=e842] [cursor=pointer]:
+                - /url: "#how-graphs-are-built"
+                - generic [ref=e843]: How Graphs Are Built
+            - listitem [ref=e844]:
+              - link "Technical Implementation" [ref=e845] [cursor=pointer]:
+                - /url: "#technical-implementation"
+                - generic [ref=e846]: Technical Implementation
+            - listitem [ref=e847]:
+              - link "Contributing to Visualizations" [ref=e848] [cursor=pointer]:
+                - /url: "#contributing-to-visualizations"
+                - generic [ref=e849]: Contributing to Visualizations
+        - article [ref=e851]:
+          - heading "Visualization ¶" [level=1] [ref=e852]:
+            - text: Visualization
+            - link "¶" [ref=e853] [cursor=pointer]:
+              - /url: "#visualization"
+          - paragraph [ref=e854]: Explore the Azure App Service Practical Guide through interactive knowledge graphs and visual maps.
+          - heading "Why Visual Navigation? ¶" [level=2] [ref=e855]:
+            - text: Why Visual Navigation?
+            - link "¶" [ref=e856] [cursor=pointer]:
+              - /url: "#why-visual-navigation"
+          - paragraph [ref=e857]: "Traditional documentation navigation relies on hierarchical menus and search. Visual graphs offer:"
+          - list [ref=e858]:
+            - listitem [ref=e859]:
+              - strong [ref=e860]: Relationship Discovery
+              - text: ": See how concepts connect to playbooks, labs, and KQL queries"
+            - listitem [ref=e861]:
+              - strong [ref=e862]: Learning Path Clarity
+              - text: ": Understand prerequisites and progression at a glance"
+            - listitem [ref=e863]:
+              - strong [ref=e864]: Troubleshooting Context
+              - text: ": Navigate from symptoms to solutions through evidence chains"
+          - heading "Available Visualizations ¶" [level=2] [ref=e865]:
+            - text: Available Visualizations
+            - link "¶" [ref=e866] [cursor=pointer]:
+              - /url: "#available-visualizations"
+          - list [ref=e868]:
+            - listitem [ref=e869]:
+              - paragraph [ref=e870]:
+                - img [ref=e872]
+                - strong [ref=e874]: Core Knowledge Graph
+              - separator [ref=e875]
+              - paragraph [ref=e876]: The complete site structure showing how Platform concepts, Best Practices, and Troubleshooting documents interconnect.
+              - paragraph [ref=e877]:
+                - link "Explore the Knowledge Graph" [ref=e878] [cursor=pointer]:
+                  - /url: core-knowledge-graph/
+                  - img [ref=e880]
+                  - text: Explore the Knowledge Graph
+            - listitem [ref=e882]:
+              - paragraph [ref=e883]:
+                - img [ref=e885]
+                - strong [ref=e887]: Troubleshooting Map
+              - separator [ref=e888]
+              - paragraph [ref=e889]: Navigate troubleshooting workflows visually. See how playbooks connect to labs, KQL queries, and evidence patterns.
+              - paragraph [ref=e890]:
+                - link "Open Troubleshooting Map" [ref=e891] [cursor=pointer]:
+                  - /url: troubleshooting-map/
+                  - img [ref=e893]
+                  - text: Open Troubleshooting Map
+            - listitem [ref=e895]:
+              - paragraph [ref=e896]:
+                - img [ref=e898]
+                - strong [ref=e900]: Learning Paths
+              - separator [ref=e901]
+              - paragraph [ref=e902]: Visual learning progressions for Python, Node.js, Java, and .NET development on App Service.
+              - paragraph [ref=e903]:
+                - link "View Learning Paths" [ref=e904] [cursor=pointer]:
+                  - /url: learning-paths/
+                  - img [ref=e906]
+                  - text: View Learning Paths
+          - heading "Graph Legend ¶" [level=2] [ref=e908]:
+            - text: Graph Legend
+            - link "¶" [ref=e909] [cursor=pointer]:
+              - /url: "#graph-legend"
+          - paragraph [ref=e910]: "Understanding the node types and edge relationships used across all visualizations:"
+          - heading "Node Types ¶" [level=3] [ref=e911]:
+            - text: Node Types
+            - link "¶" [ref=e912] [cursor=pointer]:
+              - /url: "#node-types"
+          - table [ref=e915]:
+            - rowgroup [ref=e916]:
+              - row "Type Color Description" [ref=e917]:
+                - columnheader "Type" [ref=e918]
+                - columnheader "Color" [ref=e919]
+                - columnheader "Description" [ref=e920]
+            - rowgroup [ref=e921]:
+              - row "concept Blue Platform concepts and architecture (How App Service Works, Request Lifecycle)" [ref=e922]:
+                - cell "concept" [ref=e923]:
+                  - code [ref=e924]: concept
+                - cell "Blue" [ref=e925]
+                - cell "Platform concepts and architecture (How App Service Works, Request Lifecycle)" [ref=e926]
+              - row "best_practice Green Operational guidance (Production Baseline, Security Best Practices)" [ref=e927]:
+                - cell "best_practice" [ref=e928]:
+                  - code [ref=e929]: best_practice
+                - cell "Green" [ref=e930]
+                - cell "Operational guidance (Production Baseline, Security Best Practices)" [ref=e931]
+              - row "playbook Orange Troubleshooting procedures (Intermittent 5xx, Memory Pressure)" [ref=e932]:
+                - cell "playbook" [ref=e933]:
+                  - code [ref=e934]: playbook
+                - cell "Orange" [ref=e935]
+                - cell "Troubleshooting procedures (Intermittent 5xx, Memory Pressure)" [ref=e936]
+              - row "lab Red Hands-on reproducible experiments" [ref=e937]:
+                - cell "lab" [ref=e938]:
+                  - code [ref=e939]: lab
+                - cell "Red" [ref=e940]
+                - cell "Hands-on reproducible experiments" [ref=e941]
+              - row "kql Purple KQL query patterns for diagnostics" [ref=e942]:
+                - cell "kql" [ref=e943]:
+                  - code [ref=e944]: kql
+                - cell "Purple" [ref=e945]
+                - cell "KQL query patterns for diagnostics" [ref=e946]
+              - row "map Teal Decision trees, evidence maps, mental models" [ref=e947]:
+                - cell "map" [ref=e948]:
+                  - code [ref=e949]: map
+                - cell "Teal" [ref=e950]
+                - cell "Decision trees, evidence maps, mental models" [ref=e951]
+              - row "reference Gray CLI cheatsheets, platform limits" [ref=e952]:
+                - cell "reference" [ref=e953]:
+                  - code [ref=e954]: reference
+                - cell "Gray" [ref=e955]
+                - cell "CLI cheatsheets, platform limits" [ref=e956]
+          - heading "Edge Types ¶" [level=3] [ref=e957]:
+            - text: Edge Types
+            - link "¶" [ref=e958] [cursor=pointer]:
+              - /url: "#edge-types"
+          - table [ref=e961]:
+            - rowgroup [ref=e962]:
+              - row "Relationship Meaning" [ref=e963]:
+                - columnheader "Relationship" [ref=e964]
+                - columnheader "Meaning" [ref=e965]
+            - rowgroup [ref=e966]:
+              - row "prerequisite Must understand A before B" [ref=e967]:
+                - cell "prerequisite" [ref=e968]:
+                  - code [ref=e969]: prerequisite
+                - cell "Must understand A before B" [ref=e970]
+              - row "related Conceptually connected" [ref=e971]:
+                - cell "related" [ref=e972]:
+                  - code [ref=e973]: related
+                - cell "Conceptually connected" [ref=e974]
+              - row "used_in A is used within B" [ref=e975]:
+                - cell "used_in" [ref=e976]:
+                  - code [ref=e977]: used_in
+                - cell "A is used within B" [ref=e978]
+              - row "deep_dive_for A provides detailed coverage of B" [ref=e979]:
+                - cell "deep_dive_for" [ref=e980]:
+                  - code [ref=e981]: deep_dive_for
+                - cell "A provides detailed coverage of B" [ref=e982]
+              - row "troubleshooting_for Playbook addresses issues in concept" [ref=e983]:
+                - cell "troubleshooting_for" [ref=e984]:
+                  - code [ref=e985]: troubleshooting_for
+                - cell "Playbook addresses issues in concept" [ref=e986]
+              - row "validated_by_lab Playbook hypothesis tested by lab" [ref=e987]:
+                - cell "validated_by_lab" [ref=e988]:
+                  - code [ref=e989]: validated_by_lab
+                - cell "Playbook hypothesis tested by lab" [ref=e990]
+              - row "investigated_with_kql Playbook uses this KQL query" [ref=e991]:
+                - cell "investigated_with_kql" [ref=e992]:
+                  - code [ref=e993]: investigated_with_kql
+                - cell "Playbook uses this KQL query" [ref=e994]
+          - heading "How Graphs Are Built ¶" [level=2] [ref=e995]:
+            - text: How Graphs Are Built
+            - link "¶" [ref=e996] [cursor=pointer]:
+              - /url: "#how-graphs-are-built"
+          - paragraph [ref=e997]: "The knowledge graphs are automatically generated from document frontmatter:"
+          - generic [ref=e999]:
+            - navigation [ref=e1000]:
+              - button "Copy to clipboard" [ref=e1001] [cursor=pointer]
+            - code [ref=e1002]: "--- title: Memory Pressure and Worker Degradation slug: memory-pressure-and-worker-degradation doc_type: playbook section: troubleshooting topics: - performance - memory - worker products: - azure-app-service related: - intermittent-5xx-under-load - slow-response-but-low-cpu prerequisites: - how-app-service-works - request-lifecycle used_in: - first-10-minutes-performance evidence: - kql - detector - lab ---"
+          - paragraph [ref=e1003]:
+            - text: The build pipeline (
+            - code [ref=e1004]: tools/build_doc_graph.py
+            - text: ) extracts these relationships to generate the graph JSON.
+          - heading "Technical Implementation ¶" [level=2] [ref=e1005]:
+            - text: Technical Implementation
+            - link "¶" [ref=e1006] [cursor=pointer]:
+              - /url: "#technical-implementation"
+          - paragraph [ref=e1007]:
+            - text: The visualizations use
+            - link "Cytoscape.js" [ref=e1008] [cursor=pointer]:
+              - /url: https://js.cytoscape.org/
+            - text: "for interactive 2D graph rendering:"
+          - list [ref=e1009]:
+            - listitem [ref=e1010]:
+              - strong [ref=e1011]: Click to Navigate
+              - text: ": Click any node to open the corresponding documentation page"
+            - listitem [ref=e1012]:
+              - strong [ref=e1013]: Search/Filter
+              - text: ": Use the search box to highlight matching nodes"
+            - listitem [ref=e1014]:
+              - strong [ref=e1015]: Zoom/Pan
+              - text: ": Mouse wheel to zoom, drag to pan"
+            - listitem [ref=e1016]:
+              - strong [ref=e1017]: Layout
+              - text: ": Automatic force-directed layout with manual adjustment support"
+          - heading "Contributing to Visualizations ¶" [level=2] [ref=e1018]:
+            - text: Contributing to Visualizations
+            - link "¶" [ref=e1019] [cursor=pointer]:
+              - /url: "#contributing-to-visualizations"
+          - paragraph [ref=e1020]: "To add a document to the knowledge graph:"
+          - list [ref=e1021]:
+            - listitem [ref=e1022]: Add standardized frontmatter to your markdown file
+            - listitem [ref=e1023]:
+              - text: Include
+              - code [ref=e1024]: related
+              - text: ","
+              - code [ref=e1025]: prerequisites
+              - text: ", or"
+              - code [ref=e1026]: used_in
+              - text: fields as appropriate
+            - listitem [ref=e1027]:
+              - text: Run
+              - code [ref=e1028]: python tools/build_doc_graph.py
+              - text: to regenerate the graph
+            - listitem [ref=e1029]:
+              - text: Run
+              - code [ref=e1030]: python tools/validate_frontmatter.py
+              - text: to check for broken links
+          - paragraph [ref=e1031]:
+            - text: See the
+            - link "Taxonomy" [ref=e1032] [cursor=pointer]:
+              - /url: ../meta/taxonomy/
+            - text: for complete frontmatter schema documentation.
+      - button "Back to top":
+        - img
+        - text: Back to top
+    - contentinfo [ref=e1033]:
+      - generic [ref=e1035]:
+        - generic [ref=e1036]:
+          - text: Made with
+          - link "Material for MkDocs" [ref=e1037] [cursor=pointer]:
+            - /url: https://squidfunk.github.io/mkdocs-material/
+        - link "github.com" [ref=e1039] [cursor=pointer]:
+          - /url: https://github.com/yeongseon/azure-app-service-practical-guide
+          - img [ref=e1040]

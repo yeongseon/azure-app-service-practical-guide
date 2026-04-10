@@ -1,5 +1,7 @@
 # Azure App Service Practical Guide
 
+[English](README.md) | [한국어](README.ko.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md)
+
 Comprehensive guide for running web applications on Azure App Service — from first deployment to production troubleshooting.
 
 ## What's Inside
@@ -75,6 +77,26 @@ Contributions welcome. Please ensure:
 | [azure-container-apps-practical-guide](https://github.com/yeongseon/azure-container-apps-practical-guide) | Azure Container Apps practical guide |
 | [azure-aks-practical-guide](https://github.com/yeongseon/azure-aks-practical-guide) | Azure Kubernetes Service (AKS) practical guide |
 | [azure-monitoring-practical-guide](https://github.com/yeongseon/azure-monitoring-practical-guide) | Azure Monitoring practical guide |
+
+## Migration from Legacy Repos
+
+This repository consolidates experiments previously hosted in individual repositories:
+
+| Legacy Repository | Status | Migrated To |
+|---|---|---|
+| [lab-memory-pressure](https://github.com/yeongseon/lab-memory-pressure) | Archived | [App Service: Memory Pressure](docs/troubleshooting/lab-guides/memory-pressure.md) |
+| [lab-node-memory-pressure](https://github.com/yeongseon/lab-node-memory-pressure) | Archived | [App Service: Memory Pressure](docs/troubleshooting/lab-guides/memory-pressure.md) (Node.js comparison) |
+
+### Why Consolidate?
+
+- **Discoverability**: Single location for all PaaS troubleshooting experiments
+- **Cross-referencing**: Easy comparison across services (App Service vs Functions vs Container Apps)
+- **Consistent methodology**: Shared experiment template and evidence model
+- **Easier maintenance**: Single documentation site, unified CI/CD
+
+### Legacy Repo Policy
+
+Legacy repositories are archived but remain accessible for reference. New experiments should be added to this consolidated repository.
 
 ## Disclaimer
 
