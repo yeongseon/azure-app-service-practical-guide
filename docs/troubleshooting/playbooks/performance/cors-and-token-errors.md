@@ -1,6 +1,26 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: cors-and-token-errors-flow
+      type: flowchart
+      source: self-generated
+      justification: "Synthesized browser CORS and token-failure decision points from Microsoft Learn guidance on App Service authentication and authorization behavior."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization
+    - id: cors-preflight-auth-flow
+      type: sequence
+      source: self-generated
+      justification: "Synthesized the preflight-versus-auth request path from Microsoft Learn guidance on App Service authentication and authorization."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization
+    - id: token-refresh-failure-flow
+      type: sequence
+      source: self-generated
+      justification: "Synthesized token expiry and refresh failure behavior from Microsoft Learn guidance on App Service authentication and authorization."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization
 ---
 
 # CORS Failures and Token Errors (Azure App Service Linux)
@@ -17,6 +37,7 @@ CORS and authentication failures overlap in browser behavior. A preflight reject
 
 ### Troubleshooting decision flow
 
+<!-- diagram-id: cors-and-token-errors-flow -->
 ```mermaid
 graph TD
     A[Symptom: SPA sees CORS and/or 401/403] --> B{Are allowed origins correct for frontend host?}
@@ -41,6 +62,7 @@ graph TD
 
 ### CORS preflight flow with App Service Auth in path
 
+<!-- diagram-id: cors-preflight-auth-flow -->
 ```mermaid
 sequenceDiagram
     participant B as Browser SPA
@@ -63,6 +85,7 @@ sequenceDiagram
 
 ### Token expiration and refresh failure flow
 
+<!-- diagram-id: token-refresh-failure-flow -->
 ```mermaid
 sequenceDiagram
     participant B as Browser SPA

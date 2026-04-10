@@ -1,6 +1,12 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: anti-pattern-detection-flow
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/app-service-best-practices
 ---
 
 # Common Anti-Patterns
@@ -20,6 +26,7 @@ Apply this guide in three moments:
 
 ## Anti-Pattern Detection Flow
 
+<!-- diagram-id: anti-pattern-detection-flow -->
 ```mermaid
 flowchart TD
     A[Design or operational change proposed] --> B{Touches production workload?}

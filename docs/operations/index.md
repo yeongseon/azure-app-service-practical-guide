@@ -1,6 +1,12 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: operations-navigation-overview
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/app-service-best-practices
 ---
 
 # Operations
@@ -11,6 +17,7 @@ Production operations and day-2 practices for Azure App Service. This section is
 
 ### Operations Navigation Overview
 
+<!-- diagram-id: operations-navigation-overview -->
 ```mermaid
 flowchart TD
     A[Operations Start] --> B[Scaling]

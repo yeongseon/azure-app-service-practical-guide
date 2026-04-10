@@ -1,6 +1,17 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: slow-start-cold-start-sequence
+      type: sequence
+      source: self-generated
+      justification: "Synthesized cold-start versus warm-path behavior from Microsoft Learn guidance on App Service warm-up settings, health checks, Linux startup behavior, and 502/503 troubleshooting."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/reference-app-settings
+        - https://learn.microsoft.com/en-us/azure/app-service/monitor-instances-health-check
+        - https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/faqs-app-service-linux-new
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
 ---
 
 # Slow Start / Cold Start vs Real Regression (Azure App Service Linux)
@@ -324,6 +335,7 @@ $ az webapp deployment list --resource-group <resource-group> --name <app-name>
 
 ### Investigation Notes
 
+<!-- diagram-id: slow-start-cold-start-sequence -->
 ```mermaid
 sequenceDiagram
     autonumber

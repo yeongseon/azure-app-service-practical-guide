@@ -1,6 +1,13 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: hosting-decision-flow
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview-hosting-plans
+      description: "Shows the Learn-backed decision path from operating system and deployment model to plan tier selection."
 ---
 
 # Hosting Models
@@ -17,6 +24,7 @@ Choosing the right hosting model in Azure App Service determines your operationa
 
 ### Decision flow
 
+<!-- diagram-id: hosting-decision-flow -->
 ```mermaid
 flowchart TD
     Start[Choose Hosting Strategy] --> OS{Select OS Platform}

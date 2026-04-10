@@ -1,6 +1,14 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: deployment-flow-with-slots
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/deploy-best-practices
 ---
 
 # Deployment Best Practices
@@ -74,6 +82,7 @@ az webapp deployment slot swap \
 
 ### Deployment Flow with Slots
 
+<!-- diagram-id: deployment-flow-with-slots -->
 ```mermaid
 flowchart LR
     A[Commit to main branch] --> B[CI build and test]

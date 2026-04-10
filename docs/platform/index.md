@@ -1,6 +1,13 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: platform-concepts-map
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview
+      description: "Maps the guide's platform concept pages to the main Azure App Service concept areas described in Microsoft Learn."
 ---
 
 # Concepts
@@ -22,6 +29,7 @@ This section explains Azure App Service platform behavior in a language-agnostic
 | [Authentication Architecture](./authentication-architecture.md) | EasyAuth flow, token handling, identity provider integration |
 | [Security Architecture](./security-architecture.md) | Network perimeter, TLS, managed identity, secret management |
 
+<!-- diagram-id: platform-concepts-map -->
 ```mermaid
 graph LR
     A[How App Service Works] --> B[Hosting Models]

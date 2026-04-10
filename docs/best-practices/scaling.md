@@ -1,6 +1,14 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: scaling-decision-tree
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/manage-scale-up
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/app-service-best-practices
 ---
 
 # Scaling Best Practices
@@ -65,6 +73,7 @@ Limitations:
 
 ### Scaling Decision Tree
 
+<!-- diagram-id: scaling-decision-tree -->
 ```mermaid
 flowchart TD
     A[Workload latency or saturation issue] --> B{Primary bottleneck identified?}

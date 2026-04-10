@@ -1,6 +1,14 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: security-operations-control-layers
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview-security
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/networking-features
 ---
 
 # Security Operations
@@ -20,6 +28,7 @@ Protect App Service workloads with layered controls: identity, authentication, t
 
 ## Procedure
 
+<!-- diagram-id: security-operations-control-layers -->
 ```mermaid
 flowchart TD
     A[Security Operations] --> B[Transport]

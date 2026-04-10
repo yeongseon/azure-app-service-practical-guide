@@ -1,12 +1,27 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: networking-inbound-outbound-paths
+      type: graph
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/networking-features
+    - id: private-inbound-private-outbound-architecture
+      type: graph
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/networking-features
+    - id: networking-debugging-checklist
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/networking-features
 ---
 
 # Networking Operations
 
 Secure traffic paths by controlling inbound access, private inbound endpoints, and outbound connectivity to private resources. This guide provides operational patterns for App Service networking in production.
 
+<!-- diagram-id: networking-inbound-outbound-paths -->
 ```mermaid
 graph TD
     subgraph "External Traffic"
@@ -28,6 +43,7 @@ graph TD
 
 ### Combined Architecture (Private Inbound + Private Outbound)
 
+<!-- diagram-id: private-inbound-private-outbound-architecture -->
 ```mermaid
 graph TD
     subgraph Corporate VNet
@@ -259,6 +275,7 @@ tcpping 10.0.2.4 443
 
 ### Network Debugging Checklist
 
+<!-- diagram-id: networking-debugging-checklist -->
 ```mermaid
 flowchart TD
     Start["Connectivity Issue"] --> DNS["1. nameresolver/nslookup hostname"]

@@ -1,6 +1,17 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: private-endpoint-dns-route-flow
+      type: flowchart
+      source: self-generated
+      justification: "Synthesized private endpoint, DNS, and route validation steps from Microsoft Learn guidance on App Service private endpoints, VNet integration, and networking features."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/overview-private-endpoint
+        - https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration
+        - https://learn.microsoft.com/en-us/azure/app-service/networking-features
+        - https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/troubleshoot-vnet-integration-apps
 ---
 
 # Private Endpoint / Custom DNS / Route Confusion (Azure App Service Linux)
@@ -13,6 +24,7 @@ Outbound calls from an Azure App Service Linux app to a dependency expected over
 Private Endpoint health, DNS resolution, and route policy are separate layers. Portal status may look healthy while runtime traffic still takes a public or blocked path.
 
 ### Troubleshooting decision flow
+<!-- diagram-id: private-endpoint-dns-route-flow -->
 ```mermaid
 graph TD
     A[Symptom: Private endpoint dependency calls fail] --> B{Resolve dependency FQDN in-app}

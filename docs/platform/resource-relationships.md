@@ -1,6 +1,23 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: core-relationship-map
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview
+      description: "Shows the common App Service relationships to identity, data, secrets, storage, registry, and monitoring resources."
+    - id: managed-identity-token-acquisition
+      type: sequenceDiagram
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview-managed-identity
+      description: "Illustrates managed identity token acquisition and presentation to a downstream Azure resource."
+    - id: private-network-resource-path
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/networking-features
+      description: "Shows the private networking path that combines private endpoint ingress with VNet-integrated outbound access."
 ---
 
 # Resource Relationships
@@ -17,6 +34,7 @@ Azure App Service is usually one component in a broader Azure architecture that 
 
 ### Core relationship map
 
+<!-- diagram-id: core-relationship-map -->
 ```mermaid
 flowchart LR
     Client[Client]
@@ -77,6 +95,7 @@ Benefits:
 - Simplifies credential rotation risk
 - Supports least-privilege authorization through RBAC
 
+<!-- diagram-id: managed-identity-token-acquisition -->
 ```mermaid
 sequenceDiagram
     participant App as App Service App
@@ -158,6 +177,7 @@ Resource relationships are often constrained by network boundaries:
 - VNet integration for outbound private dependency access
 - Private DNS to ensure correct private name resolution
 
+<!-- diagram-id: private-network-resource-path -->
 ```mermaid
 graph LR
     Client[VNet Client] --> PE[Private Endpoint]

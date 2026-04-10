@@ -15,6 +15,15 @@ products:
 status: stable
 last_reviewed: 2026-04-09
 summary: Diagnose IIS web.config misconfigurations causing App Service Windows startup failures.
+content_sources:
+  diagrams:
+    - id: windows-iis-webconfig-startup-flow
+      type: flowchart
+      source: self-generated
+      justification: "Synthesized IIS startup failure branches from Microsoft Learn guidance on troubleshooting ASP.NET Core on Azure App Service and IIS plus general 502/503 App Service troubleshooting."
+      based_on:
+        - https://learn.microsoft.com/en-us/aspnet/core/test/troubleshoot-azure-iis?view=aspnetcore-10.0
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
 ---
 # Windows IIS web.config Startup Failures (Azure App Service Windows)
 
@@ -30,6 +39,7 @@ After deployment, the Windows App Service site fails during startup or serves on
 
 ### Troubleshooting decision flow (mermaid diagram)
 
+<!-- diagram-id: windows-iis-webconfig-startup-flow -->
 ```mermaid
 flowchart TD
     A[Startup failure on Windows App Service] --> B{Primary HTTP signature?}

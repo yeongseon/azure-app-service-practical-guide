@@ -19,6 +19,23 @@ related:
 summary: Scale up vs scale out, autoscale rules, and capacity planning for App Service.
 status: stable
 last_reviewed: 2026-04-08
+content_sources:
+  diagrams:
+    - id: scaling-dimensions
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview-hosting-plans
+      description: "Shows the Learn-backed choice between scaling up plan capacity and scaling out worker instance count."
+    - id: autoscale-evaluation-loop
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/azure-monitor/autoscale/autoscale-get-started
+      description: "Summarizes Azure Monitor autoscale rule evaluation, action, cooldown, and reevaluation flow."
+    - id: session-affinity-scaling-impact
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/reliability/reliability-app-service
+      description: "Shows traffic distributed across plan instances and how client affinity can bias traffic to one instance."
 ---
 # Scaling
 
@@ -34,6 +51,7 @@ Scaling in Azure App Service is the process of adjusting compute capacity to mee
 
 ### Core scaling dimensions
 
+<!-- diagram-id: scaling-dimensions -->
 ```mermaid
 graph TD
     Traffic[Traffic Change] --> Choice{Scaling Strategy}
@@ -102,6 +120,7 @@ Common rule signals:
 - HTTP queue depth/request count
 - Custom Azure Monitor metrics
 
+<!-- diagram-id: autoscale-evaluation-loop -->
 ```mermaid
 flowchart LR
     Metric[Metric Breach] --> Rule[Autoscale Rule Evaluation]
@@ -129,6 +148,7 @@ Best practices:
 
 Session affinity can keep users on the same instance, but this can undermine even load distribution.
 
+<!-- diagram-id: session-affinity-scaling-impact -->
 ```mermaid
 graph LR
     FE[Frontend] --> A[Instance A]

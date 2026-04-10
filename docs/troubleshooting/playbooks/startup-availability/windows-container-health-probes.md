@@ -15,6 +15,16 @@ products:
 status: stable
 last_reviewed: 2026-04-09
 summary: Diagnose Windows container startup failures and health probe differences from Linux containers on App Service.
+content_sources:
+  diagrams:
+    - id: windows-container-health-probes-flow
+      type: flowchart
+      source: self-generated
+      justification: "Synthesized Windows container startup and probe phases from Microsoft Learn guidance on custom containers, startup time limits, and App Service troubleshooting."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container
+        - https://learn.microsoft.com/en-us/azure/app-service/reference-app-settings
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
 ---
 # Windows Container Startup and Health Probes (Azure App Service Windows)
 
@@ -29,6 +39,7 @@ Windows custom containers on App Service restart during boot, stay unavailable a
 - Port assumptions differ: IIS commonly binds to port `80`, while many Linux app samples assume explicit app port mapping.
 
 ### Troubleshooting decision flow (mermaid diagram)
+<!-- diagram-id: windows-container-health-probes-flow -->
 ```mermaid
 graph TD
     A[Symptom: Windows container startup/probe failures] --> B{Which phase fails?}

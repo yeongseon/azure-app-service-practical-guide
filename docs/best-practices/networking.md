@@ -1,6 +1,16 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: app-service-networking-topology
+      type: graph
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/networking-features
+    - id: hybrid-connections-vs-vnet-integration
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/networking-features
 ---
 
 # Networking Best Practices
@@ -30,6 +40,7 @@ Use App Service networking to achieve four outcomes:
 3. SNAT behavior is managed under concurrency.
 4. DNS resolution aligns with your private topology.
 
+<!-- diagram-id: app-service-networking-topology -->
 ```mermaid
 graph TD
     Internet[Internet Users] --> WAF[WAF or Reverse Proxy]
@@ -223,6 +234,7 @@ Decision guideline:
 - Choose **Hybrid Connections** for a narrow, transitional requirement.
 - Choose **VNet Integration** for strategic private networking.
 
+<!-- diagram-id: hybrid-connections-vs-vnet-integration -->
 ```mermaid
 flowchart TD
     A[Need private outbound connectivity?] --> B{Only a few specific host:port endpoints?}

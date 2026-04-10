@@ -1,6 +1,14 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: defense-in-depth-security-layers
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview-security
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/networking-features
 ---
 
 # Security Best Practices
@@ -23,6 +31,7 @@ Security in Azure App Service is strongest when controls are layered: identity, 
 
 Adopt a defense-in-depth model so a single control failure does not immediately expose the workload.
 
+<!-- diagram-id: defense-in-depth-security-layers -->
 ```mermaid
 flowchart TD
     A[Internet] --> B[WAF Layer]

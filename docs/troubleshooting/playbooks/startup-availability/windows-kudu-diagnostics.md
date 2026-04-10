@@ -15,6 +15,16 @@ products:
 status: stable
 last_reviewed: 2026-04-09
 summary: Use Windows-specific Kudu SCM tools, Process Explorer, Debug Console, and diagnostic dumps for App Service troubleshooting.
+content_sources:
+  diagrams:
+    - id: windows-kudu-diagnostics-flow
+      type: flowchart
+      source: self-generated
+      justification: "Synthesized Windows diagnostic tool-selection logic from Microsoft Learn guidance on Kudu capabilities and App Service performance troubleshooting."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/resources-kudu
+        - https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/troubleshoot-performance-degradation
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
 ---
 
 # Windows Kudu and Diagnostic Tools (Azure App Service Windows)
@@ -39,6 +49,7 @@ Without a selection model, teams collect noisy data, miss the first reproducible
 
 ### Tool selection decision flow (mermaid diagram)
 
+<!-- diagram-id: windows-kudu-diagnostics-flow -->
 ```mermaid
 graph TD
     A[Windows App Service incident] --> B{What evidence is missing?}

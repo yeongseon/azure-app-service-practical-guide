@@ -20,6 +20,12 @@ related:
 summary: Minimum production baseline settings for App Service - tier, health checks, observability, configuration.
 status: stable
 last_reviewed: 2026-04-08
+content_sources:
+  diagrams:
+    - id: production-readiness-checklist
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/app-service-best-practices
 ---
 # Production Baseline
 
@@ -41,6 +47,7 @@ This guide defines a minimum production baseline for Azure App Service workloads
 
 The goal of a production baseline is to reduce accidental risk. Teams should not negotiate core controls app-by-app. Instead, establish defaults once and apply them consistently.
 
+<!-- diagram-id: production-readiness-checklist -->
 ```mermaid
 flowchart TD
     A[Production Readiness Checklist] --> B[Plan Tier]

@@ -28,6 +28,16 @@ evidence:
 summary: Diagnose 5xx errors that appear under load but not at baseline traffic.
 status: stable
 last_reviewed: 2026-04-08
+content_sources:
+  diagrams:
+    - id: intermittent-5xx-under-load-flow
+      type: flowchart
+      source: self-generated
+      justification: "Synthesized intermittent 5xx under-load branches from Microsoft Learn troubleshooting guidance for App Service performance degradation, outbound connection issues, and 502/503 errors."
+      based_on:
+        - https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/troubleshoot-performance-degradation
+        - https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/troubleshoot-intermittent-outbound-connection-errors
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
 ---
 # Intermittent 5xx Under Load (Azure App Service Linux)
 
@@ -40,6 +50,7 @@ HTTP 500/502/503 errors appear intermittently during moderate-to-high concurrenc
 Intermittent behavior encourages false conclusions: "it fixed itself," "scale is fine," or "not reproducible." In App Service Linux, transient 5xx can come from multiple layers (app worker model, outbound dependencies, platform health/restart behavior), so a single metric like CPU rarely explains the full failure pattern.
 
 ### Troubleshooting decision flow
+<!-- diagram-id: intermittent-5xx-under-load-flow -->
 ```mermaid
 graph TD
     A[Symptom: Intermittent 5xx during bursts] --> B{Check 5xx timing vs load}

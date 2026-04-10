@@ -1,6 +1,16 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: app-startup-failures-flow
+      type: flowchart
+      source: self-generated
+      justification: "Synthesized startup triage branches from Microsoft Learn guidance on App Service startup readiness, warm-up settings, and 502/503 troubleshooting."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+        - https://learn.microsoft.com/en-us/azure/app-service/reference-app-settings
+        - https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container
 ---
 
 # App Startup Failures
@@ -24,6 +34,7 @@ This playbook applies when an Azure App Service app deploys or restarts but neve
 - `Site startup probe failed after ... seconds.`
 - `failed to bind`, `address already in use`, or `permission denied`.
 
+<!-- diagram-id: app-startup-failures-flow -->
 ```mermaid
 flowchart TD
     A[App fails to start] --> B{Did process launch at all?}

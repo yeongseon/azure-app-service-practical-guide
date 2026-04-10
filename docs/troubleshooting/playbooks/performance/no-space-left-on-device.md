@@ -23,6 +23,16 @@ evidence:
 summary: Diagnose and resolve disk space exhaustion on App Service workers.
 status: stable
 last_reviewed: 2026-04-08
+content_sources:
+  diagrams:
+    - id: no-space-left-on-device-flow
+      type: flowchart
+      source: self-generated
+      justification: "Synthesized Linux storage-pressure decision points from Microsoft Learn troubleshooting guidance for diagnostics, performance degradation, and App Service on Linux filesystem behavior."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/troubleshoot-performance-degradation
+        - https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/faqs-app-service-linux-new
 ---
 # No Space Left on Device / Ephemeral Storage Pressure (Azure App Service Linux)
 
@@ -35,6 +45,7 @@ Applications on Azure App Service Linux intermittently fail with `No space left 
 The issue often looks like an application bug, but the underlying constraint can be storage tier specific: `/home` is persistent but quota-limited, while `/tmp` and container writable layers are ephemeral and can fill quickly under build/runtime activity. Restarting may briefly clear symptoms (especially `/tmp`) and hide root cause, leading to repeated incidents.
 
 ### Troubleshooting decision flow
+<!-- diagram-id: no-space-left-on-device-flow -->
 ```mermaid
 graph TD
     A[Symptom: "No space left on device"] --> B{Where is pressure?}

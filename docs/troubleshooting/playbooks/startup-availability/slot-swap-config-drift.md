@@ -1,6 +1,15 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: slot-swap-config-drift-flow
+      type: flowchart
+      source: self-generated
+      justification: "Synthesized post-swap drift and restart phases from Microsoft Learn guidance on deployment slot behavior, sticky settings, and startup restarts after swaps."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots
+        - https://learn.microsoft.com/en-us/azure/app-service/reference-app-settings
 ---
 
 # Slot Swap Restart / Config Drift / Warm-up Race (Azure App Service Linux)
@@ -14,6 +23,7 @@ A slot swap operation reports success, but production availability degrades imme
 From the control-plane perspective, swap is successful. From the application perspective, startup-critical configuration and identity context can change after warm-up, causing a second startup phase (or restart cascade) that was not validated by the original warm-up response.
 
 ### Slot swap lifecycle (where races and drift appear)
+<!-- diagram-id: slot-swap-config-drift-flow -->
 ```mermaid
 flowchart LR
     A[Deploy to Staging Slot] --> B[Warm-up Validation on Staging]

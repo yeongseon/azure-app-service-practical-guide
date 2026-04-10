@@ -1,12 +1,19 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: backup-restore-sequence
+      type: sequenceDiagram
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/manage-backup
 ---
 
 # Backup and Restore Operations
 
 Protect production workloads with scheduled backups, restore drills, and disaster recovery procedures. This guide covers App Service backup capabilities and complementary operational patterns.
 
+<!-- diagram-id: backup-restore-sequence -->
 ```mermaid
 sequenceDiagram
     participant Op as Operator

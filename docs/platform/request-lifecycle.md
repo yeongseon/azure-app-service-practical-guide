@@ -19,6 +19,18 @@ related:
 summary: End-to-end request path from client through Azure frontends to application process.
 status: stable
 last_reviewed: 2026-04-08
+content_sources:
+  diagrams:
+    - id: request-path-sequence
+      type: sequenceDiagram
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview
+      description: "Shows the request handoff from App Service front ends to the worker reverse proxy and application process."
+    - id: instance-selection-affinity
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/reliability/reliability-app-service
+      description: "Illustrates frontend distribution across healthy instances and optional client affinity to a single worker."
 ---
 # Request Lifecycle
 
@@ -34,22 +46,20 @@ Every request to Azure App Service travels through multiple platform layers befo
 
 ### End-to-end request path
 
+<!-- diagram-id: request-path-sequence -->
 ```mermaid
 sequenceDiagram
     participant Client as Client
-    participant GLB as Azure Global Load Balancer
     participant FE as App Service Frontend
     participant Worker as Worker Instance Reverse Proxy
     participant App as Application Process
 
-    Client->>GLB: HTTPS request (443)
-    GLB->>FE: Route to app endpoint
+    Client->>FE: HTTPS request (443)
     FE->>Worker: Forward to selected instance
     Worker->>App: Proxy to local application port
     App-->>Worker: Response
     Worker-->>FE: Response
-    FE-->>GLB: Response
-    GLB-->>Client: HTTP response
+    FE-->>Client: HTTP response
 ```
 
 ### Stage 1: DNS and global entry
@@ -116,6 +126,7 @@ Design guidance:
 
 By default, frontend routing distributes traffic across healthy instances. Optional session affinity can pin a client to a specific instance using cookies.
 
+<!-- diagram-id: instance-selection-affinity -->
 ```mermaid
 graph LR
     FE[Frontend] --> I1[Instance 1]

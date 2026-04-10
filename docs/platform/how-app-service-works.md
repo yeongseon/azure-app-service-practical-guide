@@ -18,6 +18,48 @@ related:
 summary: Internal architecture of Azure App Service - control plane, data plane, frontends, workers, and storage.
 status: stable
 last_reviewed: 2026-04-08
+content_sources:
+  diagrams:
+    - id: core-request-path
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview
+      description: "Shows the baseline App Service request path from client to frontend, worker, and app process."
+    - id: plane-interactions
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview
+      description: "Shows the relationship between management, runtime, and SCM planes in Azure App Service."
+    - id: runtime-request-sequence
+      type: sequenceDiagram
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview
+      description: "Shows an HTTPS request traversing the frontend, selected worker instance, and app listener."
+    - id: scm-access-rules
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/resources-kudu
+      description: "Shows that the main app site and the SCM/Kudu site can have different access restriction paths."
+    - id: deployment-flow-map
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/deploy-github-actions
+      description: "Shows CI-built artifact deployment alongside the optional Kudu/Oryx deployment path."
+    - id: health-check-decision
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/monitor-instances-health-check
+      description: "Shows the health check decision path that keeps healthy instances in rotation and removes unhealthy ones."
+    - id: slot-swap-sequence
+      type: sequenceDiagram
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots
+      description: "Shows staging deployment, warm-up, and swap into production with the production slot remaining online during warm-up."
+    - id: zone-redundancy-topology
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/reliability/reliability-app-service
+      description: "Shows regional front ends distributing traffic to workers across multiple availability zones."
 ---
 # How App Service Works
 
@@ -76,6 +118,7 @@ For a normal single-app flow, keep the model simple:
 
 Do not assume a global load balancer in this baseline diagram. Multi-region routing with Front Door or Traffic Manager is a separate architecture topic.
 
+<!-- diagram-id: core-request-path -->
 ```mermaid
 graph LR
     C[Client] --> FE[App Service Frontend]
@@ -85,6 +128,7 @@ graph LR
 
 #### Management, runtime, and SCM interactions
 
+<!-- diagram-id: plane-interactions -->
 ```mermaid
 graph TD
     OP[Operator / CI] --> MGMT[Management Plane\nARM + RP]
@@ -229,6 +273,7 @@ At runtime, App Service frontends terminate inbound connections and route traffi
 
 #### Runtime path and warm instance selection
 
+<!-- diagram-id: runtime-request-sequence -->
 ```mermaid
 sequenceDiagram
     participant U as User
@@ -309,6 +354,7 @@ Reframe it correctly:
 
 #### Access restrictions for main site vs SCM site
 
+<!-- diagram-id: scm-access-rules -->
 ```mermaid
 graph TD
     OP[Operator IP] --> MAIN[Main Site Access Rules]
@@ -356,6 +402,7 @@ App Service supports multiple deployment sources and mechanisms. **Oryx is one b
 
 #### Deployment flow map
 
+<!-- diagram-id: deployment-flow-map -->
 ```mermaid
 flowchart LR
     SRC[Source Code] --> CI[CI Build/Test]
@@ -490,6 +537,7 @@ Important behaviors:
 - Most effective with **2+ instances** (single instance has limited failover value).
 - Used as a readiness gate during scale-out and recovery flows.
 
+<!-- diagram-id: health-check-decision -->
 ```mermaid
 flowchart TD
     P[Platform Probe] --> H{Health endpoint result}
@@ -525,6 +573,7 @@ When using deployment slots:
 3. Target (production) stays online during warm-up.
 4. Swap happens after readiness checks.
 
+<!-- diagram-id: slot-swap-sequence -->
 ```mermaid
 sequenceDiagram
     participant Dev as CI/CD
@@ -669,6 +718,7 @@ Zone resilience in App Service depends on SKU, instance count, and regional capa
 - Pair zonal design with data-tier resiliency.
 - Add regional failover strategy for true regional outage tolerance.
 
+<!-- diagram-id: zone-redundancy-topology -->
 ```mermaid
 graph LR
     U[User Traffic] --> FE[Regional Frontends]

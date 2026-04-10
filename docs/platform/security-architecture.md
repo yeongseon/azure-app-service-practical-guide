@@ -1,6 +1,38 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: security-layer-model
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview-security
+      description: "Shows the layered security controls that App Service guidance combines for defense in depth."
+    - id: zero-trust-inbound-decision
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview-security
+      description: "Shows a zero-trust style decision sequence from network admission through identity, app policy, and telemetry."
+    - id: inbound-outbound-security-controls
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/networking-features
+      description: "Shows inbound protection and outbound private routing controls around an App Service app."
+    - id: private-app-service-topology
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/networking-features
+      description: "Shows a private App Service topology using private endpoint ingress plus private dependency access."
+    - id: managed-identity-token-flow
+      type: sequenceDiagram
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview-managed-identity
+      description: "Illustrates short-lived token acquisition through the managed identity endpoint and Microsoft Entra ID."
+    - id: security-baseline-workflow
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview-security
+      description: "Shows the continuous security baseline cycle of planning, deployment, validation, monitoring, response, and improvement."
 ---
 
 # Security Architecture
@@ -20,6 +52,7 @@ Azure App Service security is built as a layered control system rather than a si
 
 App Service security can be modeled as five concentric layers. Each layer reduces blast radius if an outer control is bypassed.
 
+<!-- diagram-id: security-layer-model -->
 ```mermaid
 graph TD
     L1[Layer 1: Network Boundary<br/>WAF, Access Restrictions, Private Endpoints]
@@ -52,6 +85,7 @@ App Service aligns well with Zero Trust when controls are intentionally combined
 
 Zero Trust decision flow for an inbound request:
 
+<!-- diagram-id: zero-trust-inbound-decision -->
 ```mermaid
 flowchart TD
     A[Incoming Request] --> B{Source allowed<br/>by WAF/Access Restrictions/Private Endpoint?}
@@ -109,6 +143,7 @@ Outbound security determines how your app reaches dependencies.
 
 Inbound and outbound flow with security controls:
 
+<!-- diagram-id: inbound-outbound-security-controls -->
 ```mermaid
 graph LR
     Client[Client] --> Edge[Front Door or App Gateway with WAF]
@@ -126,6 +161,7 @@ graph LR
 
 High-security production design often uses private ingress and private dependency access end to end.
 
+<!-- diagram-id: private-app-service-topology -->
 ```mermaid
 graph LR
     User[Enterprise Client] --> FD[Azure Front Door Premium + WAF]
@@ -173,6 +209,7 @@ Anti-pattern to avoid:
 
 #### Service-to-service authentication
 
+<!-- diagram-id: managed-identity-token-flow -->
 ```mermaid
 sequenceDiagram
     participant App as App Service Workload
@@ -363,6 +400,7 @@ Recommended alert domains include auth failures, access restriction deny spikes,
 
 ### End-to-end security baseline workflow
 
+<!-- diagram-id: security-baseline-workflow -->
 ```mermaid
 flowchart LR
     Plan[Define baseline controls] --> Deploy[Deploy via IaC]

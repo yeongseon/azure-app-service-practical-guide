@@ -1,12 +1,21 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: health-check-recovery-flow
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/monitor-instances-health-check
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/overview-diagnostics
 ---
 
 # Health and Recovery Operations
 
 Maintain availability by combining health checks, automatic remediation, and diagnostics. This guide focuses on platform-native recovery controls for Azure App Service.
 
+<!-- diagram-id: health-check-recovery-flow -->
 ```mermaid
 flowchart TD
     Probe[Health Probe Pings /health] --> Status{Status Code?}

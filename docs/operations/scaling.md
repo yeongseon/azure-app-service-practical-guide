@@ -1,12 +1,19 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: autoscale-feedback-loop
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/manage-scale-up
 ---
 
 # Scaling Operations
 
 Scale App Service capacity safely by combining vertical and horizontal scaling with autoscale rules, guardrails, and verification checks. This guide is language-agnostic and focuses on platform-level operations.
 
+<!-- diagram-id: autoscale-feedback-loop -->
 ```mermaid
 flowchart LR
     Metric[Monitor Metric] --> Rule{Rule Triggered?}

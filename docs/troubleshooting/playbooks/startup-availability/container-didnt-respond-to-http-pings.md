@@ -28,6 +28,16 @@ evidence:
 summary: Diagnose container startup failures when HTTP ping health check fails.
 status: stable
 last_reviewed: 2026-04-08
+content_sources:
+  diagrams:
+    - id: container-http-pings-flow
+      type: flowchart
+      source: self-generated
+      justification: "Synthesized container startup reachability branches from Microsoft Learn guidance on custom container port configuration, warm-up behavior, and Linux startup troubleshooting."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container
+        - https://learn.microsoft.com/en-us/azure/app-service/reference-app-settings
+        - https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/faqs-app-service-linux-new
 ---
 # Container Didn't Respond to HTTP Pings (Azure App Service Linux)
 
@@ -42,6 +52,7 @@ The container starts but App Service reports "Container didn't respond to HTTP p
 Multiple unrelated issues produce the same error message. Port binding, startup time, health endpoint behavior, and base image issues can all manifest as "didn't respond to HTTP pings." The error message itself does not distinguish between these causes.
 
 ### Troubleshooting decision flow
+<!-- diagram-id: container-http-pings-flow -->
 ```mermaid
 graph TD
     A[Symptom: Container didn't respond to HTTP pings] --> B{What to check first?}

@@ -19,6 +19,38 @@ related:
 summary: Inbound and outbound networking controls - access restrictions, private endpoints, VNet integration.
 status: stable
 last_reviewed: 2026-04-08
+content_sources:
+  diagrams:
+    - id: networking-model-overview
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/networking-features
+      description: "Shows the split between inbound networking features and outbound networking features in multitenant App Service."
+    - id: access-restrictions-flow
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview-access-restrictions
+      description: "Illustrates how front-end access restriction rules allow or deny requests before the app handles them."
+    - id: private-endpoint-inbound
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/networking-features
+      description: "Shows private endpoint ingress from a client in the virtual network to the App Service app."
+    - id: vnet-integration-outbound
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration
+      description: "Shows outbound virtual network integration from the app into private dependencies on the delegated subnet path."
+    - id: private-inbound-outbound-pattern
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/networking-features
+      description: "Combines private endpoint ingress with outbound VNet integration for end-to-end private application patterns."
+    - id: private-endpoint-dns-resolution
+      type: sequenceDiagram
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/networking-features
+      description: "Shows the CNAME-to-private-DNS resolution flow used by App Service private endpoints."
 ---
 # Networking
 
@@ -34,6 +66,7 @@ Azure App Service networking controls define who can reach your application and 
 
 ### Networking model overview
 
+<!-- diagram-id: networking-model-overview -->
 ```mermaid
 graph TD
     Internet[Internet Clients] --> Ingress{Inbound Path}
@@ -58,6 +91,7 @@ By default, an app has a public endpoint. You can tighten inbound access using:
 
 Access restrictions provide allow/deny controls evaluated before traffic reaches your app process.
 
+<!-- diagram-id: access-restrictions-flow -->
 ```mermaid
 graph LR
     Client[Client] --> FE[App Service Frontend]
@@ -79,6 +113,7 @@ Best practices:
 
 A private endpoint assigns a private IP for app access within your network boundary.
 
+<!-- diagram-id: private-endpoint-inbound -->
 ```mermaid
 graph LR
     Internet[Public Internet] -- blocked or restricted --> App[App Service]
@@ -102,6 +137,7 @@ Outbound traffic covers calls from your app to databases, APIs, and service depe
 
 VNet integration lets app outbound traffic reach private resources.
 
+<!-- diagram-id: vnet-integration-outbound -->
 ```mermaid
 graph LR
     App[App Service App] --> Integration[VNet Integration Subnet]
@@ -128,6 +164,7 @@ High-security architecture commonly combines:
 - Private DNS zones for name resolution
 - Strict NSG and route governance
 
+<!-- diagram-id: private-inbound-outbound-pattern -->
 ```mermaid
 graph LR
     subgraph VNet[Virtual Network]
@@ -142,6 +179,7 @@ graph LR
 
 Private endpoint access typically relies on a CNAME chain and private DNS zone mapping.
 
+<!-- diagram-id: private-endpoint-dns-resolution -->
 ```mermaid
 sequenceDiagram
     participant Client as VNet Client

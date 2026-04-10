@@ -24,6 +24,17 @@ evidence:
 summary: Diagnose DNS resolution failures in VNet-integrated App Service apps.
 status: stable
 last_reviewed: 2026-04-08
+content_sources:
+  diagrams:
+    - id: dns-vnet-resolution-flow
+      type: flowchart
+      source: self-generated
+      justification: "Synthesized VNet-integrated DNS troubleshooting branches from Microsoft Learn guidance on App Service VNet integration, DNS settings, private endpoints, and VNet troubleshooting."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration
+        - https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/troubleshoot-vnet-integration-apps
+        - https://learn.microsoft.com/en-us/azure/app-service/reference-app-settings
+        - https://learn.microsoft.com/en-us/azure/app-service/overview-private-endpoint
 ---
 # DNS Resolution with VNet-Integrated App Service (Azure App Service Linux)
 
@@ -35,6 +46,7 @@ Outbound calls from an Azure App Service Linux app fail because hostnames for in
 The same FQDN may resolve successfully from a VM in the VNet, from your local machine through VPN, or from another app, while the failing App Service instance still returns DNS errors. Teams often assume "VNet integration means DNS is automatically identical everywhere," but runtime DNS path, custom resolver behavior, private zone linking, and app-level DNS settings can diverge.
 
 ### Troubleshooting decision flow
+<!-- diagram-id: dns-vnet-resolution-flow -->
 ```mermaid
 graph TD
     A[Symptom: DNS failures in VNet-integrated App Service] --> B{Check resolver path first}

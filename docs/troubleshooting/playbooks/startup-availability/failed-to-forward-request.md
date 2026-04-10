@@ -27,6 +27,16 @@ evidence:
 summary: Diagnose request forwarding failures between frontend and worker.
 status: stable
 last_reviewed: 2026-04-08
+content_sources:
+  diagrams:
+    - id: failed-to-forward-request-flow
+      type: flowchart
+      source: self-generated
+      justification: "Synthesized forwarding-path failure points from Microsoft Learn guidance on custom container startup contracts, warm-up settings, and 502/503 troubleshooting."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container
+        - https://learn.microsoft.com/en-us/azure/app-service/reference-app-settings
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
 ---
 # Failed to Forward Request (Azure App Service Linux)
 
@@ -40,6 +50,7 @@ Requests intermittently or consistently fail at runtime with platform messages l
 
 This error is often misread as a generic networking outage, but it can come from multiple layers: incorrect bind address (`127.0.0.1`), wrong port alignment (`WEBSITES_PORT` vs actual listen port), protocol mismatch (HTTP/2/WebSocket expectations vs HTTP/1.1 proxy behavior), double-proxy conflicts in custom images (nginx/caddy + platform proxy), slow first-response behavior, or post-bind crashes. The app may look healthy at a glance while still failing in the forwarding path.
 
+<!-- diagram-id: failed-to-forward-request-flow -->
 ```mermaid
 flowchart LR
     A[Client] --> B[App Service Front-end]

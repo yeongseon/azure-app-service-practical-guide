@@ -1,6 +1,22 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: auth-redirect-loop-flow
+      type: flowchart
+      source: self-generated
+      justification: "Synthesized redirect-loop decision points from Microsoft Learn guidance on App Service authentication, reverse-proxy redirects, and slot-specific auth settings."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization
+        - https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots
+        - https://learn.microsoft.com/en-us/azure/app-service/app-service-web-tutorial-custom-domain
+    - id: auth-redirect-loop-sequence
+      type: sequence
+      source: self-generated
+      justification: "Synthesized normal versus looping auth redirects from Microsoft Learn guidance on App Service authentication and reverse-proxy redirect handling."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization
 ---
 
 # Authentication Redirect Loop (Azure App Service Linux)
@@ -17,6 +33,7 @@ Redirect loops can be caused by identity configuration drift, reverse-proxy head
 
 ### Troubleshooting decision flow
 
+<!-- diagram-id: auth-redirect-loop-flow -->
 ```mermaid
 graph TD
     A[Symptom: Infinite auth redirects] --> B{Do redirect_uri and host match actual public URL?}
@@ -41,6 +58,7 @@ graph TD
 
 ### Normal flow vs redirect loop flow
 
+<!-- diagram-id: auth-redirect-loop-sequence -->
 ```mermaid
 sequenceDiagram
     participant U as User Browser

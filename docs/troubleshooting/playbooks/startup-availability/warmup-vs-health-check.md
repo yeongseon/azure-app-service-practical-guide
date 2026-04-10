@@ -1,6 +1,16 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: warmup-vs-health-check-flow
+      type: flowchart
+      source: self-generated
+      justification: "Synthesized startup warm-up versus runtime health-check branches from Microsoft Learn guidance on App Service warm-up settings and Health check behavior."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/reference-app-settings
+        - https://learn.microsoft.com/en-us/azure/app-service/monitor-instances-health-check
+        - https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/faqs-app-service-linux-new
 ---
 
 # Warm-up vs Health Check (Azure App Service Linux)
@@ -17,6 +27,7 @@ Warm-up and Health Check both use HTTP but serve different phases:
 Wrong mental model leads to wrong mitigations (for example tuning Health Check when startup timeout is the actual issue).
 
 ### Troubleshooting decision flow
+<!-- diagram-id: warmup-vs-health-check-flow -->
 ```mermaid
 graph TD
     A[Symptom: Probe failures around startup and runtime] --> B{When does failure occur?}

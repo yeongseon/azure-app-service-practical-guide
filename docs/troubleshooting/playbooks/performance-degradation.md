@@ -1,6 +1,16 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: performance-degradation-flow
+      type: flowchart
+      source: self-generated
+      justification: "Synthesized performance triage branches from Microsoft Learn troubleshooting guidance for App Service slowdowns, resource pressure, and 5xx symptoms."
+      based_on:
+        - https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/troubleshoot-performance-degradation
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
 ---
 
 # Performance Degradation
@@ -23,6 +33,7 @@ This playbook applies when an Azure App Service app becomes slow, latency rises,
 - `OutOfMemory`, worker recycle, or repeated restart messages.
 - `SNAT exhaustion`-style dependency failures that look like app slowness.
 
+<!-- diagram-id: performance-degradation-flow -->
 ```mermaid
 flowchart TD
     A[Performance degradation reported] --> B{Is latency high for all routes?}

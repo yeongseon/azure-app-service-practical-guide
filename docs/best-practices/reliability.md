@@ -1,6 +1,14 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: reliability-architecture-with-health-checks
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/app-service-best-practices
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/monitor-instances-health-check
 ---
 
 # Reliability Best Practices
@@ -96,6 +104,7 @@ Cons:
 
 ### Reliability Architecture with Health Checks
 
+<!-- diagram-id: reliability-architecture-with-health-checks -->
 ```mermaid
 flowchart LR
     U[Users] --> G[Global traffic routing]

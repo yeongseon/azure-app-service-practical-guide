@@ -1,12 +1,19 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: cost-optimization-decision-flow
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview-manage-costs
 ---
 
 # Cost Optimization Operations
 
 Control App Service spend without sacrificing reliability by right-sizing plans, tuning scaling behavior, and removing operational waste. This guide focuses on practical, language-agnostic cost controls.
 
+<!-- diagram-id: cost-optimization-decision-flow -->
 ```mermaid
 flowchart TD
     A[Analyze Current Costs] --> B{Over-provisioned?}

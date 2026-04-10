@@ -1,6 +1,16 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: deployment-failures-flow
+      type: flowchart
+      source: self-generated
+      justification: "Synthesized deployment and post-deployment failure branches from Microsoft Learn guidance on deployment slots, diagnostics, and startup-related 502/503 troubleshooting."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
 ---
 
 # Deployment Failures
@@ -24,6 +34,7 @@ This playbook applies when deployment to Azure App Service finishes with an erro
 - `Slot swap operation has failed because the source slot could not be warmed up.`
 - `Container didn't respond to HTTP pings on port`.
 
+<!-- diagram-id: deployment-failures-flow -->
 ```mermaid
 flowchart TD
     A[Deployment failure reported] --> B{Did artifact reach App Service?}

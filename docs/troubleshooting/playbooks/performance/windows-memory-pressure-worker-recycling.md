@@ -16,6 +16,16 @@ products:
 status: stable
 last_reviewed: 2026-04-09
 summary: Diagnose memory pressure and unexpected w3wp.exe worker process recycling on Windows App Service.
+content_sources:
+  diagrams:
+    - id: windows-memory-pressure-worker-recycling-flow
+      type: flowchart
+      source: self-generated
+      justification: "Synthesized Windows worker recycle paths from Microsoft Learn guidance on App Service diagnostics, Kudu-based investigation, and performance troubleshooting."
+      based_on:
+        - https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/troubleshoot-performance-degradation
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+        - https://learn.microsoft.com/en-us/azure/app-service/resources-kudu
 ---
 # Windows Memory Pressure and IIS Worker Recycling (Azure App Service Windows)
 
@@ -28,6 +38,7 @@ The app is stable after restart, then latency and intermittent 5xx return as upt
 Memory pressure on App Service Windows often appears as periodic worker recycling rather than one obvious crash. IIS overlap recycle, platform restarts, .NET GC behavior, and native allocations can all look similar from high-level uptime signals. Teams also assume on-premises IIS behavior applies directly, but App Service sandbox and SKU memory ceilings materially change outcomes.
 
 ### Troubleshooting decision flow (mermaid diagram)
+<!-- diagram-id: windows-memory-pressure-worker-recycling-flow -->
 ```mermaid
 graph TD
     A[Symptom: Windows app degrades with uptime and w3wp.exe recycles] --> B{First discriminator}

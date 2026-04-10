@@ -1,6 +1,15 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: ssl-certificate-issues-flow
+      type: flowchart
+      source: self-generated
+      justification: "Synthesized hostname, certificate, and binding checks from Microsoft Learn guidance for custom domains and TLS/SSL certificate troubleshooting."
+      based_on:
+        - https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/connection-issues-with-ssl-or-tls/troubleshoot-domain-and-tls-ssl-certificates
+        - https://learn.microsoft.com/en-us/azure/app-service/app-service-web-tutorial-custom-domain
 ---
 
 # SSL Certificate Issues
@@ -24,6 +33,7 @@ This playbook applies when a custom domain on Azure App Service cannot be bound,
 - `SSL binding could not be added because the hostname is not configured.`
 - `Managed certificate creation failed`.
 
+<!-- diagram-id: ssl-certificate-issues-flow -->
 ```mermaid
 flowchart TD
     A[SSL or certificate issue reported] --> B{Is custom hostname bound?}

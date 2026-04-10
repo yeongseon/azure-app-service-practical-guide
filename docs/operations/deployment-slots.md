@@ -1,12 +1,21 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: deployment-slot-release-sequence
+      type: sequenceDiagram
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/deploy-best-practices
 ---
 
 # Deployment Slots Operations
 
 Use deployment slots to deliver releases with minimal risk, perform validation before production exposure, and roll back quickly when needed. This guide covers slot lifecycle, swap patterns, and operational safeguards.
 
+<!-- diagram-id: deployment-slot-release-sequence -->
 ```mermaid
 sequenceDiagram
     participant Dev as Release Engineer

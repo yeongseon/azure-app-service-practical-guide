@@ -1,6 +1,15 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: authentication-failures-flow
+      type: flowchart
+      source: self-generated
+      justification: "Synthesized App Service authentication failure paths from Microsoft Learn guidance on built-in auth configuration, redirect handling, and slot-specific auth behavior."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization
+        - https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots
 ---
 
 # Authentication Failures
@@ -24,6 +33,7 @@ This playbook applies when Azure App Service Authentication (Easy Auth), Microso
 - `App Service Authentication is not configured correctly`.
 - `IDX10214` audience validation failed or issuer/tenant mismatch errors.
 
+<!-- diagram-id: authentication-failures-flow -->
 ```mermaid
 flowchart TD
     A[Authentication failure reported] --> B{Is the user reaching the identity provider?}

@@ -1,6 +1,12 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: best-practices-learning-path
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/app-service-best-practices
 ---
 
 # Best Practices
@@ -19,6 +25,7 @@ The full learning path in this repository is intentional:
 
 Without this middle layer, teams often jump from conceptual understanding directly to code and accidentally carry poor defaults into production.
 
+<!-- diagram-id: best-practices-learning-path -->
 ```mermaid
 flowchart LR
     A[Platform Understanding<br/>How App Service works] --> B[Best Practices<br/>Design judgment and trade-offs]

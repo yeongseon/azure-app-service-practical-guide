@@ -1,6 +1,16 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: slot-swap-failed-during-warmup-flow
+      type: flowchart
+      source: self-generated
+      justification: "Synthesized slot warm-up failure branches from Microsoft Learn guidance on deployment slot swaps, warm-up settings, and App Service health behavior."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots
+        - https://learn.microsoft.com/en-us/azure/app-service/reference-app-settings
+        - https://learn.microsoft.com/en-us/azure/app-service/monitor-instances-health-check
 ---
 
 # Slot Swap Failed During Warm-up (Azure App Service Linux)
@@ -14,6 +24,7 @@ An Azure App Service Linux slot swap fails, rolls back, or takes much longer tha
 Swap warm-up is not the same mechanism as regular runtime traffic checks. An app can respond when you browse the staging URL manually and still fail platform-controlled warm-up due to timing, path rules, status filtering, or slot-specific configuration drift.
 
 ### Troubleshooting decision flow
+<!-- diagram-id: slot-swap-failed-during-warmup-flow -->
 ```mermaid
 graph TD
     A[Symptom: Slot swap fails during warm-up] --> B{Check swap timeline first}

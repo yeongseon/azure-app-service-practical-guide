@@ -24,6 +24,16 @@ evidence:
 summary: Distinguish between SNAT port exhaustion and application-level connection issues.
 status: stable
 last_reviewed: 2026-04-08
+content_sources:
+  diagrams:
+    - id: snat-or-application-issue-flow
+      type: flowchart
+      source: self-generated
+      justification: "Synthesized SNAT-versus-application decision points from Microsoft Learn guidance on intermittent outbound connection errors, NAT Gateway integration, and App Service networking."
+      based_on:
+        - https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/troubleshoot-intermittent-outbound-connection-errors
+        - https://learn.microsoft.com/en-us/azure/app-service/overview-nat-gateway-integration
+        - https://learn.microsoft.com/en-us/azure/app-service/networking-features
 ---
 # SNAT or Application Issue? (Azure App Service Linux)
 
@@ -35,6 +45,7 @@ Outbound calls from the App Service app intermittently fail with timeouts or con
 SNAT port exhaustion and application-level timeout/connection bugs produce nearly identical symptoms: intermittent outbound failures. Engineers often cannot tell whether the platform (SNAT) or the app (connection handling) is at fault.
 
 ### Troubleshooting decision flow
+<!-- diagram-id: snat-or-application-issue-flow -->
 ```mermaid
 graph TD
     A[Symptom: Intermittent outbound timeout/connection errors] --> B{Check SNAT detector first}

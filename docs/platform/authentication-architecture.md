@@ -1,6 +1,38 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: easy-auth-request-path
+      type: sequenceDiagram
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization
+      description: "Shows Easy Auth intercepting requests before app code and redirecting unauthenticated users to an identity provider."
+    - id: server-directed-auth-flow
+      type: sequenceDiagram
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization
+      description: "Shows the server-directed browser flow with session cookie creation and token store persistence."
+    - id: client-directed-auth-flow
+      type: sequenceDiagram
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization
+      description: "Shows the client-directed bearer token flow where App Service validates the incoming token before forwarding the request."
+    - id: token-session-lifecycle
+      type: stateDiagram-v2
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization
+      description: "Summarizes the authenticated session lifecycle from challenge through refresh, reauthentication, and sign-out."
+    - id: auth-vs-authorization-boundary
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization
+      description: "Shows the boundary between Easy Auth identity establishment and application-level authorization decisions."
+    - id: authentication-patterns-comparison
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization
+      description: "Compares platform-only, hybrid, and application-only authentication patterns described in this guide."
 ---
 
 # Authentication Architecture
@@ -23,6 +55,7 @@ Core platform behavior:
 
 This architecture allows App Service to provide consistent provider integration (Microsoft Entra ID, Google, GitHub, and others) without requiring authentication middleware in each framework.
 
+<!-- diagram-id: easy-auth-request-path -->
 ```mermaid
 sequenceDiagram
     autonumber
@@ -71,6 +104,7 @@ App Service supports two primary interaction models depending on client type and
 
 Server-directed flow is the default mode for classic web applications where browser navigation and redirects are expected.
 
+<!-- diagram-id: server-directed-auth-flow -->
 ```mermaid
 sequenceDiagram
     autonumber
@@ -112,6 +146,7 @@ Characteristics:
 
 Client-directed flow is common for SPAs, mobile clients, and API consumers that obtain tokens directly from an identity provider.
 
+<!-- diagram-id: client-directed-auth-flow -->
 ```mermaid
 sequenceDiagram
     autonumber
@@ -182,6 +217,7 @@ Common triggers for authentication renewal:
 - Returns `401` when session is absent, expired, or non-refreshable.
 - Frequently used by SPAs to avoid full redirect loops when renewing tokens.
 
+<!-- diagram-id: token-session-lifecycle -->
 ```mermaid
 stateDiagram-v2
     [*] --> Unauthenticated
@@ -245,6 +281,7 @@ Common header surfaces available to app code include:
 - `X-MS-CLIENT-PRINCIPAL-IDP`
 - `X-MS-TOKEN-*` headers when token store and provider settings allow exposure
 
+<!-- diagram-id: auth-vs-authorization-boundary -->
 ```mermaid
 flowchart LR
     Client[Caller] --> Platform[App Service Easy Auth]
@@ -315,6 +352,7 @@ Trade-offs:
 - Highest implementation and maintenance burden.
 - Greater risk of security defects if controls are inconsistently implemented.
 
+<!-- diagram-id: authentication-patterns-comparison -->
 ```mermaid
 flowchart TB
     subgraph P1[Pattern 1: Platform-Only]

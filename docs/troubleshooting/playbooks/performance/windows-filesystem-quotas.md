@@ -16,6 +16,16 @@ products:
 status: stable
 last_reviewed: 2026-04-09
 summary: Diagnose disk space issues caused by filesystem quotas, temp files, and IIS log accumulation on Windows App Service.
+content_sources:
+  diagrams:
+    - id: windows-filesystem-quotas-flow
+      type: flowchart
+      source: self-generated
+      justification: "Synthesized Windows quota and log-growth checks from Microsoft Learn guidance on App Service diagnostics, Kudu tooling, and platform troubleshooting."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+        - https://learn.microsoft.com/en-us/azure/app-service/resources-kudu
 ---
 # Windows Filesystem Quotas and IIS Log Behaviors (Azure App Service Windows)
 
@@ -35,6 +45,7 @@ The behavior mixes persistent and ephemeral storage semantics:
 Responders often restart the app, observe temporary recovery, and incorrectly assume root cause is fixed.
 
 ### Troubleshooting decision flow (mermaid diagram)
+<!-- diagram-id: windows-filesystem-quotas-flow -->
 ```mermaid
 graph TD
     A[Symptom: 503, write failures, or quota warnings] --> B{Is D:\\home near quota?}

@@ -27,6 +27,17 @@ evidence:
 summary: Diagnose when deployment completes but application fails to start.
 status: stable
 last_reviewed: 2026-04-08
+content_sources:
+  diagrams:
+    - id: deployment-succeeded-startup-failed-flow
+      type: flowchart
+      source: self-generated
+      justification: "Synthesized post-deployment startup failure branches from Microsoft Learn guidance on deployment diagnostics, Linux startup settings, and 502/503 troubleshooting."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/reference-app-settings
+        - https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/faqs-app-service-linux-new
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
 ---
 # Deployment Succeeded but Startup Failed (Azure App Service Linux)
 
@@ -40,6 +51,7 @@ Deployment reports success (for example, ZipDeploy/CI is green and Oryx build ex
 
 Teams often treat deployment success as runtime success. On App Service Linux, these are separate phases: artifact creation/deployment can succeed while runtime boot fails due to startup command, module path, port binding, runtime version, or dependency/artifact layout mismatches.
 
+<!-- diagram-id: deployment-succeeded-startup-failed-flow -->
 ```mermaid
 flowchart TD
     A[Deployment succeeded] --> B{App reachable?}

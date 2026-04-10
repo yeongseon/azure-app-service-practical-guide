@@ -29,6 +29,16 @@ evidence:
 summary: Diagnose worker-level memory pressure, degradation patterns, and recovery.
 status: stable
 last_reviewed: 2026-04-08
+content_sources:
+  diagrams:
+    - id: memory-pressure-worker-degradation-flow
+      type: flowchart
+      source: self-generated
+      justification: "Synthesized worker degradation hypotheses from Microsoft Learn troubleshooting guidance for App Service performance, memory symptoms, and 502/503 behavior."
+      based_on:
+        - https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/troubleshoot-performance-degradation
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
 ---
 # Memory Pressure and Worker Degradation (Azure App Service Linux)
 
@@ -41,6 +51,7 @@ Latency and error rates gradually worsen over uptime even when CPU is not satura
 Teams commonly expect memory incidents to present as immediate crashes. In App Service Linux, memory pressure can first appear as worker degradation: slower GC cycles, queue buildup, intermittent timeouts, and delayed responses. Because CPU can stay moderate, responders may incorrectly scale on CPU alone and miss plan-level memory contention shared across apps.
 
 ### Troubleshooting decision flow
+<!-- diagram-id: memory-pressure-worker-degradation-flow -->
 ```mermaid
 graph TD
     A[Symptom: Performance degrades over uptime, restart helps] --> B{What to check first?}

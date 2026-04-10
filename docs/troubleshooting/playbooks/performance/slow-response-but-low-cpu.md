@@ -1,6 +1,16 @@
 ---
 hide:
   - toc
+content_sources:
+  diagrams:
+    - id: slow-response-low-cpu-flow
+      type: flowchart
+      source: self-generated
+      justification: "Synthesized low-CPU latency triage from Microsoft Learn guidance on App Service performance degradation, dependency bottlenecks, and intermittent outbound failures."
+      based_on:
+        - https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/troubleshoot-performance-degradation
+        - https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/troubleshoot-intermittent-outbound-connection-errors
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
 ---
 
 # Slow Response but Low CPU (Azure App Service Linux)
@@ -14,6 +24,7 @@ HTTP responses are slow (high P95/P99 latency or elevated TimeTaken in AppServic
 Engineers instinctively check CPU first. When CPU is low, they assume the app is not resource-constrained and may stop investigating platform-level or dependency-level causes.
 
 ### Troubleshooting decision flow
+<!-- diagram-id: slow-response-low-cpu-flow -->
 ```mermaid
 graph TD
     A[Symptom: Slow responses with low CPU] --> B{Check latency shape first}
