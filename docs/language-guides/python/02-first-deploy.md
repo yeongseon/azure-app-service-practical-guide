@@ -43,8 +43,8 @@ APP_NAME="app-flask-tutorial-abc123"
 LOCATION="koreacentral"
 ```
 
-| Command | Purpose |
-|---------|---------|
+| Command/Parameter | Purpose |
+|-------------------|---------|
 | `RG="rg-flask-tutorial"` | Defines the resource group name that will contain the deployment. |
 | `APP_NAME="app-flask-tutorial-abc123"` | Sets the globally unique web app name. |
 | `LOCATION="koreacentral"` | Chooses the Azure region for the deployment. |
@@ -55,8 +55,8 @@ LOCATION="koreacentral"
 az webapp up --name $APP_NAME --resource-group $RG --location $LOCATION --runtime "PYTHON:3.11" --sku B1
 ```
 
-| Command | Purpose |
-|---------|---------|
+| Command/Parameter | Purpose |
+|-------------------|---------|
 | `az webapp up --name $APP_NAME --resource-group $RG --location $LOCATION --runtime "PYTHON:3.11" --sku B1` | Creates the resource group, App Service plan, and web app if needed, then uploads and deploys the current app source. |
 | `--name $APP_NAME` | Uses the specified globally unique web app name. |
 | `--resource-group $RG` | Creates or reuses the target resource group. |
@@ -83,10 +83,14 @@ WEB_APP_URL="https://$(az webapp show --resource-group $RG --name $APP_NAME --qu
 curl $WEB_APP_URL/health
 ```
 
-| Command | Purpose |
-|---------|---------|
+| Command/Parameter | Purpose |
+|-------------------|---------|
 | `WEB_APP_URL="https://$(az webapp show --resource-group $RG --name $APP_NAME --query defaultHostName --output tsv)"` | Builds the site URL from the web app hostname returned by Azure. |
 | `az webapp show --resource-group $RG --name $APP_NAME --query defaultHostName --output tsv` | Returns only the default hostname for the deployed app. |
+| `--resource-group $RG` | Queries the web app inside the tutorial resource group. |
+| `--name $APP_NAME` | Selects the deployed web app whose hostname is needed. |
+| `--query defaultHostName` | Extracts only the default hostname field from the response. |
+| `--output tsv` | Formats the hostname as plain text for shell substitution. |
 | `curl $WEB_APP_URL/health` | Calls the Flask health endpoint to confirm the app is responding. |
 
 ???+ example "Expected output"
@@ -104,12 +108,16 @@ az webapp log config --resource-group $RG --name $APP_NAME --application-logging
 az webapp log tail --resource-group $RG --name $APP_NAME
 ```
 
-| Command | Purpose |
-|---------|---------|
+| Command/Parameter | Purpose |
+|-------------------|---------|
 | `az webapp log config --resource-group $RG --name $APP_NAME --application-logging filesystem --level information` | Enables filesystem application logging so the log stream contains app output. |
+| `--resource-group $RG` | Targets the resource group that contains the web app. |
+| `--name $APP_NAME` | Selects the web app to configure for logging. |
 | `--application-logging filesystem` | Writes application logs to the App Service filesystem. |
 | `--level information` | Captures informational, warning, and error log events. |
 | `az webapp log tail --resource-group $RG --name $APP_NAME` | Streams live application and platform logs from the deployed web app. |
+| `--resource-group $RG` | Reads logs from the tutorial resource group. |
+| `--name $APP_NAME` | Streams logs for the deployed Flask app. |
 
 ### Step 5: Cleanup
 
@@ -117,8 +125,8 @@ az webapp log tail --resource-group $RG --name $APP_NAME
 az group delete --name $RG --yes --no-wait
 ```
 
-| Command | Purpose |
-|---------|---------|
+| Command/Parameter | Purpose |
+|-------------------|---------|
 | `az group delete --name $RG --yes --no-wait` | Deletes the tutorial resource group and all resources created by `az webapp up`. |
 | `--name $RG` | Targets the resource group used in this tutorial. |
 | `--yes` | Skips the interactive confirmation prompt. |

@@ -61,8 +61,8 @@ STORAGE_NAME="stjavaguideabc123"
 PRIVATE_DNS_ZONE_NAME="privatelink.blob.core.windows.net"
 ```
 
-| Command/Code | Purpose |
-|--------------|---------|
+| Command/Parameter | Purpose |
+|-------------------|---------|
 | `RG="rg-java-guide"` | Reuses the resource group that contains the deployed web app. |
 | `APP_NAME="app-java-guide-abc123"` | Targets the existing App Service app. |
 | `LOCATION="koreacentral"` | Keeps networking resources in the same Azure region. |
@@ -80,11 +80,21 @@ az network vnet subnet create --resource-group $RG --vnet-name $VNET_NAME --name
 az network vnet subnet create --resource-group $RG --vnet-name $VNET_NAME --name $PRIVATE_ENDPOINT_SUBNET_NAME --address-prefixes 10.10.2.0/24 --disable-private-endpoint-network-policies true
 ```
 
-| Command/Code | Purpose |
-|--------------|---------|
-| `az network vnet create --resource-group $RG --name $VNET_NAME --location $LOCATION --address-prefixes 10.10.0.0/16` | Creates the virtual network that will host App Service outbound integration and private endpoints. |
-| `az network vnet subnet create --resource-group $RG --vnet-name $VNET_NAME --name $INTEGRATION_SUBNET_NAME --address-prefixes 10.10.1.0/24 --delegations Microsoft.Web/serverFarms` | Creates the delegated subnet required for App Service VNet integration. |
-| `az network vnet subnet create --resource-group $RG --vnet-name $VNET_NAME --name $PRIVATE_ENDPOINT_SUBNET_NAME --address-prefixes 10.10.2.0/24 --disable-private-endpoint-network-policies true` | Creates the private endpoint subnet and disables the policy that blocks private endpoint NICs. |
+| Command/Parameter | Purpose |
+|-------------------|---------|
+| `az network vnet create` | Creates the virtual network that hosts integration and private endpoint subnets. |
+| `--resource-group $RG` | Places the VNet in the selected resource group. |
+| `--name $VNET_NAME` | Sets the VNet name. |
+| `--location $LOCATION` | Creates the VNet in the selected Azure region. |
+| `--address-prefixes 10.10.0.0/16` | Defines the overall address space for the VNet. |
+| `az network vnet subnet create` | Creates a subnet inside the VNet. |
+| `--vnet-name $VNET_NAME` | Targets the named VNet. |
+| `--name $INTEGRATION_SUBNET_NAME` | Names the App Service integration subnet. |
+| `--address-prefixes 10.10.1.0/24` | Defines the CIDR range for the integration subnet. |
+| `--delegations Microsoft.Web/serverFarms` | Delegates the subnet to App Service. |
+| `--name $PRIVATE_ENDPOINT_SUBNET_NAME` | Names the private endpoint subnet. |
+| `--address-prefixes 10.10.2.0/24` | Defines the CIDR range for the private endpoint subnet. |
+| `--disable-private-endpoint-network-policies true` | Disables policies that block private endpoint NICs. |
 
 ### Step 3: Connect the web app to the integration subnet
 
@@ -92,9 +102,13 @@ az network vnet subnet create --resource-group $RG --vnet-name $VNET_NAME --name
 az webapp vnet-integration add --resource-group $RG --name $APP_NAME --vnet $VNET_NAME --subnet $INTEGRATION_SUBNET_NAME
 ```
 
-| Command/Code | Purpose |
-|--------------|---------|
-| `az webapp vnet-integration add --resource-group $RG --name $APP_NAME --vnet $VNET_NAME --subnet $INTEGRATION_SUBNET_NAME` | Routes the app's outbound traffic through the delegated subnet so it can reach private resources. |
+| Command/Parameter | Purpose |
+|-------------------|---------|
+| `az webapp vnet-integration add` | Routes the app's outbound traffic through the delegated subnet. |
+| `--resource-group $RG` | Selects the resource group containing the web app. |
+| `--name $APP_NAME` | Selects the target App Service app. |
+| `--vnet $VNET_NAME` | Chooses the virtual network used for integration. |
+| `--subnet $INTEGRATION_SUBNET_NAME` | Chooses the delegated subnet used for outbound connectivity. |
 
 ### Step 4: Enable managed identity
 
@@ -103,10 +117,15 @@ az webapp identity assign --resource-group $RG --name $APP_NAME
 APP_PRINCIPAL_ID="$(az webapp identity show --resource-group $RG --name $APP_NAME --query principalId --output tsv)"
 ```
 
-| Command/Code | Purpose |
-|--------------|---------|
-| `az webapp identity assign --resource-group $RG --name $APP_NAME` | Enables a system-assigned managed identity on the web app. |
-| `APP_PRINCIPAL_ID="$(az webapp identity show --resource-group $RG --name $APP_NAME --query principalId --output tsv)"` | Captures the managed identity principal ID for RBAC assignment. |
+| Command/Parameter | Purpose |
+|-------------------|---------|
+| `az webapp identity assign` | Enables a system-assigned managed identity on the web app. |
+| `--resource-group $RG` | Selects the resource group containing the app. |
+| `--name $APP_NAME` | Targets the web app receiving the identity. |
+| `APP_PRINCIPAL_ID="$(...)"` | Stores the managed identity principal ID in a shell variable. |
+| `az webapp identity show` | Reads the managed identity details from the web app. |
+| `--query principalId` | Returns only the service principal object ID. |
+| `--output tsv` | Formats the principal ID as plain text for shell assignment. |
 
 ### Step 5: Create a storage account, private endpoint, and private DNS zone
 
@@ -119,14 +138,37 @@ az network private-dns link vnet create --resource-group $RG --zone-name $PRIVAT
 az network private-endpoint dns-zone-group create --resource-group $RG --endpoint-name pe-storage-blob --name storage-blob-zone-group --private-dns-zone $PRIVATE_DNS_ZONE_NAME --zone-name blob
 ```
 
-| Command/Code | Purpose |
-|--------------|---------|
-| `az storage account create --resource-group $RG --name $STORAGE_NAME --location $LOCATION --sku Standard_LRS --kind StorageV2` | Creates the storage account used in the private endpoint scenario. |
-| `STORAGE_ID="$(az storage account show --resource-group $RG --name $STORAGE_NAME --query id --output tsv)"` | Retrieves the storage account resource ID required by the private endpoint command. |
-| `az network private-endpoint create --resource-group $RG --name pe-storage-blob --vnet-name $VNET_NAME --subnet $PRIVATE_ENDPOINT_SUBNET_NAME --private-connection-resource-id $STORAGE_ID --group-id blob --connection-name pe-storage-blob-connection` | Creates the blob private endpoint in the dedicated subnet. |
-| `az network private-dns zone create --resource-group $RG --name $PRIVATE_DNS_ZONE_NAME` | Creates the private DNS zone for blob endpoint name resolution. |
-| `az network private-dns link vnet create --resource-group $RG --zone-name $PRIVATE_DNS_ZONE_NAME --name link-java-guide-vnet --virtual-network $VNET_NAME --registration-enabled false` | Links the private DNS zone to the VNet so the app resolves the storage hostname to a private IP. |
-| `az network private-endpoint dns-zone-group create --resource-group $RG --endpoint-name pe-storage-blob --name storage-blob-zone-group --private-dns-zone $PRIVATE_DNS_ZONE_NAME --zone-name blob` | Associates the private endpoint with the private DNS zone. |
+| Command/Parameter | Purpose |
+|-------------------|---------|
+| `az storage account create` | Creates the storage account used in the private endpoint scenario. |
+| `--resource-group $RG` | Places the storage account in the selected resource group. |
+| `--name $STORAGE_NAME` | Sets the storage account name. |
+| `--location $LOCATION` | Creates the storage account in the selected region. |
+| `--sku Standard_LRS` | Uses standard locally redundant storage. |
+| `--kind StorageV2` | Creates a general-purpose v2 storage account. |
+| `STORAGE_ID="$(...)"` | Stores the storage account resource ID in a shell variable. |
+| `az storage account show` | Reads the storage account metadata. |
+| `--query id` | Returns only the storage account resource ID. |
+| `--output tsv` | Formats the resource ID as plain text. |
+| `az network private-endpoint create` | Creates the private endpoint for blob access. |
+| `--name pe-storage-blob` | Names the private endpoint resource. |
+| `--vnet-name $VNET_NAME` | Places the endpoint in the selected VNet. |
+| `--subnet $PRIVATE_ENDPOINT_SUBNET_NAME` | Uses the dedicated private endpoint subnet. |
+| `--private-connection-resource-id $STORAGE_ID` | Points the private endpoint at the storage account. |
+| `--group-id blob` | Targets the Blob service subresource. |
+| `--connection-name pe-storage-blob-connection` | Names the private link connection object. |
+| `az network private-dns zone create` | Creates the private DNS zone for blob endpoint resolution. |
+| `--name $PRIVATE_DNS_ZONE_NAME` | Sets the blob private DNS zone name. |
+| `az network private-dns link vnet create` | Links the private DNS zone to the VNet. |
+| `--zone-name $PRIVATE_DNS_ZONE_NAME` | Selects the private DNS zone to link. |
+| `--name link-java-guide-vnet` | Names the VNet link resource. |
+| `--virtual-network $VNET_NAME` | Connects the DNS zone to the App Service VNet. |
+| `--registration-enabled false` | Disables auto-registration because Azure Storage records are managed by the private endpoint. |
+| `az network private-endpoint dns-zone-group create` | Associates the private endpoint with the DNS zone. |
+| `--endpoint-name pe-storage-blob` | Targets the storage private endpoint. |
+| `--name storage-blob-zone-group` | Names the DNS zone group resource. |
+| `--private-dns-zone $PRIVATE_DNS_ZONE_NAME` | Selects the private DNS zone to attach. |
+| `--zone-name blob` | Uses the blob zone group label for the mapping. |
 
 ### Step 6: Grant the managed identity access to Storage
 
@@ -134,9 +176,13 @@ az network private-endpoint dns-zone-group create --resource-group $RG --endpoin
 az role assignment create --assignee-object-id $APP_PRINCIPAL_ID --assignee-principal-type ServicePrincipal --role "Storage Blob Data Contributor" --scope $STORAGE_ID
 ```
 
-| Command/Code | Purpose |
-|--------------|---------|
-| `az role assignment create --assignee-object-id $APP_PRINCIPAL_ID --assignee-principal-type ServicePrincipal --role "Storage Blob Data Contributor" --scope $STORAGE_ID` | Grants the web app identity permission to access blob data without storing secrets. |
+| Command/Parameter | Purpose |
+|-------------------|---------|
+| `az role assignment create` | Creates an RBAC role assignment for the managed identity. |
+| `--assignee-object-id $APP_PRINCIPAL_ID` | Targets the web app's managed identity object ID. |
+| `--assignee-principal-type ServicePrincipal` | Tells Azure RBAC that the assignee is a service principal. |
+| `--role "Storage Blob Data Contributor"` | Grants blob data read and write permissions. |
+| `--scope $STORAGE_ID` | Applies the role assignment at the storage account scope. |
 
 ### Step 7: Configure the app to use the storage endpoint
 
@@ -144,9 +190,13 @@ az role assignment create --assignee-object-id $APP_PRINCIPAL_ID --assignee-prin
 az webapp config appsettings set --resource-group $RG --name $APP_NAME --settings STORAGE_ACCOUNT_URL="https://$STORAGE_NAME.blob.core.windows.net"
 ```
 
-| Command/Code | Purpose |
-|--------------|---------|
-| `az webapp config appsettings set --resource-group $RG --name $APP_NAME --settings STORAGE_ACCOUNT_URL="https://$STORAGE_NAME.blob.core.windows.net"` | Stores the standard blob endpoint hostname so the app can use private DNS resolution transparently. |
+| Command/Parameter | Purpose |
+|-------------------|---------|
+| `az webapp config appsettings set` | Writes application settings into the App Service configuration. |
+| `--resource-group $RG` | Selects the resource group containing the app. |
+| `--name $APP_NAME` | Targets the App Service app to configure. |
+| `--settings` | Passes one or more app settings to store. |
+| `STORAGE_ACCOUNT_URL="https://$STORAGE_NAME.blob.core.windows.net"` | Stores the standard blob endpoint hostname that private DNS resolves to the private endpoint. |
 
 ### Step 8: Use `DefaultAzureCredential` in the app
 
@@ -175,11 +225,19 @@ az network private-endpoint show --resource-group $RG --name pe-storage-blob --q
 az role assignment list --assignee $APP_PRINCIPAL_ID --scope $STORAGE_ID --output table
 ```
 
-| Command/Code | Purpose |
-|--------------|---------|
-| `az webapp vnet-integration list --resource-group $RG --name $APP_NAME --output table` | Confirms the app is attached to the expected VNet integration subnet. |
-| `az network private-endpoint show --resource-group $RG --name pe-storage-blob --query "{name:name,provisioningState:provisioningState}" --output json` | Confirms the private endpoint exists and is provisioned. |
-| `az role assignment list --assignee $APP_PRINCIPAL_ID --scope $STORAGE_ID --output table` | Confirms the managed identity has the expected storage role assignment. |
+| Command/Parameter | Purpose |
+|-------------------|---------|
+| `az webapp vnet-integration list` | Shows the VNet integration attached to the web app. |
+| `--resource-group $RG` | Selects the app resource group. |
+| `--name $APP_NAME` | Targets the web app being validated. |
+| `--output table` | Formats the VNet integration output for quick review. |
+| `az network private-endpoint show` | Displays a single private endpoint resource. |
+| `--name pe-storage-blob` | Targets the storage private endpoint. |
+| `--query "{name:name,provisioningState:provisioningState}"` | Returns only the endpoint name and provisioning state. |
+| `--output json` | Formats the endpoint status as JSON. |
+| `az role assignment list` | Lists RBAC assignments for the managed identity. |
+| `--assignee $APP_PRINCIPAL_ID` | Filters the role assignments to the web app identity. |
+| `--scope $STORAGE_ID` | Limits the results to the storage account scope. |
 
 ## Verification
 

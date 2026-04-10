@@ -49,12 +49,17 @@ az webapp deployment slot list \
   --output table
 ```
 
-| Command Part | Explanation |
+| Command/Parameter | Purpose |
 |---|---|
-| `az webapp deployment slot create` | Creates a new slot for the existing web app. |
-| `--slot staging` | Names the slot `staging`. |
-| `--configuration-source $APP_NAME` | Copies the current production configuration to reduce initial drift. |
-| `az webapp deployment slot list` | Lists current slots for quick verification. |
+| `az webapp deployment slot create` | Creates a new deployment slot for the existing app. |
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Selects the parent web app. |
+| `--slot staging` | Creates a slot named `staging`. |
+| `--configuration-source $APP_NAME` | Copies the production slot configuration into the new slot. |
+| `--output json` | Returns structured output for verification or scripting. |
+| `az webapp deployment slot list` | Lists existing slots on the app. |
+| `--query "[].{name:name,state:state,host:defaultHostName}"` | Limits the output to slot name, state, and hostname. |
+| `--output table` | Formats the slot list in a readable table. |
 
 !!! note "Tier requirement"
     Deployment slots require an App Service Plan tier that supports slots, such as Standard, Premium, or Isolated.
@@ -73,11 +78,17 @@ az webapp config appsettings set \
   --output json
 ```
 
-| Command Part | Explanation |
+| Command/Parameter | Purpose |
 |---|---|
-| `--slot staging` | Applies the setting to the staging slot only. |
-| `--settings ...` | Defines the values that should exist in the slot. |
-| `--slot-settings APP_ENVIRONMENT API_BASE_URL` | Marks those settings as sticky so they stay with the slot during swap. |
+| `az webapp config appsettings set` | Writes application settings to the selected slot. |
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Selects the web app to configure. |
+| `--slot staging` | Applies the settings to the `staging` slot. |
+| `--settings` | Supplies app setting key-value pairs to update. |
+| `APP_ENVIRONMENT=staging` | Marks the slot as a staging environment. |
+| `API_BASE_URL=https://api-staging.contoso.example` | Points the slot at the staging API endpoint. |
+| `--slot-settings APP_ENVIRONMENT API_BASE_URL` | Makes those settings sticky so they do not swap into production. |
+| `--output json` | Returns structured output after the update. |
 
 !!! warning "Do not forget sticky settings"
     If environment-dependent values are not marked as slot settings, they can move during the swap and cause production to point to the wrong backend or use the wrong secrets.
@@ -93,11 +104,14 @@ az webapp deployment slot swap \
   --output json
 ```
 
-| Command Part | Explanation |
+| Command/Parameter | Purpose |
 |---|---|
-| `az webapp deployment slot swap` | Exchanges routing between the source slot and target slot. |
-| `--slot staging` | Uses staging as the source slot containing the new version. |
-| `--target-slot production` | Promotes the staging release into production. |
+| `az webapp deployment slot swap` | Swaps the source slot and target slot. |
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Selects the web app whose slots will be swapped. |
+| `--slot staging` | Chooses `staging` as the source slot. |
+| `--target-slot production` | Chooses `production` as the destination slot. |
+| `--output json` | Returns structured swap results. |
 
 ### Swap with Preview
 
@@ -119,10 +133,16 @@ az webapp deployment slot swap \
   --output json
 ```
 
-| Command Part | Explanation |
+| Command/Parameter | Purpose |
 |---|---|
-| `--action preview` | Applies target-slot configuration to staging and pauses before final cutover. |
-| `--action swap` | Completes the pending swap after validation succeeds. |
+| `az webapp deployment slot swap` | Starts or completes a slot swap operation. |
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Selects the web app whose slots are being swapped. |
+| `--slot staging` | Uses `staging` as the source slot. |
+| `--target-slot production` | Uses `production` as the destination slot. |
+| `--action preview` | Applies target-slot settings to staging and pauses before cutover. |
+| `--action swap` | Completes the pending preview swap after validation. |
+| `--output json` | Returns structured output for each swap stage. |
 
 If validation fails, cancel the pending swap:
 
@@ -136,9 +156,15 @@ az webapp deployment slot swap \
   --output json
 ```
 
-| Command Part | Explanation |
+| Command/Parameter | Purpose |
 |---|---|
-| `--action reset` | Cancels the preview phase and restores the pre-swap state. |
+| `az webapp deployment slot swap` | Manages a staged slot swap operation. |
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Selects the web app whose swap is being canceled. |
+| `--slot staging` | Identifies the source slot that entered preview mode. |
+| `--target-slot production` | Identifies the destination slot for the canceled swap. |
+| `--action reset` | Cancels the preview swap and restores the original state. |
+| `--output json` | Returns structured output confirming the reset result. |
 
 ### Auto-Swap
 
@@ -151,10 +177,12 @@ az webapp deployment slot auto-swap \
   --slot staging
 ```
 
-| Command Part | Explanation |
+| Command/Parameter | Purpose |
 |---|---|
-| `az webapp deployment slot auto-swap` | Enables automatic promotion from the specified source slot after warm-up. |
-| `--slot staging` | Makes `staging` the source slot that auto-swaps into production. |
+| `az webapp deployment slot auto-swap` | Enables automatic slot promotion after warm-up. |
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Selects the web app to configure. |
+| `--slot staging` | Configures `staging` as the source slot that auto-swaps into production. |
 
 !!! warning "Linux limitation"
     Microsoft Learn notes that auto-swap is not supported for web apps on Linux and Web App for Containers. Use manual slot swap for those scenarios.
@@ -188,10 +216,18 @@ curl --silent --show-error --fail \
   "https://$APP_NAME-staging.azurewebsites.net/health"
 ```
 
-| Command | Purpose |
+| Command/Parameter | Purpose |
 |---|---|
-| `az webapp show ...` | Checks platform state and any in-progress slot swap status. |
-| `curl ...staging.../health` | Validates the staging slot before promotion. |
+| `az webapp show` | Retrieves status details for the web app. |
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Selects the web app to inspect. |
+| `--query "{host:defaultHostName,state:state,slotSwapStatus:slotSwapStatus}"` | Limits the output to hostname, state, and swap status. |
+| `--output json` | Returns the status in JSON format. |
+| `curl` | Sends an HTTP request to the staging slot health endpoint. |
+| `--silent` | Suppresses normal progress output. |
+| `--show-error` | Prints an error message when the request fails. |
+| `--fail` | Makes the command exit nonzero on HTTP error responses. |
+| `"https://$APP_NAME-staging.azurewebsites.net/health"` | Targets the staging slot health check endpoint. |
 
 ## See Also
 

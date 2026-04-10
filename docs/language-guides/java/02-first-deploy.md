@@ -59,8 +59,8 @@ APP_NAME="app-java-guide-abc123"
 LOCATION="koreacentral"
 ```
 
-| Command/Code | Purpose |
-|--------------|---------|
+| Command/Parameter | Purpose |
+|-------------------|---------|
 | `RG="rg-java-guide"` | Defines the resource group that `az webapp up` creates or reuses. |
 | `APP_NAME="app-java-guide-abc123"` | Sets the globally unique App Service app name. |
 | `LOCATION="koreacentral"` | Selects the Azure region for the new App Service resources. |
@@ -79,9 +79,10 @@ Choose the command that matches your project.
     mvn package
     ```
 
-    | Command/Code | Purpose |
-    |--------------|---------|
+    | Command/Parameter | Purpose |
+    |-------------------|---------|
     | `mvn package` | Builds the Spring Boot application and creates the deployable artifact in `target/`. |
+    | `mvn` | Runs the Maven build tool for the current project. |
     | `package` | Runs the Maven package lifecycle phase that produces the JAR file used for deployment. |
 
 === "Gradle"
@@ -89,9 +90,10 @@ Choose the command that matches your project.
     gradle build
     ```
 
-    | Command/Code | Purpose |
-    |--------------|---------|
+    | Command/Parameter | Purpose |
+    |-------------------|---------|
     | `gradle build` | Builds the application and runs the standard Gradle build pipeline. |
+    | `gradle` | Runs the Gradle build tool for the current project. |
     | `build` | Produces the deployable artifact in `build/libs/` for App Service deployment. |
 
 ???+ example "Expected output"
@@ -105,8 +107,8 @@ Choose the command that matches your project.
 az webapp up --name $APP_NAME --resource-group $RG --location $LOCATION --runtime "JAVA:17-java17" --sku B1
 ```
 
-| Command/Code | Purpose |
-|--------------|---------|
+| Command/Parameter | Purpose |
+|-------------------|---------|
 | `az webapp up --name $APP_NAME --resource-group $RG --location $LOCATION --runtime "JAVA:17-java17" --sku B1` | Creates the resource group, App Service plan, and web app if needed, then deploys the current app to App Service. |
 | `--name $APP_NAME` | Uses the chosen globally unique web app name. |
 | `--resource-group $RG` | Places all created resources in the target resource group. |
@@ -131,11 +133,18 @@ curl $WEB_APP_URL/health
 az webapp show --resource-group $RG --name $APP_NAME --query "{name:name,state:state,defaultHostName:defaultHostName}" --output json
 ```
 
-| Command/Code | Purpose |
-|--------------|---------|
+| Command/Parameter | Purpose |
+|-------------------|---------|
 | `WEB_APP_URL="https://$(az webapp show --resource-group $RG --name $APP_NAME --query defaultHostName --output tsv)"` | Builds the site URL from the deployed web app hostname. |
+| `az webapp show --resource-group $RG --name $APP_NAME --query defaultHostName --output tsv` | Returns only the default hostname so the shell can build the site URL. |
+| `--resource-group $RG` | Queries the web app inside the tutorial resource group. |
+| `--name $APP_NAME` | Selects the deployed web app to inspect. |
+| `--query defaultHostName` | Extracts only the default hostname value from the response. |
+| `--output tsv` | Formats the hostname as plain text for shell substitution. |
 | `curl $WEB_APP_URL/health` | Confirms the Spring Boot health endpoint responds after deployment. |
 | `az webapp show --resource-group $RG --name $APP_NAME --query "{name:name,state:state,defaultHostName:defaultHostName}" --output json` | Verifies the app is running and returns the default hostname. |
+| `--query "{name:name,state:state,defaultHostName:defaultHostName}"` | Limits the response to the app name, state, and default hostname fields. |
+| `--output json` | Formats the verification result as JSON. |
 
 ???+ example "Expected output"
     ```json
@@ -151,8 +160,8 @@ az webapp show --resource-group $RG --name $APP_NAME --query "{name:name,state:s
 az webapp log tail --resource-group $RG --name $APP_NAME
 ```
 
-| Command/Code | Purpose |
-|--------------|---------|
+| Command/Parameter | Purpose |
+|-------------------|---------|
 | `az webapp log tail --resource-group $RG --name $APP_NAME` | Streams live application logs from the deployed web app. |
 | `--resource-group $RG` | Targets the resource group that contains the app. |
 | `--name $APP_NAME` | Selects the specific App Service instance for log streaming. |
@@ -169,8 +178,8 @@ az webapp log tail --resource-group $RG --name $APP_NAME
 az group delete --name $RG --yes --no-wait
 ```
 
-| Command/Code | Purpose |
-|--------------|---------|
+| Command/Parameter | Purpose |
+|-------------------|---------|
 | `az group delete --name $RG --yes --no-wait` | Deletes the resource group and all App Service resources created by this tutorial. |
 | `--name $RG` | Targets the tutorial resource group for removal. |
 | `--yes` | Confirms the delete operation without prompting. |
@@ -190,9 +199,11 @@ Use log streaming to check startup output:
 az webapp log tail --resource-group $RG --name $APP_NAME
 ```
 
-| Command/Code | Purpose |
-|--------------|---------|
+| Command/Parameter | Purpose |
+|-------------------|---------|
 | `az webapp log tail --resource-group $RG --name $APP_NAME` | Shows live startup and request logs so you can diagnose why the app is not healthy yet. |
+| `--resource-group $RG` | Reads logs from the resource group that contains the app. |
+| `--name $APP_NAME` | Streams logs for the specific Java web app. |
 
 ## See Also
 

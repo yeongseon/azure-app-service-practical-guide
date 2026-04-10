@@ -49,11 +49,18 @@ az acr build \
   .
 ```
 
-| Command Part | Explanation |
+| Command/Parameter | Purpose |
 |---|---|
-| `az acr create` | Creates an Azure Container Registry for storing private images. |
-| `--admin-enabled false` | Keeps the registry on the more secure path of identity-based access. |
-| `az acr build` | Builds the image in Azure Container Registry and tags it as `sample-app:v1`. |
+| `az acr create` | Creates an Azure Container Registry. |
+| `--resource-group $RG` | Places the registry in the selected resource group. |
+| `--name $ACR_NAME` | Sets the registry name. |
+| `--sku Basic` | Chooses the Basic pricing tier for the registry. |
+| `--admin-enabled false` | Disables admin username/password access in favor of stronger identity-based access. |
+| `--output json` | Returns structured output after registry creation. |
+| `az acr build` | Builds the container image in ACR. |
+| `--registry $ACR_NAME` | Chooses which registry performs the cloud build. |
+| `--image sample-app:v1` | Tags the built image as `sample-app:v1`. |
+| `.` | Uses the current directory as the Docker build context. |
 
 ### Create a Web App with a Container Image
 
@@ -66,11 +73,14 @@ az webapp create \
   --output json
 ```
 
-| Command Part | Explanation |
+| Command/Parameter | Purpose |
 |---|---|
-| `az webapp create` | Creates the App Service app. |
-| `--plan $PLAN_NAME` | Places the app in the selected App Service Plan. |
-| `--deployment-container-image-name ...` | Tells App Service which container image to pull and run. |
+| `az webapp create` | Creates the App Service web app. |
+| `--resource-group $RG` | Places the app in the selected resource group. |
+| `--plan $PLAN_NAME` | Places the app in the specified App Service Plan. |
+| `--name $APP_NAME` | Sets the web app name. |
+| `--deployment-container-image-name "$ACR_NAME.azurecr.io/sample-app:v1"` | Configures the app to pull and run the specified container image. |
+| `--output json` | Returns structured output after app creation. |
 
 ### Configure Managed Identity Pull from ACR
 
@@ -100,12 +110,29 @@ az webapp config set \
   --output json
 ```
 
-| Command Part | Explanation |
+| Command/Parameter | Purpose |
 |---|---|
-| `az webapp identity assign` | Enables a managed identity on the web app and returns its principal ID. |
-| `az acr show` | Retrieves the registry resource ID needed for RBAC scope. |
-| `az role assignment create --role AcrPull` | Grants the web app permission to pull images from ACR. |
-| `az webapp config set --generic-configurations '{"acrUseManagedIdentityCreds": true}'` | Tells App Service to use managed identity instead of registry username and password. |
+| `PRINCIPAL_ID=$(...)` | Captures the web app managed identity principal ID into a shell variable. |
+| `az webapp identity assign` | Enables a managed identity on the web app. |
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Selects the web app that needs an identity. |
+| `--query principalId` | Returns only the managed identity principal ID. |
+| `--output tsv` | Formats the query result for shell variable assignment. |
+| `ACR_RESOURCE_ID=$(...)` | Captures the ACR resource ID into a shell variable. |
+| `az acr show` | Retrieves metadata about the registry. |
+| `--resource-group $RG` | Targets the resource group that contains the registry. |
+| `--name $ACR_NAME` | Selects the registry to inspect. |
+| `--query id` | Returns only the registry resource ID. |
+| `--output tsv` | Formats the query result for shell variable assignment. |
+| `az role assignment create` | Creates an RBAC role assignment. |
+| `--assignee $PRINCIPAL_ID` | Grants the role to the web app managed identity. |
+| `--scope $ACR_RESOURCE_ID` | Applies the role assignment at the registry scope. |
+| `--role AcrPull` | Grants image pull permissions on the registry. |
+| `--output json` | Returns structured output for the role assignment and final configuration commands. |
+| `az webapp config set` | Updates general web app configuration values. |
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Selects the web app whose container pull settings are being updated. |
+| `--generic-configurations '{"acrUseManagedIdentityCreds": true}'` | Tells App Service to use managed identity credentials for ACR pulls. |
 
 !!! tip "Prefer managed identity"
     Managed identity is the preferred production approach because it removes long-lived registry passwords from the deployment path.
@@ -130,12 +157,23 @@ az acr webhook create \
   --output json
 ```
 
-| Command Part | Explanation |
+| Command/Parameter | Purpose |
 |---|---|
-| `az webapp deployment container config --enable-cd true` | Enables App Service container CD and returns the webhook URL. |
-| `--query CI_CD_URL --output tsv` | Extracts the webhook endpoint so it can be reused in the next command. |
-| `az acr webhook create` | Creates an ACR webhook that notifies App Service when a matching image tag is pushed. |
-| `--scope 'sample-app:v1'` | Limits notifications to pushes for the specified repository and tag pattern. |
+| `CI_CD_URL=$(...)` | Captures the App Service webhook URL into a shell variable. |
+| `az webapp deployment container config` | Reads or updates App Service container deployment settings. |
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Selects the web app to configure. |
+| `--enable-cd true` | Enables continuous deployment for container image updates. |
+| `--query CI_CD_URL` | Returns only the webhook URL that App Service exposes. |
+| `--output tsv` | Formats the URL for shell variable assignment. |
+| `az acr webhook create` | Creates a webhook in ACR. |
+| `--resource-group $RG` | Targets the resource group that contains the registry. |
+| `--registry $ACR_NAME` | Selects the registry that will emit webhook events. |
+| `--name appservice-cd` | Names the webhook resource. |
+| `--actions push` | Triggers the webhook when an image is pushed. |
+| `--uri $CI_CD_URL` | Sends webhook events to the App Service continuous deployment endpoint. |
+| `--scope 'sample-app:v1'` | Limits the webhook to pushes for `sample-app:v1`, so later immutable tags such as `v2` require a scope update or a stable deployment tag strategy. |
+| `--output json` | Returns structured webhook creation output. |
 
 !!! warning "Webhook dependency"
     App Service continuous deployment for containers depends on the webhook path remaining valid. Treat webhook configuration as part of the application release infrastructure, not as a one-time portal setting.
@@ -151,11 +189,14 @@ az webapp config container set \
   --output json
 ```
 
-| Command Part | Explanation |
+| Command/Parameter | Purpose |
 |---|---|
-| `az webapp config container set` | Updates the container configuration for an existing app. |
-| `--docker-custom-image-name ...:v2` | Points the app at a newer image tag. |
-| `--docker-registry-server-url` | Declares the registry endpoint where the image is hosted. |
+| `az webapp config container set` | Updates container settings for an existing web app. |
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Selects the web app to update. |
+| `--docker-custom-image-name "$ACR_NAME.azurecr.io/sample-app:v2"` | Points the app to the newer `v2` image tag. |
+| `--docker-registry-server-url "https://$ACR_NAME.azurecr.io"` | Declares the registry endpoint where the image is hosted. |
+| `--output json` | Returns structured output after the configuration update. |
 
 ### Multi-Container Note
 
@@ -169,10 +210,13 @@ az webapp config container set \
   --output json
 ```
 
-| Command Part | Explanation |
+| Command/Parameter | Purpose |
 |---|---|
-| `--multicontainer-config-file ./docker-compose.yml` | Applies a Docker Compose definition for a multi-container app. |
-| `--output json` | Returns the applied configuration result for validation or scripting. |
+| `az webapp config container set` | Updates the app to use a multi-container configuration. |
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Selects the web app to update. |
+| `--multicontainer-config-file ./docker-compose.yml` | Supplies the Docker Compose file that defines the multi-container app. |
+| `--output json` | Returns structured output after the configuration update. |
 
 !!! note "Plan for sidecar migration"
     If you are starting a new design, prefer App Service sidecar container patterns over Docker Compose. Use Docker Compose only when you are maintaining an existing multi-container deployment model.
@@ -198,10 +242,15 @@ az webapp log tail \
   --name $APP_NAME
 ```
 
-| Command | Purpose |
+| Command/Parameter | Purpose |
 |---|---|
-| `az webapp config container show ...` | Confirms the active image and container registry configuration. |
-| `az webapp log tail ...` | Streams startup and container logs to validate image pull and app readiness. |
+| `az webapp config container show` | Displays the current container configuration for the app. |
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Selects the web app to inspect. |
+| `--output json` | Returns the container configuration in JSON format. |
+| `az webapp log tail` | Streams live application and container logs. |
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Selects the web app whose logs should be tailed. |
 
 ## See Also
 

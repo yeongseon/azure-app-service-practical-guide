@@ -60,8 +60,8 @@ APP_NAME="app-express-tutorial-abc123"
 LOCATION="koreacentral"
 ```
 
-| Command/Code | Purpose |
-|--------------|---------|
+| Command/Parameter | Purpose |
+|-------------------|---------|
 | `RG="rg-express-tutorial"` | Defines the resource group that will hold the App Service resources. |
 | `APP_NAME="app-express-tutorial-abc123"` | Sets the globally unique web app name. |
 | `LOCATION="koreacentral"` | Selects the Azure region for the deployment. |
@@ -74,8 +74,8 @@ Run this command from the Node.js app folder.
 az webapp up --name $APP_NAME --resource-group $RG --location $LOCATION --runtime "NODE:20-lts" --sku B1
 ```
 
-| Command/Code | Purpose |
-|--------------|---------|
+| Command/Parameter | Purpose |
+|-------------------|---------|
 | `az webapp up --name $APP_NAME --resource-group $RG --location $LOCATION --runtime "NODE:20-lts" --sku B1` | Creates the resource group, App Service plan, and web app if needed, then uploads and deploys the current app source. |
 | `--name $APP_NAME` | Uses the specified globally unique web app name. |
 | `--resource-group $RG` | Places the deployment in the selected resource group. |
@@ -101,9 +101,14 @@ WEB_APP_URL="https://$(az webapp show --resource-group $RG --name $APP_NAME --qu
 curl $WEB_APP_URL
 ```
 
-| Command/Code | Purpose |
-|--------------|---------|
+| Command/Parameter | Purpose |
+|-------------------|---------|
 | `WEB_APP_URL="https://$(az webapp show --resource-group $RG --name $APP_NAME --query defaultHostName --output tsv)"` | Builds the app URL from the hostname returned by App Service. |
+| `az webapp show --resource-group $RG --name $APP_NAME --query defaultHostName --output tsv` | Returns only the default hostname so the shell can build the site URL. |
+| `--resource-group $RG` | Queries the web app inside the tutorial resource group. |
+| `--name $APP_NAME` | Selects the deployed Node.js web app to inspect. |
+| `--query defaultHostName` | Extracts only the default hostname field from the response. |
+| `--output tsv` | Formats the hostname as plain text for shell substitution. |
 | `curl $WEB_APP_URL` | Confirms the deployed app responds over HTTPS. |
 
 ???+ example "Expected output"
@@ -121,9 +126,11 @@ curl $WEB_APP_URL
 az webapp log tail --resource-group $RG --name $APP_NAME
 ```
 
-| Command/Code | Purpose |
-|--------------|---------|
+| Command/Parameter | Purpose |
+|-------------------|---------|
 | `az webapp log tail --resource-group $RG --name $APP_NAME` | Streams live application logs from the deployed web app. |
+| `--resource-group $RG` | Reads logs from the resource group that contains the app. |
+| `--name $APP_NAME` | Streams logs for the deployed Node.js web app. |
 
 ???+ example "Expected output"
     ```text
@@ -137,9 +144,10 @@ az webapp log tail --resource-group $RG --name $APP_NAME
 az group delete --name $RG --yes --no-wait
 ```
 
-| Command/Code | Purpose |
-|--------------|---------|
+| Command/Parameter | Purpose |
+|-------------------|---------|
 | `az group delete --name $RG --yes --no-wait` | Deletes the resource group and all App Service resources created by the tutorial. |
+| `--name $RG` | Targets the tutorial resource group for deletion. |
 | `--yes` | Skips the interactive confirmation prompt. |
 | `--no-wait` | Returns immediately while Azure continues the deletion in the background. |
 

@@ -80,14 +80,16 @@ SQL_SERVER_NAME="sql-dotnet-guide"
 KEY_VAULT_NAME="kv-dotnet-guide"
 ```
 
-| Command/Code | Purpose |
-|--------------|---------|
-| `RG`, `APP_NAME`, `LOCATION` | Reuse the baseline values from the first deployment tutorial. |
-| `VNET_NAME` | Defines the virtual network that hosts the integration and private endpoint subnets. |
-| `INTEGRATION_SUBNET_NAME` | Names the delegated subnet used by App Service VNet integration. |
-| `PRIVATE_ENDPOINT_SUBNET_NAME` | Names the subnet that hosts private endpoint network interfaces. |
-| `SQL_SERVER_NAME` | Identifies the Azure SQL server used in the private connectivity example. |
-| `KEY_VAULT_NAME` | Identifies the Key Vault used with managed identity. |
+| Command/Parameter | Purpose |
+|-------------------|---------|
+| `RG="rg-dotnet-guide"` | Reuses the resource group from the earlier deployment. |
+| `APP_NAME="app-dotnet-guide-abc123"` | Identifies the target App Service app. |
+| `LOCATION="koreacentral"` | Sets the Azure region for the networking resources. |
+| `VNET_NAME="vnet-dotnet-guide"` | Defines the virtual network for private connectivity. |
+| `INTEGRATION_SUBNET_NAME="snet-appsvc-integration"` | Names the delegated subnet used by App Service VNet integration. |
+| `PRIVATE_ENDPOINT_SUBNET_NAME="snet-private-endpoints"` | Names the subnet that hosts private endpoint NICs. |
+| `SQL_SERVER_NAME="sql-dotnet-guide"` | Identifies the Azure SQL server used in the example. |
+| `KEY_VAULT_NAME="kv-dotnet-guide"` | Identifies the Key Vault used with managed identity. |
 
 ### Step 2: Create the VNet and required subnets
 
@@ -97,11 +99,21 @@ az network vnet subnet create --resource-group "$RG" --vnet-name "$VNET_NAME" --
 az network vnet subnet create --resource-group "$RG" --vnet-name "$VNET_NAME" --name "$PRIVATE_ENDPOINT_SUBNET_NAME" --address-prefixes "10.0.2.0/24" --disable-private-endpoint-network-policies true
 ```
 
-| Command/Code | Purpose |
-|--------------|---------|
-| `az network vnet create --resource-group "$RG" --name "$VNET_NAME" --location "$LOCATION" --address-prefixes "10.0.0.0/16"` | Creates the virtual network used by the private deployment pattern. |
-| `az network vnet subnet create --resource-group "$RG" --vnet-name "$VNET_NAME" --name "$INTEGRATION_SUBNET_NAME" --address-prefixes "10.0.1.0/24" --delegations "Microsoft.Web/serverFarms"` | Creates the delegated subnet required for App Service outbound VNet integration. |
-| `az network vnet subnet create --resource-group "$RG" --vnet-name "$VNET_NAME" --name "$PRIVATE_ENDPOINT_SUBNET_NAME" --address-prefixes "10.0.2.0/24" --disable-private-endpoint-network-policies true` | Creates the subnet that can host private endpoint NICs. |
+| Command/Parameter | Purpose |
+|-------------------|---------|
+| `az network vnet create` | Creates the virtual network used by the private deployment pattern. |
+| `--resource-group "$RG"` | Places the VNet in the selected resource group. |
+| `--name "$VNET_NAME"` | Sets the VNet name. |
+| `--location "$LOCATION"` | Creates the VNet in the selected Azure region. |
+| `--address-prefixes "10.0.0.0/16"` | Defines the VNet CIDR block. |
+| `az network vnet subnet create` | Creates a subnet inside the VNet. |
+| `--vnet-name "$VNET_NAME"` | Targets the named VNet. |
+| `--name "$INTEGRATION_SUBNET_NAME"` | Names the App Service integration subnet. |
+| `--address-prefixes "10.0.1.0/24"` | Defines the CIDR range for the integration subnet. |
+| `--delegations "Microsoft.Web/serverFarms"` | Delegates the subnet to App Service. |
+| `--name "$PRIVATE_ENDPOINT_SUBNET_NAME"` | Names the private endpoint subnet. |
+| `--address-prefixes "10.0.2.0/24"` | Defines the CIDR range for the private endpoint subnet. |
+| `--disable-private-endpoint-network-policies true` | Disables policies that block private endpoint NICs. |
 
 ### Step 3: Integrate the web app and enable managed identity
 
@@ -110,10 +122,14 @@ az webapp vnet-integration add --resource-group "$RG" --name "$APP_NAME" --vnet 
 az webapp identity assign --resource-group "$RG" --name "$APP_NAME"
 ```
 
-| Command/Code | Purpose |
-|--------------|---------|
-| `az webapp vnet-integration add --resource-group "$RG" --name "$APP_NAME" --vnet "$VNET_NAME" --subnet "$INTEGRATION_SUBNET_NAME"` | Connects outbound app traffic to the delegated VNet subnet. |
-| `az webapp identity assign --resource-group "$RG" --name "$APP_NAME"` | Enables a system-assigned managed identity for passwordless Azure access. |
+| Command/Parameter | Purpose |
+|-------------------|---------|
+| `az webapp vnet-integration add` | Connects outbound app traffic to the delegated VNet subnet. |
+| `--resource-group "$RG"` | Selects the resource group containing the app. |
+| `--name "$APP_NAME"` | Targets the web app to integrate. |
+| `--vnet "$VNET_NAME"` | Chooses the virtual network used for integration. |
+| `--subnet "$INTEGRATION_SUBNET_NAME"` | Chooses the delegated integration subnet. |
+| `az webapp identity assign` | Enables a system-assigned managed identity for passwordless Azure access. |
 
 ### Step 4: Create private endpoints and private DNS links
 
@@ -130,14 +146,38 @@ az network private-dns link vnet create --resource-group "$RG" --zone-name "priv
 az network private-dns link vnet create --resource-group "$RG" --zone-name "privatelink.vaultcore.azure.net" --name "kv-link" --virtual-network "$VNET_NAME" --registration-enabled false
 ```
 
-| Command/Code | Purpose |
-|--------------|---------|
-| `SQL_SERVER_ID="$(az sql server show --resource-group "$RG" --name "$SQL_SERVER_NAME" --query id --output tsv)"` | Resolves the Azure SQL resource ID used by the private endpoint. |
-| `KEY_VAULT_ID="$(az keyvault show --resource-group "$RG" --name "$KEY_VAULT_NAME" --query id --output tsv)"` | Resolves the Key Vault resource ID used by the private endpoint. |
-| `az network private-endpoint create ... --group-id sqlServer ...` | Creates a private endpoint for Azure SQL in the private endpoint subnet. |
-| `az network private-endpoint create ... --group-id vault ...` | Creates a private endpoint for Key Vault in the private endpoint subnet. |
-| `az network private-dns zone create ...` | Creates the private DNS zones used to resolve service hostnames to private IP addresses. |
-| `az network private-dns link vnet create ...` | Links the VNet to the private DNS zones so the web app resolves backend names privately. |
+| Command/Parameter | Purpose |
+|-------------------|---------|
+| `SQL_SERVER_ID="$(...)"` | Stores the Azure SQL server resource ID in a shell variable. |
+| `az sql server show` | Reads the Azure SQL server metadata. |
+| `--resource-group "$RG"` | Selects the resource group containing the backend resources. |
+| `--name "$SQL_SERVER_NAME"` | Targets the Azure SQL server. |
+| `--query id` | Returns only the Azure SQL resource ID. |
+| `--output tsv` | Formats the ID as plain text for shell assignment. |
+| `KEY_VAULT_ID="$(...)"` | Stores the Key Vault resource ID in a shell variable. |
+| `az keyvault show` | Reads the Key Vault metadata. |
+| `--name "$KEY_VAULT_NAME"` | Targets the Key Vault. |
+| `az network private-endpoint create` | Creates a private endpoint in the private endpoint subnet. |
+| `--name "pe-sql-dotnet-guide"` | Names the Azure SQL private endpoint. |
+| `--vnet-name "$VNET_NAME"` | Places the endpoint in the selected VNet. |
+| `--subnet "$PRIVATE_ENDPOINT_SUBNET_NAME"` | Uses the subnet reserved for private endpoints. |
+| `--private-connection-resource-id "$SQL_SERVER_ID"` | Connects the endpoint to the Azure SQL server resource. |
+| `--group-id sqlServer` | Targets the Azure SQL private link subresource. |
+| `--connection-name "pe-sql-dotnet-guide-connection"` | Names the SQL private link connection object. |
+| `--name "pe-kv-dotnet-guide"` | Names the Key Vault private endpoint. |
+| `--private-connection-resource-id "$KEY_VAULT_ID"` | Connects the endpoint to the Key Vault resource. |
+| `--group-id vault` | Targets the Key Vault private link subresource. |
+| `--connection-name "pe-kv-dotnet-guide-connection"` | Names the Key Vault private link connection object. |
+| `az network private-dns zone create` | Creates a private DNS zone for private endpoint name resolution. |
+| `--name "privatelink.database.windows.net"` | Creates the Azure SQL private DNS zone. |
+| `--name "privatelink.vaultcore.azure.net"` | Creates the Key Vault private DNS zone. |
+| `az network private-dns link vnet create` | Links a private DNS zone to the VNet. |
+| `--zone-name "privatelink.database.windows.net"` | Selects the Azure SQL private DNS zone. |
+| `--name "sql-link"` | Names the Azure SQL VNet DNS link. |
+| `--virtual-network "$VNET_NAME"` | Links the DNS zone to the App Service VNet. |
+| `--registration-enabled false` | Disables auto-registration for service-managed records. |
+| `--zone-name "privatelink.vaultcore.azure.net"` | Selects the Key Vault private DNS zone. |
+| `--name "kv-link"` | Names the Key Vault VNet DNS link. |
 
 !!! warning "DNS is part of the deployment"
     Private endpoints without private DNS links usually fail at runtime even when the endpoint itself shows as created.
@@ -153,6 +193,24 @@ az webapp config appsettings set --resource-group "$RG" --name "$APP_NAME" --set
   ConnectionStrings__SqlServer="Server=tcp:${SQL_SERVER_NAME}.database.windows.net,1433;Database=<database-name>;Encrypt=True;TrustServerCertificate=False;" \
   KeyVault__Uri="https://${KEY_VAULT_NAME}.vault.azure.net/"
 ```
+
+| Command/Parameter | Purpose |
+|-------------------|---------|
+| `WEB_APP_PRINCIPAL_ID="$(...)"` | Stores the web app managed identity object ID in a shell variable. |
+| `az webapp identity show` | Reads the managed identity details for the web app. |
+| `--resource-group "$RG"` | Selects the resource group containing the app. |
+| `--name "$APP_NAME"` | Targets the configured App Service app. |
+| `--query principalId` | Returns only the managed identity principal ID. |
+| `--output tsv` | Formats the principal ID as plain text for shell assignment. |
+| `az role assignment create` | Creates an RBAC assignment for the managed identity. |
+| `--assignee-object-id "$WEB_APP_PRINCIPAL_ID"` | Targets the web app's managed identity object ID. |
+| `--assignee-principal-type ServicePrincipal` | Tells Azure RBAC that the assignee is a service principal. |
+| `--role "Key Vault Secrets User"` | Grants secret read access in Key Vault. |
+| `--scope "$KEY_VAULT_ID"` | Applies the role assignment at the Key Vault scope. |
+| `az webapp config appsettings set` | Writes application settings into App Service configuration. |
+| `--settings` | Passes the key/value settings to store. |
+| `ConnectionStrings__SqlServer="Server=tcp:${SQL_SERVER_NAME}.database.windows.net,1433;Database=<database-name>;Encrypt=True;TrustServerCertificate=False;"` | Stores the SQL connection string shape while relying on token-based auth instead of a password. |
+| `KeyVault__Uri="https://${KEY_VAULT_NAME}.vault.azure.net/"` | Stores the Key Vault URI used by the app. |
 
 ```csharp
 using Azure.Identity;
@@ -176,10 +234,10 @@ var sqlConnection = new SqlConnection(builder.Configuration.GetConnectionString(
 
 | Command/Code | Purpose |
 |--------------|---------|
-| `WEB_APP_PRINCIPAL_ID="$(az webapp identity show --resource-group "$RG" --name "$APP_NAME" --query principalId --output tsv)"` | Retrieves the managed identity object ID for RBAC assignment. |
-| `az role assignment create --assignee-object-id "$WEB_APP_PRINCIPAL_ID" --assignee-principal-type ServicePrincipal --role "Key Vault Secrets User" --scope "$KEY_VAULT_ID"` | Grants the web app permission to read secrets from Key Vault. |
-| `az webapp config appsettings set ...` | Stores the SQL hostname and Key Vault URI in App Service configuration. |
 | `new DefaultAzureCredential()` | Uses local developer identity locally and managed identity in App Service. |
+| `new SecretClient(new Uri(builder.Configuration["KeyVault:Uri"]!), credential)` | Creates a Key Vault client that authenticates with the managed identity token source. |
+| `credential.GetTokenAsync(new Azure.Core.TokenRequestContext(new[] { "https://database.windows.net/.default" }))` | Requests an Azure SQL access token for Microsoft Entra authentication. |
+| `new SqlConnection(builder.Configuration.GetConnectionString("SqlServer"))` | Opens the SQL connection using the configured server and database settings. |
 | `AccessToken = sqlToken` | Authenticates SQL connections without embedding passwords in configuration. |
 
 ### Step 6: Validate the private deployment
@@ -190,11 +248,18 @@ az network private-endpoint list --resource-group "$RG" --output table
 az webapp log tail --resource-group "$RG" --name "$APP_NAME"
 ```
 
-| Command/Code | Purpose |
-|--------------|---------|
-| `az webapp vnet-integration list --resource-group "$RG" --name "$APP_NAME" --output table` | Confirms that the web app is attached to the expected integration subnet. |
-| `az network private-endpoint list --resource-group "$RG" --output table` | Shows the current private endpoint resources and their approval state. |
-| `az webapp log tail --resource-group "$RG" --name "$APP_NAME"` | Streams runtime logs while testing SQL and Key Vault access. |
+| Command/Parameter | Purpose |
+|-------------------|---------|
+| `az webapp vnet-integration list` | Confirms that the web app is attached to the expected integration subnet. |
+| `--resource-group "$RG"` | Selects the app resource group. |
+| `--name "$APP_NAME"` | Targets the web app being validated. |
+| `--output table` | Formats the VNet integration output for quick inspection. |
+| `az network private-endpoint list` | Lists private endpoints in the resource group. |
+| `--resource-group "$RG"` | Limits the private endpoint list to the current resource group. |
+| `--output table` | Formats the private endpoint list for quick review. |
+| `az webapp log tail` | Streams runtime logs while testing SQL and Key Vault access. |
+| `--resource-group "$RG"` | Selects the app resource group for log streaming. |
+| `--name "$APP_NAME"` | Targets the web app whose runtime logs you want to follow. |
 
 ## Verification
 

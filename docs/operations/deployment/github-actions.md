@@ -91,14 +91,41 @@ jobs:
           package: ${{ env.PACKAGE_PATH }}
 ```
 
-| YAML Section | Explanation |
+| Command/Parameter | Purpose |
 |---|---|
-| `on.push.branches` | Runs the workflow for commits merged into `main`. |
-| `permissions.id-token: write` | Allows GitHub to mint an OIDC token for Azure login. |
-| `actions/checkout@v4` | Downloads repository contents to the runner. |
-| `Build application` | Restores dependencies, builds the app, and runs tests before deployment. |
-| `azure/login@v2` | Authenticates the workflow to Azure using repository secrets. |
-| `azure/webapps-deploy@v3` | Pushes the prepared package or folder to Azure App Service. |
+| `name: deploy-app-service` | Gives the workflow a readable name in GitHub Actions. |
+| `on:` | Declares the events that trigger the workflow. |
+| `push:` | Runs the workflow when code is pushed. |
+| `branches:` | Starts the branch filter list for the push trigger. |
+| `- main` | Limits the push trigger to the `main` branch. |
+| `permissions:` | Defines the GitHub token permissions available to the job. |
+| `id-token: write` | Allows the workflow to request an OIDC token for Azure authentication. |
+| `contents: read` | Allows the job to read repository contents. |
+| `env:` | Defines reusable environment variables for later steps. |
+| `AZURE_WEBAPP_NAME: my-app-service` | Stores the target App Service name. |
+| `PACKAGE_PATH: ./dist` | Stores the path to the built deployment artifact or folder. |
+| `jobs:` | Starts the workflow job definitions. |
+| `build-and-deploy:` | Names the job that builds and deploys the application. |
+| `runs-on: ubuntu-latest` | Chooses the GitHub-hosted runner image. |
+| `steps:` | Lists the ordered actions the runner executes. |
+| `name: Checkout repository` | Labels the source checkout step in the Actions log. |
+| `uses: actions/checkout@v4` | Checks out the repository onto the runner. |
+| `name: Build application` | Labels the build and test step in the Actions log. |
+| `run: |` | Starts a multiline shell script step. |
+| `npm ci` | Installs dependencies from the lockfile for a reproducible build. |
+| `npm run build` | Builds the application before deployment. |
+| `npm test` | Runs automated tests before release. |
+| `name: Sign in to Azure` | Labels the Azure authentication step in the Actions log. |
+| `uses: azure/login@v2` | Signs in to Azure from GitHub Actions. |
+| `with:` | Supplies input parameters to the Azure login action. |
+| `client-id: ${{ secrets.AZURE_CLIENT_ID }}` | Passes the Microsoft Entra application or managed identity client ID from the `AZURE_CLIENT_ID` repository secret. |
+| `tenant-id: ${{ secrets.AZURE_TENANT_ID }}` | Passes the Azure tenant ID from the `AZURE_TENANT_ID` repository secret. |
+| `subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}` | Passes the Azure subscription ID from the `AZURE_SUBSCRIPTION_ID` repository secret. |
+| `name: Deploy to production app` | Labels the production deployment step in the Actions log. |
+| `uses: azure/webapps-deploy@v3` | Deploys the package or folder to Azure App Service. |
+| `with:` | Supplies input parameters to the App Service deployment action. |
+| `app-name: ${{ env.AZURE_WEBAPP_NAME }}` | Identifies which App Service app receives the deployment by reusing the workflow environment variable. |
+| `package: ${{ env.PACKAGE_PATH }}` | Points the deploy action to the prepared build output by reusing the workflow environment variable. |
 
 ### Deploy to a Staging Slot
 
@@ -111,10 +138,14 @@ jobs:
           package: ${{ env.PACKAGE_PATH }}
 ```
 
-| YAML Key | Explanation |
+| Command/Parameter | Purpose |
 |---|---|
-| `slot-name: staging` | Targets the staging deployment slot instead of production. |
-| `package` | Deploys the already built output rather than rebuilding during release. |
+| `name: Deploy to staging slot` | Labels the deployment step in the workflow log. |
+| `uses: azure/webapps-deploy@v3` | Uses the App Service deployment action. |
+| `with:` | Supplies inputs to the deployment action. |
+| `app-name: ${{ env.AZURE_WEBAPP_NAME }}` | Selects the target App Service app by reusing the workflow environment variable. |
+| `slot-name: staging` | Directs the deployment to the `staging` slot. |
+| `package: ${{ env.PACKAGE_PATH }}` | Reuses the build output path from the workflow environment variable. |
 
 ### Complete Example with Slot Deployment and Swap
 
@@ -183,12 +214,59 @@ jobs:
             --output json
 ```
 
-| Workflow Segment | Explanation |
+| Command/Parameter | Purpose |
 |---|---|
-| `actions/setup-node@v4` | Prepares the runtime used to build the application. |
-| `Deploy package to staging slot` | Sends the validated build output to the nonproduction slot first. |
-| `Smoke test staging slot` | Verifies the deployed version before promotion. |
-| `az webapp deployment slot swap` | Promotes the staging slot to production after validation passes. |
+| `name: build-validate-promote` | Gives the end-to-end release workflow a readable name. |
+| `on:` | Declares the events that start the workflow. |
+| `push:` | Triggers the workflow on pushes. |
+| `branches:` | Starts the branch filter list for the push trigger. |
+| `- main` | Restricts the trigger to the `main` branch. |
+| `permissions:` | Defines GitHub token permissions for the workflow. |
+| `id-token: write` | Allows OIDC authentication to Azure. |
+| `contents: read` | Allows repository checkout. |
+| `env:` | Centralizes values reused across multiple steps. |
+| `AZURE_WEBAPP_NAME: my-app-service` | Stores the production app name. |
+| `RESOURCE_GROUP: rg-app-service-prod` | Stores the resource group name used by Azure CLI commands. |
+| `PACKAGE_PATH: ./dist` | Stores the path to the built artifact. |
+| `SLOT_NAME: staging` | Stores the deployment slot name used during promotion. |
+| `jobs:` | Starts the job definitions. |
+| `deploy:` | Names the job that performs deployment and promotion. |
+| `runs-on: ubuntu-latest` | Chooses the Linux runner image. |
+| `steps:` | Lists the ordered workflow steps. |
+| `name: Checkout repository` | Labels the checkout step in the workflow log. |
+| `uses: actions/checkout@v4` | Downloads the repository contents. |
+| `name: Set up Node.js` | Labels the Node.js setup step in the workflow log. |
+| `uses: actions/setup-node@v4` | Installs the requested Node.js runtime on the runner. |
+| `with:` | Supplies input parameters to the Node.js setup action. |
+| `node-version: '20'` | Pins the Node.js major version for the build. |
+| `name: Install, build, and test` | Labels the build validation step in the workflow log. |
+| `run: |` | Starts a multiline shell script step. |
+| `npm ci` | Installs dependencies from the lockfile. |
+| `npm run build` | Builds the application. |
+| `npm test` | Runs the test suite before deployment. |
+| `name: Sign in to Azure` | Labels the Azure authentication step in the workflow log. |
+| `uses: azure/login@v2` | Authenticates the runner to Azure. |
+| `with:` | Supplies input parameters to the Azure login action. |
+| `client-id: ${{ secrets.AZURE_CLIENT_ID }}` | Passes the client ID for OIDC login from the `AZURE_CLIENT_ID` repository secret. |
+| `tenant-id: ${{ secrets.AZURE_TENANT_ID }}` | Passes the tenant ID for OIDC login from the `AZURE_TENANT_ID` repository secret. |
+| `subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}` | Passes the subscription ID for OIDC login from the `AZURE_SUBSCRIPTION_ID` repository secret. |
+| `name: Deploy package to staging slot` | Labels the staged deployment step in the workflow log. |
+| `uses: azure/webapps-deploy@v3` | Deploys the package to App Service. |
+| `with:` | Supplies input parameters to the App Service deployment action. |
+| `app-name: ${{ env.AZURE_WEBAPP_NAME }}` | Identifies the destination App Service app by reusing the workflow environment variable. |
+| `slot-name: ${{ env.SLOT_NAME }}` | Identifies the destination slot for the staged deployment by reusing the workflow environment variable. |
+| `package: ${{ env.PACKAGE_PATH }}` | Points the deploy action to the build artifact by reusing the workflow environment variable. |
+| `name: Smoke test staging slot` | Labels the post-deployment health check step in the workflow log. |
+| `run: |` | Starts the multiline shell command that verifies the staging slot health endpoint. |
+| `curl --silent --show-error --fail "https://${{ env.AZURE_WEBAPP_NAME }}-${{ env.SLOT_NAME }}.azurewebsites.net/health"` | Calls the staging slot health endpoint after deployment. |
+| `name: Swap staging into production` | Labels the production promotion step in the workflow log. |
+| `run: |` | Starts the multiline shell command that swaps the staging slot into production. |
+| `az webapp deployment slot swap` | Promotes the staged release into production. |
+| `--resource-group $RESOURCE_GROUP` | Selects the resource group that contains the app. |
+| `--name $AZURE_WEBAPP_NAME` | Selects the App Service app to swap. |
+| `--slot $SLOT_NAME` | Chooses the source slot that holds the candidate release. |
+| `--target-slot production` | Chooses production as the destination slot. |
+| `--output json` | Returns structured CLI output for logging or troubleshooting. |
 
 !!! note "Manual approval option"
     For stricter release control, split deployment and swap into separate jobs and protect the production environment with GitHub environment approvals.

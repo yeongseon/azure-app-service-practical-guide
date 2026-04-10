@@ -57,8 +57,8 @@ APP_NAME="app-dotnet-guide-abc123"
 LOCATION="koreacentral"
 ```
 
-| Command/Code | Purpose |
-|--------------|---------|
+| Command/Parameter | Purpose |
+|-------------------|---------|
 | `RG="rg-dotnet-guide"` | Defines the resource group name for the tutorial deployment. |
 | `APP_NAME="app-dotnet-guide-abc123"` | Sets a globally unique App Service app name. |
 | `LOCATION="koreacentral"` | Chooses the Azure region for the App Service resources. |
@@ -71,9 +71,11 @@ Run `dotnet publish` from the repository root to create deployable output in `./
 dotnet publish "apps/dotnet-aspnetcore/GuideApi/GuideApi.csproj" --configuration Release --output "./publish"
 ```
 
-| Command/Code | Purpose |
-|--------------|---------|
+| Command/Parameter | Purpose |
+|-------------------|---------|
 | `dotnet publish "apps/dotnet-aspnetcore/GuideApi/GuideApi.csproj" --configuration Release --output "./publish"` | Restores, builds, and writes the App Service-ready files to the `publish` directory. |
+| `dotnet publish` | Runs the .NET publish pipeline for the specified project. |
+| `"apps/dotnet-aspnetcore/GuideApi/GuideApi.csproj"` | Points `dotnet publish` to the ASP.NET Core project file to build. |
 | `--configuration Release` | Produces optimized release artifacts instead of development output. |
 | `--output "./publish"` | Places the deployment files in a predictable folder for the next step. |
 
@@ -93,9 +95,10 @@ cd "./publish"
 az webapp up --name "$APP_NAME" --resource-group "$RG" --location "$LOCATION" --runtime "DOTNETCORE:8.0" --sku B1
 ```
 
-| Command/Code | Purpose |
-|--------------|---------|
+| Command/Parameter | Purpose |
+|-------------------|---------|
 | `cd "./publish"` | Moves into the folder that contains the published deployment payload. |
+| `"./publish"` | Specifies the directory that contains the published ASP.NET Core files. |
 | `az webapp up --name "$APP_NAME" --resource-group "$RG" --location "$LOCATION" --runtime "DOTNETCORE:8.0" --sku B1` | Creates the resource group, App Service plan, and web app if needed, then deploys the current directory. |
 | `--name "$APP_NAME"` | Uses the globally unique web app name for the deployment target. |
 | `--resource-group "$RG"` | Places all created resources in the selected resource group. |
@@ -120,11 +123,16 @@ WEB_APP_URL="https://$(az webapp show --resource-group "$RG" --name "$APP_NAME" 
 curl --include "$WEB_APP_URL/health"
 ```
 
-| Command/Code | Purpose |
-|--------------|---------|
+| Command/Parameter | Purpose |
+|-------------------|---------|
 | `WEB_APP_URL="https://$(az webapp show --resource-group "$RG" --name "$APP_NAME" --query defaultHostName --output tsv)"` | Builds the app URL from the default hostname returned by App Service. |
 | `az webapp show --resource-group "$RG" --name "$APP_NAME" --query defaultHostName --output tsv` | Returns only the default hostname for the deployed app. |
+| `--resource-group "$RG"` | Queries the web app in the tutorial resource group. |
+| `--name "$APP_NAME"` | Selects the deployed ASP.NET Core app to inspect. |
+| `--query defaultHostName` | Extracts only the default hostname field from the response. |
+| `--output tsv` | Formats the hostname as plain text for shell substitution. |
 | `curl --include "$WEB_APP_URL/health"` | Calls the sample health endpoint to confirm the deployment is serving requests. |
+| `--include` | Includes the HTTP response headers in the curl output. |
 
 ???+ example "Expected output"
     ```text
@@ -141,10 +149,16 @@ az webapp log config --resource-group "$RG" --name "$APP_NAME" --application-log
 az webapp log tail --resource-group "$RG" --name "$APP_NAME"
 ```
 
-| Command/Code | Purpose |
-|--------------|---------|
+| Command/Parameter | Purpose |
+|-------------------|---------|
 | `az webapp log config --resource-group "$RG" --name "$APP_NAME" --application-logging filesystem --level information` | Enables filesystem application logging so you can stream recent app events. |
+| `--resource-group "$RG"` | Targets the resource group that contains the web app. |
+| `--name "$APP_NAME"` | Selects the web app to configure for logging. |
+| `--application-logging filesystem` | Stores application logs on the App Service filesystem. |
+| `--level information` | Captures informational, warning, and error log events. |
 | `az webapp log tail --resource-group "$RG" --name "$APP_NAME"` | Streams live application logs from the deployed web app. |
+| `--resource-group "$RG"` | Reads logs from the tutorial resource group. |
+| `--name "$APP_NAME"` | Streams logs for the deployed ASP.NET Core app. |
 
 ### Step 6: Cleanup
 
@@ -152,9 +166,10 @@ az webapp log tail --resource-group "$RG" --name "$APP_NAME"
 az group delete --name "$RG" --yes --no-wait
 ```
 
-| Command/Code | Purpose |
-|--------------|---------|
+| Command/Parameter | Purpose |
+|-------------------|---------|
 | `az group delete --name "$RG" --yes --no-wait` | Deletes the resource group and all App Service resources created by this tutorial. |
+| `--name "$RG"` | Targets the tutorial resource group for deletion. |
 | `--yes` | Skips the interactive confirmation prompt. |
 | `--no-wait` | Starts deletion asynchronously so the shell returns immediately. |
 
@@ -174,9 +189,10 @@ App Service names are globally unique. Change the app name and rerun deployment.
 APP_NAME="app-dotnet-guide-$(date +%s)"
 ```
 
-| Command/Code | Purpose |
-|--------------|---------|
+| Command/Parameter | Purpose |
+|-------------------|---------|
 | `APP_NAME="app-dotnet-guide-$(date +%s)"` | Creates a more unique app name when the original name is unavailable. |
+| `date +%s` | Generates a Unix timestamp to make the app name unique. |
 
 ### Health check fails after deployment
 

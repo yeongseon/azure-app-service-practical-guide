@@ -63,14 +63,15 @@ az webapp config appsettings set \
   --output json
 ```
 
-| Command Part | Explanation |
+| Command/Parameter | Purpose |
 |---|---|
-| `az webapp config appsettings set` | Updates application settings for the target App Service app. |
-| `--resource-group $RG` | Targets the resource group that contains the web app. |
+| `az webapp config appsettings set` | Updates App Service application settings on the target app. |
+| `--resource-group $RG` | Selects the resource group that contains the web app. |
 | `--name $APP_NAME` | Selects the web app to configure. |
-| `WEBSITE_RUN_FROM_PACKAGE=1` | Mounts the deployed ZIP package as the app content source. |
-| `SCM_DO_BUILD_DURING_DEPLOYMENT=false` | Prevents App Service from rebuilding an already prepared artifact. |
-| `--output json` | Returns machine-readable output for verification or scripting. |
+| `--settings` | Supplies one or more app settings to write in the same operation. |
+| `WEBSITE_RUN_FROM_PACKAGE=1` | Tells App Service to mount the deployed ZIP package as read-only site content. |
+| `SCM_DO_BUILD_DURING_DEPLOYMENT=false` | Disables Kudu build automation because the artifact is already built. |
+| `--output json` | Returns JSON output that is easy to inspect or reuse in scripts. |
 
 !!! note "Read-only content root"
     When you run from package, application code should not try to write into the deployment directory. Store uploads, generated files, caches, and session state in external services or persistent storage instead.
@@ -93,15 +94,25 @@ curl --silent --show-error --fail \
   "https://$APP_NAME.azurewebsites.net/health"
 ```
 
-| Command Part | Explanation |
+| Command/Parameter | Purpose |
 |---|---|
-| `zip -r ./artifacts/webapp.zip .` | Builds a deployment archive from the current directory contents. |
-| `az webapp deploy` | Publishes the ZIP package through the App Service deployment endpoint. |
-| `--src-path ./artifacts/webapp.zip` | Points App Service to the local ZIP artifact to upload. |
-| `--type zip` | Declares that the artifact is a ZIP package. |
-| `--clean true` | Cleans the target deployment location before the package is applied. |
-| `--restart true` | Restarts the app after deployment so the new package is loaded. |
-| `curl --silent --show-error --fail` | Verifies the health endpoint and fails the shell command on HTTP errors. |
+| `zip` | Creates a ZIP archive that can be uploaded to App Service. |
+| `-r` | Recursively includes files and directories in the archive. |
+| `./artifacts/webapp.zip` | Sets the output ZIP file path for the deployment artifact. |
+| `.` | Uses the current directory as the archive source. |
+| `az webapp deploy` | Uploads the ZIP package to the App Service deployment endpoint. |
+| `--resource-group $RG` | Targets the resource group that owns the app. |
+| `--name $APP_NAME` | Targets the specific web app to deploy. |
+| `--src-path ./artifacts/webapp.zip` | Points the deployment command to the local ZIP artifact. |
+| `--type zip` | Declares that the uploaded artifact format is ZIP. |
+| `--clean true` | Removes existing deployed files before applying the new package. |
+| `--restart true` | Restarts the app so the new deployment is loaded immediately. |
+| `--output json` | Returns structured deployment output for validation or automation. |
+| `curl` | Sends an HTTP request to verify the deployed app responds successfully. |
+| `--silent` | Hides normal progress output. |
+| `--show-error` | Prints an error message if the request fails. |
+| `--fail` | Makes the command exit nonzero on HTTP error responses. |
+| `"https://$APP_NAME.azurewebsites.net/health"` | Calls the health endpoint on the production site. |
 
 ### Deploy to a Slot Instead of Production
 
@@ -116,10 +127,16 @@ az webapp deploy \
   --output json
 ```
 
-| Command Part | Explanation |
+| Command/Parameter | Purpose |
 |---|---|
-| `--slot staging` | Sends the package to the staging slot instead of the production slot. |
-| Remaining parameters | Behave the same as a production ZIP deployment, but isolate the release for validation first. |
+| `az webapp deploy` | Uploads the ZIP package to App Service. |
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Selects the parent web app. |
+| `--slot staging` | Deploys to the `staging` slot instead of production. |
+| `--src-path ./artifacts/webapp.zip` | Uses the prepared ZIP artifact as the deployment source. |
+| `--type zip` | Declares the artifact type as ZIP. |
+| `--restart true` | Restarts the slot after deployment. |
+| `--output json` | Returns structured command output for verification. |
 
 !!! tip "Preferred production pattern"
     ZIP Deploy becomes much safer when you deploy to a staging slot first, validate health and smoke tests, and then promote by swap. See [Slots and Swap](./slots-and-swap.md).
@@ -149,10 +166,16 @@ az webapp config appsettings list \
   --output table
 ```
 
-| Command | Purpose |
+| Command/Parameter | Purpose |
 |---|---|
-| `az webapp show ...` | Confirms the app is running and returns the production host name. |
-| `az webapp config appsettings list ...` | Verifies that package and build settings match the intended deployment model. |
+| `az webapp show` | Retrieves core metadata about the web app. |
+| `--resource-group $RG` | Targets the resource group that owns the app. |
+| `--name $APP_NAME` | Selects the web app to inspect. |
+| `--query "{state:state,host:defaultHostName}"` | Narrows the output to app state and default hostname. |
+| `--output json` | Formats the result as JSON. |
+| `az webapp config appsettings list` | Lists current app settings for the web app. |
+| `--query "[?name=='WEBSITE_RUN_FROM_PACKAGE' || name=='SCM_DO_BUILD_DURING_DEPLOYMENT']"` | Filters the settings list to the deployment-related keys only. |
+| `--output table` | Formats the filtered settings in a readable table. |
 
 ## See Also
 
