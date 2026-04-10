@@ -21,6 +21,43 @@ related:
 summary: Request path, runtime, deployment, and network failure points for troubleshooting classification.
 status: stable
 last_reviewed: 2026-04-08
+content_sources:
+  diagrams:
+    - id: request-path-architecture
+      type: flowchart
+      source: self-generated
+      justification: "Synthesized from MSLearn articles on App Service architecture, diagnostics, and troubleshooting"
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/overview-diagnostics
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+    - id: runtime-worker-model
+      type: flowchart
+      source: self-generated
+      justification: "Synthesized from MSLearn articles on App Service monitoring and diagnostics"
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/monitor-app-service
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+    - id: deployment-path
+      type: flowchart
+      source: self-generated
+      justification: "Synthesized from MSLearn articles on deployment slots and health checks"
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots
+        - https://learn.microsoft.com/en-us/azure/app-service/monitor-instances-health-check
+    - id: outbound-network-path
+      type: flowchart
+      source: self-generated
+      justification: "Synthesized from MSLearn articles on App Service networking"
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/networking-features
+        - https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration
+    - id: observability-coverage-map
+      type: flowchart
+      source: self-generated
+      justification: "Synthesized from MSLearn articles on App Service diagnostics and logging"
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/overview-diagnostics
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
 ---
 # Troubleshooting Architecture Overview
 
@@ -41,6 +78,7 @@ Use this architecture map to route quickly to the right playbook.
 
 ## 1) Request Path Architecture (where 5xx can originate)
 
+<!-- diagram-id: request-path-architecture -->
 ```mermaid
 flowchart LR
     A[Client Browser or API Caller] --> B[Azure App Service Front End]
@@ -72,6 +110,7 @@ flowchart LR
 
 ## 2) Runtime / Worker Model (memory pressure, SIGKILL, timeout)
 
+<!-- diagram-id: runtime-worker-model -->
 ```mermaid
 flowchart TD
     A[Worker Instance] --> B[Runtime Process Manager]
@@ -102,6 +141,7 @@ flowchart TD
 
 ## 3) Deployment Path (startup failures and config drift)
 
+<!-- diagram-id: deployment-path -->
 ```mermaid
 flowchart LR
     A[Code or image change] --> B[Deployment to slot]
@@ -127,6 +167,7 @@ flowchart LR
 
 ## 4) Outbound / Network Path (SNAT, DNS, private routing)
 
+<!-- diagram-id: outbound-network-path -->
 ```mermaid
 flowchart LR
     A[App Worker] --> B[DNS Resolver Path]
@@ -152,6 +193,7 @@ flowchart LR
 
 ## 5) Observability Coverage Map
 
+<!-- diagram-id: observability-coverage-map -->
 ```mermaid
 flowchart TD
     A[Component] --> B[Best First Log Source]
