@@ -56,7 +56,7 @@ graph TD
         subgraph DEP_SUBNET[Private Dependency Subnet]
             SQL[(Azure SQL Private Endpoint)]
             REDIS[(Azure Cache Private Endpoint)]
-            API[(Internal API)]
+            API[Internal API]
         end
         DNS[Private DNS Zones]
     end
