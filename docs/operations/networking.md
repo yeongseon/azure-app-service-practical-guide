@@ -4,472 +4,494 @@ hide:
 content_sources:
   diagrams:
     - id: networking-inbound-outbound-paths
-      type: graph
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/networking-features
-    - id: private-inbound-private-outbound-architecture
-      type: graph
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/networking-features
-    - id: networking-debugging-checklist
       type: flowchart
       source: mslearn-adapted
       mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/networking-features
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/overview-private-endpoint
+        - https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration
+    - id: private-inbound-private-outbound-architecture
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview-private-endpoint
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration
+    - id: networking-debugging-checklist
+      type: flowchart
+      source: self-generated
+      justification: "Synthesized operational decision flow from Microsoft Learn networking, private endpoint, and VNet integration guidance."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/networking-features
+        - https://learn.microsoft.com/en-us/azure/app-service/overview-private-endpoint
+        - https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration
 ---
 
 # Networking Operations
 
-Secure traffic paths by controlling inbound access, private inbound endpoints, and outbound connectivity to private resources. This guide provides operational patterns for App Service networking in production.
-
-<!-- diagram-id: networking-inbound-outbound-paths -->
-```mermaid
-graph TD
-    subgraph "External Traffic"
-        Client[Client] -- Inbound --> Restrictions[Access Restrictions]
-        Client -- Inbound --> PE[Private Endpoint]
-    end
-    subgraph "App Service Plan"
-        App[Application]
-    end
-    subgraph "Azure Virtual Network"
-        Integration[VNet Integration Subnet]
-        Resources[Private Resources]
-    end
-    Restrictions -- Allow --> App
-    PE -- Private Link --> App
-    App -- Outbound --> Integration
-    Integration -- Private Routing --> Resources
-```
-
-### Combined Architecture (Private Inbound + Private Outbound)
-
-<!-- diagram-id: private-inbound-private-outbound-architecture -->
-```mermaid
-graph TD
-    subgraph Corporate VNet
-        subgraph snet-pe["Private Endpoint Subnet"]
-            PE[Private Endpoint<br/>10.0.1.5]
-        end
-        subgraph snet-int["Integration Subnet (min /28)<br/>Microsoft.Web/serverFarms delegation"]
-            VI[VNet Integration]
-        end
-        subgraph snet-backend["Backend Subnet"]
-            DB[(Database / Cache)]
-            KV[Secrets Store]
-        end
-        InternalClient[Internal Client]
-    end
-
-    subgraph "App Service Platform"
-        App[Application]
-    end
-
-    subgraph "Private DNS Zones"
-        DNS1["privatelink.azurewebsites.net<br/>→ 10.0.1.5"]
-        DNS2["Private service zones<br/>→ 10.0.2.4"]
-    end
-
-    InternalClient -- "lookup app.azurewebsites.net" --> DNS1
-    DNS1 -- "A record 10.0.1.5" --> InternalClient
-    InternalClient --> PE
-    PE -- "Private Link" --> App
-    App -- "outbound" --> VI
-    VI --> DB
-    VI -- "lookup private dependency" --> DNS2
-    VI --> KV
-```
+Operate Azure App Service networking by treating inbound and outbound paths separately: use access restrictions or private endpoints for inbound reachability, and use virtual network integration for outbound access to private dependencies.
 
 ## Prerequisites
 
-- Existing Web App and App Service Plan
-- Existing VNet and subnets for:
+- Existing Web App and App Service Plan in a supported dedicated tier
+- Existing virtual network with separate subnets for:
     - private endpoint
     - VNet integration
-- Required RBAC permissions for Web, Network, and DNS resources
+    - client test host (recommended)
+- RBAC permissions for App Service, Virtual Network, Private Endpoint, and Private DNS resources
 - Variables set:
     - `RG`
     - `APP_NAME`
     - `VNET_NAME`
     - `INTEGRATION_SUBNET_NAME`
     - `PRIVATE_ENDPOINT_SUBNET_NAME`
+    - `CLIENT_SUBNET_NAME`
+    - `LOCATION`
 
 ## When to Use
 
+Use this guide when you need one or more of these patterns:
+
+1. Restrict public inbound traffic to specific source ranges.
+2. Expose the app privately over Azure Private Link.
+3. Let the app reach private resources through a delegated integration subnet.
+4. Validate DNS, routing, and reachability after networking changes.
+
 ## Procedure
 
-### Configure Inbound Access Restrictions
+<!-- diagram-id: networking-inbound-outbound-paths -->
+```mermaid
+flowchart TD
+    Client[Client] --> Inbound{Inbound path}
+    Inbound --> Access[Access restrictions]
+    Inbound --> PrivateEndpoint[Private endpoint]
+    Access --> App[App Service app]
+    PrivateEndpoint --> App
+    App --> Outbound{Outbound path}
+    Outbound --> VNetIntegration[VNet integration]
+    VNetIntegration --> PrivateDeps[Private dependencies]
+    VNetIntegration --> NatOrFirewall[NAT gateway or firewall optional]
+```
 
-Allow only known source ranges:
+### Combined Architecture (Private Inbound + Private Outbound)
+
+<!-- diagram-id: private-inbound-private-outbound-architecture -->
+```mermaid
+flowchart TD
+    InternalClient[Client in connected network] --> PublicDns[Public DNS for app hostname]
+    PublicDns --> PrivateDns[Private DNS zone for privatelink.azurewebsites.net]
+    PrivateDns --> PrivateEndpoint[Private endpoint in dedicated subnet]
+    PrivateEndpoint --> App[App Service app]
+    App --> VNetIntegration[Delegated integration subnet]
+    VNetIntegration --> PrivateResource[Private dependency]
+    VNetIntegration --> OptionalNat[Optional NAT gateway or firewall]
+```
+
+### 1. Configure Inbound Access Restrictions
+
+Allow approved public sources first, then add a deny fallback.
 
 ```bash
 az webapp config access-restriction add \
-  --resource-group $RG \
-  --name $APP_NAME \
-  --rule-name AllowCorp \
+  --resource-group "$RG" \
+  --name "$APP_NAME" \
+  --rule-name "AllowCorp" \
   --action Allow \
-  --ip-address 203.0.113.0/24 \
+  --ip-address "203.0.113.0/24" \
   --priority 100 \
   --output json
-```
 
-Add explicit deny-all fallback:
-
-```bash
 az webapp config access-restriction add \
-  --resource-group $RG \
-  --name $APP_NAME \
-  --rule-name DenyAll \
+  --resource-group "$RG" \
+  --name "$APP_NAME" \
+  --rule-name "DenyAll" \
   --action Deny \
-  --ip-address 0.0.0.0/0 \
+  --ip-address "0.0.0.0/0" \
   --priority 2147483647 \
   --output json
-```
 
-Review configured rules:
-
-```bash
 az webapp config access-restriction show \
-  --resource-group $RG \
-  --name $APP_NAME \
+  --resource-group "$RG" \
+  --name "$APP_NAME" \
   --query "ipSecurityRestrictions[].{name:name,action:action,ip:ipAddress,priority:priority}" \
   --output table
 ```
 
-### Enable VNet Integration for Outbound Traffic
+| Command/Parameter | Purpose |
+|---|---|
+| `az webapp config access-restriction add` | Adds ordered allow or deny rules on the App Service front end. |
+| `--ip-address "203.0.113.0/24"` | Uses a documentation-only example CIDR for allowed corporate ingress. |
+| `--priority 2147483647` | Places the deny rule at the lowest precedence so explicit allows are evaluated first. |
+| `az webapp config access-restriction show` | Verifies effective rule order and rule values. |
+
+### 2. Enable VNet Integration for Outbound Traffic
+
+Use a dedicated delegated subnet for outbound connectivity. Private endpoint and VNet integration must use different subnets.
 
 ```bash
 az webapp vnet-integration add \
-  --resource-group $RG \
-  --name $APP_NAME \
-  --vnet $VNET_NAME \
-  --subnet $INTEGRATION_SUBNET_NAME \
+  --resource-group "$RG" \
+  --name "$APP_NAME" \
+  --vnet "$VNET_NAME" \
+  --subnet "$INTEGRATION_SUBNET_NAME" \
   --output json
-```
 
-Route all outbound traffic into VNet path:
-
-```bash
 az webapp config appsettings set \
-  --resource-group $RG \
-  --name $APP_NAME \
-  --settings WEBSITE_VNET_ROUTE_ALL=1 \
+  --resource-group "$RG" \
+  --name "$APP_NAME" \
+  --settings "WEBSITE_VNET_ROUTE_ALL=1" \
   --output json
-```
 
-Inspect integration state:
-
-```bash
 az webapp vnet-integration list \
-  --resource-group $RG \
-  --name $APP_NAME \
+  --resource-group "$RG" \
+  --name "$APP_NAME" \
   --output table
 ```
 
-### Create Private Endpoint for Inbound Private Access
+| Command/Parameter | Purpose |
+|---|---|
+| `az webapp vnet-integration add` | Connects the app to the delegated subnet for outbound private connectivity. |
+| `--subnet "$INTEGRATION_SUBNET_NAME"` | Uses the integration subnet only; do not reuse the private endpoint subnet. |
+| `WEBSITE_VNET_ROUTE_ALL=1` | Forces all outbound app traffic into the VNet integration path. |
+| `az webapp vnet-integration list` | Confirms the app is attached to the expected VNet and subnet. |
+
+!!! note "Subnet sizing"
+    Microsoft Learn recommends planning enough IP space for scale operations and platform upgrades. For a single multitenant App Service plan, `/26` gives the safest headroom; `/28` is the minimum supported size when the subnet already exists.
+
+### 3. Create a Private Endpoint for Inbound Private Access
+
+The private endpoint handles inbound traffic only. It doesn't replace VNet integration for outbound traffic.
 
 ```bash
-APP_ID=$(az webapp show \
-  --resource-group $RG \
-  --name $APP_NAME \
+APP_ID="$(az webapp show \
+  --resource-group "$RG" \
+  --name "$APP_NAME" \
   --query id \
-  --output tsv)
+  --output tsv)"
 
 az network private-endpoint create \
-  --resource-group $RG \
+  --resource-group "$RG" \
   --name "pe-$APP_NAME" \
-  --vnet-name $VNET_NAME \
-  --subnet $PRIVATE_ENDPOINT_SUBNET_NAME \
-  --private-connection-resource-id $APP_ID \
-  --group-id sites \
+  --vnet-name "$VNET_NAME" \
+  --subnet "$PRIVATE_ENDPOINT_SUBNET_NAME" \
+  --private-connection-resource-id "$APP_ID" \
+  --group-id "sites" \
   --connection-name "pec-$APP_NAME" \
   --output json
-```
 
-Check private endpoint status:
-
-```bash
 az network private-endpoint show \
-  --resource-group $RG \
+  --resource-group "$RG" \
   --name "pe-$APP_NAME" \
-  --query "{state:provisioningState,privateIp:customDnsConfigs[0].ipAddresses[0]}" \
+  --query "{state:provisioningState,connections:privateLinkServiceConnections[].privateLinkServiceConnectionState.status}" \
   --output json
 ```
 
-### Configure Private DNS Resolution
+| Command/Parameter | Purpose |
+|---|---|
+| `az webapp show --query id` | Retrieves the App Service resource ID required by the private endpoint create command. |
+| `az network private-endpoint create` | Creates the App Service private endpoint in the selected subnet. |
+| `--group-id "sites"` | Uses the correct App Service subresource for the production slot. |
+| `az network private-endpoint show` | Verifies provisioning state and private link connection approval status. |
 
-Create and link private DNS zone:
+!!! warning "Private endpoint scope"
+    Access restriction rules are **not** evaluated for traffic that arrives through the private endpoint. If you want a true private-only pattern, disable public network access separately and validate private DNS resolution.
+
+### 4. Configure Private DNS Resolution
+
+For App Service private endpoints, clients should resolve `app-name.azurewebsites.net` through the `privatelink.azurewebsites.net` private DNS zone. Use a private DNS zone group so the required records are created automatically.
 
 ```bash
 az network private-dns zone create \
-  --resource-group $RG \
-  --name privatelink.azurewebsites.net \
+  --resource-group "$RG" \
+  --name "privatelink.azurewebsites.net" \
   --output json
 
 az network private-dns link vnet create \
-  --resource-group $RG \
-  --zone-name privatelink.azurewebsites.net \
+  --resource-group "$RG" \
+  --zone-name "privatelink.azurewebsites.net" \
   --name "link-$VNET_NAME" \
-  --virtual-network $VNET_NAME \
+  --virtual-network "$VNET_NAME" \
   --registration-enabled false \
+  --output json
+
+az network private-endpoint dns-zone-group create \
+  --resource-group "$RG" \
+  --endpoint-name "pe-$APP_NAME" \
+  --name "default" \
+  --private-dns-zone "privatelink.azurewebsites.net" \
+  --zone-name "privatelink.azurewebsites.net" \
   --output json
 ```
 
-!!! warning "DNS is often the root cause"
-    Private endpoint networking is correct only when hostname resolution returns private IPs from your VNet context.
+| Command/Parameter | Purpose |
+|---|---|
+| `az network private-dns zone create` | Creates the App Service private DNS zone. |
+| `az network private-dns link vnet create` | Links the zone to the client VNet so clients can resolve the private endpoint path. |
+| `az network private-endpoint dns-zone-group create` | Automatically creates the app and SCM DNS records for the private endpoint. |
+| `--registration-enabled false` | Prevents VM autoregistration, which isn't needed for this zone. |
 
-### Outbound IP and NAT Considerations
+!!! warning "DNS is the usual failure point"
+    A private endpoint deployment isn't operational until clients in the linked network resolve the app hostname to the private endpoint address path instead of the public internet path.
 
-App Service outbound IP lists are potential addresses. Validate real egress path when NAT is used.
+### 5. Review Outbound Egress Expectations
+
+App Service outbound IP lists are potential addresses. When you use route-all with a NAT gateway or firewall, validate the actual egress path from the integrated subnet.
 
 ```bash
 az webapp show \
-  --resource-group $RG \
-  --name $APP_NAME \
+  --resource-group "$RG" \
+  --name "$APP_NAME" \
   --query "{outbound:outboundIpAddresses,possible:possibleOutboundIpAddresses}" \
   --output json
-```
 
-If integration subnet uses NAT Gateway, validate NAT association:
-
-```bash
 az network vnet subnet show \
-  --resource-group $RG \
-  --vnet-name $VNET_NAME \
-  --name $INTEGRATION_SUBNET_NAME \
+  --resource-group "$RG" \
+  --vnet-name "$VNET_NAME" \
+  --name "$INTEGRATION_SUBNET_NAME" \
   --query "natGateway.id" \
   --output tsv
 ```
 
+| Command/Parameter | Purpose |
+|---|---|
+| `az webapp show` | Displays documented outbound and possible outbound IP sets for the app. |
+| `az network vnet subnet show` | Confirms whether the integration subnet is attached to a NAT gateway. |
+| `natGateway.id` | Returns the NAT gateway resource ID when deterministic outbound egress is configured. |
+
 ## Verification
 
-### Access Restrictions
+### Verify Public Access Restriction Behavior
+
+Run from an allowed and then a blocked public source.
 
 ```bash
 curl --silent --output /dev/null --write-out "%{http_code}" \
   "https://$APP_NAME.azurewebsites.net/health"
 ```
 
-Expected:
+| Command/Parameter | Purpose |
+|---|---|
+| `curl --write-out "%{http_code}"` | Confirms whether the app returns the expected status code without printing the full body. |
+| `https://$APP_NAME.azurewebsites.net/health` | Uses a simple health endpoint for reachability validation. |
 
-- allowed source: `200`
-- blocked source: `403`
+Expected results:
 
-### Testing from VNet (VM/Bastion Required)
+- allowed public source: `200`
+- blocked public source: `403`
 
-!!! warning "VNet Access Required"
-    After enabling private endpoint and disabling public access, the app is **only reachable from within the VNet**. You need one of:
-    
-    - Jump box VM in the VNet + Azure Bastion
-    - VPN/ExpressRoute connection
-    - Azure Cloud Shell with VNet integration
+### Verify Private Endpoint Reachability from a Connected Network
 
-#### Option A: Deploy Jump Box VM with Bastion
+You need a client **inside the linked VNet or a connected network**. A VM is the most common test client. Azure Bastion is only an access method to that VM; it doesn't replace the VM or other in-network client.
+
+Supported client patterns:
+
+- VM in the VNet, accessed through Azure Bastion
+- VM in the VNet, accessed through VPN or ExpressRoute
+- Existing workstation in a connected network with DNS forwarding to Azure private DNS
+
+#### Option A: Create a Temporary Test VM and Access It with Bastion
+
+Use a **client subnet**, not the private endpoint subnet, for the VM. If you need to create `AzureBastionSubnet`, choose an unused `/26` or larger prefix from the existing VNet address space.
 
 ```bash
-# Create Bastion subnet (required: /26 or larger)
 az network vnet subnet create \
-  --resource-group $RG \
-  --vnet-name $VNET_NAME \
+  --resource-group "$RG" \
+  --vnet-name "$VNET_NAME" \
   --name "AzureBastionSubnet" \
-  --address-prefixes "10.0.3.0/26"
+  --address-prefixes "<unused-vnet-prefix-for-bastion-subnet>"
 
-# Create public IP for Bastion
 az network public-ip create \
-  --resource-group $RG \
+  --resource-group "$RG" \
   --name "pip-bastion" \
   --sku "Standard" \
-  --location $LOCATION
+  --location "$LOCATION"
 
-# Create Bastion host (takes 5-10 minutes)
 az network bastion create \
-  --resource-group $RG \
+  --resource-group "$RG" \
   --name "bastion-$APP_NAME" \
-  --vnet-name $VNET_NAME \
+  --vnet-name "$VNET_NAME" \
   --public-ip-address "pip-bastion" \
-  --location $LOCATION \
-  --sku "Basic"
+  --location "$LOCATION" \
+  --sku "Standard"
 
-# Create jump box VM (no public IP - accessed via Bastion)
 az vm create \
-  --resource-group $RG \
+  --resource-group "$RG" \
   --name "vm-jumpbox" \
   --image "Ubuntu2404" \
   --size "Standard_B1s" \
-  --vnet-name $VNET_NAME \
-  --subnet $PRIVATE_ENDPOINT_SUBNET_NAME \
+  --vnet-name "$VNET_NAME" \
+  --subnet "$CLIENT_SUBNET_NAME" \
   --admin-username "azureuser" \
   --generate-ssh-keys \
   --public-ip-address ""
 ```
 
 | Command/Parameter | Purpose |
-|-------------------|---------|
-| `AzureBastionSubnet` | Required subnet name for Bastion (must be exactly this name) |
-| `--address-prefixes "10.0.3.0/26"` | Minimum /26 CIDR for Bastion subnet |
-| `--sku "Basic"` | Basic Bastion SKU (~$0.19/hour) |
-| `--public-ip-address ""` | VM has no public IP - only accessible via Bastion |
+|---|---|
+| `AzureBastionSubnet` | Required subnet name for Azure Bastion. |
+| `--address-prefixes "<unused-vnet-prefix-for-bastion-subnet>"` | Placeholder for an unused `/26` or larger prefix from the existing VNet address space. |
+| `az network bastion create` | Provisions Bastion so you can reach the test VM without giving it a public IP. |
+| `--sku "Standard"` | Uses the SKU required for native-client SSH with `az network bastion ssh`. |
+| `--subnet "$CLIENT_SUBNET_NAME"` | Places the VM in a dedicated client subnet instead of the private endpoint subnet. |
+| `--public-ip-address ""` | Creates the VM without a public IP. |
 
-#### Connect to VM via Bastion
+Connect to the VM:
 
 ```bash
-# Connect via Azure Portal: VM > Connect > Bastion
-# Or use Azure CLI:
 az network bastion ssh \
-  --resource-group $RG \
+  --resource-group "$RG" \
   --name "bastion-$APP_NAME" \
-  --target-resource-id $(az vm show --resource-group $RG --name "vm-jumpbox" --query "id" --output tsv) \
+  --target-resource-id "$(az vm show --resource-group "$RG" --name "vm-jumpbox" --query id --output tsv)" \
   --auth-type "ssh-key" \
   --username "azureuser" \
-  --ssh-key "~/.ssh/id_rsa"
+  --ssh-key "$HOME/.ssh/id_rsa"
 ```
 
-#### Test from Jump Box
+| Command/Parameter | Purpose |
+|---|---|
+| `az network bastion ssh` | Opens an SSH session to the VM through Bastion. |
+| `--target-resource-id` | Resolves the VM resource ID inline so the session targets the correct VM. |
+| `--ssh-key "$HOME/.ssh/id_rsa"` | Uses an explicit home-directory path so shell expansion is unambiguous. |
 
-Once connected to the VM:
+Once connected to the VM, validate DNS and HTTP reachability:
 
 ```bash
-# Test DNS resolution - should return private IP (10.x.x.x)
-nslookup $APP_NAME.azurewebsites.net
-```
-
-Expected output:
-```
-Server:         127.0.0.53
-Address:        127.0.0.53#53
-
-Non-authoritative answer:
-myapp.azurewebsites.net  canonical name = myapp.privatelink.azurewebsites.net.
-Name:   myapp.privatelink.azurewebsites.net
-Address: 10.0.1.5
-```
-
-```bash
-# Test app endpoint
+nslookup "$APP_NAME.azurewebsites.net"
 curl --silent --output /dev/null --write-out "%{http_code}" \
   "https://$APP_NAME.azurewebsites.net/health"
 ```
 
-Expected: `200`
+| Command/Parameter | Purpose |
+|---|---|
+| `nslookup "$APP_NAME.azurewebsites.net"` | Confirms the hostname resolves through the private endpoint DNS chain from the client network. |
+| `curl --write-out "%{http_code}"` | Confirms the private endpoint can serve the app successfully. |
 
-#### Option B: Minimal Test VM (No Bastion)
+Expected results:
 
-For quick testing, create a VM with public IP and SSH directly:
+- DNS answer includes the `privatelink.azurewebsites.net` path.
+- HTTP response is `200` from the in-network client.
 
-```bash
-az vm create \
-  --resource-group $RG \
-  --name "vm-test" \
-  --image "Ubuntu2404" \
-  --size "Standard_B1s" \
-  --vnet-name $VNET_NAME \
-  --subnet $PRIVATE_ENDPOINT_SUBNET_NAME \
-  --admin-username "azureuser" \
-  --generate-ssh-keys
+#### Option B: Use an Existing Connected Client Instead of Creating a VM
 
-# SSH to VM (use the public IP from output)
-ssh azureuser@<public-ip>
+If you already have a client in the linked VNet, a peered VNet, or an on-premises network connected through VPN or ExpressRoute, run the same `nslookup` and `curl` checks there. This is often preferable to creating temporary infrastructure.
 
-# Test from inside VM
-nslookup $APP_NAME.azurewebsites.net
-curl https://$APP_NAME.azurewebsites.net/health
-```
+!!! tip "Cleanup temporary test resources"
+    Delete short-lived validation resources after testing.
 
-!!! tip "Cost Optimization"
-    Delete test resources after verification:
     ```bash
-    az vm delete --resource-group $RG --name "vm-jumpbox" --yes
-    az network bastion delete --resource-group $RG --name "bastion-$APP_NAME"
-    az network public-ip delete --resource-group $RG --name "pip-bastion"
+    az vm delete --resource-group "$RG" --name "vm-jumpbox" --yes
+    az network bastion delete --resource-group "$RG" --name "bastion-$APP_NAME"
+    az network public-ip delete --resource-group "$RG" --name "pip-bastion"
     ```
-    
-    - VM (B1s): ~$0.01/hour
-    - Bastion (Basic): ~$0.19/hour
 
-### Private Endpoint Name Resolution
+    | Command/Parameter | Purpose |
+    |---|---|
+    | `az vm delete` | Removes the temporary test VM. |
+    | `az network bastion delete` | Removes the Bastion host when you no longer need private access testing. |
+    | `az network public-ip delete` | Removes the public IP reserved for Bastion. |
 
-From a VM/resource inside linked VNet:
+### Verify Outbound Private Dependency Reachability
 
-```bash
-nslookup "$APP_NAME.azurewebsites.net"
-```
-
-Expected: private IP (`10.x.x.x` or similar), not public internet address.
-
-#### Outbound Private Dependency Reachability
-
-From Kudu/SSH diagnostics console:
+From the Kudu or SSH console of the app, validate DNS and port reachability to the private dependency.
 
 ```bash
-nameresolver your-private-resource.contoso.local
-tcpping 10.0.2.4 443
+nameresolver "your-private-resource.contoso.local"
+tcpping "your-private-resource.contoso.local" 443
 ```
+
+| Command/Parameter | Purpose |
+|---|---|
+| `nameresolver` | Resolves the dependency hostname from the App Service worker context. |
+| `tcpping` | Tests TCP connectivity from the app worker to the dependency endpoint and port. |
 
 ### Network Debugging Checklist
 
 <!-- diagram-id: networking-debugging-checklist -->
 ```mermaid
 flowchart TD
-    Start["Connectivity Issue"] --> DNS["1. nameresolver/nslookup hostname"]
-    DNS -->|"Resolves to public IP\nor NXDOMAIN"| DNSFix["❌ Check Private DNS Zone\nand VNet link"]
-    DNS -->|"Resolves to private IP\n(10.x.x.x)"| Ping["2. tcpping private-ip"]
-    Ping -->|"Timeout / unreachable"| PingFix["❌ Check NSG rules,\nroute tables, peering"]
-    Ping -->|"Reachable"| Port["3. tcpping private-ip:port"]
-    Port -->|"Connection refused\nor timeout"| PortFix["❌ Check target service\nfirewall, port config"]
-    Port -->|"Port open"| App["4. curl https://endpoint"]
-    App -->|"HTTP error\n(401/403/5xx)"| AppFix["❌ Check auth config,\ncertificates, app health"]
-    App -->|"200 OK"| Done["✅ Connection working"]
+    Start[Connectivity issue] --> DNS[1. Validate DNS]
+    DNS -->|Public path or NXDOMAIN| DNSFix[Fix private DNS zone, records, or VNet link]
+    DNS -->|Private path resolves| TCP[2. Validate TCP reachability]
+    TCP -->|Timeout| RouteFix[Check NSG, UDR, firewall, peering, or VPN path]
+    TCP -->|Port reachable| HTTP[3. Validate application response]
+    HTTP -->|403 or 5xx| AppFix[Check app auth, access policy, or app health]
+    HTTP -->|200| Done[Connection verified]
 ```
 
 Layered checks:
 
-1. DNS resolution
-2. IP reachability
-3. Port connectivity
-4. Application response
+1. DNS resolution path
+2. TCP reachability
+3. Application response
 
 ### Common Failures and Fixes
 
 | Symptom | Likely Cause | Fix |
 |---|---|---|
-| `NXDOMAIN` | Private DNS zone not linked | Link VNet to zone |
-| Resolves to public IP | Wrong DNS record path | Configure private zone record |
-| IP reachable, port closed | Service firewall/ACL | Update target service network rules |
-| HTTP 403 | Access restriction or auth policy | Validate allow rules and auth configuration |
-| Intermittent egress failures | SNAT/NAT path assumptions | Validate actual egress through NAT design |
+| `NXDOMAIN` or public resolution path | Private DNS zone missing, unlinked, or not forwarded | Link the VNet to `privatelink.azurewebsites.net` and validate DNS forwarding. |
+| `403` from a public client after private endpoint rollout | Public network access still enabled but caller isn't allowed by access restrictions | Decide whether the app should stay public, then update restriction rules or disable public access. |
+| Private endpoint works but app can't reach backend | VNet integration missing or routed incorrectly | Validate integration subnet, route-all setting, and NSG or UDR behavior. |
+| Intermittent outbound failures | NAT/SNAT assumptions don't match actual egress path | Validate NAT gateway or firewall path on the integration subnet. |
+| Kudu or SCM hostname doesn't resolve privately | DNS zone group or SCM record missing | Recreate or validate the private endpoint DNS zone group. |
 
 ## Rollback / Troubleshooting
+
+To remove private inbound access:
+
+```bash
+az network private-endpoint delete \
+  --resource-group "$RG" \
+  --name "pe-$APP_NAME"
+```
+
+| Command/Parameter | Purpose |
+|---|---|
+| `az network private-endpoint delete` | Removes the App Service private endpoint resource. |
+
+To remove outbound VNet integration:
+
+```bash
+az webapp vnet-integration remove \
+  --resource-group "$RG" \
+  --name "$APP_NAME" \
+  --vnet "$VNET_NAME"
+```
+
+| Command/Parameter | Purpose |
+|---|---|
+| `az webapp vnet-integration remove` | Disconnects the app from the virtual network integration path. |
 
 ## Advanced Topics
 
 ### Zero Public Ingress Pattern
 
-Combine these controls:
+Use this combination for private-only access:
 
-- Private Endpoint for inbound
-- Access restrictions denying public traffic
-- Internal DNS resolution only
-- VNet-integrated outbound for private dependencies
+- Private endpoint for inbound traffic
+- Public network access disabled after validation
+- Private DNS for app and SCM hostnames
+- VNet integration for outbound private dependencies
 
-### Hub-and-Spoke Network Governance
+### Hub-and-Spoke Governance
 
-For large environments:
+For larger estates:
 
-- central firewall and DNS in hub
-- workload VNets as spokes
-- private DNS zone linking strategy documented and automated
+- centralize DNS forwarding and private DNS ownership
+- document which team owns NSGs, UDRs, and firewall policy
+- standardize subnet sizing for integration and private endpoint patterns
 
-### Change Management for Networking
+### Change Management
 
-- stage DNS and NSG changes with validation windows
-- keep subnet delegation and address space inventory current
-- run synthetic checks after each network change
+- validate DNS before changing traffic policy
+- stage NSG and route updates separately from app changes
+- keep a repeatable in-network test path for post-change verification
 
-!!! info "Enterprise Considerations"
-    Operational reliability improves when DNS, NSG, and route ownership are explicit across teams. Most App Service networking incidents are cross-team configuration drift issues.
+!!! info "Operational reality"
+    Most App Service networking incidents are caused by DNS, route ownership, or subnet design drift rather than by the App Service resource itself.
 
 ## Language-Specific Details
 
 For language-specific operational guidance, see:
+
 - [Node.js Guide](../language-guides/nodejs/index.md)
 - [Python Guide](../language-guides/python/index.md)
 - [Java Guide](../language-guides/java/index.md)
@@ -481,9 +503,13 @@ For language-specific operational guidance, see:
 - [Security](./security.md)
 - [Health and Recovery](./health-recovery.md)
 - [App Service networking features (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/networking-features)
-- [VNet integration (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-vnet-integration)
+- [Use private endpoints for apps (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-private-endpoint)
+- [Integrate your app with an Azure virtual network (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-vnet-integration)
+- [Configure Bastion for native client connections (Microsoft Learn)](https://learn.microsoft.com/azure/bastion/native-client)
+- [About Azure Bastion configuration settings (Microsoft Learn)](https://learn.microsoft.com/azure/bastion/configuration-settings)
 
 ## Sources
 
 - [App Service networking features (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/networking-features)
-- [VNet integration (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-vnet-integration)
+- [Use private endpoints for apps (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-private-endpoint)
+- [Integrate your app with an Azure virtual network (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-vnet-integration)
