@@ -242,7 +242,7 @@ az network vnet subnet show \
 
 ## Verification
 
-#### Access Restrictions
+### Access Restrictions
 
 ```bash
 curl --silent --output /dev/null --write-out "%{http_code}" \
@@ -254,7 +254,138 @@ Expected:
 - allowed source: `200`
 - blocked source: `403`
 
-#### Private Endpoint Name Resolution
+### Testing from VNet (VM/Bastion Required)
+
+!!! warning "VNet Access Required"
+    After enabling private endpoint and disabling public access, the app is **only reachable from within the VNet**. You need one of:
+    
+    - Jump box VM in the VNet + Azure Bastion
+    - VPN/ExpressRoute connection
+    - Azure Cloud Shell with VNet integration
+
+#### Option A: Deploy Jump Box VM with Bastion
+
+```bash
+# Create Bastion subnet (required: /26 or larger)
+az network vnet subnet create \
+  --resource-group $RG \
+  --vnet-name $VNET_NAME \
+  --name "AzureBastionSubnet" \
+  --address-prefixes "10.0.3.0/26"
+
+# Create public IP for Bastion
+az network public-ip create \
+  --resource-group $RG \
+  --name "pip-bastion" \
+  --sku "Standard" \
+  --location $LOCATION
+
+# Create Bastion host (takes 5-10 minutes)
+az network bastion create \
+  --resource-group $RG \
+  --name "bastion-$APP_NAME" \
+  --vnet-name $VNET_NAME \
+  --public-ip-address "pip-bastion" \
+  --location $LOCATION \
+  --sku "Basic"
+
+# Create jump box VM (no public IP - accessed via Bastion)
+az vm create \
+  --resource-group $RG \
+  --name "vm-jumpbox" \
+  --image "Ubuntu2404" \
+  --size "Standard_B1s" \
+  --vnet-name $VNET_NAME \
+  --subnet $PRIVATE_ENDPOINT_SUBNET_NAME \
+  --admin-username "azureuser" \
+  --generate-ssh-keys \
+  --public-ip-address ""
+```
+
+| Command/Parameter | Purpose |
+|-------------------|---------|
+| `AzureBastionSubnet` | Required subnet name for Bastion (must be exactly this name) |
+| `--address-prefixes "10.0.3.0/26"` | Minimum /26 CIDR for Bastion subnet |
+| `--sku "Basic"` | Basic Bastion SKU (~$0.19/hour) |
+| `--public-ip-address ""` | VM has no public IP - only accessible via Bastion |
+
+#### Connect to VM via Bastion
+
+```bash
+# Connect via Azure Portal: VM > Connect > Bastion
+# Or use Azure CLI:
+az network bastion ssh \
+  --resource-group $RG \
+  --name "bastion-$APP_NAME" \
+  --target-resource-id $(az vm show --resource-group $RG --name "vm-jumpbox" --query "id" --output tsv) \
+  --auth-type "ssh-key" \
+  --username "azureuser" \
+  --ssh-key "~/.ssh/id_rsa"
+```
+
+#### Test from Jump Box
+
+Once connected to the VM:
+
+```bash
+# Test DNS resolution - should return private IP (10.x.x.x)
+nslookup $APP_NAME.azurewebsites.net
+```
+
+Expected output:
+```
+Server:         127.0.0.53
+Address:        127.0.0.53#53
+
+Non-authoritative answer:
+myapp.azurewebsites.net  canonical name = myapp.privatelink.azurewebsites.net.
+Name:   myapp.privatelink.azurewebsites.net
+Address: 10.0.1.5
+```
+
+```bash
+# Test app endpoint
+curl --silent --output /dev/null --write-out "%{http_code}" \
+  "https://$APP_NAME.azurewebsites.net/health"
+```
+
+Expected: `200`
+
+#### Option B: Minimal Test VM (No Bastion)
+
+For quick testing, create a VM with public IP and SSH directly:
+
+```bash
+az vm create \
+  --resource-group $RG \
+  --name "vm-test" \
+  --image "Ubuntu2404" \
+  --size "Standard_B1s" \
+  --vnet-name $VNET_NAME \
+  --subnet $PRIVATE_ENDPOINT_SUBNET_NAME \
+  --admin-username "azureuser" \
+  --generate-ssh-keys
+
+# SSH to VM (use the public IP from output)
+ssh azureuser@<public-ip>
+
+# Test from inside VM
+nslookup $APP_NAME.azurewebsites.net
+curl https://$APP_NAME.azurewebsites.net/health
+```
+
+!!! tip "Cost Optimization"
+    Delete test resources after verification:
+    ```bash
+    az vm delete --resource-group $RG --name "vm-jumpbox" --yes
+    az network bastion delete --resource-group $RG --name "bastion-$APP_NAME"
+    az network public-ip delete --resource-group $RG --name "pip-bastion"
+    ```
+    
+    - VM (B1s): ~$0.01/hour
+    - Bastion (Basic): ~$0.19/hour
+
+### Private Endpoint Name Resolution
 
 From a VM/resource inside linked VNet:
 
