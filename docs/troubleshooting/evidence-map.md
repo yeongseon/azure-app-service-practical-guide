@@ -20,6 +20,17 @@ related:
 summary: Maps investigation questions to evidence sources, CLI commands, and KQL queries.
 status: stable
 last_reviewed: 2026-04-08
+content_validation:
+  status: verified
+  last_reviewed: "2026-04-12"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "Azure App Service diagnostics is an interactive troubleshooting experience in the Azure portal that requires no configuration."
+      source: "https://learn.microsoft.com/azure/app-service/overview-diagnostics"
+      verified: true
+    - claim: "App Service can stream logs written to console output or files stored under /home/LogFiles."
+      source: "https://learn.microsoft.com/azure/app-service/troubleshoot-diagnostic-logs"
+      verified: true
 content_sources:
   diagrams:
     - id: troubleshooting-evidence-map-diagram-1

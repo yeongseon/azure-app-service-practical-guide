@@ -16,7 +16,7 @@ This chapter deploys the Flask app from [01 - Local Run](./01-local-run.md) to A
 !!! info "Deployment Scope"
     **Service**: App Service (Linux, Python 3.11) | **Access**: Public internet | **Tier**: Basic B1
 
-    This walkthrough intentionally skips VNet integration, private endpoints, and managed identity. For that production-style pattern, use [Private Network Deployment Recipe](./recipes/private-network-deploy.md).
+    This walkthrough intentionally skips VNet integration, private endpoints, and managed identity. For that production-style pattern, use [Private Network Deployment Recipe](../recipes/private-network-deploy.md).
 
 <!-- diagram-id: 02-first-deployment-to-azure-app-service -->
 ```mermaid
@@ -139,7 +139,7 @@ When you are ready for private connectivity, move to a topology that adds VNet i
 ## Next Steps
 
 - [03 - Configuration](./03-configuration.md)
-- [Private Network Deployment Recipe](./recipes/private-network-deploy.md)
+- [Private Network Deployment Recipe](../recipes/private-network-deploy.md)
 
 ## Sources
 

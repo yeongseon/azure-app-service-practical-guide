@@ -31,6 +31,17 @@ content_sources:
       based_on:
         - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
         - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+content_validation:
+  status: verified
+  last_reviewed: "2026-04-12"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "`/home` is persistent quota-backed storage."
+      source: "https://learn.microsoft.com/azure/app-service/configure-custom-container"
+      verified: true
+    - claim: "`/tmp` is ephemeral worker-local storage."
+      source: "https://learn.microsoft.com/azure/app-service/configure-custom-container"
+      verified: true
 ---
 # Lab: No Space Left on Device (Persistent `/home` Exhaustion vs Ephemeral `/tmp` Pressure)
 

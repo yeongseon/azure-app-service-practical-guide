@@ -60,6 +60,23 @@ content_sources:
       source: mslearn-adapted
       mslearn_url: https://learn.microsoft.com/en-us/azure/reliability/reliability-app-service
       description: "Shows regional front ends distributing traffic to workers across multiple availability zones."
+content_validation:
+  status: verified
+  last_reviewed: "2026-04-12"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "A single management-plane change (for example, changing an app setting) can trigger runtime recycle."
+      source: "https://learn.microsoft.com/azure/app-service/overview"
+      verified: true
+    - claim: "At runtime, App Service frontends terminate inbound connections and route traffic to healthy worker instances."
+      source: "https://learn.microsoft.com/azure/app-service/overview"
+      verified: true
+    - claim: "Scale-out adds new instances that must warm up."
+      source: "https://learn.microsoft.com/azure/app-service/overview-hosting-plans"
+      verified: true
+    - claim: "The SCM site (`<app-name>.scm.azurewebsites.net`) is a companion management surface."
+      source: "https://learn.microsoft.com/azure/app-service/overview"
+      verified: true
 ---
 # How App Service Works
 

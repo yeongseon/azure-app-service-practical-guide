@@ -7,6 +7,20 @@ content_sources:
       type: sequenceDiagram
       source: mslearn-adapted
       mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/manage-backup
+content_validation:
+  status: verified
+  last_reviewed: "2026-04-12"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "App Service supports both scheduled backups and on-demand backups."
+      source: "https://learn.microsoft.com/azure/app-service/manage-backup"
+      verified: true
+    - claim: "App Service backup can include site content, app configuration, and optional connected database backups when supported."
+      source: "https://learn.microsoft.com/azure/app-service/manage-backup"
+      verified: true
+    - claim: "App Service backups are not a replacement for database-native point-in-time restore."
+      source: "https://learn.microsoft.com/azure/app-service/manage-backup"
+      verified: true
 ---
 
 # Backup and Restore Operations

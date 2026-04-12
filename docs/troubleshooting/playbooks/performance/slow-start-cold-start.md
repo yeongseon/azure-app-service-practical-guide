@@ -12,6 +12,17 @@ content_sources:
         - https://learn.microsoft.com/en-us/azure/app-service/monitor-instances-health-check
         - https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/faqs-app-service-linux-new
         - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+content_validation:
+  status: verified
+  last_reviewed: "2026-04-12"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "`WEBSITES_CONTAINER_START_TIME_LIMIT` only changes startup timeout tolerance."
+      source: "https://learn.microsoft.com/azure/app-service/reference-app-settings"
+      verified: true
+    - claim: "`AlwaysOn=false` on smaller SKUs increases cold-start exposure."
+      source: "https://learn.microsoft.com/azure/app-service/reference-app-settings"
+      verified: true
 ---
 
 # Slow Start / Cold Start vs Real Regression (Azure App Service Linux)

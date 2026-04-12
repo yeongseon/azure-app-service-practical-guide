@@ -11,6 +11,20 @@ content_sources:
         - https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots
         - https://learn.microsoft.com/en-us/azure/app-service/reference-app-settings
         - https://learn.microsoft.com/en-us/azure/app-service/monitor-instances-health-check
+content_validation:
+  status: verified
+  last_reviewed: "2026-04-12"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "An Azure App Service slot swap warms up the source slot before completing the traffic switch."
+      source: "https://learn.microsoft.com/azure/app-service/deploy-staging-slots"
+      verified: true
+    - claim: "`WEBSITE_SWAP_WARMUP_PING_STATUSES` defines which HTTP response codes are valid for the swap warm-up operation."
+      source: "https://learn.microsoft.com/azure/app-service/deploy-staging-slots"
+      verified: true
+    - claim: "Health Check is a separate feature for monitoring instance health after startup."
+      source: "https://learn.microsoft.com/azure/app-service/monitor-instances-health-check"
+      verified: true
 ---
 
 # Slot Swap Failed During Warm-up (Azure App Service Linux)

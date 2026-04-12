@@ -1,6 +1,17 @@
 ---
 hide:
   - toc
+content_validation:
+  status: verified
+  last_reviewed: "2026-04-12"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "Azure App Service diagnostics includes networking diagnostics such as SNAT Port Exhaustion and TCP Connections."
+      source: "https://learn.microsoft.com/azure/app-service/overview-diagnostics"
+      verified: true
+    - claim: "App Service can stream logs written to console output or files stored under /home/LogFiles for troubleshooting."
+      source: "https://learn.microsoft.com/azure/app-service/troubleshoot-diagnostic-logs"
+      verified: true
 content_sources:
   diagrams:
     - id: troubleshooting-first-10-minutes-outbound-network-diagram-1

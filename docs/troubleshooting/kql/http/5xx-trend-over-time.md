@@ -16,6 +16,23 @@ used_in:
 summary: KQL query to visualize 5xx error trends over time.
 status: stable
 last_reviewed: 2026-04-08
+content_validation:
+  status: verified
+  last_reviewed: "2026-04-12"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "With Azure Monitor integration, you can create diagnostic settings to send logs to storage accounts, event hubs, and Log Analytics workspaces."
+      source: "https://learn.microsoft.com/azure/app-service/troubleshoot-diagnostic-logs"
+      verified: true
+    - claim: "Log Analytics in the Azure portal lets you explore and analyze data collected by Azure Monitor Logs."
+      source: "https://learn.microsoft.com/azure/azure-monitor/logs/log-analytics-tutorial"
+      verified: true
+    - claim: "Log Analytics in the Azure portal lets you edit and run log queries to filter records, uncover trends, analyze patterns, and gain meaningful insights into your environment."
+      source: "https://learn.microsoft.com/azure/azure-monitor/logs/log-analytics-tutorial"
+      verified: true
+    - claim: "You can view, modify, and share visuals of query results."
+      source: "https://learn.microsoft.com/azure/azure-monitor/logs/log-analytics-tutorial"
+      verified: true
 content_sources:
   diagrams:
     - id: troubleshooting-kql-http-5xx-trend-over-time-diagram-1

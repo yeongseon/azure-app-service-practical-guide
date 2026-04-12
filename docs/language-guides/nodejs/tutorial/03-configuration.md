@@ -169,7 +169,7 @@ az webapp identity assign \
 |--------------|---------|
 | `az webapp identity assign ... --output json` | Enables a system-assigned managed identity and returns its details |
 
-For detailed security setup and authentication, see [Security & Authentication (Easy Auth)](../../operations/security.md).
+For detailed security setup and authentication, see [Security & Authentication (Easy Auth)](../../../operations/security.md).
 
 ## Slot-Sticky Settings
 
@@ -208,7 +208,7 @@ az webapp config appsettings set \
 ## Next Steps
 
 - [04. Logging & Monitoring](./04-logging-monitoring.md) - Track your app's health and performance.
-- [Security Operations](../../operations/security.md) - Go deeper into authentication and managed identity.
+- [Security Operations](../../../operations/security.md) - Go deeper into authentication and managed identity.
 
 ---
 
@@ -220,7 +220,7 @@ az webapp config appsettings set \
 - [Contribute](https://github.com/yeongseon/azure-app-service-practical-guide/issues)
 
 ## See Also
-- [Security Operations](../../operations/security.md)
+- [Security Operations](../../../operations/security.md)
 
 ## Sources
 - [Azure App Configuration documentation](https://learn.microsoft.com/en-us/azure/azure-app-configuration/overview)

@@ -45,6 +45,20 @@ content_sources:
       based_on:
         - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
         - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+content_validation:
+  status: verified
+  last_reviewed: "2026-04-12"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "Inbound traffic to App Service Linux does not connect directly from internet clients to your Gunicorn process."
+      source: "https://learn.microsoft.com/azure/app-service/networking-features"
+      verified: true
+    - claim: "If your app listens only on loopback (`127.0.0.1`) inside the container, proxy-to-container forwarding can fail because the proxy expects the application to be reachable on the container interface."
+      source: "https://learn.microsoft.com/azure/app-service/configure-custom-container"
+      verified: true
+    - claim: "If startup command explicitly hardcodes `--bind=127.0.0.1:8000`, it can override otherwise-correct defaults and make forwarding fail."
+      source: "https://learn.microsoft.com/azure/app-service/configure-custom-container"
+      verified: true
 ---
 # Lab Guide (Level 3): Failed to Forward Request on Azure App Service Linux
 

@@ -24,7 +24,7 @@ content_sources:
 
 # Private Network Deploy
 
-Use this recipe after [02 - First Deploy](../02-first-deploy.md) when you need outbound VNet integration, private endpoints for dependencies, and managed identity for passwordless access.
+Use this recipe after [02 - First Deploy](../tutorial/02-first-deploy.md) when you need outbound VNet integration, private endpoints for dependencies, and managed identity for passwordless access.
 
 <!-- diagram-id: private-network-deploy -->
 ```mermaid
@@ -60,7 +60,7 @@ flowchart LR
 
 ## Prerequisites
 
-- Completed [02 - First Deploy](../02-first-deploy.md)
+- Completed [02 - First Deploy](../tutorial/02-first-deploy.md)
 - App Service plan tier that supports VNet integration
 - Existing Azure SQL server and Key Vault, or equivalent private-link capable services
 - Permissions to configure networking, private DNS, RBAC, and managed identity
@@ -289,7 +289,7 @@ az webapp log tail --resource-group "$RG" --name "$APP_NAME"
 
 ## See Also
 
-- [02 - First Deploy](../02-first-deploy.md)
+- [02 - First Deploy](../tutorial/02-first-deploy.md)
 - [VNet Integration](vnet-integration.md)
 - [Private Endpoints](private-endpoints.md)
 - [Managed Identity](managed-identity.md)

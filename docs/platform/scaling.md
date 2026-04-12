@@ -36,6 +36,23 @@ content_sources:
       source: mslearn-adapted
       mslearn_url: https://learn.microsoft.com/en-us/azure/reliability/reliability-app-service
       description: "Shows traffic distributed across plan instances and how client affinity can bias traffic to one instance."
+content_validation:
+  status: verified
+  last_reviewed: "2026-04-12"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "Scale up changes the size/SKU of compute instances in your plan."
+      source: "https://learn.microsoft.com/azure/app-service/manage-scale-up"
+      verified: true
+    - claim: "Scale out adds more instances to distribute load."
+      source: "https://learn.microsoft.com/azure/app-service/manage-scale-up"
+      verified: true
+    - claim: "Autoscale affects plan capacity used by all co-hosted apps."
+      source: "https://learn.microsoft.com/azure/app-service/overview-hosting-plans"
+      verified: true
+    - claim: "One noisy app can impact others."
+      source: "https://learn.microsoft.com/azure/app-service/overview-hosting-plans"
+      verified: true
 ---
 # Scaling
 

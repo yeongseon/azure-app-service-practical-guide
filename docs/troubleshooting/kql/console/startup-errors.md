@@ -17,6 +17,20 @@ used_in:
 summary: KQL query to find container and application startup errors in console logs.
 status: stable
 last_reviewed: 2026-04-08
+content_validation:
+  status: verified
+  last_reviewed: "2026-04-12"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "Application logging is available on Windows and Linux."
+      source: "https://learn.microsoft.com/azure/app-service/troubleshoot-diagnostic-logs"
+      verified: true
+    - claim: "App Service streams any information written to the console output or files ending in .txt, .log, or .htm that are stored in the /home/LogFiles directory."
+      source: "https://learn.microsoft.com/azure/app-service/troubleshoot-diagnostic-logs"
+      verified: true
+    - claim: "For Linux or custom containers, the ZIP file contains console output logs for both the Docker host and the Docker container."
+      source: "https://learn.microsoft.com/azure/app-service/troubleshoot-diagnostic-logs"
+      verified: true
 content_sources:
   diagrams:
     - id: troubleshooting-kql-console-startup-errors-diagram-1

@@ -257,7 +257,7 @@ Check hostname binding list and ensure the custom host is attached to the right 
 ## See Also
 
 - [06. CI/CD](./06-ci-cd.md)
-- [Recipes: Deployment Slots Validation](./recipes/deployment-slots-validation.md)
+- [Recipes: Deployment Slots Validation](../recipes/deployment-slots-validation.md)
 - For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-app-service-practical-guide/)
 
 ## Sources

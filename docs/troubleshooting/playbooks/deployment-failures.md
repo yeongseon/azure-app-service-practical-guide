@@ -11,6 +11,23 @@ content_sources:
         - https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots
         - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
         - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+content_validation:
+  status: verified
+  last_reviewed: "2026-04-12"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "Azure App Service deployment has three main components: deployment sources, build pipelines, and deployment mechanisms."
+      source: "https://learn.microsoft.com/azure/app-service/deploy-best-practices"
+      verified: true
+    - claim: "The deployment mechanism places the built application into the /home/site/wwwroot directory of the web app."
+      source: "https://learn.microsoft.com/azure/app-service/deploy-best-practices"
+      verified: true
+    - claim: "Kudu handles continuous deployments for App Service and provides HTTP deployment endpoints such as zipdeploy."
+      source: "https://learn.microsoft.com/azure/app-service/deploy-best-practices"
+      verified: true
+    - claim: "With a Standard App Service Plan tier or better, deployment slots can be used to validate changes and swap into production without downtime."
+      source: "https://learn.microsoft.com/azure/app-service/deploy-best-practices"
+      verified: true
 ---
 
 # Deployment Failures

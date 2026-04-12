@@ -17,6 +17,17 @@ content_sources:
       justification: "Synthesized normal versus looping auth redirects from Microsoft Learn guidance on App Service authentication and reverse-proxy redirect handling."
       based_on:
         - https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization
+content_validation:
+  status: verified
+  last_reviewed: "2026-04-12"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "Azure App Service provides built-in authentication and authorization support."
+      source: "https://learn.microsoft.com/azure/app-service/overview-authentication-authorization"
+      verified: true
+    - claim: "App Service authentication settings, if enabled, are applied during a slot swap."
+      source: "https://learn.microsoft.com/azure/app-service/deploy-staging-slots"
+      verified: true
 ---
 
 # Authentication Redirect Loop (Azure App Service Linux)

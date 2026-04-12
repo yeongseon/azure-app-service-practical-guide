@@ -38,13 +38,13 @@ flowchart LR
     F --> G[07 Custom Domain & SSL]
 ```
 
-1. [01 - Local Run](./01-local-run.md)
-2. [02 - First Deploy](./02-first-deploy.md)
-3. [03 - Configuration](./03-configuration.md)
-4. [04 - Logging and Monitoring](./04-logging-monitoring.md)
-5. [05 - Infrastructure as Code](./05-infrastructure-as-code.md)
-6. [06 - CI/CD](./06-ci-cd.md)
-7. [07 - Custom Domain and SSL](./07-custom-domain-ssl.md)
+1. [01 - Local Run](./tutorial/01-local-run.md)
+2. [02 - First Deploy](./tutorial/02-first-deploy.md)
+3. [03 - Configuration](./tutorial/03-configuration.md)
+4. [04 - Logging and Monitoring](./tutorial/04-logging-monitoring.md)
+5. [05 - Infrastructure as Code](./tutorial/05-infrastructure-as-code.md)
+6. [06 - CI/CD](./tutorial/06-ci-cd.md)
+7. [07 - Custom Domain and SSL](./tutorial/07-custom-domain-ssl.md)
 
 ## Network Architecture by Tier
 

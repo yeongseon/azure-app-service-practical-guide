@@ -21,6 +21,17 @@ related:
 summary: Request path, runtime, deployment, and network failure points for troubleshooting classification.
 status: stable
 last_reviewed: 2026-04-08
+content_validation:
+  status: verified
+  last_reviewed: "2026-04-12"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "Azure App Service diagnostics is an interactive troubleshooting experience that helps troubleshoot apps with no configuration required."
+      source: "https://learn.microsoft.com/azure/app-service/overview-diagnostics"
+      verified: true
+    - claim: "App Service can stream logs written to console output or files stored under /home/LogFiles for troubleshooting."
+      source: "https://learn.microsoft.com/azure/app-service/troubleshoot-diagnostic-logs"
+      verified: true
 content_sources:
   diagrams:
     - id: request-path-architecture

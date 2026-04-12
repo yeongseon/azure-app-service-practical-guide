@@ -20,7 +20,7 @@ content_sources:
 Deploy the Express app from [01. Local Run](./01-local-run.md) to Azure App Service with a single `az webapp up` command.
 
 !!! tip "Need private networking or managed identity?"
-    Use the advanced recipe: [Private Network Deploy](./recipes/private-network-deploy.md).
+    Use the advanced recipe: [Private Network Deploy](../recipes/private-network-deploy.md).
 
 <!-- diagram-id: simple-architecture -->
 ```mermaid
@@ -159,7 +159,7 @@ az group delete --name $RG --yes --no-wait
 
 - [01. Local Run](./01-local-run.md)
 - [03. Configuration](./03-configuration.md)
-- [Private Network Deploy](./recipes/private-network-deploy.md)
+- [Private Network Deploy](../recipes/private-network-deploy.md)
 - [06. CI/CD](./06-ci-cd.md)
 
 ## Sources

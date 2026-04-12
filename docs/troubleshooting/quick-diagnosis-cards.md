@@ -18,6 +18,17 @@ related:
 summary: Rapid symptom-to-action cards for common App Service issues.
 status: stable
 last_reviewed: 2026-04-08
+content_validation:
+  status: verified
+  last_reviewed: "2026-04-12"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "App Service can stream logs written to console output or files stored under /home/LogFiles for troubleshooting."
+      source: "https://learn.microsoft.com/azure/app-service/troubleshoot-diagnostic-logs"
+      verified: true
+    - claim: "Average memory working set, CPU time, requests, and response time are metrics you can monitor when troubleshooting performance degradation."
+      source: "https://learn.microsoft.com/azure/app-service/troubleshoot-performance-degradation"
+      verified: true
 content_sources:
   diagrams:
     - id: troubleshooting-quick-diagnosis-cards-diagram-1

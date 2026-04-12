@@ -566,7 +566,7 @@ Application Insights collects telemetry into four queryable tables when either:
 Setting `APPLICATIONINSIGHTS_CONNECTION_STRING` alone is not sufficient — telemetry only reaches Application Insights when one of the above paths is active.
 
 !!! warning "Query location matters"
-    Table names differ by where you run the query. See [KQL Queries Reference — Table Naming](../../reference/kql-queries.md#table-naming) for details.
+    Table names differ by where you run the query. See [KQL Queries Reference — Table Naming](../../../reference/kql-queries.md#table-naming) for details.
     
     - **Application Insights → Logs**: `traces`, `requests`, `dependencies`
     - **Log Analytics Workspace → Logs**: `AppTraces`, `AppRequests`, `AppDependencies`
@@ -972,9 +972,9 @@ TimeGenerated              Name  Target                              DurationMs 
 
 ## Next Steps
 
-- [Operations Guide](../../operations/index.md) — scaling, slots, health checks
-- [KQL Queries Reference](../../reference/kql-queries.md) — full query library
-- [Troubleshooting & Debugging](../../reference/troubleshooting.md) — Kudu, SSH, common issues
+- [Operations Guide](../../../operations/index.md) — scaling, slots, health checks
+- [KQL Queries Reference](../../../reference/kql-queries.md) — full query library
+- [Troubleshooting & Debugging](../../../reference/troubleshooting.md) — Kudu, SSH, common issues
 
 ---
 
@@ -987,8 +987,8 @@ TimeGenerated              Name  Target                              DurationMs 
 - [Contribute](https://github.com/yeongseon/azure-app-service-practical-guide/issues)
 
 ## See Also
-- [KQL Queries Reference](../../reference/kql-queries.md)
-- [Troubleshooting & Debugging](../../reference/troubleshooting.md)
+- [KQL Queries Reference](../../../reference/kql-queries.md)
+- [Troubleshooting & Debugging](../../../reference/troubleshooting.md)
 
 ## Sources
 - [Diagnostic Settings Documentation](https://learn.microsoft.com/azure/azure-monitor/essentials/diagnostic-settings)

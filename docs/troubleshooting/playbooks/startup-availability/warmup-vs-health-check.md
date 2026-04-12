@@ -11,6 +11,20 @@ content_sources:
         - https://learn.microsoft.com/en-us/azure/app-service/reference-app-settings
         - https://learn.microsoft.com/en-us/azure/app-service/monitor-instances-health-check
         - https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/faqs-app-service-linux-new
+content_validation:
+  status: verified
+  last_reviewed: "2026-04-12"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "Health Check evaluates already-running instances."
+      source: "https://learn.microsoft.com/azure/app-service/monitor-instances-health-check"
+      verified: true
+    - claim: "Health Check removes unhealthy instances from the load balancer."
+      source: "https://learn.microsoft.com/azure/app-service/monitor-instances-health-check"
+      verified: true
+    - claim: "When selecting the Health Check path, you should choose a path that returns 200 only when the app is fully warmed up."
+      source: "https://learn.microsoft.com/azure/app-service/monitor-instances-health-check"
+      verified: true
 ---
 
 # Warm-up vs Health Check (Azure App Service Linux)

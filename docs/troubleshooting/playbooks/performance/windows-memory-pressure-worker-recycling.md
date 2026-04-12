@@ -26,6 +26,17 @@ content_sources:
         - https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/troubleshoot-performance-degradation
         - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
         - https://learn.microsoft.com/en-us/azure/app-service/resources-kudu
+content_validation:
+  status: verified
+  last_reviewed: "2026-04-12"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "Memory pressure on App Service Windows often appears as periodic worker recycling rather than one obvious crash."
+      source: "https://learn.microsoft.com/azure/app-service/troubleshoot-memory"
+      verified: true
+    - claim: "Kudu Process Explorer can be used to inspect `w3wp.exe` private bytes trend."
+      source: "https://learn.microsoft.com/azure/app-service/resources-kudu"
+      verified: true
 ---
 # Windows Memory Pressure and IIS Worker Recycling (Azure App Service Windows)
 

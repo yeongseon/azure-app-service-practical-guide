@@ -33,6 +33,17 @@ content_sources:
         - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
         - https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/troubleshoot-performance-degradation
         - https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/faqs-app-service-linux-new
+content_validation:
+  status: verified
+  last_reviewed: "2026-04-12"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "`/home` is persistent but quota-limited, while `/tmp` and container writable layers are ephemeral and can fill quickly under build/runtime activity."
+      source: "https://learn.microsoft.com/azure/app-service/faqs-app-service-linux-new"
+      verified: true
+    - claim: "Restarting may briefly clear symptoms (especially `/tmp`) and hide root cause, leading to repeated incidents."
+      source: "https://learn.microsoft.com/azure/app-service/faqs-app-service-linux-new"
+      verified: true
 ---
 # No Space Left on Device / Ephemeral Storage Pressure (Azure App Service Linux)
 

@@ -413,7 +413,7 @@ az webapp config appsettings list --resource-group $RG --name $APP_NAME --query 
 | `appCommandLine` | Shows the startup command App Service will run |
 
 ## See Also
-- [Operations Scaling](../../operations/scaling.md)
+- [Operations Scaling](../../../operations/scaling.md)
 
 ## Sources
 - [Bicep Documentation](https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/)

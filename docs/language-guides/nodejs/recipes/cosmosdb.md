@@ -114,7 +114,7 @@ az webapp config appsettings set --name $APP_NAME --resource-group $RG --setting
 ## See Also
 - [Azure SQL Integration](./azure-sql.md)
 - [Redis Cache for Sessions](./redis.md)
-- [Configuration Tutorial](../03-configuration.md)
+- [Configuration Tutorial](../tutorial/03-configuration.md)
 
 ## Sources
 - [Azure Cosmos DB for NoSQL quickstart with Node.js (Microsoft Learn)](https://learn.microsoft.com/azure/cosmos-db/nosql/quickstart-nodejs)

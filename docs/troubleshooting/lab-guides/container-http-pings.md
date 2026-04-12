@@ -56,6 +56,17 @@ content_sources:
       based_on:
         - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
         - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+content_validation:
+  status: verified
+  last_reviewed: "2026-04-12"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "`WEBSITES_PORT` (application setting): operator-configured hint used by platform logic."
+      source: "https://learn.microsoft.com/azure/app-service/configure-custom-container"
+      verified: true
+    - claim: "`PORT` (environment variable): effective runtime port exposed to the process environment."
+      source: "https://learn.microsoft.com/azure/app-service/configure-custom-container"
+      verified: true
 ---
 # Lab: Container HTTP Ping Behavior on Linux App Service (Port-Mismatch Experiment)
 

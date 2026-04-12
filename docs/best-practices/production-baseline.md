@@ -20,6 +20,23 @@ related:
 summary: Minimum production baseline settings for App Service - tier, health checks, observability, configuration.
 status: stable
 last_reviewed: 2026-04-08
+content_validation:
+  status: verified
+  last_reviewed: "2026-04-12"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "App Service supports HTTPS Only setting to redirect all HTTP traffic to HTTPS."
+      source: "https://learn.microsoft.com/azure/app-service/configure-ssl-bindings"
+      verified: true
+    - claim: "App Service allows configuration of minimum TLS version to enforce TLS 1.2 or higher."
+      source: "https://learn.microsoft.com/azure/app-service/configure-ssl-bindings"
+      verified: true
+    - claim: "Health check removes unhealthy instances from the load balancer rotation after repeated failures."
+      source: "https://learn.microsoft.com/azure/app-service/monitor-instances-health-check"
+      verified: true
+    - claim: "App Service supports system-assigned and user-assigned managed identities for secure Azure resource access."
+      source: "https://learn.microsoft.com/azure/app-service/overview-managed-identity"
+      verified: true
 content_sources:
   diagrams:
     - id: production-readiness-checklist

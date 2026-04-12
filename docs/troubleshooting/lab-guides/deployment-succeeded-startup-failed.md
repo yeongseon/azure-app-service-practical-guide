@@ -49,6 +49,20 @@ content_sources:
       based_on:
         - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
         - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+content_validation:
+  status: verified
+  last_reviewed: "2026-04-12"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "In App Service Linux, deployment and process startup are decoupled."
+      source: "https://learn.microsoft.com/azure/app-service/troubleshoot-diagnostic-logs"
+      verified: true
+    - claim: "Deployment success does not imply runtime success."
+      source: "https://learn.microsoft.com/azure/app-service/troubleshoot-diagnostic-logs"
+      verified: true
+    - claim: "Runtime success means worker process booted, app bound to expected port, and warmup probes succeeded."
+      source: "https://learn.microsoft.com/azure/app-service/configure-custom-container"
+      verified: true
 ---
 # Lab: Deployment Succeeded, Startup Failed (Wrong Module in Startup Command)
 

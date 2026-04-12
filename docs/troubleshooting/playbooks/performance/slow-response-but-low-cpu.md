@@ -11,6 +11,17 @@ content_sources:
         - https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/troubleshoot-performance-degradation
         - https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/troubleshoot-intermittent-outbound-connection-errors
         - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+content_validation:
+  status: verified
+  last_reviewed: "2026-04-12"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "Low CPU does not rule out dependency bottlenecks, worker starvation, or memory pressure as causes of high latency."
+      source: "https://learn.microsoft.com/azure/app-service/troubleshoot-performance-degradation"
+      verified: true
+    - claim: "Diagnose and Solve Problems includes an SNAT Port Exhaustion detector."
+      source: "https://learn.microsoft.com/azure/app-service/troubleshoot-intermittent-outbound-connection-errors"
+      verified: true
 ---
 
 # Slow Response but Low CPU (Azure App Service Linux)

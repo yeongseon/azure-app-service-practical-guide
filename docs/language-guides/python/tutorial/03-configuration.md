@@ -170,7 +170,7 @@ Move from single-secret references to identity-based SDK retrieval for dynamic s
 
 ## See Also
 - [04 - Logging and Monitoring](./04-logging-monitoring.md)
-- [Key Vault References Recipe](./recipes/key-vault-reference.md)
+- [Key Vault References Recipe](../recipes/key-vault-reference.md)
 
 ## Sources
 - [Configure an App Service app (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/configure-common)

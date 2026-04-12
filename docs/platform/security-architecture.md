@@ -33,6 +33,26 @@ content_sources:
       source: mslearn-adapted
       mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview-security
       description: "Shows the continuous security baseline cycle of planning, deployment, validation, monitoring, response, and improvement."
+content_validation:
+  status: verified
+  last_reviewed: "2026-04-12"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "Access Restrictions evaluate allow/deny rules by IP, CIDR, service tag, or virtual network source."
+      source: "https://learn.microsoft.com/azure/app-service/overview-security"
+      verified: true
+    - claim: "Private Endpoints expose app ingress via private IP in your virtual network."
+      source: "https://learn.microsoft.com/azure/app-service/overview-security"
+      verified: true
+    - claim: "Regional VNet Integration routes application egress into selected virtual network paths."
+      source: "https://learn.microsoft.com/azure/app-service/overview-vnet-integration"
+      verified: true
+    - claim: "App Service supports configuring a minimum TLS version of 1.2 or higher for the web app and SCM site."
+      source: "https://learn.microsoft.com/azure/app-service/overview-security"
+      verified: true
+    - claim: "Managed identity replaces embedded credentials with workload-bound tokens issued by Microsoft Entra ID."
+      source: "https://learn.microsoft.com/azure/app-service/overview-security"
+      verified: true
 ---
 
 # Security Architecture

@@ -10,6 +10,23 @@ content_sources:
       based_on:
         - https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container
         - https://learn.microsoft.com/en-us/azure/app-service/deploy-ci-cd-custom-container
+content_validation:
+  status: verified
+  last_reviewed: "2026-04-12"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "App Service can run a custom Linux container image instead of a built-in runtime stack."
+      source: "https://learn.microsoft.com/azure/app-service/configure-custom-container"
+      verified: true
+    - claim: "App Service can use managed identity credentials for Azure Container Registry pulls."
+      source: "https://learn.microsoft.com/azure/app-service/configure-custom-container"
+      verified: true
+    - claim: "Continuous deployment for App Service custom containers can be triggered by registry webhooks on image push."
+      source: "https://learn.microsoft.com/azure/app-service/deploy-ci-cd-custom-container"
+      verified: true
+    - claim: "Docker Compose support in App Service has a retirement date of March 31, 2027, and sidecar containers are the long-term direction."
+      source: "https://learn.microsoft.com/azure/app-service/configure-custom-container"
+      verified: true
 ---
 
 # Container Deploy from Azure Container Registry

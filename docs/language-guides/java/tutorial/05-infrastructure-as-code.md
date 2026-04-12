@@ -235,7 +235,7 @@ az deployment group what-if \
     If you change App Service settings directly in the portal and never reflect them in Bicep, subsequent deployments may overwrite or conflict with manual edits.
 
 !!! info "Platform architecture"
-    For platform architecture details, see [Platform: How App Service Works](../../platform/how-app-service-works.md).
+    For platform architecture details, see [Platform: How App Service Works](../../../platform/how-app-service-works.md).
 
 ## Verification
 
@@ -383,7 +383,7 @@ az webapp config appsettings list --resource-group $RG --name $APP_NAME --query 
 
 - [06. CI/CD](06-ci-cd.md)
 - [07. Custom Domain & SSL](07-custom-domain-ssl.md)
-- [Recipes: VNet Integration](./recipes/vnet-integration.md)
+- [Recipes: VNet Integration](../recipes/vnet-integration.md)
 
 ## Sources
 

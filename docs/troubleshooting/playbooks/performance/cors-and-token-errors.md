@@ -21,6 +21,17 @@ content_sources:
       justification: "Synthesized token expiry and refresh failure behavior from Microsoft Learn guidance on App Service authentication and authorization."
       based_on:
         - https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization
+content_validation:
+  status: verified
+  last_reviewed: "2026-04-12"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "App Service Auth or app auth layer challenges OPTIONS before CORS handling."
+      source: "https://learn.microsoft.com/azure/app-service/overview-authentication-authorization"
+      verified: true
+    - claim: "SPA origin and token audience/issuer expectations use different domains (`contoso.com` vs `azurewebsites.net`)."
+      source: "https://learn.microsoft.com/azure/app-service/overview-authentication-authorization"
+      verified: true
 ---
 
 # CORS Failures and Token Errors (Azure App Service Linux)

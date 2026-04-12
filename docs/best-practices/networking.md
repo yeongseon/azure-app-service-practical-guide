@@ -1,6 +1,23 @@
 ---
 hide:
   - toc
+content_validation:
+  status: verified
+  last_reviewed: "2026-04-12"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "VNet Integration is the primary App Service feature for private outbound connectivity."
+      source: "https://learn.microsoft.com/azure/app-service/networking-features"
+      verified: true
+    - claim: "VNet Integration controls outbound connectivity. It does not make inbound access private by itself."
+      source: "https://learn.microsoft.com/azure/app-service/networking-features"
+      verified: true
+    - claim: "Private Endpoint is the standard pattern for private inbound access to an App Service app."
+      source: "https://learn.microsoft.com/azure/app-service/networking-features"
+      verified: true
+    - claim: "Both features provide outbound reachability, but they solve different problems."
+      source: "https://learn.microsoft.com/azure/app-service/networking-features"
+      verified: true
 content_sources:
   diagrams:
     - id: app-service-networking-topology

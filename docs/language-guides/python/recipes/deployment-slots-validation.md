@@ -196,6 +196,6 @@ Disable auto-swap and revert to manual swap or a controlled GitHub Actions workf
 
 ## See Also
 
-- [Tutorial: 06. CI/CD](../06-ci-cd.md)
-- [Tutorial: 03. Configuration](../03-configuration.md)
+- [Tutorial: 06. CI/CD](../tutorial/06-ci-cd.md)
+- [Tutorial: 03. Configuration](../tutorial/03-configuration.md)
 - For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-app-service-practical-guide/)

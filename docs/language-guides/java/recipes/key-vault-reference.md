@@ -152,7 +152,7 @@ Review VNet integration, private endpoint health, and private DNS linkage.
 
 - [Managed Identity](managed-identity.md)
 - [VNet Integration](vnet-integration.md)
-- [Tutorial: Configuration](../03-configuration.md)
+- [Tutorial: Configuration](../tutorial/03-configuration.md)
 
 ## Sources
 

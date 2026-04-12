@@ -152,7 +152,7 @@ Ensure document model uses compatible types and includes an `id` field.
 
 - [Redis Cache](redis.md)
 - [Managed Identity](managed-identity.md)
-- [Tutorial: Logging & Monitoring](../04-logging-monitoring.md)
+- [Tutorial: Logging & Monitoring](../tutorial/04-logging-monitoring.md)
 
 ## Sources
 

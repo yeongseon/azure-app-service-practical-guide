@@ -163,7 +163,7 @@ Likely local credential succeeded but cloud identity lacks RBAC. Re-check Azure 
 
 - [Azure SQL](azure-sql.md)
 - [Key Vault References](key-vault-reference.md)
-- [Tutorial: Configuration](../03-configuration.md)
+- [Tutorial: Configuration](../tutorial/03-configuration.md)
 
 ## Sources
 

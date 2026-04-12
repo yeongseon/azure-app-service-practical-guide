@@ -24,7 +24,7 @@ content_sources:
 
 # Private Network Deploy
 
-Use this recipe after [02. First Deploy](../02-first-deploy.md) when the app must reach Azure services through VNet integration, private endpoints, and managed identity.
+Use this recipe after [02. First Deploy](../tutorial/02-first-deploy.md) when the app must reach Azure services through VNet integration, private endpoints, and managed identity.
 
 <!-- diagram-id: private-network-deploy -->
 ```mermaid
@@ -66,7 +66,7 @@ flowchart LR
 
 ## Prerequisites
 
-- Completed [02. First Deploy](../02-first-deploy.md)
+- Completed [02. First Deploy](../tutorial/02-first-deploy.md)
 - Azure CLI authenticated with permission to manage networking and RBAC
 - Existing Node.js App Service app
 - App Service plan tier that supports VNet integration

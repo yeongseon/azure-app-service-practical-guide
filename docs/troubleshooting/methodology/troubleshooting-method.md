@@ -1,6 +1,17 @@
 ---
 hide:
   - toc
+content_validation:
+  status: verified
+  last_reviewed: "2026-04-12"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "Troubleshooting performance degradation in Azure App Service involves observing app behavior, collecting data, and mitigating the issue."
+      source: "https://learn.microsoft.com/azure/app-service/troubleshoot-performance-degradation"
+      verified: true
+    - claim: "Azure App Service diagnostics is an interactive experience that helps troubleshoot apps with no configuration required."
+      source: "https://learn.microsoft.com/azure/app-service/overview-diagnostics"
+      verified: true
 content_sources:
   diagrams:
     - id: troubleshooting-methodology-troubleshooting-method-diagram-1

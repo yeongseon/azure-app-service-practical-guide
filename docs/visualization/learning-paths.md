@@ -86,13 +86,13 @@ graph LR
 
 | Step | Document | Prerequisites | Time |
 |------|----------|---------------|------|
-| 1 | [Local Run](../language-guides/python/01-local-run.md) | Python basics | 15 min |
-| 2 | [First Deploy](../language-guides/python/02-first-deploy.md) | Local Run | 30 min |
-| 3 | [Configuration](../language-guides/python/03-configuration.md) | First Deploy | 20 min |
-| 4 | [Logging & Monitoring](../language-guides/python/04-logging-monitoring.md) | Configuration | 25 min |
-| 5 | [Infrastructure as Code](../language-guides/python/05-infrastructure-as-code.md) | Logging | 30 min |
-| 6 | [CI/CD](../language-guides/python/06-ci-cd.md) | IaC | 30 min |
-| 7 | [Custom Domain & SSL](../language-guides/python/07-custom-domain-ssl.md) | CI/CD | 20 min |
+| 1 | [Local Run](../language-guides/python/tutorial/01-local-run.md) | Python basics | 15 min |
+| 2 | [First Deploy](../language-guides/python/tutorial/02-first-deploy.md) | Local Run | 30 min |
+| 3 | [Configuration](../language-guides/python/tutorial/03-configuration.md) | First Deploy | 20 min |
+| 4 | [Logging & Monitoring](../language-guides/python/tutorial/04-logging-monitoring.md) | Configuration | 25 min |
+| 5 | [Infrastructure as Code](../language-guides/python/tutorial/05-infrastructure-as-code.md) | Logging | 30 min |
+| 6 | [CI/CD](../language-guides/python/tutorial/06-ci-cd.md) | IaC | 30 min |
+| 7 | [Custom Domain & SSL](../language-guides/python/tutorial/07-custom-domain-ssl.md) | CI/CD | 20 min |
 
 ### Recipe Extensions
 
@@ -131,13 +131,13 @@ graph TD
 
 | Step | Document | Prerequisites | Time |
 |------|----------|---------------|------|
-| 1 | [Local Run](../language-guides/nodejs/01-local-run.md) | Node.js basics | 15 min |
-| 2 | [First Deploy](../language-guides/nodejs/02-first-deploy.md) | Local Run | 30 min |
-| 3 | [Configuration](../language-guides/nodejs/03-configuration.md) | First Deploy | 20 min |
-| 4 | [Logging & Monitoring](../language-guides/nodejs/04-logging-monitoring.md) | Configuration | 25 min |
-| 5 | [Infrastructure as Code](../language-guides/nodejs/05-infrastructure-as-code.md) | Logging | 30 min |
-| 6 | [CI/CD](../language-guides/nodejs/06-ci-cd.md) | IaC | 30 min |
-| 7 | [Custom Domain & SSL](../language-guides/nodejs/07-custom-domain-ssl.md) | CI/CD | 20 min |
+| 1 | [Local Run](../language-guides/nodejs/tutorial/01-local-run.md) | Node.js basics | 15 min |
+| 2 | [First Deploy](../language-guides/nodejs/tutorial/02-first-deploy.md) | Local Run | 30 min |
+| 3 | [Configuration](../language-guides/nodejs/tutorial/03-configuration.md) | First Deploy | 20 min |
+| 4 | [Logging & Monitoring](../language-guides/nodejs/tutorial/04-logging-monitoring.md) | Configuration | 25 min |
+| 5 | [Infrastructure as Code](../language-guides/nodejs/tutorial/05-infrastructure-as-code.md) | Logging | 30 min |
+| 6 | [CI/CD](../language-guides/nodejs/tutorial/06-ci-cd.md) | IaC | 30 min |
+| 7 | [Custom Domain & SSL](../language-guides/nodejs/tutorial/07-custom-domain-ssl.md) | CI/CD | 20 min |
 
 ### Node.js-Specific Recipes
 
@@ -156,13 +156,13 @@ graph TD
 
 | Step | Document | Prerequisites | Time |
 |------|----------|---------------|------|
-| 1 | [Local Run](../language-guides/java/01-local-run.md) | Java/Maven basics | 15 min |
-| 2 | [First Deploy](../language-guides/java/02-first-deploy.md) | Local Run | 30 min |
-| 3 | [Configuration](../language-guides/java/03-configuration.md) | First Deploy | 20 min |
-| 4 | [Logging & Monitoring](../language-guides/java/04-logging-monitoring.md) | Configuration | 25 min |
-| 5 | [Infrastructure as Code](../language-guides/java/05-infrastructure-as-code.md) | Logging | 30 min |
-| 6 | [CI/CD](../language-guides/java/06-ci-cd.md) | IaC | 30 min |
-| 7 | [Custom Domain & SSL](../language-guides/java/07-custom-domain-ssl.md) | CI/CD | 20 min |
+| 1 | [Local Run](../language-guides/java/tutorial/01-local-run.md) | Java/Maven basics | 15 min |
+| 2 | [First Deploy](../language-guides/java/tutorial/02-first-deploy.md) | Local Run | 30 min |
+| 3 | [Configuration](../language-guides/java/tutorial/03-configuration.md) | First Deploy | 20 min |
+| 4 | [Logging & Monitoring](../language-guides/java/tutorial/04-logging-monitoring.md) | Configuration | 25 min |
+| 5 | [Infrastructure as Code](../language-guides/java/tutorial/05-infrastructure-as-code.md) | Logging | 30 min |
+| 6 | [CI/CD](../language-guides/java/tutorial/06-ci-cd.md) | IaC | 30 min |
+| 7 | [Custom Domain & SSL](../language-guides/java/tutorial/07-custom-domain-ssl.md) | CI/CD | 20 min |
 
 ### Java-Specific Recipes
 
@@ -182,13 +182,13 @@ graph TD
 
 | Step | Document | Prerequisites | Time |
 |------|----------|---------------|------|
-| 1 | [Local Run](../language-guides/dotnet/01-local-run.md) | .NET basics | 15 min |
-| 2 | [First Deploy](../language-guides/dotnet/02-first-deploy.md) | Local Run | 30 min |
-| 3 | [Configuration](../language-guides/dotnet/03-configuration.md) | First Deploy | 20 min |
-| 4 | [Logging & Monitoring](../language-guides/dotnet/04-logging-monitoring.md) | Configuration | 25 min |
-| 5 | [Infrastructure as Code](../language-guides/dotnet/05-infrastructure-as-code.md) | Logging | 30 min |
-| 6 | [CI/CD](../language-guides/dotnet/06-ci-cd.md) | IaC | 30 min |
-| 7 | [Custom Domain & SSL](../language-guides/dotnet/07-custom-domain-ssl.md) | CI/CD | 20 min |
+| 1 | [Local Run](../language-guides/dotnet/tutorial/01-local-run.md) | .NET basics | 15 min |
+| 2 | [First Deploy](../language-guides/dotnet/tutorial/02-first-deploy.md) | Local Run | 30 min |
+| 3 | [Configuration](../language-guides/dotnet/tutorial/03-configuration.md) | First Deploy | 20 min |
+| 4 | [Logging & Monitoring](../language-guides/dotnet/tutorial/04-logging-monitoring.md) | Configuration | 25 min |
+| 5 | [Infrastructure as Code](../language-guides/dotnet/tutorial/05-infrastructure-as-code.md) | Logging | 30 min |
+| 6 | [CI/CD](../language-guides/dotnet/tutorial/06-ci-cd.md) | IaC | 30 min |
+| 7 | [Custom Domain & SSL](../language-guides/dotnet/tutorial/07-custom-domain-ssl.md) | CI/CD | 20 min |
 
 ### .NET-Specific Features
 

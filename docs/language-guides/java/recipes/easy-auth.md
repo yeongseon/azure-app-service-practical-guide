@@ -131,7 +131,7 @@ Confirm Easy Auth is enabled and requests are not bypassing App Service front do
 ## See Also
 
 - [Managed Identity](managed-identity.md)
-- [Custom Domain & SSL](../07-custom-domain-ssl.md)
+- [Custom Domain & SSL](../tutorial/07-custom-domain-ssl.md)
 - [Operations: Security](../../../operations/security.md)
 
 ## Sources

@@ -7,6 +7,20 @@ content_sources:
       type: flowchart
       source: mslearn-adapted
       mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview-manage-costs
+content_validation:
+  status: verified
+  last_reviewed: "2026-04-12"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "App Service costs are driven by plan SKU selection and the number of worker instances."
+      source: "https://learn.microsoft.com/azure/app-service/overview-manage-costs"
+      verified: true
+    - claim: "Autoscale on the App Service plan can adjust worker instance count to match demand."
+      source: "https://learn.microsoft.com/azure/app-service/manage-scale-up"
+      verified: true
+    - claim: "Schedule-based scaling can be used for predictable traffic windows."
+      source: "https://learn.microsoft.com/azure/app-service/manage-scale-up"
+      verified: true
 ---
 
 # Cost Optimization Operations

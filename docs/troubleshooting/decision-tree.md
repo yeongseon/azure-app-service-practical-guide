@@ -20,6 +20,17 @@ related:
 summary: Step-by-step decision flow to route symptoms to the correct playbook.
 status: stable
 last_reviewed: 2026-04-08
+content_validation:
+  status: verified
+  last_reviewed: "2026-04-12"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "Azure App Service diagnostics groups troubleshooting into categories such as Availability and Performance, Deployment, and Networking."
+      source: "https://learn.microsoft.com/azure/app-service/overview-diagnostics"
+      verified: true
+    - claim: "Azure App Service diagnostics includes diagnostics such as Web App Down, Application Logs, CPU Usage, Memory Usage, SNAT Port Exhaustion, and TCP Connections."
+      source: "https://learn.microsoft.com/azure/app-service/overview-diagnostics"
+      verified: true
 content_sources:
   diagrams:
     - id: troubleshooting-decision-tree-diagram-1

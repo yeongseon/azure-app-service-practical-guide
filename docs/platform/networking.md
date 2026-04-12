@@ -51,6 +51,26 @@ content_sources:
       source: mslearn-adapted
       mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/networking-features
       description: "Shows the CNAME-to-private-DNS resolution flow used by App Service private endpoints."
+content_validation:
+  status: verified
+  last_reviewed: "2026-04-12"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "By default, an app has a public endpoint."
+      source: "https://learn.microsoft.com/azure/app-service/networking-features"
+      verified: true
+    - claim: "Access restrictions provide allow/deny controls evaluated before traffic reaches your app process."
+      source: "https://learn.microsoft.com/azure/app-service/networking-features"
+      verified: true
+    - claim: "A private endpoint assigns a private IP for app access within your network boundary."
+      source: "https://learn.microsoft.com/azure/app-service/networking-features"
+      verified: true
+    - claim: "VNet integration lets app outbound traffic reach private resources."
+      source: "https://learn.microsoft.com/azure/app-service/overview-vnet-integration"
+      verified: true
+    - claim: "VNet integration controls outbound connectivity. It does not make your app privately reachable from clients."
+      source: "https://learn.microsoft.com/azure/app-service/overview-vnet-integration"
+      verified: true
 ---
 # Networking
 

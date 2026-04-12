@@ -269,7 +269,7 @@ Verify key names and nesting in `appsettings.*.json`, and ensure environment var
 ## See Also
 
 - [04. Logging & Monitoring](./04-logging-monitoring.md)
-- [Recipes: Key Vault References](./recipes/key-vault-reference.md)
+- [Recipes: Key Vault References](../recipes/key-vault-reference.md)
 - For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-app-service-practical-guide/)
 
 ## Sources

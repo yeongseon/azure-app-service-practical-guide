@@ -7,6 +7,23 @@ content_sources:
       type: flowchart
       source: mslearn-adapted
       mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/manage-scale-up
+content_validation:
+  status: verified
+  last_reviewed: "2026-04-12"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "Scale up changes the App Service Plan SKU for more CPU and memory per instance."
+      source: "https://learn.microsoft.com/azure/app-service/manage-scale-up"
+      verified: true
+    - claim: "Scale out increases the number of worker instances in the App Service Plan."
+      source: "https://learn.microsoft.com/azure/app-service/manage-scale-up"
+      verified: true
+    - claim: "Autoscale settings are created on the App Service Plan resource."
+      source: "https://learn.microsoft.com/azure/app-service/manage-scale-up"
+      verified: true
+    - claim: "Schedule-based scaling can be combined with metric-based autoscale for predictable traffic windows."
+      source: "https://learn.microsoft.com/azure/app-service/manage-scale-up"
+      verified: true
 ---
 
 # Scaling Operations

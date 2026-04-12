@@ -18,7 +18,7 @@ content_sources:
 Deploy the Spring Boot reference app to Azure App Service in about five minutes with `az webapp up`.
 
 !!! info "Keep this tutorial simple"
-    This page covers the fastest path to a working deployment. For VNet integration, private endpoints, and managed identity, use [Recipe: Private Network Deploy](recipes/private-network-deploy.md).
+    This page covers the fastest path to a working deployment. For VNet integration, private endpoints, and managed identity, use [Recipe: Private Network Deploy](../recipes/private-network-deploy.md).
 
 <!-- diagram-id: 02-first-deploy -->
 ```mermaid
@@ -209,7 +209,7 @@ az webapp log tail --resource-group $RG --name $APP_NAME
 
 - [03. Configuration](03-configuration.md)
 - [04. Logging & Monitoring](04-logging-monitoring.md)
-- [Recipe: Private Network Deploy](recipes/private-network-deploy.md)
+- [Recipe: Private Network Deploy](../recipes/private-network-deploy.md)
 
 ## Sources
 

@@ -9,6 +9,20 @@ content_sources:
       mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/monitor-instances-health-check
       based_on:
         - https://learn.microsoft.com/en-us/azure/app-service/overview-diagnostics
+content_validation:
+  status: verified
+  last_reviewed: "2026-04-12"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "App Service Health Check sends HTTP requests to a configured path such as /health."
+      source: "https://learn.microsoft.com/azure/app-service/monitor-instances-health-check"
+      verified: true
+    - claim: "When an instance becomes unhealthy, Health Check removes it from the load balancer."
+      source: "https://learn.microsoft.com/azure/app-service/monitor-instances-health-check"
+      verified: true
+    - claim: "Auto-Heal can restart an app automatically based on conditions such as memory pressure or slow requests."
+      source: "https://learn.microsoft.com/azure/app-service/overview-diagnostics"
+      verified: true
 ---
 
 # Health and Recovery Operations

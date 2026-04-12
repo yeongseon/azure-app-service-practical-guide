@@ -236,7 +236,7 @@ curl -v https://www.yourdomain.com/health 2>&1 | grep "SSL certificate verify ok
 - **Managed Certificate Limitations**: Managed certificates do not support wildcards (e.g., `*.yourdomain.com`). For wildcards, you must upload a custom PFX certificate.
 
 ## Next Steps
-Congratulations! You've completed the core operations path. Explore the **[Recipes](./recipes/index.md)** section for advanced scenarios like Managed Identity and Key Vault integration.
+Congratulations! You've completed the core operations path. Explore the **[Recipes](../recipes/index.md)** section for advanced scenarios like Managed Identity and Key Vault integration.
 
 ---
 
@@ -248,7 +248,7 @@ Congratulations! You've completed the core operations path. Explore the **[Recip
 - [Contribute](https://github.com/yeongseon/azure-app-service-practical-guide/issues)
 
 ## See Also
-- [Operations Networking](../../operations/networking.md)
+- [Operations Networking](../../../operations/networking.md)
 
 ## Sources
 - [Azure Front Door Documentation](https://learn.microsoft.com/en-us/azure/frontdoor/)

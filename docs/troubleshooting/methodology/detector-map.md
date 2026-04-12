@@ -1,6 +1,17 @@
 ---
 hide:
   - toc
+content_validation:
+  status: verified
+  last_reviewed: "2026-04-12"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "Azure App Service Diagnostics includes detectors such as Web App Down and SNAT Port Exhaustion."
+      source: "https://learn.microsoft.com/azure/app-service/overview-diagnostics"
+      verified: true
+    - claim: "Azure App Service diagnostics groups detectors into troubleshooting categories such as Availability and Performance, Deployment, and Networking."
+      source: "https://learn.microsoft.com/azure/app-service/overview-diagnostics"
+      verified: true
 content_sources:
   diagrams:
     - id: troubleshooting-methodology-detector-map-diagram-1

@@ -111,7 +111,7 @@ def health_native():
 
 ## See Also
 - [Custom Container](./custom-container.md)
-- [Deploy Application](../02-first-deploy.md)
+- [Deploy Application](../tutorial/02-first-deploy.md)
 - [Troubleshoot](../../../reference/troubleshooting.md)
 
 ## Sources

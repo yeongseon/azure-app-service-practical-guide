@@ -1,6 +1,20 @@
 ---
 hide:
   - toc
+content_validation:
+  status: verified
+  last_reviewed: "2026-04-12"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "Secrets become harder to rotate, higher accidental exposure risk, and weak auditability"
+      source: "https://learn.microsoft.com/azure/app-service/overview-security"
+      verified: true
+    - claim: "Swap can move environment-specific config into production and break dependencies"
+      source: "https://learn.microsoft.com/azure/app-service/deploy-best-practices"
+      verified: true
+    - claim: "Causes excessive socket churn and SNAT exhaustion under load"
+      source: "https://learn.microsoft.com/azure/app-service/app-service-best-practices"
+      verified: true
 content_sources:
   diagrams:
     - id: anti-pattern-detection-flow

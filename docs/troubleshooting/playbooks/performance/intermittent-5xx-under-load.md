@@ -38,6 +38,17 @@ content_sources:
         - https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/troubleshoot-performance-degradation
         - https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/troubleshoot-intermittent-outbound-connection-errors
         - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+content_validation:
+  status: verified
+  last_reviewed: "2026-04-12"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "In App Service Linux, transient 5xx can come from multiple layers (app worker model, outbound dependencies, platform health/restart behavior), so a single metric like CPU rarely explains the full failure pattern."
+      source: "https://learn.microsoft.com/azure/app-service/troubleshoot-performance-degradation"
+      verified: true
+    - claim: "App Service Plan CPU and memory trends help separate compute pressure from queueing and I/O issues."
+      source: "https://learn.microsoft.com/azure/app-service/troubleshoot-performance-degradation"
+      verified: true
 ---
 # Intermittent 5xx Under Load (Azure App Service Linux)
 

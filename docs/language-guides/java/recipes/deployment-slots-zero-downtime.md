@@ -162,8 +162,8 @@ Check slot name, distribution values, and caching/CDN layers that may mask split
 
 ## See Also
 
-- [Tutorial: CI/CD](../06-ci-cd.md)
-- [Tutorial: Configuration](../03-configuration.md)
+- [Tutorial: CI/CD](../tutorial/06-ci-cd.md)
+- [Tutorial: Configuration](../tutorial/03-configuration.md)
 - [Operations: Deployment Slots](../../../operations/deployment-slots.md)
 
 ## Sources

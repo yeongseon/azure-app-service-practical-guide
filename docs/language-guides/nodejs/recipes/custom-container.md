@@ -159,7 +159,7 @@ az webapp config container set --name $APP_NAME --resource-group $RG \
 ## See Also
 - [Native Dependencies](./native-dependencies.md)
 - [How App Service Works](../../../platform/how-app-service-works.md)
-- [CI/CD Tutorial](../06-ci-cd.md)
+- [CI/CD Tutorial](../tutorial/06-ci-cd.md)
 
 ## Sources
 - [Deploy a custom container to Azure App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/tutorial-custom-container)

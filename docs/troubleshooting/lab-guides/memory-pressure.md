@@ -71,6 +71,20 @@ content_sources:
       based_on:
         - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
         - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+content_validation:
+  status: verified
+  last_reviewed: "2026-04-12"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "App Service HTTP logs are used in this lab to inspect status codes, endpoints, and server-side request timing."
+      source: "https://learn.microsoft.com/azure/app-service/troubleshoot-diagnostic-logs"
+      verified: true
+    - claim: "App Service console logs are used in this lab to inspect runtime warnings and timeout signals."
+      source: "https://learn.microsoft.com/azure/app-service/troubleshoot-diagnostic-logs"
+      verified: true
+    - claim: "App Service platform logs are used in this lab to inspect startup, restart, and other platform lifecycle events."
+      source: "https://learn.microsoft.com/azure/app-service/troubleshoot-diagnostic-logs"
+      verified: true
 ---
 # Lab: Memory Pressure and Worker Degradation
 

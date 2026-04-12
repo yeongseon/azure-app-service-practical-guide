@@ -38,7 +38,7 @@ flowchart TD
 
 ## Prerequisites
 
-- Completed [01 - Local Run](../01-local-run.md)
+- Completed [01 - Local Run](../tutorial/01-local-run.md)
 - Existing Azure subscription and Azure CLI authentication
 - App Service app already created or ready to create in a supported tier for VNet integration
 - Permissions to create VNets, subnets, private endpoints, storage accounts, and managed identity assignments
@@ -185,7 +185,7 @@ az network private-endpoint list --resource-group $RG --output table
 - [VNet Integration](./vnet-integration.md)
 - [Private Endpoints](./private-endpoints.md)
 - [Managed Identity](./managed-identity.md)
-- [02 - First Deployment to Azure App Service](../02-first-deploy.md)
+- [02 - First Deployment to Azure App Service](../tutorial/02-first-deploy.md)
 
 ## Sources
 

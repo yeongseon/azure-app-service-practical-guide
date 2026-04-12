@@ -157,7 +157,7 @@ az webapp log config \
     Prefer central telemetry in Application Insights for long-term analytics. Filesystem logs are best for short-lived debugging.
 
 !!! warning "Query location matters"
-    Table names differ by where you run the query. See [KQL Queries Reference — Table Naming](../../reference/kql-queries.md#table-naming) for details.
+    Table names differ by where you run the query. See [KQL Queries Reference — Table Naming](../../../reference/kql-queries.md#table-naming) for details.
     
     - **Application Insights → Logs**: `traces`, `requests`, `dependencies`
     - **Log Analytics Workspace → Logs**: `AppTraces`, `AppRequests`, `AppDependencies`
@@ -223,7 +223,7 @@ failed
     Add availability tests against `/health` and a lightweight business endpoint to catch platform and app regressions early.
 
 !!! info "Platform architecture"
-    For platform architecture details, see [Platform: How App Service Works](../../platform/how-app-service-works.md).
+    For platform architecture details, see [Platform: How App Service Works](../../../platform/how-app-service-works.md).
 
 ## Verification
 
@@ -265,8 +265,8 @@ Use `AppTraces`/`AppRequests` as primary tables; in some environments, schema na
 ## See Also
 
 - [05. Infrastructure as Code](05-infrastructure-as-code.md)
-- [Reference: KQL Queries](../../reference/kql-queries.md)
-- [Recipes: Redis](./recipes/redis.md)
+- [Reference: KQL Queries](../../../reference/kql-queries.md)
+- [Recipes: Redis](../recipes/redis.md)
 
 ## Sources
 

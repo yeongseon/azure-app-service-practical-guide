@@ -38,6 +38,20 @@ content_sources:
       based_on:
         - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
         - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+content_validation:
+  status: verified
+  last_reviewed: "2026-04-12"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "Always On keeps app active and reduce idle cold starts."
+      source: "https://learn.microsoft.com/azure/app-service/monitor-instances-health-check"
+      verified: true
+    - claim: "Health check keeps only healthy instances in rotation."
+      source: "https://learn.microsoft.com/azure/app-service/monitor-instances-health-check"
+      verified: true
+    - claim: "`WEBSITE_SWAP_WARMUP_PING_PATH` is used for slot swap readiness."
+      source: "https://learn.microsoft.com/azure/app-service/deploy-staging-slots"
+      verified: true
 ---
 # Lab Guide: Slow Start (Cold Start) vs Real Regression
 

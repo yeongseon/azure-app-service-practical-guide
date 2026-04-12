@@ -2,12 +2,19 @@
 title: Azure App Service Deployment Scenarios
 description: A practical guide to choosing and implementing deployment architectures across different Azure App Service SKUs.
 content_sources:
-  - https://learn.microsoft.com/azure/app-service/overview-hosting-plans
-  - https://learn.microsoft.com/azure/app-service/networking-features
-  - https://learn.microsoft.com/azure/app-service/deploy-run-package
-  - https://learn.microsoft.com/azure/app-service/deploy-continuous-deployment
-  - https://learn.microsoft.com/azure/app-service/overview-vnet-integration
-  - https://learn.microsoft.com/azure/app-service/environment/overview
+  text:
+    - type: mslearn-adapted
+      url: https://learn.microsoft.com/azure/app-service/overview-hosting-plans
+    - type: mslearn-adapted
+      url: https://learn.microsoft.com/azure/app-service/networking-features
+    - type: mslearn-adapted
+      url: https://learn.microsoft.com/azure/app-service/deploy-run-package
+    - type: mslearn-adapted
+      url: https://learn.microsoft.com/azure/app-service/deploy-continuous-deployment
+    - type: mslearn-adapted
+      url: https://learn.microsoft.com/azure/app-service/overview-vnet-integration
+    - type: mslearn-adapted
+      url: https://learn.microsoft.com/azure/app-service/environment/overview
   diagrams:
     - id: scenario-overview-flow
       type: flowchart
@@ -34,6 +41,23 @@ content_sources:
       justification: "App Service Environment (ASE) architecture pattern"
       based_on:
         - https://learn.microsoft.com/azure/app-service/environment/overview
+content_validation:
+  status: verified
+  last_reviewed: "2026-04-12"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "By default, apps hosted in App Service are accessible directly through the internet."
+      source: "https://learn.microsoft.com/azure/app-service/networking-features"
+      verified: true
+    - claim: "A VNet-integrated App Service app can access resources inside a virtual network and support private ingress by using private endpoints."
+      source: "https://learn.microsoft.com/azure/app-service/networking-features"
+      verified: true
+    - claim: "Adding a private endpoint does not automatically disable the public endpoint; you must explicitly disable public network access in the Networking settings to achieve full isolation."
+      source: "https://learn.microsoft.com/azure/app-service/networking-features"
+      verified: true
+    - claim: "The integration subnet must be delegated to `Microsoft.Web/serverFarms` and must be empty before configuration."
+      source: "https://learn.microsoft.com/azure/app-service/overview-vnet-integration"
+      verified: true
 ---
 
 # Azure App Service Deployment Scenarios

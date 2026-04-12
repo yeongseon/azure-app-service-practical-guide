@@ -38,6 +38,20 @@ content_sources:
       based_on:
         - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
         - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+content_validation:
+  status: verified
+  last_reviewed: "2026-04-12"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "Regional VNet integration changes outbound network path and DNS dependency chain."
+      source: "https://learn.microsoft.com/azure/app-service/overview-vnet-integration"
+      verified: true
+    - claim: "After integration, resolution can depend on VNet DNS server settings, custom DNS forwarders, Azure DNS Private Resolver (if used), Private DNS zone links, and zone record correctness."
+      source: "https://learn.microsoft.com/azure/app-service/overview-vnet-integration"
+      verified: true
+    - claim: "Private Endpoints rely on split-horizon DNS."
+      source: "https://learn.microsoft.com/azure/app-service/networking-features"
+      verified: true
 ---
 # Lab: DNS Resolution Behavior for App Service Before and After VNet Integration
 

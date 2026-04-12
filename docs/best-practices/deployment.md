@@ -1,6 +1,20 @@
 ---
 hide:
   - toc
+content_validation:
+  status: verified
+  last_reviewed: "2026-04-12"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "Deployment slots are the core mechanism for safe App Service releases."
+      source: "https://learn.microsoft.com/azure/app-service/deploy-best-practices"
+      verified: true
+    - claim: "Slot settings (sticky settings): Remain in the same slot during swap"
+      source: "https://learn.microsoft.com/azure/app-service/deploy-staging-slots"
+      verified: true
+    - claim: "`SCM_DO_BUILD_DURING_DEPLOYMENT=true` uses App Service build automation (Oryx/Kudu) during deployment."
+      source: "https://learn.microsoft.com/azure/app-service/deploy-best-practices"
+      verified: true
 content_sources:
   diagrams:
     - id: deployment-flow-with-slots

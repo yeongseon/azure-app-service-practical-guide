@@ -69,6 +69,6 @@ Each recipe follows this structure:
     - [Contribute](https://github.com/yeongseon/azure-app-service-practical-guide/issues)
 
 ## See Also
-- [Local Development](../01-local-run.md)
-- [First Deploy](../02-first-deploy.md)
-- [Configuration](../03-configuration.md)
+- [Local Development](../tutorial/01-local-run.md)
+- [First Deploy](../tutorial/02-first-deploy.md)
+- [Configuration](../tutorial/03-configuration.md)

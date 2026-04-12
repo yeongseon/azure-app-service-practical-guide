@@ -1,6 +1,23 @@
 ---
 hide:
   - toc
+content_validation:
+  status: verified
+  last_reviewed: "2026-04-12"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "App Service supports managed identities for secure access to Azure resources without storing credentials."
+      source: "https://learn.microsoft.com/azure/app-service/overview-managed-identity"
+      verified: true
+    - claim: "App Service provides built-in authentication and authorization support (Easy Auth) that can protect apps without code changes."
+      source: "https://learn.microsoft.com/azure/app-service/overview-authentication-authorization"
+      verified: true
+    - claim: "Private endpoints allow apps to be accessed through a private IP address within a virtual network."
+      source: "https://learn.microsoft.com/azure/app-service/networking-features"
+      verified: true
+    - claim: "App Service supports Key Vault references to securely access secrets without storing them in application settings."
+      source: "https://learn.microsoft.com/azure/app-service/app-service-key-vault-references"
+      verified: true
 content_sources:
   diagrams:
     - id: defense-in-depth-security-layers

@@ -114,7 +114,7 @@ def connect_with_secret():
 ## See Also
 - [Managed Identity](./managed-identity.md)
 - [Redis Cache with redis-py](./redis.md)
-- [Configure App Settings](../03-configuration.md)
+- [Configure App Settings](../tutorial/03-configuration.md)
 
 ## Sources
 - [Use Key Vault references as app settings (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/app-service-key-vault-references)

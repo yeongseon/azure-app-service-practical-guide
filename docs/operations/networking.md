@@ -24,6 +24,26 @@ content_sources:
         - https://learn.microsoft.com/en-us/azure/app-service/networking-features
         - https://learn.microsoft.com/en-us/azure/app-service/overview-private-endpoint
         - https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration
+content_validation:
+  status: verified
+  last_reviewed: "2026-04-12"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "Access restrictions control inbound traffic to an App Service app."
+      source: "https://learn.microsoft.com/azure/app-service/networking-features"
+      verified: true
+    - claim: "VNet integration is used for outbound access from App Service to private resources."
+      source: "https://learn.microsoft.com/azure/app-service/overview-vnet-integration"
+      verified: true
+    - claim: "Private endpoint handles inbound traffic only and does not replace VNet integration for outbound traffic."
+      source: "https://learn.microsoft.com/azure/app-service/overview-private-endpoint"
+      verified: true
+    - claim: "Access restriction rules are not evaluated for traffic that arrives through the private endpoint."
+      source: "https://learn.microsoft.com/azure/app-service/overview-private-endpoint"
+      verified: true
+    - claim: "For App Service private endpoints, clients resolve app-name.azurewebsites.net through the privatelink.azurewebsites.net private DNS zone."
+      source: "https://learn.microsoft.com/azure/app-service/overview-private-endpoint"
+      verified: true
 ---
 
 # Networking Operations

@@ -10,6 +10,20 @@ content_sources:
       based_on:
         - https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots
         - https://learn.microsoft.com/en-us/azure/app-service/reference-app-settings
+content_validation:
+  status: verified
+  last_reviewed: "2026-04-12"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "App settings and connection strings can be marked as slot-specific so they stay with the slot during swap."
+      source: "https://learn.microsoft.com/azure/app-service/deploy-staging-slots"
+      verified: true
+    - claim: "A slot swap warms up the source slot before switching traffic."
+      source: "https://learn.microsoft.com/azure/app-service/deploy-staging-slots"
+      verified: true
+    - claim: "App Service authentication settings, if enabled, are applied from the target slot to the source slot during swap preparation."
+      source: "https://learn.microsoft.com/azure/app-service/deploy-staging-slots"
+      verified: true
 ---
 
 # Slot Swap Restart / Config Drift / Warm-up Race (Azure App Service Linux)

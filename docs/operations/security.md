@@ -9,6 +9,26 @@ content_sources:
       mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview-security
       based_on:
         - https://learn.microsoft.com/en-us/azure/app-service/networking-features
+content_validation:
+  status: verified
+  last_reviewed: "2026-04-12"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "App Service supports enforcing HTTPS-only access."
+      source: "https://learn.microsoft.com/azure/app-service/overview-security"
+      verified: true
+    - claim: "App Service supports configuring a minimum TLS version."
+      source: "https://learn.microsoft.com/azure/app-service/overview-security"
+      verified: true
+    - claim: "App Service supports managed identities for apps."
+      source: "https://learn.microsoft.com/azure/app-service/overview-security"
+      verified: true
+    - claim: "Access restrictions can be used to limit inbound traffic to an App Service app."
+      source: "https://learn.microsoft.com/azure/app-service/networking-features"
+      verified: true
+    - claim: "App Service app settings can use Azure Key Vault references for secrets."
+      source: "https://learn.microsoft.com/azure/app-service/app-service-key-vault-references"
+      verified: true
 ---
 
 # Security Operations

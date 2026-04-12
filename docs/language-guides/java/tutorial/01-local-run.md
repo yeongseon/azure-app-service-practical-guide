@@ -214,7 +214,7 @@ curl http://localhost:8181/health
     This validates the same startup contract used by App Service (`PORT`, production profile, structured logs) before your first deployment.
 
 !!! info "Platform architecture"
-    For platform architecture details, see [Platform: How App Service Works](../../platform/how-app-service-works.md).
+    For platform architecture details, see [Platform: How App Service Works](../../../platform/how-app-service-works.md).
 
 ## Verification
 
@@ -259,7 +259,7 @@ Ensure you are hitting the correct base URL and port (`localhost:8080` by defaul
 
 - [02. First Deploy](02-first-deploy.md)
 - [03. Configuration](03-configuration.md)
-- [Recipes Index](./recipes/index.md)
+- [Recipes Index](../recipes/index.md)
 
 ## Sources
 

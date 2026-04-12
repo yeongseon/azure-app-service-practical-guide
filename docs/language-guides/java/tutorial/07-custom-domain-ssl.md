@@ -234,7 +234,7 @@ You should get HTTP 200 and a valid certificate chain.
     App Service Managed Certificates have platform-specific limitations (for example wildcard coverage). Validate your domain pattern before committing to this approach.
 
 !!! info "Platform architecture"
-    For platform architecture details, see [Platform: How App Service Works](../../platform/how-app-service-works.md).
+    For platform architecture details, see [Platform: How App Service Works](../../../platform/how-app-service-works.md).
 
 ## Verification
 
@@ -259,9 +259,9 @@ Clear DNS/TLS cache or test with another network; propagation can lag at edge re
 
 ## See Also
 
-- [Recipes: Easy Auth](./recipes/easy-auth.md)
-- [Recipes: Deployment Slots Zero Downtime](./recipes/deployment-slots-zero-downtime.md)
-- [Operations: Networking](../../operations/networking.md)
+- [Recipes: Easy Auth](../recipes/easy-auth.md)
+- [Recipes: Deployment Slots Zero Downtime](../recipes/deployment-slots-zero-downtime.md)
+- [Operations: Networking](../../../operations/networking.md)
 
 ## Sources
 

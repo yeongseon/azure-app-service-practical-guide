@@ -11,6 +11,26 @@ content_sources:
         - https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/troubleshoot-performance-degradation
         - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
         - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+content_validation:
+  status: verified
+  last_reviewed: "2026-04-12"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "Slow App Service performance often occurs because of application-level problems such as long network requests, inefficient code or database queries, high memory or CPU use, or exceptions."
+      source: "https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/troubleshoot-performance-degradation"
+      verified: true
+    - claim: "App Service metrics that can be monitored for performance issues include average memory working set, CPU time, memory working set, requests, and response time."
+      source: "https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/troubleshoot-performance-degradation"
+      verified: true
+    - claim: "App Service provides diagnostic functionality for both web server diagnostics and application diagnostics."
+      source: "https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/troubleshoot-performance-degradation"
+      verified: true
+    - claim: "App Service includes a Kudu debug console that provides environment settings, log stream, diagnostic dump, and a debug console."
+      source: "https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/troubleshoot-performance-degradation"
+      verified: true
+    - claim: "Scaling out an App Service app provides more processing capability and some fault tolerance."
+      source: "https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/troubleshoot-performance-degradation"
+      verified: true
 ---
 
 # Performance Degradation

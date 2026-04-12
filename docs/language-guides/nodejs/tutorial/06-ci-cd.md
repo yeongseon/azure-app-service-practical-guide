@@ -257,7 +257,7 @@ Proceed to **[07-custom-domain-ssl.md](./07-custom-domain-ssl.md)** (Optional) t
 - [Contribute](https://github.com/yeongseon/azure-app-service-practical-guide/issues)
 
 ## See Also
-- [Operations Deployment Slots](../../operations/deployment-slots.md)
+- [Operations Deployment Slots](../../../operations/deployment-slots.md)
 - [GitHub Actions Documentation](https://docs.github.com/en/actions)
 
 ## Sources

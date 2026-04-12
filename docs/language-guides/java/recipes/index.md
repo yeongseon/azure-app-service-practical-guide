@@ -15,7 +15,7 @@ Use these production-focused recipes to integrate common Azure services and oper
 
 ## Prerequisites
 
-- Completed tutorial steps [01](../01-local-run.md) through [03](../03-configuration.md)
+- Completed tutorial steps [01](../tutorial/01-local-run.md) through [03](../tutorial/03-configuration.md)
 - Deployed app with `$RG` and `$APP_NAME` available
 - Access to create dependent Azure resources (SQL, Redis, networking)
 
@@ -108,8 +108,8 @@ Implement [Deployment Slots Zero Downtime](deployment-slots-zero-downtime.md) be
 ## See Also
 
 - [Tutorial Index](../index.md)
-- [03. Configuration](../03-configuration.md)
-- [04. Logging & Monitoring](../04-logging-monitoring.md)
+- [03. Configuration](../tutorial/03-configuration.md)
+- [04. Logging & Monitoring](../tutorial/04-logging-monitoring.md)
 
 ## Sources
 

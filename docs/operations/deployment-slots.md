@@ -9,6 +9,23 @@ content_sources:
       mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots
       based_on:
         - https://learn.microsoft.com/en-us/azure/app-service/deploy-best-practices
+content_validation:
+  status: verified
+  last_reviewed: "2026-04-12"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "Deployment slots require an App Service Plan tier Standard or higher."
+      source: "https://learn.microsoft.com/azure/app-service/deploy-staging-slots"
+      verified: true
+    - claim: "A deployment slot is a live app with its own hostname."
+      source: "https://learn.microsoft.com/azure/app-service/deploy-staging-slots"
+      verified: true
+    - claim: "Connection strings, external endpoint URLs, and other environment-specific values can be configured as slot settings so they stay with the slot during swap."
+      source: "https://learn.microsoft.com/azure/app-service/deploy-staging-slots"
+      verified: true
+    - claim: "App Service supports swap with preview so target-slot settings can be applied before final cutover."
+      source: "https://learn.microsoft.com/azure/app-service/deploy-staging-slots"
+      verified: true
 ---
 
 # Deployment Slots Operations

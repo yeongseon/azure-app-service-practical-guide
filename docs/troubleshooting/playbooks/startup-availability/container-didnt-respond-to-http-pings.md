@@ -38,6 +38,20 @@ content_sources:
         - https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container
         - https://learn.microsoft.com/en-us/azure/app-service/reference-app-settings
         - https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/faqs-app-service-linux-new
+content_validation:
+  status: verified
+  last_reviewed: "2026-04-12"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "`WEBSITES_PORT` tells the platform which port to probe."
+      source: "https://learn.microsoft.com/azure/app-service/configure-custom-container"
+      verified: true
+    - claim: "By default, App Service assumes your custom container listens on port 80."
+      source: "https://learn.microsoft.com/azure/app-service/configure-custom-container"
+      verified: true
+    - claim: "App Service currently allows your container to expose only one port for HTTP requests."
+      source: "https://learn.microsoft.com/azure/app-service/configure-custom-container"
+      verified: true
 ---
 # Container Didn't Respond to HTTP Pings (Azure App Service Linux)
 

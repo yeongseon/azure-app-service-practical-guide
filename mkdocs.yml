@@ -122,13 +122,15 @@ nav:
     - language-guides/index.md
     - Python:
       - language-guides/python/index.md
-      - language-guides/python/01-local-run.md
-      - language-guides/python/02-first-deploy.md
-      - language-guides/python/03-configuration.md
-      - language-guides/python/04-logging-monitoring.md
-      - language-guides/python/05-infrastructure-as-code.md
-      - language-guides/python/06-ci-cd.md
-      - language-guides/python/07-custom-domain-ssl.md
+      - Tutorial:
+        - language-guides/python/tutorial/index.md
+        - 1. Local Run: language-guides/python/tutorial/01-local-run.md
+        - 2. First Deploy: language-guides/python/tutorial/02-first-deploy.md
+        - 3. Configuration: language-guides/python/tutorial/03-configuration.md
+        - 4. Logging & Monitoring: language-guides/python/tutorial/04-logging-monitoring.md
+        - 5. Infrastructure as Code: language-guides/python/tutorial/05-infrastructure-as-code.md
+        - 6. CI/CD: language-guides/python/tutorial/06-ci-cd.md
+        - 7. Custom Domain & SSL: language-guides/python/tutorial/07-custom-domain-ssl.md
       - language-guides/python/python-runtime.md
       - Python Recipes:
         - language-guides/python/recipes/index.md
@@ -147,13 +149,15 @@ nav:
         - VNet Integration: language-guides/python/recipes/vnet-integration.md
     - Node.js:
       - language-guides/nodejs/index.md
-      - language-guides/nodejs/01-local-run.md
-      - language-guides/nodejs/02-first-deploy.md
-      - language-guides/nodejs/03-configuration.md
-      - language-guides/nodejs/04-logging-monitoring.md
-      - language-guides/nodejs/05-infrastructure-as-code.md
-      - language-guides/nodejs/06-ci-cd.md
-      - language-guides/nodejs/07-custom-domain-ssl.md
+      - Tutorial:
+        - language-guides/nodejs/tutorial/index.md
+        - 1. Local Run: language-guides/nodejs/tutorial/01-local-run.md
+        - 2. First Deploy: language-guides/nodejs/tutorial/02-first-deploy.md
+        - 3. Configuration: language-guides/nodejs/tutorial/03-configuration.md
+        - 4. Logging & Monitoring: language-guides/nodejs/tutorial/04-logging-monitoring.md
+        - 5. Infrastructure as Code: language-guides/nodejs/tutorial/05-infrastructure-as-code.md
+        - 6. CI/CD: language-guides/nodejs/tutorial/06-ci-cd.md
+        - 7. Custom Domain & SSL: language-guides/nodejs/tutorial/07-custom-domain-ssl.md
       - language-guides/nodejs/nodejs-runtime.md
       - Node.js Recipes:
         - language-guides/nodejs/recipes/index.md
@@ -173,13 +177,15 @@ nav:
         - VNet Integration: language-guides/nodejs/recipes/vnet-integration.md
     - Java:
       - language-guides/java/index.md
-      - language-guides/java/01-local-run.md
-      - language-guides/java/02-first-deploy.md
-      - language-guides/java/03-configuration.md
-      - language-guides/java/04-logging-monitoring.md
-      - language-guides/java/05-infrastructure-as-code.md
-      - language-guides/java/06-ci-cd.md
-      - language-guides/java/07-custom-domain-ssl.md
+      - Tutorial:
+        - language-guides/java/tutorial/index.md
+        - 1. Local Run: language-guides/java/tutorial/01-local-run.md
+        - 2. First Deploy: language-guides/java/tutorial/02-first-deploy.md
+        - 3. Configuration: language-guides/java/tutorial/03-configuration.md
+        - 4. Logging & Monitoring: language-guides/java/tutorial/04-logging-monitoring.md
+        - 5. Infrastructure as Code: language-guides/java/tutorial/05-infrastructure-as-code.md
+        - 6. CI/CD: language-guides/java/tutorial/06-ci-cd.md
+        - 7. Custom Domain & SSL: language-guides/java/tutorial/07-custom-domain-ssl.md
       - language-guides/java/java-runtime.md
       - Java Recipes:
         - language-guides/java/recipes/index.md
@@ -195,13 +201,15 @@ nav:
         - language-guides/java/recipes/vnet-integration.md
     - .NET:
       - language-guides/dotnet/index.md
-      - language-guides/dotnet/01-local-run.md
-      - language-guides/dotnet/02-first-deploy.md
-      - language-guides/dotnet/03-configuration.md
-      - language-guides/dotnet/04-logging-monitoring.md
-      - language-guides/dotnet/05-infrastructure-as-code.md
-      - language-guides/dotnet/06-ci-cd.md
-      - language-guides/dotnet/07-custom-domain-ssl.md
+      - Tutorial:
+        - language-guides/dotnet/tutorial/index.md
+        - 1. Local Run: language-guides/dotnet/tutorial/01-local-run.md
+        - 2. First Deploy: language-guides/dotnet/tutorial/02-first-deploy.md
+        - 3. Configuration: language-guides/dotnet/tutorial/03-configuration.md
+        - 4. Logging & Monitoring: language-guides/dotnet/tutorial/04-logging-monitoring.md
+        - 5. Infrastructure as Code: language-guides/dotnet/tutorial/05-infrastructure-as-code.md
+        - 6. CI/CD: language-guides/dotnet/tutorial/06-ci-cd.md
+        - 7. Custom Domain & SSL: language-guides/dotnet/tutorial/07-custom-domain-ssl.md
       - language-guides/dotnet/dotnet-runtime.md
       - .NET Recipes:
         - language-guides/dotnet/recipes/index.md

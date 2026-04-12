@@ -9,6 +9,20 @@ content_sources:
       mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/deploy-github-actions
       based_on:
         - https://learn.microsoft.com/en-us/azure/developer/github/connect-from-azure
+content_validation:
+  status: verified
+  last_reviewed: "2026-04-12"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "Microsoft Learn recommends OpenID Connect for GitHub Actions authentication to Azure because it avoids long-lived secrets."
+      source: "https://learn.microsoft.com/azure/app-service/deploy-github-actions"
+      verified: true
+    - claim: "An App Service deployment workflow in GitHub Actions commonly uses azure/login to authenticate and azure/webapps-deploy to deploy."
+      source: "https://learn.microsoft.com/azure/app-service/deploy-github-actions"
+      verified: true
+    - claim: "The azure/webapps-deploy action supports deployment to an App Service deployment slot."
+      source: "https://learn.microsoft.com/azure/app-service/deploy-github-actions"
+      verified: true
 ---
 
 # GitHub Actions CI/CD

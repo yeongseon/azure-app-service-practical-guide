@@ -39,6 +39,17 @@ content_sources:
         - https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/troubleshoot-performance-degradation
         - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
         - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+content_validation:
+  status: verified
+  last_reviewed: "2026-04-12"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "In App Service Linux, memory pressure can first appear as worker degradation: slower GC cycles, queue buildup, intermittent timeouts, and delayed responses."
+      source: "https://learn.microsoft.com/azure/app-service/troubleshoot-memory"
+      verified: true
+    - claim: "Responders may incorrectly scale on CPU alone and miss plan-level memory contention shared across apps."
+      source: "https://learn.microsoft.com/azure/app-service/troubleshoot-memory"
+      verified: true
 ---
 # Memory Pressure and Worker Degradation (Azure App Service Linux)
 

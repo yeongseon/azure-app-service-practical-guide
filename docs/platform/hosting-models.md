@@ -8,6 +8,26 @@ content_sources:
       source: mslearn-adapted
       mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview-hosting-plans
       description: "Shows the Learn-backed decision path from operating system and deployment model to plan tier selection."
+content_validation:
+  status: verified
+  last_reviewed: "2026-04-12"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "A single plan can host multiple apps, which share the same compute pool."
+      source: "https://learn.microsoft.com/azure/app-service/overview-hosting-plans"
+      verified: true
+    - claim: "Both Linux and Windows are supported."
+      source: "https://learn.microsoft.com/azure/app-service/overview"
+      verified: true
+    - claim: "An App Service plan defines the available CPU and memory per instance."
+      source: "https://learn.microsoft.com/azure/app-service/overview-hosting-plans"
+      verified: true
+    - claim: "An App Service plan defines the maximum instance count."
+      source: "https://learn.microsoft.com/azure/app-service/overview-hosting-plans"
+      verified: true
+    - claim: "An App Service plan defines the feature set, such as autoscale, deployment slots, and networking capabilities."
+      source: "https://learn.microsoft.com/azure/app-service/overview-hosting-plans"
+      verified: true
 ---
 
 # Hosting Models

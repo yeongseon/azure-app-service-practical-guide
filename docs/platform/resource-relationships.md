@@ -18,6 +18,26 @@ content_sources:
       source: mslearn-adapted
       mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/networking-features
       description: "Shows the private networking path that combines private endpoint ingress with VNet-integrated outbound access."
+content_validation:
+  status: verified
+  last_reviewed: "2026-04-12"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "An App Service Plan is the compute boundary that hosts one or more apps."
+      source: "https://learn.microsoft.com/azure/app-service/overview-hosting-plans"
+      verified: true
+    - claim: "Co-hosted apps share compute resources."
+      source: "https://learn.microsoft.com/azure/app-service/overview-hosting-plans"
+      verified: true
+    - claim: "Scaling at plan scope affects all apps in that plan."
+      source: "https://learn.microsoft.com/azure/app-service/overview-hosting-plans"
+      verified: true
+    - claim: "Private endpoints provide inbound private access to an App Service app."
+      source: "https://learn.microsoft.com/azure/app-service/networking-features"
+      verified: true
+    - claim: "Virtual network integration provides outbound access from an App Service app to private dependencies."
+      source: "https://learn.microsoft.com/azure/app-service/overview-vnet-integration"
+      verified: true
 ---
 
 # Resource Relationships

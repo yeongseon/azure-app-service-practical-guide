@@ -31,6 +31,26 @@ content_sources:
       source: mslearn-adapted
       mslearn_url: https://learn.microsoft.com/en-us/azure/reliability/reliability-app-service
       description: "Illustrates frontend distribution across healthy instances and optional client affinity to a single worker."
+content_validation:
+  status: verified
+  last_reviewed: "2026-04-12"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "App Service supports platform hostnames and custom domains."
+      source: "https://learn.microsoft.com/azure/app-service/overview"
+      verified: true
+    - claim: "Frontend components perform TLS termination"
+      source: "https://learn.microsoft.com/azure/app-service/overview"
+      verified: true
+    - claim: "Frontend components perform hostname validation"
+      source: "https://learn.microsoft.com/azure/app-service/overview"
+      verified: true
+    - claim: "Frontend components perform route selection to a healthy worker instance"
+      source: "https://learn.microsoft.com/azure/app-service/overview"
+      verified: true
+    - claim: "By default, frontend routing distributes traffic across healthy instances."
+      source: "https://learn.microsoft.com/azure/app-service/overview"
+      verified: true
 ---
 # Request Lifecycle
 

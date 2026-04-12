@@ -129,7 +129,7 @@ gunicorn --bind 0.0.0.0:${PORT:-8000} app:app --workers 2 --timeout 120
 ## See Also
 - [Managed Identity](./managed-identity.md)
 - [Native Dependencies](./native-dependencies.md)
-- [Configure App Settings](../03-configuration.md)
+- [Configure App Settings](../tutorial/03-configuration.md)
 
 ## Sources
 - [Tutorial: Connect to SQL Database from App Service using managed identity (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/tutorial-connect-msi-sql-database)

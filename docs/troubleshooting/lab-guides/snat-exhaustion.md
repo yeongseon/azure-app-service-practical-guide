@@ -45,6 +45,20 @@ content_sources:
       based_on:
         - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
         - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+content_validation:
+  status: verified
+  last_reviewed: "2026-04-12"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "Key point: SNAT mapping happens on platform egress."
+      source: "https://learn.microsoft.com/azure/app-service/networking-features"
+      verified: true
+    - claim: "Finite SNAT mappings per instance."
+      source: "https://learn.microsoft.com/azure/app-service/overview-vnet-integration"
+      verified: true
+    - claim: "Connection pooling reduces churn and improves stability."
+      source: "https://learn.microsoft.com/azure/app-service/networking-features"
+      verified: true
 ---
 # Lab Guide (Level 3): SNAT Exhaustion on Azure App Service Linux
 

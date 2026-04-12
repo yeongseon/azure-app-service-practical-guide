@@ -33,6 +33,26 @@ content_sources:
       source: mslearn-adapted
       mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization
       description: "Compares platform-only, hybrid, and application-only authentication patterns described in this guide."
+content_validation:
+  status: verified
+  last_reviewed: "2026-04-12"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "On Windows, the component is implemented as a native IIS module."
+      source: "https://learn.microsoft.com/azure/app-service/overview-authentication-authorization"
+      verified: true
+    - claim: "On Linux and custom containers, authentication runs as a sidecar-style proxy process in front of your containerized app."
+      source: "https://learn.microsoft.com/azure/app-service/overview-authentication-authorization"
+      verified: true
+    - claim: "After successful authentication, identity information is projected to your app through request headers."
+      source: "https://learn.microsoft.com/azure/app-service/overview-authentication-authorization"
+      verified: true
+    - claim: "Server-directed flow is the default mode for classic web applications where browser navigation and redirects are expected."
+      source: "https://learn.microsoft.com/azure/app-service/overview-authentication-authorization"
+      verified: true
+    - claim: "Client-directed flow is common for SPAs, mobile clients, and API consumers that obtain tokens directly from an identity provider."
+      source: "https://learn.microsoft.com/azure/app-service/overview-authentication-authorization"
+      verified: true
 ---
 
 # Authentication Architecture

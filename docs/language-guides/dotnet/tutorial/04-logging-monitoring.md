@@ -175,7 +175,7 @@ With Application Insights SDK in ASP.NET Core, these are collected automatically
     Keep event cardinality low to avoid noisy, expensive telemetry.
 
 !!! warning "Query location matters"
-    Table names differ by where you run the query. See [KQL Queries Reference — Table Naming](../../reference/kql-queries.md#table-naming) for details.
+    Table names differ by where you run the query. See [KQL Queries Reference — Table Naming](../../../reference/kql-queries.md#table-naming) for details.
     
     - **Application Insights → Logs**: `traces`, `requests`, `dependencies`
     - **Log Analytics Workspace → Logs**: `AppTraces`, `AppRequests`, `AppDependencies`
@@ -299,7 +299,7 @@ Confirm you are using instrumented libraries and avoid suppressing `DiagnosticSo
 ## See Also
 
 - [05. Infrastructure as Code](./05-infrastructure-as-code.md)
-- [Reference: KQL Queries](../../reference/kql-queries.md)
+- [Reference: KQL Queries](../../../reference/kql-queries.md)
 - For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-app-service-practical-guide/)
 
 ## Sources

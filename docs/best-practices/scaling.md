@@ -1,6 +1,20 @@
 ---
 hide:
   - toc
+content_validation:
+  status: verified
+  last_reviewed: "2026-04-12"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "Scale up increases CPU/RAM resources per instance by changing App Service plan SKU."
+      source: "https://learn.microsoft.com/azure/app-service/manage-scale-up"
+      verified: true
+    - claim: "Scale out increases instance count."
+      source: "https://learn.microsoft.com/azure/app-service/manage-scale-up"
+      verified: true
+    - claim: "Multiple apps can share one App Service plan."
+      source: "https://learn.microsoft.com/azure/app-service/manage-scale-up"
+      verified: true
 content_sources:
   diagrams:
     - id: scaling-decision-tree

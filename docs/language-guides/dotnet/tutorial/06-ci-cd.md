@@ -261,7 +261,7 @@ Inspect Log Stream and Kudu diagnostics; redeploy after a clean publish from the
 ## See Also
 
 - [07. Custom Domain & SSL](./07-custom-domain-ssl.md)
-- [Reference: Azure DevOps Pipeline Variables](../../reference/index.md)
+- [Reference: Azure DevOps Pipeline Variables](../../../reference/index.md)
 - For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-app-service-practical-guide/)
 
 ## Sources

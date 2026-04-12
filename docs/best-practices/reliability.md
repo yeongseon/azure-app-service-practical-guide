@@ -1,6 +1,23 @@
 ---
 hide:
   - toc
+content_validation:
+  status: verified
+  last_reviewed: "2026-04-12"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "Health checks are the first reliability control in App Service."
+      source: "https://learn.microsoft.com/azure/app-service/monitor-instances-health-check"
+      verified: true
+    - claim: "They allow unhealthy instances to be detected and removed from rotation."
+      source: "https://learn.microsoft.com/azure/app-service/monitor-instances-health-check"
+      verified: true
+    - claim: "Single-region design is often acceptable for low-criticality apps, but production-critical systems should plan for regional disruption."
+      source: "https://learn.microsoft.com/azure/app-service/tutorial-multi-region-app"
+      verified: true
+    - claim: "Backups are a reliability control for data/configuration recovery, not a substitute for high availability."
+      source: "https://learn.microsoft.com/azure/app-service/manage-backup"
+      verified: true
 content_sources:
   diagrams:
     - id: reliability-architecture-with-health-checks

@@ -119,7 +119,7 @@ CMD ["node", "server.js"]
 ## See Also
 - [Custom Container](./custom-container.md)
 - [Redis Cache for Sessions](./redis.md)
-- [Logging & Monitoring Tutorial](../04-logging-monitoring.md)
+- [Logging & Monitoring Tutorial](../tutorial/04-logging-monitoring.md)
 
 ## Sources
 - [Deploy Next.js hybrid apps to Azure Static Web Apps (Microsoft Learn)](https://learn.microsoft.com/azure/static-web-apps/deploy-nextjs-hybrid)

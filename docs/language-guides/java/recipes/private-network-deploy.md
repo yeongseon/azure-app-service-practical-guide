@@ -41,7 +41,7 @@ flowchart TD
 
 ## Prerequisites
 
-- Completed [02. First Deploy](../02-first-deploy.md)
+- Completed [02. First Deploy](../tutorial/02-first-deploy.md)
 - Basic or higher App Service plan
 - Permission to create VNets, subnets, private endpoints, private DNS zones, and role assignments
 - Existing Java app that already runs in App Service

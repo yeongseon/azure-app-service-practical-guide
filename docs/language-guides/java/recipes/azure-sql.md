@@ -162,7 +162,7 @@ Ensure `mssql-jdbc` version supports managed identity auth and `authentication=A
 
 - [Managed Identity](managed-identity.md)
 - [Key Vault References](key-vault-reference.md)
-- [Tutorial: Configuration](../03-configuration.md)
+- [Tutorial: Configuration](../tutorial/03-configuration.md)
 
 ## Sources
 

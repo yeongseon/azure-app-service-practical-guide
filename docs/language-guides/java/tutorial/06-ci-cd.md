@@ -221,7 +221,7 @@ For monorepos, use path filters so docs-only changes do not trigger deployments.
 Run `az deployment group what-if` for `infra/main.bicep` in PRs, then deploy infra on approved merges.
 
 !!! info "Platform architecture"
-    For platform architecture details, see [Platform: How App Service Works](../../platform/how-app-service-works.md).
+    For platform architecture details, see [Platform: How App Service Works](../../../platform/how-app-service-works.md).
 
 ## Verification
 
@@ -247,8 +247,8 @@ Ensure Maven cache is enabled in `actions/setup-java`, and avoid redundant `clea
 ## See Also
 
 - [07. Custom Domain & SSL](07-custom-domain-ssl.md)
-- [Recipes: Deployment Slots Zero Downtime](./recipes/deployment-slots-zero-downtime.md)
-- [Reference: Troubleshooting](../../reference/troubleshooting.md)
+- [Recipes: Deployment Slots Zero Downtime](../recipes/deployment-slots-zero-downtime.md)
+- [Reference: Troubleshooting](../../../reference/troubleshooting.md)
 
 ## Sources
 

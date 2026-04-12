@@ -24,6 +24,20 @@ content_sources:
       based_on:
         - https://learn.microsoft.com/en-us/aspnet/core/test/troubleshoot-azure-iis?view=aspnetcore-10.0
         - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+content_validation:
+  status: verified
+  last_reviewed: "2026-04-12"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "ASP.NET apps must be deployed to Azure App Service as compiled binaries."
+      source: "https://learn.microsoft.com/azure/app-service/configure-language-dotnet-framework"
+      verified: true
+    - claim: "If you configure an app setting with the same name in App Service and in `web.config`, the App Service value takes precedence."
+      source: "https://learn.microsoft.com/azure/app-service/configure-language-dotnet-framework"
+      verified: true
+    - claim: "You can display the detailed exception page in App Service by adding `<customErrors mode=\"Off\"/>` under `<system.web>` in `web.config`."
+      source: "https://learn.microsoft.com/azure/app-service/configure-language-dotnet-framework"
+      verified: true
 ---
 # Windows IIS web.config Startup Failures (Azure App Service Windows)
 

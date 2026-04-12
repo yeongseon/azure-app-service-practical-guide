@@ -45,7 +45,7 @@ flowchart LR
 - .NET 8 SDK installed
 
 !!! tip "Need private networking later?"
-    For VNet integration, private endpoints, and managed identity, continue with [Private network deploy](./recipes/private-network-deploy.md).
+    For VNet integration, private endpoints, and managed identity, continue with [Private network deploy](../recipes/private-network-deploy.md).
 
 ## Main Content
 
@@ -204,7 +204,7 @@ APP_NAME="app-dotnet-guide-$(date +%s)"
 
 - [01 - Local Run](./01-local-run.md)
 - [03 - Configuration](./03-configuration.md)
-- [Private network deploy](./recipes/private-network-deploy.md)
+- [Private network deploy](../recipes/private-network-deploy.md)
 
 ## Sources
 

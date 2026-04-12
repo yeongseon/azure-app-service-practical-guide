@@ -12,6 +12,17 @@ content_sources:
         - https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration
         - https://learn.microsoft.com/en-us/azure/app-service/networking-features
         - https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/troubleshoot-vnet-integration-apps
+content_validation:
+  status: verified
+  last_reviewed: "2026-04-12"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "Private Endpoint health, DNS resolution, and route policy are separate layers."
+      source: "https://learn.microsoft.com/azure/app-service/networking-features"
+      verified: true
+    - claim: "Private connectivity requires both correct DNS answer and permitted network path."
+      source: "https://learn.microsoft.com/azure/app-service/overview-vnet-integration"
+      verified: true
 ---
 
 # Private Endpoint / Custom DNS / Route Confusion (Azure App Service Linux)
