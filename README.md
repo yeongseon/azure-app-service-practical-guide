@@ -60,11 +60,13 @@ Minimal reference applications demonstrating Azure App Service patterns:
 
 ## Contributing
 
-Contributions welcome. Please ensure:
-- All CLI examples use long flags (`--resource-group`, not `-g`)
-- All documents include mermaid diagrams
-- All content references Microsoft Learn with source URLs
-- No PII in CLI output examples
+Contributions welcome! Please see our [Contributing Guide](https://yeongseon.github.io/azure-app-service-practical-guide/contributing/) for:
+
+- Repository structure and content organization
+- Document templates and writing standards
+- CLI command style and PII rules
+- Local development setup and build validation
+- Pull request process
 
 ## Related Projects
 

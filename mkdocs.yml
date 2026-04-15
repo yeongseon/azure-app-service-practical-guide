@@ -332,3 +332,5 @@ nav:
     - visualization/learning-paths.md
   - Meta:
     - meta/taxonomy.md
+  - Contributing:
+    - contributing/index.md
