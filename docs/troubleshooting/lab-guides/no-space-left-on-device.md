@@ -799,6 +799,7 @@ Evidence chain:
 
 1. Add dedicated synthetic probes for write paths,
    not only `/health`.
+
 2. Alert on `/home` free space thresholds (for example <15%, <5%).
 3. Store large generated files outside local persistent quota when possible.
 4. Implement app-level graceful fallback on `OSError` for disk writes.
@@ -857,10 +858,12 @@ AppServiceHTTPLogs
 
 1. Synthetic workload writes deterministic binary payloads,
    not production data patterns.
+
 2. Timing and status distributions are specific to this run and SKU.
 3. `/tmp` was not driven to exhaustion in this dataset,
    so `/tmp` ENOSPC behavior is inferred from architecture and app logic,
    not observed as terminal failure in this run.
+
 4. Platform logs include startup lifecycle noise;
    root-cause proof relied on app and console evidence.
 

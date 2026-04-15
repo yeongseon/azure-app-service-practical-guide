@@ -283,6 +283,7 @@ stlabdnsvnet         10.20.2.4
 - DNS failures persist even when custom DNS settings are removed in a controlled test.
 
 **What to verify**
+
 1. Confirm current DNS-related app settings:
 
 ```bash
@@ -317,6 +318,7 @@ AppServiceConsoleLogs
 - Failures are resolver timeout-only with no incorrect answer patterns.
 
 **What to verify**
+
 1. Inspect private DNS zone VNet links:
 
 ```bash
@@ -351,6 +353,7 @@ AppServiceHTTPLogs
 - Failures map to missing private zone records rather than resolver selection.
 
 **What to verify**
+
 1. Compare DNS settings between working and failing apps:
 
 ```bash
@@ -380,6 +383,7 @@ AppServiceConsoleLogs
 - Resolver and zone data are stable, but dependency service itself is down.
 
 **What to verify**
+
 1. During incident, run repeated lookups over time from the same app instance and compare across instances.
 2. Review deployment/scale timeline versus first-failure timestamps.
 3. Validate TTL values in private zones and resolver cache policy against expected failover behavior.

@@ -288,6 +288,7 @@ VirtualNetworkSubnetId                                                          
 - Only one dependency FQDN fails consistently while other outbound dependencies are unaffected.
 
 **What to verify**
+
 1. In App Service Diagnostics, open **SNAT Port Exhaustion** and inspect per-instance trends over the failure timeframe.
 2. Open the **TCP Connections** detector and compare connection count behavior to error timestamps.
 3. Query AppServiceConsoleLogs for connection timeout/refused patterns and correlation in time:
@@ -313,6 +314,7 @@ AppServiceConsoleLogs
 - Identical requests from a test workload succeed consistently while production only fails at DNS resolution stage.
 
 **What to verify**
+
 1. Review application code and DI/container lifetime for outbound clients (singleton/shared client expected for most HTTP SDKs).
 2. Inspect runtime logs for pool and socket lifecycle errors in AppServiceConsoleLogs.
 3. Use AppServiceHTTPLogs to map high-latency responses to handlers that invoke outbound calls:
@@ -338,6 +340,7 @@ AppServiceHTTPLogs
 - Private Endpoint names resolve and connect reliably while only high-RPS paths fail.
 
 **What to verify**
+
 1. From Kudu/SSH on the Linux app container, run `nslookup <hostname>` repeatedly for affected dependencies.
 2. Validate App Service VNet integration and DNS server settings (custom DNS IPs, route reachability, private DNS zone links).
 3. Query AppServiceConsoleLogs for resolution-specific strings:
@@ -363,6 +366,7 @@ AppServiceConsoleLogs
 - Failures disappear immediately after reducing local connection churn without any downstream change.
 
 **What to verify**
+
 1. Compare AppServiceHTTPLogs failure windows to dependency-side health dashboards/APM traces.
 2. Run external synthetic probes (for example, from another Azure host) to confirm if dependency slowness reproduces.
 3. Segment logs by dependency endpoint in application logs and check whether failure distribution is endpoint-specific.

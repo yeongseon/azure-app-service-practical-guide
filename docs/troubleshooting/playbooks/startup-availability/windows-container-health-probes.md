@@ -273,6 +273,7 @@ HealthCheckPath   WindowsFxVersion                                       AlwaysO
 - Failures persist after image optimization.
 
 **Validation steps**
+
 1. Measure pull duration from platform logs.
 2. Compare with startup limit.
 3. Re-test with higher startup limit and optimized image.
@@ -288,6 +289,7 @@ HealthCheckPath   WindowsFxVersion                                       AlwaysO
 - Same image starts reliably on repeated deployments.
 
 **Validation steps**
+
 1. Confirm host model requirements (IIS vs self-hosted).
 2. Match base image accordingly: `servercore` for IIS/full-framework style compatibility, `nanoserver` for lighter compatible runtimes.
 3. Rebuild with validated base and retest.
@@ -306,6 +308,7 @@ HealthCheckPath   WindowsFxVersion                                       AlwaysO
 - Probe failures disappear after non-port fixes.
 
 **Validation steps**
+
 1. Inspect IIS site binding (`*:80:` by default).
 2. Verify `WEBSITES_PORT` only if using non-default port.
 3. Confirm health path serves from bound endpoint without redirects/auth blocks.
@@ -321,6 +324,7 @@ HealthCheckPath   WindowsFxVersion                                       AlwaysO
 - Logs show sustained `w3svc` lifecycle.
 
 **Validation steps**
+
 1. Inspect Dockerfile `ENTRYPOINT` and startup command.
 2. Remove scripts that bypass service monitor process.
 3. Rebuild/redeploy and verify stable probe responses.
@@ -336,6 +340,7 @@ HealthCheckPath   WindowsFxVersion                                       AlwaysO
 - Logs show deterministic config/runtime errors instead of slow warm-up.
 
 **Validation steps**
+
 1. Build full timeline from pull to first stable healthy response.
 2. Temporarily increase startup limit.
 3. Reduce image/startup work and set a justified steady-state limit.

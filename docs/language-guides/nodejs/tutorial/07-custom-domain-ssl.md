@@ -122,6 +122,7 @@ ABC123DEF456GHI789JKL012MNO345PQR678STU901VWX234YZ
 
 ### Add DNS Records
 Go to your DNS provider and add:
+
 1. **TXT Record**: 
     - Host: `asuid.www` (for `www.yourdomain.com`)    - Value: The Verification ID from the previous step.2. **CNAME Record**:
     - Host: `www`    - Value: `app-myapp-abc123.azurewebsites.net`

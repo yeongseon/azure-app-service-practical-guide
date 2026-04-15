@@ -189,6 +189,7 @@ jobs:
 ```
 
 **Workflow execution summary:**
+
 1. **Azure Login**: Exchanges the GitHub OIDC token for an Azure access token.
 2. **Deploy**: Uploads the `deploy.zip` artifact to App Service and triggers the remote build/restart process.
 
@@ -220,6 +221,7 @@ az webapp deployment slot create \
 | `az webapp deployment slot create ... --slot staging --output json` | Creates a staging deployment slot for safer releases |
 
 The `.github/workflows/deploy-slot.yml` in this repo demonstrates this pattern:
+
 1. Deploy to the staging slot.
 2. Run health checks against the staging URL.
 3. Use `az webapp deployment slot swap` to move staging to production.
