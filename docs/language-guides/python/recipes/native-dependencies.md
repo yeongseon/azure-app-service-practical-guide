@@ -13,7 +13,7 @@ Handle Python packages with C/C++ extensions reliably on Azure App Service Linux
 
 <!-- diagram-id: native-dependencies-on-app-service-linux -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[Select wheel-first packages] --> B[Deploy with Oryx build]
     B --> C{Wheel unavailable?}
     C -- No --> D[Run app normally]

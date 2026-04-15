@@ -62,7 +62,7 @@ flowchart TD
 
 <!-- diagram-id: diagram-2 -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[Define config needs] --> B[Set App Settings]
     B --> C[Set Connection Strings]
     C --> D[Enable Managed Identity]

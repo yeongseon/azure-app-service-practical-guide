@@ -100,7 +100,7 @@ The following logical flow explains where SNAT sits in the path:
 
 <!-- diagram-id: troubleshooting-lab-guides-snat-exhaustion-diagram-1 -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[Client Request] --> B[App Service Front End]
     B --> C[Linux Worker / Gunicorn]
     C --> D[Flask /outbound endpoint]
@@ -247,7 +247,7 @@ When a Python/Flask app creates a new outbound TCP connection per request withou
 
 <!-- diagram-id: troubleshooting-lab-guides-snat-exhaustion-diagram-4 -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[No pooling in /outbound] --> B[High outbound socket churn]
     B --> C[SNAT mapping pressure]
     C --> D[Outbound timeout growth]
@@ -772,7 +772,7 @@ This section defines what you SHOULD observe at each phase of the lab. Use it to
 
 <!-- diagram-id: troubleshooting-lab-guides-snat-exhaustion-diagram-6 -->
 ```mermaid
-graph LR
+graph TD
     A[Baseline Capture] --> B[Trigger Fault]
     B --> C[During: Collect Evidence]
     C --> D[After: Compare to Baseline]

@@ -92,7 +92,7 @@ The goal is not only to "cause load," but to understand the full chain from user
 
 <!-- diagram-id: troubleshooting-lab-guides-memory-pressure-diagram-1 -->
 ```mermaid
-graph LR
+graph TD
     A[Deploy B1 Linux App Service] --> B[Deploy Flask memory-lab app]
     B --> C[Trigger /leak 100x]
     C --> D[Trigger /heavy burst]
@@ -283,7 +283,7 @@ even if HTTP 5xx does not immediately appear.
 
 <!-- diagram-id: troubleshooting-lab-guides-memory-pressure-diagram-5 -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[/leak accumulation/] --> B[Low headroom]
     B --> C[Reclaim and swap activity]
     C --> D[Request latency tail growth]
@@ -895,7 +895,7 @@ This section defines what you SHOULD observe at each phase of the lab. Use it to
 
 <!-- diagram-id: troubleshooting-lab-guides-memory-pressure-diagram-7 -->
 ```mermaid
-graph LR
+graph TD
     A[Baseline Capture] --> B[Trigger Fault]
     B --> C[During: Collect Evidence]
     C --> D[After: Compare to Baseline]

@@ -28,7 +28,7 @@ flowchart TD
 
 <!-- diagram-id: 02-first-deploy-flow -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[Set RG APP_NAME LOCATION] --> B[dotnet publish]
     B --> C[az webapp up]
     C --> D[Verify site]

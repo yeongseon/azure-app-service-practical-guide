@@ -23,7 +23,7 @@ Enable App Service built-in authentication/authorization (Easy Auth) to protect 
 
 <!-- diagram-id: how-easy-auth-fits-the-request-path -->
 ```mermaid
-flowchart LR
+flowchart TD
     U[User] --> A[App Service Auth Module]
     A -->|Authenticated| B[Spring Boot App]
     A -->|Unauthenticated| C[Login Challenge / 401]

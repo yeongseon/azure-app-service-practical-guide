@@ -96,7 +96,7 @@ az webapp deployment slot swap \
 
 <!-- diagram-id: deployment-flow-with-slots -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[Commit to main branch] --> B[CI build and test]
     B --> C[Package artifact]
     C --> D[Deploy to staging slot]

@@ -60,7 +60,7 @@ flowchart TD
 
 <!-- diagram-id: diagram-2 -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[Commit to main] --> B[Build stage restore/build/test]
     B --> C[Publish artifact]
     C --> D[Deploy stage to App Service]

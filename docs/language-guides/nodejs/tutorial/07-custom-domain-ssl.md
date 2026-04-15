@@ -77,7 +77,7 @@ flowchart TD
 
 <!-- diagram-id: how-custom-domains-work -->
 ```mermaid
-flowchart LR
+flowchart TD
     Client[Client] --> DNS[Public DNS]
     DNS -->|"CNAME (subdomain)\nor A record (apex)"| App[App Service]
     App -."TXT asuid\nownership validation".-> DNS
@@ -89,7 +89,7 @@ Azure verifies domain ownership via a TXT record before allowing the hostname bi
 
 <!-- diagram-id: how-https-binding-works -->
 ```mermaid
-flowchart LR
+flowchart TD
     Client[Client] -->|HTTPS| Domain[Custom Domain]
     Domain --> App[App Service]
     Cert[Managed Certificate\nor imported cert] -->|SNI TLS binding| App

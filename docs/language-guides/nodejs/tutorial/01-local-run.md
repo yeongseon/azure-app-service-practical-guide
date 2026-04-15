@@ -64,7 +64,7 @@ flowchart TD
 
 <!-- diagram-id: overview -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[Clone Repo] --> B[npm install]
     B --> C[npm start]
     C --> D[localhost:3000]

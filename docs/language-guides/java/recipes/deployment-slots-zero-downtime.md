@@ -23,7 +23,7 @@ Use App Service deployment slots to validate Java releases in staging, then swap
 
 <!-- diagram-id: slot-based-release-flow -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[Deploy new build to staging slot] --> B[Run smoke tests on staging URL]
     B --> C[Warm up app and dependencies]
     C --> D[Swap staging -> production]

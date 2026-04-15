@@ -219,7 +219,7 @@ Links are listed in [Sources](#sources).
 
 <!-- diagram-id: troubleshooting-lab-guides-slow-start-cold-start-diagram-3 -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[Restart or deployment trigger] --> B[Container lifecycle starts]
     B --> C[Runtime and app initialization]
     C --> D[Warm-up probe loop]
@@ -715,7 +715,7 @@ This section defines what you SHOULD observe at each phase of the lab. Use it to
 
 <!-- diagram-id: troubleshooting-lab-guides-slow-start-cold-start-diagram-5 -->
 ```mermaid
-graph LR
+graph TD
     A[Baseline Capture] --> B[Trigger Fault]
     B --> C[During: Collect Evidence]
     C --> D[After: Compare to Baseline]

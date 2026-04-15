@@ -36,7 +36,7 @@ Choose a role-based path to get productive quickly on Azure App Service. Each pa
 
 <!-- diagram-id: start-here-learning-paths-diagram-1 -->
 ```mermaid
-graph LR
+graph TD
     A[Start Here] --> B[Platform Basics]
     B --> C[Choose Language Guide]
     C --> D[Recipes]
@@ -63,7 +63,7 @@ Read in order:
 
 <!-- diagram-id: start-here-learning-paths-diagram-2 -->
 ```mermaid
-graph LR
+graph TD
     A[Start Here] --> B[Platform Deep-Dive]
     B --> BP[Best Practices]
     BP --> C[Operations]
@@ -90,7 +90,7 @@ Read in order:
 
 <!-- diagram-id: start-here-learning-paths-diagram-3 -->
 ```mermaid
-graph LR
+graph TD
     A[Start Here] --> B[Architecture Overview]
     B --> C[First 10 Minutes]
     C --> D[Playbooks]

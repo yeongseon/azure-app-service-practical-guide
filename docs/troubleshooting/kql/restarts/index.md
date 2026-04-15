@@ -15,7 +15,7 @@ Use these queries to confirm restart timing, startup loops, and restart correlat
 
 <!-- diagram-id: troubleshooting-kql-restarts-index-diagram-1 -->
 ```mermaid
-graph LR
+graph TD
     A[AppServicePlatformLogs] --> B[Restart Events]
     A --> C[Start/Stop Cycles]
     B --> D[Correlate with Incidents]

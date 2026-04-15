@@ -13,7 +13,7 @@ Connect a Flask app on App Service to Azure SQL, Azure Cache for Redis, and Key 
 
 <!-- diagram-id: private-endpoints -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[Flask app on App Service with VNet integration] --> B[Private DNS zones]
     B --> C[Private Endpoint SQL]
     B --> D[Private Endpoint Redis]

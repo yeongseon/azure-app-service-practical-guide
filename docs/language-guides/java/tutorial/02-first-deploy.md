@@ -41,7 +41,7 @@ flowchart TD
 
 <!-- diagram-id: deployment-flow -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[Set RG APP_NAME LOCATION] --> B[Build the app]
     B --> C[Run az webapp up]
     C --> D[Verify site and health endpoint]

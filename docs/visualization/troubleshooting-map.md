@@ -134,7 +134,7 @@ graph TD
 
 <!-- diagram-id: visualization-troubleshooting-map-diagram-2 -->
 ```mermaid
-graph LR
+graph TD
     subgraph Playbooks
         P1[Container HTTP Pings]
         P2[Deployment Succeeded Startup Failed]
@@ -170,7 +170,7 @@ graph LR
 
 <!-- diagram-id: visualization-troubleshooting-map-diagram-3 -->
 ```mermaid
-graph LR
+graph TD
     subgraph Playbooks
         P1[Intermittent 5xx Under Load]
         P2[Memory Pressure & Worker Degradation]
@@ -209,7 +209,7 @@ graph LR
 
 <!-- diagram-id: visualization-troubleshooting-map-diagram-4 -->
 ```mermaid
-graph LR
+graph TD
     subgraph Playbooks
         P1[DNS Resolution with VNet]
         P2[Private Endpoint DNS Confusion]

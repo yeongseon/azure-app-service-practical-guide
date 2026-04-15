@@ -71,7 +71,7 @@ flowchart TD
 
 <!-- diagram-id: ci-cd-pipeline-flow -->
 ```mermaid
-flowchart LR
+flowchart TD
     subgraph GitHub
         A[Push to main] --> B[Build Job]
         B --> C[Create ZIP]

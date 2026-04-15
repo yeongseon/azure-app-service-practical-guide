@@ -21,7 +21,7 @@ This tutorial path walks you from a local Flask run to a production-ready App Se
 
 <!-- diagram-id: tutorial-path -->
 ```mermaid
-flowchart LR
+flowchart TD
     S01[01 Local Run] --> S02[02 First Deploy]
     S02 --> S03[03 Configuration]
     S03 --> S04[04 Logging & Monitoring]

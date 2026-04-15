@@ -37,7 +37,7 @@ Use container deployment when you want App Service to run a custom Linux contain
 
 <!-- diagram-id: acr-to-app-service-container-flow -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[Build container image] --> B[Push image to Azure Container Registry]
     B --> C[Create or update App Service with image reference]
     C --> D[Grant AcrPull access or registry credentials]

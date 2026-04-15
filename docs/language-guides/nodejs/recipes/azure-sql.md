@@ -19,7 +19,7 @@ Azure SQL integration typically relies on connection strings with embedded crede
 
 <!-- diagram-id: architecture -->
 ```mermaid
-flowchart LR
+flowchart TD
     Client[Client] --> App[App Service]
     App --> Sql[Azure SQL Database]
     App -.-> MI[Managed Identity]

@@ -60,7 +60,7 @@ For orientation and study order, start with [Start Here](start-here/overview.md)
 
 <!-- diagram-id: index-diagram-1 -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[Start Here] --> B[Platform]
     B --> C[Best Practices]
     C --> D[Language Guides]

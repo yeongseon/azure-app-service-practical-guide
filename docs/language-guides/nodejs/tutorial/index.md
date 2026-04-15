@@ -23,7 +23,7 @@ This tutorial walks through the full Azure App Service path for a Node.js app, f
 
 <!-- diagram-id: tutorial-progress -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[01 Local Run] --> B[02 First Deploy]
     B --> C[03 Configuration]
     C --> D[04 Logging & Monitoring]

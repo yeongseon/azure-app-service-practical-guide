@@ -13,7 +13,7 @@ Enable VNet integration for a Flask app so outbound traffic to SQL, Redis, and K
 
 <!-- diagram-id: vnet-integration -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[Flask app on App Service] --> B[VNet integration subnet]
     B --> C[Private Endpoint SQL]
     B --> D[Private Endpoint Key Vault]

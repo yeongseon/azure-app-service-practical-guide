@@ -24,7 +24,7 @@ Connect Spring Boot to Azure SQL Database using passwordless authentication thro
 
 <!-- diagram-id: architecture-pattern -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[Spring Boot on App Service] --> B[Microsoft Entra token]
     B --> C[Azure SQL JDBC]
     C --> D[Azure SQL Database]

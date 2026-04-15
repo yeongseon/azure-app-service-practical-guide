@@ -22,7 +22,7 @@ This section covers deploying web applications to Azure App Service in four lang
 
 <!-- diagram-id: main-content -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[Local Run] --> B[First Deploy]
     B --> C[Configuration]
     C --> D[Logging]

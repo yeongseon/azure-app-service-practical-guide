@@ -34,7 +34,7 @@ content_sources:
 
 <!-- diagram-id: troubleshooting-kql-http-latency-trend-by-status-code-diagram-1 -->
 ```mermaid
-graph LR
+graph TD
     A[AppServiceHTTPLogs] --> B[Percentile Calc per Status]
     B --> C[P50 / P95 / P99 by 5m bins]
     C --> D[Timechart: Tail Latency by Status]

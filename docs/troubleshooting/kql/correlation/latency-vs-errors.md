@@ -34,7 +34,7 @@ content_sources:
 
 <!-- diagram-id: troubleshooting-kql-correlation-latency-vs-errors-diagram-1 -->
 ```mermaid
-graph LR
+graph TD
     A[AppServiceHTTPLogs] --> B[Avg Latency per 5m]
     A --> C[Error Rate per 5m]
     B --> D[Coupled Signal Detection]

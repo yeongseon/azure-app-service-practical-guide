@@ -15,7 +15,7 @@ Integrate Flask with Azure Cosmos DB (NoSQL API) using passwordless authenticati
 
 <!-- diagram-id: architecture -->
 ```mermaid
-flowchart LR
+flowchart TD
     Client[Client] --> App[App Service]
     App --> Cosmos[(Azure Cosmos DB)]
     App -.-> MI[Managed Identity]

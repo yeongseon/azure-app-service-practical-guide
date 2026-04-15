@@ -13,7 +13,7 @@ Enable VNet integration for an Express app on App Service so outbound dependency
 
 <!-- diagram-id: vnet-integration -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[Express app on App Service] --> B[VNet integration subnet]
     B --> C[Private Endpoint SQL]
     B --> D[Private Endpoint Key Vault]

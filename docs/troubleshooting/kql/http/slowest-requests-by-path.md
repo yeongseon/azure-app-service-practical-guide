@@ -34,7 +34,7 @@ content_sources:
 
 <!-- diagram-id: troubleshooting-kql-http-slowest-requests-by-path-diagram-1 -->
 ```mermaid
-graph LR
+graph TD
     A[AppServiceHTTPLogs] --> B[Group by CsUriStem]
     B --> C[Avg + P95 Latency per Path]
     C --> D[Top 20 Slowest Endpoints]

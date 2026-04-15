@@ -60,7 +60,7 @@ flowchart TD
 
 <!-- diagram-id: diagram-2 -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[Choose hostname strategy] --> B[Add DNS records]
     B --> C[Add hostname in App Service]
     C --> D[Create managed certificate]

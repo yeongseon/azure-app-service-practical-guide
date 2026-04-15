@@ -30,7 +30,7 @@ Scale App Service capacity safely by combining vertical and horizontal scaling w
 
 <!-- diagram-id: autoscale-feedback-loop -->
 ```mermaid
-flowchart LR
+flowchart TD
     Metric[Monitor Metric] --> Rule{Rule Triggered?}
     Rule -- CPU > 70% --> ScaleOut[Scale Out]
     Rule -- CPU < 30% --> ScaleIn[Scale In]

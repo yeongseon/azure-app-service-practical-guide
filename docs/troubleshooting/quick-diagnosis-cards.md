@@ -49,7 +49,7 @@ Use these when you have 60 seconds to identify the failure category.
 
 <!-- diagram-id: troubleshooting-quick-diagnosis-cards-diagram-1 -->
 ```mermaid
-graph LR
+graph TD
     A[503 after deploy] --> B[First Query]
     B --> C[Platform Segment]
     C --> D[Playbook]

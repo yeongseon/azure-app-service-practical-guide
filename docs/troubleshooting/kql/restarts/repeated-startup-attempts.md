@@ -31,7 +31,7 @@ content_sources:
 
 <!-- diagram-id: troubleshooting-kql-restarts-repeated-startup-attempts-diagram-1 -->
 ```mermaid
-graph LR
+graph TD
     A[AppServicePlatformLogs] -->|OperationName Filter| B[start / stop / fail Events]
     B --> C[Sequence by ContainerId]
     C --> D[Detect Startup Loop]

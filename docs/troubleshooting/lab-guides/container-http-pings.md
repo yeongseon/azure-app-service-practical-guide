@@ -798,7 +798,7 @@ This section defines what you SHOULD observe at each phase of the lab. Use it to
 
 <!-- diagram-id: troubleshooting-lab-guides-container-http-pings-diagram-5 -->
 ```mermaid
-graph LR
+graph TD
     A[Baseline Capture] --> B[Trigger Fault]
     B --> C[During: Collect Evidence]
     C --> D[After: Compare to Baseline]

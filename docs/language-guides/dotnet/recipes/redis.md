@@ -13,7 +13,7 @@ Use Azure Cache for Redis with ASP.NET Core 8 for distributed caching and sessio
 
 <!-- diagram-id: redis-cache -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[Set Redis connection setting] --> B[Register IDistributedCache]
     B --> C[Read or write cache keys]
     C --> D[Redis TLS endpoint]

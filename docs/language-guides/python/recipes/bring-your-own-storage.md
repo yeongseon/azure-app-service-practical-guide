@@ -15,7 +15,7 @@ Mount Azure Blob Storage or Azure Files to your App Service instance as a custom
 
 <!-- diagram-id: architecture -->
 ```mermaid
-flowchart LR
+flowchart TD
     Platform[App Service platform] -->|Mount Azure Files share| Mount[/Mounted path\/mnt\/appdata/]
     App[Flask app on App Service] -->|Read/write| Mount
     Mount --> Files[(Azure Files share)]

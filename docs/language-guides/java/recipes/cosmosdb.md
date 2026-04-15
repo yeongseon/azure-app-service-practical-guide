@@ -23,7 +23,7 @@ Integrate Spring Boot with Azure Cosmos DB for globally distributed, low-latency
 
 <!-- diagram-id: reference-architecture -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[Spring Boot App] --> B[Spring Data Cosmos]
     B --> C[Cosmos DB SQL API]
     A -.optional auth.-> D[Managed Identity + RBAC]

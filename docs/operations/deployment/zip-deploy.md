@@ -36,7 +36,7 @@ Use ZIP Deploy when you already have a prepared deployment artifact and want to 
 
 <!-- diagram-id: zip-deploy-release-flow -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[Build app artifact locally or in CI] --> B[Create ZIP package without parent folder]
     B --> C[az webapp deploy --type zip]
     C --> D{WEBSITE_RUN_FROM_PACKAGE enabled?}

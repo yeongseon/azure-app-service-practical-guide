@@ -48,7 +48,7 @@ flowchart TD
 
 <!-- diagram-id: private-network-deploy-flow -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[Create VNet and subnets] --> B[Integrate App Service]
     B --> C[Enable managed identity]
     C --> D[Create private endpoints and DNS links]

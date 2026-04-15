@@ -13,7 +13,7 @@ Integrate Azure Cosmos DB (NoSQL) with ASP.NET Core 8 using the `Microsoft.Azure
 
 <!-- diagram-id: cosmos-db -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[Set Cosmos endpoint and database settings] --> B[Create singleton CosmosClient]
     B --> C[Resolve container]
     C --> D[Run CRUD with partition key]

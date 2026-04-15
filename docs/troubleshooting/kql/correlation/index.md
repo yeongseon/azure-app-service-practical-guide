@@ -15,7 +15,7 @@ Use these queries to correlate major signals (latency, error rate, and restart e
 
 <!-- diagram-id: troubleshooting-kql-correlation-index-diagram-1 -->
 ```mermaid
-graph LR
+graph TD
     A[AppServiceHTTPLogs] --> C[Latency + Error Rate]
     B[AppServicePlatformLogs] --> D[Restart Events]
     C --> E[Unified Timeline]

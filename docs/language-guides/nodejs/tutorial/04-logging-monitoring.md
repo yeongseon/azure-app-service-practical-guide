@@ -341,7 +341,7 @@ is a common source of "I can't see my logs" issues.
 
 <!-- diagram-id: log-levels-filtering -->
 ```mermaid
-flowchart LR
+flowchart TD
     subgraph APP ["1 · Your App  LOG_LEVEL=warn"]
         direction TB
         D["debug"] -->|"suppressed"| SX1[" "]
@@ -573,7 +573,7 @@ Setting `APPLICATIONINSIGHTS_CONNECTION_STRING` alone is not sufficient — tele
 
 <!-- diagram-id: what-gets-collected -->
 ```mermaid
-graph LR
+graph TD
     A["logger.info / warn / error\nWinston"] -->|"OTel SDK export\n(advanced mode)"| B["AppTraces"]
     C["HTTP requests\nExpress router"] -->|"OTel auto-instrumented"| D["AppRequests"]
     E["External calls\nfetch / axios / http"] -->|"OTel auto-instrumented"| F["AppDependencies"]

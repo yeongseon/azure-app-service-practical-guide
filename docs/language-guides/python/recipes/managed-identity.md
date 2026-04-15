@@ -15,7 +15,7 @@ Use managed identity to access Azure resources from Flask without storing passwo
 
 <!-- diagram-id: architecture -->
 ```mermaid
-flowchart LR
+flowchart TD
     Client[Client] --> App[App Service]
     App --> KV[(Azure Key Vault)]
     App --> Storage[(Azure Storage)]

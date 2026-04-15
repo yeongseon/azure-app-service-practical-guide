@@ -23,7 +23,7 @@ Use Azure Cache for Redis with Spring Boot to reduce database load, accelerate r
 
 <!-- diagram-id: architecture -->
 ```mermaid
-flowchart LR
+flowchart TD
     C[Client] --> A[App Service Spring Boot]
     A --> R[Azure Cache for Redis TLS]
     A --> D[(Primary Database)]

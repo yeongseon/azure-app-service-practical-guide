@@ -121,7 +121,7 @@ Cons:
 
 <!-- diagram-id: reliability-architecture-with-health-checks -->
 ```mermaid
-flowchart LR
+flowchart TD
     U[Users] --> G[Global traffic routing]
     G --> R1[Region A App Service]
     G --> R2[Region B App Service]

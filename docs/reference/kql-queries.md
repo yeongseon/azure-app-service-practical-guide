@@ -47,7 +47,7 @@ flowchart TD
 
 <!-- diagram-id: reference-kql-queries-diagram-2 -->
 ```mermaid
-flowchart LR
+flowchart TD
     subgraph AI ["Application Insights"]
         T1["traces"]
         R1["requests"]

@@ -15,7 +15,7 @@ Connect Flask to Azure SQL Database using `pyodbc` and Microsoft Entra authentic
 
 <!-- diagram-id: architecture -->
 ```mermaid
-flowchart LR
+flowchart TD
     Client[Client] --> App[App Service]
     App --> Sql[(Azure SQL Database)]
     App -.-> MI[Managed Identity]

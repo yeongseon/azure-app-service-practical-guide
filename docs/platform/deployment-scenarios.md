@@ -116,7 +116,7 @@ Best for early development, personal projects, or static-like sites where VNet i
 
 <!-- diagram-id: scenario-a-public-basic -->
 ```mermaid
-graph LR
+graph TD
     User((User)) -->|HTTPS| PublicEndpoint[App Service Public IP]
     Developer((Developer)) -->|Push| GitHub[GitHub Actions]
     GitHub -->|ZIP Deploy| Kudu[Kudu SCM Site]

@@ -13,7 +13,7 @@ Connect App Service to backend services over private networking using VNet integ
 
 <!-- diagram-id: private-endpoints -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[App Service VNet integration subnet] --> B[Private DNS resolution]
     B --> C[Private Endpoint SQL]
     B --> D[Private Endpoint Redis]

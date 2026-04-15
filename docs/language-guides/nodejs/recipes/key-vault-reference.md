@@ -19,7 +19,7 @@ Azure App Service can automatically resolve secrets from Key Vault and inject th
 
 <!-- diagram-id: architecture -->
 ```mermaid
-flowchart LR
+flowchart TD
     Platform[App Service platform] --> Resolve[Resolve Key Vault reference]
     Resolve --> Kv[Azure Key Vault]
     Kv --> Setting[Secret injected as app setting]

@@ -60,7 +60,7 @@ flowchart TD
 
 <!-- diagram-id: diagram-2 -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[Run ./mvnw spring-boot:run] --> B[Bind server.port to PORT or 8080]
     B --> C[Test /health and /info]
     C --> D[Test /api/requests/log-levels]

@@ -360,7 +360,7 @@ is a common source of "I can't see my logs" issues.
 
 <!-- diagram-id: log-levels-filtering -->
 ```mermaid
-flowchart LR
+flowchart TD
     subgraph APP ["1 · Your App  LOG_LEVEL=WARNING"]
         direction TB
         D["DEBUG"] -->|"suppressed"| SX1[" "]
@@ -625,7 +625,7 @@ Setting `APPLICATIONINSIGHTS_CONNECTION_STRING` alone is not sufficient — tele
 
 <!-- diagram-id: what-gets-collected -->
 ```mermaid
-graph LR
+graph TD
     A["logger.info / warning / error\nFlask / Python logging"] -->|"OTel SDK export\n(advanced mode)"| B["AppTraces"]
     C["HTTP requests\nGunicorn + Flask router"] -->|"OTel auto-instrumented"| D["AppRequests"]
     E["External calls\nrequests / httpx / aiohttp"] -->|"OTel auto-instrumented"| F["AppDependencies"]

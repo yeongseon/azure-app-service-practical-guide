@@ -60,7 +60,7 @@ flowchart TD
 
 <!-- diagram-id: diagram-2 -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[List current App Settings] --> B[Update runtime and JAVA_OPTS]
     B --> C[Add Connection String if needed]
     C --> D[Enable Managed Identity]

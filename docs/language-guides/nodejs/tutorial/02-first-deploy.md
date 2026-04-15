@@ -35,7 +35,7 @@ flowchart TD
 
 <!-- diagram-id: simple-flow -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[Set RG APP_NAME LOCATION] --> B[Run az webapp up]
     B --> C[Open the site]
     C --> D[Stream logs]

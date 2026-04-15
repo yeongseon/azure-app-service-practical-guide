@@ -60,7 +60,7 @@ flowchart TD
 
 <!-- diagram-id: diagram-2 -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[Define Bicep parameters] --> B[Create App Service Plan reserved:false]
     B --> C[Create Web App netFrameworkVersion v8.0]
     C --> D[Apply site settings and diagnostics]

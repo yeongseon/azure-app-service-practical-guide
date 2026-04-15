@@ -19,7 +19,7 @@ Redis is an in-memory data store frequently used as a cache or session provider.
 
 <!-- diagram-id: architecture -->
 ```mermaid
-flowchart LR
+flowchart TD
     Client[Client] --> App[App Service]
     App --> Redis[Azure Cache for Redis]
     App -.-> MI[Managed Identity]

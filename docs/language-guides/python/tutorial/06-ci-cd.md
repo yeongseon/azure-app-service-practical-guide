@@ -158,7 +158,7 @@ curl https://$APP_NAME.azurewebsites.net/health
 
 <!-- diagram-id: verify-deployment-from-workflow-run -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[Push to main] --> B[setup-python]
     B --> C[pip cache restore]
     C --> D[pip install + tests]

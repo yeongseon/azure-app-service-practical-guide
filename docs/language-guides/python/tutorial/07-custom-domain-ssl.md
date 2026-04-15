@@ -66,7 +66,7 @@ flowchart TD
 
 <!-- diagram-id: how-custom-domains-work -->
 ```mermaid
-flowchart LR
+flowchart TD
     Client[Client] --> DNS[Public DNS zone]
     DNS -->|CNAME www.contoso.example -> app.azurewebsites.net| App[App Service]
     DNS -->|TXT asuid.www = customDomainVerificationId| App
@@ -78,7 +78,7 @@ App Service validates domain ownership with the `asuid` TXT record before hostna
 
 <!-- diagram-id: how-https-binding-works -->
 ```mermaid
-flowchart LR
+flowchart TD
     ClientHttps[Client HTTPS request] --> Domain[Custom domain hostname]
     Domain -->|SNI certificate binding| App[App Service]
     ClientHttp[Client HTTP request] -->|301/302 redirect| ClientHttps

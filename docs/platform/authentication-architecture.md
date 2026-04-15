@@ -301,7 +301,7 @@ Common header surfaces available to app code include:
 
 <!-- diagram-id: auth-vs-authorization-boundary -->
 ```mermaid
-flowchart LR
+flowchart TD
     Client[Caller] --> Platform[App Service Easy Auth]
     Platform -->|Identity established| App[Application Code]
     App -->|Policy decision| Data[Business Resource]

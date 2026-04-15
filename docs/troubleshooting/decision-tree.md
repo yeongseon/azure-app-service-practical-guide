@@ -98,7 +98,7 @@ flowchart TD
 
 <!-- diagram-id: troubleshooting-decision-tree-diagram-2 -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[Observed 5xx] --> B{Status pattern}
     B -->|Mostly 500| C[Check application exceptions and endpoint concentration]
     B -->|Mostly 502| D[Check forwarding path and dependency timeouts]

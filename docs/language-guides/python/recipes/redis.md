@@ -15,7 +15,7 @@ Use Azure Cache for Redis from Flask with secure configuration and optional Micr
 
 <!-- diagram-id: architecture -->
 ```mermaid
-flowchart LR
+flowchart TD
     Client[Client] --> App[App Service]
     App --> Redis[(Azure Cache for Redis)]
     App -.-> MI[Managed Identity]

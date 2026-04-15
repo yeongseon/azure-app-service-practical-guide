@@ -13,7 +13,7 @@ This recipe explains how to manage native Node.js modules like `sharp` and `bcry
 
 <!-- diagram-id: native-dependencies -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[Source with native modules] --> B[Builder image with compilers]
     B --> C[npm install + build]
     C --> D[Runtime image with minimal libs]

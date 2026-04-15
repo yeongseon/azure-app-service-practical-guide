@@ -47,7 +47,7 @@ content_sources:
 
 <!-- diagram-id: troubleshooting-kql-console-startup-errors-diagram-1 -->
 ```mermaid
-graph LR
+graph TD
     A[AppServiceConsoleLogs] -->|Keyword Filter| B[error / exception / traceback]
     B --> C[Timeline of Error Messages]
     C --> D[Identify Boot Failure Pattern]

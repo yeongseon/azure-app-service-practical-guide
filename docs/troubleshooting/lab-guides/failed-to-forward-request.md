@@ -94,7 +94,7 @@ If your app listens only on loopback (`127.0.0.1`) inside the container, proxy-t
 
 <!-- diagram-id: troubleshooting-lab-guides-failed-to-forward-request-diagram-1 -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[Client] --> B[App Service Front End]
     B --> C[Worker + Container Network]
     C --> D[Gunicorn listener]
@@ -223,7 +223,7 @@ When a Gunicorn process binds to `127.0.0.1` instead of `0.0.0.0`, the App Servi
 
 <!-- diagram-id: troubleshooting-lab-guides-failed-to-forward-request-diagram-4 -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[Startup command uses 127.0.0.1] --> B[Gunicorn reachable only on loopback]
     B --> C[Platform warmup probe cannot reach app]
     C --> D[Startup timeout / ContainerTimeout logs]
@@ -743,7 +743,7 @@ This section defines what you SHOULD observe at each phase of the lab. Use it to
 
 <!-- diagram-id: troubleshooting-lab-guides-failed-to-forward-request-diagram-6 -->
 ```mermaid
-graph LR
+graph TD
     A[Baseline Capture] --> B[Trigger Fault]
     B --> C[During: Collect Evidence]
     C --> D[After: Compare to Baseline]

@@ -37,7 +37,7 @@ From the control-plane perspective, swap is successful. From the application per
 ### Slot swap lifecycle (where races and drift appear)
 <!-- diagram-id: slot-swap-config-drift-flow -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[Deploy to Staging Slot] --> B[Warm-up Validation on Staging]
     B --> C[Config Swap / Slot Setting Resolution]
     C --> D[Traffic Switch to Production]

@@ -15,7 +15,7 @@ Use these queries to quickly establish request latency patterns, error concentra
 
 <!-- diagram-id: troubleshooting-kql-http-index-diagram-1 -->
 ```mermaid
-graph LR
+graph TD
     A[AppServiceHTTPLogs] --> B[Latency Trends]
     A --> C[5xx Error Patterns]
     A --> D[Endpoint Hotspots]

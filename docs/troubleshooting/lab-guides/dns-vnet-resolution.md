@@ -133,7 +133,7 @@ If private zone linkage is missing, results may degrade to:
 
 <!-- diagram-id: troubleshooting-lab-guides-dns-vnet-resolution-diagram-1 -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[App code calls requests.get or socket.getaddrinfo] --> B[Container resolver 127.0.0.11]
     B --> C{Resolver chain}
     C -->|No VNet integration| D[Azure public DNS path]
@@ -872,7 +872,7 @@ This section defines what you SHOULD observe at each phase of the lab. Use it to
 
 <!-- diagram-id: troubleshooting-lab-guides-dns-vnet-resolution-diagram-5 -->
 ```mermaid
-graph LR
+graph TD
     A[Baseline Capture] --> B[Trigger Fault]
     B --> C[During: Collect Evidence]
     C --> D[After: Compare to Baseline]

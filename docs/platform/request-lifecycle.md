@@ -146,7 +146,7 @@ By default, frontend routing distributes traffic across healthy instances. Optio
 
 <!-- diagram-id: instance-selection-affinity -->
 ```mermaid
-graph LR
+graph TD
     FE[Frontend] --> I1[Instance 1]
     FE --> I2[Instance 2]
     FE --> I3[Instance 3]

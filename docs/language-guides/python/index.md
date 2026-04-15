@@ -27,7 +27,7 @@ This guide walks from local Flask development to production-ready deployment and
 
 <!-- diagram-id: main-content -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[01 Local Run] --> B[02 First Deploy]
     B --> C[03 Configuration]
     C --> D[04 Logging & Monitoring]

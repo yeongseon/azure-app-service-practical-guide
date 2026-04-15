@@ -33,7 +33,7 @@ Use GitHub Actions when your source code already lives in GitHub and you want on
 
 <!-- diagram-id: github-actions-app-service-release-flow -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[Push or pull request] --> B[Checkout source]
     B --> C[Build and test]
     C --> D[Azure login with OIDC]

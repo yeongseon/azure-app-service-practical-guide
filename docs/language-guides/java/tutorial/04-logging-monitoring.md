@@ -77,7 +77,7 @@ flowchart TD
 
 <!-- diagram-id: logging-architecture-for-this-guide -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[Spring Boot App] --> B[Console Logback Output]
     B --> C[App Service Log Stream]
     B --> D[Application Insights]

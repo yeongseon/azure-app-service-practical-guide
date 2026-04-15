@@ -247,7 +247,7 @@ Interpretation:
 
 <!-- diagram-id: troubleshooting-lab-guides-deployment-succeeded-startup-failed-diagram-3 -->
 ```mermaid
-graph LR
+graph TD
     subgraph ControlPlane[Control Plane / Deployment]
         CP1[ZIP Package Upload]
         CP2[Kudu Deployment API]
@@ -879,7 +879,7 @@ This section defines what you SHOULD observe at each phase of the lab. Use it to
 
 <!-- diagram-id: troubleshooting-lab-guides-deployment-succeeded-startup-failed-diagram-4 -->
 ```mermaid
-graph LR
+graph TD
     A[Baseline Capture] --> B[Trigger Fault]
     B --> C[During: Collect Evidence]
     C --> D[After: Compare to Baseline]

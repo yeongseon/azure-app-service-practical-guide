@@ -13,7 +13,7 @@ Connect ASP.NET Core 8 to Azure SQL using Entity Framework Core and managed iden
 
 <!-- diagram-id: azure-sql -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[Enable managed identity] --> B[Grant SQL access]
     B --> C[Set SQL connection string]
     C --> D[Register DbContext]

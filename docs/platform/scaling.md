@@ -137,7 +137,7 @@ Common rule signals:
 
 <!-- diagram-id: autoscale-evaluation-loop -->
 ```mermaid
-flowchart LR
+flowchart TD
     Metric[Metric Breach] --> Rule[Autoscale Rule Evaluation]
     Rule --> Action[Scale Out or Scale In]
     Action --> Cooldown[Cooldown Window]
@@ -165,7 +165,7 @@ Session affinity can keep users on the same instance, but this can undermine eve
 
 <!-- diagram-id: session-affinity-scaling-impact -->
 ```mermaid
-graph LR
+graph TD
     FE[Frontend] --> A[Instance A]
     FE --> B[Instance B]
     FE --> C[Instance C]

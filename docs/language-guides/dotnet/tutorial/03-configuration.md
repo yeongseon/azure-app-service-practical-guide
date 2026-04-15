@@ -60,7 +60,7 @@ flowchart TD
 
 <!-- diagram-id: diagram-2 -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[List current settings] --> B[Set App Settings]
     B --> C[Configure Connection Strings]
     C --> D[Apply appsettings.Production.json defaults]

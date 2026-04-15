@@ -15,7 +15,7 @@ Use these queries to identify startup/runtime failures from container console ou
 
 <!-- diagram-id: troubleshooting-kql-console-index-diagram-1 -->
 ```mermaid
-graph LR
+graph TD
     A[AppServiceConsoleLogs] --> B[Startup Errors]
     A --> C[Binding Failures]
     B --> D[Identify Boot Issues]

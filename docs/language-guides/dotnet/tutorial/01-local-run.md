@@ -60,7 +60,7 @@ flowchart TD
 
 <!-- diagram-id: diagram-2 -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[dotnet restore] --> B[dotnet run]
     B --> C[Bind to HTTP_PLATFORM_PORT or PORT]
     C --> D[Test /health and /info]

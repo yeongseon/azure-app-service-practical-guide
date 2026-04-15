@@ -135,7 +135,7 @@ Do not assume a global load balancer in this baseline diagram. Multi-region rout
 
 <!-- diagram-id: core-request-path -->
 ```mermaid
-graph LR
+graph TD
     C[Client] --> FE[App Service Frontend]
     FE --> W[Worker Instance]
     W --> APP[App Process]
@@ -419,7 +419,7 @@ App Service supports multiple deployment sources and mechanisms. **Oryx is one b
 
 <!-- diagram-id: deployment-flow-map -->
 ```mermaid
-flowchart LR
+flowchart TD
     SRC[Source Code] --> CI[CI Build/Test]
     CI --> ART[Artifact or Image]
     ART --> DEPLOY[Deployment Mechanism]
@@ -735,7 +735,7 @@ Zone resilience in App Service depends on SKU, instance count, and regional capa
 
 <!-- diagram-id: zone-redundancy-topology -->
 ```mermaid
-graph LR
+graph TD
     U[User Traffic] --> FE[Regional Frontends]
     FE --> Z1[Workers in Zone 1]
     FE --> Z2[Workers in Zone 2]

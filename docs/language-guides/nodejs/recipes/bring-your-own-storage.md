@@ -30,7 +30,7 @@ BYOS lets you add a **third category**: your own Azure Blob container or Azure F
 
 <!-- diagram-id: architecture -->
 ```mermaid
-flowchart LR
+flowchart TD
     Platform[App Service platform] --> Share[Azure Files share mount]
     Share --> Mount[/mnt/appdata]
     App[App Service app] --> Mount

@@ -15,7 +15,7 @@ Run Flask on App Service with a custom Linux container when you need full OS/pac
 
 <!-- diagram-id: architecture -->
 ```mermaid
-flowchart LR
+flowchart TD
     Client[Client] --> Runtime[App Service container runtime]
     ACR[(Azure Container Registry)] --> Runtime
 ```

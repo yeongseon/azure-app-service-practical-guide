@@ -100,7 +100,7 @@ Each slot is a separate runtime endpoint with its own hostname and runtime lifec
 
 <!-- diagram-id: troubleshooting-lab-guides-slot-swap-config-drift-diagram-1 -->
 ```mermaid
-flowchart LR
+flowchart TD
     subgraph AppService[Single App Service App]
         P[Production Slot\nHostname: app.azurewebsites.net]
         S[Staging Slot\nHostname: app-staging.azurewebsites.net]
@@ -227,7 +227,7 @@ This lab provides an evidence-driven method to answer all four.
 
 <!-- diagram-id: troubleshooting-lab-guides-slot-swap-config-drift-diagram-4 -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[Pre-swap config divergence by slot] --> B[Swap staging to production]
     B --> C[Non-sticky values exchange]
     B --> D[Sticky values remain slot-bound]
@@ -824,7 +824,7 @@ This section defines what you SHOULD observe at each phase of the lab. Use it to
 
 <!-- diagram-id: troubleshooting-lab-guides-slot-swap-config-drift-diagram-6 -->
 ```mermaid
-graph LR
+graph TD
     A[Baseline Capture] --> B[Trigger Fault]
     B --> C[During: Collect Evidence]
     C --> D[After: Compare to Baseline]

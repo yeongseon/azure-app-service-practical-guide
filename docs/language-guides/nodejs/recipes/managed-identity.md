@@ -24,7 +24,7 @@ Azure provides two types of managed identities:
 
 <!-- diagram-id: architecture -->
 ```mermaid
-flowchart LR
+flowchart TD
     App[App Service] --> Sql[Azure SQL Database]
     App --> Kv[Azure Key Vault]
     App --> Storage[Azure Storage]

@@ -25,7 +25,7 @@ Without this middle layer, teams often jump from conceptual understanding direct
 
 <!-- diagram-id: best-practices-learning-path -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[Platform Understanding<br/>How App Service works] --> B[Best Practices<br/>Design judgment and trade-offs]
     B --> C[Implementation<br/>Language Guides and recipes]
     C --> D[Operations<br/>Run, monitor, and improve]

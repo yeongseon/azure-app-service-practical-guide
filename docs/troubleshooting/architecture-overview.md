@@ -89,7 +89,7 @@ Use this architecture map to route quickly to the right playbook.
 
 <!-- diagram-id: request-path-architecture -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[Client Browser or API Caller] --> B[Azure App Service Front End]
     B --> C[Worker VM Instance]
     C --> D[App Container or Runtime Process]
@@ -152,7 +152,7 @@ flowchart TD
 
 <!-- diagram-id: deployment-path -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[Code or image change] --> B[Deployment to slot]
     B --> C[Container start command executes]
     C --> D[Port binding and warm-up probes]
@@ -178,7 +178,7 @@ flowchart LR
 
 <!-- diagram-id: outbound-network-path -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[App Worker] --> B[DNS Resolver Path]
     B --> C[Resolved target IP]
     C --> D[Outbound NAT/SNAT ports]

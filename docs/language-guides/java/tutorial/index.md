@@ -24,7 +24,7 @@ This tutorial walks through the full Azure App Service Java journey, from local 
 
 <!-- diagram-id: tutorial-flow -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[01 Local Run] --> B[02 First Deploy]
     B --> C[03 Configuration]
     C --> D[04 Logging & Monitoring]

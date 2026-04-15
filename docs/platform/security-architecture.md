@@ -163,7 +163,7 @@ Inbound and outbound flow with security controls:
 
 <!-- diagram-id: inbound-outbound-security-controls -->
 ```mermaid
-graph LR
+graph TD
     Client[Client] --> Edge[Front Door or App Gateway with WAF]
     Edge --> Inbound[Access Restrictions and/or Private Endpoint]
     Inbound --> App[App Service]
@@ -181,7 +181,7 @@ High-security production design often uses private ingress and private dependenc
 
 <!-- diagram-id: private-app-service-topology -->
 ```mermaid
-graph LR
+graph TD
     User[Enterprise Client] --> FD[Azure Front Door Premium + WAF]
     FD --> PEApp[Private Endpoint: App Service]
     PEApp --> App[App Service]
@@ -420,7 +420,7 @@ Recommended alert domains include auth failures, access restriction deny spikes,
 
 <!-- diagram-id: security-baseline-workflow -->
 ```mermaid
-flowchart LR
+flowchart TD
     Plan[Define baseline controls] --> Deploy[Deploy via IaC]
     Deploy --> Validate[Validate policy and runtime settings]
     Validate --> Monitor[Collect logs and security signals]

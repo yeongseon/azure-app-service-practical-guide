@@ -54,7 +54,7 @@ Azure App Service is usually one component in a broader Azure architecture that 
 
 <!-- diagram-id: core-relationship-map -->
 ```mermaid
-flowchart LR
+flowchart TD
     Client[Client]
     Entra[Microsoft Entra ID]
     Cosmos[Azure Cosmos DB]
@@ -197,7 +197,7 @@ Resource relationships are often constrained by network boundaries:
 
 <!-- diagram-id: private-network-resource-path -->
 ```mermaid
-graph LR
+graph TD
     Client[VNet Client] --> PE[Private Endpoint]
     PE --> App[App Service]
     App --> Int[VNet Integration Subnet]

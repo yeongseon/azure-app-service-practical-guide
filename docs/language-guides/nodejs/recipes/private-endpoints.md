@@ -13,7 +13,7 @@ Connect an Express app on App Service to SQL, Redis, and Key Vault over private 
 
 <!-- diagram-id: private-endpoints -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[Express app on App Service with VNet integration] --> B[Private DNS zones]
     B --> C[Private Endpoint SQL]
     B --> D[Private Endpoint Redis]

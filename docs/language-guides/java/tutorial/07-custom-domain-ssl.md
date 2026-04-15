@@ -77,7 +77,7 @@ flowchart TD
 
 <!-- diagram-id: domain-and-certificate-flow -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[Create DNS record] --> B[Add hostname to App Service]
     B --> C[Ownership verification]
     C --> D[Create managed certificate]

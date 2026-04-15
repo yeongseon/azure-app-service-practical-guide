@@ -60,7 +60,7 @@ flowchart TD
 
 <!-- diagram-id: diagram-2 -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[Set App Settings] --> B[Read env vars in Flask]
     B --> C[Separate local and production profiles]
     C --> D[Add Key Vault references]

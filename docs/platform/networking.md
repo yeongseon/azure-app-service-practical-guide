@@ -111,7 +111,7 @@ Access restrictions provide allow/deny controls evaluated before traffic reaches
 
 <!-- diagram-id: access-restrictions-flow -->
 ```mermaid
-graph LR
+graph TD
     Client[Client] --> FE[App Service Frontend]
     FE --> Rules[Access Restriction Rules]
     Rules -->|Allow| App[Application]
@@ -133,7 +133,7 @@ A private endpoint assigns a private IP for app access within your network bound
 
 <!-- diagram-id: private-endpoint-inbound -->
 ```mermaid
-graph LR
+graph TD
     Internet[Public Internet] -- blocked or restricted --> App[App Service]
     subgraph VNet[Virtual Network]
         Client[VNet Client] --> PE[Private Endpoint]
@@ -157,7 +157,7 @@ VNet integration lets app outbound traffic reach private resources.
 
 <!-- diagram-id: vnet-integration-outbound -->
 ```mermaid
-graph LR
+graph TD
     App[App Service App] --> Integration[VNet Integration Subnet]
     Integration --> Database[(Private Database)]
     Integration --> Api[Private API]
@@ -184,7 +184,7 @@ High-security architecture commonly combines:
 
 <!-- diagram-id: private-inbound-outbound-pattern -->
 ```mermaid
-graph LR
+graph TD
     subgraph VNet[Virtual Network]
         Client[VNet Client] --> PE[Private Endpoint]
         Subnet[Integration Subnet] --> DB[(Private Data Service)]

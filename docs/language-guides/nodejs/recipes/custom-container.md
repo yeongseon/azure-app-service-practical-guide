@@ -17,7 +17,7 @@ This recipe explains how to deploy a Node.js application as a custom Docker cont
 
 <!-- diagram-id: custom-container-deployment -->
 ```mermaid
-flowchart LR
+flowchart TD
     Build[Build Image] --> Push[Push to ACR]
     Push --> Config[Update App Service]
     Config --> Pull[App Service Pulls Image]
@@ -34,7 +34,7 @@ Custom containers offer full control over your application's environment, includ
 
 <!-- diagram-id: architecture -->
 ```mermaid
-flowchart LR
+flowchart TD
     Acr[Azure Container Registry] --> App[App Service runtime]
     Client[Client] --> App
 ```

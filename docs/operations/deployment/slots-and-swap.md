@@ -36,7 +36,7 @@ Deployment slots reduce release risk by letting you deploy to a live nonproducti
 
 <!-- diagram-id: slot-swap-blue-green-flow -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[Deploy new version to staging slot] --> B[Apply slot-specific settings]
     B --> C[Warm up staging slot]
     C --> D[Run smoke tests]

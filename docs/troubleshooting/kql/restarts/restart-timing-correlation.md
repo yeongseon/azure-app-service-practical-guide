@@ -49,7 +49,7 @@ content_sources:
 
 <!-- diagram-id: troubleshooting-kql-restarts-restart-timing-correlation-diagram-1 -->
 ```mermaid
-graph LR
+graph TD
     A[AppServicePlatformLogs] -->|ContainerRestart| B[Restart Events]
     B --> C[Timeline Projection]
     C --> D[Correlate with Incident Window]

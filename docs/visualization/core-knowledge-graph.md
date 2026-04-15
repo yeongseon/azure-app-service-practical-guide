@@ -84,7 +84,7 @@ The platform concepts form the foundation of the knowledge graph:
 
 <!-- diagram-id: visualization-core-knowledge-graph-diagram-1 -->
 ```mermaid
-graph LR
+graph TD
     A[How App Service Works] --> B[Request Lifecycle]
     A --> C[Hosting Models]
     A --> D[Scaling]

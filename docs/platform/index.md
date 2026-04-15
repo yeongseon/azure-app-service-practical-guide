@@ -29,7 +29,7 @@ This section explains Azure App Service platform behavior in a language-agnostic
 
 <!-- diagram-id: platform-concepts-map -->
 ```mermaid
-graph LR
+graph TD
     A[How App Service Works] --> B[Hosting Models]
     B --> C[Request Lifecycle]
     C --> D[Scaling]

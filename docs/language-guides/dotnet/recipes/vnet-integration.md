@@ -13,7 +13,7 @@ Enable VNet integration for an ASP.NET Core 8 app so outbound calls to SQL, Redi
 
 <!-- diagram-id: vnet-integration -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[ASP.NET Core app on App Service] --> B[VNet integration subnet]
     B --> C[Private Endpoint SQL]
     B --> D[Private Endpoint Key Vault]

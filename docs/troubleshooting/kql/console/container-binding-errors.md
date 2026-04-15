@@ -31,7 +31,7 @@ content_sources:
 
 <!-- diagram-id: troubleshooting-kql-console-container-binding-errors-diagram-1 -->
 ```mermaid
-graph LR
+graph TD
     A[AppServiceConsoleLogs] -->|Keyword Filter| B[bind / listen / port / EADDRINUSE]
     B --> C[Binding Event Timeline]
     C --> D[Detect Port Mismatch or Conflict]

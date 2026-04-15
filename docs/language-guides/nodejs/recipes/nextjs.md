@@ -13,7 +13,7 @@ This recipe covers deploying a Next.js application to Azure App Service using th
 
 <!-- diagram-id: next-js-on-app-service -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[Configure output: standalone] --> B[npm run build]
     B --> C[Generate .next/standalone]
     C --> D[Build runtime container]

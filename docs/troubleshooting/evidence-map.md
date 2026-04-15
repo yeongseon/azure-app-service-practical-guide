@@ -47,7 +47,7 @@ Use it when you know **what you need to answer** but not **where to collect proo
 
 <!-- diagram-id: troubleshooting-evidence-map-diagram-1 -->
 ```mermaid
-flowchart LR
+flowchart TD
     Q[Investigation Question] --> S[Evidence Source]
     S --> CLI[CLI Command]
     S --> KQL[KQL Query]

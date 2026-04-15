@@ -19,7 +19,7 @@ Azure Cosmos DB is a globally distributed, multi-model database service. Integra
 
 <!-- diagram-id: architecture -->
 ```mermaid
-flowchart LR
+flowchart TD
     Client[Client] --> App[App Service]
     App --> Cosmos[Azure Cosmos DB]
     App -.-> MI[Managed Identity]

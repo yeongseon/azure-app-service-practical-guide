@@ -49,7 +49,7 @@ content_sources:
 
 <!-- diagram-id: troubleshooting-kql-http-5xx-trend-over-time-diagram-1 -->
 ```mermaid
-graph LR
+graph TD
     A[AppServiceHTTPLogs] -->|ScStatus >= 500| B[Filter 5xx]
     B --> C[Count by 15m bins + ScStatus]
     C --> D[Timechart: Spike Detection]

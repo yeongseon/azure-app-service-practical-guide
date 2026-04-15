@@ -23,7 +23,7 @@ Enable VNet Integration so your App Service app can reach private backend servic
 
 <!-- diagram-id: networking-pattern -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[App Service] --> B[VNet Integration Subnet]
     B --> C[Private Endpoint: SQL]
     B --> D[Private Endpoint: Key Vault]

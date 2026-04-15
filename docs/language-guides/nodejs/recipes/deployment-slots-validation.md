@@ -13,7 +13,7 @@ Use staging slots to validate deployments before production swap, with health ch
 
 <!-- diagram-id: deployment-slots-validation -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[Deploy to staging slot] --> B[Apply slot-sticky settings]
     B --> C[Run /health and /info checks]
     C --> D[Run /readyz validation]

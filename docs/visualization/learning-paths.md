@@ -49,7 +49,7 @@ Each language guide follows a consistent structure from local development to pro
 
 <!-- diagram-id: visualization-learning-paths-diagram-1 -->
 ```mermaid
-graph LR
+graph TD
     subgraph Foundation
         L[Local Run] --> D[First Deploy]
     end

@@ -34,7 +34,7 @@ content_sources:
 
 <!-- diagram-id: troubleshooting-kql-correlation-restarts-vs-latency-diagram-1 -->
 ```mermaid
-graph LR
+graph TD
     A[AppServiceHTTPLogs] --> B[Avg Latency Series]
     C[AppServicePlatformLogs] --> D[Restart Count Series]
     B --> E[Union Timechart]

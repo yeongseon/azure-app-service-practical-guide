@@ -21,7 +21,7 @@ Follow this 7-step path to build, deploy, configure, observe, automate, and secu
 
 <!-- diagram-id: tutorial-flow -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[01 Local Run] --> B[02 First Deploy]
     B --> C[03 Configuration]
     C --> D[04 Logging & Monitoring]

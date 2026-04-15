@@ -32,7 +32,7 @@ This is **not** a general Azure tutorial. It is designed to help engineers move 
 
 <!-- diagram-id: troubleshooting-index-diagram-1 -->
 ```mermaid
-graph LR
+graph TD
     A[Observe Symptom] --> B[List Hypotheses]
     B --> C[Collect Evidence]
     C --> D[Validate / Disprove]

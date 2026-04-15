@@ -60,7 +60,7 @@ flowchart TD
 
 <!-- diagram-id: diagram-2 -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[App request] --> B[ILogger structured logs]
     B --> C[Application Insights ingestion]
     C --> D[Log Analytics workspace]

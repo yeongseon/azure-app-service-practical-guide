@@ -53,7 +53,7 @@ flowchart TD
 
 <!-- diagram-id: private-network-flow -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[Prepare network variables] --> B[Create VNet and subnets]
     B --> C[Add App Service VNet integration]
     C --> D[Enable managed identity]

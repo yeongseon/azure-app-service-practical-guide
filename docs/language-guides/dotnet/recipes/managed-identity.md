@@ -13,7 +13,7 @@ Use App Service managed identity with `Azure.Identity` and `DefaultAzureCredenti
 
 <!-- diagram-id: managed-identity -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[Enable system-assigned identity] --> B[Get principal ID]
     B --> C[Grant RBAC on target resource]
     C --> D[Use DefaultAzureCredential in code]

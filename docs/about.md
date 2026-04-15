@@ -14,7 +14,7 @@ The Azure App Service Practical Guide is a unified hub for platform architecture
 
 <!-- diagram-id: about-diagram-1 -->
 ```mermaid
-flowchart LR
+flowchart TD
     subgraph Legacy["Original Lab Repos"]
         L1["lab-memory-pressure"]
         L2["lab-node-memory-pressure"]

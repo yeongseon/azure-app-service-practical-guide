@@ -200,7 +200,7 @@ Reality:
 
 <!-- diagram-id: troubleshooting-lab-guides-no-space-left-on-device-diagram-3 -->
 ```mermaid
-graph LR
+graph TD
     A[/health/] --> A1[No large write]
     A1 --> A2[200 OK]
 
@@ -914,7 +914,7 @@ This section defines what you SHOULD observe at each phase of the lab. Use it to
 
 <!-- diagram-id: troubleshooting-lab-guides-no-space-left-on-device-diagram-4 -->
 ```mermaid
-graph LR
+graph TD
     A[Baseline Capture] --> B[Trigger Fault]
     B --> C[During: Collect Evidence]
     C --> D[After: Compare to Baseline]

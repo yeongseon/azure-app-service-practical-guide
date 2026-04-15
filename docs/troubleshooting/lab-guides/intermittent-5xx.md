@@ -90,7 +90,7 @@ When a burst of concurrent slow requests occupies the limited Gunicorn sync work
 
 <!-- diagram-id: troubleshooting-lab-guides-intermittent-5xx-diagram-1 -->
 ```mermaid
-graph LR
+graph TD
     A[Deploy B1 Linux app with 2 sync workers] --> B[Launch 20 concurrent /slow requests]
     B --> C[Immediately call /fast 10 times]
     C --> D[Observe queued fast requests]
@@ -258,7 +258,7 @@ which confirms worker starvation and queueing.
 
 <!-- diagram-id: troubleshooting-lab-guides-intermittent-5xx-diagram-4 -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[Limited sync workers=2] --> B[Concurrent /slow saturates workers]
     B --> C[/fast cannot start promptly]
     C --> D[Queue wait increases]
@@ -822,7 +822,7 @@ This section defines what you SHOULD observe at each phase of the lab. Use it to
 
 <!-- diagram-id: troubleshooting-lab-guides-intermittent-5xx-diagram-6 -->
 ```mermaid
-graph LR
+graph TD
     A[Baseline Capture] --> B[Trigger Fault]
     B --> C[During: Collect Evidence]
     C --> D[After: Compare to Baseline]

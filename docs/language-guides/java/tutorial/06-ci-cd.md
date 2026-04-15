@@ -78,7 +78,7 @@ flowchart TD
 
 <!-- diagram-id: pipeline-design -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[Push / PR] --> B[Build + Unit Tests]
     B --> C[Package JAR]
     C --> D[Azure Login]

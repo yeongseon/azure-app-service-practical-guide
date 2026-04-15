@@ -15,7 +15,7 @@ Inject secrets directly into App Service environment variables using Key Vault R
 
 <!-- diagram-id: architecture -->
 ```mermaid
-flowchart LR
+flowchart TD
     App[App Service platform]
     Setting[Key Vault reference app setting]
     Env[Resolved environment variable]

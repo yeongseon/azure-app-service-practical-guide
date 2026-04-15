@@ -64,7 +64,7 @@ This error is often misread as a generic networking outage, but it can come from
 
 <!-- diagram-id: failed-to-forward-request-flow -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[Client] --> B[App Service Front-end]
     B --> C[Middleware Reverse Proxy]
     C --> D[App Container]

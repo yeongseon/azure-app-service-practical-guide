@@ -31,7 +31,7 @@ Managed identity removes credential rotation burden from application code:
 
 <!-- diagram-id: architecture -->
 ```mermaid
-flowchart LR
+flowchart TD
     A[Spring Boot App Service] --> B[DefaultAzureCredential]
     B --> C[Managed Identity endpoint]
     C --> D[Microsoft Entra token]

@@ -18,7 +18,7 @@ This chapter deploys the Flask app from [01 - Local Run](./01-local-run.md) to A
 
 <!-- diagram-id: 02-first-deployment-to-azure-app-service -->
 ```mermaid
-flowchart LR
+flowchart TD
     INET[Internet] --> WA[Azure App Service\nLinux Web App\nPython 3.11]
     WA --> BACKEND[Optional Backend Services\nDatabase / Storage / APIs]
 
