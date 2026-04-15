@@ -1,6 +1,4 @@
 ---
-hide:
-  - toc
 content_sources:
   text:
     - type: mslearn-adapted

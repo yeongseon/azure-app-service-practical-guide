@@ -1,6 +1,4 @@
 ---
-hide:
-  - toc
 title: Visualization
 slug: visualization-index
 doc_type: map

@@ -1,6 +1,4 @@
 ---
-hide:
-  - toc
 content_sources:
   diagrams:
     - id: 01-local-run

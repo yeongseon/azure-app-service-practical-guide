@@ -1,6 +1,4 @@
 ---
-hide:
-  - toc
 content_sources:
   diagrams:
     - id: cors-and-token-errors-flow

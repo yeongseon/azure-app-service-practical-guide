@@ -1,6 +1,4 @@
 ---
-hide:
-  - toc
 content_sources:
   diagrams:
     - id: ssl-certificate-issues-flow

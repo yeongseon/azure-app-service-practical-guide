@@ -1,6 +1,4 @@
 ---
-hide:
-  - toc
 title: Memory Pressure and Worker Degradation
 slug: memory-pressure-and-worker-degradation
 doc_type: playbook

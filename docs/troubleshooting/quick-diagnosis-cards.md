@@ -1,6 +1,4 @@
 ---
-hide:
-  - toc
 title: Quick Diagnosis Cards
 slug: quick-diagnosis-cards
 doc_type: map

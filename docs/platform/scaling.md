@@ -1,6 +1,4 @@
 ---
-hide:
-  - toc
 title: Scaling
 slug: scaling
 doc_type: concept

@@ -1,6 +1,4 @@
 ---
-hide:
-  - toc
 content_sources:
   diagrams:
     - id: troubleshooting-kql-correlation-index-diagram-1

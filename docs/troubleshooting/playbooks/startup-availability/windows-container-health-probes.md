@@ -1,6 +1,4 @@
 ---
-hide:
-  - toc
 title: Windows Container Startup and Health Probes
 slug: windows-container-health-probes
 doc_type: playbook

@@ -1,6 +1,4 @@
 ---
-hide:
-  - toc
 title: Windows Memory Pressure and IIS Worker Recycling
 slug: windows-memory-pressure-worker-recycling
 doc_type: playbook

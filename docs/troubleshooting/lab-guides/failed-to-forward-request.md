@@ -1,6 +1,4 @@
 ---
-hide:
-  - toc
 content_sources:
   diagrams:
     - id: troubleshooting-lab-guides-failed-to-forward-request-diagram-1

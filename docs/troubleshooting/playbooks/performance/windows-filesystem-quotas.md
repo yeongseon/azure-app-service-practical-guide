@@ -1,6 +1,4 @@
 ---
-hide:
-  - toc
 title: Windows Filesystem Quotas and IIS Log Behaviors
 slug: windows-filesystem-quotas
 doc_type: playbook

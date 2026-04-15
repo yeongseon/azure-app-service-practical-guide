@@ -1,6 +1,4 @@
 ---
-hide:
-  - toc
 title: No Space Left on Device
 slug: no-space-left-on-device
 doc_type: playbook

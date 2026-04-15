@@ -1,6 +1,4 @@
 ---
-hide:
-  - toc
 title: Windows IIS web.config Startup Failures
 slug: windows-iis-webconfig-startup
 doc_type: playbook

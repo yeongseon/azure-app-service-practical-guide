@@ -1,6 +1,4 @@
 ---
-hide:
-  - toc
 title: Troubleshooting Architecture Overview
 slug: troubleshooting-architecture-overview
 doc_type: map

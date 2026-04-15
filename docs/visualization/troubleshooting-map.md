@@ -1,6 +1,4 @@
 ---
-hide:
-  - toc
 title: Troubleshooting Map
 slug: troubleshooting-map
 doc_type: map

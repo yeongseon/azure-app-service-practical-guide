@@ -1,6 +1,4 @@
 ---
-hide:
-  - toc
 content_validation:
   status: verified
   last_reviewed: "2026-04-12"

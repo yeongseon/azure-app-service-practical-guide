@@ -1,6 +1,4 @@
 ---
-hide:
-  - toc
 title: Restart Timing Correlation
 slug: restart-timing-correlation
 doc_type: kql

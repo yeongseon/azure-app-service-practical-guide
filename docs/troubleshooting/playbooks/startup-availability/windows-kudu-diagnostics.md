@@ -1,6 +1,4 @@
 ---
-hide:
-  - toc
 title: Windows Kudu and Diagnostic Tools
 slug: windows-kudu-diagnostics
 doc_type: playbook

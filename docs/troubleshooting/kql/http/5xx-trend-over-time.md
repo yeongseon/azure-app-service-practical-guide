@@ -1,6 +1,4 @@
 ---
-hide:
-  - toc
 title: 5xx Trend Over Time
 slug: 5xx-trend-over-time
 doc_type: kql

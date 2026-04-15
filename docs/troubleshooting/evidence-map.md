@@ -1,6 +1,4 @@
 ---
-hide:
-  - toc
 title: Evidence Map for App Service Troubleshooting
 slug: evidence-map
 doc_type: map

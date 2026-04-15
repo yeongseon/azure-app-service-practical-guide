@@ -1,6 +1,4 @@
 ---
-hide:
-  - toc
 title: Networking
 slug: networking
 doc_type: concept

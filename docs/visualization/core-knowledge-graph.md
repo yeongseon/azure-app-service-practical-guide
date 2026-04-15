@@ -1,6 +1,4 @@
 ---
-hide:
-  - toc
 title: Core Knowledge Graph
 slug: core-knowledge-graph
 doc_type: map

@@ -1,6 +1,4 @@
 ---
-hide:
-  - toc
 title: Troubleshooting Decision Tree
 slug: decision-tree
 doc_type: map
