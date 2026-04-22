@@ -10,19 +10,19 @@ This page tracks the source validation status of all documentation content. All 
 
 ## Summary
 
-*Generated: 2026-04-12*
+*Generated: 2026-04-22*
 
 | Content Type | Total | Verified | Pending | Unverified | No Metadata |
 |---|---:|---:|---:|---:|---:|
 | Mermaid Diagrams | 340 | 340 | 0 | 0 | 0 |
-| Text Documents | 82 | 82 | 0 | 0 | 0 |
+| Text Documents | 84 | 84 | 0 | 0 | 0 |
 
 !!! success "All Content Verified"
     All text documents have verified Microsoft Learn sources for core claims.
 
 ```mermaid
 pie title Document Validation Status
-    "Verified" : 82
+    "Verified" : 84
 ```
 
 ## By Section
@@ -78,6 +78,8 @@ pie title Document Validation Status
 | [Architecture Overview](../troubleshooting/architecture-overview.md) | ✅ | ✅ Verified | 2/2 | 2026-04-12 |
 | [Auth Redirect Loop](../troubleshooting/playbooks/startup-availability/auth-redirect-loop.md) | ✅ | ✅ Verified | 2/2 | 2026-04-12 |
 | [Authentication Failures](../troubleshooting/playbooks/authentication-failures.md) | ✅ | ✅ Verified | 5/5 | 2026-04-12 |
+| [Cd Rbac Role Assignment Conflict](../troubleshooting/playbooks/cd-rbac-role-assignment-conflict.md) | ✅ | ✅ Verified | 3/3 | 2026-04-22 |
+| [Cd Reconnect Rbac Conflict](../troubleshooting/lab-guides/cd-reconnect-rbac-conflict.md) | ✅ | ✅ Verified | 3/3 | 2026-04-22 |
 | [Container Binding Errors](../troubleshooting/kql/console/container-binding-errors.md) | ✅ | ✅ Verified | 3/3 | 2026-04-12 |
 | [Container Didnt Respond To Http Pings](../troubleshooting/playbooks/startup-availability/container-didnt-respond-to-http-pings.md) | ✅ | ✅ Verified | 3/3 | 2026-04-12 |
 | [Container Http Pings](../troubleshooting/lab-guides/container-http-pings.md) | ✅ | ✅ Verified | 2/2 | 2026-04-12 |

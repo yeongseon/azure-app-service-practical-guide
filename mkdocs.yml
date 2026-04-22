@@ -258,6 +258,7 @@ nav:
       - troubleshooting/playbooks/performance-degradation.md
       - troubleshooting/playbooks/ssl-certificate-issues.md
       - troubleshooting/playbooks/authentication-failures.md
+      - troubleshooting/playbooks/cd-rbac-role-assignment-conflict.md
       - Startup & Availability:
         - troubleshooting/playbooks/startup-availability/container-didnt-respond-to-http-pings.md
         - troubleshooting/playbooks/startup-availability/deployment-succeeded-startup-failed.md
@@ -306,6 +307,7 @@ nav:
         - troubleshooting/kql/correlation/restarts-vs-latency.md
     - Lab Guides:
       - troubleshooting/lab-guides/index.md
+      - troubleshooting/lab-guides/cd-reconnect-rbac-conflict.md
       - troubleshooting/lab-guides/container-http-pings.md
       - troubleshooting/lab-guides/deployment-succeeded-startup-failed.md
       - troubleshooting/lab-guides/dns-vnet-resolution.md

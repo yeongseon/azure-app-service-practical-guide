@@ -68,6 +68,12 @@ Each lab includes:
 | [SNAT Exhaustion](snat-exhaustion.md) | Outbound connection failures from SNAT port exhaustion | [SNAT or Application Issue?](../playbooks/outbound-network/snat-or-application-issue.md) |
 | [DNS Resolution (VNet)](dns-vnet-resolution.md) | DNS resolution failure for private endpoints in VNet-integrated apps | [DNS Resolution (VNet)](../playbooks/outbound-network/dns-resolution-vnet-integrated-app-service.md) |
 
+### Identity & Deployment
+
+| Lab | Symptom | Related Playbook |
+|-----|---------|-----------------|
+| [CD Reconnect RBAC Conflict](cd-reconnect-rbac-conflict.md) | `RoleAssignmentExists` on Deployment Center reconnect for container CD with managed-identity ACR pulls | [CD RBAC Role Assignment Conflict](../playbooks/cd-rbac-role-assignment-conflict.md) |
+
 ## Prerequisites
 
 All labs require:

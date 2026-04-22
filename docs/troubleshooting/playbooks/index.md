@@ -62,6 +62,7 @@ graph TD
 | [App Startup Failures](app-startup-failures.md) | Application or container never becomes ready |
 | [SSL Certificate Issues](ssl-certificate-issues.md) | Custom domain TLS binding, renewal, or hostname mismatch problems |
 | [Authentication Failures](authentication-failures.md) | Easy Auth, Entra ID, or identity-related sign-in failures |
+| [CD RBAC Role Assignment Conflict](cd-rbac-role-assignment-conflict.md) | `RoleAssignmentExists` on Deployment Center reconnect with managed-identity ACR pulls |
 
 ## Outbound / Network
 
