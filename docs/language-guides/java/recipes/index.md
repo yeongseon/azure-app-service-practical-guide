@@ -56,6 +56,7 @@ flowchart TD
 | [Managed Identity](managed-identity.md) | Eliminate app secrets for Azure APIs | DefaultAzureCredential, RBAC |
 | [Key Vault References](key-vault-reference.md) | Resolve secrets via platform config | `@Microsoft.KeyVault(...)` |
 | [Easy Auth](easy-auth.md) | Add authentication at platform edge | App Service Authentication/Authorization |
+| [mTLS Client Certificates](mtls-client-certificates.md) | Parse `X-ARR-ClientCert` and load PKCS#12 for outbound mTLS | CertificateFactory, KeyStore, SSLContext |
 
 ### Networking recipes
 

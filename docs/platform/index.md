@@ -23,6 +23,7 @@ This section explains Azure App Service platform behavior in a language-agnostic
 | [Request Lifecycle](./request-lifecycle.md) | End-to-end request path, routing, timeouts, health checks |
 | [Scaling](./scaling.md) | Scale up/out strategies, autoscale rules, stateless design |
 | [Networking](./networking.md) | Inbound and outbound controls, private networking, DNS patterns |
+| [Mutual TLS Architecture](./mtls.md) | Inbound client certificates, outbound certificate loading, and ASE trust boundaries |
 | [Resource Relationships](./resource-relationships.md) | Identity, data, storage, secrets, monitoring integration map |
 | [Authentication Architecture](./authentication-architecture.md) | EasyAuth flow, token handling, identity provider integration |
 | [Security Architecture](./security-architecture.md) | Network perimeter, TLS, managed identity, secret management |
@@ -34,9 +35,10 @@ graph TD
     B --> C[Request Lifecycle]
     C --> D[Scaling]
     D --> E[Networking]
-    E --> F[Resource Relationships]
-    F --> G[Authentication Architecture]
-    G --> H[Security Architecture]
+    E --> F[Mutual TLS Architecture]
+    F --> G[Resource Relationships]
+    G --> H[Authentication Architecture]
+    H --> I[Security Architecture]
 ```
 
 ### Recommended reading order

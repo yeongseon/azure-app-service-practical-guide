@@ -37,6 +37,7 @@ flowchart TD
 | [Managed Identity](managed-identity.md) | Passwordless access to Azure resources |
 | [Key Vault References](key-vault-reference.md) | Access secrets without code changes |
 | [Easy Auth](easy-auth.md) | Built-in authentication (no SDK needed) |
+| [mTLS Client Certificates](mtls-client-certificates.md) | Parse `X-ARR-ClientCert` and attach client certs to outbound HTTPS calls |
 
 ## Advanced Deployments
 
