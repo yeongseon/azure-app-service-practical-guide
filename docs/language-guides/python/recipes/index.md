@@ -40,6 +40,7 @@ Pick the recipe that matches your immediate requirement:
 - [Custom container with Gunicorn + SSH](./custom-container.md)
 - [Native dependencies on Linux App Service](./native-dependencies.md)
 - [Easy Auth](./easy-auth.md)
+- [mTLS Client Certificates](./mtls-client-certificates.md)
 - [Managed Identity](./managed-identity.md)
 - [Private Network Deployment](./private-network-deploy.md)
 - [Key Vault References](./key-vault-reference.md)

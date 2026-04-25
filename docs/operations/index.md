@@ -37,6 +37,8 @@ flowchart TD
 | [Health and Recovery](./health-recovery.md) | Health checks, auto-heal, runbooks, and incident recovery controls |
 | [Backup and Restore](./backup-restore.md) | Scheduled backup configuration, restore drills, and DR planning |
 | [Networking](./networking.md) | Access restrictions, private endpoints, VNet integration, and DNS diagnostics |
+| [Incoming Client Certificates](./incoming-client-certificates.md) | Enable, verify, and troubleshoot inbound mutual TLS on App Service |
+| [Outbound Client Certificates](./outbound-client-certificates.md) | Upload, load, and rotate client certificates for outbound mTLS calls |
 | [Security](./security.md) | Identity, authentication, TLS hardening, secrets handling, and governance |
 | [Cost Optimization](./cost-optimization.md) | Right-sizing, autoscale economics, environment cleanup, and FinOps cadence |
 

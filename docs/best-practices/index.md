@@ -39,6 +39,7 @@ Use this table as your decision map for the Best Practices section.
 |---|---|---|
 | [Production Baseline](./production-baseline.md) | Establish minimum production controls for every web app. | Consistent baseline across environments and teams. |
 | [Networking](./networking.md) | Design secure and predictable inbound/outbound connectivity. | Controlled traffic paths and reliable DNS behavior. |
+| [mTLS](./mtls.md) | Apply inbound and outbound certificate trust boundaries deliberately. | Stronger caller authentication and safer certificate operations. |
 | [Security](./security.md) | Apply layered security controls from identity to edge. | Reduced attack surface and stronger secret hygiene. |
 | [Deployment](./deployment.md) | Choose safe release patterns and rollback strategy. | Lower deployment risk and faster recovery. |
 | [Scaling](./scaling.md) | Match scale settings to workload characteristics. | Better performance stability and cost efficiency. |

@@ -42,6 +42,7 @@ flowchart TD
 | Security | [Managed Identity](managed-identity.md) | `DefaultAzureCredential` pattern | Passwordless service auth |
 | Security | [Key Vault References](key-vault-reference.md) | App Settings secret injection | Minimal code secret management |
 | Security | [Easy Auth](easy-auth.md) | Built-in authentication | Protect app without custom auth stack |
+| Security | [mTLS Client Certificates](mtls-client-certificates.md) | Inbound and outbound client certificate handling | `X509Certificate2`, `HttpClientHandler` |
 | Networking | [Private network deploy](private-network-deploy.md) | VNet + private endpoint + managed identity | End-to-end isolated deployment |
 | Networking | [Private Endpoints](private-endpoints.md) | VNet integration + private access | Isolated backend connectivity |
 | Deployment | [Deployment Slots Validation](deployment-slots-validation.md) | Staging validation before swap | Safer zero-downtime releases |

@@ -106,6 +106,7 @@ nav:
     - platform/request-lifecycle.md
     - platform/scaling.md
     - platform/networking.md
+    - platform/mtls.md
     - platform/resource-relationships.md
     - platform/authentication-architecture.md
     - platform/security-architecture.md
@@ -114,6 +115,7 @@ nav:
     - best-practices/index.md
     - best-practices/production-baseline.md
     - best-practices/networking.md
+    - best-practices/mtls.md
     - best-practices/security.md
     - best-practices/deployment.md
     - best-practices/scaling.md
@@ -143,6 +145,7 @@ nav:
         - language-guides/python/recipes/easy-auth.md
         - language-guides/python/recipes/key-vault-reference.md
         - language-guides/python/recipes/managed-identity.md
+        - language-guides/python/recipes/mtls-client-certificates.md
         - language-guides/python/recipes/native-dependencies.md
         - Private Network Deployment: language-guides/python/recipes/private-network-deploy.md
         - Private Endpoints: language-guides/python/recipes/private-endpoints.md
@@ -170,6 +173,7 @@ nav:
         - language-guides/nodejs/recipes/easy-auth.md
         - language-guides/nodejs/recipes/key-vault-reference.md
         - language-guides/nodejs/recipes/managed-identity.md
+        - language-guides/nodejs/recipes/mtls-client-certificates.md
         - language-guides/nodejs/recipes/native-dependencies.md
         - language-guides/nodejs/recipes/nextjs.md
         - Private Network Deployment: language-guides/nodejs/recipes/private-network-deploy.md
@@ -196,6 +200,7 @@ nav:
         - language-guides/java/recipes/easy-auth.md
         - language-guides/java/recipes/key-vault-reference.md
         - language-guides/java/recipes/managed-identity.md
+        - language-guides/java/recipes/mtls-client-certificates.md
         - Private Network Deployment: language-guides/java/recipes/private-network-deploy.md
         - language-guides/java/recipes/private-endpoints.md
         - language-guides/java/recipes/redis.md
@@ -220,6 +225,7 @@ nav:
         - language-guides/dotnet/recipes/easy-auth.md
         - language-guides/dotnet/recipes/key-vault-reference.md
         - language-guides/dotnet/recipes/managed-identity.md
+        - language-guides/dotnet/recipes/mtls-client-certificates.md
         - Private Network Deployment: language-guides/dotnet/recipes/private-network-deploy.md
         - language-guides/dotnet/recipes/private-endpoints.md
         - language-guides/dotnet/recipes/redis.md
@@ -237,6 +243,8 @@ nav:
     - operations/health-recovery.md
     - operations/backup-restore.md
     - operations/networking.md
+    - operations/incoming-client-certificates.md
+    - operations/outbound-client-certificates.md
     - operations/security.md
     - operations/cost-optimization.md
   - Troubleshooting:
@@ -255,6 +263,7 @@ nav:
       - troubleshooting/playbooks/index.md
       - troubleshooting/playbooks/deployment-failures.md
       - troubleshooting/playbooks/app-startup-failures.md
+      - troubleshooting/playbooks/mtls-failures.md
       - troubleshooting/playbooks/performance-degradation.md
       - troubleshooting/playbooks/ssl-certificate-issues.md
       - troubleshooting/playbooks/authentication-failures.md

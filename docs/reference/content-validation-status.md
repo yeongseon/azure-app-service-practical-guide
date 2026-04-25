@@ -15,15 +15,14 @@ This page tracks the source validation status of all documentation content. All 
 | Content Type | Total | Verified | Pending | Unverified | No Metadata |
 |---|---:|---:|---:|---:|---:|
 | Mermaid Diagrams | 340 | 340 | 0 | 0 | 0 |
-| Text Documents | 84 | 84 | 0 | 0 | 0 |
+| Text Documents | 89 | 86 | 3 | 0 | 0 |
 
-!!! success "All Content Verified"
-    All text documents have verified Microsoft Learn sources for core claims.
 
 <!-- diagram-id: content-validation-status-pie -->
 ```mermaid
 pie title Document Validation Status
-    "Verified" : 84
+    "Verified" : 86
+    "Pending Review" : 3
 ```
 
 ## By Section
@@ -36,6 +35,7 @@ pie title Document Validation Status
 | [Deployment Scenarios](../platform/deployment-scenarios.md) | ✅ | ✅ Verified | 4/4 | 2026-04-12 |
 | [Hosting Models](../platform/hosting-models.md) | ✅ | ✅ Verified | 5/5 | 2026-04-12 |
 | [How App Service Works](../platform/how-app-service-works.md) | ✅ | ✅ Verified | 4/4 | 2026-04-12 |
+| [Mtls](../platform/mtls.md) | ✅ | ⚠️ Pending Review | 4/4 | 2026-04-25 |
 | [Networking](../platform/networking.md) | ✅ | ✅ Verified | 5/5 | 2026-04-12 |
 | [Request Lifecycle](../platform/request-lifecycle.md) | ✅ | ✅ Verified | 5/5 | 2026-04-12 |
 | [Resource Relationships](../platform/resource-relationships.md) | ✅ | ✅ Verified | 5/5 | 2026-04-12 |
@@ -48,6 +48,7 @@ pie title Document Validation Status
 |---|---|---|---|---|
 | [Common Anti Patterns](../best-practices/common-anti-patterns.md) | ✅ | ✅ Verified | 3/3 | 2026-04-12 |
 | [Deployment](../best-practices/deployment.md) | ✅ | ✅ Verified | 3/3 | 2026-04-12 |
+| [Mtls](../best-practices/mtls.md) | ✅ | ⚠️ Pending Review | 3/4 | 2026-04-25 |
 | [Networking](../best-practices/networking.md) | ✅ | ✅ Verified | 4/4 | 2026-04-12 |
 | [Production Baseline](../best-practices/production-baseline.md) | ✅ | ✅ Verified | 4/4 | 2026-04-12 |
 | [Reliability](../best-practices/reliability.md) | ✅ | ✅ Verified | 4/4 | 2026-04-12 |
@@ -64,7 +65,9 @@ pie title Document Validation Status
 | [Deployment Slots](../operations/deployment-slots.md) | ✅ | ✅ Verified | 4/4 | 2026-04-12 |
 | [Github Actions](../operations/deployment/github-actions.md) | ✅ | ✅ Verified | 3/3 | 2026-04-12 |
 | [Health Recovery](../operations/health-recovery.md) | ✅ | ✅ Verified | 3/3 | 2026-04-12 |
+| [Incoming Client Certificates](../operations/incoming-client-certificates.md) | ✅ | ✅ Verified | 4/4 | 2026-04-25 |
 | [Networking](../operations/networking.md) | ✅ | ✅ Verified | 5/5 | 2026-04-12 |
+| [Outbound Client Certificates](../operations/outbound-client-certificates.md) | ✅ | ✅ Verified | 4/4 | 2026-04-25 |
 | [Scaling](../operations/scaling.md) | ✅ | ✅ Verified | 4/4 | 2026-04-12 |
 | [Security](../operations/security.md) | ✅ | ✅ Verified | 5/5 | 2026-04-12 |
 | [Slots And Swap](../operations/deployment/slots-and-swap.md) | ✅ | ✅ Verified | 4/4 | 2026-04-12 |
@@ -102,6 +105,7 @@ pie title Document Validation Status
 | [Memory Pressure](../troubleshooting/lab-guides/memory-pressure.md) | ✅ | ✅ Verified | 3/3 | 2026-04-12 |
 | [Memory Pressure And Worker Degradation](../troubleshooting/playbooks/performance/memory-pressure-and-worker-degradation.md) | ✅ | ✅ Verified | 2/2 | 2026-04-12 |
 | [Mental Model](../troubleshooting/mental-model.md) | ✅ | ✅ Verified | 2/2 | 2026-04-12 |
+| [Mtls Failures](../troubleshooting/playbooks/mtls-failures.md) | ✅ | ⚠️ Pending Review | 2/3 | 2026-04-25 |
 | [No Space Left On Device](../troubleshooting/lab-guides/no-space-left-on-device.md) | ✅ | ✅ Verified | 2/2 | 2026-04-12 |
 | [No Space Left On Device](../troubleshooting/playbooks/performance/no-space-left-on-device.md) | ✅ | ✅ Verified | 2/2 | 2026-04-12 |
 | [Outbound Network](../troubleshooting/first-10-minutes/outbound-network.md) | ✅ | ✅ Verified | 2/2 | 2026-04-12 |
