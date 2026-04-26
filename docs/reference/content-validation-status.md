@@ -10,7 +10,7 @@ This page tracks the source validation status of all documentation content. All 
 
 ## Summary
 
-*Generated: 2026-04-22*
+*Generated: 2026-04-26*
 
 | Content Type | Total | Verified | Pending | Unverified | No Metadata |
 |---|---:|---:|---:|---:|---:|
@@ -20,6 +20,7 @@ This page tracks the source validation status of all documentation content. All 
 !!! success "All Content Verified"
     All text documents have verified Microsoft Learn sources for core claims.
 
+<!-- diagram-id: content-validation-status-pie -->
 ```mermaid
 pie title Document Validation Status
     "Verified" : 84
