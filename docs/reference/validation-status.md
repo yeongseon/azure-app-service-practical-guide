@@ -4,7 +4,7 @@ This page tracks which tutorials have been validated against real Azure deployme
 
 ## Summary
 
-*Generated: 2026-04-22*
+*Generated: 2026-04-26*
 
 | Metric | Count |
 |---|---:|
@@ -14,6 +14,7 @@ This page tracks which tutorials have been validated against real Azure deployme
 | ❌ Failed | 0 |
 | ➖ Not tested | 0 |
 
+<!-- diagram-id: tutorial-validation-status-pie -->
 ```mermaid
 pie title Tutorial Validation Status
 ```
