@@ -38,6 +38,30 @@ flowchart TD
     D --> E[Azure Resource API]
 ```
 
+## How RBAC Connects Identity to Resources
+
+A managed identity alone does not grant access. Azure RBAC binds three elements into a **role assignment**:
+
+<!-- diagram-id: rbac-structure -->
+```mermaid
+flowchart TD
+    P[Principal<br/>Who: Managed Identity or Service Principal] --> RA[Role Assignment<br/>Unique GUID per binding]
+    RD[Role Definition<br/>What: Key Vault Secrets User, Storage Blob Data Reader, etc.] --> RA
+    S[Scope<br/>Where: Subscription, Resource Group, or Resource] --> RA
+    RA --> ACCESS[Access Granted]
+
+    style RA fill:#f5c542,stroke:#333,color:#000
+```
+
+| Element | Question it answers | Example |
+|---|---|---|
+| **Principal** | Who needs access? | App Service's managed identity |
+| **Role Definition** | What permission? | `Key Vault Secrets User`, `Storage Blob Data Reader` |
+| **Scope** | On which resource? | A specific Key Vault, Storage account, or resource group |
+| **Role Assignment** | The binding itself | Unique GUID — one per (principal + role + scope) combination |
+
+Azure RBAC enforces a uniqueness constraint: only one role assignment can exist for the same `(principal, role definition, scope)` triple. Attempting to create a duplicate with a different assignment GUID results in a `RoleAssignmentExists` conflict.
+
 ### Add dependency (`pom.xml`)
 
 ```xml
