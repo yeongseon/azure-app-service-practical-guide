@@ -219,7 +219,7 @@ For monorepos, use path filters so docs-only changes do not trigger deployments.
 Run `az deployment group what-if` for `infra/main.bicep` in PRs, then deploy infra on approved merges.
 
 !!! info "Platform architecture"
-    For platform architecture details, see [Platform: How App Service Works](../../../platform/how-app-service-works.md).
+    For platform architecture details, see [Platform: How App Service Works](../../../platform/architecture/index.md).
 
 ## Verification
 

@@ -131,7 +131,7 @@ public Map<String, Object> redisPing(StringRedisTemplate redis) {
     Deploy Redis and App Service in the same Azure region to minimize latency and cross-zone cost.
 
 !!! info "Platform architecture"
-    For platform architecture details, see [Platform: How App Service Works](../../../platform/how-app-service-works.md).
+    For platform architecture details, see [Platform: How App Service Works](../../../platform/architecture/index.md).
 
 ## Verification
 

@@ -243,14 +243,14 @@ graph TD
 ### For Beginners
 
 1. **Start Here**: [Overview](../start-here/overview.md)
-2. **Platform**: [How App Service Works](../platform/how-app-service-works.md)
+2. **Platform**: [How App Service Works](../platform/architecture/index.md)
 3. **Your Language Guide**: Complete steps 1-3 (Local Run → Configuration)
 4. **Platform**: [Request Lifecycle](../platform/request-lifecycle.md)
 5. **Your Language Guide**: Complete steps 4-7 (Logging → SSL)
 
 ### For Experienced Developers
 
-1. **Platform**: Quick scan of [How App Service Works](../platform/how-app-service-works.md)
+1. **Platform**: Quick scan of [How App Service Works](../platform/architecture/index.md)
 2. **Best Practices**: [Production Baseline](../best-practices/production-baseline.md)
 3. **Your Language Guide**: Skim core path, focus on recipes
 4. **Troubleshooting**: [Quick Diagnosis Cards](../troubleshooting/quick-diagnosis-cards.md)

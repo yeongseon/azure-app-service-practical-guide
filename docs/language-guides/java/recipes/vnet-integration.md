@@ -117,7 +117,7 @@ az webapp config appsettings set \
     Integration subnet size impacts scaling headroom. Start with a subnet range that supports expected instance growth.
 
 !!! info "Platform architecture"
-    For platform architecture details, see [Platform: How App Service Works](../../../platform/how-app-service-works.md).
+    For platform architecture details, see [Platform: How App Service Works](../../../platform/architecture/index.md).
 
 ## Verification
 

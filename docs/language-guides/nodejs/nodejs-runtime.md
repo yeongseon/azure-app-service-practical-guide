@@ -221,7 +221,7 @@ Cold starts occur when an app scales out or starts after being idle.
 
 ## See Also
 - [Platform Limits](../../reference/platform-limits.md)
-- [How App Service Works](../../platform/how-app-service-works.md)
+- [How App Service Works](../../platform/architecture/index.md)
 - [CLI Cheatsheet](../../reference/cli-cheatsheet.md)
 
 ## Sources

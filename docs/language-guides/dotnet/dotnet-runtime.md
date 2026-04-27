@@ -163,4 +163,4 @@ az webapp show --resource-group $RESOURCE_GROUP_NAME --name $WEB_APP_NAME --outp
 - [02. First Deploy](./tutorial/02-first-deploy.md)
 - [Troubleshooting](../../reference/troubleshooting.md)
 - [CLI Cheatsheet](../../reference/cli-cheatsheet.md)
-- [Concepts: How App Service Works](../../platform/how-app-service-works.md)
+- [Concepts: How App Service Works](../../platform/architecture/index.md)

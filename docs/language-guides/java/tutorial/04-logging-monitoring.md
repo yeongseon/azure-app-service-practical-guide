@@ -221,7 +221,7 @@ failed
     Add availability tests against `/health` and a lightweight business endpoint to catch platform and app regressions early.
 
 !!! info "Platform architecture"
-    For platform architecture details, see [Platform: How App Service Works](../../../platform/how-app-service-works.md).
+    For platform architecture details, see [Platform: How App Service Works](../../../platform/architecture/index.md).
 
 ## Verification
 

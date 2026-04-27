@@ -234,7 +234,7 @@ az webapp config appsettings set \
     Keep secrets in Key Vault and expose them via Key Vault References in App Settings.
 
 !!! info "Platform architecture"
-    For platform architecture details, see [Platform: How App Service Works](../../../platform/how-app-service-works.md).
+    For platform architecture details, see [Platform: How App Service Works](../../../platform/architecture/index.md).
 
 ## Verification
 

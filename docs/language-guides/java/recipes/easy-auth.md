@@ -104,7 +104,7 @@ For fully declarative environments, manage auth settings through ARM/Bicep resou
     Easy Auth handles authentication. Your app should still enforce domain-specific authorization.
 
 !!! info "Platform architecture"
-    For platform architecture details, see [Platform: How App Service Works](../../../platform/how-app-service-works.md).
+    For platform architecture details, see [Platform: How App Service Works](../../../platform/architecture/index.md).
 
 ## Verification
 

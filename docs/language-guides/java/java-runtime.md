@@ -188,7 +188,7 @@ Look for startup logs confirming Java version, active profiles, and listening po
 - [Reference: CLI Cheatsheet](../../reference/cli-cheatsheet.md)
 - [Reference: Platform Limits](../../reference/platform-limits.md)
 - [Operations: Scaling](../../operations/scaling.md)
-- [Platform: How App Service Works](../../platform/how-app-service-works.md)
+- [Platform: How App Service Works](../../platform/architecture/index.md)
 
 ## Sources
 

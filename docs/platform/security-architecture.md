@@ -437,7 +437,7 @@ A durable security program treats configuration as code and operations as contin
 - [Authentication Architecture](./authentication-architecture.md)
 - [Networking](./networking.md)
 - [Security Operations](../operations/security.md)
-- [How App Service Works](./how-app-service-works.md)
+- [How App Service Works](./architecture/index.md)
 
 ## Sources
 

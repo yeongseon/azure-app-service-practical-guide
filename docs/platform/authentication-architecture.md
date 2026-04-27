@@ -450,7 +450,7 @@ Mitigations:
 
 - [Request Lifecycle](./request-lifecycle.md)
 - [Security Architecture](./security-architecture.md)
-- [How App Service Works](./how-app-service-works.md)
+- [How App Service Works](./architecture/index.md)
 - [Security Operations](../operations/security.md)
 
 ## Sources

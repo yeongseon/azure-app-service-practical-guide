@@ -124,7 +124,7 @@ If Key Vault is private-only:
     If identity or network path to Key Vault fails, your app receives unresolved/empty config and may fail startup.
 
 !!! info "Platform architecture"
-    For platform architecture details, see [Platform: How App Service Works](../../../platform/how-app-service-works.md).
+    For platform architecture details, see [Platform: How App Service Works](../../../platform/architecture/index.md).
 
 ## Verification
 

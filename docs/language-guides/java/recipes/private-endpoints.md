@@ -156,7 +156,7 @@ Use resilient retry settings (Spring Data JPA retry logic, Redis reconnect behav
 - [Azure SQL](azure-sql.md)
 - [Redis Cache](redis.md)
 - [VNet Integration](vnet-integration.md)
-- [Platform: How App Service Works](../../../platform/how-app-service-works.md)
+- [Platform: How App Service Works](../../../platform/architecture/index.md)
 
 ## Sources
 

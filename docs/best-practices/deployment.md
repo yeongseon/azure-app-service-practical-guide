@@ -281,7 +281,7 @@ Use this checklist before every production promotion:
 
 ## See Also
 
-- [Platform - How App Service Works](../platform/how-app-service-works.md)
+- [Platform - How App Service Works](../platform/architecture/index.md)
 - [Operations - Deployment Slots](../operations/deployment-slots.md)
 - [Operations - Health and Recovery](../operations/health-recovery.md)
 - [Best Practices - Reliability](./reliability.md)

@@ -348,7 +348,7 @@ For language-specific implementation details, see:
 
 ## See Also
 
-- [How App Service Works](./how-app-service-works.md)
+- [How App Service Works](./architecture/index.md)
 - [Hosting Models](./hosting-models.md)
 - [Networking](./networking.md)
 - [Managed identity for App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-managed-identity)

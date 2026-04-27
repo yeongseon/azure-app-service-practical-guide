@@ -18,7 +18,7 @@ This section explains Azure App Service platform behavior in a language-agnostic
 
 | Document | Description |
 |---|---|
-| [How App Service Works](./how-app-service-works.md) | Platform architecture, sandbox model, filesystem, runtime contracts |
+| [How App Service Works](./architecture/index.md) | Platform architecture, sandbox model, filesystem, runtime contracts |
 | [Hosting Models](./hosting-models.md) | Plan tiers, OS choices, code vs container deployment models |
 | [Request Lifecycle](./request-lifecycle.md) | End-to-end request path, routing, timeouts, health checks |
 | [Scaling](./scaling.md) | Scale up/out strategies, autoscale rules, stateless design |

@@ -34,7 +34,7 @@ pie title Document Validation Status
 | [Authentication Architecture](../platform/authentication-architecture.md) | ✅ | ✅ Verified | 5/5 | 2026-04-12 |
 | [Deployment Scenarios](../platform/deployment-scenarios.md) | ✅ | ✅ Verified | 4/4 | 2026-04-12 |
 | [Hosting Models](../platform/hosting-models.md) | ✅ | ✅ Verified | 5/5 | 2026-04-12 |
-| [How App Service Works](../platform/how-app-service-works.md) | ✅ | ✅ Verified | 4/4 | 2026-04-12 |
+| [How App Service Works](../platform/architecture/index.md) | ✅ | ✅ Verified | 4/4 | 2026-04-12 |
 | [Mtls](../platform/mtls.md) | ✅ | ⚠️ Pending Review | 4/4 | 2026-04-25 |
 | [Networking](../platform/networking.md) | ✅ | ✅ Verified | 5/5 | 2026-04-12 |
 | [Request Lifecycle](../platform/request-lifecycle.md) | ✅ | ✅ Verified | 5/5 | 2026-04-12 |
@@ -186,4 +186,3 @@ python3 scripts/generate_content_validation_status.py
 
 - [CLI Cheatsheet](cli-cheatsheet.md)
 - [Platform Limits](platform-limits.md)
-

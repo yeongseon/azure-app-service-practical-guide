@@ -278,7 +278,7 @@ For language-specific implementation details, see:
 
 ## See Also
 
-- [How App Service Works](./how-app-service-works.md)
+- [How App Service Works](./architecture/index.md)
 - [Scaling](./scaling.md)
 - [Networking](./networking.md)
 - [Deployment Slots in App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/deploy-staging-slots)

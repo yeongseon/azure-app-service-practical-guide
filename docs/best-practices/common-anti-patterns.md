@@ -208,7 +208,7 @@ az webapp config appsettings list \
 
 ## See Also
 
-- [Platform - How App Service Works](../platform/how-app-service-works.md)
+- [Platform - How App Service Works](../platform/architecture/index.md)
 - [Platform - Networking](../platform/networking.md)
 - [Operations - Security](../operations/security.md)
 - [Operations - Deployment Slots](../operations/deployment-slots.md)

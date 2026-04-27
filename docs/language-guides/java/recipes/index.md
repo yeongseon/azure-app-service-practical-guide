@@ -82,7 +82,7 @@ flowchart TD
     Start with Managed Identity before SQL/Key Vault recipes so your data integrations remain passwordless by design.
 
 !!! info "Platform concepts"
-    For platform architecture details, see [Platform: How App Service Works](../../../platform/how-app-service-works.md).
+    For platform architecture details, see [Platform: How App Service Works](../../../platform/architecture/index.md).
 
 ## Verification
 

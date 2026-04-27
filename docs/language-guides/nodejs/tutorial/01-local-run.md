@@ -130,7 +130,7 @@ app.listen(PORT, () => {
 !!! warning "Common Mistake"
     Never hardcode ports like `3000` or bind to `localhost` (127.0.0.1) only. App Service expects the app to listen on `0.0.0.0:PORT`.
 
-For more details on how the runtime handles your code, see [Node.js Runtime Concepts](../../../platform/how-app-service-works.md).
+For more details on how the runtime handles your code, see [Node.js Runtime Concepts](../../../platform/architecture/index.md).
 
 ### 2. Environment Variables
 
@@ -286,7 +286,7 @@ Once local development works, proceed to:
 
 ## See Also
 - [02. First Deploy](./02-first-deploy.md)
-- [Node.js Runtime Concepts](../../../platform/how-app-service-works.md)
+- [Node.js Runtime Concepts](../../../platform/architecture/index.md)
 
 ## Sources
 - [Configure Node.js app on Azure App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/configure-language-nodejs)

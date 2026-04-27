@@ -101,16 +101,17 @@ nav:
     - About: about.md
   - Platform:
     - platform/index.md
-    - platform/how-app-service-works.md
-    - platform/hosting-models.md
-    - platform/request-lifecycle.md
-    - platform/scaling.md
-    - platform/networking.md
-    - platform/mtls.md
-    - platform/resource-relationships.md
-    - platform/authentication-architecture.md
-    - platform/security-architecture.md
-    - platform/deployment-scenarios.md
+    - Architecture:
+      - Overview: platform/architecture/index.md
+      - Request Lifecycle: platform/request-lifecycle.md
+      - Resource Relationships: platform/resource-relationships.md
+      - Authentication Architecture: platform/authentication-architecture.md
+      - Security Architecture: platform/security-architecture.md
+    - Hosting Models: platform/hosting-models.md
+    - Scaling: platform/scaling.md
+    - Networking: platform/networking.md
+    - mTLS: platform/mtls.md
+    - Deployment Scenarios: platform/deployment-scenarios.md
   - Best Practices:
     - best-practices/index.md
     - best-practices/production-baseline.md

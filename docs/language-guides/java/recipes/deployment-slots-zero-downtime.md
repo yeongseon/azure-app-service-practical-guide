@@ -135,7 +135,7 @@ az webapp deployment slot swap \
     Hit `/health` and one business endpoint repeatedly on staging before swap to reduce post-swap cold latency.
 
 !!! info "Platform architecture"
-    For platform architecture details, see [Platform: How App Service Works](../../../platform/how-app-service-works.md).
+    For platform architecture details, see [Platform: How App Service Works](../../../platform/architecture/index.md).
 
 ## Verification
 

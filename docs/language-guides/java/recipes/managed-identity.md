@@ -159,7 +159,7 @@ No branching logic is needed between local and cloud identity paths.
     Assign roles at the smallest scope possible (resource level preferred over subscription level).
 
 !!! info "Platform architecture"
-    For platform architecture details, see [Platform: How App Service Works](../../../platform/how-app-service-works.md).
+    For platform architecture details, see [Platform: How App Service Works](../../../platform/architecture/index.md).
 
 ## Verification
 

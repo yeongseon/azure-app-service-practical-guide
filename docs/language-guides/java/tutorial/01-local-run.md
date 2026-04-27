@@ -212,7 +212,7 @@ curl http://localhost:8181/health
     This validates the same startup contract used by App Service (`PORT`, production profile, structured logs) before your first deployment.
 
 !!! info "Platform architecture"
-    For platform architecture details, see [Platform: How App Service Works](../../../platform/how-app-service-works.md).
+    For platform architecture details, see [Platform: How App Service Works](../../../platform/architecture/index.md).
 
 ## Verification
 

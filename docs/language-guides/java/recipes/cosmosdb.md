@@ -124,7 +124,7 @@ public Map<String, Object> cosmosPing(OrderRepository repository) {
     Design Cosmos documents around read patterns to avoid cross-partition fan-out and expensive server-side filtering.
 
 !!! info "Platform architecture"
-    For platform architecture details, see [Platform: How App Service Works](../../../platform/how-app-service-works.md).
+    For platform architecture details, see [Platform: How App Service Works](../../../platform/architecture/index.md).
 
 ## Verification
 

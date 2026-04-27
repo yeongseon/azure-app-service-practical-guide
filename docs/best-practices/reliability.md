@@ -259,7 +259,7 @@ Expected behavior:
 
 ## See Also
 
-- [Platform - How App Service Works](../platform/how-app-service-works.md)
+- [Platform - How App Service Works](../platform/architecture/index.md)
 - [Operations - Health and Recovery](../operations/health-recovery.md)
 - [Operations - Backup and Restore](../operations/backup-restore.md)
 - [Best Practices - Deployment](./deployment.md)

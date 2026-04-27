@@ -342,7 +342,7 @@ For language-specific implementation details, see:
 
 ## See Also
 
-- [How App Service Works](./how-app-service-works.md)
+- [How App Service Works](./architecture/index.md)
 - [Request Lifecycle](./request-lifecycle.md)
 - [Scaling](./scaling.md)
 - [Resource Relationships](./resource-relationships.md)

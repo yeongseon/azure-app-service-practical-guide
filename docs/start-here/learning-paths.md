@@ -45,7 +45,7 @@ graph TD
 Read in order:
 
 1. [Overview](./overview.md)
-2. [How App Service Works](../platform/how-app-service-works.md)
+2. [How App Service Works](../platform/architecture/index.md)
 3. [Hosting Models](../platform/hosting-models.md)
 4. [Best Practices: Production Baseline](../best-practices/production-baseline.md)
 5. Choose one language guide:

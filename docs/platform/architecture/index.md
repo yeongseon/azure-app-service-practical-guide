@@ -851,22 +851,22 @@ Learn references:
 
 For language-specific implementation details, see:
 
-- [Python Guide](../language-guides/python/index.md)
-- [Node.js Guide](../language-guides/nodejs/index.md)
-- [Java Guide](../language-guides/java/index.md)
-- [.NET Guide](../language-guides/dotnet/index.md)
+- [Python Guide](../../language-guides/python/index.md)
+- [Node.js Guide](../../language-guides/nodejs/index.md)
+- [Java Guide](../../language-guides/java/index.md)
+- [.NET Guide](../../language-guides/dotnet/index.md)
 
 ---
 
 ## See Also
 
-- [Hosting Models](./hosting-models.md)
-- [Request Lifecycle](./request-lifecycle.md)
-- [Scaling](./scaling.md)
-- [Networking](./networking.md)
-- [Resource Relationships](./resource-relationships.md)
-- [Authentication Architecture](./authentication-architecture.md)
-- [Security Architecture](./security-architecture.md)
+- [Hosting Models](../hosting-models.md)
+- [Request Lifecycle](../request-lifecycle.md)
+- [Scaling](../scaling.md)
+- [Networking](../networking.md)
+- [Resource Relationships](../resource-relationships.md)
+- [Authentication Architecture](../authentication-architecture.md)
+- [Security Architecture](../security-architecture.md)
 
 ## Sources
 

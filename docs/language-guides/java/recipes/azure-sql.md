@@ -133,7 +133,7 @@ public Map<String, Object> sqlPing(JdbcTemplate jdbcTemplate) {
     Avoid embedding SQL usernames/passwords in App Settings unless required for legacy migration phases.
 
 !!! info "Platform architecture"
-    For platform architecture details, see [Platform: How App Service Works](../../../platform/how-app-service-works.md).
+    For platform architecture details, see [Platform: How App Service Works](../../../platform/architecture/index.md).
 
 ## Verification
 

@@ -156,7 +156,7 @@ az webapp config container set --name $APP_NAME --resource-group $RG \
 
 ## See Also
 - [Native Dependencies](./native-dependencies.md)
-- [How App Service Works](../../../platform/how-app-service-works.md)
+- [How App Service Works](../../../platform/architecture/index.md)
 - [CI/CD Tutorial](../tutorial/06-ci-cd.md)
 
 ## Sources
