@@ -15,7 +15,7 @@ related:
   - scaling
 summary: Internal architecture of Azure App Service - control plane, data plane, frontends, workers, and storage.
 status: stable
-last_reviewed: 2026-04-08
+last_reviewed: 2026-04-27
 content_sources:
   diagrams:
     - id: core-request-path
@@ -23,6 +23,16 @@ content_sources:
       source: mslearn-adapted
       mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview
       description: "Shows the baseline App Service request path from client to frontend, worker, and app process."
+    - id: app-service-architecture-overview
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview
+      description: "Shows the big-picture App Service architecture across the control plane, regional stamp, runtime plane, and deployment plane."
+    - id: control-data-plane
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview-hosting-plans
+      description: "Shows the relationship between control-plane configuration actions and the runtime data plane in App Service."
     - id: plane-interactions
       type: flowchart
       source: mslearn-adapted
@@ -60,8 +70,8 @@ content_sources:
       description: "Shows regional front ends distributing traffic to workers across multiple availability zones."
 content_validation:
   status: verified
-  last_reviewed: "2026-04-12"
-  reviewer: ai-agent
+  last_reviewed: "2026-04-27"
+  reviewer: agent
   core_claims:
     - claim: "A single management-plane change (for example, changing an app setting) can trigger runtime recycle."
       source: "https://learn.microsoft.com/azure/app-service/overview"
@@ -104,6 +114,94 @@ Azure App Service is a managed hosting platform for web apps and APIs. You focus
 
 ## Main Content
 
+### [Beginner] Architecture at a glance
+
+Before diving into each subsystem, anchor on the full regional picture: **configuration enters through the control plane, user traffic enters through the runtime plane, and deployment traffic typically enters through the SCM plane**.
+
+<!-- diagram-id: app-service-architecture-overview -->
+```mermaid
+flowchart TD
+    Client["Client or browser"]
+    Deploy["Developer or CI/CD pipeline"]
+
+    subgraph Control["Control plane"]
+        ARM["Azure Resource Manager<br/>App Service resource provider"]
+    end
+
+    subgraph Stamp["Regional App Service stamp"]
+        subgraph Runtime["Runtime plane"]
+            FE["Front-end gateways<br/>Routing and TLS termination"]
+            Workers["Worker instances<br/>Application code execution"]
+            Storage["Shared content storage<br/>Azure Files"]
+        end
+
+        subgraph SCMPlane["Deployment plane"]
+            SCM["SCM and Kudu endpoint<br/>Deployment and diagnostics"]
+        end
+
+        Platform["Health checks, scaling,<br/>and platform management"]
+    end
+
+    Client --> FE
+    FE --> Workers
+    Workers --> Storage
+    Deploy --> SCM
+    SCM --> Storage
+    ARM --> Platform
+    Platform --> FE
+    Platform --> Workers
+```
+
+Key takeaways:
+
+- User requests hit **front-end gateways first**, then flow to healthy worker instances that run your application code.
+- Configuration changes go through **Azure Resource Manager and the App Service resource provider**, not directly to the request path.
+- **SCM/Kudu is a companion deployment and diagnostics surface**, which is why deployment behavior and runtime behavior can differ.
+- Shared content and logs typically rely on **network-backed storage**, while platform services coordinate health, placement, and scale inside the regional stamp.
+
+### [Beginner] Control plane vs data plane
+
+For change management and incident response, it helps to collapse the platform into **what you configure** versus **what executes at runtime**.
+
+<!-- diagram-id: control-data-plane -->
+```mermaid
+flowchart TD
+    subgraph CP["Control plane<br/>What you configure"]
+        C1["App Service Plan SKU and instance count"]
+        C2["App settings and connection strings"]
+        C3["Custom domains and TLS certificates"]
+        C4["Deployment slots and swap"]
+        C5["Identity and RBAC assignment"]
+        C6["Access restrictions"]
+    end
+
+    subgraph DP["Data plane<br/>What runs at runtime"]
+        D1["Front-end gateway routing"]
+        D2["Worker instance execution"]
+        D3["Health probes and instance recycling"]
+        D4["Log streaming and diagnostics"]
+        D5["SCM and deployment engine"]
+        D6["Shared file system I/O"]
+    end
+
+    CP --> DP
+```
+
+| Operation | Plane | Example |
+|---|---|---|
+| Create App Service Plan | Control | `az appservice plan create` |
+| Change app setting | Control (triggers runtime restart) | `az webapp config appsettings set` |
+| Handle HTTP request | Data | Client → Frontend → Worker → App |
+| Scale out instances | Control (new workers join data plane) | `az appservice plan update --number-of-workers` |
+| ZIP deploy | Data (SCM plane) | `az webapp deploy --src-path` |
+| Assign managed identity | Control | `az webapp identity assign` |
+
+Learn references:
+
+- [App Service overview](https://learn.microsoft.com/azure/app-service/overview)
+- [App Service plan overview](https://learn.microsoft.com/azure/app-service/overview-hosting-plans)
+- [Reliability in App Service](https://learn.microsoft.com/azure/reliability/reliability-app-service)
+
 ### [Beginner] Platform architecture at a glance
 
 The most useful mental model for App Service is **three planes**, not two:
@@ -135,29 +233,29 @@ Do not assume a global load balancer in this baseline diagram. Multi-region rout
 
 <!-- diagram-id: core-request-path -->
 ```mermaid
-graph TD
-    C[Client] --> FE[App Service Frontend]
-    FE --> W[Worker Instance]
-    W --> APP[App Process]
+flowchart TD
+    C["Client"] --> FE["App Service Frontend"]
+    FE --> W["Worker Instance"]
+    W --> APP["App Process"]
 ```
 
 #### Management, runtime, and SCM interactions
 
 <!-- diagram-id: plane-interactions -->
 ```mermaid
-graph TD
-    OP[Operator / CI] --> MGMT[Management Plane\nARM + RP]
-    USER[End User] --> FE[Runtime Frontend]
-    FE --> WK[Worker Instance]
-    WK --> APP[Main App Sandbox]
+flowchart TD
+    OP["Operator / CI"] --> MGMT["Management Plane<br/>ARM + RP"]
+    USER["End User"] --> FE["Runtime Frontend"]
+    FE --> WK["Worker Instance"]
+    WK --> APP["Main App Sandbox"]
 
-    OP --> SCM[SCM Plane\nKudu Site]
-    SCM --> DEPLOY[Deployment Engine]
-    SCM --> META[Diagnostics/Metadata]
+    OP --> SCM["SCM Plane<br/>Kudu Site"]
+    SCM --> DEPLOY["Deployment Engine"]
+    SCM --> META["Diagnostics/Metadata"]
 
     MGMT --> FE
     MGMT --> WK
-    DEPLOY --> CONTENT[/App Content/]
+    DEPLOY --> CONTENT["App Content"]
     CONTENT --> APP
 ```
 
@@ -371,11 +469,11 @@ Reframe it correctly:
 
 <!-- diagram-id: scm-access-rules -->
 ```mermaid
-graph TD
-    OP[Operator IP] --> MAIN[Main Site Access Rules]
-    OP --> SCMR[SCM Site Access Rules]
-    MAIN --> APP[app.azurewebsites.net]
-    SCMR --> KUDU[app.scm.azurewebsites.net]
+flowchart TD
+    OP["Operator IP"] --> MAIN["Main Site Access Rules"]
+    OP --> SCMR["SCM Site Access Rules"]
+    MAIN --> APP["app.azurewebsites.net"]
+    SCMR --> KUDU["app.scm.azurewebsites.net"]
 ```
 
 #### CLI check: SCM and app access restrictions
@@ -420,12 +518,12 @@ App Service supports multiple deployment sources and mechanisms. **Oryx is one b
 <!-- diagram-id: deployment-flow-map -->
 ```mermaid
 flowchart TD
-    SRC[Source Code] --> CI[CI Build/Test]
-    CI --> ART[Artifact or Image]
-    ART --> DEPLOY[Deployment Mechanism]
-    DEPLOY --> APP[Runtime Startup]
+    SRC["Source Code"] --> CI["CI Build/Test"]
+    CI --> ART["Artifact or Image"]
+    ART --> DEPLOY["Deployment Mechanism"]
+    DEPLOY --> APP["Runtime Startup"]
 
-    SRC --> KUDUDEPLOY[Kudu/Oryx Path]
+    SRC --> KUDUDEPLOY["Kudu/Oryx Path"]
     KUDUDEPLOY --> APP
 ```
 
@@ -555,10 +653,10 @@ Important behaviors:
 <!-- diagram-id: health-check-decision -->
 ```mermaid
 flowchart TD
-    P[Platform Probe] --> H{Health endpoint result}
-    H -->|200 and ready| IN[Instance kept in rotation]
-    H -->|Timeout or non-healthy| OUT[Instance marked unhealthy]
-    OUT --> REC[Recovery/replace actions]
+    P["Platform Probe"] --> H{"Health endpoint result"}
+    H -->|200 and ready| IN["Instance kept in rotation"]
+    H -->|Timeout or non-healthy| OUT["Instance marked unhealthy"]
+    OUT --> REC["Recovery/replace actions"]
 ```
 
 #### Example health endpoint design rules
@@ -735,11 +833,11 @@ Zone resilience in App Service depends on SKU, instance count, and regional capa
 
 <!-- diagram-id: zone-redundancy-topology -->
 ```mermaid
-graph TD
-    U[User Traffic] --> FE[Regional Frontends]
-    FE --> Z1[Workers in Zone 1]
-    FE --> Z2[Workers in Zone 2]
-    FE --> Z3[Workers in Zone 3]
+flowchart TD
+    U["User Traffic"] --> FE["Regional Frontends"]
+    FE --> Z1["Workers in Zone 1"]
+    FE --> Z2["Workers in Zone 2"]
+    FE --> Z3["Workers in Zone 3"]
 ```
 
 Learn references:
@@ -773,6 +871,7 @@ For language-specific implementation details, see:
 ## Sources
 
 - [Azure App Service overview](https://learn.microsoft.com/azure/app-service/overview)
+- [App Service plan overview](https://learn.microsoft.com/azure/app-service/overview-hosting-plans)
 - [App Service Environment overview](https://learn.microsoft.com/azure/app-service/environment/overview)
 - [Kudu service overview](https://learn.microsoft.com/azure/app-service/resources-kudu)
 - [Configure a custom container for App Service](https://learn.microsoft.com/azure/app-service/configure-custom-container)
