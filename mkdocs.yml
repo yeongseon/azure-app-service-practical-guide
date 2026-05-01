@@ -112,6 +112,7 @@ nav:
     - Networking: platform/networking.md
     - mTLS: platform/mtls.md
     - Web App for Containers: platform/containers/index.md
+    - Deployment Options: platform/deployment-options.md
     - Deployment Scenarios: platform/deployment-scenarios.md
   - Best Practices:
     - best-practices/index.md
