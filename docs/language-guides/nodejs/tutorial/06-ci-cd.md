@@ -26,7 +26,7 @@ Automating your deployment pipeline ensures consistent and reliable releases. Th
 <!-- diagram-id: diagram-1 -->
 ```mermaid
 flowchart TD
-    INET[Internet] -->|HTTPS| WA["Web App\nApp Service S1\nLinux Node 18 LTS"]
+    INET[Internet] -->|HTTPS| WA["Web App\nApp Service S1\nLinux Node 20 LTS"]
 
     subgraph VNET["VNet 10.0.0.0/16"]
         subgraph INT_SUB["Integration Subnet 10.0.1.0/24\nDelegation: Microsoft.Web/serverFarms"]
@@ -164,7 +164,7 @@ Also add a **Variable**:
  - `APP_NAME`: Your App Service name.
 
 ## 3. The Workflow File
-The `.github/workflows/deploy.yml` file handles the build and deploy. Key sections include:
+This repository does not include an application deployment workflow file for this sample. Use the following GitHub Actions snippet in the workflow you create for your app's build and deploy process:
 
 ```yaml
 permissions:
@@ -220,7 +220,7 @@ az webapp deployment slot create \
 |--------------|---------|
 | `az webapp deployment slot create ... --slot staging --output json` | Creates a staging deployment slot for safer releases |
 
-The `.github/workflows/deploy-slot.yml` in this repo demonstrates this pattern:
+This repository does not include a slot-deployment workflow example. If you want to use deployment slots, add this pattern to your GitHub Actions deployment workflow:
 
 1. Deploy to the staging slot.
 2. Run health checks against the staging URL.

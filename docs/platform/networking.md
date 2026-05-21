@@ -52,7 +52,7 @@ content_sources:
 content_validation:
   status: verified
   last_reviewed: "2026-04-12"
-  reviewer: ai-agent
+  reviewer: agent
   core_claims:
     - claim: "By default, an app has a public endpoint."
       source: "https://learn.microsoft.com/azure/app-service/networking-features"
@@ -68,6 +68,15 @@ content_validation:
       verified: true
     - claim: "VNet integration controls outbound connectivity. It does not make your app privately reachable from clients."
       source: "https://learn.microsoft.com/azure/app-service/overview-vnet-integration"
+      verified: true
+    - claim: "possibleOutboundIpAddresses lists all IPs the app may ever use and must be used for firewall allowlists."
+      source: "https://learn.microsoft.com/azure/app-service/overview-inbound-outbound-ips"
+      verified: true
+    - claim: "Outbound IPs change when scaling the App Service Plan, migrating to a different scale unit, or enabling VNet Integration."
+      source: "https://learn.microsoft.com/azure/app-service/overview-inbound-outbound-ips"
+      verified: true
+    - claim: "Creating a Private Endpoint assigns a private IP but does not automatically disable the public endpoint."
+      source: "https://learn.microsoft.com/azure/app-service/networking/private-endpoint"
       verified: true
 ---
 # Networking
@@ -287,19 +296,138 @@ az network private-endpoint create \
 
 Example output snippet (PII masked):
 
+<!-- Verified: real az CLI output from koreacentral, 2026-05-01 -->
 ```json
 {
   "customDnsConfigs": [
     {
-      "fqdn": "app-<masked>.privatelink.azurewebsites.net",
+      "fqdn": "app-<masked>.azurewebsites.net",
       "ipAddresses": [
-        "10.0.2.4"
+        "192.0.2.4"
+      ]
+    },
+    {
+      "fqdn": "app-<masked>.scm.azurewebsites.net",
+      "ipAddresses": [
+        "192.0.2.4"
       ]
     }
   ],
-  "id": "/subscriptions/<subscription-id>/resourceGroups/rg-<masked>/providers/Microsoft.Network/privateEndpoints/pe-<masked>"
+  "id": "/subscriptions/<subscription-id>/resourceGroups/rg-<masked>/providers/Microsoft.Network/privateEndpoints/pe-<masked>",
+  "name": "pe-<masked>",
+  "provisioningState": "Succeeded"
 }
 ```
+
+### IP address behavior and lifecycle
+
+Understanding when and why IP addresses change is critical for firewall allowlists, DNS records, and downstream dependency configurations.
+
+#### Outbound IP addresses
+
+App Service assigns a set of outbound IPs shared within the scale unit. Two fields are relevant:
+
+| Field | Description | When to use |
+|---|---|---|
+| `outboundIpAddresses` | Currently active outbound IPs | Current state only — not safe for allowlists |
+| `possibleOutboundIpAddresses` | All IPs the app could ever use on this plan | **Always use this for firewall allowlists** |
+
+Query both fields:
+
+```bash
+az webapp show \
+    --resource-group "$RG" \
+    --name "$APP_NAME" \
+    --query "{active:outboundIpAddresses, possible:possibleOutboundIpAddresses}" \
+    --output json
+```
+
+Example output (PII masked):
+
+<!-- Verified: real az CLI output from koreacentral, 2026-05-01 -->
+```json
+{
+  "active": "4.217.128.55,4.217.128.64,4.217.128.65,4.217.128.66,4.217.128.67,4.217.128.80,20.41.120.146,20.196.112.47,20.41.120.193,20.196.112.79,20.41.120.195,20.196.112.159,20.41.66.225",
+  "possible": "20.194.32.78,20.194.38.125,20.194.38.174,20.194.38.52,20.194.7.226,20.194.7.69,20.196.112.159,20.196.112.173,20.196.112.182,20.196.112.202,20.196.112.213,20.196.112.228,20.196.112.47,20.196.112.79,20.41.120.146,20.41.120.148,20.41.120.149,20.41.120.151,20.41.120.154,20.41.120.193,20.41.120.195,20.41.120.200,20.41.120.201,20.41.120.202,20.41.66.225,4.217.128.55,4.217.128.64,4.217.128.65,4.217.128.66,4.217.128.67,4.217.128.80"
+}
+```
+
+!!! warning "Outbound IPs change under these conditions"
+    - Scale up or scale down (App Service Plan SKU change)
+    - App Service Plan migration to a different scale unit or region
+    - Enabling or disabling VNet Integration
+    - Platform-side infrastructure updates
+
+    Always allowlist all addresses from `possibleOutboundIpAddresses`, not just the currently active set.
+
+#### Outbound IP behavior with VNet Integration
+
+When VNet Integration is enabled with `WEBSITE_VNET_ROUTE_ALL=1`, outbound traffic exits through the delegated integration subnet — not through the platform's shared outbound IPs. The effective egress IP becomes the NAT IP of the subnet (or a NAT Gateway if attached).
+
+```bash
+# Check current VNet integration state
+az webapp vnet-integration list \
+    --resource-group "$RG" \
+    --name "$APP_NAME" \
+    --output json
+```
+
+Example output:
+
+<!-- Verified: real az CLI output from koreacentral, 2026-05-01 -->
+```json
+[
+  {
+    "name": "snet-integration",
+    "vnetResourceId": "/subscriptions/<subscription-id>/resourceGroups/rg-<masked>/providers/Microsoft.Network/virtualNetworks/vnet-net-test/subnets/snet-integration",
+    "isSwift": null
+  }
+]
+```
+
+After enabling VNet Integration and `WEBSITE_VNET_ROUTE_ALL=1`, downstream services that allowlisted the previous platform outbound IPs will lose connectivity. Update allowlists to reflect the subnet's egress IP.
+
+#### Inbound IP addresses and Private Endpoint
+
+By default, the app's inbound IP is shared and public. When a Private Endpoint is created, the app is assigned a **private IP from the endpoint subnet**. The public endpoint continues to exist but can be blocked via access restrictions.
+
+Query the inbound IP:
+
+```bash
+az webapp show \
+    --resource-group "$RG" \
+    --name "$APP_NAME" \
+    --query "inboundIpAddress" \
+    --output tsv
+```
+
+Query Private Endpoint assigned IP:
+
+```bash
+az network private-endpoint show \
+    --resource-group "$RG" \
+    --name "pe-$APP_NAME" \
+    --query "customDnsConfigs[0].ipAddresses" \
+    --output json
+```
+
+Example output:
+
+<!-- Verified: real az CLI output from koreacentral, 2026-05-01 -->
+```json
+[
+  "192.0.2.4"
+]
+```
+
+!!! warning "Private Endpoint does not remove the public IP"
+    Creating a Private Endpoint assigns a private IP but does **not** automatically disable the public endpoint. To fully restrict inbound access to private clients only:
+
+    1. Create the Private Endpoint.
+    2. Add an access restriction to deny all public traffic (set a `Deny All` rule with lowest priority).
+    3. Validate resolution from inside the VNet returns the private IP.
+
+    Skipping step 2 leaves the app reachable from the public internet even with a Private Endpoint active.
 
 ### Troubleshooting matrix
 

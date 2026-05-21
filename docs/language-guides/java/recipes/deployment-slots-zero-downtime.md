@@ -75,7 +75,7 @@ az webapp deploy \
   --resource-group "$RG" \
   --name "$APP_NAME" \
   --slot "$SLOT_NAME" \
-  --src-path "app/target/<artifact-name>.jar" \
+  --src-path "apps/java-springboot/target/<artifact-name>.jar" \
   --type jar \
   --output json
 ```

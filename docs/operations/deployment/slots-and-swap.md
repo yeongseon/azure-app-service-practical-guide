@@ -10,7 +10,7 @@ content_sources:
 content_validation:
   status: verified
   last_reviewed: "2026-04-12"
-  reviewer: ai-agent
+  reviewer: agent
   core_claims:
     - claim: "Deployment slots require an App Service Plan tier that supports slots, such as Standard, Premium, or Isolated."
       source: "https://learn.microsoft.com/azure/app-service/deploy-staging-slots"
@@ -129,6 +129,9 @@ az webapp deployment slot swap \
 | `--output json` | Returns structured swap results. |
 
 ### Swap with Preview
+
+!!! warning "Authentication Limitation"
+    Swap with preview cannot be used when App Service authentication (Easy Auth) is enabled on either slot. Disable authentication or use standard swap instead.
 
 ```bash
 az webapp deployment slot swap \

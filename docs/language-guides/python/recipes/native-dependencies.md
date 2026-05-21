@@ -66,10 +66,12 @@ RUN apt-get update && apt-get install --yes --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
-COPY app/requirements.txt ./requirements.txt
+COPY apps/python-flask/requirements.txt ./requirements.txt
 RUN pip install --upgrade pip setuptools wheel \
     && pip install --no-cache-dir -r requirements.txt
 ```
+
+This example assumes the Docker build context is the repository root. If you build from `apps/python-flask/` instead, use `COPY requirements.txt ./requirements.txt`.
 
 ## Complete Example
 
@@ -97,10 +99,14 @@ def health_native():
 ## Troubleshooting
 
 - `error: subprocess-exited-with-error` during `pip install`:
-    - Missing compiler or system headers; move to custom container build dependencies.- `ImportError: libpq.so.*` for PostgreSQL:
-    - Install `libpq` runtime libraries or use `psycopg2-binary`.- `Pillow` image codec missing:
-    - Add required OS libs (`libjpeg`, `zlib`, optional `libwebp`).- `numpy/pandas` build timeout:
+    - Missing compiler or system headers; move to custom container build dependencies.
+- `ImportError: libpq.so.*` for PostgreSQL:
+    - Install `libpq` runtime libraries or use `psycopg2-binary`.
+- `Pillow` image codec missing:
+    - Add required OS libs (`libjpeg`, `zlib`, optional `libwebp`).
+- `numpy/pandas` build timeout:
     - Pin to wheels and avoid source builds on platform runtime.
+
 ## Advanced Topics
 
 - Prebuild wheels in CI (`pip wheel`) and publish to an internal package index.

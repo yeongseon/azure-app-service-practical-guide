@@ -135,7 +135,7 @@ jobs:
           cache: maven
 
       - name: Build and test
-        working-directory: app
+        working-directory: apps/java-springboot
         run: ./mvnw --batch-mode clean verify
 
   deploy:
@@ -160,11 +160,11 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Package app
-        working-directory: app
+        working-directory: apps/java-springboot
         run: ./mvnw --batch-mode clean package -DskipTests
 
       - name: Deploy with Maven plugin
-        working-directory: app
+        working-directory: apps/java-springboot
         env:
           RESOURCE_GROUP_NAME: ${{ vars.RESOURCE_GROUP_NAME }}
           APP_NAME: ${{ vars.APP_NAME }}

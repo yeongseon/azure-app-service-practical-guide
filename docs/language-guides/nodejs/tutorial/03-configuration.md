@@ -25,7 +25,7 @@ Manage environment variables, secrets, and identity for your Node.js application
 <!-- diagram-id: diagram-1 -->
 ```mermaid
 flowchart TD
-    INET[Internet] -->|HTTPS| WA["Web App\nApp Service S1\nLinux Node 18 LTS"]
+    INET[Internet] -->|HTTPS| WA["Web App\nApp Service S1\nLinux Node 20 LTS"]
 
     subgraph VNET["VNet 10.0.0.0/16"]
         subgraph INT_SUB["Integration Subnet 10.0.1.0/24\nDelegation: Microsoft.Web/serverFarms"]
@@ -99,17 +99,16 @@ az webapp config appsettings list \
 | `az webapp config appsettings list ... --output table` | Lists the current App Service application settings in table form |
 
 **Example output:**
+<!-- Verified: real az CLI output from koreacentral, 2026-05-01 -->
 ```
-Name                                        SlotSetting    Value
-------------------------------------------  -------------  --------------------------
-APPLICATIONINSIGHTS_CONNECTION_STRING       False          InstrumentationKey=...
-ApplicationInsightsAgent_EXTENSION_VERSION  False          ~3
-TELEMETRY_MODE                              False          basic
-LOG_LEVEL                                   False          info
-NODE_ENV                                    False          production
-SCM_DO_BUILD_DURING_DEPLOYMENT              False          true
-WEBSITE_NODE_DEFAULT_VERSION                False          ~20
-WEBSITE_HTTPLOGGING_RETENTION_DAYS          False          7
+Name                                SlotSetting    Value
+----------------------------------  -------------  ----------
+NODE_ENV                            False          production
+LOG_LEVEL                           False          info
+TELEMETRY_MODE                      False          basic
+SCM_DO_BUILD_DURING_DEPLOYMENT      False          true
+WEBSITE_NODE_DEFAULT_VERSION        False          ~20
+WEBSITE_HTTPLOGGING_RETENTION_DAYS  False          7
 ```
 
 ### Add or Update Settings

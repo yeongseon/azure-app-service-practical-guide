@@ -12,7 +12,7 @@ content_sources:
 content_validation:
   status: verified
   last_reviewed: "2026-04-12"
-  reviewer: ai-agent
+  reviewer: agent
   core_claims:
     - claim: "Azure App Service provides built-in diagnostic logging to help debug app issues."
       source: "https://learn.microsoft.com/azure/app-service/troubleshoot-diagnostic-logs"
@@ -232,7 +232,8 @@ WEBSITES_CONTAINER_START_TIME_LIMIT    230
 
 Interpretation:
 
-- `WEBSITES_PORT` must align with the listener inside the app or container.
+- For Linux custom containers, compare both `WEBSITES_PORT` and the runtime-injected `PORT` with the actual listener. Linux startup behavior is more nuanced than a direct `WEBSITES_PORT` mismatch model.
+- See [Container HTTP Pings Lab](../lab-guides/container-http-pings.md) for experimental evidence on Linux port behavior.
 - A longer startup budget can help only after fixing real startup inefficiency or dependency delays.
 
 ## 6. Validation and Disproof by Hypothesis
@@ -257,7 +258,7 @@ Validation steps:
 
 Validation steps:
 
-1. Compare `WEBSITES_PORT` or `PORT` with the actual listener log line.
+1. Compare `WEBSITES_PORT`, `PORT`, and the actual listener log line together instead of assuming a single-setting mismatch explains the failure.
 2. Ensure custom containers expose the same port they advertise to App Service.
 3. Avoid hardcoding localhost bindings.
 

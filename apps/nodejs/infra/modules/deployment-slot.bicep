@@ -82,9 +82,9 @@ resource slot 'Microsoft.Web/sites/slots@2022-03-01' = {
   }
 }
 
-resource slotConfig 'Microsoft.Web/sites/slots/config@2022-03-01' = {
+resource slotConfig 'Microsoft.Web/sites/config@2022-03-01' = {
   name: 'slotConfigNames'
-  parent: slot
+  parent: webApp
   properties: {
     appSettingNames: [
       'SLOT_NAME'

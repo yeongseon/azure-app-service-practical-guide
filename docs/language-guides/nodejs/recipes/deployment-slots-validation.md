@@ -106,6 +106,9 @@ az webapp deployment slot auto-swap \
   --output json
 ```
 
+!!! warning "Linux Limitation"
+    Auto-swap is not supported for web apps on Linux and Web App for Containers. Use manual swap or CI/CD-triggered swap instead. See [Deployment Slots](../../../operations/deployment/slots-and-swap.md) for details.
+
 Use auto-swap only when health checks and deployment confidence are high.
 
 ### 8) GitHub Actions staged deployment example

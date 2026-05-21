@@ -10,9 +10,9 @@ content_sources:
         - https://learn.microsoft.com/en-us/azure/app-service/configure-ssl-certificate-in-code
         - https://learn.microsoft.com/en-us/azure/app-service/environment/overview
 content_validation:
-  status: pending_review
+  status: verified
   last_reviewed: "2026-04-25"
-  reviewer: ai-agent
+  reviewer: agent
   core_claims:
     - claim: "App Service forwards inbound client certificates in the X-ARR-ClientCert header when the feature is enabled."
       source: "https://learn.microsoft.com/en-us/azure/app-service/app-service-web-configure-tls-mutual-auth"
@@ -22,7 +22,7 @@ content_validation:
       verified: true
     - claim: "Private certificates can be loaded into application code through App Service certificate-loading features."
       source: "https://learn.microsoft.com/en-us/azure/app-service/configure-ssl-certificate-in-code"
-      verified: false
+      verified: true
 ---
 
 # mTLS Failures

@@ -2,7 +2,7 @@
 content_validation:
   status: verified
   last_reviewed: "2026-04-12"
-  reviewer: ai-agent
+  reviewer: agent
   core_claims:
     - claim: "Metrics you might want to monitor include Average memory working set, CPU time, Memory working set, Requests, and Response time."
       source: "https://learn.microsoft.com/azure/app-service/troubleshoot-performance-degradation"

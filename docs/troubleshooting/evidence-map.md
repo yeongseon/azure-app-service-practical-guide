@@ -21,7 +21,7 @@ last_reviewed: 2026-04-08
 content_validation:
   status: verified
   last_reviewed: "2026-04-12"
-  reviewer: ai-agent
+  reviewer: agent
   core_claims:
     - claim: "Azure App Service diagnostics is an interactive troubleshooting experience in the Azure portal that requires no configuration."
       source: "https://learn.microsoft.com/azure/app-service/overview-diagnostics"

@@ -11,6 +11,11 @@ content_sources:
       based_on:
         - https://learn.microsoft.com/en-us/azure/app-service/quickstart-python?tabs=flask%2Cazure-cli
         - https://learn.microsoft.com/en-us/azure/app-service/app-service-web-tutorial-custom-domain
+validation:
+  az_cli:
+    last_tested: null
+    cli_version: null
+    result: not_tested
 ---
 
 # Python Tutorial Overview

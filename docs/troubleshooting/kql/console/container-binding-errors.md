@@ -2,7 +2,7 @@
 content_validation:
   status: verified
   last_reviewed: "2026-04-12"
-  reviewer: ai-agent
+  reviewer: agent
   core_claims:
     - claim: "Application logging is available on Windows and Linux."
       source: "https://learn.microsoft.com/azure/app-service/troubleshoot-diagnostic-logs"

@@ -34,7 +34,7 @@ content_sources:
 content_validation:
   status: verified
   last_reviewed: "2026-04-12"
-  reviewer: ai-agent
+  reviewer: agent
   core_claims:
     - claim: "Access Restrictions evaluate allow/deny rules by IP, CIDR, service tag, or virtual network source."
       source: "https://learn.microsoft.com/azure/app-service/overview-security"

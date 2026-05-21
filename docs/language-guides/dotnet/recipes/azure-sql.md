@@ -141,7 +141,7 @@ await connection.OpenAsync();
   inputs:
     command: custom
     custom: ef
-    arguments: database update --project app/GuideApi --configuration Release
+    arguments: database update --project apps/dotnet-aspnetcore/GuideApi --configuration Release
 ```
 
 !!! warning "Avoid SQL username/password in production"
@@ -177,3 +177,8 @@ Capture query plans and add indexes; review `dependencies` telemetry for high-du
 - [Managed Identity](managed-identity.md)
 - [Key Vault References](key-vault-reference.md)
 - For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-app-service-practical-guide/)
+
+## Sources
+
+- [Connect App Service to Azure SQL Database with managed identity](https://learn.microsoft.com/en-us/azure/app-service/tutorial-connect-msi-azure-database)
+- [Azure SQL authentication with Microsoft Entra ID](https://learn.microsoft.com/en-us/azure/azure-sql/database/authentication-aad-overview)

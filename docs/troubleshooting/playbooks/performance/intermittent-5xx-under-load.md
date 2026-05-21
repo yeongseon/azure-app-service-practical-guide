@@ -39,7 +39,7 @@ content_sources:
 content_validation:
   status: verified
   last_reviewed: "2026-04-12"
-  reviewer: ai-agent
+  reviewer: agent
   core_claims:
     - claim: "In App Service Linux, transient 5xx can come from multiple layers (app worker model, outbound dependencies, platform health/restart behavior), so a single metric like CPU rarely explains the full failure pattern."
       source: "https://learn.microsoft.com/azure/app-service/troubleshoot-performance-degradation"

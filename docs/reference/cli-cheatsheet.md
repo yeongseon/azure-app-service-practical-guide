@@ -100,6 +100,10 @@ WEBAPP_RESOURCE_ID=$(az webapp show --resource-group $RG --name $APP_NAME --quer
 az monitor metrics list --resource $WEBAPP_RESOURCE_ID --metric "Requests" "Http5xx" "AverageResponseTime" --interval PT5M --aggregation Total Average --output table
 ```
 
+!!! warning "Linux caveat for log download"
+    `az webapp log download` may not work with web apps running on Linux.
+    For Linux apps, use log streaming (`az webapp log tail`), the Diagnose and Solve Problems portal blade, or access logs via `/home/LogFiles`.
+
 ## Networking
 
 ```bash
@@ -136,10 +140,12 @@ Masked output example:
 az webapp deployment slot create --resource-group $RG --name $APP_NAME --slot staging --configuration-source $APP_NAME --output json
 az webapp deployment slot list --resource-group $RG --name $APP_NAME --output table
 az webapp deployment slot swap --resource-group $RG --name $APP_NAME --slot staging --target-slot production --action swap --output json
-az webapp traffic-routing set --resource-group $RG --name $APP_NAME --distribution staging=20 production=80 --output json
+az webapp traffic-routing set --resource-group $RG --name $APP_NAME --distribution staging=20 --output json
 az webapp traffic-routing clear --resource-group $RG --name $APP_NAME --output json
 az webapp deployment slot delete --resource-group $RG --name $APP_NAME --slot staging --output json
 ```
+
+Traffic not explicitly assigned to a non-production slot continues to go to production automatically.
 
 ## Cleanup
 

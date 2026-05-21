@@ -21,7 +21,7 @@ from typing import Any
 import yaml
 
 STALENESS_DAYS = 90
-TUTORIAL_GLOB = "language-guides/*/0*.md"
+TUTORIAL_GLOB = "language-guides/*/tutorial/*.md"
 
 # Status icons
 ICON_PASS = "✅ Pass"

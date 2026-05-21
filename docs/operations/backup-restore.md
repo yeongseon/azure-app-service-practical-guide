@@ -8,7 +8,7 @@ content_sources:
 content_validation:
   status: verified
   last_reviewed: "2026-04-12"
-  reviewer: ai-agent
+  reviewer: agent
   core_claims:
     - claim: "App Service supports both scheduled backups and on-demand backups."
       source: "https://learn.microsoft.com/azure/app-service/manage-backup"
@@ -145,18 +145,22 @@ az webapp config backup create \
 az webapp config backup list \
   --resource-group $RG \
   --webapp-name $APP_NAME \
-  --query "[].{id:id,name:name,created:created,status:status,sizeInBytes:sizeInBytes}" \
+  --query "[].{id:backupId,name:blobName,created:created,status:status,sizeInBytes:sizeInBytes}" \
   --output table
 ```
 
-Example output (PII-masked):
+Example output:
 
+<!-- Verified: real az CLI output from koreacentral, 2026-05-01. Backups returned Failed status due to storage account firewall restrictions during testing. Field names (backupId→id, blobName→name, status, sizeInBytes) confirmed against live API. -->
 ```text
-Id      Name                        Created                  Status      SizeInBytes
-------  --------------------------  -----------------------  ----------  -----------
-115     backup_20260401_000000.zip  2026-04-01T00:00:21Z     Succeeded   18432000
-116     backup_20260402_000000.zip  2026-04-02T00:00:19Z     Succeeded   18564096
+Name                    Created                     Status    SizeInBytes
+----------------------  --------------------------  --------  -------------
+backup_20260401.zip     2026-05-01T07:57:52.530731  Failed    0
+backup_20260402.zip     2026-05-01T08:02:22.869192  Failed    0
 ```
+
+!!! note "Status in production"
+    In a correctly configured environment, `Status` shows `Succeeded` and `SizeInBytes` reflects the actual backup size. `Failed` with `SizeInBytes: 0` indicates the storage account blocked the write (check firewall and SAS token permissions).
 
 ### Restore from a Backup
 
@@ -172,15 +176,19 @@ az webapp config backup restore \
   --output json
 ```
 
-Sample response (PII-masked):
+Sample response:
 
-```json
-{
-  "id": "/subscriptions/<subscription-id>/resourceGroups/rg-shared/providers/Microsoft.Web/sites/app-shared/backup",
-  "status": "InProgress",
-  "storageAccountUrl": "https://stsharedbackup.blob.core.windows.net/appservice-backups"
-}
+<!-- Verified: real az CLI error output from koreacentral, 2026-05-01. Restore could not complete because test backups had Status: Failed and SizeInBytes: 0 (storage account firewall blocked the backup write). -->
+```text
+ERROR: Error occurred while downloading meta data from the storage account.
+This error can occur if there is a firewall configured in the storage account
+used for restrictions. Please see https://aka.ms/manage-backup-requirements-and-restrictions
+for more details. If there is no firewall please try to reset and reconfigure your backups.
 ```
+
+!!! note "Successful restore"
+    When restore succeeds, the command returns JSON with `"status": "InProgress"` and a `storageAccountUrl` field. The app is temporarily unavailable while the restore runs. Monitor progress with `az webapp show --query state`.
+
 
 ## Verification
 

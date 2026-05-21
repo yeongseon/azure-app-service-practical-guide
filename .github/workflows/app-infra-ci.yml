@@ -1,0 +1,128 @@
+name: App and Infra CI
+
+on:
+  pull_request:
+    paths:
+      - 'apps/**'
+      - 'labs/**'
+      - 'scripts/**'
+      - 'tools/**'
+      - '.github/workflows/app-infra-ci.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'apps/**'
+      - 'labs/**'
+      - 'scripts/**'
+      - 'tools/**'
+      - '.github/workflows/app-infra-ci.yml'
+
+jobs:
+  scripts:
+    name: Shell Scripts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate shell syntax
+        run: |
+          find apps labs scripts -type f -name '*.sh' -print0 | xargs -0 -r bash -n
+
+      - name: Run ShellCheck
+        run: |
+          find apps labs scripts -type f -name '*.sh' -print0 | xargs -0 -r shellcheck
+
+  nodejs:
+    name: Node.js App
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/nodejs
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: apps/nodejs/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Audit production dependencies
+        run: npm audit --omit=dev --audit-level=moderate
+
+      - name: Run tests
+        run: npm test
+
+      - name: Verify production install
+        run: npm ci --omit=dev --dry-run
+
+  python:
+    name: Python Flask App
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r apps/python-flask/requirements-dev.txt
+
+      - name: Compile Python files
+        run: python -m compileall apps/python-flask/src apps/python-flask/tests
+
+      - name: Run tests
+        run: python -m pytest apps/python-flask/tests
+
+  dotnet:
+    name: ASP.NET Core App
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Build project
+        run: dotnet build apps/dotnet-aspnetcore/GuideApi/GuideApi.csproj
+
+  java:
+    name: Java Spring Boot App
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/java-springboot
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Run Maven tests
+        run: mvn -q test
+
+  bicep:
+    name: Bicep Templates
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Bicep templates
+        uses: azure/cli@v2
+        with:
+          inlineScript: |
+            find apps labs -type f -name '*.bicep' -print | sort | while IFS= read -r file; do
+              echo "Building ${file}"
+              az bicep build --file "${file}" --stdout >/dev/null
+            done

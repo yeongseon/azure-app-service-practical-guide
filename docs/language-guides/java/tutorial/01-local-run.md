@@ -70,7 +70,7 @@ flowchart TD
 ## Prerequisites
 
 - Java 17 installed (`java --version`)
-- Maven Wrapper executable in `app/` (`./mvnw`)
+- Maven Wrapper executable in `apps/java-springboot/` (`./mvnw`)
 - `curl` for endpoint validation
 
 ## What you'll learn
@@ -87,13 +87,13 @@ flowchart TD
 From the repository root:
 
 ```bash
-cd app
+cd apps/java-springboot
 ./mvnw spring-boot:run
 ```
 
 | Command/Code | Purpose |
 |--------------|---------|
-| `cd app` | Moves into the Spring Boot app directory before running Maven commands. |
+| `cd apps/java-springboot` | Moves into the Spring Boot app directory before running Maven commands. |
 | `./mvnw spring-boot:run` | Starts the application locally with the Maven Wrapper and Spring Boot plugin. |
 
 Expected startup behavior:

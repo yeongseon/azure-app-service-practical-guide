@@ -64,7 +64,8 @@ def scan_documents(docs_dir: Path) -> list[dict[str, Any]]:
             continue
 
         for md_file in section_dir.rglob("*.md"):
-            if md_file.name == "index.md":
+            rel_in_section = md_file.relative_to(section_dir)
+            if md_file.name == "index.md" and rel_in_section != Path("index.md"):
                 continue
 
             frontmatter = parse_frontmatter(md_file)
@@ -121,7 +122,22 @@ def get_status_icon(status: str) -> str:
     return mapping.get(status, ICON_NO_META)
 
 
-def generate_dashboard(documents: list[dict[str, Any]], today: date) -> str:
+def count_mermaid_diagrams(docs_dir: Path) -> int:
+    """Count Mermaid code blocks across the docs tree."""
+    count = 0
+    for md_file in docs_dir.rglob("*.md"):
+        rel_path = md_file.relative_to(docs_dir)
+        if any(part.startswith("_") or part.startswith(".") for part in rel_path.parts):
+            continue
+
+        text = md_file.read_text(encoding="utf-8")
+        count += len(re.findall(r"^```mermaid\s*$", text, re.MULTILINE))
+    return count
+
+
+def generate_dashboard(
+    documents: list[dict[str, Any]], docs_dir: Path, today: date
+) -> str:
     """Generate the markdown dashboard content."""
     # Compute stats
     total = len(documents)
@@ -131,8 +147,7 @@ def generate_dashboard(documents: list[dict[str, Any]], today: date) -> str:
     no_meta = sum(1 for d in documents if d["validation_status"] == "no_metadata")
     has_sources = sum(1 for d in documents if d["has_content_sources"])
 
-    # Count diagrams (placeholder - can be updated based on actual count)
-    diagram_count = 340  # From project stats
+    diagram_count = count_mermaid_diagrams(docs_dir)
 
     lines: list[str] = []
     lines.append("---")
@@ -338,7 +353,7 @@ def main() -> None:
 
     documents = scan_documents(docs_dir)
     today = date.today()
-    dashboard = generate_dashboard(documents, today)
+    dashboard = generate_dashboard(documents, docs_dir, today)
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(dashboard, encoding="utf-8")

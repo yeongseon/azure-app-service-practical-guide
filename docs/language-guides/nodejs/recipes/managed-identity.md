@@ -5,6 +5,10 @@ content_sources:
       type: flowchart
       source: mslearn-adapted
       mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview-managed-identity
+    - id: rbac-structure
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/role-based-access-control/role-assignments
 ---
 
 # Managed Identity for App Service

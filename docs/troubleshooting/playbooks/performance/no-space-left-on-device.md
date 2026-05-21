@@ -34,7 +34,7 @@ content_sources:
 content_validation:
   status: verified
   last_reviewed: "2026-04-12"
-  reviewer: ai-agent
+  reviewer: agent
   core_claims:
     - claim: "`/home` is persistent but quota-limited, while `/tmp` and container writable layers are ephemeral and can fill quickly under build/runtime activity."
       source: "https://learn.microsoft.com/azure/app-service/faqs-app-service-linux-new"

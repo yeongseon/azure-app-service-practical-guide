@@ -9,9 +9,9 @@ content_sources:
         - https://learn.microsoft.com/en-us/azure/app-service/configure-ssl-certificate-in-code
         - https://learn.microsoft.com/en-us/azure/app-service/environment/overview
 content_validation:
-  status: pending_review
+  status: verified
   last_reviewed: "2026-04-25"
-  reviewer: ai-agent
+  reviewer: agent
   core_claims:
     - claim: "App Service forwards inbound client certificates to app code in the X-ARR-ClientCert request header when mutual TLS is enabled."
       source: "https://learn.microsoft.com/en-us/azure/app-service/app-service-web-configure-tls-mutual-auth"

@@ -43,22 +43,24 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
-COPY app/requirements.txt /app/requirements.txt
+COPY apps/python-flask/requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir -r /app/requirements.txt
 
-COPY app /app
+COPY apps/python-flask /app
 
 # SSH for Azure App Service container diagnostics
 RUN mkdir -p /var/run/sshd
-COPY sshd_config /etc/ssh/sshd_config
+COPY apps/python-flask/sshd_config /etc/ssh/sshd_config
 RUN echo "root:Docker!" | chpasswd
 
-COPY entrypoint.sh /entrypoint.sh
+COPY apps/python-flask/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 EXPOSE 2222 8000
 CMD ["/entrypoint.sh"]
 ```
+
+This example assumes the Docker build context is the repository root. If you build from `apps/python-flask/` instead, drop the `apps/python-flask/` prefix from each `COPY` source path.
 
 `entrypoint.sh`:
 
@@ -76,7 +78,7 @@ exec gunicorn --bind 0.0.0.0:${PORT:-8000} app:app --workers 2 --timeout 120
 az acr build \
   --registry "$ACR_NAME" \
   --image flask-ref:latest \
-  --file Dockerfile .
+  --file "apps/python-flask/Dockerfile" .
 
 az webapp config container set \
   --resource-group "$RG" \
@@ -107,9 +109,12 @@ Subsystem sftp internal-sftp
 ## Troubleshooting
 
 - Container exits immediately:
-    - Confirm `CMD` points to executable script and script starts Gunicorn in foreground.- App responds `502` after deploy:
-    - Ensure Gunicorn binds `0.0.0.0:${PORT}` and `PORT` is not hard-coded.- Cannot SSH:
+    - Confirm `CMD` points to executable script and script starts Gunicorn in foreground.
+- App responds `502` after deploy:
+    - Ensure Gunicorn binds `0.0.0.0:${PORT}` and `PORT` is not hard-coded.
+- Cannot SSH:
     - Check port `2222` exposure and App Service SSH console compatibility.
+
 ## Advanced Topics
 
 - Use multi-stage builds and wheelhouse caching to reduce image size.

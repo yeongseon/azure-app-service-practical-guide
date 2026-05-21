@@ -34,6 +34,9 @@ https://$APP_NAME.scm.azurewebsites.net
 
 Use deployment credentials (publishing profile/user-level deployment credentials) with Basic authentication.
 
+!!! warning "Linux custom container caveat"
+    For Linux custom containers, the SCM/Kudu site runs in a separate container from the main app container. Kudu can still help with deployment metadata and shared log locations, but it cannot directly inspect the app container's live filesystem or running processes. Use SSH into the app container or application/container logs for runtime investigation.
+
 ```bash
 KUDU_BASE="https://$APP_NAME.scm.azurewebsites.net"
 AUTH_USER="<deployment-user>"
@@ -62,6 +65,8 @@ All paths below are relative to `$KUDU_BASE/api/`.
 ## Process and Environment Queries
 
 ### List processes
+
+For Linux custom containers, this shows SCM-container processes, not the main app container process list.
 
 ```bash
 curl -s -u "$AUTH_USER:$AUTH_PASS" \
@@ -92,6 +97,8 @@ curl -s -u "$AUTH_USER:$AUTH_PASS" \
 ## File System and Logs
 
 ### Browse persistent storage
+
+For Linux custom containers, treat this as SCM/shared storage inspection, not a full view into the app container filesystem.
 
 ```bash
 curl -s -u "$AUTH_USER:$AUTH_PASS" \

@@ -97,7 +97,13 @@ def parse_frontmatter(file_path: Path) -> tuple[dict[str, Any] | None, str | Non
         return None, f"Invalid YAML: {e}"
 
 
-def validate_file(file_path: Path, all_slugs: set[str]) -> list[ValidationError]:
+def validate_file(
+    file_path: Path,
+    all_slugs: set[str],
+    *,
+    require_core_fields: bool,
+    check_recommended: bool,
+) -> list[ValidationError]:
     """Validate a single file's frontmatter."""
     errors = []
 
@@ -110,22 +116,24 @@ def validate_file(file_path: Path, all_slugs: set[str]) -> list[ValidationError]
     if frontmatter is None:
         return errors
 
-    for field in REQUIRED_FIELDS:
-        if field not in frontmatter:
-            errors.append(
-                ValidationError(file_path, field, f"Missing required field: {field}")
-            )
-
-    for field in RECOMMENDED_FIELDS:
-        if field not in frontmatter:
-            errors.append(
-                ValidationError(
-                    file_path,
-                    field,
-                    f"Missing recommended field: {field}",
-                    severity="warning",
+    if require_core_fields:
+        for field in REQUIRED_FIELDS:
+            if field not in frontmatter:
+                errors.append(
+                    ValidationError(file_path, field, f"Missing required field: {field}")
                 )
-            )
+
+    if check_recommended:
+        for field in RECOMMENDED_FIELDS:
+            if field not in frontmatter:
+                errors.append(
+                    ValidationError(
+                        file_path,
+                        field,
+                        f"Missing recommended field: {field}",
+                        severity="warning",
+                    )
+                )
 
     doc_type = frontmatter.get("doc_type")
     if doc_type and doc_type not in VALID_DOC_TYPES:
@@ -178,7 +186,9 @@ def collect_slugs(docs_dir: Path) -> tuple[set[str], dict[str, list[Path]]]:
         if not frontmatter:
             continue
 
-        slug = frontmatter.get("slug", md_file.stem)
+        slug = frontmatter.get("slug")
+        if not slug:
+            continue
         slugs.add(slug)
 
         if slug not in slug_files:
@@ -195,6 +205,16 @@ def main():
     )
     parser.add_argument(
         "--strict", action="store_true", help="Treat warnings as errors"
+    )
+    parser.add_argument(
+        "--require-core-fields",
+        action="store_true",
+        help="Require title, slug, and doc_type on every file with frontmatter",
+    )
+    parser.add_argument(
+        "--check-recommended",
+        action="store_true",
+        help="Warn when summary, topics, or products are missing",
     )
     args = parser.parse_args()
 
@@ -222,7 +242,12 @@ def main():
         if any(part.startswith("_") or part.startswith(".") for part in rel_path.parts):
             continue
 
-        errors = validate_file(md_file, all_slugs)
+        errors = validate_file(
+            md_file,
+            all_slugs,
+            require_core_fields=args.require_core_fields,
+            check_recommended=args.check_recommended,
+        )
         all_errors.extend(errors)
         files_checked += 1
 

@@ -34,7 +34,7 @@ content_sources:
 content_validation:
   status: verified
   last_reviewed: "2026-04-12"
-  reviewer: ai-agent
+  reviewer: agent
   core_claims:
     - claim: "On Windows, the component is implemented as a native IIS module."
       source: "https://learn.microsoft.com/azure/app-service/overview-authentication-authorization"

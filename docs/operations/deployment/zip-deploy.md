@@ -10,7 +10,7 @@ content_sources:
 content_validation:
   status: verified
   last_reviewed: "2026-04-12"
-  reviewer: ai-agent
+  reviewer: agent
   core_claims:
     - claim: "ZIP Deploy is used to push a prepared ZIP package directly to App Service."
       source: "https://learn.microsoft.com/azure/app-service/deploy-zip"
@@ -69,6 +69,9 @@ Use `az webapp up` for first-time experimentation or tutorials. Use ZIP Deploy w
 ### Enable `WEBSITE_RUN_FROM_PACKAGE`
 
 `WEBSITE_RUN_FROM_PACKAGE=1` tells App Service to run from a mounted package instead of relying on mutable file copies in `wwwroot`. This improves consistency and reduces partial-copy or file-lock issues during deployment.
+
+!!! warning "Linux runtime-specific support"
+    For Linux code apps, Run From Package is supported for Node.js and .NET, but not for Python apps or Java apps on Linux. Use standard ZIP deploy for unsupported Linux runtimes.
 
 ```bash
 az webapp config appsettings set \
@@ -161,7 +164,7 @@ az webapp deploy \
 ### ZIP Deploy Design Guidance
 
 - Prefer prebuilt artifacts from CI over ad hoc local builds.
-- Use `WEBSITE_RUN_FROM_PACKAGE` for more predictable production behavior.
+- Use `WEBSITE_RUN_FROM_PACKAGE` for more predictable production behavior where the runtime supports it.
 - Keep the package small and remove build-only files where possible.
 - If the app requires build automation, document why `SCM_DO_BUILD_DURING_DEPLOYMENT=true` is acceptable.
 

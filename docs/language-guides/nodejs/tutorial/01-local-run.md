@@ -25,7 +25,7 @@ Run the application locally with App Service-safe defaults before deploying to A
 <!-- diagram-id: diagram-1 -->
 ```mermaid
 flowchart TD
-    INET[Internet] -->|HTTPS| WA["Web App\nApp Service S1\nLinux Node 18 LTS"]
+    INET[Internet] -->|HTTPS| WA["Web App\nApp Service S1\nLinux Node 20 LTS"]
 
     subgraph VNET["VNet 10.0.0.0/16"]
         subgraph INT_SUB["Integration Subnet 10.0.1.0/24\nDelegation: Microsoft.Web/serverFarms"]
@@ -89,14 +89,14 @@ flowchart TD
 ## Quick Start
 
 ```bash
-cd app
+cd apps/nodejs
 npm install
 npm start
 ```
 
 | Command/Code | Purpose |
 |--------------|---------|
-| `cd app` | Moves into the sample Node.js application directory |
+| `cd apps/nodejs` | Moves into the sample Node.js application directory |
 | `npm install` | Installs the dependencies declared in `package.json` |
 | `npm start` | Starts the application by running the package start script |
 
@@ -114,7 +114,7 @@ This application follows App Service conventions out of the box:
 **CRITICAL**: The app binds to `process.env.PORT`, which App Service sets automatically. While many apps default to 3000 locally, Azure App Service uses a random port and routes traffic to it via a reverse proxy (IIS/Nginx).
 
 ```javascript
-// app/server.js
+// apps/nodejs/src/server.js
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
@@ -226,10 +226,11 @@ curl "http://localhost:3000/api/requests/log-levels?userId=local-user"
 | `curl "http://localhost:3000/api/requests/log-levels?userId=local-user"` | Triggers the demo endpoint so the app emits sample logs with a test user ID |
 
 **Example output:**
+<!-- Verified: real local execution output from node v22.17.0, 2026-05-01 -->
 ```json
-{"level":"info","message":"Log level test requested","userId":"local-user","timestamp":"2026-04-01T14:00:00.000Z"}
-{"level":"error","message":"Sample error log","userId":"local-user","timestamp":"2026-04-01T14:00:00.005Z"}
-{"level":"warn","message":"Sample warning log","userId":"local-user","timestamp":"2026-04-01T14:00:00.010Z"}
+{"timestamp":"2026-05-01T08:30:53.856Z","level":"info","message":"Info level log - normal operational message","service":"azure-appservice-reference","environment":"development","userId":"local-user","action":"log-levels-demo"}
+{"timestamp":"2026-05-01T08:30:53.857Z","level":"warn","message":"Warn level log - potential issue detected","service":"azure-appservice-reference","environment":"development","userId":"local-user","warning":"Demo warning: userId parameter not provided","recommendation":"Include userId query parameter for tracking"}
+{"timestamp":"2026-05-01T08:30:53.857Z","level":"error","message":"Error level log - application error","service":"azure-appservice-reference","environment":"development","userId":"local-user","error":"Demo error: simulating error condition","errorCode":"DEMO_ERROR","severity":"high"}
 ```
 
 | Command/Code | Purpose |
@@ -259,14 +260,14 @@ kill -9 <PID>
 ### Module Not Found
 
 ```bash
-cd app
+cd apps/nodejs
 rm -rf node_modules package-lock.json
 npm install
 ```
 
 | Command/Code | Purpose |
 |--------------|---------|
-| `cd app` | Moves back into the sample application directory |
+| `cd apps/nodejs` | Moves back into the sample application directory |
 | `rm -rf node_modules package-lock.json` | Removes installed packages and the lock file to reset the local dependency state |
 | `npm install` | Reinstalls dependencies from scratch |
 

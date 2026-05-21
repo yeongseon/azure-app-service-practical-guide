@@ -120,6 +120,8 @@ curl $WEB_APP_URL
 
 ### Step 4: View logs
 
+> **Note:** `az webapp log tail` may not work reliably for Linux App Service. Use the Azure Portal Log stream or `/home/LogFiles` as alternatives.
+
 ```bash
 az webapp log tail --resource-group $RG --name $APP_NAME
 ```

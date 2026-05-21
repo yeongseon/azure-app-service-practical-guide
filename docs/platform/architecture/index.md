@@ -279,7 +279,7 @@ App Service behavior is not identical across hosting modes. Most confusion comes
 | Aspect | Windows Code | Linux Built-in | Linux Custom Container |
 |---|---|---|---|
 | Startup model | Platform launches stack runtime on worker | Platform launches built-in language image and startup command | Platform pulls your image and starts container |
-| Port contract | Platform-managed internal port/named pipe behavior | App typically reads `PORT` (or `WEBSITES_PORT` when applicable) | App Service must know listening port via `WEBSITES_PORT` |
+| Port contract | Platform-managed internal port/named pipe behavior | App typically reads `PORT` (or `WEBSITES_PORT` when applicable) | App typically binds to runtime-injected `PORT`; `WEBSITES_PORT` is a related configuration hint, not a complete Linux startup model |
 | Persistent storage path | Durable app content/log paths (Windows filesystem model) | `/home` persistent shared storage by default | `/home` persistence depends on `WEBSITES_ENABLE_APP_SERVICE_STORAGE` setting |
 | Diagnostic entry point | Kudu/SCM provides rich diagnostics | Kudu/SCM provides rich diagnostics | SSH into app container is primary; Kudu diagnostics are limited |
 | Common pitfall | Assuming local temp files are durable | Binding wrong port or slow startup | Expecting SCM container to see app container filesystem/processes |
@@ -296,8 +296,9 @@ App Service behavior is not identical across hosting modes. Most confusion comes
     - App typically binds to `PORT` (and in some cases `WEBSITES_PORT`).
     - Validate startup command and framework binding behavior.
 - **Linux custom container**
-    - App Service needs container port metadata, typically via `WEBSITES_PORT`.
-    - Ensure your container listens on the configured port.
+    - App Service startup behavior is more complex than a simple `WEBSITES_PORT` mismatch model.
+    - Apps should usually bind to the runtime-injected `PORT`, while `WEBSITES_PORT` remains a related configuration input for custom containers.
+    - See [Container HTTP Pings — Lab Guide](../../troubleshooting/lab-guides/container-http-pings.md) for experimental evidence on Linux port behavior.
 
 #### Storage behavior by hosting mode
 
@@ -346,20 +347,20 @@ Common recycle triggers:
 az webapp show \
     --resource-group "$RG" \
     --name "$APP_NAME" \
-    --query "{state:state, hostNames:hostNames, httpsOnly:httpsOnly, serverFarmId:serverFarmId}" \
+    --query "{state:state, hostNames:hostNames, httpsOnly:httpsOnly, appServicePlanId:appServicePlanId}" \
     --output json
 ```
 
 Example output (PII masked):
 
+<!-- Verified: real az CLI output from koreacentral, 2026-05-01 -->
 ```json
 {
+  "appServicePlanId": "/subscriptions/<subscription-id>/resourceGroups/<rg>/providers/Microsoft.Web/serverfarms/<plan>",
   "hostNames": [
-    "app-<masked>.azurewebsites.net",
-    "www.example.com"
+    "app-<masked>.azurewebsites.net"
   ],
   "httpsOnly": true,
-  "serverFarmId": "/subscriptions/<subscription-id>/resourceGroups/<rg>/providers/Microsoft.Web/serverfarms/<plan>",
   "state": "Running"
 }
 ```

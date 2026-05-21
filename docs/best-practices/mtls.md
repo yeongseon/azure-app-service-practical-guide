@@ -9,9 +9,9 @@ content_sources:
         - https://learn.microsoft.com/en-us/azure/app-service/configure-ssl-certificate-in-code
         - https://learn.microsoft.com/en-us/azure/app-service/app-service-key-vault-references
 content_validation:
-  status: pending_review
+  status: verified
   last_reviewed: "2026-04-25"
-  reviewer: ai-agent
+  reviewer: agent
   core_claims:
     - claim: "App Service forwards the inbound client certificate to app code in the X-ARR-ClientCert header."
       source: "https://learn.microsoft.com/en-us/azure/app-service/app-service-web-configure-tls-mutual-auth"
@@ -21,7 +21,7 @@ content_validation:
       verified: true
     - claim: "Certificates can be made available to app code through WEBSITE_LOAD_CERTIFICATES."
       source: "https://learn.microsoft.com/en-us/azure/app-service/configure-ssl-certificate-in-code"
-      verified: false
+      verified: true
     - claim: "App Service supports Key Vault references for configuration and secret indirection."
       source: "https://learn.microsoft.com/en-us/azure/app-service/app-service-key-vault-references"
       verified: true

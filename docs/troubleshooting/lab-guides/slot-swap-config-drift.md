@@ -46,7 +46,7 @@ content_sources:
 content_validation:
   status: verified
   last_reviewed: "2026-04-12"
-  reviewer: ai-agent
+  reviewer: agent
   core_claims:
     - claim: "Each slot is a separate runtime endpoint with its own hostname and runtime lifecycle."
       source: "https://learn.microsoft.com/azure/app-service/deploy-staging-slots"

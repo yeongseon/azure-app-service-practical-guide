@@ -38,7 +38,7 @@ content_sources:
 content_validation:
   status: verified
   last_reviewed: "2026-04-12"
-  reviewer: ai-agent
+  reviewer: agent
   core_claims:
     - claim: "By default, App Service assumes your custom container listens on port 80."
       source: "https://learn.microsoft.com/azure/app-service/configure-custom-container"

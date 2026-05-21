@@ -2,7 +2,7 @@
 content_validation:
   status: verified
   last_reviewed: "2026-04-12"
-  reviewer: ai-agent
+  reviewer: agent
   core_claims:
     - claim: "Health check pings a path that you choose on all instances of an App Service app at 1-minute intervals."
       source: "https://learn.microsoft.com/azure/app-service/monitor-instances-health-check"
@@ -32,7 +32,7 @@ graph TD
     B -- No --> C[Suspect crash or launch failure]
     B -- Yes --> D{Start-fail-restart loop?}
     D -- Yes --> E[Platform restart-loop hypothesis]
-    D -- No --> F{WEBSITES_PORT matches listener?}
+    D -- No --> F{Linux port config consistent with listener?}
     F -- No --> G[Port mismatch hypothesis]
     F -- Yes --> H{Binding is 0.0.0.0?}
     H -- No --> I[Binding mismatch hypothesis]
@@ -70,8 +70,8 @@ AppServicePlatformLogs
 - Good signal: normal start with no immediate fail/restart cycle.
 - Bad signal: rapid start-fail-restart patterns.
 
-## Step 3: Verify WEBSITES_PORT matches actual listener port
-App Service health pings fail if platform expects a different port than the app listens on.
+## Step 3: Verify Linux port configuration against the actual listener
+For Linux custom containers, startup reachability is more nuanced than a simple `WEBSITES_PORT` mismatch model. Check the actual listener together with both `WEBSITES_PORT` and the runtime-injected `PORT` value. See [Container HTTP Pings Lab](../lab-guides/container-http-pings.md) for experimental evidence on Linux port behavior.
 - Portal path: **App Service -> Configuration -> Application settings -> WEBSITES_PORT**
 - CLI:
 
@@ -79,8 +79,8 @@ App Service health pings fail if platform expects a different port than the app 
 az webapp config appsettings list --resource-group "$RG" --name "$APP_NAME"
 ```
 
-- Good signal: WEBSITES_PORT equals app server listen port.
-- Bad signal: mismatch (for example app listens on 8080, WEBSITES_PORT is 8000).
+- Good signal: the app binds to `0.0.0.0` on the port App Service exposes through `PORT`, and any configured `WEBSITES_PORT` does not contradict that listener.
+- Bad signal: logs show a different port or localhost-only binding than the effective Linux startup path can reach.
 
 ## Step 4: Verify binding address is 0.0.0.0 (not 127.0.0.1)
 Binding to loopback prevents App Service front-end probe from reaching the process.
@@ -145,7 +145,11 @@ AppServiceConsoleLogs
 ## Decision Points
 After these checks, you should be able to:
 - Narrow to 1-2 hypotheses:
-    - **Port mismatch** -> fix WEBSITES_PORT or app listen port    - **Binding mismatch** -> bind to `0.0.0.0`    - **Startup timeout** -> increase time limit and reduce startup work    - **Crash on boot** -> investigate stack trace/runtime dependency error- Select immediate corrective path before full deep dive.
+    - **Port/listener contract issue** -> verify `PORT`, `WEBSITES_PORT`, and actual bind behavior together
+    - **Binding mismatch** -> bind to `0.0.0.0`
+    - **Startup timeout** -> increase time limit and reduce startup work
+    - **Crash on boot** -> investigate stack trace/runtime dependency error
+    - Select immediate corrective path before full deep dive.
 
 ## Next Steps
 - [Container Didn't Respond to HTTP Pings](../playbooks/startup-availability/container-didnt-respond-to-http-pings.md)

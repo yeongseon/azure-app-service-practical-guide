@@ -60,7 +60,7 @@ resource webApp 'Microsoft.Web/sites@2023-12-01' = {
         }
         {
           name: 'DB_CONNECTION_STRING'
-          value: 'prod-server.database.windows.net'
+          value: 'prod-server.${environment().suffixes.sqlServerHostname}'
         }
         {
           name: 'FEATURE_FLAG'
@@ -72,7 +72,8 @@ resource webApp 'Microsoft.Web/sites@2023-12-01' = {
 }
 
 resource stagingSlot 'Microsoft.Web/sites/slots@2023-12-01' = {
-  name: '${webApp.name}/${stagingSlotName}'
+  name: stagingSlotName
+  parent: webApp
   location: location
   kind: 'app,linux'
   properties: {
@@ -91,7 +92,7 @@ resource stagingSlot 'Microsoft.Web/sites/slots@2023-12-01' = {
         }
         {
           name: 'DB_CONNECTION_STRING'
-          value: 'staging-server.database.windows.net'
+          value: 'staging-server.${environment().suffixes.sqlServerHostname}'
         }
         {
           name: 'FEATURE_FLAG'
@@ -103,7 +104,8 @@ resource stagingSlot 'Microsoft.Web/sites/slots@2023-12-01' = {
 }
 
 resource slotConfigNames 'Microsoft.Web/sites/config@2023-12-01' = {
-  name: '${webApp.name}/slotConfigNames'
+  name: 'slotConfigNames'
+  parent: webApp
   properties: {
     appSettingNames: [
       'DB_CONNECTION_STRING'

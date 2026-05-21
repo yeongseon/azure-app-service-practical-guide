@@ -5,6 +5,11 @@ content_sources:
       type: flowchart
       source: mslearn-adapted
       mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/app-service-best-practices
+content_validation:
+  status: verified
+  last_reviewed: 2026-05-15
+  reviewer: agent
+  core_claims: []
 ---
 
 # Best Practices

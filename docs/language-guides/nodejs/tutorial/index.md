@@ -5,6 +5,11 @@ content_sources:
       type: flowchart
       source: mslearn-adapted
       mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
+validation:
+  az_cli:
+    last_tested: null
+    cli_version: null
+    result: not_tested
 ---
 
 # Node.js Tutorial Overview
@@ -15,7 +20,7 @@ This tutorial walks through the full Azure App Service path for a Node.js app, f
 
 ## Prerequisites
 
-- **Node.js 18+**
+- **Node.js 20+**
 - **npm**
 - **Azure CLI**
 

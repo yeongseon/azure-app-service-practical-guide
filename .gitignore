@@ -45,6 +45,11 @@ Thumbs.db
 
 # Lab artifacts (raw data, charts - generated locally)
 labs/*/artifacts/
+labs/*/deploy.zip
+
+# Generated deployment artifacts
+apps/**/infra/main.json
+apps/**/infra/profiles/*.json
 
 # Environment
 .env

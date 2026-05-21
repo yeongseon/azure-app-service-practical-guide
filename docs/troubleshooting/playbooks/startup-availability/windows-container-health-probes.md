@@ -26,7 +26,7 @@ content_sources:
 content_validation:
   status: verified
   last_reviewed: "2026-04-12"
-  reviewer: ai-agent
+  reviewer: agent
   core_claims:
     - claim: "App Service considers a Windows container successfully started when the container starts and responds to an HTTP ping."
       source: "https://learn.microsoft.com/azure/app-service/configure-custom-container"

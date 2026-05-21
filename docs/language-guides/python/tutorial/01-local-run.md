@@ -69,14 +69,14 @@ flowchart TD
 ### Create and activate a virtual environment
 
 ```bash
-cd app
+cd apps/python-flask
 python -m venv .venv
 source .venv/bin/activate
 ```
 
 | Command | Purpose |
 |---------|---------|
-| `cd app` | Moves into the Flask application directory before creating the environment. |
+| `cd apps/python-flask` | Moves into the Flask application directory before creating the environment. |
 | `python -m venv .venv` | Creates an isolated Python virtual environment in `.venv`. |
 | `source .venv/bin/activate` | Activates the virtual environment in the current shell session. |
 

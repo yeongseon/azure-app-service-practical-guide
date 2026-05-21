@@ -140,6 +140,9 @@ az webapp config ssl create \
   --output json
 ```
 
+!!! note "Preview Command"
+    `az webapp config ssl create` is currently in Preview. Not all hostname configurations are eligible for managed certificates. See [App Service TLS overview](https://learn.microsoft.com/en-us/azure/app-service/overview-tls) for eligibility requirements. The Azure Portal provides an alternative path for managed certificate creation.
+
 | Command/Code | Purpose |
 |--------------|---------|
 | `az webapp config ssl create --resource-group "$RESOURCE_GROUP_NAME" --name "$WEB_APP_NAME" --hostname "api.contoso.com" --output json` | Requests an App Service managed certificate for the custom domain. |

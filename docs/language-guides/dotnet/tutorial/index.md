@@ -5,6 +5,11 @@ content_sources:
       type: flowchart
       source: mslearn-adapted
       mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
+validation:
+  az_cli:
+    last_tested: null
+    cli_version: null
+    result: not_tested
 ---
 
 # .NET Tutorial

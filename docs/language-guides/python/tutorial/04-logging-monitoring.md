@@ -145,7 +145,7 @@ az webapp config appsettings set \
 
 ## Step 2 — Structured JSON Logging
 
-`app/src/config/telemetry.py` configures a root logger that emits newline-delimited JSON to stdout,
+`apps/python-flask/src/config/telemetry.py` configures a root logger that emits newline-delimited JSON to stdout,
 so App Service and Application Insights can parse fields automatically — no extra plugins required.
 
 Every `extra={"custom_dimensions": {...}}` dict is merged into the top-level JSON payload.
@@ -155,7 +155,7 @@ The `correlationId` is injected automatically by `CorrelationIdFilter` using a p
 ### Pattern 1 — Normal Operational Logging
 
 Use structured fields so KQL queries can filter and aggregate without string parsing.
-See `app/src/routes/demo/requests.py` for a working example:
+See `apps/python-flask/src/routes/demo/requests.py` for a working example:
 
 ```python
 # routes/demo/requests.py
@@ -213,7 +213,7 @@ def log_levels_demo():
 
 Always record the URL, status code, and elapsed time for outbound calls so you can diagnose
 slow or failing dependencies in Application Insights.
-See `app/src/routes/demo/dependencies.py`:
+See `apps/python-flask/src/routes/demo/dependencies.py`:
 
 ```python
 # routes/demo/dependencies.py
@@ -280,18 +280,18 @@ def external_dependency_demo():
   "exception": {
     "type": "ConnectTimeout",
     "message": "HTTPSConnectionPool(...): Read timed out.",
-    "stack": "Traceback (most recent call last):\n  File \"/app/routes/demo/dependencies.py\", line 31, in external_dependency_demo\n    response = requests.get(api_url, timeout=timeout)\n  ..."
+    "stack": "Traceback (most recent call last):\n  File \"/home/site/wwwroot/src/routes/demo/dependencies.py\", line 31, in external_dependency_demo\n    response = requests.get(api_url, timeout=timeout)\n  ..."
   }
 }
 ```
 
 ### Pattern 3 — Unhandled Exception Logging
 
-Flask's global error handler in `app/src/app.py` catches all unhandled exceptions and logs
+Flask's global error handler in `apps/python-flask/src/app.py` catches all unhandled exceptions and logs
 them with full context before returning an error response:
 
 ```python
-# app/src/app.py
+# apps/python-flask/src/app.py
 @app.errorhandler(Exception)
 def handle_exception(error: Exception):
     status = getattr(error, "status", 500)
@@ -332,7 +332,7 @@ When `TELEMETRY_MODE=advanced` and `APPLICATIONINSIGHTS_CONNECTION_STRING` is se
 to Application Insights automatically in addition to stdout:
 
 ```python
-# app/src/config/telemetry.py
+# apps/python-flask/src/config/telemetry.py
 if settings.telemetry_mode == "advanced":
     if settings.applicationinsights_connection_string and configure_azure_monitor:
         configure_azure_monitor(
@@ -428,7 +428,7 @@ az webapp config appsettings set \
 
 ### Correlation ID — Tracing a Single Request
 
-`app/src/middleware/correlation.py` injects a unique `correlationId` into every request using
+`apps/python-flask/src/middleware/correlation.py` injects a unique `correlationId` into every request using
 a `contextvars.ContextVar`, which is then picked up by `CorrelationIdFilter` and stamped onto
 **every** log line emitted during that request:
 
@@ -497,17 +497,32 @@ az webapp log config \
 
 **Example output:**
 
+<!-- Verified: real az CLI output from koreacentral, 2026-05-01 -->
 ```json
 {
   "applicationLogs": {
+    "azureBlobStorage": {
+      "level": "Off",
+      "retentionInDays": null,
+      "sasUrl": null
+    },
+    "azureTableStorage": {
+      "level": "Off",
+      "sasUrl": null
+    },
     "fileSystem": {
       "level": "Verbose"
     }
   },
   "httpLogs": {
+    "azureBlobStorage": {
+      "enabled": false,
+      "retentionInDays": 3,
+      "sasUrl": null
+    },
     "fileSystem": {
       "enabled": true,
-      "retentionInDays": 7,
+      "retentionInDays": 3,
       "retentionInMb": 100
     }
   }
@@ -591,6 +606,9 @@ unzip logs.zip -d ./logs
 | `unzip logs.zip -d ./logs` | Extracts the downloaded logs into the local `./logs` directory. |
 | `-d ./logs` | Writes extracted files into the specified output directory. |
 
+!!! warning "Linux Limitation"
+    This command may not work with web apps running on Linux. Use log streaming, the Azure Portal's Log stream blade, or access logs directly via `/home/LogFiles` as alternatives.
+
 **SSH and tail live:**
 
 ```bash
@@ -610,7 +628,7 @@ tail -f /home/LogFiles/*_docker.log
 
 Application Insights collects telemetry into four queryable tables when either:
 
-- **`TELEMETRY_MODE=advanced`** — the app calls `configure_azure_monitor()` at startup (see `app/src/config/telemetry.py`), **or**
+- **`TELEMETRY_MODE=advanced`** — the app calls `configure_azure_monitor()` at startup (see `apps/python-flask/src/config/telemetry.py`), **or**
 - The **App Service Application Insights agent** is enabled in the portal (App Service → Application Insights → Turn on).
 
 Setting `APPLICATIONINSIGHTS_CONNECTION_STRING` alone is not sufficient — telemetry only reaches Application Insights when one of the above paths is active.

@@ -8,7 +8,7 @@ content_sources:
 content_validation:
   status: verified
   last_reviewed: "2026-04-12"
-  reviewer: ai-agent
+  reviewer: agent
   core_claims:
     - claim: "App Service costs are driven by plan SKU selection and the number of worker instances."
       source: "https://learn.microsoft.com/azure/app-service/overview-manage-costs"

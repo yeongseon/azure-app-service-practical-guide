@@ -28,20 +28,20 @@ graph TD
 
 ## Request Limits
 
-| Limit | Typical Value | Notes |
-| :--- | :--- | :--- |
-| **Frontend HTTP timeout** | **230 seconds** | Enforced by App Service frontend/load balancer for synchronous HTTP requests. |
-| **Max request body** | **128 MB** | Applies to common HTTP request payloads on App Service. |
-| **URL length** | **8192 characters** | Practical upper bound for request URL length. |
+| Limit | Typical Value | Notes | Source |
+| :--- | :--- | :--- | :--- |
+| **Frontend HTTP timeout** | **230 seconds** | Enforced by the App Service frontend for synchronous HTTP requests on Windows apps; Linux apps are documented as approximately 240 seconds. | [Web request times out in App Service](https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/web-request-times-out-app-service) |
+| **Max request body** | **128 MB** | [Requires verification] This guide does not currently have an App Service-specific Microsoft Learn source for a platform-wide 128 MB limit. Request body limits vary by runtime and web server. | [Request Limits &lt;requestLimits&gt; (IIS)](https://learn.microsoft.com/en-us/iis/configuration/system.webserver/security/requestfiltering/requestlimits/) [Stack-specific] |
+| **URL length** | **8192 characters** | [Requires verification] No App Service-specific Microsoft Learn source was found for a universal 8192-character limit. URL limits vary by stack and front-end/server behavior. | [Request Limits &lt;requestLimits&gt; (IIS)](https://learn.microsoft.com/en-us/iis/configuration/system.webserver/security/requestfiltering/requestlimits/) [Stack-specific] |
 
 ## Scale and Plan Limits
 
-| Tier | Max Instances (Typical) | Deployment Slots (Typical) | Always On |
-| :--- | :--- | :--- | :--- |
-| **Free (F1)** | 1 | 0 | No |
-| **Basic (B1)** | 3 | 0 | No |
-| **Standard (S1)** | 10 | 5 | Yes |
-| **Premium (P1V3 and above)** | 30+ | 20 | Yes |
+| Tier | Max Instances (Typical) | Deployment Slots (Typical) | Always On | Source |
+| :--- | :--- | :--- | :--- | :--- |
+| **Free (F1)** | 1 | 0 | No | [Azure App Service limits](https://learn.microsoft.com/azure/azure-resource-manager/management/azure-subscription-service-limits#app-service-limits) |
+| **Basic (B1)** | 3 | 0 | No | [Azure App Service limits](https://learn.microsoft.com/azure/azure-resource-manager/management/azure-subscription-service-limits#app-service-limits) |
+| **Standard (S1)** | 10 | 5 | Yes | [Azure App Service limits](https://learn.microsoft.com/azure/azure-resource-manager/management/azure-subscription-service-limits#app-service-limits) |
+| **Premium (P1V3 and above)** | 30+ | 20 | Yes | [Azure App Service limits](https://learn.microsoft.com/azure/azure-resource-manager/management/azure-subscription-service-limits#app-service-limits) |
 
 !!! note "Regional and SKU variation"
     Effective limits can vary by region, subscription, and SKU generation.
@@ -57,27 +57,27 @@ graph TD
 
 ## Deployment and Configuration Limits
 
-| Limit | Value | Notes |
-| :--- | :--- | :--- |
-| **Max app settings** | **10,000** | Environment variables and configuration entries |
-| **ZIP deploy upload size** | **2048 MB** | CLI/Kudu ZIP deploy package limit |
-| **Slot settings scope** | Per-slot | Mark sensitive values as slot settings |
+| Limit | Value | Notes | Source |
+| :--- | :--- | :--- | :--- |
+| **Max app settings** | **10,000** | [Requires verification] This guide does not currently have a Microsoft Learn source that documents a hard App Service limit of 10,000 settings. Environment block and runtime constraints can be stack-specific. | [Configure an App Service app](https://learn.microsoft.com/en-us/azure/app-service/configure-common) [Requires verification] |
+| **ZIP deploy upload size** | **2048 MB** | CLI/Kudu ZIP deploy package limit. | [Deploy files to Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/deploy-zip) |
+| **Slot settings scope** | Per-slot | Mark sensitive values as slot settings. | [Configure an App Service app](https://learn.microsoft.com/en-us/azure/app-service/configure-common#configure-app-settings) |
 
 ## Networking and Connections
 
-| Limit/Behavior | Value / Pattern | Notes |
-| :--- | :--- | :--- |
-| **SNAT ports per instance (common)** | **128** | Outbound-heavy apps can exhaust ports |
-| **Outbound IPs** | Multiple, can change | Use `possibleOutboundIpAddresses` for allowlists |
-| **WebSocket and long-lived connections** | Tier-dependent | Higher tiers support greater concurrency |
+| Limit/Behavior | Value / Pattern | Notes | Source |
+| :--- | :--- | :--- | :--- |
+| **SNAT ports per instance (common)** | **128** | Outbound-heavy apps can exhaust ports. | [Troubleshoot intermittent outbound connection errors](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-intermittent-outbound-connection-errors) |
+| **Outbound IPs** | Multiple, can change | Use `possibleOutboundIpAddresses` for allowlists. | [Azure App Service limits](https://learn.microsoft.com/azure/azure-resource-manager/management/azure-subscription-service-limits#app-service-limits) |
+| **WebSocket and long-lived connections** | Tier-dependent | Higher tiers support greater concurrency. | [Azure App Service limits](https://learn.microsoft.com/azure/azure-resource-manager/management/azure-subscription-service-limits#app-service-limits) |
 
 ## Diagnostics and Retention
 
-| Area | Typical Range | Notes |
-| :--- | :--- | :--- |
-| **Filesystem log retention** | 30–90 days | Depends on storage/log configuration |
-| **Live log streaming session** | Time-limited | Streams may disconnect on inactivity |
-| **Application Insights retention** | Configurable | Affects cost and forensic depth |
+| Area | Typical Range | Notes | Source |
+| :--- | :--- | :--- | :--- |
+| **Filesystem log retention** | 30–90 days | [Requires verification] Retention depends on storage usage and log configuration; no single App Service platform default was verified for this range. | [Enable diagnostic logging for apps in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs) [Requires verification] |
+| **Live log streaming session** | Time-limited | Streams may disconnect on inactivity. | [Enable diagnostic logging for apps in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs) |
+| **Application Insights retention** | Configurable | Affects cost and forensic depth. | [Manage usage and costs for Application Insights](https://learn.microsoft.com/en-us/azure/azure-monitor/app/pricing) |
 
 ## Limit-Driven Symptoms
 

@@ -8,7 +8,7 @@ content_sources:
 content_validation:
   status: verified
   last_reviewed: "2026-04-12"
-  reviewer: ai-agent
+  reviewer: agent
   core_claims:
     - claim: "Scale up changes the App Service Plan SKU for more CPU and memory per instance."
       source: "https://learn.microsoft.com/azure/app-service/manage-scale-up"

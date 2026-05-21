@@ -30,7 +30,7 @@ content_sources:
 content_validation:
   status: verified
   last_reviewed: "2026-04-22"
-  reviewer: ai-agent
+  reviewer: agent
   core_claims:
     - claim: "Azure RBAC enforces a unique constraint on the combination of scope, principal, and role definition for role assignments."
       source: "https://learn.microsoft.com/azure/role-based-access-control/role-assignments-cli"
@@ -112,20 +112,20 @@ flowchart TD
 The error returned by the deployment includes the conflicting role assignment ID without hyphens:
 
 ```text
-The ID of the existing role assignment is 561ed7ada306588a8d5f2746e0ae4fca
+The ID of the existing role assignment is <role-assignment-id-no-hyphens>
 ```
 
 Convert this 32-character hex string into a standard GUID by inserting hyphens at positions 8, 12, 16, and 20:
 
 ```text
-561ed7ad-a306-588a-8d5f-2746e0ae4fca
+<role-assignment-id>
 ```
 
 ### Platform Signals
 
 ```bash
 SUBSCRIPTION_ID="<subscription-id>"
-ROLE_ASSIGNMENT_ID="561ed7ad-a306-588a-8d5f-2746e0ae4fca"
+ROLE_ASSIGNMENT_ID="<role-assignment-id>"
 
 az role assignment list \
     --subscription "$SUBSCRIPTION_ID" \
@@ -295,7 +295,7 @@ az role assignment list --scope "$ACR_ID" \
 
     ```bash
     SUBSCRIPTION_ID="<subscription-id>"
-    ROLE_ASSIGNMENT_ID="561ed7ad-a306-588a-8d5f-2746e0ae4fca"
+    ROLE_ASSIGNMENT_ID="<role-assignment-id>"
     az role assignment show \
         --ids "/subscriptions/$SUBSCRIPTION_ID/providers/Microsoft.Authorization/roleAssignments/$ROLE_ASSIGNMENT_ID" \
         --output json

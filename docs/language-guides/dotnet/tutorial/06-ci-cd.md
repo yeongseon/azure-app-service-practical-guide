@@ -116,15 +116,15 @@ stages:
 
 - script: dotnet restore
   displayName: Restore dependencies
-  workingDirectory: app/GuideApi
+  workingDirectory: apps/dotnet-aspnetcore/GuideApi
 
 - script: dotnet build --configuration $(buildConfiguration) --no-restore
   displayName: Build
-  workingDirectory: app/GuideApi
+  workingDirectory: apps/dotnet-aspnetcore/GuideApi
 
 - script: dotnet test --configuration $(buildConfiguration) --no-build
   displayName: Test
-  workingDirectory: app/GuideApi
+  workingDirectory: apps/dotnet-aspnetcore/GuideApi
 ```
 
 ### 3) Publish stage artifact
@@ -132,7 +132,7 @@ stages:
 ```yaml
 - script: dotnet publish --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)
   displayName: Publish app artifacts
-  workingDirectory: app/GuideApi
+  workingDirectory: apps/dotnet-aspnetcore/GuideApi
 
 - publish: $(Build.ArtifactStagingDirectory)
   artifact: drop
@@ -212,13 +212,13 @@ Because pipeline deploys published binaries, startup behavior must not depend on
 Use these for debugging outside pipeline:
 
 ```bash
-dotnet publish "app/GuideApi/GuideApi.csproj" --configuration Release --output "/tmp/guideapi-publish"
+dotnet publish "apps/dotnet-aspnetcore/GuideApi/GuideApi.csproj" --configuration Release --output "/tmp/guideapi-publish"
 az webapp deploy --resource-group "$RESOURCE_GROUP_NAME" --name "$WEB_APP_NAME" --src-path "/tmp/guideapi.zip" --type zip --output json
 ```
 
 | Command/Code | Purpose |
 |--------------|---------|
-| `dotnet publish "app/GuideApi/GuideApi.csproj" --configuration Release --output "/tmp/guideapi-publish"` | Produces release-ready publish output outside the pipeline for debugging. |
+| `dotnet publish "apps/dotnet-aspnetcore/GuideApi/GuideApi.csproj" --configuration Release --output "/tmp/guideapi-publish"` | Produces release-ready publish output outside the pipeline for debugging. |
 | `az webapp deploy --resource-group "$RESOURCE_GROUP_NAME" --name "$WEB_APP_NAME" --src-path "/tmp/guideapi.zip" --type zip --output json` | Deploys a zip package manually to App Service. |
 
 !!! tip "Why Azure DevOps is the differentiator"

@@ -26,7 +26,7 @@ content_sources:
 content_validation:
   status: verified
   last_reviewed: "2026-04-12"
-  reviewer: ai-agent
+  reviewer: agent
   core_claims:
     - claim: "Kudu tools require the SCM endpoint at `https://<app-name>.scm.azurewebsites.net`."
       source: "https://learn.microsoft.com/azure/app-service/resources-kudu"

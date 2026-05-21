@@ -51,6 +51,11 @@ az webapp config appsettings list --resource-group $RG --name $APP_NAME --output
 az webapp deployment slot list --resource-group $RG --name $APP_NAME --output table
 ```
 
+> **Note:** `az webapp log tail` may not work reliably for Linux App Service. Use the Azure Portal Log stream or `/home/LogFiles` as alternatives.
+
+!!! warning "Linux custom container SCM caveat"
+    For Linux custom containers, the SCM/Kudu site runs in a separate container from the app container. That means Kudu cannot directly inspect the app container's live filesystem or running processes. Prefer SSH into the app container, Log stream, or application/container logs when investigating runtime behavior inside a custom container.
+
 ## Common Platform Issues
 
 | Symptom | Likely Cause | Action |
@@ -141,6 +146,8 @@ az webapp show \
 - Check environment: `/api/environment`
 - Check running processes: `/api/processes`
 - Review logs under `/home/LogFiles`
+
+For Linux custom containers, use those Kudu checks mainly for deployment context, environment snapshots, and shared logs. Do not assume `/api/processes` or Kudu file browsing reflects the main app container runtime state.
 
 See [Kudu API Reference](./kudu-queries.md) for endpoint details.
 
