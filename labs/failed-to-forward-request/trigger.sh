@@ -72,7 +72,7 @@ echo "Waiting for restart and warm-up"
 sleep 20
 
 status_after="000"
-for attempt in $(seq 1 12); do
+for ((attempt = 1; attempt <= 12; attempt++)); do
     status_after=$(curl --silent --show-error --max-time 15 --output /dev/null --write-out "%{http_code}" "https://$APP_URL/health" || true)
     if [ "$status_after" = "200" ]; then
         break

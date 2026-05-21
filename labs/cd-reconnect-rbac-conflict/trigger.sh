@@ -59,10 +59,11 @@ set -e
 
 if grep -qE "RoleAssignmentExists|already exists" /tmp/cd-rbac-conflict.log; then
     EXISTING_ID=$(grep -oE 'existing role assignment is [a-f0-9]{32}' /tmp/cd-rbac-conflict.log | awk '{print $NF}' | head -1)
+    EXISTING_GUID="${EXISTING_ID:0:8}-${EXISTING_ID:8:4}-${EXISTING_ID:12:4}-${EXISTING_ID:16:4}-${EXISTING_ID:20:12}"
     echo ""
     echo "PASS: RoleAssignmentExists conflict reproduced."
     echo "    Existing assignment ID (no hyphens): $EXISTING_ID"
-    echo "    GUID format: $(echo "$EXISTING_ID" | sed 's/\(........\)\(....\)\(....\)\(....\)\(............\)/\1-\2-\3-\4-\5/')"
+    echo "    GUID format: $EXISTING_GUID"
     echo "    This is the same error returned by Deployment Center on container CD reconnect."
     exit 0
 elif [ "$RESULT" -eq 0 ]; then
