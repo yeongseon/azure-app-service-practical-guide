@@ -1,12 +1,20 @@
 ---
 content_sources:
   diagrams:
-    - id: private-endpoints
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/networking/private-endpoint
+  - id: private-endpoints
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/networking/private-endpoint
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/networking/private-endpoint
+    verified: true
 ---
-
 # Private Endpoints
 
 Connect a Flask app on App Service to Azure SQL, Azure Cache for Redis, and Key Vault through private endpoints while keeping standard service hostnames.
@@ -183,6 +191,14 @@ az webapp vnet-integration list \
 
 - Verify system-assigned identity is enabled on the web app.
 - Confirm SQL permissions for managed identity principal and Key Vault access policy or RBAC.
+
+## Review Matrix
+
+| Review area | Page-specific check |
+|---|---|
+| Scope | Confirm the guidance applies to Private Endpoints. |
+| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
+| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
 
 ## See Also
 

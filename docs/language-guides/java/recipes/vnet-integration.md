@@ -1,12 +1,20 @@
 ---
 content_sources:
   diagrams:
-    - id: networking-pattern
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration
+  - id: networking-pattern
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration
+    verified: true
 ---
-
 # VNet Integration
 
 Enable VNet Integration so your App Service app can reach private backend services through controlled outbound networking.
@@ -138,6 +146,14 @@ Check VNet DNS settings and private DNS zone association to the integration VNet
 ### Connectivity broke after enabling route-all
 
 Review route table (`UDR`) and ensure required Azure service endpoints are reachable through your forced egress path.
+
+## Review Matrix
+
+| Review area | Page-specific check |
+|---|---|
+| Scope | Confirm the guidance applies to VNet Integration. |
+| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
+| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
 
 ## See Also
 

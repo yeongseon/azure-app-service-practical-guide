@@ -1,14 +1,22 @@
 ---
 content_sources:
   diagrams:
-    - id: java-mtls-client-certificate-flow
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/app-service-web-configure-tls-mutual-auth
-      based_on:
-        - https://learn.microsoft.com/en-us/azure/app-service/configure-ssl-certificate-in-code
+  - id: java-mtls-client-certificate-flow
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/app-service-web-configure-tls-mutual-auth
+    based_on:
+    - https://learn.microsoft.com/en-us/azure/app-service/configure-ssl-certificate-in-code
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/app-service-web-configure-tls-mutual-auth
+    verified: true
 ---
-
 # mTLS Client Certificates
 
 Use a Spring Boot filter to parse `X-ARR-ClientCert`, validate the forwarded certificate, and configure an outbound `SSLContext` from a PKCS#12 certificate for remote services that require mutual TLS.
@@ -211,6 +219,14 @@ curl --include \
 - Replace simple CN parsing with SAN and issuer validation
 - Add full trust-store handling if your security model requires private CA validation in code
 - Move diagnostics routes behind administrative authorization if they remain enabled
+
+## Review Matrix
+
+| Review area | Page-specific check |
+|---|---|
+| Scope | Confirm the guidance applies to mTLS Client Certificates. |
+| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
+| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
 
 ## See Also
 

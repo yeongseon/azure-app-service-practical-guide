@@ -8,13 +8,13 @@ content_validation:
       source: "https://learn.microsoft.com/azure/app-service/troubleshoot-diagnostic-logs"
       verified: true
     - claim: "Log Analytics in the Azure portal lets you explore and analyze data collected by Azure Monitor Logs."
-      source: "https://learn.microsoft.com/azure/azure-monitor/logs/log-analytics-tutorial"
+      source: "https://learn.microsoft.com/en-us/azure/azure-monitor/logs/log-analytics-overviewlog-analytics-tutorial"
       verified: true
     - claim: "Log Analytics in the Azure portal lets you edit and run log queries to filter records, uncover trends, analyze patterns, and gain meaningful insights into your environment."
-      source: "https://learn.microsoft.com/azure/azure-monitor/logs/log-analytics-tutorial"
+      source: "https://learn.microsoft.com/en-us/azure/azure-monitor/logs/log-analytics-overviewlog-analytics-tutorial"
       verified: true
     - claim: "You can view, modify, and share visuals of query results."
-      source: "https://learn.microsoft.com/azure/azure-monitor/logs/log-analytics-tutorial"
+      source: "https://learn.microsoft.com/en-us/azure/azure-monitor/logs/log-analytics-overviewlog-analytics-tutorial"
       verified: true
 content_sources:
   diagrams:
@@ -58,6 +58,14 @@ AppServiceHTTPLogs
 - Data freshness depends on Diagnostic Settings and Log Analytics ingestion latency.
 - Low-traffic periods can distort percentiles because sample size is small.
 - This query cannot identify the exact dependency/code path causing latency.
+
+## Review Matrix
+
+| Review area | Page-specific check |
+|---|---|
+| Scope | Confirm the guidance applies to Latency Trend by Status Code. |
+| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
+| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
 
 ## See Also
 

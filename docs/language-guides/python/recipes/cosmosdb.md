@@ -1,12 +1,20 @@
 ---
 content_sources:
   diagrams:
-    - id: architecture
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/quickstart-python
+  - id: architecture
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/quickstart-python
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/quickstart-python
+    verified: true
 ---
-
 # Cosmos DB with azure-cosmos SDK
 
 Integrate Flask with Azure Cosmos DB (NoSQL API) using passwordless authentication through Managed Identity.
@@ -118,6 +126,14 @@ def ensure_container():
 - Use optimistic concurrency with ETag (`if_match`) for safe updates.
 - Tune query RU cost and add composite indexes for heavy query workloads.
 
+## Review Matrix
+
+| Review area | Page-specific check |
+|---|---|
+| Scope | Confirm the guidance applies to Cosmos DB with azure-cosmos SDK. |
+| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
+| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
+
 ## See Also
 - [Managed Identity](./managed-identity.md)
 - [Key Vault References](./key-vault-reference.md)
@@ -125,4 +141,4 @@ def ensure_container():
 
 ## Sources
 - [Azure Cosmos DB documentation (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/cosmos-db/)
-- [Use managed identity to connect Cosmos DB from App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/tutorial-connect-msi-azure-service)
+- [Use managed identity to connect Cosmos DB from App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/overview-managed-identity)

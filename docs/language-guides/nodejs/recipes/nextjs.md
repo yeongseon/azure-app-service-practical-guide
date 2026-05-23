@@ -1,12 +1,20 @@
 ---
 content_sources:
   diagrams:
-    - id: next-js-on-app-service
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
+  - id: next-js-on-app-service
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/
+    verified: true
 ---
-
 # Next.js on App Service
 
 This recipe covers deploying a Next.js application to Azure App Service using the standalone build feature and SSR configuration.
@@ -113,6 +121,14 @@ CMD ["node", "server.js"]
     - [ISR on App Service](https://github.com/yeongseon/azure-app-service-practical-guide/issues)
     - [Edge middleware](https://github.com/yeongseon/azure-app-service-practical-guide/issues)
     - [Contribute](https://github.com/yeongseon/azure-app-service-practical-guide/issues)
+
+## Review Matrix
+
+| Review area | Page-specific check |
+|---|---|
+| Scope | Confirm the guidance applies to Next.js on App Service. |
+| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
+| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
 
 ## See Also
 - [Custom Container](./custom-container.md)

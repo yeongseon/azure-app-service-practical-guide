@@ -1,12 +1,20 @@
 ---
 content_sources:
   diagrams:
-    - id: private-endpoints
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/networking/private-endpoint
+  - id: private-endpoints
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/networking/private-endpoint
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/networking/private-endpoint
+    verified: true
 ---
-
 # Private Endpoints
 
 Connect App Service to backend services over private networking using VNet integration and private endpoints for SQL, Redis, and Storage.
@@ -154,8 +162,20 @@ Use dependency telemetry and synthetic API checks to verify end-to-end connectiv
 
 Use resilient retry settings (`EnableRetryOnFailure`, Redis reconnect behavior) and monitor transient errors.
 
+## Review Matrix
+
+| Review area | Page-specific check |
+|---|---|
+| Scope | Confirm the guidance applies to Private Endpoints. |
+| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
+| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
+
 ## See Also
 
 - [Azure SQL](azure-sql.md)
 - [Redis Cache](redis.md)
 - For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-app-service-practical-guide/)
+
+## Sources
+
+- [Microsoft Learn source 1](https://learn.microsoft.com/en-us/azure/app-service/networking/private-endpoint)

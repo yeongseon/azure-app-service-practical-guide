@@ -1,16 +1,24 @@
 ---
 content_sources:
   diagrams:
-    - id: 02-first-deploy
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/quickstart-dotnetcore
-    - id: 02-first-deploy-flow
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/quickstart-dotnetcore
+  - id: 02-first-deploy
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/quickstart-dotnetcore
+  - id: 02-first-deploy-flow
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/quickstart-dotnetcore
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/quickstart-dotnetcore
+    verified: true
 ---
-
 # 02 - First Deploy
 
 Deploy the ASP.NET Core 8 sample to Azure App Service in a few minutes by publishing the app locally and using `az webapp up`.

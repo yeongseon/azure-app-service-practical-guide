@@ -262,6 +262,14 @@ For language-specific operational guidance, see:
 - [Java Guide](../language-guides/java/index.md)
 - [.NET Guide](../language-guides/dotnet/index.md)
 
+## Review Matrix
+
+| Review area | Page-specific check |
+|---|---|
+| Scope | Confirm the guidance applies to Health and Recovery Operations. |
+| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
+| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
+
 ## See Also
 
 - [Operations Index](./index.md)

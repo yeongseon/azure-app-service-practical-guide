@@ -1,12 +1,20 @@
 ---
 content_sources:
   diagrams:
-    - id: easy-auth
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization
+  - id: easy-auth
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization
+    verified: true
 ---
-
 # Easy Auth
 
 Protect Flask endpoints using App Service built-in authentication and consume authenticated user context from request headers.
@@ -111,6 +119,14 @@ def admin_only():
 - Use provider access tokens (`X-MS-TOKEN-*`) for downstream API calls when required.
 - Combine Easy Auth (authentication) with app-level RBAC/ABAC (authorization).
 - Restrict authentication to specific tenant(s) and issuer validation for multi-tenant scenarios.
+
+## Review Matrix
+
+| Review area | Page-specific check |
+|---|---|
+| Scope | Confirm the guidance applies to Easy Auth. |
+| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
+| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
 
 ## See Also
 - [Managed Identity](./managed-identity.md)

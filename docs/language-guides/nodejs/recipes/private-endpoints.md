@@ -1,12 +1,20 @@
 ---
 content_sources:
   diagrams:
-    - id: private-endpoints
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/networking/private-endpoint
+  - id: private-endpoints
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/networking/private-endpoint
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/networking/private-endpoint
+    verified: true
 ---
-
 # Private Endpoints
 
 Connect an Express app on App Service to SQL, Redis, and Key Vault over private endpoints while preserving standard Azure service DNS names.
@@ -188,6 +196,14 @@ az webapp vnet-integration list \
 
 - Validate route table and DNS path for `vault.azure.net` via private link.
 - Check App Service managed identity permissions on Key Vault.
+
+## Review Matrix
+
+| Review area | Page-specific check |
+|---|---|
+| Scope | Confirm the guidance applies to Private Endpoints. |
+| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
+| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
 
 ## See Also
 

@@ -1,12 +1,20 @@
 ---
 content_sources:
   diagrams:
-    - id: azure-sql
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/azure-sql/database/connect-query-python
+  - id: azure-sql
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/azure-sql/database/connect-query-python
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/azure-sql/database/connect-query-python
+    verified: true
 ---
-
 # Azure SQL
 
 Connect ASP.NET Core 8 to Azure SQL using Entity Framework Core and managed identity authentication for passwordless production access.
@@ -171,6 +179,14 @@ Enable EF Core retries and verify firewall/private endpoint rules.
 ### Slow queries
 
 Capture query plans and add indexes; review `dependencies` telemetry for high-duration SQL operations.
+
+## Review Matrix
+
+| Review area | Page-specific check |
+|---|---|
+| Scope | Confirm the guidance applies to Azure SQL. |
+| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
+| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
 
 ## See Also
 

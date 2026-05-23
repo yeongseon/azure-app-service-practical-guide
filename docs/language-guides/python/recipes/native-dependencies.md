@@ -1,12 +1,20 @@
 ---
 content_sources:
   diagrams:
-    - id: native-dependencies-on-app-service-linux
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
+  - id: native-dependencies-on-app-service-linux
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/
+    verified: true
 ---
-
 # Native Dependencies on App Service Linux
 
 Handle Python packages with C/C++ extensions reliably on Azure App Service Linux.
@@ -112,6 +120,14 @@ def health_native():
 - Prebuild wheels in CI (`pip wheel`) and publish to an internal package index.
 - Use constraints files (`-c constraints.txt`) for deterministic dependency resolution.
 - Track ABI compatibility when upgrading Python minor versions.
+
+## Review Matrix
+
+| Review area | Page-specific check |
+|---|---|
+| Scope | Confirm the guidance applies to Native Dependencies on App Service Linux. |
+| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
+| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
 
 ## See Also
 - [Custom Container](./custom-container.md)

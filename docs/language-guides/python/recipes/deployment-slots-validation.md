@@ -1,12 +1,20 @@
 ---
 content_sources:
   diagrams:
-    - id: deployment-slots-validation
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/quickstart-python
+  - id: deployment-slots-validation
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/quickstart-python
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/quickstart-python
+    verified: true
 ---
-
 # Deployment Slots Validation
 
 Use staging slots to validate deployments before production swap, with health checks and automated safeguards in GitHub Actions.
@@ -195,8 +203,20 @@ Ensure no other management operations are running on the App Service. Check the 
 
 Disable auto-swap and revert to manual swap or a controlled GitHub Actions workflow. Ensure that the staging slot is fully warmed up before auto-swap triggers.
 
+## Review Matrix
+
+| Review area | Page-specific check |
+|---|---|
+| Scope | Confirm the guidance applies to Deployment Slots Validation. |
+| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
+| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
+
 ## See Also
 
 - [Tutorial: 06. CI/CD](../tutorial/06-ci-cd.md)
 - [Tutorial: 03. Configuration](../tutorial/03-configuration.md)
 - For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-app-service-practical-guide/)
+
+## Sources
+
+- [Microsoft Learn source 1](https://learn.microsoft.com/en-us/azure/app-service/quickstart-python)

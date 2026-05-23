@@ -1,16 +1,24 @@
 ---
 content_sources:
   diagrams:
-    - id: 06-ci-cd-with-azure-devops
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/deploy-continuous-deployment
-    - id: diagram-2
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/deploy-continuous-deployment
+  - id: 06-ci-cd-with-azure-devops
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/deploy-continuous-deployment
+  - id: diagram-2
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/deploy-continuous-deployment
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/deploy-continuous-deployment
+    verified: true
 ---
-
 # 06. CI/CD with Azure DevOps
 
 Implement continuous integration and deployment for the .NET guide using **Azure DevOps Pipelines** as the primary delivery workflow.

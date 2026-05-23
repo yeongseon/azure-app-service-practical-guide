@@ -1,17 +1,26 @@
 ---
 content_sources:
   diagrams:
-    - id: playbook-map
-      type: flowchart
-      source: self-generated
-      justification: "Synthesized the playbook symptom map from Microsoft Learn troubleshooting topics that anchor this section."
-      based_on:
-        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
-        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
-        - https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/troubleshoot-performance-degradation
-        - https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/connection-issues-with-ssl-or-tls/troubleshoot-domain-and-tls-ssl-certificates
+  - id: playbook-map
+    type: flowchart
+    source: self-generated
+    justification: Synthesized the playbook symptom map from Microsoft Learn troubleshooting
+      topics that anchor this section.
+    based_on:
+    - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+    - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+    - https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/troubleshoot-performance-degradation
+    - https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/connection-issues-with-ssl-or-tls/troubleshoot-domain-and-tls-ssl-certificates
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+    verified: true
 ---
-
 # Playbooks
 
 Symptom-oriented troubleshooting guides for Azure App Service Linux.
@@ -89,3 +98,10 @@ graph TD
 - [Troubleshooting](../index.md)
 - [First 10 Minutes Checklists](../first-10-minutes/index.md)
 - [Hands-on Labs](../lab-guides/index.md)
+
+## Sources
+
+- [Microsoft Learn source 1](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs)
+- [Microsoft Learn source 2](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503)
+- [Microsoft Learn source 3](https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/troubleshoot-performance-degradation)
+- [Microsoft Learn source 4](https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/connection-issues-with-ssl-or-tls/troubleshoot-domain-and-tls-ssl-certificates)

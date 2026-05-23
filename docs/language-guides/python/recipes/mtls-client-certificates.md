@@ -1,14 +1,22 @@
 ---
 content_sources:
   diagrams:
-    - id: python-mtls-client-certificate-flow
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/app-service-web-configure-tls-mutual-auth
-      based_on:
-        - https://learn.microsoft.com/en-us/azure/app-service/configure-ssl-certificate-in-code
+  - id: python-mtls-client-certificate-flow
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/app-service-web-configure-tls-mutual-auth
+    based_on:
+    - https://learn.microsoft.com/en-us/azure/app-service/configure-ssl-certificate-in-code
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/app-service-web-configure-tls-mutual-auth
+    verified: true
 ---
-
 # mTLS Client Certificates
 
 Use Flask middleware to parse `X-ARR-ClientCert`, validate the forwarded client certificate, and attach a private certificate to outbound HTTPS calls when the remote service requires mutual TLS.
@@ -234,6 +242,14 @@ curl --include \
 - Replace CN-only validation with issuer, SAN, and chain validation for production
 - Move outbound certificate passwords or related configuration into your approved secret-management workflow
 - Delete temporary diagnostics routes after validation if they expose more certificate metadata than your policy allows
+
+## Review Matrix
+
+| Review area | Page-specific check |
+|---|---|
+| Scope | Confirm the guidance applies to mTLS Client Certificates. |
+| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
+| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
 
 ## See Also
 

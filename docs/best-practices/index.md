@@ -216,7 +216,7 @@ Treat this section as a living operational standard:
 ## Sources
 
 - [Azure App Service documentation (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/)
-- [Overview of App Service best practices](https://learn.microsoft.com/azure/app-service/overview-best-practices)
+- [Overview of App Service best practices](https://learn.microsoft.com/en-us/azure/app-service/app-service-best-practices)
 - [Security in Azure App Service](https://learn.microsoft.com/azure/app-service/overview-security)
 - [App Service networking features](https://learn.microsoft.com/azure/app-service/networking-features)
 - [Use deployment slots in Azure App Service](https://learn.microsoft.com/azure/app-service/deploy-staging-slots)

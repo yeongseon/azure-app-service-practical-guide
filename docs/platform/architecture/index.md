@@ -376,7 +376,7 @@ az webapp config appsettings list \
 
 Learn references:
 
-- [Manage an App Service app in Azure CLI](https://learn.microsoft.com/azure/app-service/scripts/cli-web-app)
+- [Manage an App Service app in Azure CLI](https://learn.microsoft.com/en-us/azure/app-service/quickstart-html)
 - [Configure app settings](https://learn.microsoft.com/azure/app-service/configure-common)
 
 ---

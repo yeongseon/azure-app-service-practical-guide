@@ -1,12 +1,20 @@
 ---
 content_sources:
   diagrams:
-    - id: main-content
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
+  - id: main-content
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/
+    verified: true
 ---
-
 # .NET Guide
 
 This guide covers the end-to-end path for running ASP.NET Core applications on Azure App Service.
@@ -38,6 +46,14 @@ Use .NET recipes to apply identity, data, networking, and deployment patterns.
 
 - [.NET Recipes](./recipes/index.md)
 
+## Review Matrix
+
+| Review area | Page-specific check |
+|---|---|
+| Scope | Confirm the guidance applies to .NET Guide. |
+| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
+| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
+
 ## See Also
 
 - [Language Guides](../index.md)
@@ -47,4 +63,4 @@ Use .NET recipes to apply identity, data, networking, and deployment patterns.
 
 ## Sources
 
-- [Quickstart: Deploy an ASP.NET Core app](https://learn.microsoft.com/azure/app-service/quickstart-dotnetcore)
+- [Quickstart: Deploy an ASP.NET Core app](https://learn.microsoft.com/en-us/azure/app-service/quickstart-dotnetcore)

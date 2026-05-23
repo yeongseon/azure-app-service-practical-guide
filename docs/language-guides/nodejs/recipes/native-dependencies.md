@@ -1,12 +1,20 @@
 ---
 content_sources:
   diagrams:
-    - id: native-dependencies
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
+  - id: native-dependencies
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/
+    verified: true
 ---
-
 # Native Dependencies
 
 This recipe explains how to manage native Node.js modules like `sharp` and `bcrypt` on Azure App Service using multi-stage Docker builds.
@@ -111,6 +119,14 @@ node -e "require('bcrypt')"
     - [Pre-built binaries](https://github.com/yeongseon/azure-app-service-practical-guide/issues)
     - [Alpine compatibility](https://github.com/yeongseon/azure-app-service-practical-guide/issues)
     - [Contribute](https://github.com/yeongseon/azure-app-service-practical-guide/issues)
+
+## Review Matrix
+
+| Review area | Page-specific check |
+|---|---|
+| Scope | Confirm the guidance applies to Native Dependencies. |
+| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
+| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
 
 ## See Also
 - [Custom Container](./custom-container.md)

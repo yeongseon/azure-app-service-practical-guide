@@ -205,3 +205,8 @@ Deploy reproduction environments to your Azure subscription and observe real sym
 - [Architecture Overview](architecture-overview.md)
 - [Decision Tree](decision-tree.md)
 - [Evidence Map](evidence-map.md)
+
+## Sources
+
+- [Microsoft Learn source 1](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs)
+- [Microsoft Learn source 2](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503)

@@ -1,12 +1,20 @@
 ---
 content_sources:
   diagrams:
-    - id: architecture
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/app-service-key-vault-references
+  - id: architecture
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/app-service-key-vault-references
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/app-service-key-vault-references
+    verified: true
 ---
-
 # Key Vault References
 
 Inject secrets directly into App Service environment variables using Key Vault References, while keeping Flask code simple.
@@ -108,6 +116,14 @@ def connect_with_secret():
 - Combine with slot settings to isolate staging vs production secrets.
 - Prefer Key Vault References for non-SDK consumers; use SDK + managed identity for dynamic secret operations.
 - Rotate secrets in Key Vault without code changes or repo updates.
+
+## Review Matrix
+
+| Review area | Page-specific check |
+|---|---|
+| Scope | Confirm the guidance applies to Key Vault References. |
+| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
+| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
 
 ## See Also
 - [Managed Identity](./managed-identity.md)

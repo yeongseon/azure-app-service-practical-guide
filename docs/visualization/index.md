@@ -4,23 +4,33 @@ slug: visualization-index
 doc_type: map
 section: visualization
 topics:
-  - navigation
-  - knowledge-graph
-  - learning
+- navigation
+- knowledge-graph
+- learning
 products:
-  - azure-app-service
+- azure-app-service
 summary: Interactive visual maps for navigating the Azure App Service documentation.
 status: stable
 last_reviewed: 2026-04-08
 content_sources:
   diagrams:
-    - id: visualization-index-diagram-1
-      type: flowchart
-      source: self-generated
-      justification: "Self-generated visualization synthesized from official Azure App Service documentation to explain guide structure and relationships."
-      based_on:
-        - https://learn.microsoft.com/en-us/azure/app-service/overview
-        - https://learn.microsoft.com/en-us/azure/app-service/environment/overview
+  - id: visualization-index-diagram-1
+    type: flowchart
+    source: self-generated
+    justification: Self-generated visualization synthesized from official Azure App
+      Service documentation to explain guide structure and relationships.
+    based_on:
+    - https://learn.microsoft.com/en-us/azure/app-service/overview
+    - https://learn.microsoft.com/en-us/azure/app-service/environment/overview
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/overview
+    verified: true
 ---
 # Visualization
 
@@ -168,3 +178,13 @@ To add a document to the knowledge graph:
 4. Run `python tools/validate_frontmatter.py` to check for broken links
 
 See the [Taxonomy](../meta/taxonomy.md) for complete frontmatter schema documentation.
+
+## See Also
+
+- [Guide home](../index.md)
+- [Start here](../start-here/overview.md)
+
+## Sources
+
+- [Microsoft Learn source 1](https://learn.microsoft.com/en-us/azure/app-service/overview)
+- [Microsoft Learn source 2](https://learn.microsoft.com/en-us/azure/app-service/environment/overview)

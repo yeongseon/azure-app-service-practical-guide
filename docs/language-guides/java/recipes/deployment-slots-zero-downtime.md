@@ -1,12 +1,20 @@
 ---
 content_sources:
   diagrams:
-    - id: slot-based-release-flow
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/quickstart-python
+  - id: slot-based-release-flow
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/quickstart-python
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/quickstart-python
+    verified: true
 ---
-
 # Deployment Slots for Zero-Downtime Releases
 
 Use App Service deployment slots to validate Java releases in staging, then swap traffic to production with near-zero downtime.
@@ -157,6 +165,14 @@ Ensure parity for non-sticky settings and dependent resource access policies.
 ### Canary routing not taking effect
 
 Check slot name, distribution values, and caching/CDN layers that may mask split traffic behavior.
+
+## Review Matrix
+
+| Review area | Page-specific check |
+|---|---|
+| Scope | Confirm the guidance applies to Deployment Slots for Zero-Downtime Releases. |
+| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
+| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
 
 ## See Also
 

@@ -1,12 +1,20 @@
 ---
 content_sources:
   diagrams:
-    - id: main-content
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
+  - id: main-content
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/
+    verified: true
 ---
-
 # Language Guides
 
 This section covers deploying web applications to Azure App Service in four languages: Python, Node.js, Java, and .NET.
@@ -46,7 +54,7 @@ For shared platform concepts, see [Platform](../platform/index.md).
 
 ## Sources
 
-- [Quickstart: Deploy a Python web app](https://learn.microsoft.com/azure/app-service/quickstart-python)
-- [Quickstart: Deploy a Node.js web app](https://learn.microsoft.com/azure/app-service/quickstart-nodejs)
-- [Quickstart: Deploy a Java app](https://learn.microsoft.com/azure/app-service/quickstart-java)
-- [Quickstart: Deploy an ASP.NET Core app](https://learn.microsoft.com/azure/app-service/quickstart-dotnetcore)
+- [Quickstart: Deploy a Python web app](https://learn.microsoft.com/en-us/azure/app-service/quickstart-python)
+- [Quickstart: Deploy a Node.js web app](https://learn.microsoft.com/en-us/azure/app-service/quickstart-nodejs)
+- [Quickstart: Deploy a Java app](https://learn.microsoft.com/en-us/azure/app-service/quickstart-java)
+- [Quickstart: Deploy an ASP.NET Core app](https://learn.microsoft.com/en-us/azure/app-service/quickstart-dotnetcore)

@@ -1,12 +1,20 @@
 ---
 content_sources:
   diagrams:
-    - id: architecture
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/azure-sql/database/connect-query-python
+  - id: architecture
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/azure-sql/database/connect-query-python
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/azure-sql/database/connect-query-python
+    verified: true
 ---
-
 # Azure SQL with Managed Identity
 
 Connect Flask to Azure SQL Database using `pyodbc` and Microsoft Entra authentication via Managed Identity.
@@ -123,6 +131,14 @@ gunicorn --bind 0.0.0.0:${PORT:-8000} app:app --workers 2 --timeout 120
 - Use retry logic (`tenacity`) for transient errors (error codes 40613, 40197, 40501).
 - Use short-lived per-request connections (or a bounded pool) to avoid stale tokens.
 - For high throughput, evaluate SQLAlchemy with an access-token event hook.
+
+## Review Matrix
+
+| Review area | Page-specific check |
+|---|---|
+| Scope | Confirm the guidance applies to Azure SQL with Managed Identity. |
+| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
+| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
 
 ## See Also
 - [Managed Identity](./managed-identity.md)

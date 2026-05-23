@@ -257,6 +257,14 @@ Expected behavior:
 - Preventive action items with ownership and deadlines
 - Documentation updates in operations and best-practices sections
 
+## Review Matrix
+
+| Review area | Page-specific check |
+|---|---|
+| Scope | Confirm the guidance applies to Reliability Best Practices. |
+| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
+| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
+
 ## See Also
 
 - [Platform - How App Service Works](../platform/architecture/index.md)
@@ -267,7 +275,7 @@ Expected behavior:
 
 ## Sources
 
-- [Best practices for Azure App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-best-practices)
+- [Best practices for Azure App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/app-service-best-practices)
 - [Monitor instances in Azure App Service with Health check (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/monitor-instances-health-check)
 - [Back up and restore your app in Azure App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/manage-backup)
 - [Create and manage deployment slots in Azure App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/deploy-staging-slots)

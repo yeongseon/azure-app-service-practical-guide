@@ -368,7 +368,7 @@ Run this checklist before calling an app production-ready:
 
 ## Sources
 
-- [Overview of App Service best practices](https://learn.microsoft.com/azure/app-service/overview-best-practices)
+- [Overview of App Service best practices](https://learn.microsoft.com/en-us/azure/app-service/app-service-best-practices)
 - [Configure common App Service settings](https://learn.microsoft.com/azure/app-service/configure-common)
 - [Enable diagnostics in App Service](https://learn.microsoft.com/azure/app-service/troubleshoot-diagnostic-logs)
 - [Health check in App Service](https://learn.microsoft.com/azure/app-service/monitor-instances-health-check)

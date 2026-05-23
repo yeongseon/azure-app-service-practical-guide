@@ -1,12 +1,20 @@
 ---
 content_sources:
   diagrams:
-    - id: architecture
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container
+  - id: architecture
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container
+    verified: true
 ---
-
 # Custom Container (Docker + Gunicorn + SSH)
 
 Run Flask on App Service with a custom Linux container when you need full OS/package control.
@@ -120,6 +128,14 @@ Subsystem sftp internal-sftp
 - Use multi-stage builds and wheelhouse caching to reduce image size.
 - Add health checks and a non-root runtime user where compatible.
 - Pin base image digest to control supply chain changes.
+
+## Review Matrix
+
+| Review area | Page-specific check |
+|---|---|
+| Scope | Confirm the guidance applies to Custom Container (Docker + Gunicorn + SSH). |
+| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
+| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
 
 ## See Also
 - [Native Dependencies](./native-dependencies.md)

@@ -140,6 +140,14 @@ For ASE or ILB ASE deployments, confirm:
 - validate certificate loading and rotation during planned maintenance windows
 - treat ASE as a topology change, not as a new certificate format
 
+## Review Matrix
+
+| Review area | Page-specific check |
+|---|---|
+| Scope | Confirm the guidance applies to mTLS Failures. |
+| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
+| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
+
 ## See Also
 
 - [Mutual TLS Architecture](../../platform/mtls.md)

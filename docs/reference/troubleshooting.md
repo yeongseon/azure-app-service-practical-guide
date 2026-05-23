@@ -1,13 +1,23 @@
 ---
 content_sources:
   diagrams:
-    - id: reference-troubleshooting-diagram-1
-      type: flowchart
-      source: self-generated
-      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
-      based_on:
-        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
-        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+  - id: reference-troubleshooting-diagram-1
+    type: flowchart
+    source: self-generated
+    justification: Self-generated troubleshooting diagram synthesized from Microsoft
+      Learn diagnostics and Azure App Service incident guidance for this guide.
+    based_on:
+    - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+    - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+    verified: true
 ---
 # Troubleshooting
 

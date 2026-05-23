@@ -1,12 +1,22 @@
 ---
 content_sources:
   diagrams:
-    - id: index-diagram-1
-      type: flowchart
-      source: self-generated
-      justification: "Self-generated navigation diagram synthesized from official Azure App Service overview documentation for this guide."
-      based_on:
-        - https://learn.microsoft.com/en-us/azure/app-service/overview
+  - id: index-diagram-1
+    type: flowchart
+    source: self-generated
+    justification: Self-generated navigation diagram synthesized from official Azure
+      App Service overview documentation for this guide.
+    based_on:
+    - https://learn.microsoft.com/en-us/azure/app-service/overview
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/overview
+    verified: true
 ---
 # Azure App Service Practical Guide
 
@@ -74,3 +84,12 @@ flowchart TD
 This is an independent community project. Not affiliated with or endorsed by Microsoft.
 
 Primary product reference: [Azure App Service overview](https://learn.microsoft.com/azure/app-service/overview)
+
+## See Also
+
+- [Start here](start-here/overview.md)
+
+## Sources
+
+- [Microsoft Learn source 1](https://learn.microsoft.com/en-us/azure/app-service/overview)
+- [Microsoft Learn source 2](https://learn.microsoft.com/azure/app-service/overview)

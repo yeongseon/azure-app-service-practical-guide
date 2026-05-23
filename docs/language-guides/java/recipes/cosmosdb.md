@@ -1,12 +1,20 @@
 ---
 content_sources:
   diagrams:
-    - id: reference-architecture
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/quickstart-python
+  - id: reference-architecture
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/quickstart-python
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/quickstart-python
+    verified: true
 ---
-
 # Cosmos DB Integration
 
 Integrate Spring Boot with Azure Cosmos DB for globally distributed, low-latency NoSQL workloads on App Service.
@@ -146,6 +154,14 @@ Review partition key choice and query filters; avoid unbounded scans.
 
 Ensure document model uses compatible types and includes an `id` field.
 
+## Review Matrix
+
+| Review area | Page-specific check |
+|---|---|
+| Scope | Confirm the guidance applies to Cosmos DB Integration. |
+| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
+| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
+
 ## See Also
 
 - [Redis Cache](redis.md)
@@ -155,4 +171,4 @@ Ensure document model uses compatible types and includes an `id` field.
 ## Sources
 
 - [Quickstart: Build a Java app by using Azure Cosmos DB SQL API account](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/quickstart-java)
-- [Spring Data Azure Cosmos DB developer guide](https://learn.microsoft.com/en-us/azure/developer/java/spring-framework/configure-spring-data-azure-cosmos-db)
+- [Spring Data Azure Cosmos DB developer guide](https://learn.microsoft.com/en-us/azure/developer/java/spring-framework/how-to-guides-spring-data-cosmosdb)

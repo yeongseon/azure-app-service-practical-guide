@@ -444,7 +444,7 @@ A durable security program treats configuration as code and operations as contin
 - [App Service security overview](https://learn.microsoft.com/azure/app-service/overview-security)
 - [Security baseline for App Service](https://learn.microsoft.com/security/benchmark/azure/baselines/app-service-security-baseline)
 - [Networking features overview](https://learn.microsoft.com/azure/app-service/networking-features)
-- [Zero Trust for App Service](https://learn.microsoft.com/security/zero-trust/deploy/app-service)
+- [Zero Trust for App Service](https://learn.microsoft.com/en-us/security/zero-trust/)
 - [Managed identities for App Service](https://learn.microsoft.com/azure/app-service/overview-managed-identity)
 - [Key Vault references](https://learn.microsoft.com/azure/app-service/app-service-key-vault-references)
 - [Microsoft Defender for App Service](https://learn.microsoft.com/azure/defender-for-cloud/defender-for-app-service-introduction)

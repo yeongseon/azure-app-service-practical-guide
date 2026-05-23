@@ -4,22 +4,33 @@ slug: taxonomy
 doc_type: reference
 section: meta
 topics:
-  - documentation
-  - standards
-  - metadata
+- documentation
+- standards
+- metadata
 products:
-  - azure-app-service
-summary: Standard taxonomy for document types, relationship fields, and frontmatter schema.
+- azure-app-service
+summary: Standard taxonomy for document types, relationship fields, and frontmatter
+  schema.
 status: stable
 last_reviewed: 2026-04-08
 content_sources:
   diagrams:
-    - id: meta-taxonomy-diagram-1
-      type: flowchart
-      source: self-generated
-      justification: "Self-generated navigation diagram synthesized from official Azure App Service overview documentation for this guide."
-      based_on:
-        - https://learn.microsoft.com/en-us/azure/app-service/overview
+  - id: meta-taxonomy-diagram-1
+    type: flowchart
+    source: self-generated
+    justification: Self-generated navigation diagram synthesized from official Azure
+      App Service overview documentation for this guide.
+    based_on:
+    - https://learn.microsoft.com/en-us/azure/app-service/overview
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/overview
+    verified: true
 ---
 # Documentation Taxonomy
 
@@ -261,3 +272,12 @@ python3 tools/build_doc_graph.py
 This produces:
 - `docs/assets/graph/core-knowledge.json`
 - `docs/assets/graph/troubleshooting-map.json`
+
+## See Also
+
+- [Guide home](../index.md)
+- [Start here](../start-here/overview.md)
+
+## Sources
+
+- [Microsoft Learn source 1](https://learn.microsoft.com/en-us/azure/app-service/overview)

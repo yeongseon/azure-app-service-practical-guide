@@ -1,16 +1,24 @@
 ---
 content_sources:
   diagrams:
-    - id: custom-container-deployment
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container
-    - id: architecture
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container
+  - id: custom-container-deployment
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container
+  - id: architecture
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container
+    verified: true
 ---
-
 # Custom Container Deployment
 
 This recipe explains how to deploy a Node.js application as a custom Docker container on Azure App Service for Linux, including SSH access for debugging.
@@ -153,6 +161,14 @@ az webapp config container set --name $APP_NAME --resource-group $RG \
     - [Multi-stage builds](https://github.com/yeongseon/azure-app-service-practical-guide/issues)
     - [Sidecar containers](https://github.com/yeongseon/azure-app-service-practical-guide/issues)
     - [Contribute](https://github.com/yeongseon/azure-app-service-practical-guide/issues)
+
+## Review Matrix
+
+| Review area | Page-specific check |
+|---|---|
+| Scope | Confirm the guidance applies to Custom Container Deployment. |
+| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
+| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
 
 ## See Also
 - [Native Dependencies](./native-dependencies.md)

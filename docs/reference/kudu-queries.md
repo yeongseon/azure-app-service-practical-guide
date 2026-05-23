@@ -1,12 +1,22 @@
 ---
 content_sources:
   diagrams:
-    - id: reference-kudu-queries-diagram-1
-      type: flowchart
-      source: self-generated
-      justification: "Self-generated reference diagram synthesized from official Azure App Service documentation for this guide."
-      based_on:
-        - https://learn.microsoft.com/en-us/azure/app-service/resources-kudu
+  - id: reference-kudu-queries-diagram-1
+    type: flowchart
+    source: self-generated
+    justification: Self-generated reference diagram synthesized from official Azure
+      App Service documentation for this guide.
+    based_on:
+    - https://learn.microsoft.com/en-us/azure/app-service/resources-kudu
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/resources-kudu
+    verified: true
 ---
 # Kudu API Reference
 

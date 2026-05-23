@@ -156,6 +156,14 @@ After these checks, you should be able to:
 - [Intermittent 5xx Under Load](../playbooks/performance/intermittent-5xx-under-load.md)
 - [SNAT or Application Issue?](../playbooks/outbound-network/snat-or-application-issue.md)
 
+## Review Matrix
+
+| Review area | Page-specific check |
+|---|---|
+| Scope | Confirm the guidance applies to First 10 Minutes: Performance. |
+| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
+| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
+
 ## See Also
 
 - [Slow Response but Low CPU](../playbooks/performance/slow-response-but-low-cpu.md)
