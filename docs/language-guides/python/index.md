@@ -146,6 +146,14 @@ graph TB
 !!! tip "Which tier to choose?"
     Start with **Basic (B1)** for development. Use **Standard (S1)** or **Premium (P1v3)** for production workloads needing VNet integration, deployment slots, and autoscale. Choose **Isolated (ASE v3)** only when regulatory or compliance requirements mandate full network isolation.
 
+## Run It in the Portal
+
+#### Portal view: App Service Plan overview (Pricing tier surfaces here)
+
+![App Service Plan overview blade showing the Linux plan asp-test-20251107 in Korea Central with Pricing tier "Premium0 V3", App Service Plan kind "Linux", Status "Ready", Operating system "Linux", and 1 instance; the right-side charts show CPU Percentage and Memory Percentage time-series for the plan and a list of the apps and slots hosted on the plan including app-test-20251107 and its staging slot.](../../assets/platform/hosting-models/01-app-service-plan.png)
+
+The `App Service Plan` overview blade is the Portal surface where the tier choice this guide walks through becomes visible. The visible `Pricing tier: Premium0 V3` and `Operating system: Linux` reflect the same dimensions the tier architecture diagrams above describe — the plan SKU determines whether VNet integration, deployment slots, and autoscale are available to the apps hosted on it. The per-app list at the bottom (`app-test-20251107` and its staging slot) is how you verify that the Python web app is pinned to the chosen plan. Use this blade as the Portal anchor after selecting the tier appropriate for your workload (Basic for development, Standard or Premium for production VNet workloads, Isolated for full network isolation).
+
 ## Advanced Topics
 
 Use the Python-specific recipes for service integrations and production patterns.

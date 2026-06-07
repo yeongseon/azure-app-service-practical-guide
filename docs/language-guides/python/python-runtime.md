@@ -230,6 +230,14 @@ az webapp ssh --resource-group $RG --name $APP_NAME
 
 Check installed packages and startup process from SSH/Kudu when diagnosing import issues.
 
+## Run It in the Portal
+
+#### Portal view: Environment variables blade (runtime app settings managed here)
+
+![Azure Portal Environment variables blade for app-test-20251107 Web App with the App settings tab selected (Connection strings tab adjacent). The toolbar shows a search box plus the actions plus Add, Refresh, Show values, Advanced edit, and Pull reference values. The settings table has columns Name, Value, Deployment slot setting, Source, and Delete and lists five App Service-sourced rows: APPLICATIONINSIGHTS_CONNECTION_STRING, APPLICATIONINSIGHTSAGENT_EXTENSION_ENABLED, ApplicationInsightsAgent_EXTENSION_VERSION, SCM_DO_BUILD_DURING_DEPLOYMENT, and WEBSITE_HTTPLOGGING_RETENTION_DAYS, each with a Show value link and Source App Service. The left navigation expands Settings with Environment variables highlighted, alongside Configuration, Instances, Authentication, Identity, Backups, Custom domains, Certificates, Networking, and WebJobs; Apply and Discard buttons are disabled at the bottom.](../../assets/operations/deployment/zip-deploy/01-app-settings-run-from-package.png)
+
+The `Environment variables` blade with the `App settings` tab selected is the Portal counterpart to the `az webapp config appsettings set` commands this page uses to configure the Python runtime. The visible row `SCM_DO_BUILD_DURING_DEPLOYMENT` is the same setting this page enables to make Oryx install `requirements.txt` on deploy; after running the CLI to set `WEB_CONCURRENCY` or `PYTHON_ENABLE_GUNICORN_MULTIWORKERS`, those rows appear in the same `Name`/`Value`/`Deployment slot setting`/`Source` table. The `Show value` link on each row lets you confirm the registered value without dropping back to the CLI, and the `Refresh` action picks up CLI-driven changes without leaving the blade. Use this blade as the Portal verification surface for any runtime app setting documented on this page.
+
 ## See Also
 - [CLI Cheatsheet](../../reference/cli-cheatsheet.md)
 - [Troubleshooting](../../reference/troubleshooting.md)
