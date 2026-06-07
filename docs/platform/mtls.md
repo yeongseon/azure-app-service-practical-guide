@@ -61,6 +61,10 @@ The important architecture rule is that **inbound mTLS and outbound mTLS are ind
 
 For inbound mutual TLS, App Service terminates TLS at the front end and forwards the presented client certificate to your application in the `X-ARR-ClientCert` request header.
 
+#### Portal view: Custom domains and TLS bindings
+
+![Custom domains blade for a Web App showing three configured hostnames — the default `app-test-20251107.azurewebsites.net` host, the App Service domain `app-test-20251107.net`, and the App Service domain `www.app-test-20251107.net`. Each row shows SSL state, TLS/SSL binding type ("SNI SSL"), certificate source ("App Service Managed Certificate"), and a Custom Domain Verification ID. Command bar buttons include Add custom domain and Manage App Service Domain; an HTTPS Only toggle and Minimum TLS Version selector are visible at the top of the blade.](../assets/platform/mtls/01-custom-domains-tls.png)
+
 Key platform behavior:
 
 - `clientCertEnabled` turns the feature on.

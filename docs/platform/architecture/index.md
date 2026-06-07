@@ -159,6 +159,12 @@ Key takeaways:
 - **SCM/Kudu is a companion deployment and diagnostics surface**, which is why deployment behavior and runtime behavior can differ.
 - Shared content and logs typically rely on **network-backed storage**, while platform services coordinate health, placement, and scale inside the regional stamp.
 
+#### Portal view: App Service Web App overview
+
+![App Service Web App overview blade for `app-test-20251107` in Korea Central showing the Essentials panel with Resource group `rg-test-20251107`, Status "Running", Location "Korea Central", Subscription "Visual Studio Enterprise Subscription", Subscription ID `00000000-0000-0000-0000-000000000000`, URL `https://app-test-20251107.azurewebsites.net`, App Service Plan `asp-test-20251107 (Premium0 V3: 1)`, Runtime stack "Python - 3.11", Operating System "Linux", Health check "Not Configured", and Inbound traffic / Outbound traffic IP cards. The body shows time-series charts for HTTP 5xx, Data In, Data Out, and Requests. The command bar contains Browse, Stop, Swap, Restart, Get publish profile, Reset publish profile, and Delete buttons. The left navigation lists Overview, Activity log, Access control (IAM), Tags, Diagnose and solve problems, and Microsoft Defender for Cloud at the top.](../../assets/platform/architecture/01-app-service-overview.png)
+
+The Overview blade is the operator's mental map of an App Service Web App. The Essentials panel ties the app to its plan SKU (`Premium0 V3`), runtime stack (Python 3.11), OS (Linux), and the inbound/outbound IP boundaries that frontend gateways present to clients. The chart row surfaces the four signals you triage first during an incident — HTTP 5xx, Data In, Data Out, Requests — which map directly to the runtime plane in the diagram above. The command bar (`Browse`, `Stop`, `Swap`, `Restart`, `Get publish profile`) gives you the management-plane levers; everything you change here flows through ARM and may recycle workers.
+
 ### [Beginner] Control plane vs data plane
 
 For change management and incident response, it helps to collapse the platform into **what you configure** versus **what executes at runtime**.

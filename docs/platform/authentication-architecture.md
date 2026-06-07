@@ -63,6 +63,10 @@ Azure App Service Authentication/Authorization (commonly called **Easy Auth**) i
 
 App Service inserts an authentication component into the inbound request path so identity is established before requests are handed to your app process.
 
+#### Portal view: Authentication blade (empty state)
+
+![Authentication blade for a Web App showing the empty state with the heading "Add identity provider to your app" and a brief description of App Service Authentication ("Easy Auth"). A primary "Add identity provider" button is centered on the page with provider logos for Microsoft, Apple, Facebook, GitHub, Google, Twitter, and OpenID Connect available. The left navigation shows the Authentication entry selected under the Settings group, and tabs for "Authentication" and "Authentication settings (Classic)" are visible at the top.](../assets/platform/authentication-architecture/01-authentication-blade.png)
+
 Core platform behavior:
 
 - The authentication module sits in front of your app in the same App Service worker sandbox.

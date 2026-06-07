@@ -191,6 +191,10 @@ Correlate these signals for end-to-end insight:
 - Dependency timing and failure rates
 - Application-level correlation IDs
 
+#### Portal view: Log stream
+
+![Log stream blade for a Web App showing the live runtime log feed. The top filter bar has "Log Level" dropdown, "Stop" / "Copy" / "Clear" buttons, a "Logs" radio set with "Runtime" selected (Platform unselected), an Instances selector with a worker instance ID, and a Lookback period of "Last 30 minutes". The main panel renders a dark console with time-stamped log lines emitted by an azure.core.pipeline.policies.http_logging_policy showing Request URL, Request method (POST), Request headers (Content-Type, Content-Length, Accept, x-ms-client-request-id, User-Agent), Response status 200, and "Transmission succeeded: Item received: 3. Items accepted: 3" entries from the Azure Monitor OpenTelemetry exporter. The left navigation shows Log stream selected under the Monitoring group.](../assets/platform/request-lifecycle/01-log-stream.png)
+
 ### CLI examples for lifecycle inspection
 
 Enable and inspect HTTP logs:

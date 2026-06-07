@@ -88,6 +88,10 @@ flowchart TD
 
 Legend: ✅ Supported · ⚠️ Limited or conditional · ❌ Not supported
 
+### Portal view: Deployment Center
+
+![Deployment Center blade for a Web App with the "Settings" tab selected showing the Source picker as an unselected dropdown labeled "Source". A bulleted list of supported deployment sources is displayed: GitHub, Bitbucket, Local Git, External Git, GitHub Actions, Azure Repos, FTPS credentials, and Manual deployment (Push/Sync). Tabs across the top of the blade include "Settings" (selected), "Containers (new)", "Logs", and "FTPS Credentials". Save and Browse buttons appear in the command bar. The left navigation shows Deployment Center highlighted under the Deployment group.](../assets/platform/deployment-options/01-deployment-center.png)
+
 ---
 
 ## ZIP Deploy — New API (`az webapp deploy`)

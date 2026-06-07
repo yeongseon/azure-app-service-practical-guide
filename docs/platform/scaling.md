@@ -92,6 +92,10 @@ Trade-offs:
 - Has finite ceiling per instance size
 - Can increase cost rapidly if used alone for growth
 
+#### Portal view: Scale up blade
+
+![Scale up (App Service plan) blade for an App Service plan showing four pricing tier categories — Dev / Test, Production, Production V3, and Production V4 — each presented as cards. Production V3 is selected and the table lists Premium V3 SKUs with their vCPU, RAM, and storage values, including P0v3, P1v3, P2v3, P3v3, P1mv3, P2mv3, P3mv3, P4mv3, and P5mv3 rows; the current Premium0 V3 tier is highlighted and an "Upgrade" button is available at the top of the blade.](../assets/platform/scaling/02-scale-up.png)
+
 ### Scale out (horizontal)
 
 Scale out adds more instances to distribute load.
@@ -107,6 +111,10 @@ Trade-offs:
 - Requires shared external state (sessions/cache/locks)
 - Dependency services must handle increased parallelism
 - Operational complexity increases with instance count
+
+#### Portal view: Scale out blade
+
+![Scale out (App Service plan) blade showing three radio tabs — Manual, Automatic, and Rules Based — with Manual selected. The right pane shows an Instance count slider currently set to 1 with valid range 1 to 3 for Premium V3 plans, and a "Save" / "Discard" command bar; an info banner notes that scale-out behavior depends on the plan SKU and recommends enabling autoscale for production.](../assets/platform/scaling/01-scale-out.png)
 
 ### Stateless design requirement
 

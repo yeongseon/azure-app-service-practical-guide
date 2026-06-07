@@ -106,6 +106,10 @@ graph TD
     VNet --> PrivateResources[Private Resources in VNet]
 ```
 
+#### Portal view: Networking blade
+
+![App Service Networking blade for a Web App split into Inbound traffic configuration and Outbound traffic configuration cards. The Inbound card shows Public network access "Enabled (unrestricted)", Access restriction status "Not configured", Private endpoints "0", and FTP basic auth status. The Outbound card shows Virtual network integration "Not configured", Outbound addresses (a comma-separated list of platform-assigned IPs), and links to configure VNet integration and hybrid connections. A central panel labels the rows as inbound and outbound configuration columns.](../assets/platform/networking/01-networking-blade.png)
+
 ### Inbound traffic controls
 
 By default, an app has a public endpoint. You can tighten inbound access using:

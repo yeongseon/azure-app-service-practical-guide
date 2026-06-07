@@ -204,6 +204,10 @@ Design notes: treat DNS as part of the security boundary, restrict SCM/Kudu sepa
 
 Managed identity replaces embedded credentials with workload-bound tokens issued by Microsoft Entra ID.
 
+##### Portal view: Identity blade
+
+![Identity blade for a Web App showing tabs "System assigned" (selected) and "User assigned". The System assigned panel displays a Status toggle currently "Off" with description "When enabled, Azure will create an identity for this resource in Microsoft Entra ID". Save and Discard buttons appear at the top; below the Status row a "Permissions" section explains role assignments for the identity, and the Object (principal) ID field is empty pending enablement. The left navigation shows Identity selected under the Settings group.](../assets/platform/security-architecture/01-identity-blade.png)
+
 **System-assigned managed identity**
 - Lifecycle tied to one App Service app.
 - Best for simple one-app-to-resource trust.
