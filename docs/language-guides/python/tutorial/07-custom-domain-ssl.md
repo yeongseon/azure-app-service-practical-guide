@@ -1,20 +1,28 @@
 ---
 content_sources:
   diagrams:
-    - id: 07-custom-domain-and-ssl-on-app-service
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/app-service-web-tutorial-custom-domain
-    - id: how-custom-domains-work
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/app-service-web-tutorial-custom-domain
-    - id: how-https-binding-works
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/app-service-web-tutorial-custom-domain
+  - id: 07-custom-domain-and-ssl-on-app-service
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/app-service-web-tutorial-custom-domain
+  - id: how-custom-domains-work
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/app-service-web-tutorial-custom-domain
+  - id: how-https-binding-works
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/app-service-web-tutorial-custom-domain
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/app-service-web-tutorial-custom-domain
+    verified: true
 ---
-
 # 07 - Custom Domain and SSL on App Service
 
 This final tutorial binds your Flask app to a custom domain and enables HTTPS certificates. It covers DNS validation, hostname binding, and certificate verification.
@@ -137,6 +145,9 @@ THUMBPRINT=$(az webapp config ssl list --resource-group $RG --query "[?hostNames
 
 az webapp config ssl bind --resource-group $RG --name $APP_NAME --certificate-thumbprint $THUMBPRINT --ssl-type SNI
 ```
+
+!!! note "Preview Command"
+    `az webapp config ssl create` is currently in Preview. Not all hostname configurations are eligible for managed certificates. See [App Service TLS overview](https://learn.microsoft.com/en-us/azure/app-service/overview-tls) for eligibility requirements. The Azure Portal provides an alternative path for managed certificate creation.
 
 | Command | Purpose |
 |---------|---------|

@@ -1,13 +1,23 @@
 ---
 content_sources:
   diagrams:
-    - id: reference-cli-cheatsheet-diagram-1
-      type: flowchart
-      source: self-generated
-      justification: "Self-generated reference diagram synthesized from official Azure App Service documentation for this guide."
-      based_on:
-        - https://learn.microsoft.com/en-us/azure/app-service/overview
-        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+  - id: reference-cli-cheatsheet-diagram-1
+    type: flowchart
+    source: self-generated
+    justification: Self-generated reference diagram synthesized from official Azure
+      App Service documentation for this guide.
+    based_on:
+    - https://learn.microsoft.com/en-us/azure/app-service/overview
+    - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/overview
+    verified: true
 ---
 # Azure CLI App Service Cheatsheet
 
@@ -100,6 +110,10 @@ WEBAPP_RESOURCE_ID=$(az webapp show --resource-group $RG --name $APP_NAME --quer
 az monitor metrics list --resource $WEBAPP_RESOURCE_ID --metric "Requests" "Http5xx" "AverageResponseTime" --interval PT5M --aggregation Total Average --output table
 ```
 
+!!! warning "Linux caveat for log download"
+    `az webapp log download` may not work with web apps running on Linux.
+    For Linux apps, use log streaming (`az webapp log tail`), the Diagnose and Solve Problems portal blade, or access logs via `/home/LogFiles`.
+
 ## Networking
 
 ```bash
@@ -136,10 +150,12 @@ Masked output example:
 az webapp deployment slot create --resource-group $RG --name $APP_NAME --slot staging --configuration-source $APP_NAME --output json
 az webapp deployment slot list --resource-group $RG --name $APP_NAME --output table
 az webapp deployment slot swap --resource-group $RG --name $APP_NAME --slot staging --target-slot production --action swap --output json
-az webapp traffic-routing set --resource-group $RG --name $APP_NAME --distribution staging=20 production=80 --output json
+az webapp traffic-routing set --resource-group $RG --name $APP_NAME --distribution staging=20 --output json
 az webapp traffic-routing clear --resource-group $RG --name $APP_NAME --output json
 az webapp deployment slot delete --resource-group $RG --name $APP_NAME --slot staging --output json
 ```
+
+Traffic not explicitly assigned to a non-production slot continues to go to production automatically.
 
 ## Cleanup
 

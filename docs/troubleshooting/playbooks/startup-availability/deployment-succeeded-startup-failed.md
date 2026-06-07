@@ -39,7 +39,7 @@ content_sources:
 content_validation:
   status: verified
   last_reviewed: "2026-04-12"
-  reviewer: ai-agent
+  reviewer: agent
   core_claims:
     - claim: "App Service continues to serve requests from the old container while the new container is pulled and started."
       source: "https://learn.microsoft.com/azure/app-service/configure-custom-container"

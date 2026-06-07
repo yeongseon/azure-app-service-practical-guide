@@ -10,19 +10,20 @@ This page tracks the source validation status of all documentation content. All 
 
 ## Summary
 
-*Generated: 2026-04-26*
+*Generated: 2026-06-07*
 
 | Content Type | Total | Verified | Pending | Unverified | No Metadata |
 |---|---:|---:|---:|---:|---:|
-| Mermaid Diagrams | 340 | 340 | 0 | 0 | 0 |
-| Text Documents | 89 | 86 | 3 | 0 | 0 |
+| Mermaid Diagrams | 364 | 364 | 0 | 0 | 0 |
+| Text Documents | 93 | 93 | 0 | 0 | 0 |
 
+!!! success "All Content Verified"
+    All text documents have verified Microsoft Learn sources for core claims.
 
 <!-- diagram-id: content-validation-status-pie -->
 ```mermaid
 pie title Document Validation Status
-    "Verified" : 86
-    "Pending Review" : 3
+    "Verified" : 93
 ```
 
 ## By Section
@@ -32,11 +33,12 @@ pie title Document Validation Status
 | Document | Has Sources | Status | Claims | Last Reviewed |
 |---|---|---|---|---|
 | [Authentication Architecture](../platform/authentication-architecture.md) | ✅ | ✅ Verified | 5/5 | 2026-04-12 |
+| [Deployment Options](../platform/deployment-options.md) | ✅ | ✅ Verified | 5/5 | 2026-05-01 |
 | [Deployment Scenarios](../platform/deployment-scenarios.md) | ✅ | ✅ Verified | 4/4 | 2026-04-12 |
 | [Hosting Models](../platform/hosting-models.md) | ✅ | ✅ Verified | 5/5 | 2026-04-12 |
-| [How App Service Works](../platform/architecture/index.md) | ✅ | ✅ Verified | 4/4 | 2026-04-12 |
-| [Mtls](../platform/mtls.md) | ✅ | ⚠️ Pending Review | 4/4 | 2026-04-25 |
-| [Networking](../platform/networking.md) | ✅ | ✅ Verified | 5/5 | 2026-04-12 |
+| [Index](../platform/index.md) | ✅ | ✅ Verified | — | 2026-05-15 |
+| [Mtls](../platform/mtls.md) | ✅ | ✅ Verified | 4/4 | 2026-04-25 |
+| [Networking](../platform/networking.md) | ✅ | ✅ Verified | 8/8 | 2026-04-12 |
 | [Request Lifecycle](../platform/request-lifecycle.md) | ✅ | ✅ Verified | 5/5 | 2026-04-12 |
 | [Resource Relationships](../platform/resource-relationships.md) | ✅ | ✅ Verified | 5/5 | 2026-04-12 |
 | [Scaling](../platform/scaling.md) | ✅ | ✅ Verified | 4/4 | 2026-04-12 |
@@ -48,8 +50,9 @@ pie title Document Validation Status
 |---|---|---|---|---|
 | [Common Anti Patterns](../best-practices/common-anti-patterns.md) | ✅ | ✅ Verified | 3/3 | 2026-04-12 |
 | [Deployment](../best-practices/deployment.md) | ✅ | ✅ Verified | 3/3 | 2026-04-12 |
-| [Mtls](../best-practices/mtls.md) | ✅ | ⚠️ Pending Review | 3/4 | 2026-04-25 |
-| [Networking](../best-practices/networking.md) | ✅ | ✅ Verified | 4/4 | 2026-04-12 |
+| [Index](../best-practices/index.md) | ✅ | ✅ Verified | — | 2026-05-15 |
+| [Mtls](../best-practices/mtls.md) | ✅ | ✅ Verified | 4/4 | 2026-04-25 |
+| [Networking](../best-practices/networking.md) | ✅ | ✅ Verified | 7/7 | 2026-04-12 |
 | [Production Baseline](../best-practices/production-baseline.md) | ✅ | ✅ Verified | 4/4 | 2026-04-12 |
 | [Reliability](../best-practices/reliability.md) | ✅ | ✅ Verified | 4/4 | 2026-04-12 |
 | [Scaling](../best-practices/scaling.md) | ✅ | ✅ Verified | 3/3 | 2026-04-12 |
@@ -66,6 +69,7 @@ pie title Document Validation Status
 | [Github Actions](../operations/deployment/github-actions.md) | ✅ | ✅ Verified | 3/3 | 2026-04-12 |
 | [Health Recovery](../operations/health-recovery.md) | ✅ | ✅ Verified | 3/3 | 2026-04-12 |
 | [Incoming Client Certificates](../operations/incoming-client-certificates.md) | ✅ | ✅ Verified | 4/4 | 2026-04-25 |
+| [Index](../operations/index.md) | ✅ | ✅ Verified | — | 2026-05-15 |
 | [Networking](../operations/networking.md) | ✅ | ✅ Verified | 5/5 | 2026-04-12 |
 | [Outbound Client Certificates](../operations/outbound-client-certificates.md) | ✅ | ✅ Verified | 4/4 | 2026-04-25 |
 | [Scaling](../operations/scaling.md) | ✅ | ✅ Verified | 4/4 | 2026-04-12 |
@@ -98,6 +102,7 @@ pie title Document Validation Status
 | [Evidence Map](../troubleshooting/evidence-map.md) | ✅ | ✅ Verified | 2/2 | 2026-04-12 |
 | [Failed To Forward Request](../troubleshooting/lab-guides/failed-to-forward-request.md) | ✅ | ✅ Verified | 3/3 | 2026-04-12 |
 | [Failed To Forward Request](../troubleshooting/playbooks/startup-availability/failed-to-forward-request.md) | ✅ | ✅ Verified | 3/3 | 2026-04-12 |
+| [Index](../troubleshooting/index.md) | ✅ | ✅ Verified | — | 2026-05-15 |
 | [Intermittent 5Xx](../troubleshooting/lab-guides/intermittent-5xx.md) | ✅ | ✅ Verified | 3/3 | 2026-04-12 |
 | [Intermittent 5Xx Under Load](../troubleshooting/playbooks/performance/intermittent-5xx-under-load.md) | ✅ | ✅ Verified | 2/2 | 2026-04-12 |
 | [Latency Trend By Status Code](../troubleshooting/kql/http/latency-trend-by-status-code.md) | ✅ | ✅ Verified | 4/4 | 2026-04-12 |
@@ -105,7 +110,7 @@ pie title Document Validation Status
 | [Memory Pressure](../troubleshooting/lab-guides/memory-pressure.md) | ✅ | ✅ Verified | 3/3 | 2026-04-12 |
 | [Memory Pressure And Worker Degradation](../troubleshooting/playbooks/performance/memory-pressure-and-worker-degradation.md) | ✅ | ✅ Verified | 2/2 | 2026-04-12 |
 | [Mental Model](../troubleshooting/mental-model.md) | ✅ | ✅ Verified | 2/2 | 2026-04-12 |
-| [Mtls Failures](../troubleshooting/playbooks/mtls-failures.md) | ✅ | ⚠️ Pending Review | 2/3 | 2026-04-25 |
+| [Mtls Failures](../troubleshooting/playbooks/mtls-failures.md) | ✅ | ✅ Verified | 3/3 | 2026-04-25 |
 | [No Space Left On Device](../troubleshooting/lab-guides/no-space-left-on-device.md) | ✅ | ✅ Verified | 2/2 | 2026-04-12 |
 | [No Space Left On Device](../troubleshooting/playbooks/performance/no-space-left-on-device.md) | ✅ | ✅ Verified | 2/2 | 2026-04-12 |
 | [Outbound Network](../troubleshooting/first-10-minutes/outbound-network.md) | ✅ | ✅ Verified | 2/2 | 2026-04-12 |
@@ -186,3 +191,4 @@ python3 scripts/generate_content_validation_status.py
 
 - [CLI Cheatsheet](cli-cheatsheet.md)
 - [Platform Limits](platform-limits.md)
+

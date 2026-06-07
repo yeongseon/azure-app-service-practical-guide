@@ -43,4 +43,4 @@ export ACR_NAME="$(az deployment group show --resource-group "$RG" --name "lab-c
 | `az` (Azure CLI) | 2026-04-22 | 2.70.0 | pass |
 | `bicep` | 2026-04-22 | (bundled with az) | pass |
 
-Reproduced the exact `RoleAssignmentExists` error: existing role assignment ID `561ed7ad-a306-588a-8d5f-2746e0ae4fca` on the registry scope. Recovery (delete + redeploy) succeeded with `1 active AcrPull assignment` afterwards.
+Reproduced the exact `RoleAssignmentExists` error: existing role assignment ID `<role-assignment-id>` on the registry scope. Recovery (delete + redeploy) succeeded with `1 active AcrPull assignment` afterwards.

@@ -12,7 +12,7 @@ content_sources:
 content_validation:
   status: verified
   last_reviewed: "2026-04-12"
-  reviewer: ai-agent
+  reviewer: agent
   core_claims:
     - claim: "Slow App Service performance often occurs because of application-level problems such as long network requests, inefficient code or database queries, high memory or CPU use, or exceptions."
       source: "https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/troubleshoot-performance-degradation"

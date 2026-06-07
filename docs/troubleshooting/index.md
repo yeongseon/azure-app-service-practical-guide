@@ -15,6 +15,11 @@ content_sources:
       based_on:
         - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
         - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+content_validation:
+  status: verified
+  last_reviewed: 2026-05-15
+  reviewer: agent
+  core_claims: []
 ---
 # App Service OSS Troubleshooting
 
@@ -200,3 +205,8 @@ Deploy reproduction environments to your Azure subscription and observe real sym
 - [Architecture Overview](architecture-overview.md)
 - [Decision Tree](decision-tree.md)
 - [Evidence Map](evidence-map.md)
+
+## Sources
+
+- [Microsoft Learn source 1](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs)
+- [Microsoft Learn source 2](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503)

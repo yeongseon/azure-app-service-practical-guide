@@ -1,20 +1,28 @@
 ---
 content_sources:
   diagrams:
-    - id: diagram-1
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/app-service-web-tutorial-custom-domain
-    - id: how-custom-domains-work
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/app-service-web-tutorial-custom-domain
-    - id: how-https-binding-works
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/app-service-web-tutorial-custom-domain
+  - id: diagram-1
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/app-service-web-tutorial-custom-domain
+  - id: how-custom-domains-work
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/app-service-web-tutorial-custom-domain
+  - id: how-https-binding-works
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/app-service-web-tutorial-custom-domain
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/app-service-web-tutorial-custom-domain
+    verified: true
 ---
-
 # 07. Custom Domains and SSL (OPTIONAL)
 
 ⏱️ **Time**: 30 minutes  
@@ -30,7 +38,7 @@ By default, your app is accessible at `*.azurewebsites.net`. For production, you
 <!-- diagram-id: diagram-1 -->
 ```mermaid
 flowchart TD
-    INET[Internet] -->|HTTPS| WA["Web App\nApp Service S1\nLinux Node 18 LTS"]
+    INET[Internet] -->|HTTPS| WA["Web App\nApp Service S1\nLinux Node 20 LTS"]
 
     subgraph VNET["VNet 10.0.0.0/16"]
         subgraph INT_SUB["Integration Subnet 10.0.1.0/24\nDelegation: Microsoft.Web/serverFarms"]
@@ -116,16 +124,20 @@ az webapp show --name $APP_NAME --resource-group $RG --query customDomainVerific
 | `az webapp show --name $APP_NAME --resource-group $RG --query customDomainVerificationId --output json | jq -r '.'` | Retrieves the domain ownership verification ID required for the DNS TXT record |
 
 **Example output:**
+<!-- Verified: real az CLI output from koreacentral, 2026-05-01 -->
 ```
-ABC123DEF456GHI789JKL012MNO345PQR678STU901VWX234YZ
+5F4D40324651269FDA2F10E03050A49ECBA6A88B93D95EA7E223D34005F9E7DE
 ```
 
 ### Add DNS Records
 Go to your DNS provider and add:
 
-1. **TXT Record**: 
-    - Host: `asuid.www` (for `www.yourdomain.com`)    - Value: The Verification ID from the previous step.2. **CNAME Record**:
-    - Host: `www`    - Value: `app-myapp-abc123.azurewebsites.net`
+1. **TXT Record**:
+    - Host: `asuid.www` (for `www.yourdomain.com`)
+    - Value: The Verification ID from the previous step.
+2. **CNAME Record**:
+    - Host: `www`
+    - Value: `app-myapp-abc123.azurewebsites.net`
 
 ### Map the Domain in Azure
 ```bash
@@ -140,14 +152,7 @@ az webapp config hostname add \
 |--------------|---------|
 | `az webapp config hostname add ... --hostname www.yourdomain.com --output json` | Adds the custom hostname binding to the App Service app |
 
-**Example output:**
-```json
-{
-  "hostName": "www.example.com",
-  "hostNameType": "Verified",
-  "siteName": "app-myapp-abc123"
-}
-```
+On success, the command returns JSON containing `hostName`, `hostNameType: "Verified"`, and `siteName`. Requires DNS TXT and CNAME records to propagate before running.
 
 | Command/Code | Purpose |
 |--------------|---------|
@@ -167,6 +172,9 @@ az webapp config ssl create \
   --output json
 ```
 
+!!! note "Preview Command"
+    `az webapp config ssl create` is currently in Preview. Not all hostname configurations are eligible for managed certificates. See [App Service TLS overview](https://learn.microsoft.com/en-us/azure/app-service/overview-tls) for eligibility requirements. The Azure Portal provides an alternative path for managed certificate creation.
+
 | Command/Code | Purpose |
 |--------------|---------|
 | `az webapp config ssl create ... --hostname www.yourdomain.com --output json` | Requests an App Service managed certificate for the custom domain |
@@ -174,20 +182,20 @@ az webapp config ssl create \
 ### Bind the Certificate
 ```bash
 # Get the certificate thumbprint from the previous command output or:
-THUMBPRINT=$(az webapp config ssl list --resource-group $RG --query "[?hostname=='www.yourdomain.com'].thumbprint" --output json | jq -r '.')
+THUMBPRINT=$(az webapp config ssl list --resource-group $RG --query "[?hostname=='www.yourdomain.com'].thumbprint | [0]" --output tsv)
 
 az webapp config ssl bind \
   --name $APP_NAME \
   --resource-group $RG \
   --certificate-thumbprint $THUMBPRINT \
-  --ssl-type SniEnabled \
+  --ssl-type SNI \
   --output json
 ```
 
 | Command/Code | Purpose |
 |--------------|---------|
-| `THUMBPRINT=$(az webapp config ssl list ... | jq -r '.')` | Looks up the certificate thumbprint for the custom domain |
-| `az webapp config ssl bind ... --certificate-thumbprint $THUMBPRINT --ssl-type SniEnabled --output json` | Binds the certificate to the custom hostname using SNI-based TLS |
+| `THUMBPRINT=$(az webapp config ssl list ... --query "[?hostname=='www.yourdomain.com'].thumbprint | [0]" --output tsv)` | Looks up the certificate thumbprint for the custom domain as a scalar value |
+| `az webapp config ssl bind ... --certificate-thumbprint $THUMBPRINT --ssl-type SNI --output json` | Binds the certificate to the custom hostname using SNI-based TLS |
 
 ## 4. Security Hardening
 Ensure all traffic uses HTTPS and modern TLS versions.

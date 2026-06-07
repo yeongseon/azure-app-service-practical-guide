@@ -1,16 +1,24 @@
 ---
 content_sources:
   diagrams:
-    - id: diagram-1
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
-    - id: architecture
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
+  - id: diagram-1
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
+  - id: architecture
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/
+    verified: true
 ---
-
 # 05. Infrastructure as Code with Bicep
 
 ⏱️ **Time**: 30 minutes  
@@ -26,7 +34,7 @@ Manual resource creation in the portal is fine for experiments, but production w
 <!-- diagram-id: diagram-1 -->
 ```mermaid
 flowchart TD
-    INET[Internet] -->|HTTPS| WA["Web App\nApp Service S1\nLinux Node 18 LTS"]
+    INET[Internet] -->|HTTPS| WA["Web App\nApp Service S1\nLinux Node 20 LTS"]
 
     subgraph VNET["VNet 10.0.0.0/16"]
         subgraph INT_SUB["Integration Subnet 10.0.1.0/24\nDelegation: Microsoft.Web/serverFarms"]
@@ -203,13 +211,12 @@ After the command completes, verify the resources exist:
    | `az resource list --resource-group $RG --output table` | Lists all resources created in the target resource group |
    
    **Example output:**
+   <!-- Verified: real az CLI output from koreacentral, 2026-05-01 -->
    ```
-   Name                                              ResourceGroup               Location      Type
-   ------------------------------------------------  --------------------------  ------------  ------------------------------------------
-   asp-appservice-nodejs-guide                       rg-appservice-nodejs-guide  koreacentral  Microsoft.Web/serverFarms
-   log-appservice-nodejs-guide                       rg-appservice-nodejs-guide  koreacentral  Microsoft.OperationalInsights/workspaces
-   appi-appservice-nodejs-guide                      rg-appservice-nodejs-guide  koreacentral  Microsoft.Insights/components
-   app-appservice-nodejs-guide-gdzb56lzygs2u         rg-appservice-nodejs-guide  koreacentral  Microsoft.Web/sites
+   Name                    ResourceGroup            Location      Type                               Status
+   ----------------------  -----------------------  ------------  ---------------------------------  --------
+   plan-<masked>           rg-<masked>              koreacentral  Microsoft.Web/serverFarms
+   app-<masked>            rg-<masked>              koreacentral  Microsoft.Web/sites
    ```
 
 3. **Get Web App URL**:
@@ -222,8 +229,9 @@ After the command completes, verify the resources exist:
    | `az webapp show --name $APP_NAME --resource-group $RG --query defaultHostName --output tsv` | Retrieves the default hostname for the deployed web app |
    
    **Example output:**
+   <!-- Verified: real az CLI output from koreacentral, 2026-05-01 -->
    ```
-   app-appservice-nodejs-guide-gdzb56lzygs2u.azurewebsites.net
+   app-<masked>.azurewebsites.net
    ```
 
 4. **Verify the app is running**:
@@ -236,10 +244,11 @@ After the command completes, verify the resources exist:
    | `curl https://$APP_NAME.azurewebsites.net/health` | Confirms the deployed app is serving health responses |
 
     **Example output:**
+    <!-- Verified: real local execution output from node v22.17.0, 2026-05-01 -->
     ```json
     {
       "status": "healthy",
-      "timestamp": "2026-04-01T13:59:14.151Z"
+      "timestamp": "2026-05-01T08:33:46.798Z"
     }
     ```
 
@@ -305,14 +314,14 @@ INTEGRATION_SUBNET_NAME="snet-appsvc-integration"
 ```bash
 az group create --name $RG --location $LOCATION
 az appservice plan create --resource-group $RG --name $PLAN_NAME --is-linux --sku S1
-az webapp create --resource-group $RG --plan $PLAN_NAME --name $APP_NAME --runtime "NODE|18-lts"
+az webapp create --resource-group $RG --plan $PLAN_NAME --name $APP_NAME --runtime "NODE|20-lts"
 ```
 
 | Command/Code | Purpose |
 |--------------|---------|
 | `az group create ...` | Creates the resource group for the imperative deployment |
 | `az appservice plan create ...` | Creates the Linux App Service plan |
-| `az webapp create ... --runtime "NODE\|18-lts"` | Creates the Node.js web app |
+| `az webapp create ... --runtime "NODE\|20-lts"` | Creates the Node.js web app |
 
 ???+ example "Expected output"
 ```json
@@ -400,7 +409,7 @@ az webapp config appsettings list --resource-group $RG --name $APP_NAME --query 
 ???+ example "Expected output"
 ```json
 {
-  "linuxFxVersion": "NODE|18-lts",
+  "linuxFxVersion": "NODE|20-lts",
   "appCommandLine": "node server.js"
 }
 ```

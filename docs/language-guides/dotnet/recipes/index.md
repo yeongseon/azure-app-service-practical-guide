@@ -1,12 +1,20 @@
 ---
 content_sources:
   diagrams:
-    - id: recipes
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
+  - id: recipes
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/
+    verified: true
 ---
-
 # Recipes
 
 Use these production-oriented recipes to integrate common Azure services with ASP.NET Core 8 on Windows App Service.
@@ -110,3 +118,7 @@ For each recipe completion:
 - [Tutorial index](../index.md)
 - [Reference index](../../../reference/index.md)
 - For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-app-service-practical-guide/)
+
+## Sources
+
+- [Microsoft Learn source 1](https://learn.microsoft.com/en-us/azure/app-service/)

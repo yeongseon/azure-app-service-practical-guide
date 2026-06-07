@@ -87,10 +87,10 @@ flowchart TD
     C --> D[Create or update Web App]
     D --> E[Configure container image and registry]
     E --> F[App Service pulls image on startup]
-    F --> G[Platform runs health ping on startup port]
+    F --> G[Platform evaluates startup HTTP reachability]
     G --> H{Health check passes?}
     H -->|Yes| I[App is Running]
-    H -->|No| J[Startup failure — check WEBSITES_PORT and logs]
+    H -->|No| J[Startup failure — check PORT/WEBSITES_PORT, binding, and logs]
 ```
 
 Each stage has a corresponding verification step:
@@ -273,7 +273,7 @@ az webapp config set \
 
 ### Multi-Container and Sidecar Pattern
 
-App Service supports adding up to nine sidecar containers alongside the main Linux custom container. Sidecars run in the same App Service plan and share the network namespace with the main container.
+App Service supports adding up to nine sidecar containers alongside the main application container. Sidecars run in the same App Service plan and share the network namespace with the main container.
 
 <!-- diagram-id: sidecar-architecture -->
 ```mermaid
@@ -298,7 +298,7 @@ flowchart TD
 - Configuration or secrets sync sidecars
 
 !!! note "Sidecar support is Linux-only"
-    Sidecar containers are only available for Linux custom container apps. Windows containers do not support sidecars.
+    Sidecars are available for Linux App Service apps, including both code-only (built-in runtime) apps and custom container apps. Windows containers do not support sidecars.
 
 #### Configure a Sidecar
 
@@ -314,7 +314,7 @@ az webapp sitecontainers create \
 
 | Command/Code | Purpose |
 |---|---|
-| `az webapp sitecontainers create` | Attaches a sidecar container to the main Linux custom container app |
+| `az webapp sitecontainers create` | Attaches a sidecar container to the main application container |
 | `--is-main false` | Marks this as a sidecar — the main container must already exist |
 | `--target-port` | Port the sidecar listens on inside the app (for example, 4317 for OpenTelemetry gRPC) |
 
@@ -335,7 +335,9 @@ az webapp sitecontainers create \
 
 ### Port Configuration and Health Checks
 
-App Service sends an HTTP GET to the startup port to verify the container started successfully. By default it expects port 80. If your container listens on a different port, set `WEBSITES_PORT`:
+App Service sends startup HTTP checks to verify that the app became reachable. For Linux custom containers, port handling is more nuanced than a simple `WEBSITES_PORT` probe rule: the app should usually bind to the runtime-injected `PORT` value, and `WEBSITES_PORT` is one of the settings that can influence platform behavior. See [Container HTTP Pings — Lab Guide](../../troubleshooting/lab-guides/container-http-pings.md) for experimental evidence on Linux port behavior.
+
+If your custom container uses a non-default HTTP port, configure `WEBSITES_PORT` and make sure the process actually listens on the value exposed through `PORT`:
 
 ```bash
 az webapp config appsettings set \
@@ -346,7 +348,7 @@ az webapp config appsettings set \
 
 | Command/Code | Purpose |
 |---|---|
-| `WEBSITES_PORT` | Tells App Service which port your container exposes so the platform health ping reaches it |
+| `WEBSITES_PORT` | App setting commonly used to declare the custom container HTTP port; on Linux, the app should usually bind to the runtime-injected `PORT` value |
 
 <!-- Verified: real az CLI output from koreacentral, 2026-05-01 -->
 ```yaml
@@ -355,8 +357,8 @@ az webapp config appsettings set \
   value: '8080'
 ```
 
-!!! warning "Missing WEBSITES_PORT is the most common container startup failure"
-    If the platform cannot connect to the startup port within the startup window, it marks the container as failed and restarts it. Check `WEBSITES_PORT` first whenever a container fails to start.
+!!! warning "Check both `PORT` binding and `WEBSITES_PORT`"
+    On Linux custom containers, startup failures are not explained by `WEBSITES_PORT` mismatch alone. Verify that the app binds to `0.0.0.0` on the runtime-injected `PORT`, then compare that behavior with any configured `WEBSITES_PORT` value.
 
 ### Security Considerations
 

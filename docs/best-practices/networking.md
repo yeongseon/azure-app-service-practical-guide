@@ -2,7 +2,7 @@
 content_validation:
   status: verified
   last_reviewed: "2026-04-12"
-  reviewer: ai-agent
+  reviewer: agent
   core_claims:
     - claim: "VNet Integration is the primary App Service feature for private outbound connectivity."
       source: "https://learn.microsoft.com/azure/app-service/networking-features"
@@ -13,8 +13,17 @@ content_validation:
     - claim: "Private Endpoint is the standard pattern for private inbound access to an App Service app."
       source: "https://learn.microsoft.com/azure/app-service/networking-features"
       verified: true
-    - claim: "Both features provide outbound reachability, but they solve different problems."
-      source: "https://learn.microsoft.com/azure/app-service/networking-features"
+    - claim: "VNet Integration provides outbound private connectivity. Private Endpoint provides inbound private access. They solve different directions of traffic flow."
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration"
+      verified: true
+    - claim: "possibleOutboundIpAddresses must be used for firewall allowlists as the active outbound IP set can change."
+      source: "https://learn.microsoft.com/azure/app-service/overview-inbound-outbound-ips"
+      verified: true
+    - claim: "Enabling VNet Integration with route-all routes all outbound traffic through the VNet. The source IP remains one of the app's standard outbound IPs unless the integration subnet uses a NAT Gateway or routes traffic through a firewall or NVA."
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration"
+      verified: true
+    - claim: "Creating a Private Endpoint does not automatically block the public endpoint. To achieve private-only inbound access, disable public network access on the app or configure access restrictions as appropriate."
+      source: "https://learn.microsoft.com/en-us/azure/app-service/networking/private-endpoint"
       verified: true
 content_sources:
   diagrams:
@@ -234,7 +243,7 @@ Expected: private IP address in your VNet range.
 
 ### 5) Hybrid Connections vs VNet Integration
 
-Both features provide outbound reachability, but they solve different problems.
+VNet Integration provides outbound private connectivity. Private Endpoint provides inbound private access. They solve different directions of traffic flow.
 
 | Decision area | Hybrid Connections | VNet Integration |
 |---|---|---|
@@ -314,6 +323,144 @@ az network private-dns record-set a list \
   --zone-name privatelink.azurewebsites.net \
   --output table
 ```
+
+### 9) Manage IP address changes proactively
+
+App Service IP addresses are not static. Treating them as fixed causes allowlist drift, broken firewall rules, and silent connectivity failures after scale events.
+
+#### Outbound IP allowlist strategy
+
+Two CLI fields exist for outbound IPs — use the right one:
+
+| Field | What it represents | When to use |
+|---|---|---|
+| `outboundIpAddresses` | IPs currently active | Read-only diagnostics |
+| `possibleOutboundIpAddresses` | All IPs the app may ever use on this plan | **Firewall allowlists — always use this** |
+
+Query both to understand current vs. potential exposure:
+
+```bash
+az webapp show \
+    --resource-group "$RG" \
+    --name "$APP_NAME" \
+    --query "{active:outboundIpAddresses,possible:possibleOutboundIpAddresses}" \
+    --output json
+```
+
+Example output (PII masked):
+
+<!-- Verified: real az CLI output from koreacentral, 2026-05-01 -->
+```json
+{
+  "active": "4.217.128.55,4.217.128.64,4.217.128.65,4.217.128.66,4.217.128.67,4.217.128.80,20.41.120.146,20.196.112.47,20.41.120.193,20.196.112.79,20.41.120.195,20.196.112.159,20.41.66.225",
+  "possible": "20.194.32.78,20.194.38.125,20.194.38.174,20.194.38.52,20.194.7.226,20.194.7.69,20.196.112.159,20.196.112.173,20.196.112.182,20.196.112.202,20.196.112.213,20.196.112.228,20.196.112.47,20.196.112.79,20.41.120.146,20.41.120.148,20.41.120.149,20.41.120.151,20.41.120.154,20.41.120.193,20.41.120.195,20.41.120.200,20.41.120.201,20.41.120.202,20.41.66.225,4.217.128.55,4.217.128.64,4.217.128.65,4.217.128.66,4.217.128.67,4.217.128.80"
+}
+```
+
+!!! warning "Events that change outbound IPs"
+    - Scaling the App Service Plan up or down (SKU change)
+    - Moving the app to a different region or scale unit
+    - Enabling or disabling VNet Integration
+    - Platform-side infrastructure updates
+
+    After any of these events, re-query `possibleOutboundIpAddresses` and update downstream allowlists before traffic is restored.
+
+#### Outbound IP behavior under VNet Integration
+
+With route-all enabled (formerly `WEBSITE_VNET_ROUTE_ALL=1`, now exposed as a platform setting through the portal or CLI), all outbound traffic is routed through the VNet. The source IP remains one of the app's standard outbound IPs unless the integration subnet uses a NAT Gateway or forces traffic through a firewall or NVA, in which case the egress IP becomes that device's IP.
+
+Verify after enabling:
+
+```bash
+# Confirm VNet integration is active
+az webapp vnet-integration list \
+    --resource-group "$RG" \
+    --name "$APP_NAME" \
+    --output table
+
+# Confirm route-all setting
+az webapp config appsettings list \
+    --resource-group "$RG" \
+    --name "$APP_NAME" \
+    --query "[?name=='WEBSITE_VNET_ROUTE_ALL']" \
+    --output table
+```
+
+<!-- Verified: real az CLI output from koreacentral, 2026-05-01 -->
+```
+Location       Name              ResourceGroup     VnetResourceId
+-------------  ----------------  ----------------  -------------------------------------------------
+Korea Central  snet-integration  rg-<masked>       .../virtualNetworks/vnet-<masked>/subnets/snet-integration
+```
+
+```
+Name                    Value    SlotSetting
+----------------------  -------  -------------
+WEBSITE_VNET_ROUTE_ALL  1        False
+```
+
+!!! warning "Update downstream allowlists after enabling VNet Integration"
+    Route-all changes the path of outbound traffic, but not necessarily the observed source IP. Downstream services will continue to see one of the app's standard outbound IPs unless the integration subnet uses a NAT Gateway or routes traffic through a firewall or NVA. Update allowlists to reflect the actual egress design before enabling route-all in production.
+
+#### Inbound IP and Private Endpoint behavior
+
+Creating a Private Endpoint assigns a private IP from the endpoint subnet. The public inbound endpoint is not automatically disabled. For private-only inbound access, disable public network access on the app or apply access restrictions that enforce the intended exposure model.
+
+Query the current inbound IP:
+
+```bash
+az webapp show \
+    --resource-group "$RG" \
+    --name "$APP_NAME" \
+    --query "inboundIpAddress" \
+    --output tsv
+```
+
+Query the Private Endpoint's assigned private IP:
+
+```bash
+az network private-endpoint show \
+    --resource-group "$RG" \
+    --name "pe-$APP_NAME" \
+    --query "customDnsConfigs[0].ipAddresses" \
+    --output json
+```
+
+Example output:
+
+<!-- Verified: real az CLI output from koreacentral, 2026-05-01 -->
+```json
+[
+  "192.0.2.4"
+]
+```
+
+Validate that DNS resolves to the private IP from within the VNet:
+
+```bash
+nslookup "$APP_NAME.azurewebsites.net"
+```
+
+When run from a VM inside the VNet with the private DNS zone configured, the response resolves to the Private Endpoint IP (for example, `192.0.2.4`) instead of the public IP. The Private Endpoint IP was confirmed via `az network private-endpoint show` (koreacentral, 2026-05-01) and sanitized for publication.
+
+!!! warning "Private Endpoint does not automatically block public access"
+    After creating a Private Endpoint, the public endpoint remains reachable until you disable public network access on the app or apply access restrictions that enforce private-only inbound access. Complete the sequence:
+
+    1. Create the Private Endpoint.
+    2. Verify DNS resolves to the private IP from the target VNet.
+    3. Disable public network access on the app or add access restrictions that block unintended public inbound traffic.
+    4. Validate from public internet that access is denied according to the control you applied.
+
+    ```bash
+    az webapp config access-restriction add \
+        --resource-group "$RG" \
+        --name "$APP_NAME" \
+        --rule-name "DenyPublic" \
+        --action Deny \
+        --ip-address 0.0.0.0/0 \
+        --priority 65000 \
+        --output json
+    ```
 
 ### Common networking anti-patterns
 

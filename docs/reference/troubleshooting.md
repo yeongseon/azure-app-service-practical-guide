@@ -1,13 +1,23 @@
 ---
 content_sources:
   diagrams:
-    - id: reference-troubleshooting-diagram-1
-      type: flowchart
-      source: self-generated
-      justification: "Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide."
-      based_on:
-        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
-        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+  - id: reference-troubleshooting-diagram-1
+    type: flowchart
+    source: self-generated
+    justification: Self-generated troubleshooting diagram synthesized from Microsoft
+      Learn diagnostics and Azure App Service incident guidance for this guide.
+    based_on:
+    - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+    - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+    verified: true
 ---
 # Troubleshooting
 
@@ -50,6 +60,11 @@ az webapp log tail --resource-group $RG --name $APP_NAME
 az webapp config appsettings list --resource-group $RG --name $APP_NAME --output table
 az webapp deployment slot list --resource-group $RG --name $APP_NAME --output table
 ```
+
+> **Note:** `az webapp log tail` may not work reliably for Linux App Service. Use the Azure Portal Log stream or `/home/LogFiles` as alternatives.
+
+!!! warning "Linux custom container SCM caveat"
+    For Linux custom containers, the SCM/Kudu site runs in a separate container from the app container. That means Kudu cannot directly inspect the app container's live filesystem or running processes. Prefer SSH into the app container, Log stream, or application/container logs when investigating runtime behavior inside a custom container.
 
 ## Common Platform Issues
 
@@ -141,6 +156,8 @@ az webapp show \
 - Check environment: `/api/environment`
 - Check running processes: `/api/processes`
 - Review logs under `/home/LogFiles`
+
+For Linux custom containers, use those Kudu checks mainly for deployment context, environment snapshots, and shared logs. Do not assume `/api/processes` or Kudu file browsing reflects the main app container runtime state.
 
 See [Kudu API Reference](./kudu-queries.md) for endpoint details.
 

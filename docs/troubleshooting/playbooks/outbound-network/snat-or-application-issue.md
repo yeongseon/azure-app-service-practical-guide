@@ -35,7 +35,7 @@ content_sources:
 content_validation:
   status: verified
   last_reviewed: "2026-04-12"
-  reviewer: ai-agent
+  reviewer: agent
   core_claims:
     - claim: "SNAT applies only to outbound connections to PUBLIC IP addresses. Private Endpoint and Service Endpoint traffic does NOT consume SNAT ports."
       source: "https://learn.microsoft.com/azure/app-service/troubleshoot-intermittent-outbound-connection-errors"

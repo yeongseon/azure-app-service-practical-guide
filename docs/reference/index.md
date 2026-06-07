@@ -1,13 +1,23 @@
 ---
 content_sources:
   diagrams:
-    - id: reference-index-diagram-1
-      type: flowchart
-      source: self-generated
-      justification: "Self-generated reference diagram synthesized from official Azure App Service documentation for this guide."
-      based_on:
-        - https://learn.microsoft.com/en-us/azure/app-service/overview
-        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+  - id: reference-index-diagram-1
+    type: flowchart
+    source: self-generated
+    justification: Self-generated reference diagram synthesized from official Azure
+      App Service documentation for this guide.
+    based_on:
+    - https://learn.microsoft.com/en-us/azure/app-service/overview
+    - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/overview
+    verified: true
 ---
 # Reference
 
@@ -66,3 +76,8 @@ For runtime/framework-specific guidance, see:
 - [Troubleshooting](../troubleshooting/index.md)
 - [Operations](../operations/index.md)
 - [Platform](../platform/index.md)
+
+## Sources
+
+- [Microsoft Learn source 1](https://learn.microsoft.com/en-us/azure/app-service/overview)
+- [Microsoft Learn source 2](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs)

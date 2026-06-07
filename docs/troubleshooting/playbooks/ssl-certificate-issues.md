@@ -11,7 +11,7 @@ content_sources:
 content_validation:
   status: verified
   last_reviewed: "2026-04-12"
-  reviewer: ai-agent
+  reviewer: agent
   core_claims:
     - claim: "Azure App Service supports free App Service managed certificates, App Service certificates, Key Vault imported certificates, uploaded private certificates, and uploaded public certificates."
       source: "https://learn.microsoft.com/azure/app-service/configure-ssl-certificate"

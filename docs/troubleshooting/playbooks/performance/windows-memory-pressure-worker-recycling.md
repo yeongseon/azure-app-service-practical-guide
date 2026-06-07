@@ -27,10 +27,10 @@ content_sources:
 content_validation:
   status: verified
   last_reviewed: "2026-04-12"
-  reviewer: ai-agent
+  reviewer: agent
   core_claims:
     - claim: "Memory pressure on App Service Windows often appears as periodic worker recycling rather than one obvious crash."
-      source: "https://learn.microsoft.com/azure/app-service/troubleshoot-memory"
+      source: "https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/troubleshoot-performance-degradation"
       verified: true
     - claim: "Kudu Process Explorer can be used to inspect `w3wp.exe` private bytes trend."
       source: "https://learn.microsoft.com/azure/app-service/resources-kudu"
@@ -438,4 +438,4 @@ In Windows App Service, repeated `w3wp.exe` recycle with uptime-linked degradati
 
 - [Azure App Service diagnostics overview](https://learn.microsoft.com/en-us/azure/app-service/overview-diagnostics)
 - [Troubleshoot performance degradation in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-performance-degradation)
-- [Troubleshoot .NET process crash and memory issues (practice lab reference)](https://learn.microsoft.com/en-us/troubleshoot/developer/webapps/aspnetcore/practice-troubleshoot-linux/lab-2-2-dotnet-process-crash)
+- [Troubleshoot .NET process crash and memory issues (practice lab reference)](https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/capture-memory-dumps-app-service)

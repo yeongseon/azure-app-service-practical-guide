@@ -35,7 +35,7 @@ content_validation:
     - claim: "az webapp deploy is the recommended unified deployment API, replacing az webapp deployment source config-zip"
       source: https://learn.microsoft.com/en-us/azure/app-service/deploy-zip
       verified: true
-    - claim: "WEBSITE_RUN_FROM_PACKAGE mounts the ZIP as read-only wwwroot; Linux support is limited"
+    - claim: "WEBSITE_RUN_FROM_PACKAGE mounts the ZIP as read-only wwwroot; Linux support is runtime-specific"
       source: https://learn.microsoft.com/en-us/azure/app-service/deploy-run-package
       verified: true
     - claim: "Local Git deployment requires SCM basic authentication to be explicitly enabled"
@@ -63,7 +63,7 @@ flowchart TD
     A[Choose a deployment method] --> B{Artifact type?}
     B -- ZIP package --> C{Windows or Linux?}
     C -- Windows --> D[ZIP Deploy or Run from Package]
-    C -- Linux --> E[ZIP Deploy only]
+    C -- Linux --> E[ZIP Deploy; Run from Package for Node.js/.NET only]
     B -- WAR / JAR / EAR --> F[az webapp deploy --type war/jar/ear]
     B -- Container image --> G[Web App for Containers]
     B -- Source code --> H{CI/CD system?}
@@ -166,7 +166,7 @@ Mounts a ZIP file directly as the read-only `wwwroot` instead of unpacking it. E
 | Property | Value |
 |---|---|
 | Windows | ✅ |
-| Linux | ⚠️ Limited (MSLearn documents as Windows-primary) |
+| Linux | ⚠️ Runtime-specific: supported for Node.js and .NET on Linux; not supported for Python apps or Java apps on Linux |
 | `wwwroot` | Read-only at runtime |
 | Blob URL support | `WEBSITE_RUN_FROM_PACKAGE=<SAS URL>` |
 | Local ZIP | `WEBSITE_RUN_FROM_PACKAGE=1` |
@@ -200,8 +200,8 @@ az webapp deploy \
 | `WEBSITE_RUN_FROM_PACKAGE=<URL>` | Mount remote ZIP from Blob SAS URL |
 | `WEBSITE_USE_ZIP` | **Deprecated** — use `WEBSITE_RUN_FROM_PACKAGE` instead |
 
-!!! warning "Linux limitation"
-    On Linux App Service, `WEBSITE_RUN_FROM_PACKAGE` may cause startup failures. Microsoft Learn documents this feature as Windows-primary. Use standard ZIP deploy on Linux.
+!!! warning "Linux runtime-specific support"
+    On Linux App Service, `WEBSITE_RUN_FROM_PACKAGE` is **not supported for Python apps or Java apps on Linux**. It is supported for **Node.js and .NET on Linux**. For unsupported Linux runtimes, use standard ZIP deploy instead of Run from Package.
 
 !!! note "Read-only wwwroot"
     With Run from Package active, any attempt to write to `wwwroot` at runtime will fail. Store runtime state in Azure Storage or an external service.
@@ -574,7 +574,7 @@ This table summarizes the key behavioral differences between Windows and Linux A
 |---|---|---|
 | Default app root | `D:\home\site\wwwroot` | `/home/site/wwwroot` |
 | Build engine | Kudu (MSBuild / script) | Oryx (auto-detect language) |
-| Run from Package | ✅ Fully supported | ⚠️ Limited |
+| Run from Package | ✅ Fully supported | ⚠️ Runtime-specific (Node.js/.NET supported; Python/Java on Linux not supported) |
 | Web Deploy (MSDeploy) | ✅ | ❌ |
 | Kudu SCM UI | Full UI | Basic UI |
 | SCM basic auth default | Disabled (since 2023) | Disabled (since 2023) |

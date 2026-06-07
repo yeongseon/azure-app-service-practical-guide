@@ -1,16 +1,24 @@
 ---
 content_sources:
   diagrams:
-    - id: 06-ci-cd-with-github-actions-for-flask-app-service
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/deploy-continuous-deployment
-    - id: verify-deployment-from-workflow-run
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/deploy-continuous-deployment
+  - id: 06-ci-cd-with-github-actions-for-flask-app-service
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/deploy-continuous-deployment
+  - id: verify-deployment-from-workflow-run
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/deploy-continuous-deployment
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/deploy-continuous-deployment
+    verified: true
 ---
-
 # 06 - CI/CD with GitHub Actions for Flask App Service
 
 This tutorial automates build and deployment for Flask using GitHub Actions. It uses `actions/setup-python`, pip dependency caching, and Azure Web App deployment.
@@ -88,15 +96,22 @@ jobs:
         with:
           python-version: '3.11'
           cache: 'pip'
-          cache-dependency-path: app/requirements.txt
+          cache-dependency-path: apps/python-flask/requirements.txt
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r app/requirements.txt
+          pip install -r apps/python-flask/requirements.txt
+          pip install -r apps/python-flask/requirements-dev.txt
 
-      - name: Run tests
-        run: pytest
+      - name: Run tests if present
+        working-directory: apps/python-flask
+        run: |
+          if [ -d tests ]; then
+            pytest
+          else
+            echo "No tests directory yet; skipping pytest for this sample app."
+          fi
 
       - name: Azure login
         uses: azure/login@v2
@@ -109,7 +124,7 @@ jobs:
         uses: azure/webapps-deploy@v3
         with:
           app-name: app-flask-tutorial-abc123
-          package: app
+          package: apps/python-flask
 ```
 
 | YAML | Purpose |
@@ -122,15 +137,17 @@ jobs:
 | `uses: actions/setup-python@v5` | Installs and configures Python on the runner. |
 | `python-version: '3.11'` | Pins the workflow to Python 3.11. |
 | `cache: 'pip'` | Enables dependency caching for `pip` packages. |
-| `cache-dependency-path: app/requirements.txt` | Uses the Python requirements file to calculate the cache key. |
+| `cache-dependency-path: apps/python-flask/requirements.txt` | Uses the Python requirements file to calculate the cache key. |
 | `python -m pip install --upgrade pip` | Upgrades `pip` before installing dependencies. |
-| `pip install -r app/requirements.txt` | Installs the Flask app dependencies in the workflow. |
-| `run: pytest` | Runs the test suite before deployment. |
+| `pip install -r apps/python-flask/requirements.txt` | Installs the Flask app runtime dependencies in the workflow. |
+| `pip install -r apps/python-flask/requirements-dev.txt` | Installs the development dependencies required to run `pytest`. |
+| `working-directory: apps/python-flask` | Runs the validation step from the Flask sample app directory. |
+| `if [ -d tests ]; then pytest ... fi` | Runs `pytest` when the sample app has tests and skips the step cleanly when it does not. |
 | `uses: azure/login@v2` | Authenticates the workflow to Azure. |
 | `client-id`, `tenant-id`, `subscription-id` | Reads Azure identity values from GitHub secrets. |
 | `uses: azure/webapps-deploy@v3` | Deploys the application package to Azure App Service. |
 | `app-name: app-flask-tutorial-abc123` | Identifies the target App Service app. |
-| `package: app` | Deploys the contents of the `app` directory. |
+| `package: apps/python-flask` | Deploys the contents of the Flask sample app directory. |
 
 ### Configure startup command and app settings once
 

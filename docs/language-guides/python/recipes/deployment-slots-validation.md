@@ -1,12 +1,20 @@
 ---
 content_sources:
   diagrams:
-    - id: deployment-slots-validation
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/quickstart-python
+  - id: deployment-slots-validation
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/quickstart-python
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/quickstart-python
+    verified: true
 ---
-
 # Deployment Slots Validation
 
 Use staging slots to validate deployments before production swap, with health checks and automated safeguards in GitHub Actions.
@@ -123,6 +131,9 @@ az webapp deployment slot auto-swap \
     --output json
 ```
 
+!!! warning "Linux Limitation"
+    Auto-swap is not supported for web apps on Linux and Web App for Containers. Use manual swap or CI/CD-triggered swap instead. See [Deployment Slots](../../../operations/deployment/slots-and-swap.md) for details.
+
 ### 8) GitHub Actions staged deployment example
 
 Automate the deployment, validation, and swap process using GitHub Actions:
@@ -197,3 +208,7 @@ Disable auto-swap and revert to manual swap or a controlled GitHub Actions workf
 - [Tutorial: 06. CI/CD](../tutorial/06-ci-cd.md)
 - [Tutorial: 03. Configuration](../tutorial/03-configuration.md)
 - For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-app-service-practical-guide/)
+
+## Sources
+
+- [Microsoft Learn source 1](https://learn.microsoft.com/en-us/azure/app-service/quickstart-python)

@@ -1,17 +1,27 @@
 ---
 content_sources:
   diagrams:
-    - id: private-network-deploy
-      type: flowchart
-      source: self-generated
-      justification: "Synthesizes the original first-deploy advanced flow using Microsoft Learn guidance for App Service VNet integration, private endpoints, and managed identity."
-      based_on:
-        - https://learn.microsoft.com/en-us/azure/app-service/configure-vnet-integration-enable
-        - https://learn.microsoft.com/en-us/azure/app-service/networking/private-endpoint
-        - https://learn.microsoft.com/en-us/azure/app-service/overview-managed-identity
-        - https://learn.microsoft.com/en-us/azure/app-service/quickstart-python
+  - id: private-network-deploy
+    type: flowchart
+    source: self-generated
+    justification: Synthesizes the original first-deploy advanced flow using Microsoft
+      Learn guidance for App Service VNet integration, private endpoints, and managed
+      identity.
+    based_on:
+    - https://learn.microsoft.com/en-us/azure/app-service/configure-vnet-integration-enable
+    - https://learn.microsoft.com/en-us/azure/app-service/networking/private-endpoint
+    - https://learn.microsoft.com/en-us/azure/app-service/overview-managed-identity
+    - https://learn.microsoft.com/en-us/azure/app-service/quickstart-python
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/configure-vnet-integration-enable
+    verified: true
 ---
-
 # Private Network Deployment
 
 Use this recipe when the simple public `az webapp up` flow is no longer enough and your Flask app needs outbound private connectivity plus identity-based access to Azure services.

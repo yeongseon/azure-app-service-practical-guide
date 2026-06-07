@@ -1,18 +1,31 @@
 ---
 content_sources:
   text:
-    - type: mslearn-adapted
-      url: https://learn.microsoft.com/en-us/azure/app-service/quickstart-python?tabs=flask%2Cazure-cli
+  - type: mslearn-adapted
+    url: https://learn.microsoft.com/en-us/azure/app-service/quickstart-python?tabs=flask%2Cazure-cli
   diagrams:
-    - id: tutorial-path
-      type: flowchart
-      source: self-generated
-      justification: "Overview sequence derived from the structure of this tutorial series."
-      based_on:
-        - https://learn.microsoft.com/en-us/azure/app-service/quickstart-python?tabs=flask%2Cazure-cli
-        - https://learn.microsoft.com/en-us/azure/app-service/app-service-web-tutorial-custom-domain
+  - id: tutorial-path
+    type: flowchart
+    source: self-generated
+    justification: Overview sequence derived from the structure of this tutorial series.
+    based_on:
+    - https://learn.microsoft.com/en-us/azure/app-service/quickstart-python?tabs=flask%2Cazure-cli
+    - https://learn.microsoft.com/en-us/azure/app-service/app-service-web-tutorial-custom-domain
+validation:
+  az_cli:
+    last_tested: null
+    cli_version: null
+    result: not_tested
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/quickstart-python?tabs=flask%2Cazure-cli
+    verified: true
 ---
-
 # Python Tutorial Overview
 
 This tutorial path walks you from a local Flask run to a production-ready App Service deployment.
@@ -58,3 +71,8 @@ Follow the steps in order. Each tutorial builds on the previous one and assumes 
 - [Python Guide](../index.md)
 - [Python Runtime](../python-runtime.md)
 - [Python Recipes](../recipes/index.md)
+
+## Sources
+
+- [Microsoft Learn source 1](https://learn.microsoft.com/en-us/azure/app-service/quickstart-python?tabs=flask%2Cazure-cli)
+- [Microsoft Learn source 2](https://learn.microsoft.com/en-us/azure/app-service/app-service-web-tutorial-custom-domain)

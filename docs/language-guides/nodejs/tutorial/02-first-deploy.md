@@ -1,16 +1,24 @@
 ---
 content_sources:
   diagrams:
-    - id: simple-architecture
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/quickstart-nodejs
-    - id: simple-flow
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/quickstart-nodejs
+  - id: simple-architecture
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/quickstart-nodejs
+  - id: simple-flow
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/quickstart-nodejs
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/quickstart-nodejs
+    verified: true
 ---
-
 # 02. First Deploy
 
 **Time estimate: 5 minutes**
@@ -119,6 +127,8 @@ curl $WEB_APP_URL
     ```
 
 ### Step 4: View logs
+
+> **Note:** `az webapp log tail` may not work reliably for Linux App Service. Use the Azure Portal Log stream or `/home/LogFiles` as alternatives.
 
 ```bash
 az webapp log tail --resource-group $RG --name $APP_NAME

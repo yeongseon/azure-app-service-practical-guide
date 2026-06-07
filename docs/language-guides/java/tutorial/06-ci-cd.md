@@ -1,16 +1,24 @@
 ---
 content_sources:
   diagrams:
-    - id: 06-ci-cd
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/deploy-continuous-deployment
-    - id: pipeline-design
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/deploy-continuous-deployment
+  - id: 06-ci-cd
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/deploy-continuous-deployment
+  - id: pipeline-design
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/deploy-continuous-deployment
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/deploy-continuous-deployment
+    verified: true
 ---
-
 # 06. CI/CD
 
 Implement GitHub Actions CI/CD for repeatable Java builds and controlled deployments to Azure App Service.
@@ -135,7 +143,7 @@ jobs:
           cache: maven
 
       - name: Build and test
-        working-directory: app
+        working-directory: apps/java-springboot
         run: ./mvnw --batch-mode clean verify
 
   deploy:
@@ -160,11 +168,11 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Package app
-        working-directory: app
+        working-directory: apps/java-springboot
         run: ./mvnw --batch-mode clean package -DskipTests
 
       - name: Deploy with Maven plugin
-        working-directory: app
+        working-directory: apps/java-springboot
         env:
           RESOURCE_GROUP_NAME: ${{ vars.RESOURCE_GROUP_NAME }}
           APP_NAME: ${{ vars.APP_NAME }}

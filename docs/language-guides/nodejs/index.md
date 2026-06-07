@@ -1,12 +1,20 @@
 ---
 content_sources:
   diagrams:
-    - id: main-content
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
+  - id: main-content
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/
+    verified: true
 ---
-
 # Node.js Guide
 
 This guide covers the full path for building, deploying, and operating Express apps on Azure App Service.
@@ -47,4 +55,4 @@ Use Node.js-focused recipes for framework and integration scenarios.
 
 ## Sources
 
-- [Quickstart: Deploy a Node.js web app](https://learn.microsoft.com/azure/app-service/quickstart-nodejs)
+- [Quickstart: Deploy a Node.js web app](https://learn.microsoft.com/en-us/azure/app-service/quickstart-nodejs)

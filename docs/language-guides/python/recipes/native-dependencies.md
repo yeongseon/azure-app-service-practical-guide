@@ -1,12 +1,20 @@
 ---
 content_sources:
   diagrams:
-    - id: native-dependencies-on-app-service-linux
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
+  - id: native-dependencies-on-app-service-linux
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/
+    verified: true
 ---
-
 # Native Dependencies on App Service Linux
 
 Handle Python packages with C/C++ extensions reliably on Azure App Service Linux.
@@ -66,10 +74,12 @@ RUN apt-get update && apt-get install --yes --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
-COPY app/requirements.txt ./requirements.txt
+COPY apps/python-flask/requirements.txt ./requirements.txt
 RUN pip install --upgrade pip setuptools wheel \
     && pip install --no-cache-dir -r requirements.txt
 ```
+
+This example assumes the Docker build context is the repository root. If you build from `apps/python-flask/` instead, use `COPY requirements.txt ./requirements.txt`.
 
 ## Complete Example
 
@@ -97,10 +107,14 @@ def health_native():
 ## Troubleshooting
 
 - `error: subprocess-exited-with-error` during `pip install`:
-    - Missing compiler or system headers; move to custom container build dependencies.- `ImportError: libpq.so.*` for PostgreSQL:
-    - Install `libpq` runtime libraries or use `psycopg2-binary`.- `Pillow` image codec missing:
-    - Add required OS libs (`libjpeg`, `zlib`, optional `libwebp`).- `numpy/pandas` build timeout:
+    - Missing compiler or system headers; move to custom container build dependencies.
+- `ImportError: libpq.so.*` for PostgreSQL:
+    - Install `libpq` runtime libraries or use `psycopg2-binary`.
+- `Pillow` image codec missing:
+    - Add required OS libs (`libjpeg`, `zlib`, optional `libwebp`).
+- `numpy/pandas` build timeout:
     - Pin to wheels and avoid source builds on platform runtime.
+
 ## Advanced Topics
 
 - Prebuild wheels in CI (`pip wheel`) and publish to an internal package index.

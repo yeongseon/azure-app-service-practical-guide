@@ -12,7 +12,10 @@ TEMPLATE="${SCRIPT_DIR}/infra/role-assignment.bicep"
 
 APP_PRINCIPAL_ID=$(az webapp identity show --name "$APP_NAME" --resource-group "$RG" \
     --query principalId --output tsv | tr -d '\r')
-[ -n "$APP_PRINCIPAL_ID" ] && [ "$APP_PRINCIPAL_ID" != "null" ] || { echo "FAIL: Web App $APP_NAME has no managed identity - run trigger.sh first"; exit 1; }
+if [ -z "$APP_PRINCIPAL_ID" ] || [ "$APP_PRINCIPAL_ID" = "null" ]; then
+    echo "FAIL: Web App $APP_NAME has no managed identity - run trigger.sh first"
+    exit 1
+fi
 
 echo "==> Step 1: confirm pre-existing assignment exists (must reproduce conflict baseline)"
 INITIAL_COUNT=$(az role assignment list --assignee "$APP_PRINCIPAL_ID" --scope "$ACR_ID" --query "length(@)" --output tsv | tr -d '\r')

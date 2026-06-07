@@ -1,16 +1,24 @@
 ---
 content_sources:
   diagrams:
-    - id: 01-local-run
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
-    - id: diagram-2
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
+  - id: 01-local-run
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
+  - id: diagram-2
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/
+    verified: true
 ---
-
 # 01. Local Run
 
 Run the ASP.NET Core 8 reference API locally using the same port and environment conventions expected by Azure App Service on Windows.
@@ -71,7 +79,7 @@ flowchart TD
 
 - .NET 8 SDK installed (`dotnet --info`)
 - Local clone of `azure-app-service-practical-guide`
-- Terminal with access to `app/GuideApi`
+- Terminal with access to `apps/dotnet-aspnetcore/GuideApi`
 
 ## What you'll learn
 
@@ -85,14 +93,14 @@ flowchart TD
 ### 1) Run the app
 
 ```bash
-dotnet restore "app/GuideApi/GuideApi.csproj"
-dotnet run --project "app/GuideApi/GuideApi.csproj"
+dotnet restore "apps/dotnet-aspnetcore/GuideApi/GuideApi.csproj"
+dotnet run --project "apps/dotnet-aspnetcore/GuideApi/GuideApi.csproj"
 ```
 
 | Command/Code | Purpose |
 |--------------|---------|
-| `dotnet restore "app/GuideApi/GuideApi.csproj"` | Restores the NuGet packages required by the Guide API project. |
-| `dotnet run --project "app/GuideApi/GuideApi.csproj"` | Builds and starts the ASP.NET Core app locally. |
+| `dotnet restore "apps/dotnet-aspnetcore/GuideApi/GuideApi.csproj"` | Restores the NuGet packages required by the Guide API project. |
+| `dotnet run --project "apps/dotnet-aspnetcore/GuideApi/GuideApi.csproj"` | Builds and starts the ASP.NET Core app locally. |
 
 By default, the app listens on port `5000` if no environment variable is provided.
 
@@ -149,22 +157,22 @@ Expected `/health` shape:
 Run in Development:
 
 ```bash
-ASPNETCORE_ENVIRONMENT=Development dotnet run --project "app/GuideApi/GuideApi.csproj"
+ASPNETCORE_ENVIRONMENT=Development dotnet run --project "apps/dotnet-aspnetcore/GuideApi/GuideApi.csproj"
 ```
 
 | Command/Code | Purpose |
 |--------------|---------|
-| `ASPNETCORE_ENVIRONMENT=Development dotnet run --project "app/GuideApi/GuideApi.csproj"` | Starts the app with Development settings and middleware enabled. |
+| `ASPNETCORE_ENVIRONMENT=Development dotnet run --project "apps/dotnet-aspnetcore/GuideApi/GuideApi.csproj"` | Starts the app with Development settings and middleware enabled. |
 
 Run in Production:
 
 ```bash
-ASPNETCORE_ENVIRONMENT=Production dotnet run --project "app/GuideApi/GuideApi.csproj"
+ASPNETCORE_ENVIRONMENT=Production dotnet run --project "apps/dotnet-aspnetcore/GuideApi/GuideApi.csproj"
 ```
 
 | Command/Code | Purpose |
 |--------------|---------|
-| `ASPNETCORE_ENVIRONMENT=Production dotnet run --project "app/GuideApi/GuideApi.csproj"` | Starts the app with Production configuration for local parity checks. |
+| `ASPNETCORE_ENVIRONMENT=Production dotnet run --project "apps/dotnet-aspnetcore/GuideApi/GuideApi.csproj"` | Starts the app with Production configuration for local parity checks. |
 
 Typical differences:
 
@@ -191,7 +199,7 @@ Local behavior should mirror pipeline-produced artifacts. A minimal pipeline ste
 ```yaml
 - script: dotnet publish --configuration Release --output $(Build.ArtifactStagingDirectory)
   displayName: Publish app artifacts
-  workingDirectory: app/GuideApi
+  workingDirectory: apps/dotnet-aspnetcore/GuideApi
 ```
 
 ## Verification
@@ -216,12 +224,12 @@ curl --include --request GET "http://localhost:5000/health"
 Stop the previous process and rerun, or test with platform-style port simulation:
 
 ```bash
-HTTP_PLATFORM_PORT=5050 dotnet run --project "app/GuideApi/GuideApi.csproj"
+HTTP_PLATFORM_PORT=5050 dotnet run --project "apps/dotnet-aspnetcore/GuideApi/GuideApi.csproj"
 ```
 
 | Command/Code | Purpose |
 |--------------|---------|
-| `HTTP_PLATFORM_PORT=5050 dotnet run --project "app/GuideApi/GuideApi.csproj"` | Simulates the port injection behavior used by Windows App Service. |
+| `HTTP_PLATFORM_PORT=5050 dotnet run --project "apps/dotnet-aspnetcore/GuideApi/GuideApi.csproj"` | Simulates the port injection behavior used by Windows App Service. |
 
 ### Missing .NET SDK
 

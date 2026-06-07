@@ -2,7 +2,7 @@
 content_validation:
   status: verified
   last_reviewed: "2026-04-12"
-  reviewer: ai-agent
+  reviewer: agent
   core_claims:
     - claim: "Deployment slots are the core mechanism for safe App Service releases."
       source: "https://learn.microsoft.com/azure/app-service/deploy-best-practices"

@@ -1,12 +1,20 @@
 ---
 content_sources:
   diagrams:
-    - id: vnet-integration
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration
+  - id: vnet-integration
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration
+    verified: true
 ---
-
 # VNet Integration
 
 Enable VNet integration for an Express app on App Service so outbound dependency traffic flows over private network paths.

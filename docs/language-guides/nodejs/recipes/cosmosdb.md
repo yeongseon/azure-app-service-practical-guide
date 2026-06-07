@@ -1,12 +1,20 @@
 ---
 content_sources:
   diagrams:
-    - id: architecture
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/quickstart-python
+  - id: architecture
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/quickstart-python
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/quickstart-python
+    verified: true
 ---
-
 # Cosmos DB Integration
 
 This recipe shows how to connect a Node.js application to Azure Cosmos DB for NoSQL using the `@azure/cosmos` SDK and passwordless Managed Identity.

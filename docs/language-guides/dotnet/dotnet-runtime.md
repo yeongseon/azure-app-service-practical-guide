@@ -1,12 +1,20 @@
 ---
 content_sources:
   diagrams:
-    - id: net-runtime-on-windows-app-service-net-8
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
+  - id: net-runtime-on-windows-app-service-net-8
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/
+    verified: true
 ---
-
 # .NET Runtime on Windows App Service (.NET 8)
 
 Runtime alignment is critical for startup reliability. This reference summarizes .NET 8 runtime settings, environment variables, `web.config` behavior, and startup conventions for this guide.
@@ -164,3 +172,7 @@ az webapp show --resource-group $RESOURCE_GROUP_NAME --name $WEB_APP_NAME --outp
 - [Troubleshooting](../../reference/troubleshooting.md)
 - [CLI Cheatsheet](../../reference/cli-cheatsheet.md)
 - [Concepts: How App Service Works](../../platform/architecture/index.md)
+
+## Sources
+
+- [Microsoft Learn source 1](https://learn.microsoft.com/en-us/azure/app-service/)

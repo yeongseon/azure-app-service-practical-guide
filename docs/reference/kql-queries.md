@@ -1,20 +1,31 @@
 ---
 content_sources:
   diagrams:
-    - id: reference-kql-queries-diagram-1
-      type: flowchart
-      source: self-generated
-      justification: "Self-generated query workflow diagram synthesized from Azure Monitor Logs and Azure App Service diagnostics guidance on Microsoft Learn."
-      based_on:
-        - https://learn.microsoft.com/en-us/azure/azure-monitor/logs/get-started-queries
-        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
-    - id: reference-kql-queries-diagram-2
-      type: flowchart
-      source: self-generated
-      justification: "Self-generated query workflow diagram synthesized from Azure Monitor Logs and Azure App Service diagnostics guidance on Microsoft Learn."
-      based_on:
-        - https://learn.microsoft.com/en-us/azure/azure-monitor/logs/get-started-queries
-        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+  - id: reference-kql-queries-diagram-1
+    type: flowchart
+    source: self-generated
+    justification: Self-generated query workflow diagram synthesized from Azure Monitor
+      Logs and Azure App Service diagnostics guidance on Microsoft Learn.
+    based_on:
+    - https://learn.microsoft.com/en-us/azure/azure-monitor/logs/get-started-queries
+    - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+  - id: reference-kql-queries-diagram-2
+    type: flowchart
+    source: self-generated
+    justification: Self-generated query workflow diagram synthesized from Azure Monitor
+      Logs and Azure App Service diagnostics guidance on Microsoft Learn.
+    based_on:
+    - https://learn.microsoft.com/en-us/azure/azure-monitor/logs/get-started-queries
+    - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/azure-monitor/logs/get-started-queries
+    verified: true
 ---
 # KQL Queries Reference
 

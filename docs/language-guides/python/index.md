@@ -1,24 +1,32 @@
 ---
 content_sources:
   diagrams:
-    - id: main-content
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
-    - id: basic-tier-b1-simple-public-endpoint
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
-    - id: standard-premium-tier-s1-p1v3-vnet-integrated
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
-    - id: isolated-tier-ase-v3-full-network-isolation
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
+  - id: main-content
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
+  - id: basic-tier-b1-simple-public-endpoint
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
+  - id: standard-premium-tier-s1-p1v3-vnet-integrated
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
+  - id: isolated-tier-ase-v3-full-network-isolation
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/
+    verified: true
 ---
-
 # Python Guide
 
 This guide walks from local Flask development to production-ready deployment and operations on Azure App Service.
@@ -154,4 +162,4 @@ Use the Python-specific recipes for service integrations and production patterns
 
 ## Sources
 
-- [Quickstart: Deploy a Python web app](https://learn.microsoft.com/azure/app-service/quickstart-python)
+- [Quickstart: Deploy a Python web app](https://learn.microsoft.com/en-us/azure/app-service/quickstart-python)

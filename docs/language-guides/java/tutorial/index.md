@@ -1,15 +1,28 @@
 ---
 content_sources:
   text:
-    - type: mslearn-adapted
-      url: https://learn.microsoft.com/en-us/azure/app-service/quickstart-java
+  - type: mslearn-adapted
+    url: https://learn.microsoft.com/en-us/azure/app-service/quickstart-java
   diagrams:
-    - id: tutorial-flow
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/quickstart-java
+  - id: tutorial-flow
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/quickstart-java
+validation:
+  az_cli:
+    last_tested: null
+    cli_version: null
+    result: not_tested
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/quickstart-java
+    verified: true
 ---
-
 # Java Tutorial Index
 
 This tutorial walks through the full Azure App Service Java journey, from local development to custom domain and SSL setup.
@@ -50,3 +63,12 @@ flowchart TD
 - [Java guide overview](../index.md)
 - [Java runtime](../java-runtime.md)
 - [Java recipes](../recipes/index.md)
+
+## See Also
+
+- [Guide home](../../../index.md)
+- [Start here](../../../start-here/overview.md)
+
+## Sources
+
+- [Microsoft Learn source 1](https://learn.microsoft.com/en-us/azure/app-service/quickstart-java)

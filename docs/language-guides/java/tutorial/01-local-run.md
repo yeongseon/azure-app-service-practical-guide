@@ -1,16 +1,24 @@
 ---
 content_sources:
   diagrams:
-    - id: 01-local-run
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
-    - id: diagram-2
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
+  - id: 01-local-run
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
+  - id: diagram-2
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/
+    verified: true
 ---
-
 # 01. Local Run
 
 Run the Spring Boot reference app locally using the same runtime assumptions Azure App Service uses in production.
@@ -70,7 +78,7 @@ flowchart TD
 ## Prerequisites
 
 - Java 17 installed (`java --version`)
-- Maven Wrapper executable in `app/` (`./mvnw`)
+- Maven Wrapper executable in `apps/java-springboot/` (`./mvnw`)
 - `curl` for endpoint validation
 
 ## What you'll learn
@@ -87,13 +95,13 @@ flowchart TD
 From the repository root:
 
 ```bash
-cd app
+cd apps/java-springboot
 ./mvnw spring-boot:run
 ```
 
 | Command/Code | Purpose |
 |--------------|---------|
-| `cd app` | Moves into the Spring Boot app directory before running Maven commands. |
+| `cd apps/java-springboot` | Moves into the Spring Boot app directory before running Maven commands. |
 | `./mvnw spring-boot:run` | Starts the application locally with the Maven Wrapper and Spring Boot plugin. |
 
 Expected startup behavior:

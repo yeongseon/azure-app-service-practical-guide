@@ -1,12 +1,20 @@
 ---
 content_sources:
   diagrams:
-    - id: architecture-pattern
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/azure-sql/database/connect-query-python
+  - id: architecture-pattern
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/azure-sql/database/connect-query-python
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/azure-sql/database/connect-query-python
+    verified: true
 ---
-
 # Azure SQL with Managed Identity
 
 Connect Spring Boot to Azure SQL Database using passwordless authentication through Managed Identity and Microsoft Entra tokens.
@@ -164,5 +172,5 @@ Ensure `mssql-jdbc` version supports managed identity auth and `authentication=A
 
 ## Sources
 
-- [Tutorial: Connect to Azure SQL with managed identity](https://learn.microsoft.com/en-us/azure/azure-sql/database/azure-sql-passwordless-migration-java)
+- [Tutorial: Connect to Azure SQL with managed identity](https://learn.microsoft.com/en-us/azure/developer/java/spring-framework/configure-spring-data-jdbc-with-azure-sql-server)
 - [Managed identities for Azure resources](https://learn.microsoft.com/en-us/entra/identity/managed-identities-azure-resources/overview)

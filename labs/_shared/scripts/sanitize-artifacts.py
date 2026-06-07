@@ -43,8 +43,6 @@ def should_mask_ip(ip_text: str) -> bool:
 
     if ip_text in {"0.0.0.0", "127.0.0.1"}:
         return False
-    if ip.is_private:
-        return False
     return True
 
 

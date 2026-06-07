@@ -26,7 +26,7 @@ content_sources:
 content_validation:
   status: verified
   last_reviewed: "2026-04-12"
-  reviewer: ai-agent
+  reviewer: agent
   core_claims:
     - claim: "Kudu tools require the SCM endpoint at `https://<app-name>.scm.azurewebsites.net`."
       source: "https://learn.microsoft.com/azure/app-service/resources-kudu"
@@ -470,4 +470,4 @@ az webapp log config --resource-group <resource-group> --name <app-name> --appli
 - [Kudu service for Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/resources-kudu)
 - [Azure App Service diagnostics overview](https://learn.microsoft.com/en-us/azure/app-service/overview-diagnostics)
 - [Enable diagnostic logging for apps in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs)
-- [Auto-Heal in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/overview-auto-heal)
+- [Auto-Heal in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/web-sites-monitor)

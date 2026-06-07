@@ -46,7 +46,7 @@ content_sources:
 content_validation:
   status: verified
   last_reviewed: "2026-04-12"
-  reviewer: ai-agent
+  reviewer: agent
   core_claims:
     - claim: "Inbound traffic to App Service Linux does not connect directly from internet clients to your Gunicorn process."
       source: "https://learn.microsoft.com/azure/app-service/networking-features"

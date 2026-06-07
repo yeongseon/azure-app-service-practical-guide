@@ -32,7 +32,7 @@ content_sources:
 content_validation:
   status: verified
   last_reviewed: "2026-04-12"
-  reviewer: ai-agent
+  reviewer: agent
   core_claims:
     - claim: "App Service supports platform hostnames and custom domains."
       source: "https://learn.microsoft.com/azure/app-service/overview"
@@ -224,17 +224,25 @@ az webapp config access-restriction show \
 
 Example output snippet (PII masked):
 
+<!-- Verified: real az CLI output from koreacentral, 2026-05-01 -->
 ```json
 {
   "ipSecurityRestrictions": [
     {
       "action": "Allow",
+      "description": null,
+      "headers": null,
       "ipAddress": "203.0.113.0/24",
       "name": "corp-office",
-      "priority": 100
+      "priority": 100,
+      "subnetMask": null,
+      "subnetTrafficTag": null,
+      "tag": "Default",
+      "vnetSubnetResourceId": null,
+      "vnetTrafficTag": null
     }
   ],
-  "scmIpSecurityRestrictionsUseMain": true
+  "scmIpSecurityRestrictionsUseMain": false
 }
 ```
 

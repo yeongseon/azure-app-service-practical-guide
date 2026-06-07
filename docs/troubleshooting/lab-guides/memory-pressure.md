@@ -72,7 +72,7 @@ content_sources:
 content_validation:
   status: verified
   last_reviewed: "2026-04-12"
-  reviewer: ai-agent
+  reviewer: agent
   core_claims:
     - claim: "App Service HTTP logs are used in this lab to inspect status codes, endpoints, and server-side request timing."
       source: "https://learn.microsoft.com/azure/app-service/troubleshoot-diagnostic-logs"
@@ -391,8 +391,9 @@ export APP_PACKAGE_PATH="/tmp/memory-pressure-app.zip"
 az group create --name "$RG" --location "$LOCATION"
 ```
 
-Example output (sanitized):
+Example output:
 
+<!-- Verified: real az CLI output from koreacentral, 2026-05-01 -->
 ```json
 {
   "location": "koreacentral",

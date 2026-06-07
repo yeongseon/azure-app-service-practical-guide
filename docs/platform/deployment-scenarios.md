@@ -44,7 +44,7 @@ content_sources:
 content_validation:
   status: verified
   last_reviewed: "2026-04-12"
-  reviewer: ai-agent
+  reviewer: agent
   core_claims:
     - claim: "By default, apps hosted in App Service are accessible directly through the internet."
       source: "https://learn.microsoft.com/azure/app-service/networking-features"
@@ -107,8 +107,11 @@ graph TD
 | Run from Package | Yes | Yes | Yes | Yes | Yes |
 | Container (Web App for Containers) | No | Yes | Yes | Yes | Yes |
 | GitHub Actions / ADO | Yes | Yes | Yes | Yes | Yes (vNet required) |
-| Kudu (SCM) Site | Public Only | Public Only | Public/Private | Public/Private | Private |
+| Kudu (SCM) Site | Public access only | Depends on SCM private endpoint and public network access settings | Depends on SCM private endpoint and public network access settings | Depends on SCM private endpoint and public network access settings | Depends on ASE/network topology |
 | Deployment Slots | No | No | 5 | 20 | 20 |
+
+!!! note "SCM reachability depends on topology, not just SKU"
+    SCM/Kudu reachability depends on whether you configure an SCM private endpoint and whether public network access remains enabled. Private endpoints for multi-tenant App Service are available from the **Basic** tier onward, so Basic, Standard, and Premium apps can be public-only, dual-access, or effectively private depending on network configuration.
 
 ## Scenario A: Public-Only (Free/Shared tiers)
 
@@ -204,7 +207,7 @@ graph TD
 
 1. **Verify SKU Compatibility:** Ensure the chosen tier supports VNet integration (Basic+) or Private Endpoints (Basic+).
 2. **Subnet Delegation:** The integration subnet must be delegated to `Microsoft.Web/serverFarms` and must be empty before configuration.
-3. **App Settings (Code Deploy):** For ZIP or package-based deployments, configure `WEBSITE_RUN_FROM_PACKAGE=1` for faster startup and atomic swaps. (Not applicable for custom containers).
+3. **App Settings (Code Deploy):** For ZIP or package-based deployments, configure `WEBSITE_RUN_FROM_PACKAGE=1` for faster startup and atomic swaps **only when the runtime supports it**. On Linux code apps, it is supported for Node.js and .NET, but not for Python or Java. (Not applicable for custom containers).
 4. **DNS Resolution:** Ensure private DNS zones (`privatelink.azurewebsites.net`) are linked to your VNet when using Private Endpoints.
 
 ## See Also

@@ -2,7 +2,7 @@
 content_validation:
   status: verified
   last_reviewed: "2026-04-12"
-  reviewer: ai-agent
+  reviewer: agent
   core_claims:
     - claim: "Health checks are the first reliability control in App Service."
       source: "https://learn.microsoft.com/azure/app-service/monitor-instances-health-check"
@@ -267,7 +267,7 @@ Expected behavior:
 
 ## Sources
 
-- [Best practices for Azure App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-best-practices)
+- [Best practices for Azure App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/app-service-best-practices)
 - [Monitor instances in Azure App Service with Health check (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/monitor-instances-health-check)
 - [Back up and restore your app in Azure App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/manage-backup)
 - [Create and manage deployment slots in Azure App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/deploy-staging-slots)

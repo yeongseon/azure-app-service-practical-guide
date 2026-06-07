@@ -2,7 +2,7 @@
 content_validation:
   status: verified
   last_reviewed: "2026-04-12"
-  reviewer: ai-agent
+  reviewer: agent
   core_claims:
     - claim: "Troubleshooting performance degradation in Azure App Service involves observing app behavior, collecting data, and mitigating the issue."
       source: "https://learn.microsoft.com/azure/app-service/troubleshoot-performance-degradation"

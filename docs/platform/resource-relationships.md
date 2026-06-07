@@ -19,7 +19,7 @@ content_sources:
 content_validation:
   status: verified
   last_reviewed: "2026-04-12"
-  reviewer: ai-agent
+  reviewer: agent
   core_claims:
     - claim: "An App Service Plan is the compute boundary that hosts one or more apps."
       source: "https://learn.microsoft.com/azure/app-service/overview-hosting-plans"
@@ -244,6 +244,7 @@ az webapp identity show \
 
 Example output (PII masked):
 
+<!-- Verified: real az CLI output from koreacentral, 2026-05-01 -->
 ```json
 {
   "principalId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",

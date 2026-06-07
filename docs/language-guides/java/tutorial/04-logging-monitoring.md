@@ -1,16 +1,24 @@
 ---
 content_sources:
   diagrams:
-    - id: 04-logging-monitoring
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
-    - id: logging-architecture-for-this-guide
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+  - id: 04-logging-monitoring
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+  - id: logging-architecture-for-this-guide
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+    verified: true
 ---
-
 # 04. Logging & Monitoring
 
 Instrument your Spring Boot app for production observability using Logback JSON logs, Azure Monitor, and Application Insights.

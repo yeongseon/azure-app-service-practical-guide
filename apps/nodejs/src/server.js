@@ -160,30 +160,38 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.listen(PORT, () => {
-  logger.info('Server started', {
-    port: PORT,
-    environment: process.env.NODE_ENV || 'development',
-    nodeVersion: process.version,
-    telemetryMode: process.env.TELEMETRY_MODE || 'basic',
+function startServer() {
+  const server = app.listen(PORT, () => {
+    logger.info('Server started', {
+      port: PORT,
+      environment: process.env.NODE_ENV || 'development',
+      nodeVersion: process.version,
+      telemetryMode: process.env.TELEMETRY_MODE || 'basic',
+    });
   });
-});
 
-process.on('SIGTERM', () => {
-  logger.info('SIGTERM signal received: closing HTTP server');
-  process.exit(0);
-});
-
-process.on('SIGINT', () => {
-  logger.info('SIGINT signal received: closing HTTP server');
-  process.exit(0);
-});
-
-process.on('unhandledRejection', (reason, promise) => {
-  logger.error('Unhandled Promise Rejection', {
-    reason: reason instanceof Error ? reason.message : reason,
-    stack: reason instanceof Error ? reason.stack : undefined,
+  process.on('SIGTERM', () => {
+    logger.info('SIGTERM signal received: closing HTTP server');
+    server.close(() => process.exit(0));
   });
-});
 
-module.exports = app;
+  process.on('SIGINT', () => {
+    logger.info('SIGINT signal received: closing HTTP server');
+    server.close(() => process.exit(0));
+  });
+
+  process.on('unhandledRejection', (reason) => {
+    logger.error('Unhandled Promise Rejection', {
+      reason: reason instanceof Error ? reason.message : reason,
+      stack: reason instanceof Error ? reason.stack : undefined,
+    });
+  });
+
+  return server;
+}
+
+if (require.main === module) {
+  startServer();
+}
+
+module.exports = { app, startServer };

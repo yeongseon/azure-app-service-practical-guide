@@ -1,12 +1,20 @@
 ---
 content_sources:
   diagrams:
-    - id: 02-first-deployment-to-azure-app-service
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/quickstart-python
+  - id: 02-first-deployment-to-azure-app-service
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/quickstart-python
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/quickstart-python
+    verified: true
 ---
-
 # 02 - First Deployment to Azure App Service
 
 This chapter deploys the Flask app from [01 - Local Run](./01-local-run.md) to Azure App Service in a few minutes using `az webapp up`. It uses public access and a Basic B1 plan so you can focus on the fastest first deployment path.
@@ -101,6 +109,8 @@ curl $WEB_APP_URL/health
 !!! note "Enable application logging first"
     `az webapp log tail` is most useful after filesystem application logging is enabled.
 
+> **Note:** `az webapp log tail` may not work reliably for Linux App Service. Use the Azure Portal Log stream or `/home/LogFiles` as alternatives.
+
 ```bash
 az webapp log config --resource-group $RG --name $APP_NAME --application-logging filesystem --level information
 az webapp log tail --resource-group $RG --name $APP_NAME
@@ -138,6 +148,12 @@ When you are ready for private connectivity, move to a topology that adds VNet i
 
 - [03 - Configuration](./03-configuration.md)
 - [Private Network Deployment Recipe](../recipes/private-network-deploy.md)
+
+## See Also
+
+- [Guide home](../../../index.md)
+- [Section index](index.md)
+- [Start here](../../../start-here/overview.md)
 
 ## Sources
 

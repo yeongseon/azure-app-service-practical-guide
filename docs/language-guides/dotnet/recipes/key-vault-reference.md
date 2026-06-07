@@ -1,12 +1,20 @@
 ---
 content_sources:
   diagrams:
-    - id: key-vault-references
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/app-service-key-vault-references
+  - id: key-vault-references
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/app-service-key-vault-references
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/app-service-key-vault-references
+    verified: true
 ---
-
 # Key Vault References
 
 Use Azure App Service Key Vault References to inject secrets into configuration without embedding secret values in code or pipeline variables.
@@ -162,3 +170,7 @@ Validate slot-specific identity and slot-specific app settings configuration.
 - [Managed Identity](managed-identity.md)
 - [Azure SQL](azure-sql.md)
 - For platform details, see [Azure App Service Guide](https://yeongseon.github.io/azure-app-service-practical-guide/)
+
+## Sources
+
+- [Microsoft Learn source 1](https://learn.microsoft.com/en-us/azure/app-service/app-service-key-vault-references)

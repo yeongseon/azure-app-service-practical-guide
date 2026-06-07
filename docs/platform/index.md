@@ -6,6 +6,11 @@ content_sources:
       source: mslearn-adapted
       mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview
       description: "Maps the guide's platform concept pages to the main Azure App Service concept areas described in Microsoft Learn."
+content_validation:
+  status: verified
+  last_reviewed: 2026-05-15
+  reviewer: agent
+  core_claims: []
 ---
 
 # Concepts

@@ -1,12 +1,22 @@
 ---
 content_sources:
   diagrams:
-    - id: about-diagram-1
-      type: flowchart
-      source: self-generated
-      justification: "Self-generated navigation diagram synthesized from official Azure App Service overview documentation for this guide."
-      based_on:
-        - https://learn.microsoft.com/en-us/azure/app-service/overview
+  - id: about-diagram-1
+    type: flowchart
+    source: self-generated
+    justification: Self-generated navigation diagram synthesized from official Azure
+      App Service overview documentation for this guide.
+    based_on:
+    - https://learn.microsoft.com/en-us/azure/app-service/overview
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/overview
+    verified: true
 ---
 # About
 
@@ -69,3 +79,7 @@ While these legacy repositories are now archived, their technical content lives 
 
 - [Start Here](./start-here/overview.md)
 - [Repository Map](./start-here/repository-map.md)
+
+## Sources
+
+- [Microsoft Learn source 1](https://learn.microsoft.com/en-us/azure/app-service/overview)

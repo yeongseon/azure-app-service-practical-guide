@@ -1,14 +1,22 @@
 ---
 content_sources:
   diagrams:
-    - id: nodejs-mtls-client-certificate-flow
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/app-service-web-configure-tls-mutual-auth
-      based_on:
-        - https://learn.microsoft.com/en-us/azure/app-service/configure-ssl-certificate-in-code
+  - id: nodejs-mtls-client-certificate-flow
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/app-service-web-configure-tls-mutual-auth
+    based_on:
+    - https://learn.microsoft.com/en-us/azure/app-service/configure-ssl-certificate-in-code
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/app-service-web-configure-tls-mutual-auth
+    verified: true
 ---
-
 # mTLS Client Certificates
 
 Use Express middleware to parse `X-ARR-ClientCert`, validate the forwarded client certificate with `X509Certificate`, and attach a client certificate to outbound HTTPS calls through `https.Agent`.

@@ -2,7 +2,7 @@
 content_validation:
   status: verified
   last_reviewed: "2026-04-12"
-  reviewer: ai-agent
+  reviewer: agent
   core_claims:
     - claim: "Secrets become harder to rotate, higher accidental exposure risk, and weak auditability"
       source: "https://learn.microsoft.com/azure/app-service/overview-security"
@@ -218,7 +218,7 @@ az webapp config appsettings list \
 
 ## Sources
 
-- [Best practices for Azure App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-best-practices)
+- [Best practices for Azure App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/app-service-best-practices)
 - [Secure Azure App Service apps (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-security)
 - [Troubleshoot outbound connection failures in Azure App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/troubleshoot-intermittent-outbound-connection-errors)
 - [Monitor instances in Azure App Service with Health check (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/monitor-instances-health-check)

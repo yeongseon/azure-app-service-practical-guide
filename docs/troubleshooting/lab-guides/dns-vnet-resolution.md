@@ -39,7 +39,7 @@ content_sources:
 content_validation:
   status: verified
   last_reviewed: "2026-04-12"
-  reviewer: ai-agent
+  reviewer: agent
   core_claims:
     - claim: "Regional VNet integration changes outbound network path and DNS dependency chain."
       source: "https://learn.microsoft.com/azure/app-service/overview-vnet-integration"

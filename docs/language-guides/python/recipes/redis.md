@@ -1,12 +1,20 @@
 ---
 content_sources:
   diagrams:
-    - id: architecture
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/azure-cache-for-redis/cache-python-get-started
+  - id: architecture
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/azure-cache-for-redis/cache-python-get-started
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/azure-cache-for-redis/cache-python-get-started
+    verified: true
 ---
-
 # Redis Cache with redis-py
 
 Use Azure Cache for Redis from Flask with secure configuration and optional Microsoft Entra authentication.

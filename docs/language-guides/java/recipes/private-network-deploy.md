@@ -1,16 +1,25 @@
 ---
 content_sources:
   diagrams:
-    - id: private-network-deploy
-      type: flowchart
-      source: self-generated
-      justification: "Synthesized end-to-end scenario from Microsoft Learn guidance for App Service VNet integration, private endpoints, and managed identity."
-      based_on:
-        - https://learn.microsoft.com/en-us/azure/app-service/configure-vnet-integration-enable
-        - https://learn.microsoft.com/en-us/azure/app-service/networking/private-endpoint
-        - https://learn.microsoft.com/en-us/azure/app-service/overview-managed-identity
+  - id: private-network-deploy
+    type: flowchart
+    source: self-generated
+    justification: Synthesized end-to-end scenario from Microsoft Learn guidance for
+      App Service VNet integration, private endpoints, and managed identity.
+    based_on:
+    - https://learn.microsoft.com/en-us/azure/app-service/configure-vnet-integration-enable
+    - https://learn.microsoft.com/en-us/azure/app-service/networking/private-endpoint
+    - https://learn.microsoft.com/en-us/azure/app-service/overview-managed-identity
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/configure-vnet-integration-enable
+    verified: true
 ---
-
 # Private Network Deploy
 
 Deploy the Java app with private outbound connectivity, a storage private endpoint, and system-assigned managed identity.

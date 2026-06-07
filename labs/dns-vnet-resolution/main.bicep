@@ -15,7 +15,7 @@ var virtualNetworkName = 'vnet-${baseName}-${uniqueSuffix}'
 var integrationSubnetName = 'snet-${baseName}-int'
 var privateEndpointSubnetName = 'snet-${baseName}-pep'
 var privateEndpointName = 'pep-${baseName}-${uniqueSuffix}'
-var privateDnsZoneName = 'privatelink.blob.core.windows.net'
+var privateDnsZoneName = 'privatelink.blob.${environment().suffixes.storage}'
 var cleanBase = replace(baseName, '-', '')
 var storageAccountName = toLower(take('st${cleanBase}${uniqueSuffix}', 24))
 

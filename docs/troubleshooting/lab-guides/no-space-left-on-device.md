@@ -32,7 +32,7 @@ content_sources:
 content_validation:
   status: verified
   last_reviewed: "2026-04-12"
-  reviewer: ai-agent
+  reviewer: agent
   core_claims:
     - claim: "`/home` is persistent quota-backed storage."
       source: "https://learn.microsoft.com/azure/app-service/configure-custom-container"

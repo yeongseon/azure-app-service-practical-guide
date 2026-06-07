@@ -32,7 +32,7 @@ content_sources:
 content_validation:
   status: verified
   last_reviewed: "2026-04-22"
-  reviewer: ai-agent
+  reviewer: agent
   core_claims:
     - claim: "Azure RBAC role assignments are uniquely identified by the combination of scope, principal, and role definition."
       source: "https://learn.microsoft.com/azure/role-based-access-control/role-assignments-cli"
@@ -48,7 +48,7 @@ validation:
     last_tested: "2026-04-22"
     cli_version: "2.70.0"
     result: pass
-    notes: "Reproduced the exact 'RoleAssignmentExists' error with the existing role assignment ID returned by the second ARM deployment (561ed7ada306588a8d5f2746e0ae4fca). Recovery (delete + redeploy) succeeded."
+    notes: "Reproduced the exact 'RoleAssignmentExists' error with the existing role assignment ID returned by the second ARM deployment. Recovery (delete + redeploy) succeeded."
   bicep:
     last_tested: "2026-04-22"
     result: pass
@@ -291,9 +291,9 @@ Expected result: the second deployment fails with `RoleAssignmentExists`, the de
 
 | Step | Action | Expected | Actual (2026-04-22) | Pass/Fail |
 |---|---|---|---|---|
-| 1 | Deploy `infra/main.bicep` | `provisioningState: Succeeded` | Web App `app-aspcdrbac-xslpiyghtnhze`, ACR `acraspcdrbacxslpiyghtnhze` provisioned; Web App MI principalId `d67ccf06-f18b-40f3-8f96-eacd723e580f` | Pass |
+| 1 | Deploy `infra/main.bicep` | `provisioningState: Succeeded` | Web App `app-aspcdrbac-<suffix>`, ACR `acraspcdrbac<suffix>` provisioned; Web App MI principalId `<principal-id>` | Pass |
 | 2 | Capture deployment outputs | `APP_NAME`, `ACR_NAME`, `ACR_ID` populated | All variables set from deployment outputs | Pass |
-| 3 | Run `trigger.sh` | Second ARM deployment fails with `RoleAssignmentExists` and includes existing assignment ID | Failed with `existing role assignment is 561ed7ada306588a8d5f2746e0ae4fca` (GUID `561ed7ad-a306-588a-8d5f-2746e0ae4fca`) | Pass |
+| 3 | Run `trigger.sh` | Second ARM deployment fails with `RoleAssignmentExists` and includes existing assignment ID | Failed with `existing role assignment is <role-assignment-id-no-hyphens>` (GUID `<role-assignment-id>`) | Pass |
 | 4 | Inspect conflicting assignment | One `AcrPull` assignment for the Web App MI on ACR scope | Single assignment matching the GUID returned by the failure | Pass |
 | 5 | Run `verify.sh` (delete + redeploy) | Conflict reproduces, delete succeeds, retry deployment succeeds | Recovery completed; `PASS: recovery successful - 1 active AcrPull assignment` | Pass |
 | 6 | Run `cleanup.sh` | Resource group removed | Resource group deletion initiated successfully | Pass |

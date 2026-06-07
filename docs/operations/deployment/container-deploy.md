@@ -11,7 +11,7 @@ content_sources:
 content_validation:
   status: verified
   last_reviewed: "2026-04-12"
-  reviewer: ai-agent
+  reviewer: agent
   core_claims:
     - claim: "App Service can run a custom Linux container image instead of a built-in runtime stack."
       source: "https://learn.microsoft.com/azure/app-service/configure-custom-container"

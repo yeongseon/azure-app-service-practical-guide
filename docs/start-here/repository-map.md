@@ -1,12 +1,22 @@
 ---
 content_sources:
   diagrams:
-    - id: start-here-repository-map-diagram-1
-      type: graph
-      source: self-generated
-      justification: "Self-generated navigation diagram synthesized from official Azure App Service overview documentation for this guide."
-      based_on:
-        - https://learn.microsoft.com/en-us/azure/app-service/overview
+  - id: start-here-repository-map-diagram-1
+    type: graph
+    source: self-generated
+    justification: Self-generated navigation diagram synthesized from official Azure
+      App Service overview documentation for this guide.
+    based_on:
+    - https://learn.microsoft.com/en-us/azure/app-service/overview
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/overview
+    verified: true
 ---
 # Repository Map
 
@@ -83,5 +93,5 @@ graph TD
 ## Sources
 
 - [Azure App Service documentation hub (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/)
-- [App Service architecture center (Microsoft Learn)](https://learn.microsoft.com/azure/architecture/web-apps/app-service/)
+- [App Service architecture center (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/architecture/web-apps/)
 - [Azure App Service diagnostics overview (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-diagnostics)

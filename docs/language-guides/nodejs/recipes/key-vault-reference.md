@@ -1,12 +1,20 @@
 ---
 content_sources:
   diagrams:
-    - id: architecture
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/app-service-key-vault-references
+  - id: architecture
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/app-service-key-vault-references
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/app-service-key-vault-references
+    verified: true
 ---
-
 # Key Vault References
 
 Key Vault references allow App Service to access secrets directly from Azure Key Vault through environment variables. This eliminates the need to store sensitive data in application settings and simplifies secret rotation.

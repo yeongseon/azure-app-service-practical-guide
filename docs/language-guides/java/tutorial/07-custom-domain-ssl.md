@@ -1,16 +1,24 @@
 ---
 content_sources:
   diagrams:
-    - id: 07-custom-domain-ssl
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/app-service-web-tutorial-custom-domain
-    - id: domain-and-certificate-flow
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/app-service-web-tutorial-custom-domain
+  - id: 07-custom-domain-ssl
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/app-service-web-tutorial-custom-domain
+  - id: domain-and-certificate-flow
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/app-service-web-tutorial-custom-domain
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/app-service-web-tutorial-custom-domain
+    verified: true
 ---
-
 # 07. Custom Domain & SSL
 
 Map a custom domain to your Java App Service app and secure it with a managed TLS certificate.
@@ -151,6 +159,9 @@ az webapp config ssl create \
   --hostname "$CUSTOM_HOSTNAME" \
   --output json
 ```
+
+!!! note "Preview Command"
+    `az webapp config ssl create` is currently in Preview. Not all hostname configurations are eligible for managed certificates. See [App Service TLS overview](https://learn.microsoft.com/en-us/azure/app-service/overview-tls) for eligibility requirements. The Azure Portal provides an alternative path for managed certificate creation.
 
 | Command/Code | Purpose |
 |--------------|---------|

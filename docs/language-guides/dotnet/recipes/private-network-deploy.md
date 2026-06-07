@@ -1,25 +1,35 @@
 ---
 content_sources:
   diagrams:
-    - id: private-network-deploy
-      type: flowchart
-      source: self-generated
-      justification: "Combines the .NET App Service quickstart with VNet integration, private endpoint, and managed identity guidance into one deployment scenario."
-      based_on:
-        - https://learn.microsoft.com/en-us/azure/app-service/quickstart-dotnetcore
-        - https://learn.microsoft.com/en-us/azure/app-service/configure-vnet-integration-enable
-        - https://learn.microsoft.com/en-us/azure/app-service/networking/private-endpoint
-        - https://learn.microsoft.com/en-us/azure/app-service/tutorial-connect-msi-azure-database
-    - id: private-network-deploy-flow
-      type: flowchart
-      source: self-generated
-      justification: "Summarizes the end-to-end deployment flow for a private .NET App Service scenario."
-      based_on:
-        - https://learn.microsoft.com/en-us/azure/app-service/configure-vnet-integration-enable
-        - https://learn.microsoft.com/en-us/azure/app-service/networking/private-endpoint
-        - https://learn.microsoft.com/en-us/azure/app-service/tutorial-connect-msi-azure-database
+  - id: private-network-deploy
+    type: flowchart
+    source: self-generated
+    justification: Combines the .NET App Service quickstart with VNet integration,
+      private endpoint, and managed identity guidance into one deployment scenario.
+    based_on:
+    - https://learn.microsoft.com/en-us/azure/app-service/quickstart-dotnetcore
+    - https://learn.microsoft.com/en-us/azure/app-service/configure-vnet-integration-enable
+    - https://learn.microsoft.com/en-us/azure/app-service/networking/private-endpoint
+    - https://learn.microsoft.com/en-us/azure/app-service/tutorial-connect-msi-azure-database
+  - id: private-network-deploy-flow
+    type: flowchart
+    source: self-generated
+    justification: Summarizes the end-to-end deployment flow for a private .NET App
+      Service scenario.
+    based_on:
+    - https://learn.microsoft.com/en-us/azure/app-service/configure-vnet-integration-enable
+    - https://learn.microsoft.com/en-us/azure/app-service/networking/private-endpoint
+    - https://learn.microsoft.com/en-us/azure/app-service/tutorial-connect-msi-azure-database
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/quickstart-dotnetcore
+    verified: true
 ---
-
 # Private Network Deploy
 
 Use this recipe after [02 - First Deploy](../tutorial/02-first-deploy.md) when you need outbound VNet integration, private endpoints for dependencies, and managed identity for passwordless access.

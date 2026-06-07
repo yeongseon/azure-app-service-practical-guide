@@ -3,7 +3,10 @@
 from __future__ import annotations
 
 import platform
+from http import HTTPStatus
 from importlib import import_module
+
+from werkzeug.exceptions import HTTPException
 
 from src.config import configure_logging, get_correlation_id, get_logger, get_settings
 from src.middleware import register_correlation_middleware
@@ -14,6 +17,13 @@ flask = import_module("flask")
 Flask = flask.Flask
 jsonify = flask.jsonify
 request = flask.request
+
+
+def status_phrase(status_code: int) -> str:
+    try:
+        return HTTPStatus(status_code).phrase
+    except ValueError:
+        return "Error"
 
 
 HOMEPAGE_HTML = """
@@ -155,7 +165,14 @@ def create_app() -> Flask:
 
     @app.errorhandler(Exception)
     def handle_exception(error: Exception):
-        status = getattr(error, "status", 500)
+        status = getattr(error, "status", None)
+        message = str(error)
+
+        if isinstance(error, HTTPException):
+            status = error.code or 500
+            message = error.description or message
+        elif status is None:
+            status = 500
 
         logger.error(
             "Unhandled error",
@@ -172,8 +189,12 @@ def create_app() -> Flask:
         return (
             jsonify(
                 {
-                    "error": "Internal Server Error",
-                    "message": "An error occurred" if settings.environment == "production" else str(error),
+                    "error": status_phrase(status),
+                    "message": (
+                        "An error occurred"
+                        if settings.environment == "production" and status >= 500
+                        else message
+                    ),
                     "correlationId": get_correlation_id(),
                 }
             ),

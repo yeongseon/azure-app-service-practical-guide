@@ -39,9 +39,9 @@ content_sources:
 content_validation:
   status: verified
   last_reviewed: "2026-04-12"
-  reviewer: ai-agent
+  reviewer: agent
   core_claims:
-    - claim: "`WEBSITES_PORT` tells the platform which port to probe."
+    - claim: "For Linux custom containers, port configuration involves both App Service settings and the app's actual listener behavior."
       source: "https://learn.microsoft.com/azure/app-service/configure-custom-container"
       verified: true
     - claim: "By default, App Service assumes your custom container listens on port 80."
@@ -86,7 +86,7 @@ graph TD
 
 ### Quick Conclusion
 
-Treat this error as a startup reachability workflow, not a single failure mode. First align expected port and bind address (`WEBSITES_PORT`/`PORT`, `0.0.0.0`), then correlate platform timeout events with console startup logs to separate timeout from crash conditions. Once the immediate issue is mitigated, harden startup commands and initialization behavior so every deployment responds to HTTP pings within the configured startup window.
+Treat this error as a startup reachability workflow, not a single failure mode. First align Linux port and bind behavior (`PORT`, `WEBSITES_PORT`, `0.0.0.0`), then correlate platform timeout events with console startup logs to separate timeout from crash conditions. Linux startup behavior is more nuanced than a direct `WEBSITES_PORT`-equals-probe-target model. See [Container HTTP Pings Lab](../../lab-guides/container-http-pings.md) for experimental evidence on Linux port behavior. Once the immediate issue is mitigated, harden startup commands and initialization behavior so every deployment responds to HTTP pings within the configured startup window.
 
 ## 2. Common Misreadings
 
@@ -98,7 +98,7 @@ Treat this error as a startup reachability workflow, not a single failure mode. 
 
 ## 3. Competing Hypotheses
 
-- H1: Port mismatch — container listens on a different port than what App Service expects (`WEBSITES_PORT` configured probe target vs actual app listen port exposed through `PORT` inside the container)
+- H1: Port or listener contract mismatch — the container listens on a different port or address than the Linux startup path actually reaches (`PORT`, `WEBSITES_PORT`, bind address, or startup command drift)
 - H2: Binding to localhost — container binds to 127.0.0.1 instead of 0.0.0.0, so the platform health probe cannot reach it
 - H3: Startup time exceeded — container takes longer than the startup time limit (WEBSITES_CONTAINER_START_TIME_LIMIT, default 230 seconds) to begin responding to HTTP
 - H4: Application crash during startup — container process exits or enters an error loop before it can respond to any HTTP request
@@ -118,8 +118,8 @@ Treat this error as a startup reachability workflow, not a single failure mode. 
 
 ### Platform Signals
 
-- `WEBSITES_PORT` app setting value (tells the platform which port to probe).
-- `PORT` environment variable (injected into the container by the platform, defaults to 8080 or the value of `WEBSITES_PORT`).
+- `WEBSITES_PORT` app setting value (custom-container port configuration input).
+- `PORT` environment variable (runtime-injected into the container and usually the value the app should bind to).
 - WEBSITES_CONTAINER_START_TIME_LIMIT value
 - Startup command configuration in Azure Portal
 - Docker log stream (Log stream blade in Portal)

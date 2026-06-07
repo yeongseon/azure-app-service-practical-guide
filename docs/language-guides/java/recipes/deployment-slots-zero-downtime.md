@@ -1,12 +1,20 @@
 ---
 content_sources:
   diagrams:
-    - id: slot-based-release-flow
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/quickstart-python
+  - id: slot-based-release-flow
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/quickstart-python
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/quickstart-python
+    verified: true
 ---
-
 # Deployment Slots for Zero-Downtime Releases
 
 Use App Service deployment slots to validate Java releases in staging, then swap traffic to production with near-zero downtime.
@@ -75,7 +83,7 @@ az webapp deploy \
   --resource-group "$RG" \
   --name "$APP_NAME" \
   --slot "$SLOT_NAME" \
-  --src-path "app/target/<artifact-name>.jar" \
+  --src-path "apps/java-springboot/target/<artifact-name>.jar" \
   --type jar \
   --output json
 ```

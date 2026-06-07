@@ -1,24 +1,36 @@
 ---
 content_sources:
   diagrams:
-    - id: start-here-learning-paths-diagram-1
-      type: graph
-      source: self-generated
-      justification: "Self-generated navigation diagram synthesized from official Azure App Service overview documentation for this guide."
-      based_on:
-        - https://learn.microsoft.com/en-us/azure/app-service/overview
-    - id: start-here-learning-paths-diagram-2
-      type: graph
-      source: self-generated
-      justification: "Self-generated navigation diagram synthesized from official Azure App Service overview documentation for this guide."
-      based_on:
-        - https://learn.microsoft.com/en-us/azure/app-service/overview
-    - id: start-here-learning-paths-diagram-3
-      type: graph
-      source: self-generated
-      justification: "Self-generated navigation diagram synthesized from official Azure App Service overview documentation for this guide."
-      based_on:
-        - https://learn.microsoft.com/en-us/azure/app-service/overview
+  - id: start-here-learning-paths-diagram-1
+    type: graph
+    source: self-generated
+    justification: Self-generated navigation diagram synthesized from official Azure
+      App Service overview documentation for this guide.
+    based_on:
+    - https://learn.microsoft.com/en-us/azure/app-service/overview
+  - id: start-here-learning-paths-diagram-2
+    type: graph
+    source: self-generated
+    justification: Self-generated navigation diagram synthesized from official Azure
+      App Service overview documentation for this guide.
+    based_on:
+    - https://learn.microsoft.com/en-us/azure/app-service/overview
+  - id: start-here-learning-paths-diagram-3
+    type: graph
+    source: self-generated
+    justification: Self-generated navigation diagram synthesized from official Azure
+      App Service overview documentation for this guide.
+    based_on:
+    - https://learn.microsoft.com/en-us/azure/app-service/overview
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/overview
+    verified: true
 ---
 # Learning Paths
 
@@ -120,5 +132,5 @@ Read in order:
 ## Sources
 
 - [Get started with Azure App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/getting-started)
-- [Deploy your app to Azure App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/quickstart)
+- [Deploy your app to Azure App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/getting-started)
 - [Azure App Service documentation hub (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/)

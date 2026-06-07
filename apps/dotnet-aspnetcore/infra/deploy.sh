@@ -11,6 +11,7 @@ REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 if [[ -f "${SCRIPT_DIR}/.env" ]]; then
   echo "Loading deployment settings from infra/.env"
   set -a
+  # shellcheck disable=SC1091
   source "${SCRIPT_DIR}/.env"
   set +a
 fi
@@ -71,7 +72,7 @@ echo "  Web App: ${WEB_APP_NAME}"
 echo "  URL: ${WEB_APP_URL}"
 
 echo "Step 4/5: Publishing ASP.NET Core app"
-APP_PROJECT_DIR="${REPO_ROOT}/app/GuideApi"
+APP_PROJECT_DIR="${REPO_ROOT}/GuideApi"
 PUBLISH_DIR="${APP_PROJECT_DIR}/publish"
 ZIP_PATH="${APP_PROJECT_DIR}/guideapi.zip"
 

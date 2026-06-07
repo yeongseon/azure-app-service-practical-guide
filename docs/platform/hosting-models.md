@@ -9,7 +9,7 @@ content_sources:
 content_validation:
   status: verified
   last_reviewed: "2026-04-12"
-  reviewer: ai-agent
+  reviewer: agent
   core_claims:
     - claim: "A single plan can host multiple apps, which share the same compute pool."
       source: "https://learn.microsoft.com/azure/app-service/overview-hosting-plans"
@@ -202,12 +202,13 @@ az appservice plan show \
 
 Example output (PII masked):
 
+<!-- Verified: real az CLI output from koreacentral, 2026-05-01 -->
 ```json
 {
-  "numberOfWorkers": 2,
+  "numberOfWorkers": 1,
   "reserved": true,
   "sku": {
-    "capacity": 2,
+    "capacity": 1,
     "name": "S1",
     "tier": "Standard"
   },

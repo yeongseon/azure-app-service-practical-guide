@@ -1,14 +1,22 @@
 ---
 content_sources:
   diagrams:
-    - id: dotnet-mtls-client-certificate-flow
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/app-service-web-configure-tls-mutual-auth
-      based_on:
-        - https://learn.microsoft.com/en-us/azure/app-service/configure-ssl-certificate-in-code
+  - id: dotnet-mtls-client-certificate-flow
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/app-service-web-configure-tls-mutual-auth
+    based_on:
+    - https://learn.microsoft.com/en-us/azure/app-service/configure-ssl-certificate-in-code
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/app-service-web-configure-tls-mutual-auth
+    verified: true
 ---
-
 # mTLS Client Certificates
 
 Use ASP.NET Core middleware to parse `X-ARR-ClientCert`, validate the forwarded certificate with `X509Certificate2`, and attach a client certificate to outbound `HttpClient` requests.

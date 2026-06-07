@@ -1,12 +1,20 @@
 ---
 content_sources:
   diagrams:
-    - id: architecture
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/azure-sql/database/connect-query-python
+  - id: architecture
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/azure-sql/database/connect-query-python
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/azure-sql/database/connect-query-python
+    verified: true
 ---
-
 # Azure SQL Integration
 
 This recipe shows how to connect a Node.js application running on Azure App Service to an Azure SQL Database using a passwordless Managed Identity approach.

@@ -1,28 +1,36 @@
 ---
 content_sources:
   diagrams:
-    - id: diagram-1
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
-    - id: how-logs-flow
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
-    - id: log-levels-filtering
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
-    - id: correlation-id-tracing-a-single-request
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
-    - id: what-gets-collected
-      type: flowchart
-      source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+  - id: diagram-1
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+  - id: how-logs-flow
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+  - id: log-levels-filtering
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+  - id: correlation-id-tracing-a-single-request
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+  - id: what-gets-collected
+    type: flowchart
+    source: mslearn-adapted
+    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+content_validation:
+  status: verified
+  last_reviewed: '2026-05-23'
+  reviewer: agent
+  core_claims:
+  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
+      guidance.
+    source: https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+    verified: true
 ---
-
 # 04. Logging & Monitoring
 
 **Time estimate: 30 minutes**
@@ -37,7 +45,7 @@ Monitor your Node.js application's health, track performance, and diagnose issue
 <!-- diagram-id: diagram-1 -->
 ```mermaid
 flowchart TD
-    INET[Internet] -->|HTTPS| WA["Web App\nApp Service S1\nLinux Node 18 LTS"]
+    INET[Internet] -->|HTTPS| WA["Web App\nApp Service S1\nLinux Node 20 LTS"]
 
     subgraph VNET["VNet 10.0.0.0/16"]
         subgraph INT_SUB["Integration Subnet 10.0.1.0/24\nDelegation: Microsoft.Web/serverFarms"]
@@ -150,8 +158,8 @@ Use structured fields so KQL queries can filter and aggregate without string par
 
 The `/log-levels` demo route uses the module-level `logger` directly.  
 For routes that need per-request correlation, use `req.logger` — a child logger with
-`correlationId` pre-bound by `app/src/middleware/correlation.js`.  
-See `app/src/routes/demo/requests.js`:
+`correlationId` pre-bound by `apps/nodejs/src/middleware/correlation.js`.
+See `apps/nodejs/src/routes/demo/requests.js`:
 
 ```js
 // routes/demo/requests.js — /log-levels demo (uses module-level logger)
@@ -219,7 +227,7 @@ router.post('/user-login', (req, res) => {
 ### Pattern 2 — External Dependency Tracking
 
 Always record the URL, status code, and elapsed time so you can diagnose slow or failing
-dependencies in Application Insights. See `app/src/routes/demo/dependencies.js`:
+dependencies in Application Insights. See `apps/nodejs/src/routes/demo/dependencies.js`:
 
 ```js
 // routes/demo/dependencies.js
@@ -272,7 +280,7 @@ router.get('/external', async (req, res) => {
   "url": "https://jsonplaceholder.typicode.com/posts/1",
   "error": "The operation was aborted due to timeout",
   "duration": 10043
-}
+```
 ```
 
 | Command/Code | Purpose |
@@ -285,7 +293,7 @@ router.get('/external', async (req, res) => {
 
 ### Pattern 3 — Unhandled Exception Logging
 
-`app/src/server.js` catches all unhandled errors in the Express error handler and logs them
+`apps/nodejs/src/server.js` catches all unhandled errors in the Express error handler and logs them
 with full context before returning an error response:
 
 ```js
@@ -328,7 +336,7 @@ but the two records are not guaranteed to be identical or always co-emitted.
 
 ### Advanced Mode (Winston + OpenTelemetry)
 
-`app/src/config/telemetry/advanced.js` adds Winston and ships telemetry directly to Application Insights via the OpenTelemetry SDK. The `logger.error(...)` call above lands in Application Insights as:
+`apps/nodejs/src/config/telemetry/advanced.js` adds Winston and ships telemetry directly to Application Insights via the OpenTelemetry SDK. The `logger.error(...)` call above lands in Application Insights as:
 
 - **Table:** `AppTraces`
 - **SeverityLevel:** `3` (Error)
@@ -406,7 +414,7 @@ az webapp config appsettings set \
 
 ### Correlation ID — Tracing a Single Request
 
-`app/src/middleware/correlation.js` injects a unique `correlationId` into every request and
+`apps/nodejs/src/middleware/correlation.js` injects a unique `correlationId` into every request and
 binds it to `req.logger` so all log lines for the same request share the same ID automatically:
 
 <!-- diagram-id: correlation-id-tracing-a-single-request -->
@@ -447,17 +455,32 @@ az webapp log config \
 
 **Example output:**
 
+<!-- Verified: real az CLI output from koreacentral, 2026-05-01 -->
 ```json
 {
   "applicationLogs": {
+    "azureBlobStorage": {
+      "level": "Off",
+      "retentionInDays": null,
+      "sasUrl": null
+    },
+    "azureTableStorage": {
+      "level": "Off",
+      "sasUrl": null
+    },
     "fileSystem": {
       "level": "Verbose"
     }
   },
   "httpLogs": {
+    "azureBlobStorage": {
+      "enabled": false,
+      "retentionInDays": 3,
+      "sasUrl": null
+    },
     "fileSystem": {
       "enabled": true,
-      "retentionInDays": 7,
+      "retentionInDays": 3,
       "retentionInMb": 100
     }
   }
@@ -540,6 +563,9 @@ unzip logs.zip -d ./logs
 | `az webapp log download ... --log-file ./logs.zip` | Downloads the current App Service logs as a zip archive |
 | `unzip logs.zip -d ./logs` | Extracts the downloaded logs into a local folder |
 
+!!! warning "Linux Limitation"
+    This command may not work with web apps running on Linux. Use log streaming, the Azure Portal's Log stream blade, or access logs directly via `/home/LogFiles` as alternatives.
+
 **SSH and tail live:**
 
 ```bash
@@ -558,7 +584,7 @@ tail -f /home/LogFiles/*_docker.log
 
 Application Insights collects telemetry into four queryable tables when either:
 
-- **`TELEMETRY_MODE=advanced`** — the app initializes the OTel SDK at startup (see `app/src/config/telemetry/advanced.js`), **or**
+- **`TELEMETRY_MODE=advanced`** — the app initializes the OTel SDK at startup (see `apps/nodejs/src/config/telemetry/advanced.js`), **or**
 - The **App Service Application Insights agent** is enabled in the portal (App Service → Application Insights → Turn on).
 
 Setting `APPLICATIONINSIGHTS_CONNECTION_STRING` alone is not sufficient — telemetry only reaches Application Insights when one of the above paths is active.

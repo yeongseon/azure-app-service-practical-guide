@@ -11,7 +11,7 @@ content_sources:
 content_validation:
   status: verified
   last_reviewed: "2026-04-25"
-  reviewer: ai-agent
+  reviewer: agent
   core_claims:
     - claim: "The az webapp config ssl upload command uploads a private PFX certificate to an App Service app."
       source: "https://learn.microsoft.com/en-us/cli/azure/webapp/config/ssl?view=azure-cli-latest"

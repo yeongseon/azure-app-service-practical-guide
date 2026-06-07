@@ -11,7 +11,7 @@ content_sources:
 content_validation:
   status: verified
   last_reviewed: "2026-04-12"
-  reviewer: ai-agent
+  reviewer: agent
   core_claims:
     - claim: "App settings and connection strings can be marked as slot-specific so they stay with the slot during swap."
       source: "https://learn.microsoft.com/azure/app-service/deploy-staging-slots"
