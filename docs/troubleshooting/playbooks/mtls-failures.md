@@ -122,6 +122,12 @@ For ASE or ILB ASE deployments, confirm:
 - whether an upstream proxy or gateway changes the expected request path
 - whether the ingress chain preserves the standard `X-ARR-ClientCert` application contract
 
+#### Portal view: Networking blade as entry point for mTLS configuration
+
+![Azure portal Networking blade showing Inbound traffic configuration column (Public network access Enabled with no access restrictions Using default behavior, App assigned address Not configured, Private endpoints 0 private endpoints, Inbound IPv4 20.200.197.3, Inbound IPv6 2603:1040:f05:3::208, Optional inbound services Azure Front Door) and Outbound traffic configuration column (Virtual network integration Not configured, Hybrid connections Not configured, Outbound DNS Default Azure-provided, list of Outbound IPv4 and IPv6 addresses), Integration subnet configuration card showing NAT gateway N/A, NSG N/A, UDR N/A, toolbar with Refresh, Troubleshoot, Send us your feedback buttons](../../assets/troubleshooting/networking/01-networking-hub.png)
+
+The `Networking` hub is the entry point for verifying the inbound posture that determines whether incoming mTLS traffic can even reach your app: the `Public network access` field, `Private endpoints` count, and `Inbound IPv4/IPv6` rows together describe which network surfaces are accepting TLS handshakes and which client-cert headers (`X-ARR-ClientCert`) can ever be forwarded. When a private endpoint, an ASE, or an upstream gateway sits in front of the app, the `Inbound traffic configuration` column tells you whether you should be debugging the multitenant front-end or a non-standard ingress chain that may not present the certificate the same way. The TLS bindings and `clientCertEnabled` toggle live in adjacent blades (`Custom domains`, `Configuration > General settings`); this Networking hub is the diagnostic spine that anchors which inbound path the playbook's `clientCertExclusionPaths` and `clientCertMode` checks actually apply to.
+
 ## Resolution
 
 - Enable `clientCertEnabled` and set the intended `clientCertMode`

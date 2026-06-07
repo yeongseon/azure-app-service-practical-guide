@@ -128,6 +128,12 @@ When slot swap fails during warm-up, assume a validation contract mismatch first
 - Health Check path configuration and authentication requirements.
 - Slot setting flags for sensitive config (database, cache, feature toggles, secrets).
 
+#### Portal view: Activity log for slot-swap operation audit
+
+![Azure portal Activity log blade for app-test-20251107 with toolbar Activity, Edit columns, Refresh, Export Activity Logs, Download as CSV, Insights, Feedback, Pin current filters, Reset filters. A "Looking for Log Analytics?" info banner offers a Visit Log Analytics cross-link. Below it: a Search box, a Quick Insights link, and filter chips Management Group: None, Subscription: Visual Studio Enterprise Subscription, Event severity: All, Timespan: Last 6 hours, Resource group: rg-test-20251107 (X), Resource: app-test-20251107 (X), plus an Add Filter button. The "11 items." count precedes a results table with columns Operation name, Status, Time, Time stamp, Subscription, Event initiated by - all 11 rows (mix of ValidateUpgradePath, Get Web App Publishing Profile, Get Web App Slots Differences, List Web App Slot Security Sensitive Settings) show Succeeded status, "Sun Jun 07 ..." time stamps, Visual Studio Enterprise Subscription, and user@example.com (PII masked) for Event initiated by.](../../../assets/troubleshooting/activity-log/01-activity-log.png)
+
+The `Activity log` blade is the authoritative timeline for swap-attempt operations: `Swap Web App Slots`, `Apply slot configuration`, and any preceding `Get Web App Slots Differences` calls show up here with exact `Time stamp` values and the `Event initiated by` principal (CI/CD service principal vs. an interactive operator). For a warm-up failure, pin the filter to the affected app and tighten the timespan to the swap window, then correlate the failure row's timestamp against the first warm-up rejection in `AppServicePlatformLogs` and the first `503` in `AppServiceHTTPLogs` to anchor whether the rollback happened before or after the staging slot accepted its first request. Use `Download as CSV` to export the swap audit trail before the 90-day Activity log retention horizon expires.
+
 ## 5. Evidence to Collect
 
 ### Required Evidence

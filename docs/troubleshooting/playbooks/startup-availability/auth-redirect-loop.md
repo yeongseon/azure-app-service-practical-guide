@@ -142,6 +142,12 @@ sequenceDiagram
 - Proxy/edge host + `X-Forwarded-Proto` forwarding behavior.
 - Slot configuration parity and recent swap timeline.
 
+#### Portal view: Runtime log stream for live redirect-loop traffic
+
+![Azure portal Log stream blade for app-test-20251107 with toolbar Log Level filter, Stop, Copy, Clear; a Logs section showing Runtime and Platform radio buttons (Runtime selected); an Instances dropdown showing a single instance hash b58cc693426fe8c6d1b45abb7e0487ceeee9eeb41200672d7683b5ebc05e075f next to a refresh icon; and a Lookback period set to Last 30 minutes. The streaming pane shows red INFO-level log entries with 2026-06-07 timestamps, x-ms-client-request-id 00000000-0000-0000-0000-000000000000 (PII masked), HTTP method POST, request headers (Content-Type application/json), and OpenTelemetry exporter transmissions to https://koreacentral-0.in.applicationinsights.azure.com/v2.1/track with Response status 200 and Items received 3, Items accepted 3.](../../../assets/troubleshooting/log-stream/01-log-stream.png)
+
+The `Log stream` blade with the `Runtime` radio selected is the right tool to confirm the redirect chain as a user reproduces the issue — repeated `302` responses to `/.auth/login/aad/callback` and back to the protected app path appear in real time, before the same evidence aggregates into `AppServiceHTTPLogs`. The per-`Instance` dropdown matters here because session-state mismatches in a horizontally scaled app can produce loops only on specific instances, and the `Last 30 minutes` lookback bounds the window to the exact reproduction you just triggered. Use this view to falsify or confirm the `## 4. What to Check First` hypotheses (EasyAuth misconfiguration vs. `X-Forwarded-Proto` mismatch behind an edge proxy) before committing to the deeper Section 5 HAR captures and KQL queries.
+
 ## 5. Evidence to Collect
 
 ### Required Evidence

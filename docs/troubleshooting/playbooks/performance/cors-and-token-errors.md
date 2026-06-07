@@ -159,6 +159,12 @@ sequenceDiagram
 - Active hostname strategy (`azurewebsites.net` vs custom domain) across SPA/API.
 - Any recent auth/CORS setting changes close to incident start.
 
+#### Portal view: Runtime log stream for CORS preflight and token-validation signals
+
+![Azure portal Log stream blade for app-test-20251107 with toolbar Log Level filter, Stop, Copy, Clear; a Logs section showing Runtime and Platform radio buttons (Runtime selected); an Instances dropdown showing a single instance hash b58cc693426fe8c6d1b45abb7e0487ceeee9eeb41200672d7683b5ebc05e075f next to a refresh icon; and a Lookback period set to Last 30 minutes. The streaming pane shows red INFO-level log entries with 2026-06-07 timestamps, x-ms-client-request-id 00000000-0000-0000-0000-000000000000 (PII masked), HTTP method POST, request headers (Content-Type application/json), and OpenTelemetry exporter transmissions to https://koreacentral-0.in.applicationinsights.azure.com/v2.1/track with Response status 200 and Items received 3, Items accepted 3.](../../../assets/troubleshooting/log-stream/01-log-stream.png)
+
+The `Log stream` blade with the `Runtime` radio selected is the live tail you keep open while reproducing a failing browser request — preflight `OPTIONS` calls, `401`/`403` responses, and any application-side token-validation error lines emitted by your framework show up here in real time, before they aggregate into `AppServiceHTTPLogs` and `AppServiceAuthenticationLogs`. The `Last 30 minutes` lookback and the per-`Instance` dropdown are what make this view the right tool for the moment you click the failing button in the SPA: you see whether the worker received the preflight at all (a CORS rule blocked it before app code), versus whether the worker rejected the bearer token (a token issuer/audience mismatch). This live signal is the cheapest way to falsify or confirm the hypotheses in `## 4. What to Check First` before you commit to the deeper KQL evidence in this section.
+
 ## 5. Evidence to Collect
 
 ### Required Evidence

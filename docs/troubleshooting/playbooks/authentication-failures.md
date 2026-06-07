@@ -125,6 +125,12 @@ flowchart TD
         --output table
     ```
 
+#### Portal view: Diagnose and solve hub - entry point for EasyAuth investigation
+
+![Azure portal Diagnose and solve problems blade for app-test-20251107 with the Common Solutions tab selected (AI-powered Diagnostics (preview) tab also visible). Seven Troubleshooting categories: Availability and Performance (Application Logs, App Down Workflow, Web App Down), Configuration and Management (Investigate EasyAuth errors, IP Address Configuration, All Scaling Operations), Risk Assessments (Availability risks, Configuration risks), Deployment (Troubleshoot), Networking (Troubleshoot), Diagnostic Tools (Auto-Heal, Network Troubleshooter, Advanced Application Restart), Load Test your App (Create Load Test). Risk alerts shows an Availability card with 2 Critical alerts. Popular troubleshooting tools list: Application Logs, App Down Workflow, Web App Down, Web App Slow, Process Full List.](../../assets/troubleshooting/diagnose-and-solve/01-overview.png)
+
+For authentication failures, the `Configuration and Management` category exposes the `Investigate EasyAuth errors` link, which is the platform-supplied diagnostic entry point for App Service Authentication (EasyAuth) misconfiguration — issuer, audience, redirect URI, token store, and provider callback errors. Use this hub as the first step before running the Section 5 KQL queries: the linked detector evaluates current EasyAuth settings against the platform's own error catalog, so it can short-circuit a long log dive when the root cause is a known configuration drift (e.g., a stale `MICROSOFT_PROVIDER_AUTHENTICATION_SECRET`). The other tiles (`IP Address Configuration`, `All Scaling Operations`) remain useful as adjacent context when an auth failure correlates with a network or scale change.
+
 ## 5. Evidence to Collect
 
 Capture the full login journey: initial request, redirect to provider, callback, final app response, and any header/claim evidence at the app boundary.

@@ -158,6 +158,12 @@ az webapp config show --name "$APP_NAME" --resource-group "$RG" \
 
 The `acrUseManagedIdentityCreds: true` setting confirms the Web App expects to authenticate to ACR via its own MI. If `acrUserManagedIdentityID` is set, a user-assigned MI is in use instead — adjust the principal lookup accordingly (`az identity show`).
 
+#### Portal view: Activity log for role-assignment operation audit
+
+![Azure portal Activity log blade for app-test-20251107 with toolbar Activity, Edit columns, Refresh, Export Activity Logs, Download as CSV, Insights, Feedback, Pin current filters, Reset filters. A "Looking for Log Analytics?" info banner offers a Visit Log Analytics cross-link. Below it: a Search box, a Quick Insights link, and filter chips Management Group: None, Subscription: Visual Studio Enterprise Subscription, Event severity: All, Timespan: Last 6 hours, Resource group: rg-test-20251107 (X), Resource: app-test-20251107 (X), plus an Add Filter button. The "11 items." count precedes a results table with columns Operation name, Status, Time, Time stamp, Subscription, Event initiated by - all 11 rows (mix of ValidateUpgradePath, Get Web App Publishing Profile, Get Web App Slots Differences, List Web App Slot Security Sensitive Settings) show Succeeded status, "Sun Jun 07 ..." time stamps, Visual Studio Enterprise Subscription, and user@example.com (PII masked) for Event initiated by.](../../assets/troubleshooting/activity-log/01-activity-log.png)
+
+The `Activity log` blade is the authoritative source for role-assignment lineage on the affected scope — it records `Create role assignment`, `Delete role assignment`, and `Update role assignment` operations along with the `Event initiated by` principal and exact `Time stamp`. To resolve the RBAC conflict this playbook addresses, scope the filter to the ACR resource (or its resource group) and pin the timespan to the period spanning the original CI/CD setup, any infrastructure-as-code reconciliation, and the moment the deployment started failing — that diff reveals whether a parallel pipeline, a re-applied Bicep template, or a manual cleanup removed the assignment the Web App's MI relies on. Use `Download as CSV` to attach the audit trail to the incident ticket; the Activity log's 90-day retention bounds how far back you can reconstruct the conflict history.
+
 ## 5. Evidence to Collect
 
 ### Required Evidence

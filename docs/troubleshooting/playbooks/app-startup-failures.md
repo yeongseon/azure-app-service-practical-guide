@@ -124,6 +124,12 @@ flowchart TD
         --output json
     ```
 
+#### Portal view: Web App Down detector for startup-failure triage
+
+![Azure portal Diagnose and solve problems blade scoped to the Web App Down detector for app-test-20251107. The detector header reads "Web App Down" with breadcrumb "Diagnose and solve problems > Availability and Performance > Web App Down". Two KPI tiles: App Availability 100% (blue) and Platform Availability 100% (green). Organic SLA shown as 100%. A green-bordered banner reads "No downtimes were identified for this Web App in the last 24 hours". Detector navigation list on the left shows related detectors including Container Issues, Linux CPU Drill Down, Linux Memory Drill Down, Web App Restarted, Web App Slow, SNAT Port Exhaustion, and HTTP Server Errors.](../../assets/troubleshooting/diagnose-and-solve/02-detector-web-app-down.png)
+
+For an app that refuses to start, the `Web App Down` detector under `Availability and Performance` is the fastest signal of whether your worker process is failing or whether the platform itself is rejecting requests. The App Availability KPI summarizes whether requests reached your app, while the Platform Availability KPI isolates infrastructure-side outages — when App Availability is degraded but Platform Availability is healthy, the failure is inside your container's startup path. The left-rail detector list (`Container Issues`, `Web App Restarted`) routes you to the next layer of evidence the Section 5 KQL queries quantify; the navigation labels reference Linux drill-downs because this capture is from a Linux app, but the detector itself is OS-agnostic and the same hub is the correct first stop for Windows apps too.
+
 ## 5. Evidence to Collect
 
 Capture the first startup attempt after a restart or deployment. Later retries often hide the original failure mode.

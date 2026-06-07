@@ -124,6 +124,12 @@ flowchart TD
         --output json
     ```
 
+#### Portal view: Networking blade as entry point for TLS bindings and hostname state
+
+![Azure portal Networking blade showing Inbound traffic configuration column (Public network access Enabled with no access restrictions Using default behavior, App assigned address Not configured, Private endpoints 0 private endpoints, Inbound IPv4 20.200.197.3, Inbound IPv6 2603:1040:f05:3::208, Optional inbound services Azure Front Door) and Outbound traffic configuration column (Virtual network integration Not configured, Hybrid connections Not configured, Outbound DNS Default Azure-provided, list of Outbound IPv4 and IPv6 addresses), Integration subnet configuration card showing NAT gateway N/A, NSG N/A, UDR N/A, toolbar with Refresh, Troubleshoot, Send us your feedback buttons](../../assets/troubleshooting/networking/01-networking-hub.png)
+
+The `Networking` blade summarizes the inbound posture that determines which hostnames, IPs, and ingress paths the platform is actually terminating TLS on — `Public network access`, `Private endpoints`, and the `Inbound IPv4/IPv6` rows together establish which surface a client is connecting to when the SSL handshake fails. Use this hub as the orientation step before navigating to `Custom domains` and `TLS/SSL settings` (the blades that hold per-hostname certificate bindings, SNI vs. IP-based assignment, and minimum TLS version): the failure mode is often that the certificate is bound to a hostname that no longer resolves to the surface shown here (for example, a private-endpoint-only app where the public DNS record still points at the multitenant inbound IP). The `Optional inbound services` row also flags whether Azure Front Door fronts the app, which changes whose certificate (App Service vs. AFD) the browser actually validates.
+
 ## 5. Evidence to Collect
 
 Capture DNS state, hostname binding state, certificate inventory, and user-facing symptom at the same time. Many SSL incidents are simply mismatched layers.
