@@ -125,6 +125,12 @@ flowchart TD
         --output table
     ```
 
+#### Portal view: Diagnose and solve hub - entry point for EasyAuth investigation
+
+![Azure portal Diagnose and solve problems blade for app-test-20251107 with the Common Solutions tab selected (AI-powered Diagnostics (preview) tab also visible). Seven Troubleshooting categories: Availability and Performance (Application Logs, App Down Workflow, Web App Down), Configuration and Management (Investigate EasyAuth errors, IP Address Configuration, All Scaling Operations), Risk Assessments (Availability risks, Configuration risks), Deployment (Troubleshoot), Networking (Troubleshoot), Diagnostic Tools (Auto-Heal, Network Troubleshooter, Advanced Application Restart), Load Test your App (Create Load Test). Risk alerts shows an Availability card with 2 Critical alerts. Popular troubleshooting tools list: Application Logs, App Down Workflow, Web App Down, Web App Slow, Process Full List.](../../assets/troubleshooting/diagnose-and-solve/01-overview.png)
+
+The `Diagnose and solve problems` blade with the `Common Solutions` tab is the orientation surface this playbook uses as its Portal entry point for authentication failures. The `Configuration and Management` category card surfaces `Investigate EasyAuth errors` as a direct link — the link name itself names the diagnostic this playbook routes to before running the Section 5 KQL queries. Adjacent links in the same card (`IP Address Configuration`, `All Scaling Operations`) and the top-level `Risk alerts` panel (Availability card with `2 Critical`) provide collateral context when an auth failure correlates with a network or scale change. The `Popular troubleshooting tools` rail at the bottom (`Application Logs`, `App Down Workflow`, `Web App Down`, `Web App Slow`, `Process Full List`) is the shared launchpad for the log-side evidence the Section 5 KQL queries operate over.
+
 ## 5. Evidence to Collect
 
 Capture the full login journey: initial request, redirect to provider, callback, final app response, and any header/claim evidence at the app boundary.

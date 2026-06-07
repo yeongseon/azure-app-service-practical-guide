@@ -131,6 +131,12 @@ Do not treat warm-up and Health Check as one signal. First isolate startup readi
 - Startup command, image tag, and recent deployment change window.
 - `WEBSITE_WARMUP_PATH` and `WEBSITE_WARMUP_STATUSES` for custom warm-up probe behavior.
 
+#### Portal view: Web App Down detector for warmup vs. health-check triage
+
+![Azure portal Diagnose and solve problems Web App Down detector for app-test-20251107 showing breadcrumb "Diagnose and solve problems > Availability and Performance > Web App Down". App Availability tile shows 100% (blue) and Platform Availability tile shows 100% (green). Organic SLA 100%. Green banner reads "No downtimes were identified for this Web App in the last 24 hours". Left rail detector navigation lists Container Issues, Linux CPU Drill Down, Linux Memory Drill Down, Web App Restarted, Web App Slow, SNAT Port Exhaustion, HTTP Server Errors.](../../../assets/troubleshooting/diagnose-and-solve/02-detector-web-app-down.png)
+
+The `Web App Down` detector under `Availability and Performance` is the orientation surface for this playbook's first triage step. In this baseline capture both KPI tiles read `100%` (`App Availability` blue, `Platform Availability` green) and the green banner reports "No downtimes were identified for this Web App in the last 24 hours". The detector's separation of `App Availability` from `Platform Availability` into two distinct KPI tiles is the property the playbook leverages when distinguishing worker-side warm-up/probe regressions from infrastructure-side failures. The left-rail detector navigation lists adjacent detectors (`Web App Restarted`, `Container Issues`) that the playbook's Section 5 evidence list routes to next. The Linux drill-down labels reflect this capture's source app; the detector itself is OS-agnostic and is the correct first stop on Windows apps as well.
+
 ## 5. Evidence to Collect
 
 ### Required Evidence

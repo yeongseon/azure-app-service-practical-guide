@@ -128,6 +128,12 @@ When slot swap fails during warm-up, assume a validation contract mismatch first
 - Health Check path configuration and authentication requirements.
 - Slot setting flags for sensitive config (database, cache, feature toggles, secrets).
 
+#### Portal view: Activity log for slot-swap operation audit
+
+![Azure portal Activity log blade for app-test-20251107 with toolbar Activity, Edit columns, Refresh, Export Activity Logs, Download as CSV, Insights, Feedback, Pin current filters, Reset filters. A "Looking for Log Analytics?" info banner offers a Visit Log Analytics cross-link. Below it: a Search box, a Quick Insights link, and filter chips Management Group: None, Subscription: Visual Studio Enterprise Subscription, Event severity: All, Timespan: Last 6 hours, Resource group: rg-test-20251107 (X), Resource: app-test-20251107 (X), plus an Add Filter button. The "11 items." count precedes a results table with columns Operation name, Status, Time, Time stamp, Subscription, Event initiated by - all 11 rows (mix of ValidateUpgradePath, Get Web App Publishing Profile, Get Web App Slots Differences, List Web App Slot Security Sensitive Settings) show Succeeded status, "Sun Jun 07 ..." time stamps, Visual Studio Enterprise Subscription, and user@example.com (PII masked) for Event initiated by.](../../../assets/troubleshooting/activity-log/01-activity-log.png)
+
+The `Activity log` blade is the control-plane audit surface this playbook uses to anchor a swap-window timeline. The visible filter chips (`Resource: app-test-20251107`, `Timespan: Last 6 hours`) demonstrate the standard scope-and-window pattern you apply when investigating a swap that failed during warm-up. Among the 11 visible rows are slot-adjacent operations (`Get Web App Slots Differences`, `List Web App Slot Security Sensitive Settings`) that confirm the blade's filter correctly captures slot-touching control-plane activity for this resource. The `Status`, `Time stamp`, and `Event initiated by` columns populated for every row define the schema you correlate against the warm-up failure window; the toolbar `Download as CSV` action exports the filtered set for ticket attachment, and the visible `Sun Jun 07` timestamps illustrate the per-row resolution the blade provides.
+
 ## 5. Evidence to Collect
 
 ### Required Evidence

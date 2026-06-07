@@ -158,6 +158,12 @@ az webapp config show --name "$APP_NAME" --resource-group "$RG" \
 
 The `acrUseManagedIdentityCreds: true` setting confirms the Web App expects to authenticate to ACR via its own MI. If `acrUserManagedIdentityID` is set, a user-assigned MI is in use instead — adjust the principal lookup accordingly (`az identity show`).
 
+#### Portal view: Activity log for role-assignment operation audit
+
+![Azure portal Activity log blade for app-test-20251107 with toolbar Activity, Edit columns, Refresh, Export Activity Logs, Download as CSV, Insights, Feedback, Pin current filters, Reset filters. A "Looking for Log Analytics?" info banner offers a Visit Log Analytics cross-link. Below it: a Search box, a Quick Insights link, and filter chips Management Group: None, Subscription: Visual Studio Enterprise Subscription, Event severity: All, Timespan: Last 6 hours, Resource group: rg-test-20251107 (X), Resource: app-test-20251107 (X), plus an Add Filter button. The "11 items." count precedes a results table with columns Operation name, Status, Time, Time stamp, Subscription, Event initiated by - all 11 rows (mix of ValidateUpgradePath, Get Web App Publishing Profile, Get Web App Slots Differences, List Web App Slot Security Sensitive Settings) show Succeeded status, "Sun Jun 07 ..." time stamps, Visual Studio Enterprise Subscription, and user@example.com (PII masked) for Event initiated by.](../../assets/troubleshooting/activity-log/01-activity-log.png)
+
+The `Activity log` blade is the control-plane audit surface this playbook uses for RBAC investigation. The visible filter chips (`Resource: app-test-20251107`, `Timespan: Last 6 hours`) demonstrate the standard scope-and-window pattern you apply when triaging an RBAC conflict — to investigate CI/CD identity assignments on a registry, you instead set `Resource` to the affected ACR (or its resource group). Among the 11 visible rows are control-plane operations like `ValidateUpgradePath`, `Get Web App Publishing Profile`, `Get Web App Slots Differences`, and `List Web App Slot Security Sensitive Settings` — all `Succeeded`, all stamped `Sun Jun 07`, all initiated by `user@example.com` (PII masked) — which confirm the blade's `Status`, `Time stamp`, and `Event initiated by` columns are populated for every control-plane call and define the schema you correlate against the role-assignment ID returned by the CLI commands above. The toolbar exposes `Download as CSV` for exporting the filtered set into the incident ticket.
+
 ## 5. Evidence to Collect
 
 ### Required Evidence

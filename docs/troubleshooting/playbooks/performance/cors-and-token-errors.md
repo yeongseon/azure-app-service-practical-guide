@@ -159,6 +159,12 @@ sequenceDiagram
 - Active hostname strategy (`azurewebsites.net` vs custom domain) across SPA/API.
 - Any recent auth/CORS setting changes close to incident start.
 
+#### Portal view: Runtime log stream for CORS preflight and token-validation signals
+
+![Azure portal Log stream blade for app-test-20251107 with toolbar Log Level filter, Stop, Copy, Clear; a Logs section showing Runtime and Platform radio buttons (Runtime selected); an Instances dropdown showing a single instance hash b58cc693426fe8c6d1b45abb7e0487ceeee9eeb41200672d7683b5ebc05e075f next to a refresh icon; and a Lookback period set to Last 30 minutes. The streaming pane shows red INFO-level log entries with 2026-06-07 timestamps, x-ms-client-request-id 00000000-0000-0000-0000-000000000000 (PII masked), HTTP method POST, request headers (Content-Type application/json), and OpenTelemetry exporter transmissions to https://koreacentral-0.in.applicationinsights.azure.com/v2.1/track with Response status 200 and Items received 3, Items accepted 3.](../../../assets/troubleshooting/log-stream/01-log-stream.png)
+
+The `Log stream` blade with the `Runtime` radio selected is the live tail surface for app-emitted logs. The visible entries (`2026-06-07` timestamps, HTTP `POST` calls with `Content-Type: application/json`, `Response status 200` from OpenTelemetry exporter transmissions to `koreacentral-0.in.applicationinsights.azure.com/v2.1/track`) show the line-by-line format this blade prints — application log lines from the running worker appear in the same pane while it is open. The `Instances` dropdown isolates a single worker, the `Lookback period: Last 30 minutes` chip bounds the buffer, and the toolbar's `Log Level` filter is the noise control you adjust to suppress the OpenTelemetry exporter chatter visible in this baseline. Use this surface as the live counterpart to the aggregated `AppServiceHTTPLogs` and `AppServiceAuthenticationLogs` evidence Section 5's KQL queries operate over.
+
 ## 5. Evidence to Collect
 
 ### Required Evidence

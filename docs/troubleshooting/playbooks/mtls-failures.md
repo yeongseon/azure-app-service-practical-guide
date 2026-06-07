@@ -122,6 +122,12 @@ For ASE or ILB ASE deployments, confirm:
 - whether an upstream proxy or gateway changes the expected request path
 - whether the ingress chain preserves the standard `X-ARR-ClientCert` application contract
 
+#### Portal view: Networking blade as entry point for mTLS configuration
+
+![Azure portal Networking blade showing Inbound traffic configuration column (Public network access Enabled with no access restrictions Using default behavior, App assigned address Not configured, Private endpoints 0 private endpoints, Inbound IPv4 20.200.197.3, Inbound IPv6 2603:1040:f05:3::208, Optional inbound services Azure Front Door) and Outbound traffic configuration column (Virtual network integration Not configured, Hybrid connections Not configured, Outbound DNS Default Azure-provided, list of Outbound IPv4 and IPv6 addresses), Integration subnet configuration card showing NAT gateway N/A, NSG N/A, UDR N/A, toolbar with Refresh, Troubleshoot, Send us your feedback buttons](../../assets/troubleshooting/networking/01-networking-hub.png)
+
+The `Networking` blade is the orientation surface for inbound-path verification. The `Inbound traffic configuration` column lists `Public network access` (`Enabled with no access restrictions`), `Private endpoints` (`0 private endpoints`), `Inbound IPv4` (`20.200.197.3`), and `Inbound IPv6` (`2603:1040:f05:3::208`) — together these describe every surface on which an inbound client connection (including an mTLS handshake) can land for this app. The `Optional inbound services` row shows `Azure Front Door` as an upstream integration registered against this app's inbound configuration. The `Outbound traffic configuration` column (`Virtual network integration: Not configured`, `Hybrid connections: Not configured`) confirms no VNet egress detour exists in this baseline. The toolbar `Troubleshoot` button is the platform-supplied network-diagnostics launcher.
+
 ## Resolution
 
 - Enable `clientCertEnabled` and set the intended `clientCertMode`
