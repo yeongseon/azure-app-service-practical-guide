@@ -96,6 +96,8 @@ Trade-offs:
 
 ![Scale up (App Service plan) blade for an App Service plan showing four pricing tier categories — Dev / Test, Production, Production V3, and Production V4 — each presented as cards. Production V3 is selected and the table lists Premium V3 SKUs with their vCPU, RAM, and storage values, including P0v3, P1v3, P2v3, P3v3, P1mv3, P2mv3, P3mv3, P4mv3, and P5mv3 rows; the current Premium0 V3 tier is highlighted and an "Upgrade" button is available at the top of the blade.](../assets/platform/scaling/02-scale-up.png)
 
+The Scale up blade is the vertical scaling control for changing the per-instance resource envelope. Tier cards such as `Production V3` and the SKU table with `vCPU`, `RAM`, and storage values show that scale-up means selecting a larger worker shape like `P0v3` or `P1mv3`, not adding more instances. The `Upgrade` action also hints at the operational consequence this page calls out: changing plan size is a control-plane mutation that can recycle workers while giving each instance more headroom.
+
 ### Scale out (horizontal)
 
 Scale out adds more instances to distribute load.
@@ -115,6 +117,8 @@ Trade-offs:
 #### Portal view: Scale out blade
 
 ![Scale out (App Service plan) blade showing three radio tabs — Manual, Automatic, and Rules Based — with Manual selected. The right pane shows an Instance count slider currently set to 1 with valid range 1 to 3 for Premium V3 plans, and a "Save" / "Discard" command bar; an info banner notes that scale-out behavior depends on the plan SKU and recommends enabling autoscale for production.](../assets/platform/scaling/01-scale-out.png)
+
+The Scale out blade is the horizontal scaling surface for changing how many workers serve the app. `Manual`, `Automatic`, and `Rules Based` modes separate fixed instance counts from autoscale-driven behavior, while the `Instance count` slider makes the current worker fan-out explicit for the selected `Premium V3` plan. This is the UI expression of scale-out architecture: App Service can add parallel instances for capacity and resilience, but only within the limits allowed by the plan SKU and the application's stateless design.
 
 ### Stateless design requirement
 

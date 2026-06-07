@@ -67,6 +67,8 @@ App Service inserts an authentication component into the inbound request path so
 
 ![Authentication blade for a Web App showing the empty state with the heading "Add identity provider to your app" and a brief description of App Service Authentication ("Easy Auth"). A primary "Add identity provider" button is centered on the page with provider logos for Microsoft, Apple, Facebook, GitHub, Google, Twitter, and OpenID Connect available. The left navigation shows the Authentication entry selected under the Settings group, and tabs for "Authentication" and "Authentication settings (Classic)" are visible at the top.](../assets/platform/authentication-architecture/01-authentication-blade.png)
 
+The Authentication blade is where Easy Auth is attached to the inbound request path before your application code runs. The `Add identity provider` action and provider logos make the trust boundary explicit: App Service can broker sign-in with Microsoft, GitHub, Google, OpenID Connect, and other providers without framework-specific middleware in the app itself. The paired `Authentication` and `Authentication settings (Classic)` tabs also signal that the platform owns the auth policy surface, including provider registration and redirect behavior, rather than your route handlers.
+
 Core platform behavior:
 
 - The authentication module sits in front of your app in the same App Service worker sandbox.

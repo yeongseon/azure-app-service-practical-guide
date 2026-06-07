@@ -88,9 +88,11 @@ flowchart TD
 
 Legend: ✅ Supported · ⚠️ Limited or conditional · ❌ Not supported
 
-### Portal view: Deployment Center
+#### Portal view: Deployment Center
 
 ![Deployment Center blade for a Web App with the "Settings" tab selected showing the Source picker as an unselected dropdown labeled "Source". A bulleted list of supported deployment sources is displayed: GitHub, Bitbucket, Local Git, External Git, GitHub Actions, Azure Repos, FTPS credentials, and Manual deployment (Push/Sync). Tabs across the top of the blade include "Settings" (selected), "Containers (new)", "Logs", and "FTPS Credentials". Save and Browse buttons appear in the command bar. The left navigation shows Deployment Center highlighted under the Deployment group.](../assets/platform/deployment-options/01-deployment-center.png)
+
+Deployment Center is the control-plane menu for choosing how code or artifacts reach the app. The `Source` picker and the list of GitHub, Bitbucket, Local Git, Azure Repos, FTPS, and manual push/sync options make it clear that App Service supports several deployment paths with different automation and packaging models. The adjacent `Containers (new)` tab also reinforces the core distinction this page teaches: some deployments ship files or build outputs, while others point the app at a container image that App Service will pull at runtime.
 
 ---
 
