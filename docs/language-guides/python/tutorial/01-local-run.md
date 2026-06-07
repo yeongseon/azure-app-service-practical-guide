@@ -181,6 +181,14 @@ sequenceDiagram
 
 Add `python-dotenv` for local `.env` loading, then compare request latency and memory profile between Flask development server and Gunicorn workers.
 
+## Run It in the Portal
+
+#### Portal view: App Service plan (Linux) - the deployment target this tutorial emulates locally
+
+![App Service Plan overview blade showing the Linux plan asp-test-20251107 in Korea Central with Pricing tier "Premium0 V3", App Service Plan kind "Linux", Status "Ready", Operating system "Linux", and 1 instance; the right-side charts show CPU Percentage and Memory Percentage time-series for the plan and a list of the apps and slots hosted on the plan including app-test-20251107 and its staging slot.](../../../assets/platform/hosting-models/01-app-service-plan.png)
+
+Your local Flask + Gunicorn setup in this tutorial is intentionally a parity environment for this Linux App Service plan. The visible `Operating system: Linux`, `Pricing tier: Premium0 V3`, and single-instance configuration are what your local Docker-style runtime emulates: a Linux worker that serves a WSGI app over Gunicorn. The right-side `CPU Percentage` and `Memory Percentage` charts are what your local performance testing predicts - if your Flask app exhausts memory locally on the same workload, it will exhaust the `Premium0 V3` worker too. Use this blade to confirm the target plan family and worker size before promoting the local app via `az webapp deploy` in the next tutorial.
+
 ## See Also
 - [02 - First Deploy](./02-first-deploy.md)
 

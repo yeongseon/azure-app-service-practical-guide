@@ -307,6 +307,14 @@ az webapp config appsettings list --resource-group $RG --name $APP_NAME --query 
     }
     ```
 
+## Run It in the Portal
+
+#### Portal view: Resource group overview (verifying Bicep deployment outputs)
+
+![Resource group overview blade for `rg-test-20251107` in Korea Central showing an Essentials panel with Subscription "Visual Studio Enterprise Subscription", Subscription ID `00000000-0000-0000-0000-000000000000`, Deployments "2 Failed, 4 Succeeded", and Location "Korea Central". The Resources tab lists 11 related resources grouped by type, including Application Insights (`ai-test-20251107`), App Service (`app-test-20251107`), App Service Domain (`app-test-20251107.net` and `domain-test-20251107.com`), DNS Zone (`app-test-20251107.net` and `domain-test-20251107.com`), Microsoft.Web certificate (`app-test-20251107.net-app-test-20251107`), App Service (Slot) (`staging (app-test-20251107/staging)`), Application Insights Smart Detection, Action group, App Service Plan (`asp-test-20251107`), and Failure Anomalies smart detector alert rule. The command bar includes Create, Manage view, Delete resource group, Refresh, Export to CSV, Open query, Assign tags, Move, Delete, and Export template buttons.](../../../assets/platform/resource-relationships/01-resource-group.png)
+
+After running `az deployment group create --template-file main.bicep`, the resource group overview is the consolidated view of every resource the Bicep template provisioned. The visible Resources tab confirms a complete environment: `App Service Plan (asp-test-20251107)`, the Linux web app (`app-test-20251107`), the `staging` deployment slot, `Application Insights (ai-test-20251107)`, custom App Service Domains and DNS Zones, plus Smart Detection and Failure Anomalies alert rules - all from a single template execution. The `Deployments: 2 Failed, 4 Succeeded` indicator in Essentials is the same status returned by `az deployment group list`; click it to drill into the deployment timeline when troubleshooting a partial failure. The `Export template` button in the command bar is the round-trip path back to ARM JSON when you want to compare deployed state against the Bicep source committed to your repository.
+
 ## See Also
 - [06 - CI/CD](./06-ci-cd.md)
 - [Provision Infrastructure (Existing Guide)](./02-first-deploy.md)

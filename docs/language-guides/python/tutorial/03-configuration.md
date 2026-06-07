@@ -174,6 +174,14 @@ Masked example:
 
 Move from single-secret references to identity-based SDK retrieval for dynamic secret versioning and reduced configuration drift across environments.
 
+## Run It in the Portal
+
+#### Portal view: Configuration > General settings blade (Portal counterpart to `az webapp config set`)
+
+![Configuration General settings blade for a Web App with five tabs — General settings (active), Stack settings, Health check, Path mappings, Error pages — and a Refresh action. Platform settings section lists SCM Basic Auth Publishing Credentials (unchecked), FTP Basic Auth Publishing Credentials (unchecked), WebJobs runtime (unchecked), FTP state (FTPS only), Inbound IP mode (IPv4), HTTP version (1.1), HTTP 2.0 Proxy (Off), SSH (checked), Always on (unchecked), Session affinity (checked), Session affinity proxy (unchecked), HTTPS only (unchecked), Minimum Inbound TLS Version (1.2), SCM Minimum Inbound TLS Version (1.2), Minimum Inbound TLS Cipher Suite (TLS_RSA_WITH_AES_128_CBC_SHA, Default), and End-to-end TLS encryption (unchecked). Apply and Discard buttons are at the bottom of the blade.](../../../assets/best-practices/production-baseline/01-configuration-general.png)
+
+The `Configuration > General settings` blade is the Portal counterpart to the `az webapp config set` commands used in this tutorial. The visible Platform settings panel exposes the same fields you can flip with the CLI: `HTTPS only`, `Always on`, `Minimum Inbound TLS Version`, `FTP state`, and `HTTP version` map directly to `--https-only`, `--always-on`, `--min-tls-version`, `--ftps-state`, and `--http20-enabled`. The `Stack settings` tab (visible next to General settings) is where the Python runtime version is bound after `az webapp config set --linux-fx-version PYTHON|3.11` runs. Use this blade for visual verification after the tutorial's CLI steps, paying special attention to `Always on` (unchecked here, but recommended on for non-development plans) and `HTTPS only` (unchecked by default, should be flipped on for production Flask apps).
+
 ## See Also
 - [04 - Logging and Monitoring](./04-logging-monitoring.md)
 - [Key Vault References Recipe](../recipes/key-vault-reference.md)

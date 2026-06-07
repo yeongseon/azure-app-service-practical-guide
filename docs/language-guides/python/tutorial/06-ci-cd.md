@@ -188,6 +188,14 @@ flowchart TD
 
 Split CI and CD jobs, gate deployment with required approvals, and add slot-based blue/green rollout with automatic rollback checks.
 
+## Run It in the Portal
+
+#### Portal view: Deployment Center blade (GitHub Actions source configuration)
+
+![Azure Portal Deployment Center blade for app-test-20251107 Web App with the Settings tab selected and Containers (new), Logs, and FTPS Credentials tabs visible. The toolbar shows Save and Discard (disabled), Refresh, Browse, Sync (disabled), and Send us your feedback. An information banner at the top reads "You are now in the production slot, which is not recommended for setting up CI/CD. Learn more". The body text "Deploy and build code from your preferred source and build provider" precedes a Source dropdown set to GitHub, with "Building with GitHub Actions" and a Change provider link below. A GitHub section explains that App Service places a GitHub Actions workflow in the chosen repository and shows Signed in as demouser with a Change account link, followed by required Organization, Repository, and Branch dropdowns all in empty Select state. The left navigation expands Deployment with Deployment slots and Deployment Center (highlighted) entries.](../../../assets/operations/deployment/github-actions/01-deployment-center-github.png)
+
+The Deployment Center blade is the Portal entry point for the GitHub Actions workflow built throughout this tutorial. With `Source: GitHub` selected and `Building with GitHub Actions`, filling in Organization/Repository/Branch and clicking `Save` causes App Service to inject a starter `.github/workflows/*.yml` into the chosen repo using publish-profile authentication by default. The tutorial diverges from this click-driven path by checking a hand-authored workflow into version control under `.github/workflows/` so that OIDC federated credentials, slot-first deployment, and pinned `azure/login@v2` and `azure/webapps-deploy@v3` versions are explicit. The banner `You are now in the production slot, which is not recommended for setting up CI/CD` reinforces the slot-first pattern: scaffold against a staging slot, then swap. Use this blade for inspection and the initial scaffold; the production workflow should live in version control as the tutorial demonstrates.
+
 ## See Also
 - [07 - Custom Domain and SSL](./07-custom-domain-ssl.md)
 - [GitHub Actions (Existing Guide)](./06-ci-cd.md)

@@ -1012,6 +1012,14 @@ TimeGenerated              Name         Target                              Dura
     - Integration with external log aggregators (Elastic, Splunk, Datadog)
 - [Contribute](https://github.com/yeongseon/azure-app-service-practical-guide/issues)
 
+## Run It in the Portal
+
+#### Portal view: Application Insights Overview blade (telemetry destination for this tutorial)
+
+![Azure portal Application Insights Overview blade for ai-test-20251107 with top toolbar Application Dashboard, Getting started, Search, Logs, Monitor resource group, Feedback, Favorites, Rename, Delete and View Cost / JSON View links on the right. Essentials shows Resource group rg-test-20251107, Location Korea Central, Subscription "Visual Studio Enterprise Subscription", Subscription ID 00000000-0000-0000-0000-000000000000, Instrumentation key 00000000-0000-0000-0000-000000000000, Connection string "InstrumentationKey=00000000-...;IngestionEnd..." (truncated), Logs workspace DefaultWorkspace-00000000-0000-0000-0000-000000000000-SE, OTLP connection info "Turn on OTLP support". A "Show data for last:" tab strip shows 30 minutes / 1 hour (selected) / 6 hours / 12 hours / 1 day / 3 days / 7 days / 30 days. Four pinned tiles: Failed requests Count chart with a spike (label 10), Server response time at ~1ms (label 1.07ms), Server requests Count chart with spikes (label 15), and Availability Avg flat at 0% (label "--" because no test configured). Left nav lists Search, Overview (selected), Activity log, Access control (IAM), Tags, Diagnose and solve problems, Resource visualizer, plus collapsed group headers Investigate, Monitoring, Usage, Configure, Settings, Automation, Help.](../../../assets/troubleshooting/app-insights/01-overview.png)
+
+This Application Insights Overview blade is the destination for the OpenCensus and Azure Monitor SDK telemetry configured in this tutorial. The `Instrumentation key` and `Connection string` shown in Essentials are the values your Flask `config/telemetry.py` reads from `APPLICATIONINSIGHTS_CONNECTION_STRING` and sends spans, requests, and traces to. The four pinned tiles correspond directly to telemetry types emitted by the SDK: `Server requests` Count comes from the request collector, `Failed requests` from request failures (HTTP 5xx + unhandled exceptions), `Server response time` from request latency, and `Availability` from any availability tests configured later. Use the `Logs` button in the top toolbar to land in the KQL editor and run the `AppRequests`, `AppDependencies`, `AppExceptions`, and `AppTraces` queries from the End-to-End Debugging Scenario section above.
+
 ## See Also
 - [KQL Queries Reference](../../../reference/kql-queries.md)
 - [Troubleshooting & Debugging](../../../reference/troubleshooting.md)
