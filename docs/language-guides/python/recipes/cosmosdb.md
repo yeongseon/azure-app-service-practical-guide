@@ -126,6 +126,14 @@ def ensure_container():
 - Use optimistic concurrency with ETag (`if_match`) for safe updates.
 - Tune query RU cost and add composite indexes for heavy query workloads.
 
+## Run It in the Portal
+
+#### Portal view: Identity blade (system-assigned identity for Cosmos DB RBAC)
+
+![Identity blade for a Web App with two tabs — System assigned (active) and User assigned. A descriptive header explains that a system-assigned managed identity is restricted to one per resource, tied to the lifecycle of the resource, allows RBAC permissions to be granted in Azure, and is authenticated with Microsoft Entra ID so no credentials need to be stored in code. The command bar shows Save, Discard, Refresh, Troubleshoot, and Got feedback? actions. The Status control is a two-state toggle currently set to Off, with On as the alternative position. No Object (principal) ID, Permissions, or Azure role assignments are shown because the identity is not yet enabled.](../../../assets/best-practices/security/01-identity-blade.png)
+
+This Identity blade is the Portal starting point for the Cosmos DB recipe's passwordless connection pattern. With `System assigned` active and the `Status` toggle moved from `Off` to `On`, App Service generates an Entra ID principal that you then grant the Cosmos `Built-in Data Contributor` role to via `az cosmosdb sql role assignment create`. The descriptive header restates the lifecycle guarantee the recipe relies on: the identity is tied to the App Service resource, so it disappears when the app is deleted. Use this blade to confirm the identity is enabled before running the data-plane RBAC assignment shown in the recipe.
+
 ## See Also
 - [Managed Identity](./managed-identity.md)
 - [Key Vault References](./key-vault-reference.md)

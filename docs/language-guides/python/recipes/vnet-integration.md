@@ -161,6 +161,14 @@ connection = pyodbc.connect(
 - Verify required Azure destinations remain reachable via your egress path.
 - Re-test with route-all disabled to isolate routing policy impact.
 
+## Run It in the Portal
+
+#### Portal view: Networking blade (Virtual network integration not yet configured)
+
+![App Service Networking blade for a Web App split into Inbound traffic configuration and Outbound traffic configuration cards. The Inbound card shows Public network access "Enabled (unrestricted)", Access restriction status "Not configured", Private endpoints "0", and FTP basic auth status. The Outbound card shows Virtual network integration "Not configured", Outbound addresses (a comma-separated list of platform-assigned IPs), and links to configure VNet integration and hybrid connections. A central panel labels the rows as inbound and outbound configuration columns.](../../../assets/platform/networking/01-networking-blade.png)
+
+The Networking blade is the Portal surface where this recipe's outbound VNet connection becomes visible. In the pre-recipe state shown here, `Virtual network integration: Not configured` is the key row; after `az webapp vnet-integration add`, this is the row to revisit to confirm the app is attached to the delegated subnet. The `Inbound traffic configuration` card remains separate, which matches the recipe's point that VNet integration changes outbound connectivity rather than inbound exposure on its own.
+
 ## See Also
 
 - [Key Vault References](key-vault-reference.md)
