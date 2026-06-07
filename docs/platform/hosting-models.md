@@ -218,6 +218,9 @@ Example output (PII masked):
 
 ### Bicep pattern for repeatable hosting model
 
+!!! info "`reserved: true` designates a Linux App Service Plan"
+    The `reserved` property selects the underlying OS for the plan: `true` creates a Linux plan, while `false` (or omitting the property) creates a Windows plan. This is one of the few Bicep flags whose name does not describe its effect, so be explicit when authoring templates.
+
 ```bicep
 param location string = resourceGroup().location
 param planName string
@@ -233,7 +236,7 @@ resource plan 'Microsoft.Web/serverfarms@2023-12-01' = {
     capacity: 1
   }
   properties: {
-    reserved: true
+    reserved: true // Linux plan. Set to false (or omit) for a Windows plan.
   }
 }
 
