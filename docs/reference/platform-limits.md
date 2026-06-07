@@ -97,6 +97,14 @@ graph TD
 - Missing files due to writing into ephemeral paths
 - Slow or dropped long-running HTTP requests over frontend timeout
 
+## Run It in the Portal
+
+#### Portal view: Scale up (App Service plan) blade
+
+![Scale up (App Service plan) blade for the Linux plan `asp-test-20251107` with `Hardware view` selected next to `Feature view`. The main table groups pricing plans into `Dev/Test`, `Production`, and `Legacy`, and shows columns for Name, ACU/vCPU, vCPU, Memory (GB), Remote Storage (GB), Scale (instance), SLA, Cost per hour (instance), and Cost per month (instance). Visible rows include `Free F1`, `Basic B1`, `Basic B2`, `Basic B3`, `Premium v3 P0V3`, `Premium v3 P1V3`, `Premium v3 P2V3`, `Premium v3 P3V3`, `Premium v3 P1mv3`, `Premium v3 P2mv3`, `Premium v3 P3mv3`, `Premium v3 P4mv3`, and `Premium v3 P5mv3`; the `Premium v3 P0V3` row is selected. A `Select` button appears at the bottom of the blade.](../assets/platform/scaling/02-scale-up.png)
+
+The `Scale up (App Service plan)` blade is where you compare the plan SKUs that drive most of the limits in the Scale and Plan Limits table above. This capture shows the `Hardware view` table grouped into `Dev/Test`, `Production`, and `Legacy`, with the selected `Premium v3 P0V3` row exposing the per-plan fields that matter operationally: `vCPU`, `Memory (GB)`, `Remote Storage (GB)`, `Scale (instance)`, and SLA. Because the blade is scoped to the App Service plan rather than the individual web app, it is the right place to confirm whether plan tier and per-instance capacity are part of a saturation or quota problem. Use this view to verify the current plan family and worker size before concluding that a symptom is application-only.
+
 ## See Also
 
 - [CLI Cheatsheet](cli-cheatsheet.md)

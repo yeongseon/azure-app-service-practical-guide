@@ -169,6 +169,14 @@ See [Kudu API Reference](./kudu-queries.md) for endpoint details.
 - Plan SKU and current instance count
 - Relevant error snippets (PII removed)
 
+## Run It in the Portal
+
+#### Portal view: Diagnose and solve problems blade
+
+![Azure portal Diagnose and solve problems blade for app-test-20251107 with the Common Solutions tab selected (AI-powered Diagnostics (preview) tab also visible) and a top toolbar showing a Search for common problems or tools search box, Refresh, and Feedback. A Risk alerts section shows a single Availability card with 2 Critical alerts and a View more details link. Seven Troubleshooting categories follow. A Popular troubleshooting tools list at the bottom shows Application Logs, App Down Workflow, Web App Down, Web App Slow, and Process Full List. Left nav highlights Diagnose and solve problems.](../assets/troubleshooting/diagnose-and-solve/01-overview.png)
+
+The `Diagnose and solve problems` blade is the Portal counterpart to the `Diagnose and solve problems` entry in the Diagnostic Tools Overview table above. The visible troubleshooting categories show how the portal organizes first-response workflows: `Availability and Performance`, `Configuration and Management`, `Risk Assessments`, `Deployment`, `Networking`, `Diagnostic Tools`, and `Load Test your App`. The `Risk alerts` card and the `Popular troubleshooting tools` row (`Application Logs`, `App Down Workflow`, `Web App Down`, `Web App Slow`, `Process Full List`) make this a practical starting point before you move into the CLI, KQL, or Kudu steps elsewhere on this page. Use this blade to choose the detector that best matches the symptom you are triaging, then collect the supporting data listed in `## Data to Collect Before Escalation`.
+
 ## See Also
 
 - [KQL Queries](kql-queries.md)

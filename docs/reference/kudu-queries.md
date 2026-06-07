@@ -177,6 +177,14 @@ curl -s -u "$AUTH_USER:$AUTH_PASS" \
 | `/home/data` | Persistent data directory |
 | `/tmp` | Temporary storage (ephemeral) |
 
+## Run It in the Portal
+
+#### Portal view: Web App Overview blade (Kudu entry point in left nav)
+
+![Azure portal Overview blade for `app-test-20251107` (Web App) with a command bar (`Browse`, `Stop`, `Swap`, `Restart`, `Delete`, `Refresh`, `Download publish profile`, `Reset publish profile`, `Share to mobile`, `Send us your feedback`) and an Essentials panel showing Resource group `rg-test-20251107`, Status `Running`, Location `Korea Central`, Subscription `Visual Studio Enterprise Subscription`, Subscription ID `00000000-0000-0000-0000-000000000000`, Default domain `app-test-20251107.azurewebsites.net`, App Service Plan `asp-test-20251107 (P0v3: 1)`, Operating System `Linux`, and Health Check `Not Configured`. The Properties tab is selected (next to Monitoring, Logs, Capabilities, Notifications (1), Recommendations) and surfaces Web app (`Publishing model: Code`, `Runtime Stack: Python - 3.11`, `Runtime status: Healthy`), Domains (`2 Domains View all`), Hosting (`Plan Type: App Service plan`, `Instance Count: 1`, `SKU and size: Premium0V3 (P0v3)` with `Scale up` link), Deployment Center (`Last deployment: Successful on Thursday, November 6, 10:58:01 PM`, `Deployment provider: None`), Application Insights (`Name: ai-test-20251107`, `Region: Korea Central`), and Networking (`Inbound IP addresses: 20.200.197.3, 2603:1040:f05:3::208`, `Private endpoint connections: 0 private endpoints`, `Virtual network integration: Not configured`). Left nav under the search box lists Overview (selected), Activity log, Access control (IAM), Tags, Diagnose and solve problems, Microsoft Defender for Cloud, Events (preview), Log stream, AI (preview), Resource visualizer, with collapsed groups Deployment, Settings, Performance, App Service plan, Development Tools, API, Monitoring, Automation, and Support + troubleshooting.](../assets/platform/architecture/01-app-service-overview.png)
+
+Use this Overview blade to confirm the app identity before switching to the Kudu endpoints in this reference. The visible `Default domain` shows the app hostname, so the matching SCM hostname for this app is `app-test-20251107.scm.azurewebsites.net`, and the Properties tab confirms this is a Linux `Python - 3.11` code app on `asp-test-20251107 (P0v3: 1)`. The left nav also shows the collapsed `Development Tools` area associated with Kudu-based diagnostics, and the Deployment Center `Last deployment` field is a quick portal cross-check when you compare portal state with deployment-history API results. Use this blade as the confirmation point for app, plan, OS, and deployment state before moving into SCM-specific investigation.
+
 ## See Also
 
 - [Troubleshooting Reference](troubleshooting.md)
