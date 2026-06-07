@@ -129,11 +129,11 @@ def cache_health():
 
 ## Run It in the Portal
 
-#### Portal view: Identity blade (managed identity for passwordless Redis access)
+#### Portal view: Identity blade (optional Microsoft Entra authentication path)
 
 ![Identity blade for a Web App showing tabs "System assigned" (selected) and "User assigned". The System assigned panel displays a Status toggle currently "Off" with description "When enabled, Azure will create an identity for this resource in Microsoft Entra ID". Save and Discard buttons appear at the top; below the Status row a "Permissions" section explains role assignments for the identity, and the Object (principal) ID field is empty pending enablement. The left navigation shows Identity selected under the Settings group.](../../../assets/platform/security-architecture/01-identity-blade.png)
 
-The Identity blade is the Portal starting point for the passwordless Redis access pattern this recipe configures. With `System assigned` selected and the `Status` toggle flipped from `Off` to `On`, App Service registers the Entra ID principal that the recipe then grants a `Data Contributor` access policy to via `az redis access-policy-assignment create`. The empty `Object (principal) ID` field on this blade becomes populated after enablement and is the exact value you pass to the Redis access-policy assignment as `--object-id`. Use this blade as the first verification step before running the Python `redis-py` client with `DefaultAzureCredential` to acquire access tokens for the cache.
+The `Identity` blade is relevant only if you extend this recipe from the default key-based `REDIS_ACCESS_KEY` configuration to the optional Microsoft Entra authentication path mentioned in the introduction. In the visible pre-enable state, `System assigned` is selected and `Status` is still `Off`; turning it `On` is the Portal step that creates the app identity before any Redis-side access mapping can happen. For the recipe's default flow, keep using the `REDIS_ACCESS_KEY` app setting and `redis.Redis(..., password=...)` configuration shown above.
 
 ## See Also
 - [Key Vault References](./key-vault-reference.md)
