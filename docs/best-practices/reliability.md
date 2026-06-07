@@ -138,8 +138,13 @@ flowchart TD
 
 App Service can recycle instances during scale, patching, and deployment events. Applications must handle termination signals gracefully.
 
-!!! info "Platform grace period: approximately 30 seconds"
-    When App Service recycles a worker, it sends **SIGTERM** to the application process and waits **approximately 30 seconds** before sending **SIGKILL** to force termination. All in-flight request completion, connection draining, and cleanup work must finish within this window. Prioritize cleanup tasks accordingly, and avoid blocking the shutdown path on long-running operations such as large cache flushes or unbounded queue drains.
+!!! info "Plan for a short grace period — and treat the exact value as a configurable upper bound"
+    When App Service recycles a worker, it sends **SIGTERM** to the application process and then sends **SIGKILL** after a grace period. The exact duration depends on the hosting model:
+
+    - **Code-based apps** on App Service have a relatively short grace window (often described as on the order of a few tens of seconds) for in-flight request drain and cleanup.
+    - **Custom containers** default to **5 seconds** before SIGKILL. You can extend this up to **1800 seconds** by setting the `WEBSITES_CONTAINER_STOP_TIME_LIMIT` app setting (see the Microsoft Learn "Configure a custom container" reference).
+
+    Treat the grace period as small and configurable, not as a fixed platform guarantee. In-flight request completion, connection draining, and cleanup work must finish well within whatever window your hosting model provides.
 
 ### Why SIGTERM Handling Matters
 
@@ -151,7 +156,8 @@ App Service can recycle instances during scale, patching, and deployment events.
 
 - Trap termination signals in application runtime
 - Stop accepting new requests quickly (close the listener or health endpoint)
-- Finish in-flight requests within the ~30 second timeout budget
+- Finish in-flight requests within the platform's grace window for your hosting model
+- For custom containers, raise `WEBSITES_CONTAINER_STOP_TIME_LIMIT` if 5 seconds is insufficient (but keep it bounded)
 - Flush logs/telemetry and close outbound connections cleanly
 - Move long-running cleanup (large flush, archive upload) outside the request path so it does not depend on shutdown
 

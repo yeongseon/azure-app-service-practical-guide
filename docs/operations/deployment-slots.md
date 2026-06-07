@@ -107,9 +107,11 @@ az webapp deployment slot list \
 
 ### Configure Slot-Specific Settings
 
-**By default, no settings are sticky.** All app settings and connection strings move with the swap unless you explicitly mark them as slot-specific using the `--slot-settings` flag. This means a setting created on the staging slot will follow the code to production after the swap, which can contaminate the production environment with staging configuration.
+**For app settings and connection strings, nothing is slot-specific by default.** They follow the code during a swap unless you explicitly mark them with the `--slot-settings` flag (or check the **Deployment slot setting** box in the Portal). A setting created on staging will move to production on swap, which can contaminate production with staging configuration.
 
-Use sticky settings for any value that must remain pinned to a specific slot (environment name, feature flags, downstream endpoint URLs, diagnostic keys):
+Some other categories are already non-swapped by default on the platform side (for example, publishing endpoints, scaling settings, IP restrictions, Always On, and managed identities). Microsoft Learn maintains the authoritative list of which settings swap and which do not — consult it whenever the behavior is ambiguous for a given setting category.
+
+Use sticky settings for any app-setting or connection-string value that must remain pinned to a specific slot (environment name, feature flags, downstream endpoint URLs, diagnostic keys):
 
 ```bash
 az webapp config appsettings set \
