@@ -148,6 +148,14 @@ resource diagnosticSettings 'Microsoft.Insights/diagnosticSettings@2021-05-01-pr
           days: 0
         }
       }
+      {
+        category: 'AppServicePlatformLogs'
+        enabled: true
+        retentionPolicy: {
+          enabled: false
+          days: 0
+        }
+      }
     ]
     metrics: [
       {
