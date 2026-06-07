@@ -335,6 +335,14 @@ blob_client = BlobServiceClient(
 
 This approach works on all tiers (no mount required) and gives full read/write access. See [Managed Identity](./managed-identity.md) for the full setup.
 
+## Run It in the Portal
+
+#### Portal view: Environment variables blade (storage mount settings surface here)
+
+![Azure Portal Environment variables blade for app-test-20251107 Web App with the App settings tab selected (Connection strings tab adjacent). The toolbar shows a search box plus the actions plus Add, Refresh, Show values, Advanced edit, and Pull reference values. The settings table has columns Name, Value, Deployment slot setting, Source, and Delete and lists five App Service-sourced rows: APPLICATIONINSIGHTS_CONNECTION_STRING, APPLICATIONINSIGHTSAGENT_EXTENSION_ENABLED, ApplicationInsightsAgent_EXTENSION_VERSION, SCM_DO_BUILD_DURING_DEPLOYMENT, and WEBSITE_HTTPLOGGING_RETENTION_DAYS, each with a Show value link and Source App Service. The left navigation expands Settings with Environment variables highlighted, alongside Configuration, Instances, Authentication, Identity, Backups, Custom domains, Certificates, Networking, and WebJobs; Apply and Discard buttons are disabled at the bottom.](../../../assets/operations/deployment/zip-deploy/01-app-settings-run-from-package.png)
+
+The Environment variables blade with the `App settings` tab selected is the Portal surface where the storage mount configuration created by this recipe appears. After you run `az webapp config storage-account add`, the mount-related entries show up in this same `Name`/`Value`/`Deployment slot setting`/`Source` table alongside the platform-managed rows visible here such as `APPLICATIONINSIGHTS_CONNECTION_STRING` and `SCM_DO_BUILD_DURING_DEPLOYMENT`. The `Show value` link on each row lets you confirm the registered storage account and share path values without dropping back to the CLI. The `Refresh` action in the toolbar picks up CLI-driven changes without leaving the blade.
+
 ## See Also
 - [Managed Identity](./managed-identity.md)
 - [Key Vault References](./key-vault-reference.md)

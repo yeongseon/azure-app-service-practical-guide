@@ -120,6 +120,14 @@ def admin_only():
 - Combine Easy Auth (authentication) with app-level RBAC/ABAC (authorization).
 - Restrict authentication to specific tenant(s) and issuer validation for multi-tenant scenarios.
 
+## Run It in the Portal
+
+#### Portal view: Authentication blade (empty state - Easy Auth entry point)
+
+![Authentication blade for a Web App showing the empty state with the heading "Add identity provider to your app" and a brief description of App Service Authentication ("Easy Auth"). A primary "Add identity provider" button is centered on the page with provider logos for Microsoft, Apple, Facebook, GitHub, Google, Twitter, and OpenID Connect available. The left navigation shows the Authentication entry selected under the Settings group, and tabs for "Authentication" and "Authentication settings (Classic)" are visible at the top.](../../../assets/platform/authentication-architecture/01-authentication-blade.png)
+
+The Authentication blade in its empty state is the Portal entry point for the Easy Auth flow this recipe wires up. Clicking `Add identity provider` and choosing `Microsoft` triggers the same configuration that the recipe builds via `az webapp auth update` and the underlying authsettingsV2 API, including app registration linkage and token store enablement. The visible provider list — `Microsoft`, `Apple`, `Facebook`, `GitHub`, `Google`, `Twitter`, and `OpenID Connect` — is the same set the recipe exposes through the CLI flags for each provider type. Use this blade after the CLI configuration to confirm Easy Auth is enabled and the Python app receives the forwarded `X-MS-CLIENT-PRINCIPAL` header on incoming requests.
+
 ## See Also
 - [Managed Identity](./managed-identity.md)
 - [Key Vault References](./key-vault-reference.md)

@@ -129,6 +129,14 @@ Subsystem sftp internal-sftp
 - Add health checks and a non-root runtime user where compatible.
 - Pin base image digest to control supply chain changes.
 
+## Run It in the Portal
+
+#### Portal view: Deployment Center - Containers (new) tab (sidecar registration for custom Python images)
+
+![Deployment Center blade for a Web App with the "Containers (new)" tab selected. The body shows an empty containers table with column headers Name, Type, Source, Image, Tag, Port, and Logs, and an introductory line "Enhance site functionality by adding sidecar containers. Learn more". A command bar above the table contains Refresh, Add (split dropdown), Delete (disabled), and Send us your feedback buttons. Tabs across the top of the blade include Settings, Containers (new) (selected), Logs, and FTPS Credentials. The left navigation shows Deployment Center selected under the Deployment group.](../../../assets/platform/containers/01-deployment-center-containers.png)
+
+The Deployment Center `Containers (new)` tab is the Portal surface for inspecting and extending the custom Python image this recipe ships. After your `az webapp create --deployment-container-image-name` command provisions the main container, this tab shows the `Name`/`Type`/`Source`/`Image`/`Tag`/`Port`/`Logs` table where you click `Add` to attach a co-located sidecar such as an OpenTelemetry collector or Nginx. The adjacent `Settings` tab is where the primary container image registry, tag, and pull credentials are visible and editable. Use this blade after the CLI deployment to verify the main container appears in the inventory and to layer in sidecars without rebuilding the Python image.
+
 ## See Also
 - [Native Dependencies](./native-dependencies.md)
 - [Deploy Application](../tutorial/02-first-deploy.md)

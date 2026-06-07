@@ -192,6 +192,14 @@ az webapp vnet-integration list \
 - Verify system-assigned identity is enabled on the web app.
 - Confirm SQL permissions for managed identity principal and Key Vault access policy or RBAC.
 
+## Run It in the Portal
+
+#### Portal view: Networking blade (pre-recipe state - 0 private endpoints, public access enabled)
+
+![Networking blade for the Web App with a minimal command bar offering Refresh, Troubleshoot, and Send us your feedback. An info banner reads "Check your network configuration. Select any of the features listed below to change your network setup. Learn more". The blade is split into Inbound traffic configuration and Outbound traffic configuration columns. Inbound shows Public network access "Enabled with no access restrictions (Using default behavior)" as a link, App assigned address "Not configured", Private endpoints "0 private endpoints", Inbound IPv4 addresses "20.200.197.3", and Inbound IPv6 addresses "2603:1040:f05:3::208". An Optional inbound services subsection lists Azure Front Door with a "View details" link. Outbound shows Virtual network integration "Not configured", Hybrid connections "Not configured", Outbound DNS "Default (Azure-provided)", Outbound IPv4 addresses (a long comma-separated list of roughly 30 addresses across the 20.214.x.x and 20.249.x.x ranges), and Outbound IPv6 addresses (a similarly long comma-separated list of IPv6 prefixes). An Integration subnet configuration section at the bottom shows NAT gateway "N/A". The left navigation has Networking highlighted under the Favorites group, with the Settings group expanded below it.](../../../assets/operations/networking/01-networking-overview.png)
+
+The Networking blade is the Portal surface where the private endpoint provisioned by this recipe appears. In this pre-recipe state, `Private endpoints: 0 private endpoints` and `Public network access: Enabled with no access restrictions` reflect the default open posture; after running `az network private-endpoint create` and tightening `Public network access` through the Access Restrictions blade, the Inbound column shows the private-endpoint count incrementing and the public-access link reflecting the lockdown. The `Inbound IPv4 addresses` field at the top is what would no longer be reachable from the public Internet once the lockdown step is applied. Use this blade to verify both the private endpoint registration and the public-access posture changed as the recipe describes.
+
 ## See Also
 
 - [Azure SQL](azure-sql.md)
