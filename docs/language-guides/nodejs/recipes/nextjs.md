@@ -122,6 +122,14 @@ CMD ["node", "server.js"]
     - [Edge middleware](https://github.com/yeongseon/azure-app-service-practical-guide/issues)
     - [Contribute](https://github.com/yeongseon/azure-app-service-practical-guide/issues)
 
+## Run It in the Portal
+
+#### Portal view: Environment variables blade (Next.js private runtime variables surface in App settings)
+
+![Azure Portal Environment variables blade for app-test-20251107 Web App with the App settings tab selected (Connection strings tab adjacent). The toolbar shows a search box plus the actions plus Add, Refresh, Show values, Advanced edit, and Pull reference values. The settings table has columns Name, Value, Deployment slot setting, Source, and Delete and lists five App Service-sourced rows: APPLICATIONINSIGHTS_CONNECTION_STRING, APPLICATIONINSIGHTSAGENT_EXTENSION_ENABLED, ApplicationInsightsAgent_EXTENSION_VERSION, SCM_DO_BUILD_DURING_DEPLOYMENT, and WEBSITE_HTTPLOGGING_RETENTION_DAYS, each with a Show value link and Source App Service. The left navigation expands Settings with Environment variables highlighted, alongside Configuration, Instances, Authentication, Identity, Backups, Custom domains, Certificates, Networking, and WebJobs; Apply and Discard buttons are disabled at the bottom.](../../../assets/operations/deployment/zip-deploy/01-app-settings-run-from-package.png)
+
+The `Environment variables` blade with the `App settings` tab selected is the Portal surface where the Next.js private runtime variables this recipe describes — for example `DATABASE_URL` — appear once you add them via `az webapp config appsettings set`. New rows would sit in the same `Name`/`Value`/`Deployment slot setting`/`Source` table shown here alongside the visible App Service-managed entries. The `Show value`, `Refresh`, and `Advanced edit` toolbar actions are the Portal controls for confirming the CLI-written settings landed before the standalone `server.js` reads them through `process.env` in `getServerSideProps` or `getStaticProps`. Build-time `NEXT_PUBLIC_*` variables called out earlier on this page are baked into the bundle and do not appear in this runtime table.
+
 ## See Also
 - [Custom Container](./custom-container.md)
 - [Redis Cache for Sessions](./redis.md)

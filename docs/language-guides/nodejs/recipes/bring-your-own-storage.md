@@ -332,6 +332,14 @@ const blobServiceClient = new BlobServiceClient(
 
 See [Managed Identity](./managed-identity.md) for the full setup.
 
+## Run It in the Portal
+
+#### Portal view: Environment variables blade (recipe app settings for mount paths)
+
+![Azure Portal Environment variables blade for app-test-20251107 Web App with the App settings tab selected (Connection strings tab adjacent). The toolbar shows a search box plus the actions plus Add, Refresh, Show values, Advanced edit, and Pull reference values. The settings table has columns Name, Value, Deployment slot setting, Source, and Delete and lists five App Service-sourced rows: APPLICATIONINSIGHTS_CONNECTION_STRING, APPLICATIONINSIGHTSAGENT_EXTENSION_ENABLED, ApplicationInsightsAgent_EXTENSION_VERSION, SCM_DO_BUILD_DURING_DEPLOYMENT, and WEBSITE_HTTPLOGGING_RETENTION_DAYS, each with a Show value link and Source App Service. The left navigation expands Settings with Environment variables highlighted, alongside Configuration, Instances, Authentication, Identity, Backups, Custom domains, Certificates, Networking, and WebJobs; Apply and Discard buttons are disabled at the bottom.](../../../assets/operations/deployment/zip-deploy/01-app-settings-run-from-package.png)
+
+The `Environment variables` blade with the `App settings` tab selected is the Portal surface where the recipe's companion path settings appear after you add `ASSETS_PATH` and `DATA_PATH` as shown earlier on this page. Those rows would sit in the same `Name`/`Value` table shown here, and the visible `Show value` and `Refresh` actions are the controls you use to confirm the CLI-written app settings landed. Use this blade for the app-setting layer of the recipe; use `az webapp config storage-account list` for the actual BYOS mount inventory.
+
 ## See Also
 - [Managed Identity](./managed-identity.md)
 - [Key Vault References](./key-vault-reference.md)

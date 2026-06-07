@@ -142,6 +142,14 @@ node your-app.js
     - [Read replicas](https://github.com/yeongseon/azure-app-service-practical-guide/issues)
     - [Contribute](https://github.com/yeongseon/azure-app-service-practical-guide/issues)
 
+## Run It in the Portal
+
+#### Portal view: Identity blade (managed identity enabled for Azure SQL access)
+
+![Identity blade for a Web App showing tabs "System assigned" (selected) and "User assigned". The System assigned panel displays a Status toggle currently "Off" with description "When enabled, Azure will create an identity for this resource in Microsoft Entra ID". Save and Discard buttons appear at the top; below the Status row a "Permissions" section explains role assignments for the identity, and the Object (principal) ID field is empty pending enablement. The left navigation shows Identity selected under the Settings group.](../../../assets/platform/security-architecture/01-identity-blade.png)
+
+The Identity blade is the Portal entry point for the managed-identity flow this recipe uses to connect to Azure SQL without a stored password. With the `System assigned` tab selected and the `Status` toggle flipped from `Off` to `On`, App Service creates the Entra-backed identity that the SQL statements earlier in the recipe grant access to with `CREATE USER ... FROM EXTERNAL PROVIDER` and `ALTER ROLE ... ADD MEMBER ...`. Use this blade as the first verification step for the recipe before testing the passwordless `mssql` connection from the Node.js app.
+
 ## See Also
 - [Cosmos DB Integration](./cosmosdb.md)
 - [Redis Cache for Sessions](./redis.md)
