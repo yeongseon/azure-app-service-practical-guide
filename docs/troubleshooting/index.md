@@ -193,6 +193,12 @@ Deploy reproduction environments to your Azure subscription and observe real sym
 
 ## Architecture & Methodology
 
+#### Portal view: Diagnose and solve problems landing page
+
+![Diagnose and solve problems blade for app-test-20251107 showing the Common Solutions tab with a Risk alerts panel (Availability 2 Critical, View more details) and a Troubleshooting categories grid with seven cards covering Availability and Performance, Configuration and Management, Risk Assessments, Deployment, Networking, Diagnostic Tools, and Load Test your App. A Popular troubleshooting tools list at the bottom shows Application Logs, App Down Workflow, Web App Down, Web App Slow, and Process Full List.](../assets/troubleshooting/diagnose-and-solve/01-overview.png)
+
+The Portal's built-in `Diagnose and solve problems` blade is the operational entry point that complements the architecture and methodology pages below. Treat it as the first stop during an active incident — `Risk alerts` surfaces pre-detected critical issues, the seven `Troubleshooting categories` map directly to the failure classifications in the [Mental Model](mental-model.md), and the `Popular troubleshooting tools` (App Down Workflow, Web App Slow) run guided diagnostic flows that consolidate many manual KQL queries.
+
 - [Architecture Overview](architecture-overview.md) — How App Service components interact during failures
 - [Decision Tree](decision-tree.md) — Route from symptom to playbook in 60 seconds
 - [Evidence Map](evidence-map.md) — What evidence to collect for each failure type

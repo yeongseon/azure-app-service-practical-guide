@@ -27,6 +27,12 @@ Symptom-oriented troubleshooting guides for Azure App Service Linux.
 
 Each playbook follows a hypothesis-driven structure: start from the symptom, list competing hypotheses, collect evidence, validate or disprove, and identify the root cause.
 
+#### Portal view: Diagnose and solve problems (the symptom-to-playbook entry point)
+
+![Azure portal Diagnose and solve problems blade for app-test-20251107 with the Common Solutions tab selected (AI-powered Diagnostics (preview) tab also visible). Seven Troubleshooting categories: Availability and Performance (Application Logs, App Down Workflow, Web App Down), Configuration and Management (Investigate EasyAuth errors, IP Address Configuration, All Scaling Operations), Risk Assessments (Availability risks, Configuration risks), Deployment (Troubleshoot), Networking (Troubleshoot), Diagnostic Tools (Auto-Heal, Network Troubleshooter, Advanced Application Restart), Load Test your App (Create Load Test). Risk alerts shows an Availability card with 2 Critical alerts. Popular troubleshooting tools list: Application Logs, App Down Workflow, Web App Down, Web App Slow, Process Full List.](../../assets/troubleshooting/diagnose-and-solve/01-overview.png)
+
+The category cards in this blade map almost 1:1 to the playbook sections below: **Availability and Performance** maps to Startup/Availability and Performance playbooks, **Networking** maps to Outbound/Network playbooks, **Configuration and Management** and **Deployment** map to Deployment Failures. When a symptom is reported, open this blade first to let Azure surface the most likely detectors, then use this index page to pick the matching playbook for hypothesis-driven validation. Treat detector output as a hypothesis generator (per [Detector Map](../methodology/detector-map.md)), not a conclusion - every playbook below uses logs + metrics to confirm or refute what the detectors suggest.
+
 <!-- diagram-id: playbook-map -->
 ```mermaid
 graph TD

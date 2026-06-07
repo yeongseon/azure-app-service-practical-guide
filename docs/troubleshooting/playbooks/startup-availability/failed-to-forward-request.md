@@ -174,6 +174,12 @@ Treat **"Failed to forward request"** as a runtime proxy-path symptom, not a sin
 - Restart/recycle signals around failure windows
 - Whether failures are steady-state or bursty during deployment/restart windows
 
+#### Portal view: Web App Down detector (the App vs Platform availability split)
+
+![Azure portal Diagnose and solve problems Web App Down detector for app-test-20251107 with breadcrumb "Diagnose and solve problems > Availability and Performance > Web App Down". App Availability KPI 100% (blue tile) and Platform Availability 100% (green tile). Organic SLA 100%. Green banner reads "No downtimes were identified for this Web App in the last 24 hours". Detector navigation rail on the left lists Container Issues, Linux CPU Drill Down, Linux Memory Drill Down, Web App Restarted, Web App Slow, SNAT Port Exhaustion, HTTP Server Errors.](../../../assets/troubleshooting/diagnose-and-solve/02-detector-web-app-down.png)
+
+For "Failed to forward request" symptoms, run this detector first to disambiguate the failure layer. If **App Availability** is low but **Platform Availability** is high, the platform proxy is working but cannot reach your app process - exactly H1 (bind mismatch), H2 (port mismatch), or H6 (crash after bind) from Section 3. If **both** are low, you're not in this playbook's scope. Pair this with the `Container Issues` and `Web App Restarted` detectors in the left rail: `Container Issues` shows the explicit forwarding/proxy errors with `ContainerId`, and `Web App Restarted` reveals the post-bind crash loop pattern of H6. The 24-hour scope visible in the banner is the default - widen it via the detector's time picker if your incident is older.
+
 ### Logs
 
 - `AppServicePlatformLogs`: look for `OperationName`, `ContainerId`, `ResultDescription` entries containing forward/proxy failures

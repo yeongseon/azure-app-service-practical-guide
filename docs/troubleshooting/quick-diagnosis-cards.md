@@ -211,6 +211,12 @@ du -sh /tmp/* | sort -h | tail -20
 
 When you don't know where to start, run these three queries to establish baseline:
 
+#### Portal view: Log Analytics editor where the three baseline queries run
+
+![Application Insights Logs blade for ai-test-20251107 showing the KQL editor with a New Query 1 tab, a blue Run button, Time range Last 24 hours, Show 1000 results, and a KQL mode dropdown. The query editor is empty with placeholder Type your query here or click one of the queries to start. A Query history panel below shows the empty state No queries history with the hint You haven't run any queries yet.](../assets/troubleshooting/log-analytics/01-logs.png)
+
+All three baseline queries below execute in this Application Insights Logs editor. Before pasting each query, adjust the blade-level `Time range` to match the query's `ago(...)` window — Query 1 uses 2 hours, Query 2 uses 24 hours, and Query 3 uses 6 hours. The `Show: 1000 results` cap matters when investigating high-volume incidents; for noisy queries you may need to increase it or refine the filter. Use the `KQL mode` dropdown — all queries below assume raw Kusto syntax. As you run each query, the `Query history` panel will populate; export the queries that produced actionable evidence into the incident ticket as your reproducibility artifact.
+
 ### Query 1: HTTP Error Trend
 
 ```kusto

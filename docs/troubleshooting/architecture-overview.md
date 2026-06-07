@@ -202,6 +202,12 @@ flowchart TD
 
 ## 5) Observability Coverage Map
 
+#### Portal view: Diagnose and solve problems as observability gateway
+
+![Diagnose and solve problems blade for app-test-20251107 with a Search box, Common Solutions tab selected, and a Risk alerts panel showing Availability 2 Critical with View more details link. The Troubleshooting categories grid shows seven cards: Availability and Performance (links Application Logs, App Down Workflow, Web App Down), Configuration and Management (links Investigate EasyAuth errors, IP Address Configuration, All Scaling Operations), Risk Assessments (links Availability risks, Configuration risks), Deployment (Troubleshoot link), Networking (Troubleshoot link), Diagnostic Tools (links Auto-Heal, Network Troubleshooter, Advanced Application Restart), and Load Test your App (Create Load Test link). A Popular troubleshooting tools list at the bottom shows Application Logs, App Down Workflow, Web App Down, Web App Slow, and Process Full List.](../assets/troubleshooting/diagnose-and-solve/01-overview.png)
+
+The `Diagnose and solve problems` blade is the Portal-side mirror of this observability coverage map and the fastest first stop during an active incident. Each `Troubleshooting categories` card maps to one or more components in the diagram below: `Availability and Performance` covers the Front End and worker lifecycle, `Configuration and Management` and `Deployment` cover Activity Log signals, `Networking` covers the outbound path, and `Diagnostic Tools` provides mitigation actions like `Auto-Heal` and `Advanced Application Restart`. The `Risk alerts` panel runs continuous health checks and surfaces critical issues before symptoms appear in your own monitoring — always check it before falling through to the manual KQL queries below.
+
 <!-- diagram-id: observability-coverage-map -->
 ```mermaid
 flowchart TD
@@ -224,6 +230,12 @@ az monitor metrics list --resource <app-resource-id> --metric "Http5xx,Requests,
 az webapp config show --resource-group <resource-group> --name <app-name>
 az webapp config appsettings list --resource-group <resource-group> --name <app-name>
 ```
+
+#### Portal view: Log Analytics editor where the KQL queries below execute
+
+![Application Insights Logs blade for ai-test-20251107 showing the KQL editor with a New Query 1 tab, a Run button, Time range Last 24 hours, Show 1000 results, and a KQL mode dropdown. The query editor is empty with placeholder Type your query here or click one of the queries to start. A Query history panel below shows the empty state No queries history.](../assets/troubleshooting/log-analytics/01-logs.png)
+
+The KQL snippets below all execute in the Application Insights Logs editor shown here — accessible from the `Logs` button in any Application Insights or Log Analytics workspace. Before pasting a query, set the blade-level `Time range` to match the `| where TimeGenerated > ago(...)` clause in the query (default queries here use `ago(2h)`, `ago(6h)`, or `ago(24h)`). The `KQL mode` dropdown distinguishes raw Kusto from `Simple mode`; all three queries below require `KQL mode`. The empty `Query history` panel becomes the reproducibility artifact during real incidents — save important queries from this panel into the runbook for post-incident review.
 
 ```kusto
 AppServiceHTTPLogs

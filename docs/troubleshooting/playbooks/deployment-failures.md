@@ -134,6 +134,12 @@ flowchart TD
         --output table
     ```
 
+#### Portal view: Activity log (deployment + swap operation history)
+
+![Azure portal Activity log blade for app-test-20251107 with toolbar Activity, Edit columns, Refresh, Export Activity Logs, Download as CSV, Insights, Feedback, Pin current filters, Reset filters. A "Looking for Log Analytics?" info banner offers a Visit Log Analytics cross-link. Below it: a Search box, a Quick Insights link, and filter chips Management Group: None, Subscription: Visual Studio Enterprise Subscription, Event severity: All, Timespan: Last 6 hours, Resource group: rg-test-20251107 (X), Resource: app-test-20251107 (X), plus an Add Filter button. The "11 items." count precedes a results table with columns Operation name, Status, Time, Time stamp, Subscription, Event initiated by - all 11 rows (mix of ValidateUpgradePath, Get Web App Publishing Profile, Get Web App Slots Differences, List Web App Slot Security Sensitive Settings) show Succeeded status, "Sun Jun 07 ..." time stamps, Visual Studio Enterprise Subscription, and user@example.com (PII masked) for Event initiated by.](../../assets/troubleshooting/activity-log/01-activity-log.png)
+
+Activity log is the control-plane source of truth for **when** a deployment, restart, or slot swap happened - critical for building the timeline this section requires. For deployment failure triage, filter by `Operation name` containing values like `Restart Web App`, `Swap Slots`, `Update site config`, `Stop Web App`, or `Start Web App`, and tighten the **Timespan** filter to the incident window. The `Event initiated by` column distinguishes user-initiated actions from system/CI service principal actions - a green "Succeeded" status here only proves the ARM operation completed, NOT that the worker is serving traffic (that's why Section 5's HTTP and console queries are still required). Use **Download as CSV** to attach the timeline to incident tickets.
+
 ## 5. Evidence to Collect
 
 Collect one timeline that includes deployment start, deployment end, app restart, first healthy response, and any swap event. That timeline prevents mixing build failures with startup failures.
