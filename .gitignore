@@ -47,9 +47,10 @@ Thumbs.db
 labs/*/artifacts/
 labs/*/deploy.zip
 
-# Generated deployment artifacts
+# Generated deployment artifacts (Bicep transpiler output from `az bicep build` / `az deployment group create`)
 apps/**/infra/main.json
 apps/**/infra/profiles/*.json
+apps/**/infra/modules/*.json
 
 # Environment
 .env
