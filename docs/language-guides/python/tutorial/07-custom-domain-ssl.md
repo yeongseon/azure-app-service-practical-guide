@@ -200,6 +200,14 @@ Masked certificate inventory example:
 
 Use Azure DNS and Traffic Manager for multi-region failover, and automate certificate lifecycle monitoring with alerts for expiration windows.
 
+## Run It in the Portal
+
+#### Portal view: Custom domains blade (post-binding verification)
+
+![Custom domains blade for a Web App. The top of the blade shows two read-only fields — `IP address` (`20.200.197.3`) and `Custom Domain Verification ID` (masked for documentation) — followed by a `Filter by keywords` search box and an `Add filter` button. The command bar above the table contains `Add custom domain`, `Buy App Service domain`, and a disabled `Delete` button. A `3 items` count precedes the table, whose columns are Custom domains, Status, Solution, Binding type, Certificate used, and Actions. Three rows are listed: `app-test-20251107.net` (Status: Secured, Binding type: SNI SSL, Certificate used: `app-test-20251107.net-app-test-2…`), `www.app-test-20251107.net` (Status: Secured, Binding type: SNI SSL, Certificate used: `app-test-20251107.net-app-test-2…`), and the default `app-test-20251107.azurewebsites.net` host (Status: Secured, Solution / Binding type / Certificate used columns rendered as `-` because the default hostname does not have a bound certificate). The left navigation shows Custom domains highlighted under Settings.](../../../assets/platform/mtls/01-custom-domains-tls.png)
+
+The Custom domains blade is the Portal verification surface for the `az webapp config hostname add` and `az webapp config ssl bind` steps in this tutorial. After DNS validation and certificate binding, the custom-hostname rows should show `Status: Secured`, `Binding type: SNI SSL`, and a populated `Certificate used` value, which is the end state visible for `app-test-20251107.net` and `www.app-test-20251107.net` in this screenshot. The `IP address` field at the top is the value you compare against the apex-domain `A` record during setup, and `Add custom domain` is the visible Portal entry point for the same hostname-binding flow. Use this blade after the CLI steps to confirm that the hostname rows, binding type, and certificate columns all reflect the expected custom-domain state.
+
 ## See Also
 - [Tutorial Overview](./index.md)
 - [Deployment Slots](../../../operations/deployment-slots.md)
