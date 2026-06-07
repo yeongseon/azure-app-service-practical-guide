@@ -169,6 +169,14 @@ See [Kudu API Reference](./kudu-queries.md) for endpoint details.
 - Plan SKU and current instance count
 - Relevant error snippets (PII removed)
 
+## Run It in the Portal
+
+#### Portal view: Diagnose and solve problems blade
+
+![Azure portal Diagnose and solve problems blade for app-test-20251107 with the Common Solutions tab selected (AI-powered Diagnostics (preview) tab also visible) and a top toolbar showing a Search for common problems or tools search box, Refresh, and Feedback. A Risk alerts section shows a single Availability card with 2 Critical alerts and a View more details link. Seven Troubleshooting categories follow. A Popular troubleshooting tools list at the bottom shows Application Logs, App Down Workflow, Web App Down, Web App Slow, and Process Full List. Left nav highlights Diagnose and solve problems.](../assets/troubleshooting/diagnose-and-solve/01-overview.png)
+
+The `Diagnose and solve problems` blade is the Portal counterpart to the Diagnostic Tools Overview table above - it is the one labelled `Built-in detectors and recommendations` and is what the table's `Access` column means by `Azure Portal > Web App`. The visible seven `Troubleshooting categories` map directly to the `## Common Platform Issues` table: `Availability and Performance` covers `503 Service Unavailable` and `Slow responses / timeouts`, `Configuration and Management` covers app-setting and scaling misconfiguration, `Networking` covers `Intermittent outbound failures` and `DNS resolution failures for private endpoints`, and `Deployment` covers deployment-history checks otherwise reached via the `az webapp log deployment list` snippet in `## Deployment Troubleshooting`. The `Risk alerts` panel surfaces `Availability 2 Critical` items that act as the initial signal feeding the `## Fast Triage Commands` workflow - clicking `View more details` is the GUI equivalent of running `az webapp show` and `az webapp log tail` in parallel. The `Popular troubleshooting tools` row (`Application Logs`, `App Down Workflow`, `Web App Down`, `Web App Slow`, `Process Full List`) gives one-click access to the detectors most often needed when `## Data to Collect Before Escalation` is being prepared.
+
 ## See Also
 
 - [KQL Queries](kql-queries.md)

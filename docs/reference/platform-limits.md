@@ -97,6 +97,14 @@ graph TD
 - Missing files due to writing into ephemeral paths
 - Slow or dropped long-running HTTP requests over frontend timeout
 
+## Run It in the Portal
+
+#### Portal view: Scale up (App Service plan) blade
+
+![Scale up (App Service plan) blade for an App Service plan showing four pricing tier categories — Dev / Test, Production, Production V3, and Production V4 — each presented as cards. Production V3 is selected and the table lists Premium V3 SKUs with their vCPU, RAM, and storage values, including P0v3, P1v3, P2v3, P3v3, P1mv3, P2mv3, P3mv3, P4mv3, and P5mv3 rows; the current Premium0 V3 tier is highlighted and an "Upgrade" button is available at the top of the blade.](../assets/platform/scaling/02-scale-up.png)
+
+The `Scale up (App Service plan)` blade is where you change the SKU that drives most of the limits in the Scale and Plan Limits table above. The visible Production V3 card lists `P0v3`, `P1v3`, `P2v3`, `P3v3` (and the memory-optimized `P1mv3` through `P5mv3`) - these are the rows the table refers to as `Premium (P1V3 and above)` with `Max Instances (Typical) 30+` and `Deployment Slots (Typical) 20`. Switching to the Dev / Test card surfaces the `F1`, `B1`, and other tiers cross-referenced in the same table (`Free (F1)` with `Max Instances 1`, `Basic (B1)` with `Max Instances 3`, no slots). Always On, slot count, and per-instance limits like the documented `~128 SNAT ports per instance` in the Networking and Connections table are bound to the SKU selected here, not to the web app itself; that is why the `Upgrade` button targets the plan and applies to every web app sharing it. Use this blade to validate the SKU before troubleshooting symptoms in the `## Limit-Driven Symptoms` section - many of them (`Sudden 5xx spikes`, `Intermittent outbound failures`) are first explained by being on a tier whose typical limits no longer match current load.
+
 ## See Also
 
 - [CLI Cheatsheet](cli-cheatsheet.md)
