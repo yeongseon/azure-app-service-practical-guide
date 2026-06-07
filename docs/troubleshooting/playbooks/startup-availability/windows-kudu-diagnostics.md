@@ -153,6 +153,24 @@ az webapp log config --resource-group <resource-group> --name <app-name> --web-s
 az webapp log tail --resource-group <resource-group> --name <app-name>
 ```
 
+#### Portal view: Overview blade confirming Windows runtime
+
+![Azure portal Overview blade for the app-test-windows-20260608 Web App. The top command bar shows Browse, Stop, Swap, Restart, Delete, Refresh, Download publish profile, Reset publish profile, Share to mobile, Send us your feedback. The Essentials section lists Resource group rg-test-windows-20260608, Status Running, Location Korea Central, Subscription Visual Studio Enterprise Subscription, Subscription ID 00000000-0000-0000-0000-000000000000 (PII masked), Default domain app-test-windows-20260608.azurewebsites.net, App Service Plan asp-test-windows-20260608 (B1: 1), Operating System Windows, Health Check Not Configured. The Properties tab is selected, showing a Web app card with Name app-test-windows-20260608, Publishing model Code, Runtime Stack Dotnet - v8.0, and a Hosting card with Plan Type App Service plan, Name asp-test-windows-20260608, Operating System Windows, Instance Count 1, SKU and size Basic (B1). The left navigation rail lists Overview, Activity log, Access control (IAM), Tags, Diagnose and solve problems, Microsoft Defender for Cloud, Events (preview), Log stream, AI (preview), Resource visualizer, Networking, Deployment, Settings, Performance, App Service plan, Development Tools, API, Monitoring, Automation, Support + troubleshooting.](../../../assets/troubleshooting/kudu/01-overview.png)
+
+The `Overview` blade is the Portal landing surface for the Web App resource. The `Windows` value appears under both the Essentials `Operating System` field and the Hosting card's `Operating System` row, and the `Dotnet - v8.0` string appears under the Web app card's `Runtime Stack` row. The left navigation rail also exposes `Log stream` as a top-level menu entry; the same `Log Stream` string appears in this playbook's Section 5 evidence table.
+
+#### Portal view: Kudu Environment home with REST API surface inventory
+
+![Kudu+ Environment home page. Top navigation lists Environment, Debug console (dropdown), Process explorer, Tools (dropdown), Site extensions, and a user@example.com (PII masked) account label. The Environment heading lists Build 2026.5.1.3 (Commit: f4ee002fc6), Azure App Service 108.0.7.45 (release_ANT108-f8334366)+f833436623d9273dc099f581aebca802e0a126fd, Site up time 00.00:06:39, Site folder C:\home, Temp folder C:\local\Temp\. The REST API heading with caption "(works best when using a JSON viewer extension)" is followed by a list of items: App Settings, Deployments, Source control info, Files, Log streaming (use curl, not browser!), Processes and mini-dumps, Runtime versions, Site Extensions (installed | feed), Web hooks, WebJobs (all | triggered | continuous), Functions (list | host config). The footer states "More information about Kudu can be found on the wiki."](../../../assets/troubleshooting/kudu/02-kudu-home.png)
+
+The Kudu+ Environment home is the SCM site entry surface this playbook's Section 5 evidence table references via the `https://<app-name>.scm.azurewebsites.net/` URL prefix. The visible top navigation entries `Environment`, `Debug console`, `Process explorer`, `Tools`, and `Site extensions` are the same surface names this playbook's Windows Kudu Tool Map row labels enumerate (`Process Explorer`, `Debug Console`, `Site Extensions`).
+
+#### Portal view: Kudu Process Explorer table with live w3wp.exe rows
+
+![Kudu+ Process Explorer page. Top navigation shows Environment, Debug console (dropdown), Process explorer (current), Tools (dropdown), Site extensions, user@example.com (PII masked) account label. The page heading reads Process Explorer. A Find Handle... button sits above a Refresh link. The table has columns name, pid, user_name, total_cpu_time, working_set, private_memory, thread_count, properties, profiling. Row 1: w3wp.exe, 1760, app-test-windows-20260608, 3 s, 6,044 KB, 52,008 KB, 31, Properties.. button, Collect IIS Events checkbox, Start Profiling button. Row 2: w3wp.exe with an scm badge, 6200, app-test-windows-20260608, 14 s, 44,096 KB, 76,112 KB, 32, Properties.. button, Collect IIS Events checkbox, Start Profiling button.](../../../assets/troubleshooting/kudu/03-process-explorer.png)
+
+The `Process Explorer` page is the live worker-process table this playbook's Windows Kudu Tool Map names at the `https://<app-name>.scm.azurewebsites.net/ProcessExplorer/` URL. The visible `total_cpu_time`, `working_set`, `private_memory`, and `thread_count` columns include the per-process measurements this playbook's Process Explorer checklist names as "CPU, private bytes, thread count". The two visible `w3wp.exe` rows (one carrying an `scm` badge) match the `w3wp.exe` worker-process string this playbook's H1 hypothesis text names.
+
 ## 5. Evidence to Collect
 
 ### Required Evidence
