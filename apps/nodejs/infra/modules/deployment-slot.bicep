@@ -25,11 +25,11 @@ param nodeEnv string = 'production'
 @description('Sampling ratio')
 param samplingRatio string = '1.0'
 
-resource webApp 'Microsoft.Web/sites@2022-03-01' existing = {
+resource webApp 'Microsoft.Web/sites@2023-12-01' existing = {
   name: webAppName
 }
 
-resource slot 'Microsoft.Web/sites/slots@2022-03-01' = {
+resource slot 'Microsoft.Web/sites/slots@2023-12-01' = {
   name: slotName
   parent: webApp
   location: location
@@ -82,7 +82,7 @@ resource slot 'Microsoft.Web/sites/slots@2022-03-01' = {
   }
 }
 
-resource slotConfig 'Microsoft.Web/sites/config@2022-03-01' = {
+resource slotConfig 'Microsoft.Web/sites/config@2023-12-01' = {
   name: 'slotConfigNames'
   parent: webApp
   properties: {

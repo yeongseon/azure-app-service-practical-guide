@@ -168,7 +168,7 @@ Add CPU-based scale-in rule:
 az monitor autoscale rule create \
   --resource-group $RG \
   --autoscale-name "autoscale-$PLAN_NAME" \
-  --condition "Percentage CPU < 35 avg 15m" \
+  --condition "Percentage CPU < 35 avg 20m" \
   --scale in 1 \
   --cooldown 15 \
   --output json

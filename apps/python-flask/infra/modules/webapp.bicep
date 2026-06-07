@@ -44,7 +44,7 @@ var basicSkus = ['B1', 'B2', 'B3']
 var alwaysOn = !contains(basicSkus, appServicePlanSku)
 var startupCommand = 'gunicorn --bind=0.0.0.0:8000 --chdir src app:app'
 
-resource webApp 'Microsoft.Web/sites@2022-03-01' = {
+resource webApp 'Microsoft.Web/sites@2023-12-01' = {
   name: name
   location: location
   kind: 'app,linux'
@@ -93,7 +93,7 @@ resource webApp 'Microsoft.Web/sites@2022-03-01' = {
   }
 }
 
-resource webAppLogs 'Microsoft.Web/sites/config@2022-03-01' = {
+resource webAppLogs 'Microsoft.Web/sites/config@2023-12-01' = {
   name: 'logs'
   parent: webApp
   properties: {
@@ -142,6 +142,14 @@ resource diagnosticSettings 'Microsoft.Insights/diagnosticSettings@2021-05-01-pr
       }
       {
         category: 'AppServiceAppLogs'
+        enabled: true
+        retentionPolicy: {
+          enabled: false
+          days: 0
+        }
+      }
+      {
+        category: 'AppServicePlatformLogs'
         enabled: true
         retentionPolicy: {
           enabled: false

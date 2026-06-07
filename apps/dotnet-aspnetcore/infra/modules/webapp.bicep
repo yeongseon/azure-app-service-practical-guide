@@ -19,7 +19,7 @@ param logAnalyticsWorkspaceId string
 var basicSkus = ['B1', 'B2', 'B3']
 var alwaysOn = !contains(basicSkus, appServicePlanSku)
 
-resource webApp 'Microsoft.Web/sites@2023-01-01' = {
+resource webApp 'Microsoft.Web/sites@2023-12-01' = {
   name: name
   location: location
   kind: 'app'
@@ -60,7 +60,7 @@ resource webApp 'Microsoft.Web/sites@2023-01-01' = {
   }
 }
 
-resource webAppLogs 'Microsoft.Web/sites/config@2023-01-01' = {
+resource webAppLogs 'Microsoft.Web/sites/config@2023-12-01' = {
   name: 'logs'
   parent: webApp
   properties: {
@@ -109,6 +109,14 @@ resource diagnosticSettings 'Microsoft.Insights/diagnosticSettings@2021-05-01-pr
       }
       {
         category: 'AppServiceConsoleLogs'
+        enabled: true
+        retentionPolicy: {
+          enabled: false
+          days: 0
+        }
+      }
+      {
+        category: 'AppServicePlatformLogs'
         enabled: true
         retentionPolicy: {
           enabled: false

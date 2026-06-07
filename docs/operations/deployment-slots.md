@@ -107,7 +107,11 @@ az webapp deployment slot list \
 
 ### Configure Slot-Specific Settings
 
-Use sticky settings for environment-specific values.
+**For app settings and connection strings, nothing is slot-specific by default.** They follow the code during a swap unless you explicitly mark them with the `--slot-settings` flag (or check the **Deployment slot setting** box in the Portal). A setting created on staging will move to production on swap, which can contaminate production with staging configuration.
+
+Some other categories are already non-swapped by default on the platform side (for example, publishing endpoints, scaling settings, IP restrictions, Always On, and managed identities). Microsoft Learn maintains the authoritative list of which settings swap and which do not — consult it whenever the behavior is ambiguous for a given setting category.
+
+Use sticky settings for any app-setting or connection-string value that must remain pinned to a specific slot (environment name, feature flags, downstream endpoint URLs, diagnostic keys):
 
 ```bash
 az webapp config appsettings set \
@@ -120,8 +124,16 @@ az webapp config appsettings set \
   --output json
 ```
 
+Commonly slot-pinned categories:
+
+- Environment identifiers (`APP_ENVIRONMENT`, `DEPLOYMENT_TIER`)
+- Feature flags scoped to a specific environment
+- External endpoint URLs that differ between staging and production
+- Diagnostic and telemetry keys (Application Insights connection strings per environment)
+- Connection strings to environment-specific data stores
+
 !!! warning "Keep critical secrets slot-sticky"
-    Connection strings, external endpoint URLs, and diagnostic keys should be configured as slot settings when values differ between environments.
+    Connection strings, external endpoint URLs, and diagnostic keys should be configured as slot settings when values differ between environments. Forgetting to mark them as sticky is one of the most common causes of post-swap production incidents.
 
 ### Deploy to Staging and Validate
 

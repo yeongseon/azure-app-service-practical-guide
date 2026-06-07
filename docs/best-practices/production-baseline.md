@@ -172,6 +172,17 @@ az webapp config show \
 !!! info "Always On matters for non-request workloads"
     Apps with scheduled background jobs, cache warm-up, or token refresh logic can fail unpredictably if Always On is disabled.
 
+!!! note "What Always On does and does not prevent"
+    Always On prevents cold starts caused by **idle recycle** (the platform unloading an app that has received no requests for ~20 minutes on Basic and higher tiers). It does **not** prevent cold starts from:
+
+    - Planned platform maintenance and worker node patching
+    - Worker recycles or instance redeployment
+    - Explicit restarts (`az webapp restart`)
+    - Deployment-triggered restarts (including slot swaps)
+    - Regional failover recovery
+
+    Design startup paths to be fast and idempotent even with Always On enabled.
+
 ### 3) Health check configuration
 
 Health checks are required for stable traffic handling and reliable restart behavior.
