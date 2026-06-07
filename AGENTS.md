@@ -197,14 +197,46 @@ async (page) => {
       { re: /\\byeongseon\\b/gi, val: 'demouser' },
       { re: /\\b[0-9A-F]{32,}\\b/g, val: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' },
     ];
-    const apply = (s) => { let o=s; for (const {re,val} of subs){ re.lastIndex=0; o=o.replace(re,val);} return o; };
-    const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
-    const nodes=[]; let n; while ((n=w.nextNode())) nodes.push(n);
-    for (const node of nodes){ const o=node.textContent||''; const x=apply(o); if (x!==o) node.textContent=x; }
-    document.querySelectorAll('[aria-label]').forEach(el=>{const o=el.getAttribute('aria-label')||'';const x=apply(o);if(x!==o)el.setAttribute('aria-label',x);});
-    document.querySelectorAll('[title]').forEach(el=>{const o=el.getAttribute('title')||'';const x=apply(o);if(x!==o)el.setAttribute('title',x);});
-    document.querySelectorAll('input, textarea').forEach(el=>{const o=el.value||'';const x=apply(o);if(x!==o)el.value=x;});
-    return 'ok';
+    let count = 0;
+    const applySubs = (input) => {
+      let out = input;
+      for (const { re, val } of subs) {
+        re.lastIndex = 0;
+        out = out.replace(re, val);
+      }
+      return out;
+    };
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
+    const nodes = [];
+    let n;
+    while ((n = walker.nextNode())) nodes.push(n);
+    for (const node of nodes) {
+      const orig = node.textContent || '';
+      const next = applySubs(orig);
+      if (next !== orig) {
+        node.textContent = next;
+        count++;
+      }
+    }
+    document.querySelectorAll('[aria-label]').forEach((el) => {
+      const orig = el.getAttribute('aria-label') || '';
+      const next = applySubs(orig);
+      if (next !== orig) el.setAttribute('aria-label', next);
+    });
+    document.querySelectorAll('input, textarea').forEach((el) => {
+      const orig = el.value || '';
+      const next = applySubs(orig);
+      if (next !== orig) {
+        el.value = next;
+        count++;
+      }
+    });
+    document.querySelectorAll('[title]').forEach((el) => {
+      const orig = el.getAttribute('title') || '';
+      const next = applySubs(orig);
+      if (next !== orig) el.setAttribute('title', next);
+    });
+    return count;
   })()`;
   const mf = page.mainFrame();
   await mf.evaluate(PII_SCRIPT);
