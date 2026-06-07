@@ -272,6 +272,14 @@ Inspect effective environment variables through Kudu or startup logging and conf
 
 Verify key names and nesting in `appsettings.*.json`, and ensure environment variable separators use double underscores.
 
+## Run It in the Portal
+
+#### Portal view: Configuration > General settings blade (Portal counterpart to `az webapp config set`)
+
+![Configuration General settings blade for a Web App with five tabs — General settings (active), Stack settings, Health check, Path mappings, Error pages — and a Refresh action. Platform settings section lists SCM Basic Auth Publishing Credentials (unchecked), FTP Basic Auth Publishing Credentials (unchecked), WebJobs runtime (unchecked), FTP state (FTPS only), Inbound IP mode (IPv4), HTTP version (1.1), HTTP 2.0 Proxy (Off), SSH (checked), Always on (unchecked), Session affinity (checked), Session affinity proxy (unchecked), HTTPS only (unchecked), Minimum Inbound TLS Version (1.2), SCM Minimum Inbound TLS Version (1.2), Minimum Inbound TLS Cipher Suite (TLS_RSA_WITH_AES_128_CBC_SHA, Default), and End-to-end TLS encryption (unchecked). Apply and Discard buttons are at the bottom of the blade.](../../../assets/best-practices/production-baseline/01-configuration-general.png)
+
+The `Configuration > General settings` blade is the Portal verification surface for the `az webapp config set` step in this tutorial. In the visible `Platform settings` list, `HTTPS only`, `Always on`, `FTP state`, `HTTP version`, and `Minimum Inbound TLS Version` are all shown directly, and the screenshot also makes the current defaults concrete: `Always on` and `HTTPS only` are both unchecked here. Use this blade to confirm those runtime-level settings before moving on to app settings and connection strings elsewhere in the tutorial.
+
 ## See Also
 
 - [04. Logging & Monitoring](./04-logging-monitoring.md)

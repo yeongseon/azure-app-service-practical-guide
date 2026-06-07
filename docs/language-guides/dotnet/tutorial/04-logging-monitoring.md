@@ -302,6 +302,14 @@ az webapp config appsettings set \
 
 Confirm you are using instrumented libraries and avoid suppressing `DiagnosticSource` activity in custom middleware.
 
+## Run It in the Portal
+
+#### Portal view: Application Insights Overview blade (telemetry destination for this tutorial)
+
+![Azure portal Application Insights Overview blade for ai-test-20251107 with top toolbar Application Dashboard, Getting started, Search, Logs, Monitor resource group, Feedback, Favorites, Rename, Delete and View Cost / JSON View links on the right. Essentials shows Resource group rg-test-20251107, Location Korea Central, Subscription "Visual Studio Enterprise Subscription", Subscription ID 00000000-0000-0000-0000-000000000000, Instrumentation key 00000000-0000-0000-0000-000000000000, Connection string "InstrumentationKey=00000000-...;IngestionEnd..." (truncated), Logs workspace DefaultWorkspace-00000000-0000-0000-0000-000000000000-SE, OTLP connection info "Turn on OTLP support". A "Show data for last:" tab strip shows 30 minutes / 1 hour (selected) / 6 hours / 12 hours / 1 day / 3 days / 7 days / 30 days. Four pinned tiles: Failed requests Count chart with a spike (label 10), Server response time at ~1ms (label 1.07ms), Server requests Count chart with spikes (label 15), and Availability Avg flat at 0% (label "--" because no test configured). Left nav lists Search, Overview (selected), Activity log, Access control (IAM), Tags, Diagnose and solve problems, Resource visualizer, plus collapsed group headers Investigate, Monitoring, Usage, Configure, Settings, Automation, Help.](../../../assets/troubleshooting/app-insights/01-overview.png)
+
+This Application Insights Overview blade is the Portal destination for the telemetry configured in this ASP.NET Core tutorial. The visible `Server requests`, `Failed requests`, and `Server response time` tiles give a quick requests/latency snapshot, and the `Connection string` and `Logs` entry are both shown in the Overview surface. Use the `Logs` button in the top toolbar to open the KQL surface for the query steps in the End-to-End Debugging Scenario section above.
+
 ## See Also
 
 - [05. Infrastructure as Code](./05-infrastructure-as-code.md)

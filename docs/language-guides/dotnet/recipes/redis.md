@@ -169,6 +169,14 @@ Expect value to round-trip and persist across scaled-out instances.
 - Ensure `UseSession()` is in middleware pipeline.
 - Confirm distributed cache registration occurs before session setup.
 
+## Run It in the Portal
+
+#### Portal view: Identity blade (optional Microsoft Entra authentication path)
+
+![Identity blade for a Web App showing tabs "System assigned" (selected) and "User assigned". The System assigned panel displays a Status toggle currently "Off" with description "When enabled, Azure will create an identity for this resource in Microsoft Entra ID". Save and Discard buttons appear at the top; below the Status row a "Permissions" section explains role assignments for the identity, and the Object (principal) ID field is empty pending enablement. The left navigation shows Identity selected under the Settings group.](../../../assets/platform/security-architecture/01-identity-blade.png)
+
+The `Identity` blade shown here is an optional extension point, not part of the default flow on this page. The recipe above uses the `Redis__Connection` app setting with `Microsoft.Extensions.Caching.StackExchangeRedis`, while this screenshot shows the `System assigned` identity surface in its current `Off` state. If you later adopt an identity-based Redis authentication pattern, this is the blade where the app identity would be enabled first.
+
 ## See Also
 
 - [Private Endpoints](private-endpoints.md)

@@ -206,6 +206,14 @@ APP_NAME="app-dotnet-guide-$(date +%s)"
 - Review `az webapp log tail` output for startup exceptions.
 - Confirm the publish step completed successfully before deployment.
 
+## Run It in the Portal
+
+#### Portal view: Web App Overview blade - first-deploy verification surface
+
+![Azure portal Overview blade for `app-test-20251107` (Web App) with a command bar (`Browse`, `Stop`, `Swap`, `Restart`, `Delete`, `Refresh`, `Download publish profile`, `Reset publish profile`, `Share to mobile`, `Send us your feedback`) and an Essentials panel showing Resource group `rg-test-20251107`, Status `Running`, Location `Korea Central`, Subscription `Visual Studio Enterprise Subscription`, Subscription ID `00000000-0000-0000-0000-000000000000`, Default domain `app-test-20251107.azurewebsites.net`, App Service Plan `asp-test-20251107 (P0v3: 1)`, Operating System `Linux`, and Health Check `Not Configured`. The Properties tab is selected (next to Monitoring, Logs, Capabilities, Notifications (1), Recommendations) and surfaces Web app (`Publishing model: Code`, `Runtime Stack: Python - 3.11`, `Runtime status: Healthy`), Domains (`2 Domains View all`), Hosting (`Plan Type: App Service plan`, `Instance Count: 1`, `SKU and size: Premium0V3 (P0v3)` with `Scale up` link), Deployment Center (`Last deployment: Successful on Thursday, November 6, 10:58:01 PM`, `Deployment provider: None`), Application Insights (`Name: ai-test-20251107`, `Region: Korea Central`), and Networking (`Inbound IP addresses: 20.200.197.3, 2603:1040:f05:3::208`, `Private endpoint connections: 0 private endpoints`, `Virtual network integration: Not configured`). Left nav under the search box lists Overview (selected), Activity log, Access control (IAM), Tags, Diagnose and solve problems, Microsoft Defender for Cloud, Events (preview), Log stream, AI (preview), Resource visualizer, with collapsed groups Deployment, Settings, Performance, App Service plan, Development Tools, API, Monitoring, Automation, and Support + troubleshooting.](../../../assets/platform/architecture/01-app-service-overview.png)
+
+After running `az webapp up --runtime "DOTNETCORE:8.0"` in this tutorial, the Overview blade is the first Portal verification surface. This particular screenshot was captured from a Python deployment, so the visible `Operating System: Linux` and `Runtime Stack: Python - 3.11` reflect that deployment; for this .NET 8 tutorial the equivalent values read `Windows` and `.NET 8` because `az webapp up` provisions a Windows App Service plan with the specified `DOTNETCORE:8.0` runtime. The OS-agnostic `Essentials` fields — `Status: Running`, `Default domain`, and the attached `App Service Plan` — are the values you compare against the CLI deployment output, and the `Default domain` value is what you open in a browser to perform the `curl $WEB_APP_URL/health` verification step from this tutorial.
+
 ## See Also
 
 - [01 - Local Run](./01-local-run.md)

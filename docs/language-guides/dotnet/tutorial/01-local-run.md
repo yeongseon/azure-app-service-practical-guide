@@ -255,6 +255,14 @@ Console.WriteLine($"ASPNETCORE_ENVIRONMENT={builder.Environment.EnvironmentName}
 |--------------|---------|
 | `Console.WriteLine($"ASPNETCORE_ENVIRONMENT={builder.Environment.EnvironmentName}");` | Prints the effective ASP.NET Core environment during startup for debugging. |
 
+## Run It in the Portal
+
+#### Portal view: App Service plan - the deployment target this tutorial emulates locally
+
+![App Service Plan overview blade showing the Linux plan asp-test-20251107 in Korea Central with Pricing tier "Premium0 V3", App Service Plan kind "Linux", Status "Ready", Operating system "Linux", and 1 instance; the right-side charts show CPU Percentage and Memory Percentage time-series for the plan and a list of the apps and slots hosted on the plan including app-test-20251107 and its staging slot.](../../../assets/platform/hosting-models/01-app-service-plan.png)
+
+Your local ASP.NET Core run with `dotnet run` in this tutorial is meant to mirror the runtime shape of an App Service-hosted web app. This particular screenshot was captured from a Python deployment, so the visible `App Service Plan kind: Linux` and `Operating system: Linux` reflect that deployment; for the .NET 8 path in this guide the equivalent values read `Windows` because the deploy step uses `--runtime "DOTNETCORE:8.0"` on a Windows App Service plan. The `CPU Percentage` and `Memory Percentage` charts on the right are the Portal-side signals you compare against when local runs suggest the app is using too much CPU or memory under load, and the hosted-app list at the bottom confirms an App Service plan is the shared deployment target used by later tutorials.
+
 ## See Also
 
 - [02. First Deploy](./02-first-deploy.md)
