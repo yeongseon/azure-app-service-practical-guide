@@ -158,6 +158,7 @@ The helper applies replacements to text nodes **and** `aria-label` attributes ac
 | `*.onmicrosoft.com` (bare domain) | `contoso.onmicrosoft.com` | Tenant domains. Trailing negative lookahead prevents partial rewrites of longer hostnames such as `tenant.onmicrosoft.com.uk`. |
 | `ychoe` (employee alias) | `demouser` | Author alias, word-bounded so unrelated tokens are not touched. |
 | `Yeongseon Choe` (display name) | `Demo User` | Author display name. |
+| `yeongseon` (GitHub handle, bare token) | `demouser` | Author GitHub username surfaced in Deployment Center "Signed in as" panels and similar source-control integrations. Case-insensitive and word-bounded; runs AFTER the `Yeongseon Choe` rule so the full display-name form is preserved. |
 | Uppercase hex token ≥ 32 chars (Custom Domain Verification ID, other SHA-256-style identifiers) | 64-char `AAAA…A` placeholder | Custom Domain Verification IDs and similar long uppercase hex strings are real account-scoped tokens that the GUID regex does not match. Boundary-anchored so shorter hex substrings inside other tokens are not partially rewritten. |
 | Account-menu avatar (cannot be rewritten) | Native Playwright mask, `maskColor='#0078d4'` | Blends with Portal command bar. The helper throws if the avatar selector matches nothing. |
 
@@ -193,16 +194,49 @@ async (page) => {
       { re: /\\b[A-Za-z0-9-]+\\.onmicrosoft\\.com(?![A-Za-z0-9.-])/gi, val: 'contoso.onmicrosoft.com' },
       { re: /\\bychoe\\b/gi, val: 'demouser' },
       { re: /Yeongseon\\s+Choe/g, val: 'Demo User' },
+      { re: /\\byeongseon\\b/gi, val: 'demouser' },
       { re: /\\b[0-9A-F]{32,}\\b/g, val: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' },
     ];
-    const apply = (s) => { let o=s; for (const {re,val} of subs){ re.lastIndex=0; o=o.replace(re,val);} return o; };
-    const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
-    const nodes=[]; let n; while ((n=w.nextNode())) nodes.push(n);
-    for (const node of nodes){ const o=node.textContent||''; const x=apply(o); if (x!==o) node.textContent=x; }
-    document.querySelectorAll('[aria-label]').forEach(el=>{const o=el.getAttribute('aria-label')||'';const x=apply(o);if(x!==o)el.setAttribute('aria-label',x);});
-    document.querySelectorAll('[title]').forEach(el=>{const o=el.getAttribute('title')||'';const x=apply(o);if(x!==o)el.setAttribute('title',x);});
-    document.querySelectorAll('input, textarea').forEach(el=>{const o=el.value||'';const x=apply(o);if(x!==o)el.value=x;});
-    return 'ok';
+    let count = 0;
+    const applySubs = (input) => {
+      let out = input;
+      for (const { re, val } of subs) {
+        re.lastIndex = 0;
+        out = out.replace(re, val);
+      }
+      return out;
+    };
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
+    const nodes = [];
+    let n;
+    while ((n = walker.nextNode())) nodes.push(n);
+    for (const node of nodes) {
+      const orig = node.textContent || '';
+      const next = applySubs(orig);
+      if (next !== orig) {
+        node.textContent = next;
+        count++;
+      }
+    }
+    document.querySelectorAll('[aria-label]').forEach((el) => {
+      const orig = el.getAttribute('aria-label') || '';
+      const next = applySubs(orig);
+      if (next !== orig) el.setAttribute('aria-label', next);
+    });
+    document.querySelectorAll('input, textarea').forEach((el) => {
+      const orig = el.value || '';
+      const next = applySubs(orig);
+      if (next !== orig) {
+        el.value = next;
+        count++;
+      }
+    });
+    document.querySelectorAll('[title]').forEach((el) => {
+      const orig = el.getAttribute('title') || '';
+      const next = applySubs(orig);
+      if (next !== orig) el.setAttribute('title', next);
+    });
+    return count;
   })()`;
   const mf = page.mainFrame();
   await mf.evaluate(PII_SCRIPT);

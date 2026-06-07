@@ -94,6 +94,12 @@ az webapp config appsettings set \
 !!! note "Read-only content root"
     When you run from package, application code should not try to write into the deployment directory. Store uploads, generated files, caches, and session state in external services or persistent storage instead.
 
+#### Portal view: Environment variables blade
+
+![Azure Portal Environment variables blade for app-test-20251107 Web App with the App settings tab selected (Connection strings tab adjacent). The toolbar shows a search box plus the actions plus Add, Refresh, Show values, Advanced edit, and Pull reference values. The settings table has columns Name, Value, Deployment slot setting, Source, and Delete and lists five App Service-sourced rows: APPLICATIONINSIGHTS_CONNECTION_STRING, APPLICATIONINSIGHTSAGENT_EXTENSION_ENABLED, ApplicationInsightsAgent_EXTENSION_VERSION, SCM_DO_BUILD_DURING_DEPLOYMENT, and WEBSITE_HTTPLOGGING_RETENTION_DAYS, each with a Show value link and Source App Service. The left navigation expands Settings with Environment variables highlighted, alongside Configuration, Instances, Authentication, Identity, Backups, Custom domains, Certificates, Networking, and WebJobs; Apply and Discard buttons are disabled at the bottom.](../../assets/operations/deployment/zip-deploy/01-app-settings-run-from-package.png)
+
+The `az webapp config appsettings set` command above writes directly into this blade, which is the same surface the Portal exposes for manual edits. Notice there is no `WEBSITE_RUN_FROM_PACKAGE` row yet - this is the pre-state before enabling run-from-package, and after the CLI runs it appears here with Source `App Service` just like the existing entries. Treat this blade as a read-only audit view in CI-driven deployments rather than the primary editing surface, because manual Portal edits drift from the configuration that ZIP Deploy expects. The `Deployment slot setting` column matters when you promote to production - if a slot-specific value is required for staging-only configuration, mark it sticky from the CLI or this column instead of relying on the default empty state.
+
 ### Complete ZIP Deploy Example
 
 ```bash

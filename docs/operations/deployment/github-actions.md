@@ -57,6 +57,12 @@ Microsoft Learn recommends OpenID Connect (OIDC) for GitHub Actions because it a
 !!! tip "Prefer OIDC over publish profiles"
     Publish profiles work, but OIDC is the better long-term choice because GitHub exchanges a short-lived token at runtime instead of storing a reusable deployment credential.
 
+#### Portal view: Deployment Center (GitHub source)
+
+![Azure Portal Deployment Center blade for app-test-20251107 Web App with the Settings tab selected and Containers (new), Logs, and FTPS Credentials tabs visible. The toolbar shows Save and Discard (disabled), Refresh, Browse, Sync (disabled), and Send us your feedback. An information banner at the top reads "You are now in the production slot, which is not recommended for setting up CI/CD. Learn more". The body text "Deploy and build code from your preferred source and build provider" precedes a Source dropdown set to GitHub, with "Building with GitHub Actions" and a Change provider link below. A GitHub section explains that App Service places a GitHub Actions workflow in the chosen repository and shows Signed in as demouser with a Change account link, followed by required Organization, Repository, and Branch dropdowns all in empty Select state. The left navigation expands Deployment with Deployment slots and Deployment Center (highlighted) entries.](../../assets/operations/deployment/github-actions/01-deployment-center-github.png)
+
+The Portal's Deployment Center is the click-driven path that this workflow YAML replaces. When you fill in Organization, Repository, and Branch and click `Save`, Azure generates a workflow file that uses the publish-profile authentication path by default, not the OIDC pattern shown above. The banner "You are now in the production slot, which is not recommended for setting up CI/CD" reinforces the slot-first guidance: use Deployment Center to scaffold against a staging slot, then promote with `azure/webapps-deploy@v3` and a swap step as in the [complete example](#complete-example-with-slot-deployment-and-swap). Use this blade for scaffolding and inspection only - the production workflow should live in `.github/workflows/` under version control and pin the `azure/login` and `azure/webapps-deploy` major versions explicitly.
+
 ### Workflow Template
 
 ```yaml

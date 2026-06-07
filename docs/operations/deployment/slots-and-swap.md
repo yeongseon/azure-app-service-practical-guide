@@ -128,6 +128,12 @@ az webapp deployment slot swap \
 | `--target-slot production` | Chooses `production` as the destination slot. |
 | `--output json` | Returns structured swap results. |
 
+#### Portal view: Swap blade with config preview
+
+![Azure Portal Deployment slots blade for app-test-20251107 Web App with the Swap right panel open. The slot list shows app-test-20251107 with a PRODUCTION badge and app-test-20251107-staging; the toolbar exposes Save and Discard (disabled), Add, Swap (highlighted), Logs, Refresh (disabled), and Send us your feedback. The Swap panel has a Source dropdown set to app-test-20251107-staging and a Target dropdown showing app-test-20251107 with a PRODUCTION badge, followed by an info banner reading "Swap with preview can only be used with sites that have deployment slot settings enabled." and a disabled "Perform swap with preview" checkbox. A Config Changes section explains it is the final summary of configuration changes on source and target slots after the swap, with Source slot changes (selected) and Target slot changes tabs. The table columns Setting, Type, Old Value, New Value list SCM_DO_BUILD_DURING_DEPLOYMENT (AppSetting, Not set to true), APPLICATIONINSIGHTS_CONNECTION_STRING (AppSetting, Not set to a long zero-GUID instrumentation string), ApplicationInsightsAgent_EXTENSION_VERSION (AppSetting, Not set to ~3), and APPLICATIONINSIGHTSAGENT_EXTENSION_ENABLED (AppSetting, Not set to true). Bottom buttons are Start Swap (primary) and Close.](../../assets/operations/deployment/slots-and-swap/01-swap-dialog.png)
+
+This is the Portal equivalent of the `az webapp deployment slot swap` command on the production app. The `Source slot changes` and `Target slot changes` tabs render the exact effective configuration each slot will have after the swap completes - this is the last opportunity to catch sticky-setting omissions before cutover. Notice the disabled `Perform swap with preview` checkbox: the banner explains the slot must have at least one slot-specific setting before preview mode unlocks, which is why marking `APP_ENVIRONMENT` and `API_BASE_URL` as `--slot-settings` in the [Configure Slot-Specific Settings](#configure-slot-specific-settings) example is important even when the values look ordinary. Run this manual review against staging slot deployments before promoting; treat any Old Value to New Value transition in the production-bound row as a release decision, not a Portal click.
+
 ### Swap with Preview
 
 !!! warning "Authentication Limitation"

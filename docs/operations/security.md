@@ -166,6 +166,12 @@ az webapp auth microsoft update \
 !!! warning "Protect client secrets"
     Never store client secrets in source control or plain-text operational notes. Prefer managed identity and secure secret stores whenever possible.
 
+#### Portal view: Authentication blade (empty state)
+
+![Authentication blade for the Web App with a minimal command bar offering Refresh, Troubleshoot, and Send us your feedback actions. The main content area is an empty state with a large silhouette-and-key avatar icon, a heading "Add an identity provider", a subtitle reading "Choose an identity provider to manage the user identities and authentication flow for your application. Providers include Microsoft, Facebook, Google, and Twitter.", a "Learn more about identity providers" link, and a primary blue "Add identity provider" call-to-action button. The left navigation has the Settings group highlighted.](../assets/operations/security/01-authentication.png)
+
+The Authentication blade in its empty state is the visual representation of the gap the `az webapp auth update` and `az webapp auth microsoft update` commands above close. When no provider has been configured, the platform performs no token validation at all — every request reaches the application regardless of identity, which is why this empty state should be considered a security finding for any production app that expects authenticated traffic. The `Add identity provider` button walks through the same provisioning the CLI performs but additionally surfaces app-registration creation, redirect-URI selection, and token-store toggles that are easy to misconfigure when scripted blind. After running the CLI commands above, return to this blade and confirm the empty state has been replaced by a configured provider row — the platform-authentication layer in the defense-in-depth control list further down depends on this Portal surface no longer reading "Add an identity provider".
+
 ### Restrict Inbound Access by IP or Private Networking
 
 ```bash
