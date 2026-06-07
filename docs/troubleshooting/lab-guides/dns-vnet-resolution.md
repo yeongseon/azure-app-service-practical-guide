@@ -476,6 +476,12 @@ Inspect:
 
 ### 3.8 Query HTTP logs in Log Analytics
 
+#### Portal view: Networking blade (VNet integration context)
+
+![Azure portal Networking blade for app-test-20251107 (Web App) with toolbar Refresh, Troubleshoot, Send us your feedback and a "Check your network configuration..." description with a Learn more link. Two-column layout: Inbound traffic configuration shows Public network access "Enabled with no access restrictions (Using default behavior)", App assigned address "Not configured", Private endpoints "0 private endpoints", Inbound IPv4 addresses 20.200.197.3, Inbound IPv6 addresses 2603:1040:f05:3::208, plus Optional inbound services with Azure Front Door "View details". Outbound traffic configuration shows Virtual network integration "Not configured", Hybrid connections "Not configured", Outbound DNS "Default (Azure-provided)", and a long Outbound IPv4 addresses list (20.214.209.150, 20.214.209.176, 20.214.209.187, ... ~30 platform-pool addresses) plus an Outbound IPv6 addresses list. Integration subnet configuration shows NAT gateway, Network security group, and User defined route all N/A. Left nav highlights Networking (under Favorites).](../../assets/troubleshooting/networking/01-networking-hub.png)
+
+The `Networking` blade is the Portal anchor for DNS-resolution failures: `Outbound DNS` under `Outbound traffic configuration` reveals whether the app is using `Default (Azure-provided)` resolvers or a custom Private DNS Zone, and `Virtual network integration` shows whether outbound traffic is going through a VNet at all. In this capture, `Virtual network integration: Not configured` and `Outbound DNS: Default (Azure-provided)` together mean DNS queries are using the public Azure DNS resolver - which cannot resolve `*.privatelink.<service>.azure.com` hostnames. If your KQL queries below show `ENOTFOUND` or `EAI_AGAIN` on private hostnames, this blade tells you immediately that the cause is missing VNet integration, not application code. Click the `Troubleshoot` button in the toolbar for the Networking-specific detector that walks through the same diagnosis.
+
 ```kusto
 AppServiceHTTPLogs
 | where TimeGenerated > ago(6h)

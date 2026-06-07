@@ -235,6 +235,12 @@ The script extracts the 32-character hex ID from the error and prints both the r
 
 ### Inspect the conflicting assignment
 
+#### Portal view: Activity log (RBAC operation audit)
+
+![Azure portal Activity log blade for app-test-20251107 with toolbar Activity, Edit columns, Refresh, Export Activity Logs, Download as CSV, Insights, Feedback, Pin current filters, Reset filters. A "Looking for Log Analytics?" info banner offers a Visit Log Analytics cross-link. Below it: a Search box, a Quick Insights link, and filter chips Management Group: None, Subscription: Visual Studio Enterprise Subscription, Event severity: All, Timespan: Last 6 hours, Resource group: rg-test-20251107 (X), Resource: app-test-20251107 (X), plus an Add Filter button. The "11 items." count precedes a results table with columns Operation name, Status, Time, Time stamp, Subscription, Event initiated by - all 11 rows show Succeeded status, "Sun Jun 07 ..." time stamps, Visual Studio Enterprise Subscription, and user@example.com (PII masked) for Event initiated by.](../../assets/troubleshooting/activity-log/01-activity-log.png)
+
+The `Activity log` blade is the Portal counterpart to the `az role assignment list` CLI query below - it shows the audit trail of every ARM operation against the app and its ACR, which is where Deployment Center's role-assignment attempts surface during a CD reconnect. This capture shows the correct scoping posture for the lab: `Event severity: All` (so warnings and errors are not hidden), `Timespan: Last 6 hours`, and `Resource group: rg-test-20251107` / `Resource: app-test-20251107` chips are applied, narrowing the table to `11 items.` of `Succeeded` operations from `user@example.com`. To diagnose this conflict, change the `Resource group` chip to your ACR's resource group, update the `Resource` chip to the ACR resource, and use the `Add Filter` button to scope to role-assignment operations - the conflicting GUID will appear inside the `Operation name` cell once those filter chips match. Once located, run the CLI query below to extract the existing assignment and reconcile.
+
 ```bash
 az role assignment list \
     --assignee "$APP_PRINCIPAL_ID" \

@@ -440,6 +440,12 @@ The script does:
 
 ### 3.10 KQL runbook queries
 
+#### Portal view: Activity log (swap audit trail)
+
+![Azure portal Activity log blade for app-test-20251107 with toolbar Activity, Edit columns, Refresh, Export Activity Logs, Download as CSV, Insights, Feedback, Pin current filters, Reset filters. A "Looking for Log Analytics?" info banner offers a Visit Log Analytics cross-link. Below it: a Search box, a Quick Insights link, and filter chips Management Group: None, Subscription: Visual Studio Enterprise Subscription, Event severity: All, Timespan: Last 6 hours, Resource group: rg-test-20251107 (X), Resource: app-test-20251107 (X), plus an Add Filter button. The "11 items." count precedes a results table with columns Operation name, Status, Time, Time stamp, Subscription, Event initiated by - all 11 rows show Succeeded status, "Sun Jun 07 ..." time stamps, Visual Studio Enterprise Subscription, and user@example.com (PII masked) for Event initiated by.](../../assets/troubleshooting/activity-log/01-activity-log.png)
+
+The `Activity log` blade is the Portal anchor for swap-drift investigations - it gives you the audit trail of every ARM operation against the app, with timestamps, initiator, and status, while the KQL queries below give you the application-side evidence. This capture already shows the right scoping posture: the `Timespan: Last 6 hours` and `Resource: app-test-20251107` chips are applied, narrowing the table to `11 items.` of `Succeeded` operations - the same scope you want for a swap-window audit. The `Event initiated by` column (here `user@example.com`) tells you which principal triggered each operation, which is useful when correlating against the sticky-vs-non-sticky settings table in section 2. Use the KQL block below to verify the application-side restart and request behavior aligns with the audited operations.
+
 #### 3.10.1 HTTP request evidence
 
 ```kusto
