@@ -293,6 +293,14 @@ Once local development works, proceed to:
     - Mocking Azure dependencies locally
 - [Contribute](https://github.com/yeongseon/azure-app-service-practical-guide/issues)
 
+## Run It in the Portal
+
+#### Portal view: App Service plan (Linux) - the deployment target this tutorial emulates locally
+
+![App Service Plan overview blade showing the Linux plan asp-test-20251107 in Korea Central with Pricing tier "Premium0 V3", App Service Plan kind "Linux", Status "Ready", Operating system "Linux", and 1 instance; the right-side charts show CPU Percentage and Memory Percentage time-series for the plan and a list of the apps and slots hosted on the plan including app-test-20251107 and its staging slot.](../../../assets/platform/hosting-models/01-app-service-plan.png)
+
+Your local Express setup in this tutorial is meant to mirror the runtime shape of a Linux App Service app, not every plan-level limit shown on this blade. The visible `Operating system: Linux` confirms the worker OS, and the hosted-app list on the right shows that an App Service plan is the shared deployment target used by later tutorials. The `CPU Percentage` and `Memory Percentage` charts are the Portal-side signals you compare against when local `npm start` tests suggest the app is using too much CPU or memory under load. Use this blade to verify that the target app runs on a Linux App Service plan before moving from local validation to Azure deployment.
+
 ## See Also
 - [02. First Deploy](./02-first-deploy.md)
 - [Node.js Runtime Concepts](../../../platform/architecture/index.md)

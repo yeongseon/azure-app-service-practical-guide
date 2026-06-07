@@ -46,6 +46,14 @@ Use Node.js-focused recipes for framework and integration scenarios.
 
 - [Node.js Recipes](./recipes/index.md)
 
+## Run It in the Portal
+
+#### Portal view: App Service Plan overview (Pricing tier surfaces here)
+
+![App Service Plan overview blade showing the Linux plan asp-test-20251107 in Korea Central with Pricing tier "Premium0 V3", App Service Plan kind "Linux", Status "Ready", Operating system "Linux", and 1 instance; the right-side charts show CPU Percentage and Memory Percentage time-series for the plan and a list of the apps and slots hosted on the plan including app-test-20251107 and its staging slot.](../../assets/platform/hosting-models/01-app-service-plan.png)
+
+The `App Service Plan` overview blade makes the hosting tier concrete by showing the plan identity, `Pricing tier: Premium0 V3`, `Operating system: Linux`, and `Status: Ready` in one view. For this Node.js guide's tier architecture, the most relevant visible fields are the plan SKU and operating system because they tell you which Linux plan the Express app is running on. The hosted apps list at the bottom shows `app-test-20251107` and its staging slot attached to the same plan. The `CPU Percentage` and `Memory Percentage` charts on the right show that this blade is also the plan-level view for shared compute usage.
+
 ## See Also
 
 - [Language Guides](../index.md)
