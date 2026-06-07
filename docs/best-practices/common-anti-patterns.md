@@ -96,6 +96,12 @@ If you cannot fix everything immediately, prioritize these first:
 !!! warning "Top-five anti-patterns drive disproportionate incidents"
     Eliminating these five patterns usually produces the biggest reliability and security gains in the shortest time.
 
+#### Portal view: Diagnose and solve problems
+
+![Diagnose and solve problems blade for a Web App with a search box reading "Search for common problems or tools", a Refresh action, and a Feedback action. Two tabs are visible — Common Solutions (active) and AI-powered Diagnostics (preview). A Risk alerts section shows a single Availability card with a red X icon, the text "2 Critical", and a "View more details" link. The Troubleshooting categories section contains seven cards: Availability and Performance (links Application Logs, App Down Workflow, Web App Down), Configuration and Management (links Investigate EasyAuth errors, IP Address Configuration, All Scaling Operations), Risk Assessments (links Availability risks, Configuration risks), Deployment (link Troubleshoot), Networking (link Troubleshoot), Diagnostic Tools (links Auto-Heal, Network Troubleshooter, Advanced Application Restart), and Load Test your App (link Create Load Test). A Popular troubleshooting tools section at the bottom lists Application Logs, App Down Workflow, Web App Down, and Web App Slow as direct links.](../assets/best-practices/common-anti-patterns/01-diagnose-and-solve.png)
+
+The Diagnose and solve problems blade is the App Service equivalent of an anti-pattern detection gate after the fact — it surfaces the symptoms left behind by the patterns this guide eliminates upfront. The visible `Risk alerts: Availability — 2 Critical` panel is the platform's own confirmation that this particular app is hitting at least two anti-patterns from the catalog above; clicking through shows which ones (most commonly single-instance HA, missing health check, or SNAT/timeout patterns flagged by the platform). The seven `Troubleshooting categories` map cleanly onto the anti-pattern table sections — `Availability and Performance` reveals single-instance and missing-health-check anti-patterns, `Configuration and Management` surfaces slot-setting and EasyAuth misconfigurations, `Networking` exposes SNAT and outbound dependency anti-patterns, and `Risk Assessments` is the closest platform equivalent to a pre-go-live anti-pattern review. Treat any non-zero `Risk alerts` count as a release blocker, not as ambient noise.
+
 ## Category Deep Dive
 
 ### Configuration Anti-Patterns

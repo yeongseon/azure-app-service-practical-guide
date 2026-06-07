@@ -78,6 +78,12 @@ az webapp config set \
 - Critical configuration presence
 - Version metadata for rollout debugging
 
+#### Portal view: Health check blade
+
+![Health check blade for a Web App with two tabs — Health check (active) and Instances — and a command bar showing Save, Discard, Refresh, Troubleshoot, Metrics, and Send us your feedback actions. The first blue info banner reads "Your site has a single instance which will not be removed if it becomes unhealthy. However, after one hour of continuous unhealthy pings, the instance will be replaced. You can still set up Azure Monitor Alerts based on the health status." The second blue info banner reads "Health check is being moved to Configuration. Click here to go to the new experience." A descriptive line explains "Health check increases your application's availability by removing unhealthy instances from the load balancer. If your instance remains unhealthy, it will be replaced" with a Learn more link. The Health check enablement checkbox below is unchecked, so no path or threshold fields are visible. The left navigation shows Monitoring expanded with Alerts, Metrics, Logs, Health check (active), and Application Insights entries.](../assets/best-practices/reliability/01-health-check.png)
+
+The Health check blade is the platform's enforcement point for the rotation-removal behavior every reliability strategy depends on. The visible state captures both the most common anti-pattern and the platform's own warning about it: the `Health check` checkbox is unchecked, and the blue banner explicitly states that a single-instance plan cannot remove an unhealthy instance — it can only be replaced after a full hour of failing pings. This is why this guide pairs `/healthz` configuration with the [minimum two instances rule](#minimum-instance-count-for-high-availability): without the checkbox enabled and at least two instances, neither rotation nor fast replacement is available. Enable the checkbox, set the path to `/healthz`, and verify the change moves the platform from "replace after an hour" to "remove from rotation immediately".
+
 !!! warning "Do not fake healthy status"
     If key dependencies are unavailable, return unhealthy. Hiding failures delays detection and increases incident impact.
 

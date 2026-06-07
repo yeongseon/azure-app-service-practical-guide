@@ -104,6 +104,12 @@ az webapp identity show \
   --output json
 ```
 
+#### Portal view: Identity blade
+
+![Identity blade for a Web App with two tabs — System assigned (active) and User assigned. A descriptive header explains that a system-assigned managed identity is restricted to one per resource, tied to the lifecycle of the resource, allows RBAC permissions to be granted in Azure, and is authenticated with Microsoft Entra ID so no credentials need to be stored in code. The command bar shows Save, Discard, Refresh, Troubleshoot, and Got feedback? actions. The Status control is a two-state toggle currently set to Off, with On as the alternative position. No Object (principal) ID, Permissions, or Azure role assignments are shown because the identity is not yet enabled.](../assets/best-practices/security/01-identity-blade.png)
+
+The Identity blade is the surface where the "managed identity first" principle is either enforced or quietly skipped. The visible `Status: Off` state is the App Service default for a newly created Web App and is also the most common source of secret-leakage incidents — until this toggle is flipped to `On`, every Azure-resource access from the app must use a static credential. The `System assigned` and `User assigned` tabs map directly to the identity-type decision table above: use `System assigned` when the app's lifecycle owns its identity, and switch to `User assigned` when one identity must be shared across multiple apps. After `az webapp identity assign`, this blade should show `Status: On` together with a `principalId` value, which is the input required for the RBAC role assignments that follow.
+
 !!! info "Start with least privilege"
     Grant only the minimum required roles at the narrowest possible scope. Review and trim permissions regularly.
 

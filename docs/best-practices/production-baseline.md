@@ -153,6 +153,12 @@ az webapp update \
   --output json
 ```
 
+#### Portal view: Configuration General settings
+
+![Configuration General settings blade for a Web App with five tabs — General settings (active), Stack settings, Health check, Path mappings, Error pages — and a Refresh action. Platform settings section lists SCM Basic Auth Publishing Credentials (unchecked), FTP Basic Auth Publishing Credentials (unchecked), WebJobs runtime (unchecked), FTP state (FTPS only), Inbound IP mode (IPv4), HTTP version (1.1), HTTP 2.0 Proxy (Off), SSH (checked), Always on (unchecked), Session affinity (checked), Session affinity proxy (unchecked), HTTPS only (unchecked), Minimum Inbound TLS Version (1.2), SCM Minimum Inbound TLS Version (1.2), Minimum Inbound TLS Cipher Suite (TLS_RSA_WITH_AES_128_CBC_SHA, Default), and End-to-end TLS encryption (unchecked). Apply and Discard buttons are at the bottom of the blade.](../assets/best-practices/production-baseline/01-configuration-general.png)
+
+The Configuration General settings blade is where every runtime safety default in this baseline is read from and written to. The visible state here is the platform default for a newly created Web App and demonstrates exactly the configuration drift this section warns against: `Always on` and `HTTPS only` are both unchecked, which means background workloads can be paused on idle recycle and inbound traffic can still arrive over plain HTTP. `Minimum Inbound TLS Version 1.2` is on by default, but it is not a substitute for HTTPS enforcement. Treat this blade as the authoritative verification surface after running the CLI baseline above — every checkbox that this guide marks as required should be visibly enabled here before an app is called production-ready.
+
 Verify effective configuration:
 
 ```bash

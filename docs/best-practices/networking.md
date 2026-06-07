@@ -292,6 +292,12 @@ az webapp config access-restriction add \
   --output json
 ```
 
+#### Portal view: Access Restrictions blade
+
+![Access Restrictions blade reached from the Networking page with Save and Refresh actions. The App access section explains that public access applies to both the main site and the advanced (SCM) tool site, and that "Deny public network access will block all incoming traffic except that comes from private endpoints"; the Public network access control offers three radio buttons — Enabled from all networks (with a note that selecting it will clear all current access restrictions), Enabled from select virtual networks and IP addresses, and Disabled — and shows an info banner reading "Enabled (using default behavior)". The Site access and rules section has Main site (active) and Advanced tool site tabs and describes rules being evaluated in priority order with the "Unmatched rule action" controlling un-rule-matched traffic. The Unmatched rule action selector has Allow (selected) and Deny radio buttons. Add and Delete buttons appear above a Filter rules search box and an Action : All filter chip with a removable X, followed by a rules table with columns Priority, Name, Source, Action, and HTTP headers. The table contains a single rule with Priority 2147483647, Name "Allow all", Source "Any", Action "Allow" (green checkmark), and HTTP headers "Not configured".](../assets/best-practices/networking/01-access-restrictions.png)
+
+The Access Restrictions blade is where the layered inbound model described above is enforced. The visible default state shows the two most important behaviors this guide warns against assuming away: `Public network access` is `Enabled (using default behavior)` meaning the app is publicly reachable, and the implicit `Allow all` rule at priority `2147483647` with `Unmatched rule action: Allow` means that without any explicit rules, every source is permitted. The `Main site` and `Advanced tool site` tabs separate runtime traffic from SCM/Kudu management traffic — both must be hardened. After running the `az webapp config access-restriction add` command above with priority 100, the new `AllowCorp` rule should appear above the default `Allow all` row, and the `Unmatched rule action` should be flipped to `Deny` to convert the implicit allow-by-default posture into an explicit deny-by-default posture.
+
 ### 7) Outbound dependency validation checklist
 
 Before production cutover:
