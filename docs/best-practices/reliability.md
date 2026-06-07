@@ -138,6 +138,9 @@ flowchart TD
 
 App Service can recycle instances during scale, patching, and deployment events. Applications must handle termination signals gracefully.
 
+!!! info "Platform grace period: approximately 30 seconds"
+    When App Service recycles a worker, it sends **SIGTERM** to the application process and waits **approximately 30 seconds** before sending **SIGKILL** to force termination. All in-flight request completion, connection draining, and cleanup work must finish within this window. Prioritize cleanup tasks accordingly, and avoid blocking the shutdown path on long-running operations such as large cache flushes or unbounded queue drains.
+
 ### Why SIGTERM Handling Matters
 
 - Prevents abrupt termination of in-flight requests
@@ -147,9 +150,10 @@ App Service can recycle instances during scale, patching, and deployment events.
 ### Graceful Shutdown Checklist
 
 - Trap termination signals in application runtime
-- Stop accepting new requests quickly
-- Finish in-flight requests within timeout budget
+- Stop accepting new requests quickly (close the listener or health endpoint)
+- Finish in-flight requests within the ~30 second timeout budget
 - Flush logs/telemetry and close outbound connections cleanly
+- Move long-running cleanup (large flush, archive upload) outside the request path so it does not depend on shutdown
 
 !!! note "Language-specific implementation"
     Use this document for design guidance, then implement signal handlers in your language guide runtime section.
