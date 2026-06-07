@@ -107,7 +107,9 @@ az webapp deployment slot list \
 
 ### Configure Slot-Specific Settings
 
-Use sticky settings for environment-specific values.
+**By default, no settings are sticky.** All app settings and connection strings move with the swap unless you explicitly mark them as slot-specific using the `--slot-settings` flag. This means a setting created on the staging slot will follow the code to production after the swap, which can contaminate the production environment with staging configuration.
+
+Use sticky settings for any value that must remain pinned to a specific slot (environment name, feature flags, downstream endpoint URLs, diagnostic keys):
 
 ```bash
 az webapp config appsettings set \
@@ -120,8 +122,16 @@ az webapp config appsettings set \
   --output json
 ```
 
+Commonly slot-pinned categories:
+
+- Environment identifiers (`APP_ENVIRONMENT`, `DEPLOYMENT_TIER`)
+- Feature flags scoped to a specific environment
+- External endpoint URLs that differ between staging and production
+- Diagnostic and telemetry keys (Application Insights connection strings per environment)
+- Connection strings to environment-specific data stores
+
 !!! warning "Keep critical secrets slot-sticky"
-    Connection strings, external endpoint URLs, and diagnostic keys should be configured as slot settings when values differ between environments.
+    Connection strings, external endpoint URLs, and diagnostic keys should be configured as slot settings when values differ between environments. Forgetting to mark them as sticky is one of the most common causes of post-swap production incidents.
 
 ### Deploy to Staging and Validate
 
