@@ -154,6 +154,14 @@ Review partition key choice and query filters; avoid unbounded scans.
 
 Ensure document model uses compatible types and includes an `id` field.
 
+## Run It in the Portal
+
+#### Portal view: Identity blade (optional system-assigned identity for Cosmos DB RBAC)
+
+![Identity blade for a Web App with two tabs — System assigned (active) and User assigned. A descriptive header explains that a system-assigned managed identity is restricted to one per resource, tied to the lifecycle of the resource, allows RBAC permissions to be granted in Azure, and is authenticated with Microsoft Entra ID so no credentials need to be stored in code. The command bar shows Save, Discard, Refresh, Troubleshoot, and Got feedback? actions. The Status control is a two-state toggle currently set to Off, with On as the alternative position. No Object (principal) ID, Permissions, or Azure role assignments are shown because the identity is not yet enabled.](../../../assets/best-practices/security/01-identity-blade.png)
+
+This Identity blade is relevant only if you extend this recipe from the default key-based `COSMOS_KEY` configuration to the optional managed-identity/RBAC path mentioned in the introduction. With `System assigned` active and the `Status` toggle moved from `Off` to `On`, App Service generates an Entra ID principal that you would then grant the Cosmos `Built-in Data Contributor` role to via `az cosmosdb sql role assignment create`. The descriptive header restates the lifecycle guarantee: the identity is tied to the App Service resource, so it disappears when the app is deleted. For the recipe's default flow, keep using the `COSMOS_KEY` app setting and the Spring Data Cosmos auto-configuration with `@Container`-annotated entities shown above.
+
 ## See Also
 
 - [Redis Cache](redis.md)
