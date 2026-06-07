@@ -129,6 +129,12 @@ az webapp config backup show \
   --output json
 ```
 
+#### Portal view: Backups blade
+
+![Backups blade for the Web App with the command bar offering Backup Now (disabled), Configure custom backups, Reset custom backups (disabled), Restore, Refresh, Troubleshoot, and Documentation actions. An info banner reads "App backups happen automatically every hour. If you need a different backup schedule, you can also configure custom backups, but you'll also need to set up a separate storage account. To start the restore process, select a backup. Automatic backups retention schedule follows different patterns." with a Learn more link. Two summary tiles show Oldest backup "5/8/2026" and Automatic backup "Every 1 hour". A filter row shows three removable chips (Type : All, Status : All, Time range : None), an Add filter button, and a Reset link, followed by "Showing 10 of 240 results". The backup table has columns Backup time (sorted descending), Status, Type, and Restore. Ten rows show hourly backups from 6/7/2026 9:47:05 AM to 6/7/2026 6:47:07 PM, each with Status "Succeeded" (green checkmark), Type "Automatic", and an individual Restore action icon. Pagination at the bottom reads "Showing 1 - 10 of 240 results" with page numbers 1 through 5.](../assets/operations/backup-restore/01-backups.png)
+
+The Backups blade is where the schedule applied by `az webapp config backup update` becomes operationally visible. The two summary tiles confirm the platform is honoring the schedule — `Oldest backup: 5/8/2026` proves the retention window is in effect, and `Automatic backup: Every 1 hour` matches a typical production cadence. The `Status` column with consistent green `Succeeded` rows is the single most important signal during a restore drill: this is the column that should never read `Failed` for the backup you intend to restore from. Note that the toolbar `Backup Now` action is disabled in this view because it requires a configured custom storage container — that gap is the same one the `az webapp config backup update --container-url "$BACKUP_URL"` command above closes, after which the `Restore` action on any successful row becomes the manual equivalent of `az webapp config backup restore`.
+
 ### Trigger On-Demand Backup Before High-Risk Changes
 
 ```bash

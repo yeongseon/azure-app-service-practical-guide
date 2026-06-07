@@ -79,6 +79,12 @@ az webapp show \
   --output json
 ```
 
+#### Portal view: Custom domains blade (HTTPS bindings)
+
+![Custom domains blade for the Web App with a Refresh and Troubleshoot command bar and a wide orange info banner reading "Update: We've made changes after July 2025 to support more customers. Some previously impacted scenarios are no longer affected. Learn more". A description reads "Configure and manage custom domains assigned to your app. Learn more". Two read-only fields show IP address "20.200.197.3" (with copy icon) and Custom Domain Verification ID (a masked AAAAAAAAAAAAA... value with copy icon). A Filter by keywords search, Add filter button, "3 items" counter, and Add custom domain / Buy App Service domain / Delete (disabled) actions sit above a table with columns Custom domains, Status, Solution, Binding type, Certificate used, and Actions. Three rows: "app-test-20251107.net" with Status "Secured" (green), Solution "-", Binding type "SNI SSL", and Certificate used "app-test-20251107.net-app-t..."; "www.app-test-20251107.net" with the same Secured / SNI SSL / certificate values; and the default "app-test-20251107.azurewebsite..." with Status "Secured", all other columns "-", and no actions. The left navigation has Custom domains highlighted under the Settings group.](../assets/operations/incoming-client-certificates/01-tls-ssl-bindings.png)
+
+The Custom domains blade is the prerequisite check for inbound mTLS that the `--https-only true` command above enforces at the protocol level. For each row, `Status: Secured` together with `Binding type: SNI SSL` means the platform terminates TLS at the front end for that hostname — the same termination layer that produces the `X-ARR-ClientCert` header described in step 5 below. The default `*.azurewebsites.net` hostname is always `Secured` using the platform-managed wildcard certificate, but custom domains (`app-test-20251107.net` and `www.app-test-20251107.net` here) require an explicit binding before mTLS can work on those hostnames — an unbound custom domain will fall through to HTTP and bypass the entire client-certificate handshake. After running the `az webapp update --set clientCertEnabled=true` command in step 2, return to this blade to confirm every domain you intend to enforce mTLS on shows `Secured` with a valid `Certificate used` value.
+
 ### 2) Enable client certificate mode
 
 Use Azure CLI:

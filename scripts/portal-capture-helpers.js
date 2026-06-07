@@ -34,6 +34,10 @@ const PII_RULES = [
     replacement: 'Demo User',
   },
   {
+    pattern: /\byeongseon\b/gi,
+    replacement: 'demouser',
+  },
+  {
     pattern: /\b[0-9A-F]{32,}\b/g,
     replacement: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
   },
