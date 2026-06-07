@@ -53,7 +53,7 @@ param logAnalyticsWorkspaceId string
 var basicSkus = ['B1', 'B2', 'B3']
 var alwaysOn = !contains(basicSkus, appServicePlanSku)
 
-resource webApp 'Microsoft.Web/sites@2022-03-01' = {
+resource webApp 'Microsoft.Web/sites@2023-12-01' = {
   name: name
   location: location
   kind: 'app,linux'
@@ -105,7 +105,7 @@ resource webApp 'Microsoft.Web/sites@2022-03-01' = {
   }
 }
 
-resource webAppLogs 'Microsoft.Web/sites/config@2022-03-01' = {
+resource webAppLogs 'Microsoft.Web/sites/config@2023-12-01' = {
   name: 'logs'
   parent: webApp
   properties: {
