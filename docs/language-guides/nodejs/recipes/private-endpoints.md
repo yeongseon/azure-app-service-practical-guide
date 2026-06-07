@@ -197,6 +197,14 @@ az webapp vnet-integration list \
 - Validate route table and DNS path for `vault.azure.net` via private link.
 - Check App Service managed identity permissions on Key Vault.
 
+## Run It in the Portal
+
+#### Portal view: Networking blade (app-side precondition for backend private endpoints)
+
+![Networking blade for the Web App with a minimal command bar offering Refresh, Troubleshoot, and Send us your feedback. An info banner reads "Check your network configuration. Select any of the features listed below to change your network setup. Learn more". The blade is split into Inbound traffic configuration and Outbound traffic configuration columns. Inbound shows Public network access "Enabled with no access restrictions (Using default behavior)" as a link, App assigned address "Not configured", Private endpoints "0 private endpoints", Inbound IPv4 addresses "20.200.197.3", and Inbound IPv6 addresses "2603:1040:f05:3::208". An Optional inbound services subsection lists Azure Front Door with a "View details" link. Outbound shows Virtual network integration "Not configured", Hybrid connections "Not configured", Outbound DNS "Default (Azure-provided)", Outbound IPv4 addresses (a long comma-separated list of roughly 30 addresses across the 20.214.x.x and 20.249.x.x ranges), and Outbound IPv6 addresses (a similarly long comma-separated list of IPv6 prefixes). An Integration subnet configuration section at the bottom shows NAT gateway "N/A". The left navigation has Networking highlighted under the Favorites group, with the Settings group expanded below it.](../../../assets/operations/networking/01-networking-overview.png)
+
+This web-app `Networking` blade is a supporting before-state for the recipe rather than the place where the SQL, Redis, and Key Vault private endpoints themselves are listed. The visible `Virtual network integration: Not configured` row is the app-side prerequisite the recipe changes before private DNS for those backend services can work, while `Private endpoints: 0 private endpoints` also makes clear the screenshot is not showing downstream private endpoints attached to other resources. Use this capture as the pre-integration checkpoint before running the recipe's VNet and backend private-endpoint steps for the Node.js app.
+
 ## See Also
 
 - [Azure SQL](azure-sql.md)
