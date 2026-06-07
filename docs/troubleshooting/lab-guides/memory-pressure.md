@@ -558,6 +558,12 @@ az monitor log-analytics query \
 
 ### 3.11 KQL query snippets for portal use
 
+#### Portal view: Metrics blade (memory pressure anchor)
+
+![Azure portal Metrics blade for app-test-20251107 with top toolbar New chart, Refresh, Share and a Local Time: Last 24 hours (Automatic) selector. A Chart Title heading sits above a chart-level command bar with Add metric, disabled Add filter, disabled Apply splitting, Line chart, Drill into Logs, New alert rule, and Save to dashboard. The chart configuration row shows Scope app-test-20251107, Metric Namespace App Service standard... (truncated), Metric Select metric placeholder, and Aggregation Select aggregation placeholder. The empty chart canvas (Y-axis 0-100, X-axis Jun 07 / 6 AM / 12 PM / 6 PM, UTC+09:00) is overlaid with three Sample data help cards titled Filter + Split, Plot multiple metrics, and Build custom dashboards with descriptions and Learn more links.](../../assets/troubleshooting/metrics/01-metrics-empty.png)
+
+The `Metrics` blade is the Portal entry point for the memory-pressure KQL queries below. Use the `Add metric` button in the chart command bar to plot `Memory percentage`, `Average response time`, and `Http 5xx` from the `App Service standard` metric namespace - these are the same dimensions the KQL snippets surface from `AppServiceHTTPLogs`. The `Drill into Logs` button on the same toolbar pivots from a metric spike directly into a Log Analytics query, which is faster than typing the queries below from scratch. If the chart is empty (as shown - no metric selected), the `Sample data` help cards explain how to plot multiple metrics and build a dashboard for ongoing memory-pressure monitoring.
+
 ```kusto
 AppServiceHTTPLogs
 | where TimeGenerated > ago(2h)

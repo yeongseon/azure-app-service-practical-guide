@@ -420,6 +420,12 @@ done
 
 ### 3.8 Collect platform diagnostics
 
+#### Portal view: Networking blade (outbound IP context)
+
+![Azure portal Networking blade for app-test-20251107 (Web App) with toolbar Refresh, Troubleshoot, Send us your feedback and a "Check your network configuration..." description with a Learn more link. Two-column layout: Inbound traffic configuration shows Public network access "Enabled with no access restrictions (Using default behavior)", App assigned address "Not configured", Private endpoints "0 private endpoints", Inbound IPv4 addresses 20.200.197.3, Inbound IPv6 addresses 2603:1040:f05:3::208, plus Optional inbound services with Azure Front Door "View details". Outbound traffic configuration shows Virtual network integration "Not configured", Hybrid connections "Not configured", Outbound DNS "Default (Azure-provided)", and a long Outbound IPv4 addresses list (20.214.209.150, 20.214.209.176, 20.214.209.187, ... ~30 platform-pool addresses) plus an Outbound IPv6 addresses list. Integration subnet configuration shows NAT gateway, Network security group, and User defined route all N/A. Left nav highlights Networking (under Favorites).](../../assets/troubleshooting/networking/01-networking-hub.png)
+
+The `Networking` blade is the Portal counterpart to the SNAT KQL queries below. The `Outbound traffic configuration` column confirms `Virtual network integration` is `Not configured` and shows the ~30 shared platform-pool `Outbound IPv4 addresses` (`20.214.209.150`, `20.214.209.176`, ...) that this app is multiplexing with other tenants - the exact root cause of SNAT port exhaustion under load. `NAT gateway`, `Network security group`, and `User defined route` all show `N/A` under `Integration subnet configuration`, which is the documented anti-pattern: a stateless outbound burst app has no dedicated SNAT pool and inherits the shared one. After confirming this state, run the queries below to quantify the resulting `499`/`503` errors.
+
 #### HTTP signal query
 
 ```kusto

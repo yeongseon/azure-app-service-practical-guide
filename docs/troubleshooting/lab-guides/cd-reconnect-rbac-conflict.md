@@ -235,6 +235,12 @@ The script extracts the 32-character hex ID from the error and prints both the r
 
 ### Inspect the conflicting assignment
 
+#### Portal view: Activity log (RBAC operation audit)
+
+![Azure portal Activity log blade for app-test-20251107 with toolbar Activity, Edit columns, Refresh, Export Activity Logs, Download as CSV, Insights, Feedback, Pin current filters, Reset filters. A "Looking for Log Analytics?" info banner offers a Visit Log Analytics cross-link. Below it: a Search box, a Quick Insights link, and filter chips Management Group: None, Subscription: Visual Studio Enterprise Subscription, Event severity: All, Timespan: Last 6 hours, Resource group: rg-test-20251107 (X), Resource: app-test-20251107 (X), plus an Add Filter button. The "11 items." count precedes a results table with columns Operation name, Status, Time, Time stamp, Subscription, Event initiated by - all 11 rows show Succeeded status, "Sun Jun 07 ..." time stamps, Visual Studio Enterprise Subscription, and user@example.com (PII masked) for Event initiated by.](../../assets/troubleshooting/activity-log/01-activity-log.png)
+
+The `Activity log` blade is the Portal counterpart to the `az role assignment list` CLI query below - it shows the audit trail of `Create role assignment` ARM operations that Deployment Center attempts, including the conflict signal you are trying to diagnose. Apply `Event severity: All` (so warnings/errors are not hidden), scope to `Resource group: <your-acr-rg>` to capture the ACR-side assignment, and look for the row where Deployment Center's ARM template tried to create a new `Microsoft.Authorization/roleAssignments` with a different GUID name than the existing one. The `Event initiated by` column reveals whether the prior assignment was created by a human, CLI, or another deployment - useful evidence when deciding whether to delete the old one. Once you have located the offending ARM event, run the CLI query below to extract the existing assignment's GUID and reconcile.
+
 ```bash
 az role assignment list \
     --assignee "$APP_PRINCIPAL_ID" \

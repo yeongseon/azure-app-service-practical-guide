@@ -478,6 +478,12 @@ Expected from artifacts:
 
 ### 3.11 KQL queries for evidence capture
 
+#### Portal view: Log stream (live ENOSPC tail)
+
+![Azure portal Log stream blade for app-test-20251107 with toolbar Log Level filter, Stop, Copy, Clear; a Logs section showing Runtime and Platform radio buttons (Runtime selected); an Instances dropdown showing a single instance hash b58cc693426fe8c6d1b45abb7e0487ceeee9eeb41200672d7683b5ebc05e075f next to a refresh icon; and a Lookback period set to Last 30 minutes. The streaming pane shows red INFO-level log entries with 2026-06-07 timestamps, x-ms-client-request-id 00000000-0000-0000-0000-000000000000 (PII masked), HTTP method POST, request headers (Content-Type application/json), and OpenTelemetry exporter transmissions to https://koreacentral-0.in.applicationinsights.azure.com/v2.1/track with Response status 200 and Items received 3, Items accepted 3.](../../assets/troubleshooting/log-stream/01-log-stream.png)
+
+The `Log stream` blade is the live counterpart to the KQL queries below - while KQL gives you minute-level aggregates after ingestion delay, `Log stream` shows `ENOSPC` and `No space left on device` messages the instant the kernel emits them. Keep the `Runtime` radio selected (not `Platform`) to see Python/Gunicorn write failures, and pin the `Instances` dropdown to the specific worker hash (`b58cc693...`) to avoid log interleaving when multiple instances are scaled out. The `Lookback period: Last 30 minutes` and `Stop`/`Clear` toolbar are useful for capturing a clean tail right after running the `/fill-home` trigger from section 3.7 or 3.8. After triggering the failure, switch to the queries below for after-the-fact analysis and `507` status correlation.
+
 #### HTTP outcomes
 
 ```kusto

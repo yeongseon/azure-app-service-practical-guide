@@ -51,6 +51,12 @@ Each lab includes:
 4. **verify.sh** — Script to query Log Analytics and confirm expected signals appeared
 5. **Documentation page** — Step-by-step walkthrough with KQL queries and expected observations
 
+#### Portal view: Diagnose and solve problems entry point
+
+![Azure portal Diagnose and solve problems blade for app-test-20251107 with the Common Solutions tab selected (AI-powered Diagnostics (preview) tab also visible) and a top toolbar showing a Search for common problems or tools search box, Refresh, and Feedback. A Risk alerts section shows a single Availability card with 2 Critical alerts and a View more details link. Seven Troubleshooting categories follow. A Popular troubleshooting tools list at the bottom shows Application Logs, App Down Workflow, Web App Down, Web App Slow, and Process Full List. Left nav highlights Diagnose and solve problems.](../../assets/troubleshooting/diagnose-and-solve/01-overview.png)
+
+The `Diagnose and solve problems` blade is the first Portal stop when running these labs. The `Common Solutions` tab groups seven troubleshooting categories that map to the lab folders below, and the `Popular troubleshooting tools` row at the bottom links to `App Down Workflow`, `Web App Down`, `Web App Slow`, and `Process Full List` - the same detectors most labs ask you to open after reproducing the failure mode. The `Risk alerts` `Availability` card with `2 Critical alerts` is exactly the signal you want to see fire when a lab triggers an outage. Treat this blade as the operational companion to the lab metadata table: it tells you which Portal detector to consult after triggering each scenario.
+
 ## Available Labs
 
 ### Performance
