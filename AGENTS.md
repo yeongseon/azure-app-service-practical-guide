@@ -136,6 +136,113 @@ az webapp create -g $RG -n $APP_NAME  # ❌ Don't do this
 
 The goal is to prevent leaking **real Azure account information**, not to mask obviously-fake example values that aid readability.
 
+### Portal Screenshot Capture (PII Replacement Rules)
+
+Azure Portal screenshots in `docs/assets/**/*.png` MUST use **text replacement** (not black-box redaction). Black rectangles look like leaks and break visual continuity; replaced placeholders read as documentation examples.
+
+#### Capture method
+
+Use the reusable helper at [`scripts/portal-capture-helpers.js`](scripts/portal-capture-helpers.js). Usage instructions for both standalone Playwright and MCP `browser_run_code_unsafe` are in [`scripts/portal-capture-helpers.md`](scripts/portal-capture-helpers.md).
+
+The helper applies replacements to text nodes **and** `aria-label` attributes across the main frame and every nested iframe (Portal blades render inside iframes), then masks only the Account-menu avatar using Playwright's native `mask` option with Portal blue (`#0078d4`) so the masked region blends into the UI.
+
+#### PII Replacement Rules
+
+| Pattern | Replacement | Rationale |
+|---|---|---|
+| GUID (subscription, tenant, object, resource ID) | `00000000-0000-0000-0000-000000000000` | Zero-GUID is the documented Azure placeholder convention. Boundary-anchored to avoid eating GUID-shaped substrings inside longer hex tokens. |
+| `MCAPS-*` / `MCAPS*` subscription names | `Visual Studio Enterprise Subscription` | MCAPS prefixes leak internal subscription naming. Word-bounded so identifiers like `XMCAPSinternal` are not partially rewritten. |
+| `Microsoft Non-Production` tenant badge | `Contoso` | Tenant display name visible in the top-right Account button leaks the internal environment. |
+| `*@microsoft.com` | `user@example.com` | Employee emails. Case-insensitive; trailing negative lookahead prevents `user@microsoft.com.uk`-style partial rewrites. |
+| `*@*.onmicrosoft.com` | `user@example.com` | Tenant-scoped user emails. Case-insensitive; trailing negative lookahead prevents partial rewrites of longer hostnames. |
+| `*.onmicrosoft.com` (bare domain) | `contoso.onmicrosoft.com` | Tenant domains. Trailing negative lookahead prevents partial rewrites of longer hostnames such as `tenant.onmicrosoft.com.uk`. |
+| `ychoe` (employee alias) | `demouser` | Author alias, word-bounded so unrelated tokens are not touched. |
+| `Yeongseon Choe` (display name) | `Demo User` | Author display name. |
+| Account-menu avatar (cannot be rewritten) | Native Playwright mask, `maskColor='#0078d4'` | Blends with Portal command bar. The helper throws if the avatar selector matches nothing. |
+
+The replacement scope covers text nodes, `aria-label`, `title`, and the visible value of `input` / `textarea` controls so search bars and filter chips do not leak resource names.
+
+#### Capture workflow rules
+
+- **Re-navigate between captures.** Portal CSS is cumulative; leftover style injections from a previous capture leak into the next page (e.g. left-nav appearing as a black box). Always call `browser_navigate` to reload before applying the helper.
+- **Use the Portal MSIT URL with tenant hint.** `https://ms.portal.azure.com/#@<tenant>.onmicrosoft.com/resource/...`. Plain `portal.azure.com` triggers a login redirect.
+- **Prefer the English-language Portal.** The primary avatar selector keys off the English `aria-label` "Account menu"; a localized Portal may still match the `button.fxs-menu-account` fallback class, but that fallback is best-effort and not a stable contract. The helper throws if neither selector matches, so non-English captures should be reviewed manually.
+- **Close every transient flyout, drawer, and command-bar dropdown** before capture. Account panel, Recent menu, notifications, and tenant switcher each surface PII the helper cannot fully rewrite (avatar thumbnails, embedded canvases, late-rendered iframe content).
+- **Wait for the target blade to finish rendering** before applying replacements. The helper's 400 ms post-replacement pause is not a substitute for a per-blade `browser_wait_for` against stable text or an element on the blade.
+- **Viewport: 1600 x 1000.** Captures the standard blade layout without horizontal scrollbars.
+- **No black-box masking.** If a value cannot be rewritten and is not a known avatar/badge, fail the capture and update `PII_RULES` rather than fall back to a black rectangle.
+
+If `PII_RULES` in the helper is updated, this table MUST be updated in the same commit.
+
+#### Inline capture pattern (Playwright MCP `browser_run_code_unsafe`)
+
+When capturing via the Playwright MCP `browser_run_code_unsafe` tool (no `require()` access), the PII helper must be **inlined** in the snippet. The inline rules MUST match `scripts/portal-capture-helpers.js` exactly; do not omit or alter any rule.
+
+**Mandatory inline structure (per capture):**
+
+```javascript
+async (page) => {
+  const PII_SCRIPT = `(() => {
+    const subs = [
+      { re: /(?<![0-9a-f])[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}(?![0-9a-f])/gi, val: '00000000-0000-0000-0000-000000000000' },
+      { re: /\\bMCAPS[-A-Za-z0-9_]*\\b/g, val: 'Visual Studio Enterprise Subscription' },
+      { re: /Microsoft\\s+Non-Production/gi, val: 'Contoso' },
+      { re: /\\b[A-Za-z0-9._%+-]+@microsoft\\.com(?![A-Za-z0-9.-])/gi, val: 'user@example.com' },
+      { re: /\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.onmicrosoft\\.com(?![A-Za-z0-9.-])/gi, val: 'user@example.com' },
+      { re: /\\b[A-Za-z0-9-]+\\.onmicrosoft\\.com(?![A-Za-z0-9.-])/gi, val: 'contoso.onmicrosoft.com' },
+      { re: /\\bychoe\\b/gi, val: 'demouser' },
+      { re: /Yeongseon\\s+Choe/g, val: 'Demo User' },
+    ];
+    const apply = (s) => { let o=s; for (const {re,val} of subs){ re.lastIndex=0; o=o.replace(re,val);} return o; };
+    const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
+    const nodes=[]; let n; while ((n=w.nextNode())) nodes.push(n);
+    for (const node of nodes){ const o=node.textContent||''; const x=apply(o); if (x!==o) node.textContent=x; }
+    document.querySelectorAll('[aria-label]').forEach(el=>{const o=el.getAttribute('aria-label')||'';const x=apply(o);if(x!==o)el.setAttribute('aria-label',x);});
+    document.querySelectorAll('[title]').forEach(el=>{const o=el.getAttribute('title')||'';const x=apply(o);if(x!==o)el.setAttribute('title',x);});
+    document.querySelectorAll('input, textarea').forEach(el=>{const o=el.value||'';const x=apply(o);if(x!==o)el.value=x;});
+    return 'ok';
+  })()`;
+  const mf = page.mainFrame();
+  await mf.evaluate(PII_SCRIPT);
+  for (const f of page.frames()) { if (f===mf) continue; try { await f.evaluate(PII_SCRIPT); } catch(e){} }
+  await page.waitForTimeout(500);
+  const avatar = page.locator('button[aria-label*="Account menu"]').first();
+  await page.screenshot({
+    path: 'docs/assets/<section>/<topic>/<NN>-<blade>-<state>.png',
+    fullPage: false,
+    mask: [avatar],
+    maskColor: '#0078d4',
+  });
+  return 'captured';
+}
+```
+
+**Backslash escaping rule (`browser_run_code_unsafe` JSON):**
+
+- Regex escapes (`\b`, `\s`, `\.`) must be written as `\\b`, `\\s`, `\\.` in the inline string literal.
+- The template literal itself goes inside the JSON `code` parameter, so the entire snippet is double-escaped one more level when passed as JSON.
+
+**Per-capture mandatory steps (in order):**
+
+1. **Navigate** to the target blade URL (`https://ms.portal.azure.com/#@<tenant>.onmicrosoft.com/resource/...`). Always re-navigate; never reuse a stale page.
+2. **Wait** for blade-specific text (`browser_wait_for` with stable text on the blade) before applying replacements. The 500 ms post-replacement pause inside the snippet is not a substitute.
+3. **Run the inline snippet** above via `browser_run_code_unsafe`. Replace `<section>`, `<topic>`, `<NN>`, `<blade>`, `<state>` in the screenshot path.
+4. **Verify** with the `read` tool on the PNG. Confirm visually:
+    - No `MICROSOFT NON-PRODUCTION` badge in top-right
+    - No `ychoe@microsoft.com` or `Yeongseon Choe` anywhere
+    - Subscription ID rendered as `00000000-0000-0000-0000-000000000000`
+    - Subscription name rendered as `Visual Studio Enterprise Subscription`
+    - Account avatar masked with solid Portal-blue (`#0078d4`), not a black rectangle
+5. **If verification fails** → fix the helper / inline snippet and re-capture. Never ship a capture with raw PII or a black-box mask.
+
+**What the helper does NOT mask (and why it is acceptable):**
+
+- URL bar / browser chrome — not part of the PNG output.
+- `href` attribute values in the DOM — not rendered visually.
+- Avatar image pixels — masked with solid Portal-blue rectangle (the only acceptable mask color).
+
+If any of the above ever becomes visible in a capture, treat it as a P0 issue: fail the capture, fix the helper, and re-shoot.
+
 ### Admonition Indentation Rule
 
 For MkDocs admonitions (`!!!` / `???`), every line in the body must be indented by **4 spaces**.
