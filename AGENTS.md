@@ -205,8 +205,18 @@ async (page) => {
   const mf = page.mainFrame();
   await mf.evaluate(PII_SCRIPT);
   for (const f of page.frames()) { if (f===mf) continue; try { await f.evaluate(PII_SCRIPT); } catch(e){} }
-  await page.waitForTimeout(500);
-  const avatar = page.locator('button[aria-label*="Account menu"]').first();
+  await page.waitForTimeout(400);
+
+  const selectors = ['button[aria-label*="Account menu"]', 'button.fxs-menu-account'];
+  let avatar = null;
+  for (const s of selectors) {
+    const loc = page.locator(s);
+    if ((await loc.count()) > 0) { avatar = loc.first(); break; }
+  }
+  if (!avatar) {
+    throw new Error('No Account-avatar element matched ' + JSON.stringify(selectors) + '. Wait for the blade to settle before capture; non-English Portals may still match the fxs-menu-account fallback but that is best-effort, not guaranteed.');
+  }
+
   await page.screenshot({
     path: 'docs/assets/<section>/<topic>/<NN>-<blade>-<state>.png',
     fullPage: false,
@@ -225,7 +235,7 @@ async (page) => {
 **Per-capture mandatory steps (in order):**
 
 1. **Navigate** to the target blade URL (`https://ms.portal.azure.com/#@<tenant>.onmicrosoft.com/resource/...`). Always re-navigate; never reuse a stale page.
-2. **Wait** for blade-specific text (`browser_wait_for` with stable text on the blade) before applying replacements. The 500 ms post-replacement pause inside the snippet is not a substitute.
+2. **Wait** for blade-specific text (`browser_wait_for` with stable text on the blade) before applying replacements. The 400 ms post-replacement pause inside the snippet is not a substitute.
 3. **Run the inline snippet** above via `browser_run_code_unsafe`. Replace `<section>`, `<topic>`, `<NN>`, `<blade>`, `<state>` in the screenshot path.
 4. **Verify** with the `read` tool on the PNG. Confirm visually:
     - No `MICROSOFT NON-PRODUCTION` badge in top-right
