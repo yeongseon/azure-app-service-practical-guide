@@ -121,14 +121,6 @@ def health_native():
 - Use constraints files (`-c constraints.txt`) for deterministic dependency resolution.
 - Track ABI compatibility when upgrading Python minor versions.
 
-## Review Matrix
-
-| Review area | Page-specific check |
-|---|---|
-| Scope | Confirm the guidance applies to Native Dependencies on App Service Linux. |
-| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
-| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
-
 ## See Also
 - [Custom Container](./custom-container.md)
 - [Deploy Application](../tutorial/02-first-deploy.md)

@@ -192,14 +192,6 @@ az webapp vnet-integration list \
 - Verify system-assigned identity is enabled on the web app.
 - Confirm SQL permissions for managed identity principal and Key Vault access policy or RBAC.
 
-## Review Matrix
-
-| Review area | Page-specific check |
-|---|---|
-| Scope | Confirm the guidance applies to Private Endpoints. |
-| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
-| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
-
 ## See Also
 
 - [Azure SQL](azure-sql.md)

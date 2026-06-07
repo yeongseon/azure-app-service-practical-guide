@@ -321,14 +321,6 @@ For language-specific implementation details, see:
 - [Java Guide](../language-guides/java/index.md)
 - [.NET Guide](../language-guides/dotnet/index.md)
 
-## Review Matrix
-
-| Review area | Page-specific check |
-|---|---|
-| Scope | Confirm the guidance applies to Scaling. |
-| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
-| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
-
 ## See Also
 
 - [How App Service Works](./architecture/index.md)

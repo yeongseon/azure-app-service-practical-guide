@@ -1,32 +1,16 @@
 ---
 content_sources:
-  sources:
   - type: self-generated
     justification: Auto-generated dashboard tracking content validation status
-  diagrams:
-  - id: content-validation-status-pie
-    type: pie
-    source: self-generated
-    justification: Auto-generated dashboard chart from repository validation metadata.
-    based_on:
-    - https://learn.microsoft.com/en-us/azure/app-service/overview
-content_validation:
-  status: verified
-  last_reviewed: '2026-05-23'
-  reviewer: agent
-  core_claims:
-  - claim: This generated dashboard summarizes repository validation metadata and
-      links back to Microsoft Learn as the source basis for Azure content checks.
-    source: https://learn.microsoft.com/en-us/azure/app-service/overview
-    verified: true
 ---
+
 # Content Validation Status
 
 This page tracks the source validation status of all documentation content. All content must be traceable to official Microsoft Learn documentation.
 
 ## Summary
 
-*Generated: 2026-05-23*
+*Generated: 2026-06-07*
 
 | Content Type | Total | Verified | Pending | Unverified | No Metadata |
 |---|---:|---:|---:|---:|---:|
@@ -208,6 +192,3 @@ python3 scripts/generate_content_validation_status.py
 - [CLI Cheatsheet](cli-cheatsheet.md)
 - [Platform Limits](platform-limits.md)
 
-## Sources
-
-- [Microsoft Learn overview](https://learn.microsoft.com/en-us/azure/app-service/overview)

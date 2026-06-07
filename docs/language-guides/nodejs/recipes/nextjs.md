@@ -122,14 +122,6 @@ CMD ["node", "server.js"]
     - [Edge middleware](https://github.com/yeongseon/azure-app-service-practical-guide/issues)
     - [Contribute](https://github.com/yeongseon/azure-app-service-practical-guide/issues)
 
-## Review Matrix
-
-| Review area | Page-specific check |
-|---|---|
-| Scope | Confirm the guidance applies to Next.js on App Service. |
-| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
-| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
-
 ## See Also
 - [Custom Container](./custom-container.md)
 - [Redis Cache for Sessions](./redis.md)

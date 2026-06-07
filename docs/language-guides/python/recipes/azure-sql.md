@@ -132,14 +132,6 @@ gunicorn --bind 0.0.0.0:${PORT:-8000} app:app --workers 2 --timeout 120
 - Use short-lived per-request connections (or a bounded pool) to avoid stale tokens.
 - For high throughput, evaluate SQLAlchemy with an access-token event hook.
 
-## Review Matrix
-
-| Review area | Page-specific check |
-|---|---|
-| Scope | Confirm the guidance applies to Azure SQL with Managed Identity. |
-| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
-| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
-
 ## See Also
 - [Managed Identity](./managed-identity.md)
 - [Native Dependencies](./native-dependencies.md)

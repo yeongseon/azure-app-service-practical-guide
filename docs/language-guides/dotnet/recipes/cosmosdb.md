@@ -181,14 +181,6 @@ Validate item exists in Cosmos Data Explorer and check App Insights dependency t
 
 Align CLR naming and JSON policy; use explicit attributes when integrating with pre-existing document schema.
 
-## Review Matrix
-
-| Review area | Page-specific check |
-|---|---|
-| Scope | Confirm the guidance applies to Cosmos DB. |
-| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
-| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
-
 ## See Also
 
 - [Managed Identity](managed-identity.md)

@@ -153,14 +153,6 @@ Use the Python-specific recipes for service integrations and production patterns
 - [Python Recipes](./recipes/index.md)
 - [Managed Identity Recipe](./recipes/managed-identity.md)
 
-## Review Matrix
-
-| Review area | Page-specific check |
-|---|---|
-| Scope | Confirm the guidance applies to Python Guide. |
-| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
-| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
-
 ## See Also
 
 - [Language Guides](../index.md)

@@ -220,14 +220,6 @@ curl --include \
 - Add full trust-store handling if your security model requires private CA validation in code
 - Move diagnostics routes behind administrative authorization if they remain enabled
 
-## Review Matrix
-
-| Review area | Page-specific check |
-|---|---|
-| Scope | Confirm the guidance applies to mTLS Client Certificates. |
-| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
-| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
-
 ## See Also
 
 - [Incoming Client Certificates](../../../operations/incoming-client-certificates.md)

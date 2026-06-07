@@ -39,14 +39,6 @@ graph TD
 - [5xx Trend Over Time](5xx-trend-over-time.md)
 - [Slowest Requests by Path](slowest-requests-by-path.md)
 
-## Review Matrix
-
-| Review area | Page-specific check |
-|---|---|
-| Scope | Confirm the guidance applies to HTTP Queries. |
-| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
-| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
-
 ## See Also
 
 - [KQL Query Library](../index.md)

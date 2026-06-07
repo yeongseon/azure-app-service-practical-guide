@@ -154,14 +154,6 @@ Review partition key choice and query filters; avoid unbounded scans.
 
 Ensure document model uses compatible types and includes an `id` field.
 
-## Review Matrix
-
-| Review area | Page-specific check |
-|---|---|
-| Scope | Confirm the guidance applies to Cosmos DB Integration. |
-| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
-| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
-
 ## See Also
 
 - [Redis Cache](redis.md)

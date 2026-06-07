@@ -178,14 +178,6 @@ You can inspect header presence in app logs for debugging (without dumping sensi
 
 Normalize claim type mapping and case sensitivity in one place.
 
-## Review Matrix
-
-| Review area | Page-specific check |
-|---|---|
-| Scope | Confirm the guidance applies to Easy Auth. |
-| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
-| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
-
 ## See Also
 
 - [Managed Identity](managed-identity.md)

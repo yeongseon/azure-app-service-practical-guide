@@ -193,14 +193,6 @@ Validate no pending restart/operation exists and check App Service Activity Log 
 
 Disable auto-swap and enforce manual approval stage in Azure DevOps for high-risk environments.
 
-## Review Matrix
-
-| Review area | Page-specific check |
-|---|---|
-| Scope | Confirm the guidance applies to Deployment Slots Validation. |
-| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
-| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
-
 ## See Also
 
 - [Tutorial: 06. CI/CD](../tutorial/06-ci-cd.md)

@@ -75,14 +75,6 @@ AppServiceHTTPLogs
 - In low-volume apps, a small number of errors can appear as large percentage impact.
 - This query cannot determine whether the error originated in app code, platform, or downstream dependency.
 
-## Review Matrix
-
-| Review area | Page-specific check |
-|---|---|
-| Scope | Confirm the guidance applies to 5xx Trend Over Time. |
-| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
-| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
-
 ## See Also
 
 - [HTTP Query Pack](index.md)

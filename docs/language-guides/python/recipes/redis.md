@@ -127,14 +127,6 @@ def cache_health():
 - Use cache-aside with per-key jittered TTL to reduce stampede effects.
 - Consider premium tier with zone redundancy for higher resilience.
 
-## Review Matrix
-
-| Review area | Page-specific check |
-|---|---|
-| Scope | Confirm the guidance applies to Redis Cache with redis-py. |
-| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
-| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
-
 ## See Also
 - [Key Vault References](./key-vault-reference.md)
 - [Managed Identity](./managed-identity.md)

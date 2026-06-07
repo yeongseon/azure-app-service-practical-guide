@@ -73,14 +73,6 @@ AppServiceConsoleLogs
 - Keyword search may include non-fatal lines or miss framework-specific error formats.
 - This query cannot prove whether App Service health probes succeeded.
 
-## Review Matrix
-
-| Review area | Page-specific check |
-|---|---|
-| Scope | Confirm the guidance applies to Startup Errors. |
-| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
-| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
-
 ## See Also
 
 - [Console Query Pack](index.md)

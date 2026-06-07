@@ -59,14 +59,6 @@ AppServiceHTTPLogs
 - Paths with very low count can produce unstable percentile values.
 - This query cannot reveal internal function-level bottlenecks inside a path.
 
-## Review Matrix
-
-| Review area | Page-specific check |
-|---|---|
-| Scope | Confirm the guidance applies to Slowest Requests by Path. |
-| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
-| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
-
 ## See Also
 
 - [HTTP Query Pack](index.md)

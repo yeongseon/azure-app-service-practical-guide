@@ -163,14 +163,6 @@ Traffic not explicitly assigned to a non-production slot continues to go to prod
 az group delete --name $RG --yes --no-wait
 ```
 
-## Review Matrix
-
-| Review area | Page-specific check |
-|---|---|
-| Scope | Confirm the guidance applies to Azure CLI App Service Cheatsheet. |
-| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
-| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
-
 ## See Also
 
 - [KQL Queries](kql-queries.md)

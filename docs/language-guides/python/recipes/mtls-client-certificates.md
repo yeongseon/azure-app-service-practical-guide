@@ -243,14 +243,6 @@ curl --include \
 - Move outbound certificate passwords or related configuration into your approved secret-management workflow
 - Delete temporary diagnostics routes after validation if they expose more certificate metadata than your policy allows
 
-## Review Matrix
-
-| Review area | Page-specific check |
-|---|---|
-| Scope | Confirm the guidance applies to mTLS Client Certificates. |
-| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
-| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
-
 ## See Also
 
 - [Incoming Client Certificates](../../../operations/incoming-client-certificates.md)

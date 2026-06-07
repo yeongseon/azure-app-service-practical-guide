@@ -159,14 +159,6 @@ Use dependency telemetry and synthetic API checks to verify end-to-end connectiv
 
 Use resilient retry settings (Spring Data JPA retry logic, Redis reconnect behavior) and monitor transient errors.
 
-## Review Matrix
-
-| Review area | Page-specific check |
-|---|---|
-| Scope | Confirm the guidance applies to Private Endpoints. |
-| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
-| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
-
 ## See Also
 
 - [Azure SQL](azure-sql.md)

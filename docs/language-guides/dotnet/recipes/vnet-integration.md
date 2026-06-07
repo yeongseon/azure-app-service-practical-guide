@@ -167,14 +167,6 @@ var redis = await ConnectionMultiplexer.ConnectAsync($"{redisHost}:{redisPort},s
 - Inspect route table and next hop configuration.
 - Confirm required Azure control plane dependencies remain reachable.
 
-## Review Matrix
-
-| Review area | Page-specific check |
-|---|---|
-| Scope | Confirm the guidance applies to VNet Integration. |
-| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
-| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
-
 ## See Also
 
 - [Azure SQL](azure-sql.md)

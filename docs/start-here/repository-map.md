@@ -80,14 +80,6 @@ graph TD
 3. Use [Operations](../operations/index.md) and [Troubleshooting](../troubleshooting/index.md) for production execution.
 4. Use [Reference](../reference/index.md) for quick command and query lookups.
 
-## Review Matrix
-
-| Review area | Page-specific check |
-|---|---|
-| Scope | Confirm the guidance applies to Repository Map. |
-| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
-| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
-
 ## See Also
 
 - [Azure App Service Practical Guide](./overview.md)

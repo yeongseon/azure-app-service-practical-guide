@@ -57,14 +57,6 @@ AppServiceConsoleLogs
 - Broad keyword matching can include benign listen information.
 - This query cannot validate actual socket state inside the running container.
 
-## Review Matrix
-
-| Review area | Page-specific check |
-|---|---|
-| Scope | Confirm the guidance applies to Container Binding Errors. |
-| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
-| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
-
 ## See Also
 
 - [Console Query Pack](index.md)

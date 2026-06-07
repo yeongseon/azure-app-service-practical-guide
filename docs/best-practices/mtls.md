@@ -141,14 +141,6 @@ Use targeted exclusions instead of downgrading the entire site to `Optional` jus
 - Outbound certificate loading is documented separately from inbound auth.
 - Rotation and expiration checks exist for outbound certificates.
 
-## Review Matrix
-
-| Review area | Page-specific check |
-|---|---|
-| Scope | Confirm the guidance applies to mTLS Best Practices. |
-| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
-| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
-
 ## See Also
 
 - [Mutual TLS Architecture](../platform/mtls.md)

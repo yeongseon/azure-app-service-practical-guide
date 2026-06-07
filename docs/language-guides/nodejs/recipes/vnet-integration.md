@@ -161,14 +161,6 @@ async function queryHealth() {
 - Validate default route and firewall path for required Azure services.
 - Temporarily disable route-all to verify routing as the root cause.
 
-## Review Matrix
-
-| Review area | Page-specific check |
-|---|---|
-| Scope | Confirm the guidance applies to VNet Integration. |
-| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
-| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
-
 ## See Also
 
 - [Key Vault References](key-vault-reference.md)

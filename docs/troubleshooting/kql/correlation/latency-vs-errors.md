@@ -60,14 +60,6 @@ AppServiceHTTPLogs
 - Short windows with low request count can produce volatile error-rate percentages.
 - This query cannot isolate whether errors originate in app runtime, platform, or dependency.
 
-## Review Matrix
-
-| Review area | Page-specific check |
-|---|---|
-| Scope | Confirm the guidance applies to Latency vs Errors. |
-| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
-| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
-
 ## See Also
 
 - [Correlation Query Pack](index.md)

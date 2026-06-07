@@ -46,14 +46,6 @@ Use .NET recipes to apply identity, data, networking, and deployment patterns.
 
 - [.NET Recipes](./recipes/index.md)
 
-## Review Matrix
-
-| Review area | Page-specific check |
-|---|---|
-| Scope | Confirm the guidance applies to .NET Guide. |
-| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
-| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
-
 ## See Also
 
 - [Language Guides](../index.md)

@@ -120,14 +120,6 @@ def admin_only():
 - Combine Easy Auth (authentication) with app-level RBAC/ABAC (authorization).
 - Restrict authentication to specific tenant(s) and issuer validation for multi-tenant scenarios.
 
-## Review Matrix
-
-| Review area | Page-specific check |
-|---|---|
-| Scope | Confirm the guidance applies to Easy Auth. |
-| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
-| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
-
 ## See Also
 - [Managed Identity](./managed-identity.md)
 - [Key Vault References](./key-vault-reference.md)

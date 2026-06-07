@@ -164,14 +164,6 @@ Validate network path: SQL firewall, private endpoint DNS, VNet integration rout
 
 Ensure `mssql-jdbc` version supports managed identity auth and `authentication=ActiveDirectoryManagedIdentity` is present.
 
-## Review Matrix
-
-| Review area | Page-specific check |
-|---|---|
-| Scope | Confirm the guidance applies to Azure SQL with Managed Identity. |
-| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
-| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
-
 ## See Also
 
 - [Managed Identity](managed-identity.md)

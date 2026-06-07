@@ -257,14 +257,6 @@ Expected behavior:
 - Preventive action items with ownership and deadlines
 - Documentation updates in operations and best-practices sections
 
-## Review Matrix
-
-| Review area | Page-specific check |
-|---|---|
-| Scope | Confirm the guidance applies to Reliability Best Practices. |
-| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
-| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
-
 ## See Also
 
 - [Platform - How App Service Works](../platform/architecture/index.md)

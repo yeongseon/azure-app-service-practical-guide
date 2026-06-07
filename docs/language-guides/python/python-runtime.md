@@ -230,14 +230,6 @@ az webapp ssh --resource-group $RG --name $APP_NAME
 
 Check installed packages and startup process from SSH/Kudu when diagnosing import issues.
 
-## Review Matrix
-
-| Review area | Page-specific check |
-|---|---|
-| Scope | Confirm the guidance applies to Python Runtime. |
-| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
-| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
-
 ## See Also
 - [CLI Cheatsheet](../../reference/cli-cheatsheet.md)
 - [Troubleshooting](../../reference/troubleshooting.md)

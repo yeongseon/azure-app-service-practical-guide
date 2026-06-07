@@ -166,14 +166,6 @@ Ensure parity for non-sticky settings and dependent resource access policies.
 
 Check slot name, distribution values, and caching/CDN layers that may mask split traffic behavior.
 
-## Review Matrix
-
-| Review area | Page-specific check |
-|---|---|
-| Scope | Confirm the guidance applies to Deployment Slots for Zero-Downtime Releases. |
-| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
-| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
-
 ## See Also
 
 - [Tutorial: CI/CD](../tutorial/06-ci-cd.md)

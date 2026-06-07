@@ -75,14 +75,6 @@ We want to acknowledge the original lab repositories that formed the foundation 
 
 While these legacy repositories are now archived, their technical content lives on here, updated for the latest Azure App Service features.
 
-## Review Matrix
-
-| Review area | Page-specific check |
-|---|---|
-| Scope | Confirm the guidance applies to About. |
-| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
-| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
-
 ## See Also
 
 - [Start Here](./start-here/overview.md)

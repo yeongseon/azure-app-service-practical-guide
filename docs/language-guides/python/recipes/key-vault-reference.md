@@ -117,14 +117,6 @@ def connect_with_secret():
 - Prefer Key Vault References for non-SDK consumers; use SDK + managed identity for dynamic secret operations.
 - Rotate secrets in Key Vault without code changes or repo updates.
 
-## Review Matrix
-
-| Review area | Page-specific check |
-|---|---|
-| Scope | Confirm the guidance applies to Key Vault References. |
-| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
-| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
-
 ## See Also
 - [Managed Identity](./managed-identity.md)
 - [Redis Cache with redis-py](./redis.md)

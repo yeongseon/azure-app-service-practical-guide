@@ -92,14 +92,6 @@ az webapp restart --resource-group "$RG" --name "$APP_NAME"
 - Combine Easy Auth + app-level authorization (role checks) for defense in depth.
 - Use managed identities for all supported Azure SDK connections to remove static credentials.
 
-## Review Matrix
-
-| Review area | Page-specific check |
-|---|---|
-| Scope | Confirm the guidance applies to Recipes. |
-| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
-| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
-
 ## See Also
 - [Easy Auth](./easy-auth.md)
 - [Managed Identity](./managed-identity.md)

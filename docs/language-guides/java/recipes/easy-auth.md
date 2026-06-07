@@ -134,14 +134,6 @@ Update allowed redirect URIs and issuer settings for the custom hostname.
 
 Confirm Easy Auth is enabled and requests are not bypassing App Service front door.
 
-## Review Matrix
-
-| Review area | Page-specific check |
-|---|---|
-| Scope | Confirm the guidance applies to Easy Auth (Built-in Authentication). |
-| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
-| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
-
 ## See Also
 
 - [Managed Identity](managed-identity.md)

@@ -57,14 +57,6 @@ AppServicePlatformLogs
 - Keyword matching may include non-startup operations that contain similar text.
 - This query cannot show application stack traces causing the failure loop.
 
-## Review Matrix
-
-| Review area | Page-specific check |
-|---|---|
-| Scope | Confirm the guidance applies to Repeated Startup Attempts. |
-| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
-| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
-
 ## See Also
 
 - [Restarts Query Pack](index.md)

@@ -59,14 +59,6 @@ AppServiceHTTPLogs
 - Low-traffic periods can distort percentiles because sample size is small.
 - This query cannot identify the exact dependency/code path causing latency.
 
-## Review Matrix
-
-| Review area | Page-specific check |
-|---|---|
-| Scope | Confirm the guidance applies to Latency Trend by Status Code. |
-| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
-| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
-
 ## See Also
 
 - [HTTP Query Pack](index.md)

@@ -169,14 +169,6 @@ Expect value to round-trip and persist across scaled-out instances.
 - Ensure `UseSession()` is in middleware pipeline.
 - Confirm distributed cache registration occurs before session setup.
 
-## Review Matrix
-
-| Review area | Page-specific check |
-|---|---|
-| Scope | Confirm the guidance applies to Redis Cache. |
-| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
-| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
-
 ## See Also
 
 - [Private Endpoints](private-endpoints.md)

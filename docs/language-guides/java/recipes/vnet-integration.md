@@ -147,14 +147,6 @@ Check VNet DNS settings and private DNS zone association to the integration VNet
 
 Review route table (`UDR`) and ensure required Azure service endpoints are reachable through your forced egress path.
 
-## Review Matrix
-
-| Review area | Page-specific check |
-|---|---|
-| Scope | Confirm the guidance applies to VNet Integration. |
-| Source basis | Validate the recommendation against the Microsoft Learn sources in this page. |
-| Evidence | Capture command output, portal state, metrics, logs, or screenshots before treating the result as proven. |
-
 ## See Also
 
 - [Key Vault References](key-vault-reference.md)
