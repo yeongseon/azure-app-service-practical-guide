@@ -87,6 +87,12 @@ flowchart TD
 
 Solid arrows represent runtime traffic or data flow. Dashed arrows represent identity and token relationships.
 
+#### Portal view: Resource group overview
+
+![Resource group overview blade for `rg-test-20251107` in Korea Central showing an Essentials panel with Subscription "Visual Studio Enterprise Subscription", Subscription ID `00000000-0000-0000-0000-000000000000`, Deployments "2 Failed, 4 Succeeded", and Location "Korea Central". The Resources tab lists 11 related resources grouped by type, including Application Insights (`ai-test-20251107`), App Service (`app-test-20251107`), App Service Domain (`app-test-20251107.net` and `domain-test-20251107.com`), DNS Zone (`app-test-20251107.net` and `domain-test-20251107.com`), Microsoft.Web certificate (`app-test-20251107.net-app-test-20251107`), App Service (Slot) (`staging (app-test-20251107/staging)`), Application Insights Smart Detection, Action group, App Service Plan (`asp-test-20251107`), and Failure Anomalies smart detector alert rule. The command bar includes Create, Manage view, Delete resource group, Refresh, Export to CSV, Open query, Assign tags, Move, Delete, and Export template buttons.](../assets/platform/resource-relationships/01-resource-group.png)
+
+The resource group overview is the easiest place to see that an App Service app is never an isolated object. The `Resources` list shows the app, its `staging` slot, the shared App Service Plan, DNS zones, certificates, and Application Insights components as separate Azure resources that participate in one workload. That relationship map is the point of this page: deployment, scaling, monitoring, and custom-domain behavior are spread across multiple resource types even when operators think of them as one website.
+
 ### Plan-to-app relationship
 
 An App Service Plan is the compute boundary that hosts one or more apps.

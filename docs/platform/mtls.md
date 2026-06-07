@@ -61,6 +61,12 @@ The important architecture rule is that **inbound mTLS and outbound mTLS are ind
 
 For inbound mutual TLS, App Service terminates TLS at the front end and forwards the presented client certificate to your application in the `X-ARR-ClientCert` request header.
 
+#### Portal view: Custom domains and TLS bindings
+
+![Custom domains blade for a Web App. The top of the blade shows two read-only fields — `IP address` (`20.200.197.3`) and `Custom Domain Verification ID` (masked for documentation) — followed by a `Filter by keywords` search box and an `Add filter` button. The command bar above the table contains `Add custom domain`, `Buy App Service domain`, and a disabled `Delete` button. A `3 items` count precedes the table, whose columns are Custom domains, Status, Solution, Binding type, Certificate used, and Actions. Three rows are listed: `app-test-20251107.net` (Status: Secured, Binding type: SNI SSL, Certificate used: `app-test-20251107.net-app-test-2…`), `www.app-test-20251107.net` (Status: Secured, Binding type: SNI SSL, Certificate used: `app-test-20251107.net-app-test-2…`), and the default `app-test-20251107.azurewebsites.net` host (Status: Secured, Solution / Binding type / Certificate used columns rendered as `-` because the default hostname does not have a bound certificate). The left navigation shows Custom domains highlighted under Settings.](../assets/platform/mtls/01-custom-domains-tls.png)
+
+The Custom domains blade is where the inbound TLS surface becomes concrete for client-certificate designs. The hostname rows and their `SNI SSL` binding type define which front-end endpoints can participate in the TLS handshake, while the `Certificate used` column ties each hostname to the server certificate that the front end will present. The contrast between the two App Service domain rows (both bound to an SNI SSL certificate) and the default `*.azurewebsites.net` row (whose Solution, Binding type, and Certificate used columns are all `-`) shows that mTLS configuration applies on top of explicitly bound custom hostnames — `clientCertEnabled` and `clientCertMode` decide whether App Service then asks the client to present a certificate and forward `X-ARR-ClientCert` to your app.
+
 Key platform behavior:
 
 - `clientCertEnabled` turns the feature on.

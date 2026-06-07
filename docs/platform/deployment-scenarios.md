@@ -113,6 +113,12 @@ graph TD
 !!! note "SCM reachability depends on topology, not just SKU"
     SCM/Kudu reachability depends on whether you configure an SCM private endpoint and whether public network access remains enabled. Private endpoints for multi-tenant App Service are available from the **Basic** tier onward, so Basic, Standard, and Premium apps can be public-only, dual-access, or effectively private depending on network configuration.
 
+#### Portal view: Deployment slots
+
+![Deployment slots blade for a Web App showing two slots in a table: the Production slot (default) and a "staging" slot, each with columns App URL, Status (both "Running"), Source, Auto Swap, and Traffic %. The Production slot shows 70% traffic and the staging slot shows 30%, demonstrating a partial-traffic routing configuration during canary testing. The command bar contains "Add Slot" and "Swap" buttons; the left navigation shows Deployment slots selected under the Deployment group.](../assets/platform/deployment-scenarios/01-deployment-slots.png)
+
+The Deployment slots blade turns release strategy into concrete routing controls. Separate `Production` and `staging` rows, each with its own `App URL`, `Status`, and `Traffic %`, show that slots are distinct runtime targets even though they live under one app and plan boundary. The `70%` / `30%` split and the `Swap` button map directly to canary and cutover scenarios: you can shift live traffic gradually, then promote the staged build into production once behavior is verified.
+
 ## Scenario A: Public-Only (Free/Shared tiers)
 
 Best for early development, personal projects, or static-like sites where VNet integration and private ingress are not required.

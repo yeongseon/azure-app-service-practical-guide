@@ -79,6 +79,12 @@ App Service supports custom containers on both Linux and Windows. The two hostin
 
 Deploying a containerized app to App Service follows a consistent flow regardless of language or registry.
 
+#### Portal view: Deployment Center — Containers tab
+
+![Deployment Center blade for a Web App with the "Containers (new)" tab selected. The body shows an empty containers table with column headers Name, Type, Source, Image, Tag, Port, and Logs, and an introductory line "Enhance site functionality by adding sidecar containers. Learn more". A command bar above the table contains Refresh, Add (split dropdown), Delete (disabled), and Send us your feedback buttons. Tabs across the top of the blade include Settings, Containers (new) (selected), Logs, and FTPS Credentials. The left navigation shows Deployment Center selected under the Deployment group.](../../assets/platform/containers/01-deployment-center-containers.png)
+
+The `Containers (new)` tab exposes the runtime contract that App Service must satisfy to start a containerized workload. Columns such as `Source`, `Image`, `Tag`, and `Port` map directly to the image-pull and startup phases: the platform must fetch the selected image, launch it with the configured port, and then watch logs and HTTP reachability to decide whether startup succeeded. The `Add` action and sidecar-focused table also show that container lifecycle on App Service is not just about one image, but about coordinating the main app container and any companion containers inside the same app boundary.
+
 <!-- diagram-id: container-lifecycle -->
 ```mermaid
 flowchart TD

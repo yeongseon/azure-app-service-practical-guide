@@ -69,6 +69,12 @@ The App Service Plan defines:
 
 A single plan can host multiple apps, which share the same compute pool.
 
+#### Portal view: App Service Plan blade
+
+![App Service Plan overview blade showing the Linux plan asp-test-20251107 in Korea Central with Pricing tier "Premium0 V3", App Service Plan kind "Linux", Status "Ready", Operating system "Linux", and 1 instance; the right-side charts show CPU Percentage and Memory Percentage time-series for the plan and a list of the apps and slots hosted on the plan including app-test-20251107 and its staging slot.](../assets/platform/hosting-models/01-app-service-plan.png)
+
+The App Service Plan blade shows the actual compute boundary that your apps share. `Pricing tier`, `Operating system`, and `1 instance` define the SKU envelope, worker type, and current scale ceiling that apply to every app and slot hosted on the plan. The CPU and Memory charts, alongside the hosted apps list, make the tenancy model visible: multiple apps can live in the same plan, but they draw from the same instance pool and are scaled together at the plan level.
+
 | Tier Family | Typical Use | Scale Features | Notable Limits |
 |---|---|---|---|
 | Free/Shared | Learning, experiments | Very limited | Shared resources, feature constraints |
