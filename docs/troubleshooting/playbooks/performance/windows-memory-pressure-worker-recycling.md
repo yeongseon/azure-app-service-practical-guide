@@ -124,6 +124,12 @@ If `w3wp.exe` private bytes climbs toward the SKU memory envelope and recycle ev
 - **Config-triggered recycle**: recycle aligns with configuration/app setting changes, slot swaps, or web.config touches.
 - **Overlap recycle behavior**: temporary dual-worker overlap can increase short-lived memory pressure during transition.
 
+#### Portal view: Diagnose and solve problems hub as entry point for the Memory detector
+
+![Azure portal Diagnose and solve problems blade for app-test-20251107 with the Common Solutions tab selected (AI-powered Diagnostics (preview) tab also visible). Seven Troubleshooting categories: Availability and Performance (Application Logs, App Down Workflow, Web App Down), Configuration and Management (Investigate EasyAuth errors, IP Address Configuration, All Scaling Operations), Risk Assessments (Availability risks, Configuration risks), Deployment (Troubleshoot), Networking (Troubleshoot), Diagnostic Tools (Auto-Heal, Network Troubleshooter, Advanced Application Restart), Load Test your App (Create Load Test). Risk alerts shows an Availability card with 2 Critical alerts. Popular troubleshooting tools list: Application Logs, App Down Workflow, Web App Down, Web App Slow, Process Full List.](../../../assets/troubleshooting/diagnose-and-solve/01-overview.png)
+
+The `Diagnose and solve problems` blade with the `Common Solutions` tab selected is the orientation surface this playbook's Section 4 names as the first triage step before opening Kudu. The visible `Availability and Performance` category card lists `Application Logs`, `App Down Workflow`, and `Web App Down` as the entry-point links inside that category. The visible `Diagnostic Tools` category card lists `Auto-Heal`, `Network Troubleshooter`, and `Advanced Application Restart` — `Auto-Heal` being the same name this playbook's H3 hypothesis discriminator references. The `Popular troubleshooting tools` strip at the bottom lists `Application Logs`, `App Down Workflow`, `Web App Down`, `Web App Slow`, and `Process Full List`. The source app for this capture is Linux; the `Diagnose and solve problems` hub itself is OS-agnostic and is the equivalent first stop for a Windows worker-recycle incident.
+
 ## 5. Evidence to Collect
 
 ### Required evidence

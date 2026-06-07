@@ -130,6 +130,12 @@ Classify first by IIS sub-status code, then verify whether failure is XML parse,
 - App stack/runtime configuration in App Service (`.NET` version and bitness where applicable).
 - Effective site-level behavior when `applicationHost.config` restrictions apply.
 
+#### Portal view: Logs blade for KQL investigation of IIS sub-status patterns
+
+![Azure portal Logs blade for ai-test-20251107 (Application Insights) with a New Query 1 tab open, top-right controls Observability agent (New), Save, Share, Queries hub, and an inline toolbar Run + Time range: Last 24 hours + Show: 1000 results + KQL mode dropdown. The query editor shows placeholder text "Type your query here or click one of the queries to start" on line 1. Below the editor a Query history pane reads "No queries history — You haven't run any queries yet. To start, go to Queries on the side pane or type a query in the query editor." Left nav under Monitoring lists Alerts, Metrics, Diagnostic settings, Logs (selected), Workbooks, Dashboards with Grafana; the Investigate group above is collapsed.](../../../assets/troubleshooting/log-analytics/01-logs.png)
+
+The `Logs` blade with a `New Query 1` tab is the execution surface this playbook's KQL queries (against `AppServiceHTTPLogs` for `500.19`, `500.21`, and `502.5` sub-status patterns) run inside. The visible inline toolbar — `Run`, `Time range: Last 24 hours`, `Show: 1000 results`, `KQL mode` — names the controls used to bound a query to the incident window. The left-nav `Monitoring` group lists `Alerts`, `Metrics`, `Diagnostic settings`, `Logs` (selected), `Workbooks`, and `Dashboards with Grafana` — the adjacent surfaces this playbook's evidence section also references. The source resource for this capture is an Application Insights workspace connected to a Linux App Service; the `Logs` blade itself is OS-agnostic and is the equivalent Portal destination for running this playbook's IIS sub-status queries against a Windows App Service.
+
 ## 5. Evidence to Collect
 
 ### Required Evidence
