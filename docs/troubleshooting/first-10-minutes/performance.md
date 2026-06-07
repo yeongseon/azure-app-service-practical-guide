@@ -50,6 +50,12 @@ Start with platform resource pressure because it can invalidate all app-level co
 az monitor metrics list --resource "$APP_SERVICE_PLAN_ID" --metric "CpuPercentage" "MemoryPercentage" --interval PT1M --aggregation Average
 ```
 
+#### Portal view: Metrics blade (initial empty state)
+
+![Azure portal Metrics blade for app-test-20251107 showing toolbar with New chart, Save to dashboard, Share, Subscribe button, plus Local Time and Last 24 hours selectors. The chart configuration row has Scope set to app-test-20251107, Metric Namespace App Service standard metr... (truncated), and empty Metric and Aggregation dropdowns with placeholder text Select metric and Avg. Below the empty chart canvas, three Sample data help cards show Filter and Split, Plot multiple metrics, and Build custom dashboards with descriptions and Learn more links.](../../assets/troubleshooting/metrics/01-metrics-empty.png)
+
+This is the starting point when no metric is selected. For performance triage, choose **App Service Plan** scope rather than the app scope, then add `CPU Percentage` and `Memory Percentage` and switch the time range from the default `Last 24 hours` to a tighter window (e.g. `Last 1 hour` or the exact incident window). Use **Apply splitting** by `Instance` to surface single-instance saturation that the plan average would otherwise dilute. The `App Service standard metrics` namespace shown in the dropdown is the correct one - do not pick `Storage` or guest-OS namespaces here.
+
 - Good signal: CPU and memory mostly stable, no sustained saturation during incident.
 - Bad signal: CPU consistently above ~80-90% or memory high/flat with no recovery.
 

@@ -86,6 +86,12 @@ For this incident class, prove DNS answer, route path, and policy allowance inde
 - Private DNS zone links and A record values.
 - Effective routes and NSG rules on integration/private endpoint subnets.
 
+#### Portal view: Networking blade as the layer-separation control panel
+
+![Azure portal Networking blade showing Inbound traffic configuration column (Public network access Enabled with no access restrictions Using default behavior, App assigned address Not configured, Private endpoints 0 private endpoints, Inbound IPv4 20.200.197.3, Inbound IPv6 2603:1040:f05:3::208, Optional inbound services Azure Front Door) and Outbound traffic configuration column (Virtual network integration Not configured, Hybrid connections Not configured, Outbound DNS Default Azure-provided, list of Outbound IPv4 and IPv6 addresses), Integration subnet configuration card showing NAT gateway N/A, NSG N/A, UDR N/A, toolbar with Refresh, Troubleshoot, Send us your feedback buttons](../../../assets/troubleshooting/networking/01-networking-hub.png)
+
+The `Networking` blade enforces the playbook's central diagnostic principle — Private Endpoint health, DNS resolution, and route policy are separate layers and must be verified independently — by surfacing each layer in its own card. Verify in this exact order: first the `Outbound traffic configuration > Virtual network integration` field to confirm the integration subnet exists (the prerequisite for private DNS zone lookups to even reach the integration VNet); second the `Outbound DNS` field to confirm the resolver path (`Default (Azure-provided)` returns private zone records only if zones are linked to the integration VNet, while `Custom` bypasses Azure DNS entirely — H2 territory); third the `Integration subnet configuration` card's `NSG` and `UDR` fields to confirm no route table is steering traffic to a firewall that blocks the dependency's private IP (H3/H4). The `Inbound traffic configuration > Private endpoints` link shows endpoints *into* the App Service itself, which is unrelated to outbound private-endpoint dependency resolution — a common point of confusion this playbook explicitly disambiguates. Use the `Troubleshoot` toolbar button to launch the integrated network diagnostics that test each layer's reachability with one click.
+
 ### Investigation Notes
 - Always validate from inside Linux App Service runtime; external resolver behavior is not authoritative.
 - Private connectivity requires both correct DNS answer and permitted network path.

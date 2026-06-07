@@ -52,6 +52,12 @@ Use this page when you need to triage quickly from symptom to likely failure cat
 
 The tree is intentionally symptom-first and optimized for the first 10–15 minutes of incident response.
 
+#### Portal view: Diagnose and solve problems as the triage entry point
+
+![Diagnose and solve problems blade for app-test-20251107 showing the Common Solutions tab with a Risk alerts panel (Availability 2 Critical, View more details link) and a Troubleshooting categories grid with seven cards: Availability and Performance (Application Logs, App Down Workflow, Web App Down links), Configuration and Management (Investigate EasyAuth errors, IP Address Configuration, All Scaling Operations), Risk Assessments (Availability risks, Configuration risks), Deployment (Troubleshoot link), Networking (Troubleshoot link), Diagnostic Tools (Auto-Heal, Network Troubleshooter, Advanced Application Restart), and Load Test your App (Create Load Test link). A Popular troubleshooting tools list at the bottom shows Application Logs, App Down Workflow, Web App Down, Web App Slow, and Process Full List.](../assets/troubleshooting/diagnose-and-solve/01-overview.png)
+
+Before walking the manual decision tree below, open `Diagnose and solve problems` in the Portal — its `Risk alerts` panel and `Common Solutions` may already point directly to the failure category. The seven `Troubleshooting categories` correspond to the branches in the decision tree: `Availability and Performance` covers the 5xx and startup branches, `Networking` covers the outbound dependency branch, `Configuration and Management` covers the slot swap and config drift branches, and `Deployment` covers the post-deploy regression branch. Click `App Down Workflow` for an automated walkthrough that runs many of the queries from the decision tree below in a guided sequence.
+
 ## Main triage decision tree
 
 <!-- diagram-id: troubleshooting-decision-tree-diagram-1 -->

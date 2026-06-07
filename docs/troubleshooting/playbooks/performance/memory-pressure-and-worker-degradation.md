@@ -96,6 +96,12 @@ graph TD
 - HTTP latency distribution using `AppServiceHTTPLogs.TimeTaken` (P50/P95/P99).
 - Restart/recycle frequency and instance count trend during the incident window.
 
+#### Portal view: Metrics blade for memory vs CPU divergence detection
+
+![Azure portal Metrics blade for app-test-20251107 with Scope showing app-test-20251107, Metric Namespace set to App Service standard metr... (truncated), empty Metric and Aggregation dropdowns showing Select metric and Avg placeholders, three Sample data help cards titled Filter + Split, Plot multiple metrics, and Build custom dashboards, toolbar with New chart, Save to dashboard, Share, Subscribe buttons, time selector showing Local Time and Last 24 hours](../../../assets/troubleshooting/metrics/01-metrics-empty.png)
+
+The decisive metric pivot for this playbook is **scope: change `Scope` from the app to the parent App Service Plan**, because `MemoryPercentage` and `CpuPercentage` are plan-level metrics, not app-level — querying them on the app scope returns empty data and produces a false "no memory pressure" conclusion. Once scoped to the plan, add `MemoryPercentage` with `Avg` aggregation and `CpuPercentage` with `Avg` aggregation on the same chart over a 24-hour window: the canonical degradation signature this playbook diagnoses is `MemoryPercentage` rising monotonically with uptime while `CpuPercentage` stays moderate and flat (the divergence pattern listed in the Normal vs Abnormal Comparison table below). Use the `Plot multiple metrics` capability hinted at in the help card to overlay these on one chart, then add a second chart with `Http Response Time` on the app scope split by `Instance` to confirm latency climbs in lockstep with plan memory.
+
 ### Logs
 - `AppServiceConsoleLogs` for OOM, worker timeout, restart loop, GC pressure, heap warnings.
 - `AppServiceAppLogs` for framework/runtime warnings (allocation spikes, request body size warnings, retry storms).

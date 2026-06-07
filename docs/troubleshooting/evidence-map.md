@@ -70,6 +70,12 @@ An evidence map reduces this by pairing each question with a reproducible comman
     Since log result capture from the browser is awkward and difficult to maintain, use CLI queries and example outputs.
     This makes investigation reproducible, easier to copy, and easier to interpret.
 
+#### Portal view: Application Insights Logs query editor
+
+![Application Insights Logs blade for the `ai-test-20251107` workspace-based resource, opened from Microsoft Azure (Preview) with breadcrumb `Home > ai-test-20251107`. The left navigation shows Overview, Activity log, Access control (IAM), Tags, Diagnose and solve problems, Resource visualizer, and an expanded Monitoring section containing Alerts, Metrics, Diagnostic settings, Logs (highlighted as the current blade), Workbooks, and Dashboards with Grafana, plus collapsed sections for Investigate, Usage, Configure, Settings, Automation, and Help. The query workspace shows a `New Query 1` tab with a `+` button to open additional tabs, a toolbar with `Observability agent` (New badge), `Save`, `Share`, an overflow menu, and `Queries hub`. The query control row contains a blue `Run` button, `Time range: Last 24 hours`, `Show: 1000 results`, and a `KQL mode` dropdown on the far right. The KQL editor is empty with placeholder text `Type your query here or click one of the queries to start`. A `Query history` panel at the bottom shows an empty state `No queries history` with the hint `You haven't run any queries yet. To start, go to Queries on the side pane or type a query in the query editor.`](../assets/troubleshooting/log-analytics/01-logs.png)
+
+The Logs blade is the canonical entry point for every KQL snippet in this evidence map. The `Time range: Last 24 hours` selector is the first control to adjust during an incident — most queries below scope to `ago(6h)` or `ago(24h)`, so widening or narrowing the blade-level window must match the `| where TimeGenerated > ago(...)` clause to avoid empty results from a stale time filter. The `KQL mode` dropdown distinguishes raw Kusto from `Simple mode`; all queries on this page assume `KQL mode`. The empty `Query history` panel here means a fresh workspace — during real incidents this panel becomes the reproducibility artifact you preserve in the ticket alongside CLI output.
+
 ## Quick Map (Question → Source → Command → Table)
 
 | Question | Best Source | CLI Command | KQL Table |
@@ -131,6 +137,12 @@ AppServiceHTTPLogs
 
 ## 3) Was startup failing?
 
+#### Portal view: Log stream blade streaming runtime logs
+
+![Log stream blade for the `app-test-20251107` Web App. The left navigation shows Overview, Activity log, Access control (IAM), Tags, Diagnose and solve problems, Microsoft Defender for Cloud, Events (preview), and Log stream (highlighted as the current blade), with AI (preview), Resource visualizer, a Favorites group (Networking, API definition), and collapsed Deployment, Settings, Performance, App Service plan, Development Tools, API, Monitoring, Automation, and Support + troubleshooting groups below. The command bar has Log Level dropdown, Stop, Copy, and Clear actions. A Logs radio selector shows `Runtime` selected and `Platform` unselected. The Instances dropdown shows a single worker instance ID and a Refresh icon, and the Lookback period dropdown is set to `Last 30 minutes`. The streaming console pane shows live INFO-level entries with ISO-8601 timestamps prefixed `2026-06-07T12:32:07` and `2026-06-07T12:32:08`, including repeated `azure.core.pipeline.policies.http_logging_policy:Request URL: 'https://koreacentral-0.in.applicationinsights.azure.com//v2.1/track'` lines, `Request method: 'POST'`, request/response headers (`Content-Type`, `Content-Length`, `Accept`, `Server: Microsoft-HTTPAPI/2.0`), `x-ms-client-request-id: '00000000-0000-0000-0000-000000000000'`, and `azure.monitor.opentelemetry.exporter.export._base:Transmission succeeded: Item received: 3. Items accepted: 3` confirmation messages.](../assets/troubleshooting/log-stream/01-log-stream.png)
+
+The Log stream blade is the fastest way to confirm whether startup is **silent** (no logs at all) versus **failing** (errors visible in real time). The `Runtime` radio selects application logs from your container's stdout/stderr — this is where Python tracebacks, Node.js `Error: listen EADDRINUSE`, and Java `BindException` will surface. Switch to `Platform` when investigating whether App Service itself is restarting the container or printing health-check failures. The `Instances` dropdown matters during multi-instance incidents because each worker streams independently — if startup is failing on only one instance, you must rotate through each instance ID to find the failing one. The CLI command below produces the same stream without the browser-side UI lag.
+
 ### CLI
 
 ```bash
@@ -148,6 +160,12 @@ AppServiceConsoleLogs
 ```
 
 ## 4) Was a dependency slow?
+
+#### Portal view: Application Insights Overview dashboard
+
+![Application Insights Overview blade for the `ai-test-20251107` resource. The command bar exposes `Application Dashboard`, `Getting started`, `Search`, `Logs`, `Monitor resource group`, `Feedback`, `Favorites`, `Rename`, and `Delete`. The Essentials panel shows `Resource group: rg-test-20251107`, `Location: Korea Central`, `Subscription: Visual Studio Enterprise Subscription`, `Subscription ID: 00000000-0000-0000-0000-000000000000`, `Instrumentation key: 00000000-0000-0000-0000-000000000000`, `Connection string: InstrumentationKey=00000000-0000-0000-0000-000000000000;IngestionEnd...`, `Logs workspace: DefaultWorkspace-00000000-0000-0000-0000-000000000000-SE`, and `OTLP connection info: Turn on OTLP support`. `View Cost` and `JSON View` links sit on the right. A `Show data for last:` tab strip offers 30 minutes / 1 hour (selected) / 6 hours / 12 hours / 1 day / 3 days / 7 days / 30 days. Four pinned tiles render below: `Failed requests` (pink area chart spiking to 6, value `10`), `Server response time` (blue dashed line near 1ms, value `1.07ms`), `Server requests` (blue line with spikes to 8, value `15`), and `Availability` (flat green line at 0%, value `--`). All x-axes display UTC+09:00 timestamps from 9:15 PM to 9:45 PM.](../assets/troubleshooting/app-insights/01-overview.png)
+
+The Application Insights Overview is the right starting point when the question is "is a dependency slow?" because `Server response time` is the primary signal — values much greater than the historical baseline indicate downstream latency. Pair this with `Failed requests` to distinguish slow-but-succeeding calls from outright dependency failures. The `Logs` button in the command bar opens the same KQL editor used by the query below, but you should also check `Application Dashboard` for the curated dependency view. The `1 hour` window is the right scope for active incidents; widen to `1 day` to see whether the latency pattern is recurring (e.g., scheduled batch jobs or noisy neighbors). Note `Logs workspace` shows this is a workspace-based Application Insights resource — required for `AppDependencies` and `AppRequests` tables in the KQL below.
 
 ### CLI
 
@@ -190,6 +208,12 @@ AppServiceConsoleLogs
 ```
 
 ## 6) Was scale involved?
+
+#### Portal view: Metrics blade empty state with metric selector
+
+![Metrics blade for the `app-test-20251107` Web App in its initial empty state. The command bar shows `+ New chart`, `Refresh`, and a `Share` dropdown on the left, and a `Local Time: Last 24 hours (Automatic)` time selector on the right. A `Chart Title` field with edit icon sits above the chart toolbar, which contains `+ Add metric` (with split dropdown), `Add filter` (disabled), `Apply splitting` (disabled), `Line chart` selected on the right, `Drill into Logs`, `New alert rule`, and `Save to dashboard`. The metric configuration row shows four required fields: `Scope: app-test-20251107`, `Metric Namespace: App Service standard...` (truncated), `Metric: Select metric` (empty placeholder), and `Aggregation: Select aggregation` (grayed out until a metric is chosen). An empty Y-axis (0-100) and X-axis (Jun 07, 6 AM, 12 PM, 6 PM, UTC+09:00) frame the chart. A floating callout reads `Select a metric above to see data appear on this chart or learn more below:` with three help cards — `Filter + Split` ("Apply filters and splits to identify outlying segments"), `Plot multiple metrics` ("Create charts with multiple metrics and resources"), and `Build custom dashboards` ("Pin charts to your dashboards").](../assets/troubleshooting/metrics/01-metrics-empty.png)
+
+The Metrics blade is the visual companion to the `az monitor metrics list` CLI command below. The required fields are the same: `Scope` (the App Service resource), `Metric Namespace` (App Service standard metrics), `Metric` (e.g., `CpuPercentage`, `MemoryWorkingSet`, `Http5xx`), and `Aggregation` (Avg, Max, Sum, Count). For "was scale involved?" the canonical chart pairs `CpuPercentage` Max with `Requests` Sum over the same window — a Cpu spike that precedes a Requests drop indicates autoscale lag, while spikes that align indicate normal capacity tracking. Use `Apply splitting` to split a single metric by `Instance` to see whether one worker is hot — a critical signal for diagnosing noisy-neighbor or sticky-session imbalance. The `Drill into Logs` button is the bridge from the chart to the matching KQL query.
 
 ### CLI
 
@@ -268,6 +292,12 @@ AppServiceConsoleLogs
 ```
 
 ## 10) Was there a deployment?
+
+#### Portal view: Activity log blade for the Web App
+
+![Activity log blade for the `app-test-20251107` Web App. The command bar exposes `Activity`, `Edit columns`, `Refresh`, `Export Activity Logs`, `Download as CSV`, `Insights`, `Feedback`, `Pin current filters`, and `Reset filters`. An info banner reads `Looking for Log Analytics? In Log Analytics you can search for performance, diagnostics, health logs, and more. Visit Log Analytics`. A `Search` box and `Quick Insights` link sit above six active filter chips: `Management Group: None`, `Subscription: Visual Studio Enterprise Subscription`, `Event severity: All`, `Timespan: Last 6 hours`, `Resource group: rg-test-20251107`, `Resource: app-test-20251107`, with an `+ Add Filter` button. An `11 items.` count appears above a table with columns `Operation name`, `Status`, `Time`, `Time stamp`, `Subscription`, and `Event initiated by`. Visible rows include `ValidateUpgradePath`, multiple `Get Web App Publishing Profile`, `Get Web App Slots Differences`, and two `List Web App Slot Security Sensitive Settings` entries — all with `Succeeded` status, relative times ranging from `an hour ago` to `4 hours ago`, absolute timestamps `Sun Jun 07 ...`, `Visual Studio Enterprise Subscription`, and `user@example.com` as the initiator.](../assets/troubleshooting/activity-log/01-activity-log.png)
+
+The Activity log is the authoritative record of every control-plane operation against this Web App — deployments, configuration changes, slot swaps, and scale operations all appear as discrete `Operation name` entries with the initiating principal. For "was there a deployment?" the operations to grep are `Microsoft.Web/sites/publish/Action`, `Update Site`, `Update Configuration`, and `Update App Settings`. The `Event initiated by` column distinguishes user-driven deployments from automated CI/CD service principals — critical for separating intentional deploys from third-party automation. The `Timespan: Last 6 hours` chip should match the incident window; the `Add Filter` button lets you scope further by operation name. Use `Export Activity Logs` to set up continuous export to Log Analytics so the same data is available as the KQL query below.
 
 ### CLI
 

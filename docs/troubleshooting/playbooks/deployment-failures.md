@@ -134,6 +134,12 @@ flowchart TD
         --output table
     ```
 
+#### Portal view: Activity log (deployment + swap operation history)
+
+![Azure portal Activity log blade for app-test-20251107 showing 11 entries in the operation table with columns Operation name, Status, Time, Time stamp, Subscription, Event initiated by. All visible rows show Succeeded status. The Event initiated by column displays user@example.com (PII masked). Filter chips at the top include Subscription, Event severity, Timespan, Resource group, Resource. Toolbar shows Edit columns, Refresh, Export Activity Logs, Download as CSV, Logs, Pin current filters, Reset filters, Diagnostic settings.](../../assets/troubleshooting/activity-log/01-activity-log.png)
+
+Activity log is the control-plane source of truth for **when** a deployment, restart, or slot swap happened - critical for building the timeline this section requires. For deployment failure triage, filter by `Operation name` containing values like `Restart Web App`, `Swap Slots`, `Update site config`, `Stop Web App`, or `Start Web App`, and tighten the **Timespan** filter to the incident window. The `Event initiated by` column distinguishes user-initiated actions from system/CI service principal actions - a green "Succeeded" status here only proves the ARM operation completed, NOT that the worker is serving traffic (that's why Section 5's HTTP and console queries are still required). Use **Download as CSV** to attach the timeline to incident tickets.
+
 ## 5. Evidence to Collect
 
 Collect one timeline that includes deployment start, deployment end, app restart, first healthy response, and any swap event. That timeline prevents mixing build failures with startup failures.

@@ -60,6 +60,12 @@ Cold start latency is bursty and event-driven, while true performance regression
 - `AppServiceConsoleLogs`: startup sequence, import/load messages, Gunicorn worker boot timing, timeout/warning lines in `ResultDescription`.
 - `AppServiceHTTPLogs`: `TimeTaken`, `ScStatus`, `CsUriStem` around event windows.
 
+#### Portal view: Log stream for live cold-start sequence observation
+
+![Azure portal Log stream blade with Runtime Logs and Platform Logs radio buttons (Runtime Logs selected), Instances dropdown showing All Instances, Last 30 minutes filter, Refresh button, streaming INFO log entries with x-ms-client-request-id 00000000-0000-0000-0000-000000000000 (PII masked), OpenTelemetry exporter transmission lines to applicationinsights.azure.com showing request ID, status code 200, elapsed time in milliseconds for each transmitted span](../../../assets/troubleshooting/log-stream/01-log-stream.png)
+
+`Log stream` is the fastest way to watch a cold-start sequence unfold in real time and measure the gap between `Starting gunicorn`, `Listening at: http://0.0.0.0:8000`, and the first `Booting worker with pid:` line — that gap is the dominant startup cost for Python apps on Linux App Service and the central evidence for H2 (startup path is too heavy). Switch the radio to `Platform Logs` to also capture `Container is initializing` and `ContainerTimeout` transitions, then trigger a controlled restart (`az webapp restart`) and time the sequence with a stopwatch; a sequence longer than the default `WEBSITES_CONTAINER_START_TIME_LIMIT=230` seconds will fail repeatedly and surface in the platform stream as `LastError: ContainerTimeout`. This evidence directly disproves H1 (expected cold start window) when the measured startup duration exceeds the bounded SLO budget and proves the optimization work belongs in the app's import path, not in the warm-up settings.
+
 ### Platform Signals
 - Deployment timeline (`az webapp deployment list`) vs latency timeline.
 - App settings: `AlwaysOn`, `WEBSITE_WARMUP_PATH`, `WEBSITES_CONTAINER_START_TIME_LIMIT`.

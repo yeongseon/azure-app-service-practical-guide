@@ -111,6 +111,12 @@ Treat this error as a startup reachability workflow, not a single failure mode. 
 - Linux - Number of Running Containers detector (is the container actually running?)
 - Restart count (is the platform killing and restarting the container repeatedly?)
 
+#### Portal view: Web App Down detector (the first signal for HTTP ping failures)
+
+![Azure portal Diagnose and solve problems Web App Down detector for app-test-20251107 showing breadcrumb "Diagnose and solve problems > Availability and Performance > Web App Down". App Availability tile shows 100% (blue) and Platform Availability tile shows 100% (green). Organic SLA 100%. Green banner reads "No downtimes were identified for this Web App in the last 24 hours". Left rail detector navigation lists Container Issues, Linux CPU Drill Down, Linux Memory Drill Down, Web App Restarted, Web App Slow, SNAT Port Exhaustion, HTTP Server Errors.](../../../assets/troubleshooting/diagnose-and-solve/02-detector-web-app-down.png)
+
+This is the detector to open first when the symptom is "Container didn't respond to HTTP pings". The two KPIs distinguish the failure surface: if **App Availability** is low but **Platform Availability** is 100%, the container itself is the problem - container is running but never reaches probe-readiness, which is exactly this playbook's scope. If **Platform Availability** is also low, the issue is upstream of the container and this playbook doesn't apply. The left-rail siblings - especially `Container Issues` and `Web App Restarted` - are the next detectors to open: `Container Issues` surfaces ping failure messages and exit codes directly, and `Web App Restarted` exposes the restart-loop pattern that H4 (application crash during startup) produces.
+
 ### Logs
 
 - AppServiceConsoleLogs: stdout/stderr from the container — look for listen port, binding address, startup errors, crash traces
@@ -123,6 +129,12 @@ Treat this error as a startup reachability workflow, not a single failure mode. 
 - WEBSITES_CONTAINER_START_TIME_LIMIT value
 - Startup command configuration in Azure Portal
 - Docker log stream (Log stream blade in Portal)
+
+#### Portal view: Log stream (live container stdout/stderr)
+
+![Azure portal Log stream blade for app-test-20251107 showing radio buttons for Runtime Logs (selected) and Web Server Logs, an Instances dropdown defaulting to "All Instances", a Time range selector "Last 30 minutes", and a Refresh button. The log pane shows multiple INFO-level rows with timestamps in 2025, including x-ms-client-request-id 00000000-0000-0000-0000-000000000000 (PII masked) and OpenTelemetry exporter transmission lines to applicationinsights.azure.com. Each entry shows the request ID, status code, and elapsed time in milliseconds for telemetry batches.](../../../assets/troubleshooting/log-stream/01-log-stream.png)
+
+For HTTP ping failures, Log stream is the fastest way to see whether your application process even reaches a bind line. Switch to **Runtime Logs** (shown selected) and watch in real-time during a restart - you should see Gunicorn/Uvicorn/Node/Java startup banners followed by a `Listening at: http://0.0.0.0:<port>` line. If those lines never appear before the container terminates, you're in H4 (application crash) or H5 (missing startup command) territory. If they appear with `127.0.0.1`, you're in H2 (localhost bind). If they appear but the port doesn't match `WEBSITES_PORT`, you're in H1 (port mismatch). The OpenTelemetry exporter lines visible here are normal background telemetry noise - filter past them to find the actual app startup output.
 
 ## 5. Evidence to Collect
 

@@ -75,6 +75,12 @@ flowchart TD
     G --> G1[Start with Activity Log and config delta]
 ```
 
+#### Portal view: Diagnose and solve problems landing page
+
+![Diagnose and solve problems blade for the `app-test-20251107` Web App. A `Search for common problems or tools` box sits at the top with `Refresh` and `Feedback` actions. Two tabs are visible: `Common Solutions` (selected) and `AI-powered Diagnostics (preview)`. A `Risk alerts` section shows an `Availability` card with a red X icon, `2 Critical`, and a `View more details` link. The `Troubleshooting categories` grid contains seven cards: `Availability and Performance` ("Check your app's health and discover app or platform issues" with links Application Logs, App Down Workflow, Web App Down), `Configuration and Management` ("Find out if your app service features are misconfigured" with links Investigate EasyAuth errors, IP Address Configuration, All Scaling Operations), `Risk Assessments` ("Analyze your app for optimal performance and configurations" with links Availability risks, Configuration risks), `Deployment` ("Discover and resolve issues with your application code deployments" with Troubleshoot link), `Networking` ("Discover and resolve any networking related issues with your resources" with Troubleshoot link), `Diagnostic Tools` ("Run proactive tools to automatically mitigate the app" with links Auto-Heal, Network Troubleshooter, Advanced Application Restart), and `Load Test your App` ("Generate high-scale load on your application to identify performance bottlenecks" with Create Load Test link). A `Popular troubleshooting tools` list at the bottom shows Application Logs, App Down Workflow, Web App Down, Web App Slow, and Process Full List. A `Privacy` link sits in the bottom-right corner.](../assets/troubleshooting/diagnose-and-solve/01-overview.png)
+
+The Portal's own `Diagnose and solve problems` blade is the operational mirror of the five-category classification above. `Availability and Performance` aligns to Category 1 (Request path) and Category 3 (Runtime degradation). `Configuration and Management` plus `Deployment` align to Category 5 (Deployment/recycle/platform event). `Networking` is the direct counterpart to Category 4 (Dependency/outbound), and `Diagnostic Tools` (Auto-Heal, Network Troubleshooter) is the mitigation toolbox. The `Risk alerts` panel at the top (here showing `2 Critical` availability issues) is the fastest pre-classification signal — when it is non-empty, click `View more details` before running any KQL. The `AI-powered Diagnostics (preview)` tab provides ML-based pattern matching that can short-circuit the manual classification when the symptom is familiar.
+
 ## Category summary matrix
 
 | Category | Typical Symptoms | First Signal to Check | Common Mistake |
@@ -95,6 +101,12 @@ Request path issues are failures in the inbound flow from client to app response
 - latency increase before error-rate increase
 - only specific routes or methods failing
 - proxy/forwarding failures in incident timeline
+
+#### Portal view: Application Insights Overview as the first signal
+
+![Application Insights Overview for `ai-test-20251107` showing four pinned tiles: Failed requests (pink area chart, value 10), Server response time (blue dashed line at 1ms, value 1.07ms), Server requests (blue line with spikes, value 15), and Availability (flat green line at 0%, value --). The Essentials panel above lists Resource group rg-test-20251107, Location Korea Central, Subscription Visual Studio Enterprise Subscription, and a redacted Instrumentation key 00000000-0000-0000-0000-000000000000. A Show data for last tab strip has 1 hour selected.](../assets/troubleshooting/app-insights/01-overview.png)
+
+For Category 1 incidents, the Application Insights `Failed requests` and `Server response time` tiles are the first signal — together they reveal whether the request path is failing outright or simply slow. The `1 hour` window is the right starting scope; widen to compare against the 24-hour baseline if needed. Click `Failed requests` to drill into the per-endpoint breakdown that maps to the `CsUriStem` grouping in the KQL query below. `Server requests` count is the denominator — a request spike with no failure-rate increase is normal load, while flat requests with rising failures indicates a routing or upstream issue.
 
 ### First signal to check
 
@@ -227,6 +239,12 @@ This category covers incidents triggered by operational changes rather than stea
 - instability appears after slot swap
 - restart/recycle events correlate with outage window
 - app behavior differs between staging and production slot
+
+#### Portal view: Activity log as the first signal
+
+![Activity log blade for app-test-20251107 with filter chips set to Subscription Visual Studio Enterprise Subscription, Event severity All, Timespan Last 6 hours, Resource group rg-test-20251107, and Resource app-test-20251107. The table shows 11 items including ValidateUpgradePath, multiple Get Web App Publishing Profile entries, Get Web App Slots Differences, and List Web App Slot Security Sensitive Settings — all with Succeeded status, times spanning an hour ago to 4 hours ago, and user@example.com as the initiator.](../assets/troubleshooting/activity-log/01-activity-log.png)
+
+For Category 5 incidents, the Activity log is the authoritative timeline of every control-plane change against this Web App. The first question to answer is "what operation immediately preceded the incident window?" — sort by `Time` descending and look for `Update Site`, `Update Configuration`, `Update App Settings`, `Microsoft.Web/sites/publish/Action`, or any slot-swap operation in the hour before symptoms began. The `Event initiated by` column distinguishes a human deploy from a CI/CD service principal or platform-initiated change. The `Timespan: Last 6 hours` filter chip should match the incident window; widen to 24 hours if the suspected change is older. Pair this with the CLI/KQL commands below to extract the change details (`Update App Settings` operations log the new values in their JSON payload).
 
 ### First signal to check
 

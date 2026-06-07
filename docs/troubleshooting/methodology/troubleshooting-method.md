@@ -147,6 +147,12 @@ Categorize evidence into five primary types to build a multidimensional view of 
 4.  **Configuration**: App settings, VNet integration, and scaling rules. Source: Configuration blade or `az webapp show`.
 5.  **Runtime Behavior**: Observed HTTP responses (headers/body) and behavior under synthetic load. Source: `curl`, load testing.
 
+#### Portal view: Application Insights Overview (a synthesized evidence surface)
+
+![Azure portal Application Insights Overview blade for ai-test-20251107 with four pinned metric tiles: Failed requests showing 10, Server response time 1.07ms, Server requests 15, Availability "--" with no test configured. Essentials row shows Resource group rg-test-20251107, Location Korea Central, Subscription "Visual Studio Enterprise Subscription", Subscription ID 00000000-0000-0000-0000-000000000000, Instrumentation Key 00000000-0000-0000-0000-000000000000, Connection String redacted. Left nav includes Investigate, Monitoring, Alerts, Metrics, Logs, Application Map, Live metrics, Transaction search, Availability, Failures, Performance.](../../assets/troubleshooting/app-insights/01-overview.png)
+
+Application Insights is the single blade that combines four of the five evidence categories: **Metrics** (the four pinned tiles), **Logs** (the Logs link in the left nav surfaces the same `requests`/`dependencies`/`traces`/`exceptions` tables), **Runtime Behavior** (Live metrics, Transaction search, Application Map), and **Configuration** signals via `customDimensions`. Use the Overview tiles as a one-glance health check before drilling into KQL - the `Failed requests: 10` and `Server requests: 15` ratio shown here is already a strong signal of pathological error rate. Note that `Availability: --` is the default state until you author a synthetic availability test, which is itself a configuration gap worth flagging during triage.
+
 ## Key KQL Tables Reference
 
 Use these tables in Log Analytics to extract evidence:
@@ -157,6 +163,12 @@ Use these tables in Log Analytics to extract evidence:
 | **AppServiceConsoleLogs** | Standard output and error from the container. | `ResultDescription`, `Host`, `ContainerId` |
 | **AppServicePlatformLogs** | Events from the App Service platform. | `OperationName`, `ContainerId`, `ResultDescription` |
 | **AppServiceAppLogs** | Custom application-level log messages. | `CustomLevel`, `ResultDescription`, `Logger` |
+
+#### Portal view: Log Analytics query editor (where evidence tables are queried)
+
+![Azure portal Log Analytics workspace Logs blade with a New Query 1 tab open, blue Run button (disabled), Time range selector set to "Last 24 hours", Save / Share / Export toolbar buttons, "Show 1000 results" toolbar label, and KQL mode dropdown. The query editor pane is empty with placeholder text inviting the user to start typing a query, and an empty Query history panel on the right.](../../assets/troubleshooting/log-analytics/01-logs.png)
+
+This is the working surface for every table in the reference above. The default `Last 24 hours` range is usually too wide for incident triage - tighten it to the incident window before running queries to reduce noise and cost. Use the **Tables** browser (collapsed by default on the left of the editor) to discover available tables in this workspace and confirm that diagnostic settings are actually routing `AppServiceHTTPLogs`, `AppServiceConsoleLogs`, and `AppServicePlatformLogs` here - empty results from a correct query usually mean a missing diagnostic setting, not a missing event. The 1000-result cap shown in the toolbar applies to the UI grid only; KQL aggregations are computed on the full result set server-side.
 
 ## How to Correlate Evidence
 

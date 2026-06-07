@@ -207,6 +207,12 @@ dependencies
 !!! tip "How to Read This"
     If dependency latency rises before HTTP latency, the app is probably waiting on something external rather than burning CPU locally.
 
+#### Portal view: Application Insights Overview (where the query above runs)
+
+![Azure portal Application Insights Overview blade for ai-test-20251107 with four pinned metric tiles: Failed requests 10, Server response time 1.07ms, Server requests 15, Availability "--". Essentials shows Resource group rg-test-20251107, Location Korea Central, Subscription Visual Studio Enterprise Subscription, Subscription ID 00000000-0000-0000-0000-000000000000, Instrumentation Key 00000000-0000-0000-0000-000000000000, Connection String redacted. Left nav contains Investigate, Monitoring, Alerts, Metrics, Logs, Application Map, Live metrics, Transaction search, Availability, Failures, Performance.](../../assets/troubleshooting/app-insights/01-overview.png)
+
+Application Insights is the most efficient surface for H4 (dependency hypothesis) because it correlates request latency with dependency duration in a single trace. The four Overview tiles give an immediate H1-vs-H4 read: a high `Failed requests` count with low `Server response time` points to fast-failing dependencies (H4), while a normal failure count with high server response time points to local processing (H1/H2). For the dependency KQL above, click **Logs** in the left nav to land in the Application Insights query editor where the `dependencies` table is queryable. Use **Application Map** for a visual dependency graph during triage - it surfaces failing downstream targets without writing KQL.
+
 ### 5.2 CLI Investigation
 
 ```bash

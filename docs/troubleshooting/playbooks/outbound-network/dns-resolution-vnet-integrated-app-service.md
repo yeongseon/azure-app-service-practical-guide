@@ -110,6 +110,12 @@ When DNS failures occur in a VNet-integrated App Service Linux app, treat resolv
 - Private Endpoint + Private DNS zone linkage health.
 - Azure DNS Private Resolver inbound/outbound endpoint path (if used).
 
+#### Portal view: Networking blade for VNet integration and DNS resolver verification
+
+![Azure portal Networking blade showing Inbound traffic configuration column (Public network access Enabled with no access restrictions Using default behavior, App assigned address Not configured, Private endpoints 0 private endpoints, Inbound IPv4 20.200.197.3, Inbound IPv6 2603:1040:f05:3::208, Optional inbound services Azure Front Door) and Outbound traffic configuration column (Virtual network integration Not configured, Hybrid connections Not configured, Outbound DNS Default Azure-provided, list of Outbound IPv4 and IPv6 addresses), Integration subnet configuration card showing NAT gateway N/A, NSG N/A, UDR N/A, toolbar with Refresh, Troubleshoot, Send us your feedback buttons](../../../assets/troubleshooting/networking/01-networking-hub.png)
+
+The `Networking` blade exposes the two settings that determine DNS outcome for VNet-integrated apps: `Virtual network integration` (which subnet the resolver requests originate from) and `Outbound DNS` (which resolver is used). The screenshot above shows the unintegrated baseline where `Virtual network integration: Not configured` and `Outbound DNS: Default (Azure-provided)` mean all lookups go to Azure-provided DNS (`168.63.129.16`) — Private DNS zone records will not be returned unless the integration subnet's VNet has the relevant `privatelink.*` zone link, which is exactly the H2 misconfiguration. After enabling VNet integration, the `Outbound DNS` field reads `Custom` if `WEBSITE_DNS_SERVER` is set in app settings (H3) or `Inherited from VNet` if the integration VNet has `dhcpOptions.dnsServers` populated; both are explicit override paths to investigate. Click `Virtual network integration` → `Configuration` to view the integration subnet and confirm it matches the subnet linked to the private DNS zones your app needs to resolve.
+
 ### Investigation Notes
 - Regional VNet integration provides a network path, but does not automatically enable route-all or make all outbound traffic private. DNS outcome depends on resolver configuration and zone linkage, while routing outcome depends on `vnetRouteAllEnabled` and subnet route tables — these are separate checks.
 - A successful `nslookup` once does not prove resolver stability; perform repeated checks across time and instances.

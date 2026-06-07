@@ -110,6 +110,12 @@ When a slot swap succeeds but production degrades, focus on post-swap behavior: 
 - Auto-swap configuration and startup budget (`WEBSITES_CONTAINER_START_TIME_LIMIT`).
 - Managed identity assignment and role bindings for production-scoped resources.
 
+#### Portal view: Activity log timeline for swap audit
+
+![Azure portal Activity log blade showing 11 entries in a table with Operation name, Status, Time, Time stamp, Subscription, and Event initiated by columns, all rows showing Succeeded status, Event initiated by column showing user@example.com (PII masked), filter chips for Subscription, Event severity, Timespan, Resource group, and Resource, toolbar with Edit columns, Refresh, Export Activity Logs, Download as CSV, Logs, Pin current filters, Reset filters, Diagnostic settings buttons](../../../assets/troubleshooting/activity-log/01-activity-log.png)
+
+The `Activity log` blade is the authoritative timeline source for slot-swap operations and the only place that records the exact `Succeeded` timestamp for `Swap Web App Slots` against the swap-initiating principal in the `Event initiated by` column. Pin this filter to the affected app and the incident window, then correlate the `Succeeded` row's `Time stamp` value against the first post-swap restart event in `AppServicePlatformLogs` and the first user-visible 5xx in `AppServiceHTTPLogs` to build the multi-phase timeline this playbook depends on. Use `Download as CSV` to export the audit trail before the 90-day retention horizon expires, since the swap audit record is what proves which slot configuration was effective at the moment production began degrading.
+
 ## 5. Evidence to Collect
 
 ### Required

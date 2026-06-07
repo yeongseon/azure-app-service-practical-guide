@@ -43,6 +43,13 @@ graph TD
 
 ## Step 1: Check AppServiceConsoleLogs for startup output
 First question: is the containerized app producing any startup logs at all?
+
+#### Portal view: Web App Down detector confirms the availability symptom
+
+![Web App Down detector blade under Diagnose and solve problems for app-test-20251107 | Availability and Performance. The left navigation lists detectors including Overview (selected), Application Changes, Application Logs, Container Issues, CPU Usage, Health Check feature, Http 4xx errors, Linux - Host Disk Space Usage, Linux - Number of Running Containers, Linux CPU Drill Down, Linux Memory Drill Down, Linux Swap Space Low, Memory Usage, Process Full List, Process List, Site Status History, SNAT Failed Connection Endpoints, SNAT Port Exhaustion, TCP Connections, Testing in Production (TIP), Web App Down (highlighted), Web App Restarted, Web App Slow, Web App Troubleshooter, and App Down Workflow. The top toolbar has a Search box, AI-powered Diagnostics (preview), Refresh, Feedback, and Get Resiliency Score report. The detector body shows the title Web App Down - Investigate common issues with Linux and containerized apps that are having availability issues or experiencing downtime, two filter pills Time Range (UTC): Last 24 Hours and Downtime(UTC): Drag and select a time window on the graph, a Troubleshoot App Performance and Availability section, and a View Availability dropdown on the right. The availability chart shows App Availability (blue) and Platform Availability (green) at 100% across the full 24-hour window from 06-06 14:00 to 06-07 12:00, with an Organic SLA of 100% and the message No downtimes were identified between 06-Jun-26 01:15 PM UTC and 07-Jun-26 01:00 PM UTC.](../../assets/troubleshooting/diagnose-and-solve/02-detector-web-app-down.png)
+
+Before running the KQL query below, confirm the symptom is observable from the platform's perspective using the `Web App Down` detector. The `App Availability` and `Platform Availability` lines distinguish your app's HTTP availability from the platform infrastructure — when `App Availability` drops but `Platform Availability` stays at 100%, the failure is in your container or code, not the App Service platform. The `Drag and select a time window on the graph` action runs the full availability diagnostic against the selected window and surfaces correlated detector results. When `Organic SLA: 100%` and the chart is flat, the symptom has not been observed by the platform yet — proceed to the console logs below to look for in-progress startup failures.
+
 - KQL:
 
 ```kql
@@ -51,6 +58,12 @@ AppServiceConsoleLogs
 | project TimeGenerated, ResultDescription
 | order by TimeGenerated desc
 ```
+
+#### Portal view: Log stream for real-time startup output
+
+![Log stream blade for app-test-20251107 Web App with command bar buttons Log Level, Stop, Copy, and Clear. The Logs radio selector has Runtime selected and Platform unselected. The Instances dropdown shows a single worker instance and the Lookback period is set to Last 30 minutes. The streaming console pane shows live INFO-level entries from azure.core.pipeline.policies.http_logging_policy with Request URL https://koreacentral-0.in.applicationinsights.azure.com//v2.1/track, Request method POST, request and response headers (Content-Type application/json, Content-Length, Accept, Server Microsoft-HTTPAPI/2.0), x-ms-client-request-id 00000000-0000-0000-0000-000000000000, and Transmission succeeded Item received 3 Items accepted 3 confirmations.](../../assets/troubleshooting/log-stream/01-log-stream.png)
+
+The Log stream blade is the real-time complement to the historical KQL query above and the fastest way to confirm whether the container is producing any startup output at all. The `Runtime` radio captures stdout/stderr from your application — this is where Python tracebacks, Node.js `Error: listen EADDRINUSE`, and Java `BindException` appear within seconds of restart. The `Platform` radio shows App Service platform messages (container lifecycle, health probe results). If Log stream is silent during a restart cycle, the container is failing before any logging framework initializes — proceed to Step 2 to check platform events. The `az webapp log tail` CLI below produces the same stream without browser-side UI lag.
 
 - Good signal: clear startup sequence logs (framework boot, server start, listening message).
 - Bad signal: no output, repeated fatal exceptions, or immediate process exits.

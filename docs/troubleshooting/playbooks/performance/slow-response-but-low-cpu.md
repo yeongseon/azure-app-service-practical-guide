@@ -87,6 +87,12 @@ graph TD
 - Azure Monitor metrics for App Service Plan: CPU %, Memory %, Connections.
 - Dependency telemetry (Application Insights dependencies table, if enabled): call duration, failure %, target endpoint.
 
+#### Portal view: Application Insights overview for dependency latency evidence
+
+![Azure portal Application Insights Overview blade for ai-test-20251107 showing 4 pinned tiles (Failed requests 10, Server response time 1.07ms, Server requests 15, Availability -- because no test configured), Essentials section with Resource group rg-test-20251107, Location Korea Central, Subscription Visual Studio Enterprise Subscription, Subscription ID and Instrumentation Key both masked to 00000000-0000-0000-0000-000000000000, Connection String redacted, left navigation showing Investigate group (Application Map, Live metrics, Transaction search, Availability, Failures, Performance) and Monitoring/Alerts/Metrics/Logs sections](../../../assets/troubleshooting/app-insights/01-overview.png)
+
+The `Application Insights` blade is the decisive evidence source for H1 (downstream dependency slowness), because the `Failures` and `Performance` links in the left navigation reveal per-dependency latency that `AppServiceHTTPLogs` cannot — `AppServiceHTTPLogs.TimeTaken` only captures total request duration without exposing which dependency call inside the request was slow. The `Server response time` tile (showing `1.07ms` here on a healthy app) and the linked `Performance` blade let you split the same total latency by `Dependency name` and `Target` so you can prove whether the slow path is the SQL call, the Redis call, the third-party API, or the Key Vault lookup. For this playbook specifically, navigate to `Application Map` to visualize dependency call duration as a topology overlay — a dependency node with `Avg ms` significantly higher than its baseline is the single strongest signal that low-CPU latency is dependency-bound rather than worker-bound.
+
 ### Useful Context
 - Recent deployments, startup command changes, app setting changes, scale events.
 - Dependency-side health: Azure SQL DTU/vCore pressure, storage throttling, third-party API status.

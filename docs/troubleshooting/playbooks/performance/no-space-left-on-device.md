@@ -97,6 +97,12 @@ graph TD
 - `AppServicePlatformLogs` for container lifecycle events (`OperationName`) and repeated container changes (`ContainerId`).
 - `AppServiceHTTPLogs` for endpoint-specific impact (`CsUriStem`) and status/latency changes (`ScStatus`, `TimeTaken`).
 
+#### Portal view: Log stream for live `No space left on device` detection
+
+![Azure portal Log stream blade with Runtime Logs and Platform Logs radio buttons (Runtime Logs selected), Instances dropdown showing All Instances, Last 30 minutes filter, Refresh button, streaming INFO log entries with x-ms-client-request-id 00000000-0000-0000-0000-000000000000 (PII masked), OpenTelemetry exporter transmission lines to applicationinsights.azure.com showing request ID, status code 200, elapsed time in milliseconds for each transmitted span](../../../assets/troubleshooting/log-stream/01-log-stream.png)
+
+The `Log stream` blade is the fastest way to catch the exact `No space left on device` write exception in flight, because it surfaces `AppServiceConsoleLogs` lines within ~5 seconds of emission — before they reach Log Analytics ingestion (which has a 2-5 minute delay). Keep the `Runtime Logs` radio selected and `Instances` set to `All Instances` so you see write failures from whichever instance is currently saturating its writable layer, then trigger the suspected workload (deployment, upload, build, cache warmup) and watch for the literal `[Errno 28] No space left on device` substring alongside the affected file path. The path itself is the decisive evidence: `/home/...` errors indicate persistent quota exhaustion (H1) and survive restart, while `/tmp/...` or container-layer paths indicate ephemeral pressure (H2/H3) that restart appears to fix but the underlying write pattern remains.
+
 ### Platform Signals
 - Confirm whether failure starts during deployment (`SCM_DO_BUILD_DURING_DEPLOYMENT=true`) versus steady runtime.
 - Confirm Linux file target (`/home`, `/tmp`, extracted image path) from console traces.

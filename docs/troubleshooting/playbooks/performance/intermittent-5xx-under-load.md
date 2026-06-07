@@ -103,6 +103,12 @@ graph TD
 - App Service Plan CPU and memory trends (same period) to separate compute pressure from queueing/I/O issues.
 - Instance count and scale activity timing relative to first 5xx spike.
 
+#### Portal view: Metrics blade entry point for 5xx vs concurrency correlation
+
+![Azure portal Metrics blade for app-test-20251107 with Scope showing app-test-20251107, Metric Namespace set to App Service standard metr... (truncated), empty Metric and Aggregation dropdowns showing Select metric and Avg placeholders, three Sample data help cards titled Filter + Split, Plot multiple metrics, and Build custom dashboards, toolbar with New chart, Save to dashboard, Share, Subscribe buttons, time selector showing Local Time and Last 24 hours](../../../assets/troubleshooting/metrics/01-metrics-empty.png)
+
+Open the `Metrics` blade scoped to the app (not the plan) and add `Http5xx` with `Sum` aggregation alongside `Requests` with `Sum` and `Response Time` with `P95` on the same chart so you can directly see the burst-shaped failure pattern this playbook targets. The empty starting state shown above is intentional — every investigation begins from this canvas, and the `Filter + Split` card hints at the most important pivot for intermittent 5xx work: split `Http5xx` by `Instance` to detect whether the failures concentrate on a single saturated instance (supporting H1 worker exhaustion) or spread uniformly across all instances (supporting H4 outbound or H3 platform). Set the time range to a tight 1-hour window around the incident, switch `Local Time` to UTC for cross-referencing with KQL timestamps in `AppServiceHTTPLogs`, then pin the chart via `Save to dashboard` so subsequent responders inherit the same view.
+
 ### Logs
 - `AppServiceHTTPLogs`: status distribution (500/502/503), paths, user agents, and `TimeTaken` tail behavior.
 - `AppServiceConsoleLogs`: worker timeout, connection timeout, dependency exceptions, process restart messages.

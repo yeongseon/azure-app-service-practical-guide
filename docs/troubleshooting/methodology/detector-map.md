@@ -46,6 +46,12 @@ graph TD
 
 Navigate to your App Service in the Azure Portal → **Diagnose and solve problems**.
 
+#### Portal view: Diagnose and solve problems hub (category landing)
+
+![Azure portal Diagnose and solve problems blade for app-test-20251107, with AI-powered Diagnostics tab selected. Seven troubleshooting category cards are visible: Availability and Performance (with sub-bullets Web App Down, Web App Slow, High CPU Analysis, High Memory Analysis, Application Crashes), Configuration and Management, Risk Assessments, Deployment, Networking, Diagnostic Tools, and Load Test your App. A Risk alerts banner highlights "Availability 2 Critical" alerts requiring attention. Below the cards, a Popular tools list shows Diagnose Issues, Auto-heal, Metrics per Instance (Apps), and App Service Diagnostics. Left nav highlights Diagnose and solve problems under the Monitoring section.](../../assets/troubleshooting/diagnose-and-solve/01-overview.png)
+
+This is the landing page for every detector in the reference table below. The seven category cards map directly to the **Category** column - **Availability and Performance** contains `Web App Down`, `Linux - Number of Running Containers`, and `App Service Plan CPU/Memory`; **Networking** contains `SNAT Port Exhaustion` and `TCP Connections`; **Configuration and Management** contains deployment-related detectors. The `Risk alerts: Availability 2 Critical` badge surfaces detectors that have already flagged anomalies for this app, so triaging risks here before running individual detectors is the fastest path to a hypothesis. The **AI-powered Diagnostics** tab (currently selected) gives a synthesized narrative across detectors, but per the [Detector Limitations](#detector-limitations) section it remains a starting point - validate with logs.
+
 ## Detector Reference
 
 | Detector | Category | What It Shows | When to Use | Related Playbook |
@@ -59,6 +65,12 @@ Navigate to your App Service in the Azure Portal → **Diagnose and solve proble
 | App Service Plan Memory | Performance | Plan-level memory utilization percentage | Memory pressure, gradual degradation | memory-pressure-and-worker-degradation |
 | Application Logs | Diagnostics | App stdout/stderr output | Runtime errors, crash investigation | All playbooks |
 | Deployment Logs | Configuration | Deployment history and status | Post-deployment failures | All startup playbooks |
+
+#### Portal view: Web App Down detector (healthy baseline output)
+
+![Azure portal Diagnose and solve problems blade scoped to the Web App Down detector for app-test-20251107. The detector header reads "Web App Down" with breadcrumb "Diagnose and solve problems > Availability and Performance > Web App Down". Two KPI tiles: App Availability 100% (blue) and Platform Availability 100% (green). Organic SLA shown as 100%. A green-bordered banner reads "No downtimes were identified for this Web App in the last 24 hours". Detector navigation list on the left shows related detectors including Container Issues, Linux CPU Drill Down, Linux Memory Drill Down, Web App Restarted, Web App Slow, SNAT Port Exhaustion, and HTTP Server Errors.](../../assets/troubleshooting/diagnose-and-solve/02-detector-web-app-down.png)
+
+This is what `Web App Down` looks like when the app is healthy - both `App Availability` and `Platform Availability` at 100%, `Organic SLA: 100%`, and the explicit "No downtimes were identified" banner. The distinction between **App Availability** (your code responding) and **Platform Availability** (the App Service infrastructure healthy) is critical for triage: a low App Availability with high Platform Availability points to application/container issues (use `container-didnt-respond-to-http-pings`); a low Platform Availability points to platform incidents - check [Azure Status](https://status.azure.com/) before code changes. The left-rail detector list also reveals the sibling detectors you'd hop to next: `Container Issues`, `Linux CPU Drill Down`, `Web App Restarted`. The 24-hour scope shown here is the detector default and matches the **Time scope** limitation noted below.
 
 ## Detector Limitations
 

@@ -196,6 +196,12 @@ When deployment is green but the app is down, treat build success and runtime su
 !!! tip "How to Read This"
     The combination of repeated `503` responses near ~50 seconds and `ContainerTimeout` in platform logs means the platform waited for startup readiness and never got it. Zero console rows is a strong signal that the container process never reached a usable boot/logging state.
 
+#### Portal view: Log stream (where "no rows" becomes a positive signal)
+
+![Azure portal Log stream blade for app-test-20251107 with Runtime Logs radio selected, Instances dropdown set to All Instances, Time range Last 30 minutes, and a Refresh button. The log pane shows INFO-level entries with x-ms-client-request-id 00000000-0000-0000-0000-000000000000 (PII masked) and OpenTelemetry exporter transmission lines to applicationinsights.azure.com, each showing request ID, status code, and elapsed time in milliseconds.](../../../assets/troubleshooting/log-stream/01-log-stream.png)
+
+Open Log stream during the next deployment attempt to watch in real time whether the startup banner ever appears. A healthy startup shows: Oryx output (if `SCM_DO_BUILD_DURING_DEPLOYMENT=true`), then a Gunicorn/Uvicorn banner, then `Listening at: http://0.0.0.0:<port>`. The "0 rows" finding in the KQL above means none of that appeared - the process either crashed before logging (H1 module not found / H4 runtime mismatch) or never executed (H2 build mode mismatch left dependencies missing). Watching in Log stream is faster than KQL roundtrips because failures often surface within 30-60 seconds of a restart; click **Refresh** if the stream pauses. Note that container restart events themselves don't appear in this stream - cross-check with platform logs for `StoppingSiteContainers`.
+
 ### KQL Queries with Example Output
 
 ### Query 1: Startup timeout and cancellation sequence
