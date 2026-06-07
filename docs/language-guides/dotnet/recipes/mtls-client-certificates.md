@@ -230,6 +230,14 @@ curl --include \
 - Centralize certificate validation in a dedicated service for controller reuse
 - Audit whether diagnostics endpoints should be removed after rollout
 
+## Run It in the Portal
+
+#### Portal view: Configuration > General settings > Incoming client certificates section
+
+![Configuration General settings blade for a Web App scrolled down to the Incoming client certificates section, with General settings (active), Stack settings, Health check, Path mappings, and Error pages tabs visible at the top and a Refresh command bar action beneath the tabs. Above the section the remaining transport controls are visible: Session affinity proxy (unchecked), HTTPS only (unchecked), Minimum Inbound TLS Version (1.2), SCM Minimum Inbound TLS Version (1.2), Minimum Inbound TLS Cipher Suite (TLS_RSA_WITH_AES_128_CBC_SHA, Default) with a Change link, and End-to-end TLS encryption (unchecked). A Debugging section shows Remote debugging (unchecked). The Incoming client certificates section presents Client certificate mode as four radio options — Required (with description "All requests must be authenticated through a client certificate."), Optional (with description "Clients will be prompted for a certificate, if no certificate is provided fallback to SSO or other means of authentication. Unauthenticated requests will be blocked."), Optional Interactive User (with description "Clients will not be prompted for a certificate by default. Unless the request can be authenticated through other means (like SSO), it will be blocked."), and Ignore (selected, with description "No client authentication is required. Unauthenticated requests will not be blocked."). Apply and Discard buttons are at the bottom.](../../../assets/best-practices/mtls/01-client-cert-config.png)
+
+The `Configuration > General settings` blade scrolled to `Incoming client certificates` is the Portal surface that shows the four platform modes this recipe depends on before the ASP.NET Core middleware can consume `X-ARR-ClientCert` and validate it as an `X509Certificate2`. The visible `Client certificate mode` radios — `Required`, `Optional`, `Optional Interactive User`, and `Ignore` — are the settings the .NET-side certificate parsing logic must align with, and the screenshot clearly shows `Ignore` as the current default state. Use this blade as the verification point that the intended client-certificate mode is set before testing the .NET middleware against incoming certificate-bearing requests.
+
 ## See Also
 
 - [Incoming Client Certificates](../../../operations/incoming-client-certificates.md)

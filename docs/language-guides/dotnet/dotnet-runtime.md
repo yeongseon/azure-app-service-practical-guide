@@ -165,6 +165,14 @@ az webapp show --resource-group $RESOURCE_GROUP_NAME --name $WEB_APP_NAME --outp
 | Missing framework version | Runtime mismatch | Update stack or retarget build |
 | Port binding failure | Wrong URL binding assumptions | Ensure `HTTP_PLATFORM_PORT` flow used |
 
+## Run It in the Portal
+
+#### Portal view: Environment variables blade (where `ASPNETCORE_ENVIRONMENT` is managed)
+
+![Azure Portal Environment variables blade for app-test-20251107 Web App with the App settings tab selected (Connection strings tab adjacent). The toolbar shows a search box plus the actions plus Add, Refresh, Show values, Advanced edit, and Pull reference values. The settings table has columns Name, Value, Deployment slot setting, Source, and Delete and lists five App Service-sourced rows: APPLICATIONINSIGHTS_CONNECTION_STRING, APPLICATIONINSIGHTSAGENT_EXTENSION_ENABLED, ApplicationInsightsAgent_EXTENSION_VERSION, SCM_DO_BUILD_DURING_DEPLOYMENT, and WEBSITE_HTTPLOGGING_RETENTION_DAYS, each with a Show value link and Source App Service. The left navigation expands Settings with Environment variables highlighted, alongside Configuration, Instances, Authentication, Identity, Backups, Custom domains, Certificates, Networking, and WebJobs; Apply and Discard buttons are disabled at the bottom.](../../assets/operations/deployment/zip-deploy/01-app-settings-run-from-package.png)
+
+The `Environment variables` blade with the `App settings` tab selected is the Portal counterpart to the `az webapp config appsettings set ... ASPNETCORE_ENVIRONMENT=Production` command used in this runtime guide. After running that CLI command, the `ASPNETCORE_ENVIRONMENT` row would appear alongside the App Service-managed entries visible here in the same `Name`/`Value`/`Deployment slot setting`/`Source` table layout. The `Show value`, `Advanced edit`, and `Pull reference values` toolbar actions are the controls you use to inspect or change runtime settings without redeploying. Use the highlighted `Environment variables` left-nav entry to navigate here when verifying runtime configuration for the ASP.NET Core app.
+
 ## See Also
 
 - [01. Local Run](./tutorial/01-local-run.md)

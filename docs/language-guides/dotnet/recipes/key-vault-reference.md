@@ -165,6 +165,14 @@ az webapp config appsettings list --resource-group "$RESOURCE_GROUP_NAME" --name
 
 Validate slot-specific identity and slot-specific app settings configuration.
 
+## Run It in the Portal
+
+#### Portal view: Environment variables blade (Key Vault references surface in App settings)
+
+![Azure Portal Environment variables blade for app-test-20251107 Web App with the App settings tab selected (Connection strings tab adjacent). The toolbar shows a search box plus the actions plus Add, Refresh, Show values, Advanced edit, and Pull reference values. The settings table has columns Name, Value, Deployment slot setting, Source, and Delete and lists five App Service-sourced rows: APPLICATIONINSIGHTS_CONNECTION_STRING, APPLICATIONINSIGHTSAGENT_EXTENSION_ENABLED, ApplicationInsightsAgent_EXTENSION_VERSION, SCM_DO_BUILD_DURING_DEPLOYMENT, and WEBSITE_HTTPLOGGING_RETENTION_DAYS, each with a Show value link and Source App Service. The left navigation expands Settings with Environment variables highlighted, alongside Configuration, Instances, Authentication, Identity, Backups, Custom domains, Certificates, Networking, and WebJobs; Apply and Discard buttons are disabled at the bottom.](../../../assets/operations/deployment/zip-deploy/01-app-settings-run-from-package.png)
+
+The Environment variables blade with the `App settings` tab selected is the Portal surface where Key Vault references created by this recipe appear for the ASP.NET Core app. After running `az webapp config appsettings set` with values of the form `@Microsoft.KeyVault(...)`, new rows show up alongside the platform-managed entries visible here in the same `Name`/`Value`/`Deployment slot setting`/`Source` table. The `Pull reference values` and `Refresh` actions in the toolbar are the Portal-side controls for re-evaluating reference state, which is useful after granting the app's managed identity access to a vault. Use `Show value` on a reference row to confirm the resolved secret is exposed to `IConfiguration` in the .NET app instead of the literal reference syntax.
+
 ## See Also
 
 - [Managed Identity](managed-identity.md)

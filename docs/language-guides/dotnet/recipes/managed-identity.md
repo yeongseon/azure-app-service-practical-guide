@@ -204,6 +204,14 @@ Expect successful response without any secret stored in source code or App Setti
 
 Set explicit exclusions in `DefaultAzureCredentialOptions` to prevent credential chain surprises.
 
+## Run It in the Portal
+
+#### Portal view: Identity blade (canonical managed-identity enablement surface)
+
+![Identity blade for a Web App with two tabs — System assigned (active) and User assigned. A descriptive header explains that a system-assigned managed identity is restricted to one per resource, tied to the lifecycle of the resource, allows RBAC permissions to be granted in Azure, and is authenticated with Microsoft Entra ID so no credentials need to be stored in code. The command bar shows Save, Discard, Refresh, Troubleshoot, and Got feedback? actions. The Status control is a two-state toggle currently set to Off, with On as the alternative position. No Object (principal) ID, Permissions, or Azure role assignments are shown because the identity is not yet enabled.](../../../assets/best-practices/security/01-identity-blade.png)
+
+The Identity blade is the canonical Portal surface for the managed-identity flow this recipe walks through for the ASP.NET Core app. With `System assigned` active and the `Status` toggle moved from `Off` to `On`, App Service creates the Entra ID principal that the recipe then uses with `Azure.Identity` `DefaultAzureCredential` to access downstream resources via `Azure.Security.KeyVault.Secrets`, `Azure.Storage.Blobs`, and other Entra-aware SDK clients. The descriptive header on this blade restates the lifecycle guarantee the recipe relies on — the identity is tied to the resource — and the `User assigned` tab is the alternative path the recipe covers for identities shared across multiple apps. Use this blade as step 1 of the recipe before issuing any downstream role assignments via the CLI.
+
 ## See Also
 
 - [Key Vault References](key-vault-reference.md)
