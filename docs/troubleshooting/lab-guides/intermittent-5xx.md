@@ -429,6 +429,12 @@ curl --silent "$APP_URL/diag/stats" > /tmp/intermittent-5xx-diag-stats-after.jso
 curl --silent "$APP_URL/diag/env" > /tmp/intermittent-5xx-diag-env-after.json
 ```
 
+#### Portal view: Application Insights overview (post-trigger triage anchor)
+
+![Application Insights Overview blade for ai-test-20251107 showing four pinned tiles: Failed requests (pink area chart, value 10), Server response time (blue dashed line at 1ms, value 1.07ms), Server requests (blue line with spikes, value 15), and Availability (flat green line at 0%, value --). The Essentials panel above lists Resource group rg-test-20251107, Location Korea Central, Subscription Visual Studio Enterprise Subscription, and a redacted Instrumentation key 00000000-0000-0000-0000-000000000000. A Show data for last tab strip has 1 hour selected.](../../assets/troubleshooting/app-insights/01-overview.png)
+
+The `Application Insights` overview is the highest-signal Portal view to open immediately after the trigger script in section 3.7 finishes. The `Failed requests` tile (`10` here) is the primary failure-burst indicator, `Server response time` separates fast-path latency from slow-endpoint queueing, and `Server requests` lets you visually correlate the failure burst with the request volume burst from `/slow`. The `Show data for last 1 hour` tab keeps the window tight enough that the starvation pattern is not smoothed away by older traffic - widen it to 24 hours only after the immediate-window signal is validated. From here, click the `Failed requests` tile to drill into the App Insights `requests` failure telemetry for the same failure window the platform `AppServiceHTTPLogs` queries in section 3.10 aggregate from a different angle.
+
 ### 3.9 Query Log Analytics
 
 Resolve workspace identifiers:
