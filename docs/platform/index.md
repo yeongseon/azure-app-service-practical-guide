@@ -63,7 +63,7 @@ graph TD
 
 **[Inferred]** The `Plan Type` value `App Service plan` and the `SKU and size` value `Premium0V3 (P0v3)` appearing in the `Hosting` section are consistent with the hosting-tier topics referenced in the [Hosting Models](#documents) row of the Documents table above. The `Inbound IP addresses`, `Private endpoint connections`, and `Virtual network integration` rows of the `Networking` section are consistent with the inbound and outbound topics referenced in the [Networking](#documents) row of the Documents table. The `Application Insights` section listing `ai-test-20251107` is consistent with the monitoring-integration topic referenced in the [Resource Relationships](#documents) row.
 
-**[Not Proven]** The configured TLS minimum version, FTP state, and Always On flag are not visible on this view. The Application Insights instrumentation key or connection string is not visible on this view. The App Service Plan scale-out instance count history is not visible on this view. The deployment slot configuration and traffic-split assignments are not visible on this view.
+**[Not Proven]** Additional configuration detail, historical detail, and linked-resource detail are not visible on this view.
 
 ## Advanced Topics
 

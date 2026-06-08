@@ -207,7 +207,7 @@ Treat this section as a living operational standard:
 
 **[Inferred]** The `Platform settings` rows `Always on`, `HTTPS only`, `Minimum Inbound TLS Version` set to `1.2`, and `FTP state` set to `FTPS only` overlap with the `Compute baseline` (`Always On`), `Transport and edge` (`HTTPS-only`, `TLS floor`), and `Connectivity` items listed in the [Decision areas covered](#decision-areas-covered) subsection above. The `SCM Basic Auth Publishing Credentials` and `FTP Basic Auth Publishing Credentials` rows both shown unchecked are consistent with the credential-hygiene framing in the [Quality gate before implementation](#quality-gate-before-implementation) checklist above ("Identity and secret strategy is approved").
 
-**[Not Proven]** The configured Application Insights instrumentation, managed identity assignment, deployment slot count, scale-out instance count, and access restriction rule list are not visible on this view. Whether `Always on` should be enabled for this workload is a decision recorded in a separate ADR and is not visible on this view. The `Change` link target for the `Minimum Inbound TLS Cipher Suite` row is not visible on this view.
+**[Not Proven]** Additional configuration detail beyond the visible rows is not shown on this view.
 
 ## Advanced Topics
 

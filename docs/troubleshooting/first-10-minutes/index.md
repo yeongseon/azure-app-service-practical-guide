@@ -55,7 +55,7 @@ Each checklist row above has a corresponding entry surface in the Azure Portal. 
 
 **[Inferred]** The metric-definition row labels `Scope`, `Metric Namespace`, `Metric`, and `Aggregation` are consistent with the per-chart configuration steps suggested by the [Performance](performance.md) checklist row above ("Slow responses, high latency, elevated error rates"). The `Local Time: Last 24 hours (Automatic)` time range chip is consistent with the first-10-minutes triage window scope of this index page.
 
-**[Not Proven]** No specific metric (such as `Http2xx`, `Http5xx`, `Response Time`, or `CPU Percentage`) is currently selected on this view. No aggregated value, sparkline, or chart series is rendered. The pinned dashboard list and alert rule history for this app are not visible on this view.
+**[Not Proven]** No metric value, data series, or historical detail is shown on this view.
 
 ### Portal view: Outbound / Network checklist
 
@@ -65,7 +65,7 @@ Each checklist row above has a corresponding entry surface in the Azure Portal. 
 
 **[Inferred]** The `Outbound traffic configuration` section labels `Virtual network integration`, `Hybrid connections`, `Outbound DNS`, and the `Outbound IPv4 addresses` list are consistent with the outbound-related topics listed in the [Outbound / Network](outbound-network.md) checklist row above ("Outbound connection failures, DNS issues, SNAT"). The `Integration subnet configuration` section with its `NAT gateway`, `Network security group`, and `User defined route` rows all showing `N/A` is consistent with the `Virtual network integration` row showing `Not configured` directly above.
 
-**[Not Proven]** The SNAT port utilization metric, current outbound DNS resolver address, and active outbound connection count are not visible on this view. The peered virtual network, route table, or firewall configuration that may be applied via integration is not visible on this view. The Azure Front Door profile name or origin group attached to this Web App is not visible on this view.
+**[Not Proven]** Additional outbound-configuration detail beyond the visible summary is not shown on this view.
 
 ### Portal view: Startup / Availability checklist
 
@@ -75,7 +75,7 @@ Each checklist row above has a corresponding entry surface in the Azure Portal. 
 
 **[Inferred]** The `Availability and Performance` category card lists the links `Application Logs`, `App Down Workflow`, and `Web App Down`. The `Popular troubleshooting tools` section at the bottom repeats `App Down Workflow` and `Web App Down`, and additionally lists `Web App Slow` and `Process Full List`. These link names are consistent with the topics listed in the [Startup / Availability](startup-availability.md) checklist row above ("Container won't start, site down, deployment failures") and the [Performance](performance.md) checklist row ("Slow responses").
 
-**[Not Proven]** The two `Availability` risk alerts marked `2 Critical` are not expanded on this view, so the specific detector names and timestamps that triggered them are not visible. The output of running any of the listed detectors (`Web App Down`, `Application Logs`, `Web App Slow`, `Process Full List`) is not visible on this view. Whether the `AI-powered Diagnostics (preview)` tab returns additional findings is not visible on this view.
+**[Not Proven]** Additional alert detail and detector detail beyond the visible summaries is not shown on this view.
 
 ## See Also
 
