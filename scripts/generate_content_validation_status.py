@@ -157,12 +157,12 @@ def _scope_summary_lines() -> list[str]:
         "This page tracks `content_validation` metadata for **in-scope "
         "factual-claim documents** under "
         f"{sections}. Pages outside this scope — navigation indexes "
-        f"({nav_examples}), reference-lookup KQL packs ({excluded}), "
-        "tutorials, language guides, and start-here landing pages — "
-        "intentionally omit the metadata and are not counted here. "
-        "See `AGENTS.md` §Text Content Validation for the full policy "
-        "and `scripts/lib/content_scope.py` for the executable scope "
-        "definition.",
+        f"({nav_examples}), reference-lookup KQL packs and lab guides "
+        f"({excluded}), tutorials, language guides, and start-here "
+        "landing pages — intentionally omit the metadata and are not "
+        "counted here. See `AGENTS.md` §Text Content Validation for the "
+        "full policy and `scripts/lib/content_scope.py` for the "
+        "executable scope definition.",
     ]
 
 
