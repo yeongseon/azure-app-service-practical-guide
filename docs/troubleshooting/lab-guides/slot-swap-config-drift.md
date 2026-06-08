@@ -348,6 +348,12 @@ Expected pre-swap model:
 | DB_CONNECTION_STRING | prod-server.database.windows.net | staging-server.database.windows.net | true |
 | FEATURE_FLAG | v1 | v2 | false |
 
+#### Portal view: Configuration blade (slot-aware settings entry point)
+
+![Azure portal Configuration > General settings blade for app-test-20251107 with toolbar Save, Discard, Refresh, Feedback. Top of the page: Always on toggle row with On / Off radio buttons (On selected) and a Discoverability link "Learn more about Always on". Below it: HTTP version (HTTP 1.1 default), Web sockets Off, ARR affinity On, Client certificate mode Ignore, Managed pipeline version Integrated. Left nav highlights Configuration (under Settings) with sub-tabs Application settings, General settings (selected), Default documents, Path mappings. Breadcrumb reads "Home > app-test-20251107 | Configuration > Configuration".](../../assets/troubleshooting/configuration/01-always-on.png)
+
+The `Configuration` blade is the Portal control plane for the same settings the CLI commands above expose. The `Application settings` sub-tab (visible in the left nav of this capture) is where the per-row `Deployment slot setting` checkbox appears - that checkbox is the visual representation of the `slotSetting:true` flag in the expected pre-swap table above (`DB_CONNECTION_STRING` row). `General settings` (selected here, showing `Always on` and `ARR affinity`) follows different swap rules than App Settings; consult section 1.3 before changing anything here mid-incident. Use this blade to spot-check the sticky/non-sticky shape of your settings without parsing CLI JSON, then cross-reference the post-swap behavior with the KQL evidence in section 3.10.
+
 ### 3.6 Capture pre-swap runtime evidence
 
 ```bash

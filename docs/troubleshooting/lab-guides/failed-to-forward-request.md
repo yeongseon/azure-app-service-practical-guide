@@ -195,6 +195,12 @@ gunicorn --bind=127.0.0.1:8000 --timeout=120 --workers=2 app:app
 
 This baseline directly encodes the fault condition.
 
+#### Portal view: Diagnose and solve (Web App Down baseline reading)
+
+![Azure portal Diagnose and solve problems > Availability and Performance > Web App Down detector for app-test-20251107 with breadcrumb "Diagnose and solve problems > Availability and Performance > Web App Down". Two KPI tiles dominate the top: App Availability 100% (blue tile) and Platform Availability 100% (green tile). Organic SLA reads 100%. A green banner below states "No downtimes were identified for this Web App in the last 24 hours". Detector navigation rail on the left lists Container Issues, Linux CPU Drill Down, Linux Memory Drill Down, Web App Restarted, Web App Slow, SNAT Port Exhaustion, HTTP Server Errors.](../../assets/troubleshooting/diagnose-and-solve/02-detector-web-app-down.png)
+
+The `Web App Down` detector is the deceptive baseline reading that traps inexperienced responders on this failure mode. Both `App Availability` and `Platform Availability` tiles read `100%` and the green banner declares `No downtimes were identified for this Web App in the last 24 hours` - because the container is technically running and the platform is healthy, the detector cannot mark availability as degraded even when every request returns `502`/`503` from the front-end proxy. The actual fault (`failed to forward request` between the proxy and `127.0.0.1:8000`) surfaces one or two detectors deeper in the left rail: `Container Issues`, `Web App Restarted`, and `HTTP Server Errors` are the right next clicks. Always pair this detector reading with the KQL queries in section 3.9 - `AppServicePlatformLogs` and `AppServiceHTTPLogs` show the proxy-side error truth this top-level detector understates.
+
 ---
 
 ## 2) Hypothesis
