@@ -6,8 +6,15 @@ on:
       - 'docs/**/*.md'
       - 'scripts/**/*.py'
       - 'apps/**'
+      - 'labs/**'
+      - 'tools/**'
       - 'AGENTS.md'
-      - '.github/workflows/validate-content-sources.yml'
+      - 'README*.md'
+      - 'CONTRIBUTING.md'
+      - 'SECURITY.md'
+      - 'CODE_OF_CONDUCT.md'
+      - 'mkdocs.yml'
+      - '.github/workflows/**'
   push:
     branches:
       - main
@@ -15,8 +22,15 @@ on:
       - 'docs/**/*.md'
       - 'scripts/**/*.py'
       - 'apps/**'
+      - 'labs/**'
+      - 'tools/**'
       - 'AGENTS.md'
-      - '.github/workflows/validate-content-sources.yml'
+      - 'README*.md'
+      - 'CONTRIBUTING.md'
+      - 'SECURITY.md'
+      - 'CODE_OF_CONDUCT.md'
+      - 'mkdocs.yml'
+      - '.github/workflows/**'
 
 jobs:
   validate-content-sources:

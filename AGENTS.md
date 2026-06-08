@@ -528,7 +528,7 @@ https://learn.microsoft.com/en-us/azure/app-service/overview
 
 **Enforcement**:
 
-- `scripts/normalize_mslearn_locale.py --check` runs in CI on every PR that touches `docs/`, `scripts/`, `apps/`, the workflow file, or `AGENTS.md`.
+- `scripts/normalize_mslearn_locale.py --check` runs in CI on every PR or push that touches a scannable file — Markdown, Python, YAML, JSON, Bicep, Terraform, or text — under any tracked directory except `.git/` and `.playwright-mcp/` (the latter holds MCP-captured browser DOM dumps, which are not authoritative content). Workflow YAML under `.github/workflows/` IS scanned so a Learn URL pasted into a workflow env var is caught.
 - Run `python3 scripts/normalize_mslearn_locale.py --apply` locally to fix drift before pushing.
 - The check is a pure text transformation; HTTP reachability of URLs is validated separately by `scripts/validate_mslearn_urls.py`, which runs on push to `main`.
 
