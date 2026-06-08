@@ -130,6 +130,12 @@ flowchart TD
     style K fill:#ffebee
 ```
 
+#### Portal view: Deployment Center (control-plane deployment status)
+
+![Azure portal Deployment Center blade for app-test-20251107 with tabs Settings (active), Containers (new), Logs, FTPS Credentials; toolbar buttons Save (disabled), Discard (disabled), Refresh, Browse, Sync (disabled), Send us your feedback; info banner reading "You are now in the production slot, which is not recommended for setting up CI/CD. Learn more."; description text "Deploy and build code from your preferred source and build provider. Learn more."; a Source required dropdown reading "Select a code source"; left service navigation showing Overview, Activity log, Access control (IAM), Tags, Diagnose and solve problems, Microsoft Defender for Cloud, Events (preview), Log stream, AI (preview), Resource visualizer, expanded Favorites with Networking and API definition pinned, and an expanded Deployment group with Deployment slots and Deployment Center (selected); collapsed Settings, Performance, App Service plan, Development Tools, API, Monitoring, Automation, and Support + troubleshooting groups below.](../../assets/troubleshooting/deployment-center/01-deployment-center.png)
+
+The `Deployment Center` blade is the Portal-visible surface of the same Kudu ZIP Deploy / Oryx build pipeline that the diagram above traces from box A to box C. When this lab's `az webapp deploy --type zip` command completes, this blade is where an operator first looks to confirm "the deployment worked" - the `Settings` tab reports the configured source, the `Logs` tab lists each deployment ID with a `Success` status, and the production-slot banner reflects the lab's single-slot setup. The critical insight is that this entire blade is a control-plane view: a green `Success` here only tells you the package was accepted, unpacked, and that the startup command was scheduled - it tells you nothing about whether the worker actually imported `app:app`, bound `PORT`, or passed the warmup probe (boxes D through K in the diagram). Treat this blade as "deployment delivered to the host" evidence only, and pair it with the runtime evidence from sections 3.6 through 3.10 before declaring an incident resolved.
+
 ### 1.3 Startup lifecycle details on App Service Linux
 
 For Python on App Service Linux,
