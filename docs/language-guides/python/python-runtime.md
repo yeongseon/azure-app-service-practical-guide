@@ -5,22 +5,6 @@ content_sources:
     type: flowchart
     source: mslearn-adapted
     mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
-content_validation:
-  status: verified
-  last_reviewed: '2026-06-08'
-  reviewer: agent
-  core_claims:
-  - claim: On Azure App Service for Linux Python, ASGI frameworks such as FastAPI
-      can be served via Gunicorn with a Uvicorn worker class (`-k uvicorn.workers.UvicornWorker`)
-      to bridge the synchronous Gunicorn process model to ASGI; this is a documented
-      common setup pattern for FastAPI on App Service.
-    source: https://learn.microsoft.com/en-us/azure/app-service/tutorial-ai-slm-fastapi
-    verified: true
-  - claim: The default App Service Linux Python container runs apps using the Gunicorn
-      WSGI HTTP server with extra arguments `--bind=0.0.0.0 --timeout 600`, behind
-      an Nginx reverse proxy.
-    source: https://learn.microsoft.com/en-us/azure/app-service/configure-language-python
-    verified: true
 ---
 # Python Runtime
 

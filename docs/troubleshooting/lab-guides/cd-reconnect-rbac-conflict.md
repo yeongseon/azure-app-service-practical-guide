@@ -29,20 +29,6 @@ content_sources:
         - https://learn.microsoft.com/azure/app-service/configure-custom-container?tabs=debian&pivots=container-linux
         - https://learn.microsoft.com/azure/app-service/deploy-container-github-action
         - https://learn.microsoft.com/azure/role-based-access-control/role-assignments-cli
-content_validation:
-  status: verified
-  last_reviewed: "2026-04-22"
-  reviewer: agent
-  core_claims:
-    - claim: "Azure RBAC role assignments are uniquely identified by the combination of scope, principal, and role definition."
-      source: "https://learn.microsoft.com/azure/role-based-access-control/role-assignments-cli"
-      verified: true
-    - claim: "App Service can authenticate to Azure Container Registry using its system-assigned managed identity by enabling acrUseManagedIdentityCreds and granting the identity the AcrPull role on the registry."
-      source: "https://learn.microsoft.com/azure/app-service/configure-custom-container?tabs=debian&pivots=container-linux"
-      verified: true
-    - claim: "ARM deployments that create Microsoft.Authorization/roleAssignments fail with RoleAssignmentExists when a different assignment name targets the same scope, principal, and role."
-      source: "https://learn.microsoft.com/azure/role-based-access-control/troubleshooting"
-      verified: true
 validation:
   az_cli:
     last_tested: "2026-04-22"
@@ -53,7 +39,6 @@ validation:
     last_tested: "2026-04-22"
     result: pass
 ---
-
 # Lab: CD Reconnect RBAC Conflict
 
 Reproduce the `RoleAssignmentExists: The role assignment already exists` error that surfaces when App Service Deployment Center container continuous deployment is reconnected to a Web App that uses its system-assigned managed identity to pull images from Azure Container Registry, after a previous CD configuration left the AcrPull role assignment behind.

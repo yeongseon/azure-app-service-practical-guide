@@ -5,13 +5,7 @@ content_sources:
       type: flowchart
       source: mslearn-adapted
       mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/app-service-best-practices
-content_validation:
-  status: verified
-  last_reviewed: 2026-05-15
-  reviewer: agent
-  core_claims: []
 ---
-
 # Best Practices
 
 This section is the design judgment layer of the Azure App Service guide. Read it after understanding platform behavior and before implementing language-specific code so your architecture and operational choices are intentional from day one.

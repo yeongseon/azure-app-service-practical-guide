@@ -5,22 +5,6 @@ content_sources:
     type: flowchart
     source: mslearn-adapted
     mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
-content_validation:
-  status: verified
-  last_reviewed: '2026-06-08'
-  reviewer: agent
-  core_claims:
-  - claim: 'On Azure App Service for Tomcat, `az webapp deploy --type war` (OneDeploy)
-      renames the uploaded WAR to `app.war` and places it at `/home/site/wwwroot/app.war`,
-      serving it at the root context (`/`); the default targets a single path, so
-      OneDeploy effectively supports one WAR per app at the default location.'
-    source: https://learn.microsoft.com/en-us/azure/app-service/configure-language-java-deploy-run
-    verified: true
-  - claim: Deploying multiple WARs to a single Tomcat instance on App Service requires
-      `--target-path` for OneDeploy, or an alternative deployment method such as
-      FTP/SCM file copy into the Tomcat `webapps` directory.
-    source: https://learn.microsoft.com/en-us/azure/app-service/configure-language-java-deploy-run
-    verified: true
 ---
 # Java Runtime
 

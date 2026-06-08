@@ -5,13 +5,7 @@ content_sources:
       type: flowchart
       source: mslearn-adapted
       mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/app-service-best-practices
-content_validation:
-  status: verified
-  last_reviewed: 2026-05-15
-  reviewer: agent
-  core_claims: []
 ---
-
 # Operations
 
 Production operations and day-2 practices for Azure App Service. This section is language-agnostic and focuses on platform behavior, reliability, security, and cost control.

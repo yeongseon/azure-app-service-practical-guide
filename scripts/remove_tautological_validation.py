@@ -33,15 +33,16 @@ from typing import Any
 
 import yaml
 
-PLACEHOLDER_TEXT = "primary source basis"
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-# Matches the `content_validation:` key at column 0 of a YAML block and all
-# subsequent indented (or blank) lines that belong to it. Stops at the next
-# top-level key (line starting with a non-whitespace, non-`---` character) or
-# the frontmatter terminator.
+from lib.content_scope import (  # noqa: E402
+    TAUTOLOGICAL_CLAIM_MARKER,
+    is_tautological_text,
+)
+
 CONTENT_VALIDATION_BLOCK = re.compile(
-    r"^content_validation:[ \t]*\n"  # the key line
-    r"(?:[ \t]+[^\n]*\n|[ \t]*\n)*",  # indented or blank continuation lines
+    r"^content_validation:[ \t]*\n"
+    r"(?:[ \t]+[^\n]*\n|[ \t]*\n)*",
     re.MULTILINE,
 )
 
@@ -50,9 +51,10 @@ FRONTMATTER_DELIMITER = re.compile(r"^---\s*\n(.*?)\n---\s*\n", re.DOTALL)
 
 def find_candidate_files(docs_dir: Path) -> list[Path]:
     candidates: list[Path] = []
+    marker = TAUTOLOGICAL_CLAIM_MARKER.casefold()
     for md_file in sorted(docs_dir.rglob("*.md")):
         text = md_file.read_text(encoding="utf-8")
-        if PLACEHOLDER_TEXT in text:
+        if marker in text.casefold():
             candidates.append(md_file)
     return candidates
 
@@ -70,8 +72,7 @@ def split_frontmatter(text: str) -> tuple[str | None, str, str]:
 def is_tautological_claim(claim: Any) -> bool:
     if not isinstance(claim, dict):
         return False
-    claim_text = claim.get("claim", "")
-    return isinstance(claim_text, str) and PLACEHOLDER_TEXT in claim_text
+    return is_tautological_text(claim.get("claim"))
 
 
 def classify(filepath: Path) -> tuple[str, str | None]:

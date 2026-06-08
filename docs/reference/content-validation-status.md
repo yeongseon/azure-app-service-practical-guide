@@ -6,7 +6,7 @@ content_sources:
 
 # Content Validation Status
 
-This page tracks the source validation status of all documentation content. All content must be traceable to official Microsoft Learn documentation.
+This page tracks `content_validation` metadata for **in-scope factual-claim documents** under `docs/best-practices/`, `docs/operations/`, `docs/platform/`, `docs/troubleshooting/`. Pages outside this scope — navigation indexes (`docs/best-practices/index.md`, `docs/operations/deployment/index.md`, `docs/operations/index.md`, `docs/platform/index.md`, `docs/troubleshooting/first-10-minutes/index.md`, `docs/troubleshooting/index.md`, `docs/troubleshooting/playbooks/index.md`), reference-lookup KQL packs (`docs/troubleshooting/kql/`, `docs/troubleshooting/lab-guides/`), tutorials, language guides, and start-here landing pages — intentionally omit the metadata and are not counted here. See `AGENTS.md` §Text Content Validation for the full policy and `scripts/lib/content_scope.py` for the executable scope definition.
 
 ## Summary
 
@@ -15,15 +15,15 @@ This page tracks the source validation status of all documentation content. All 
 | Content Type | Total | Verified | Pending | Unverified | No Metadata |
 |---|---:|---:|---:|---:|---:|
 | Mermaid Diagrams | 364 | 364 | 0 | 0 | 0 |
-| Text Documents | 69 | 69 | 0 | 0 | 0 |
+| In-Scope Factual-Claim Documents | 71 | 71 | 0 | 0 | 0 |
 
-!!! success "All Content Verified"
-    All text documents have verified Microsoft Learn sources for core claims.
+!!! success "All In-Scope Documents Verified"
+    Every in-scope factual-claim document has verified Microsoft Learn sources for its core claims.
 
 <!-- diagram-id: content-validation-status-pie -->
 ```mermaid
-pie title Document Validation Status
-    "Verified" : 69
+pie title In-Scope Document Validation Status
+    "Verified" : 71
 ```
 
 ## By Section
@@ -36,6 +36,8 @@ pie title Document Validation Status
 | [Deployment Options](../platform/deployment-options.md) | ✅ | ✅ Verified | 5/5 | 2026-05-01 |
 | [Deployment Scenarios](../platform/deployment-scenarios.md) | ✅ | ✅ Verified | 4/4 | 2026-04-12 |
 | [Hosting Models](../platform/hosting-models.md) | ✅ | ✅ Verified | 5/5 | 2026-04-12 |
+| [Index](../platform/architecture/index.md) | ✅ | ✅ Verified | 4/4 | 2026-04-27 |
+| [Index](../platform/containers/index.md) | ✅ | ✅ Verified | 5/5 | 2026-05-01 |
 | [Mtls](../platform/mtls.md) | ✅ | ✅ Verified | 4/4 | 2026-04-25 |
 | [Networking](../platform/networking.md) | ✅ | ✅ Verified | 8/8 | 2026-04-12 |
 | [Request Lifecycle](../platform/request-lifecycle.md) | ✅ | ✅ Verified | 5/5 | 2026-04-12 |
@@ -139,7 +141,9 @@ pie title Document Validation Status
 
 ## How to Add Validation
 
-Add a `content_validation` block to your document's frontmatter:
+Before adding metadata, confirm the page is in scope. The block is required ONLY for factual-claim pages under `docs/platform/`, `docs/best-practices/`, `docs/operations/`, and `docs/troubleshooting/` (excluding `troubleshooting/kql/`, `troubleshooting/lab-guides/`, and navigation landing pages listed in `scripts/lib/content_scope.NAVIGATION_INDEXES`).
+
+For an in-scope page, add a `content_validation` block to its frontmatter:
 
 ```yaml
 ---
@@ -156,6 +160,8 @@ content_validation:
       verified: true
 ---
 ```
+
+Each `core_claim` MUST be a verifiable factual assertion about Azure App Service behavior (a documented limit, default, or feature). Meta-statements such as "this page uses Microsoft Learn as the primary source basis" are tautological and rejected — the marker text `primary source basis` triggers a fail-fast in both this generator and `tools/validate_frontmatter.py`.
 
 Then regenerate this page:
 
