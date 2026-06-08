@@ -55,7 +55,7 @@ Each checklist row above has a corresponding entry surface in the Azure Portal. 
 
 **[Inferred]** The metric-definition row labels `Scope`, `Metric Namespace`, `Metric`, and `Aggregation` are consistent with the per-chart configuration steps suggested by the [Performance](performance.md) checklist row above ("Slow responses, high latency, elevated error rates"). The `Local Time: Last 24 hours (Automatic)` time range chip is consistent with the first-10-minutes triage window scope of this index page.
 
-**[Not Proven]** No metric value, data series, or historical detail is shown on this view.
+**[Not Proven]** Additional metric value detail, data series detail, and historical detail are not visible on this view.
 
 ### Portal view: Outbound / Network checklist
 
