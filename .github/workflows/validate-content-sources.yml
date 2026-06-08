@@ -3,8 +3,13 @@ name: Validate Content Sources
 on:
   pull_request:
     paths:
-      - 'docs/**/*.md'
-      - 'scripts/**/*.py'
+      # These path filters MUST stay at least as broad as the EXTENSIONS set
+      # in scripts/normalize_mslearn_locale.py (.md, .py, .yml, .yaml, .json,
+      # .bicep, .tf, .txt). Narrowing 'docs/**' to 'docs/**/*.md' or
+      # 'scripts/**' to 'scripts/**/*.py' lets a PR touching only .json files
+      # under those paths bypass the MSLearn locale check entirely.
+      - 'docs/**'
+      - 'scripts/**'
       - 'apps/**'
       - 'labs/**'
       - 'tools/**'
@@ -19,8 +24,8 @@ on:
     branches:
       - main
     paths:
-      - 'docs/**/*.md'
-      - 'scripts/**/*.py'
+      - 'docs/**'
+      - 'scripts/**'
       - 'apps/**'
       - 'labs/**'
       - 'tools/**'

@@ -59,11 +59,15 @@ from pathlib import Path
 # Capture the first path segment after the ``learn.microsoft.com/`` hostname
 # so a per-match function can decide whether to insert, replace, or leave
 # the locale alone. A naive "insert en-us unless an xx-xx/ locale is already
-# present" regex corrupts three real-world URL shapes:
+# present" regex corrupts four real-world URL shapes:
 #   1. The Learn catalog API root segment ``api/`` (no locale exists; would 404)
 #   2. Title-Case locale variants such as ``en-US/`` (old AGENTS.md guidance)
 #   3. Script-tag locale variants such as ``zh-Hans/`` (valid Learn locale)
-LEARN_URL_RE = re.compile(r"learn\.microsoft\.com/(?P<seg>[A-Za-z]+(?:-[A-Za-z]+)?)/")
+#   4. Substring-only hosts such as ``mylearn.microsoft.com/`` or
+#      ``fakelearn.microsoft.com/`` (NOT the Learn host; rejected by the
+#      leading ``\b`` word boundary, which matches between ``/`` and ``l``
+#      but not between two word characters such as ``y`` and ``l``).
+LEARN_URL_RE = re.compile(r"\blearn\.microsoft\.com/(?P<seg>[A-Za-z]+(?:-[A-Za-z]+)?)/")
 
 # Lowercase two-letter language-region form currently used by Learn article
 # locales (``en-us``, ``ja-jp``, ``ko-kr``), broadened to also recognize
