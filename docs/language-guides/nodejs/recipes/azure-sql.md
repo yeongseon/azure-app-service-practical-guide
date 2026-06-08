@@ -147,5 +147,5 @@ The Identity blade is the Portal entry point for the managed-identity flow this 
 - [Networking Concepts](../../../platform/networking.md)
 
 ## Sources
-- [Azure SQL Database connection with Node.js (Microsoft Learn)](https://learn.microsoft.com/azure/azure-sql/database/connect-query-nodejs)
-- [Connect App Service to Azure Database using Managed Identity (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/tutorial-connect-msi-azure-database)
+- [Azure SQL Database connection with Node.js (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/azure-sql/database/connect-query-nodejs)
+- [Connect App Service to Azure Database using Managed Identity (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/tutorial-connect-msi-azure-database)

@@ -13,22 +13,22 @@ content_validation:
   reviewer: agent
   core_claims:
     - claim: "Deployment slots require an App Service Plan tier Standard or higher."
-      source: "https://learn.microsoft.com/azure/app-service/deploy-staging-slots"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots"
       verified: true
     - claim: "A deployment slot is a live app with its own hostname."
-      source: "https://learn.microsoft.com/azure/app-service/deploy-staging-slots"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots"
       verified: true
     - claim: "Connection strings, external endpoint URLs, and other environment-specific values can be configured as slot settings so they stay with the slot during swap."
-      source: "https://learn.microsoft.com/azure/app-service/deploy-staging-slots"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots"
       verified: true
     - claim: "App Service supports swap with preview so target-slot settings can be applied before final cutover."
-      source: "https://learn.microsoft.com/azure/app-service/deploy-staging-slots"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots"
       verified: true
     - claim: "On Windows, applicationInitialization in web.config declares URLs the platform pings on the target slot before completing a swap."
-      source: "https://learn.microsoft.com/azure/app-service/deploy-staging-slots"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots"
       verified: true
     - claim: "On Linux, slot-swap warm-up is controlled by WEBSITE_SWAP_WARMUP_PING_PATH (path to ping) and WEBSITE_SWAP_WARMUP_PING_STATUSES (acceptable response codes; by default all responses are valid)."
-      source: "https://learn.microsoft.com/azure/app-service/deploy-staging-slots"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots"
       verified: true
 ---
 
@@ -431,8 +431,8 @@ For language-specific operational guidance, see:
 - [Operations Index](./index.md)
 - [Health and Recovery](./health-recovery.md)
 - [Security](./security.md)
-- [Deployment slots (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/deploy-staging-slots)
+- [Deployment slots (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots)
 
 ## Sources
 
-- [Deployment slots (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/deploy-staging-slots)
+- [Deployment slots (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots)

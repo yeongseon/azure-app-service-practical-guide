@@ -5,13 +5,13 @@ content_validation:
   reviewer: agent
   core_claims:
     - claim: "Deployment slots are the core mechanism for safe App Service releases."
-      source: "https://learn.microsoft.com/azure/app-service/deploy-best-practices"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/deploy-best-practices"
       verified: true
     - claim: "Slot settings (sticky settings): Remain in the same slot during swap"
-      source: "https://learn.microsoft.com/azure/app-service/deploy-staging-slots"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots"
       verified: true
     - claim: "`SCM_DO_BUILD_DURING_DEPLOYMENT=true` uses App Service build automation (Oryx/Kudu) during deployment."
-      source: "https://learn.microsoft.com/azure/app-service/deploy-best-practices"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/deploy-best-practices"
       verified: true
 content_sources:
   diagrams:
@@ -295,7 +295,7 @@ Use this checklist before every production promotion:
 
 ## Sources
 
-- [Deploy your app to Azure App Service - Best Practices (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/deploy-best-practices)
-- [Deploy to staging slots in Azure App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/deploy-staging-slots)
-- [Continuous deployment to Azure App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/deploy-continuous-deployment)
-- [Run your app in Azure App Service directly from a ZIP package (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/deploy-run-package)
+- [Deploy your app to Azure App Service - Best Practices (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/deploy-best-practices)
+- [Deploy to staging slots in Azure App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots)
+- [Continuous deployment to Azure App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/deploy-continuous-deployment)
+- [Run your app in Azure App Service directly from a ZIP package (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/deploy-run-package)

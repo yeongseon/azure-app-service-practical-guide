@@ -37,19 +37,19 @@ content_validation:
   reviewer: agent
   core_claims:
     - claim: "On Windows, the component is implemented as a native IIS module."
-      source: "https://learn.microsoft.com/azure/app-service/overview-authentication-authorization"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization"
       verified: true
     - claim: "On Linux and custom containers, authentication runs as a sidecar-style proxy process in front of your containerized app."
-      source: "https://learn.microsoft.com/azure/app-service/overview-authentication-authorization"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization"
       verified: true
     - claim: "After successful authentication, identity information is projected to your app through request headers."
-      source: "https://learn.microsoft.com/azure/app-service/overview-authentication-authorization"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization"
       verified: true
     - claim: "Server-directed flow is the default mode for classic web applications where browser navigation and redirects are expected."
-      source: "https://learn.microsoft.com/azure/app-service/overview-authentication-authorization"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization"
       verified: true
     - claim: "Client-directed flow is common for SPAs, mobile clients, and API consumers that obtain tokens directly from an identity provider."
-      source: "https://learn.microsoft.com/azure/app-service/overview-authentication-authorization"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization"
       verified: true
 ---
 
@@ -461,8 +461,8 @@ Mitigations:
 
 ## Sources
 
-- [Authentication and authorization in Azure App Service](https://learn.microsoft.com/azure/app-service/overview-authentication-authorization)
-- [Configure authentication providers](https://learn.microsoft.com/azure/app-service/configure-authentication-provider-aad)
-- [Work with OAuth tokens in App Service](https://learn.microsoft.com/azure/app-service/configure-authentication-oauth-tokens)
-- [App Service Auth architecture](https://learn.microsoft.com/azure/app-service/overview-authentication-authorization#architecture)
-- [Authentication in deployment slots](https://learn.microsoft.com/azure/app-service/deploy-staging-slots)
+- [Authentication and authorization in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization)
+- [Configure authentication providers](https://learn.microsoft.com/en-us/azure/app-service/configure-authentication-provider-aad)
+- [Work with OAuth tokens in App Service](https://learn.microsoft.com/en-us/azure/app-service/configure-authentication-oauth-tokens)
+- [App Service Auth architecture](https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization#architecture)
+- [Authentication in deployment slots](https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots)

@@ -13,16 +13,16 @@ content_validation:
   reviewer: agent
   core_claims:
     - claim: "ZIP Deploy is used to push a prepared ZIP package directly to App Service."
-      source: "https://learn.microsoft.com/azure/app-service/deploy-zip"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/deploy-zip"
       verified: true
     - claim: "The ZIP file must contain the application files at the archive root."
-      source: "https://learn.microsoft.com/azure/app-service/deploy-zip"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/deploy-zip"
       verified: true
     - claim: "WEBSITE_RUN_FROM_PACKAGE=1 tells App Service to run from a mounted package instead of mutable file copies in wwwroot."
-      source: "https://learn.microsoft.com/azure/app-service/deploy-run-package"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/deploy-run-package"
       verified: true
     - claim: "When App Service runs from package, the package is mounted read-only."
-      source: "https://learn.microsoft.com/azure/app-service/deploy-run-package"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/deploy-run-package"
       verified: true
 ---
 

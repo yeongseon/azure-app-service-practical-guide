@@ -1016,5 +1016,5 @@ This Application Insights Overview blade is the Portal destination for the telem
 - [Troubleshooting & Debugging](../../../reference/troubleshooting.md)
 
 ## Sources
-- [Enable diagnostics logging for apps in App Service](https://learn.microsoft.com/azure/app-service/troubleshoot-diagnostic-logs)
-- [Application Insights for Python](https://learn.microsoft.com/azure/azure-monitor/app/opencensus-python)
+- [Enable diagnostics logging for apps in App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs)
+- [Application Insights for Python](https://learn.microsoft.com/en-us/azure/azure-monitor/app/opencensus-python)

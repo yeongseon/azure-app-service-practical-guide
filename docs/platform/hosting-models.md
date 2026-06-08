@@ -12,19 +12,19 @@ content_validation:
   reviewer: agent
   core_claims:
     - claim: "A single plan can host multiple apps, which share the same compute pool."
-      source: "https://learn.microsoft.com/azure/app-service/overview-hosting-plans"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-hosting-plans"
       verified: true
     - claim: "Both Linux and Windows are supported."
-      source: "https://learn.microsoft.com/azure/app-service/overview"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview"
       verified: true
     - claim: "An App Service plan defines the available CPU and memory per instance."
-      source: "https://learn.microsoft.com/azure/app-service/overview-hosting-plans"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-hosting-plans"
       verified: true
     - claim: "An App Service plan defines the maximum instance count."
-      source: "https://learn.microsoft.com/azure/app-service/overview-hosting-plans"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-hosting-plans"
       verified: true
     - claim: "An App Service plan defines the feature set, such as autoscale, deployment slots, and networking capabilities."
-      source: "https://learn.microsoft.com/azure/app-service/overview-hosting-plans"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-hosting-plans"
       verified: true
 ---
 
@@ -301,10 +301,10 @@ For language-specific implementation details, see:
 - [Request Lifecycle](./request-lifecycle.md)
 - [Scaling](./scaling.md)
 - [Networking](./networking.md)
-- [App Service plan overview (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-hosting-plans)
-- [Custom container in App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/tutorial-custom-container)
+- [App Service plan overview (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/overview-hosting-plans)
+- [Custom container in App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/tutorial-custom-container)
 
 ## Sources
 
-- [App Service plan overview (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-hosting-plans)
-- [Custom container in App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/tutorial-custom-container)
+- [App Service plan overview (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/overview-hosting-plans)
+- [Custom container in App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/tutorial-custom-container)

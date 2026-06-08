@@ -139,5 +139,5 @@ The Environment variables blade with the `App settings` tab selected is the Port
 - [Azure App Service Security Documentation](../../../operations/security.md)
 
 ## Sources
-- [Official Azure Key Vault References documentation](https://learn.microsoft.com/azure/app-service/app-service-key-vault-references)
-- [Use managed identity to access Key Vault from App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/tutorial-connect-msi-key-vault)
+- [Official Azure Key Vault References documentation](https://learn.microsoft.com/en-us/azure/app-service/app-service-key-vault-references)
+- [Use managed identity to access Key Vault from App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/tutorial-connect-msi-key-vault)

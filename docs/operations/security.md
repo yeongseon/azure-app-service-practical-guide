@@ -13,19 +13,19 @@ content_validation:
   reviewer: agent
   core_claims:
     - claim: "App Service supports enforcing HTTPS-only access."
-      source: "https://learn.microsoft.com/azure/app-service/overview-security"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-security"
       verified: true
     - claim: "App Service supports configuring a minimum TLS version."
-      source: "https://learn.microsoft.com/azure/app-service/overview-security"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-security"
       verified: true
     - claim: "App Service supports managed identities for apps."
-      source: "https://learn.microsoft.com/azure/app-service/overview-security"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-security"
       verified: true
     - claim: "Access restrictions can be used to limit inbound traffic to an App Service app."
-      source: "https://learn.microsoft.com/azure/app-service/networking-features"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/networking-features"
       verified: true
     - claim: "App Service app settings can use Azure Key Vault references for secrets."
-      source: "https://learn.microsoft.com/azure/app-service/app-service-key-vault-references"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/app-service-key-vault-references"
       verified: true
 ---
 
@@ -399,12 +399,12 @@ For language-specific security patterns and auth integration:
 - [Security Architecture](../platform/security-architecture.md)
 - [Networking](./networking.md)
 - [Health and Recovery](./health-recovery.md)
-- [App Service security overview (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-security)
-- [Authentication and authorization (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-authentication-authorization)
-- [Configure CORS (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/app-service-web-tutorial-rest-api#enable-cors)
+- [App Service security overview (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/overview-security)
+- [Authentication and authorization (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization)
+- [Configure CORS (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/app-service-web-tutorial-rest-api#enable-cors)
 
 ## Sources
 
-- [App Service security overview (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-security)
-- [Authentication and authorization (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-authentication-authorization)
-- [Configure CORS (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/app-service-web-tutorial-rest-api#enable-cors)
+- [App Service security overview (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/overview-security)
+- [Authentication and authorization (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization)
+- [Configure CORS (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/app-service-web-tutorial-rest-api#enable-cors)

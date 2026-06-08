@@ -297,5 +297,5 @@ Your local Express setup in this tutorial is meant to mirror the runtime shape o
 - [Node.js Runtime Concepts](../../../platform/architecture/index.md)
 
 ## Sources
-- [Configure Node.js app on Azure App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/configure-language-nodejs)
-- [App Service local development setup (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-local-cache)
+- [Configure Node.js app on Azure App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/configure-language-nodejs)
+- [App Service local development setup (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/overview-local-cache)

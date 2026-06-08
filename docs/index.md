@@ -73,7 +73,7 @@ flowchart TD
 
 This is an independent community project. Not affiliated with or endorsed by Microsoft.
 
-Primary product reference: [Azure App Service overview](https://learn.microsoft.com/azure/app-service/overview)
+Primary product reference: [Azure App Service overview](https://learn.microsoft.com/en-us/azure/app-service/overview)
 
 ## See Also
 
@@ -82,4 +82,4 @@ Primary product reference: [Azure App Service overview](https://learn.microsoft.
 ## Sources
 
 - [Microsoft Learn source 1](https://learn.microsoft.com/en-us/azure/app-service/overview)
-- [Microsoft Learn source 2](https://learn.microsoft.com/azure/app-service/overview)
+- [Microsoft Learn source 2](https://learn.microsoft.com/en-us/azure/app-service/overview)

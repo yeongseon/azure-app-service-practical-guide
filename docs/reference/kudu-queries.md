@@ -182,8 +182,8 @@ Use this Overview blade to confirm the app identity before switching to the Kudu
 
 ## Sources
 
-- [Kudu in Azure App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/resources-kudu)
-- [App Service Diagnostics Overview (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-diagnostics)
+- [Kudu in Azure App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/resources-kudu)
+- [App Service Diagnostics Overview (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/overview-diagnostics)
 
 ## Language-Specific Details
 

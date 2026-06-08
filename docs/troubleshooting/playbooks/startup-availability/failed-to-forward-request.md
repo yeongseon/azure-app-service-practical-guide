@@ -41,13 +41,13 @@ content_validation:
   reviewer: agent
   core_claims:
     - claim: "By default, App Service assumes your custom container listens on port 80."
-      source: "https://learn.microsoft.com/azure/app-service/configure-custom-container"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container"
       verified: true
     - claim: "If your custom container listens on a different port, you must set the `WEBSITES_PORT` app setting."
-      source: "https://learn.microsoft.com/azure/app-service/configure-custom-container"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container"
       verified: true
     - claim: "App Service currently allows your container to expose only one port for HTTP requests."
-      source: "https://learn.microsoft.com/azure/app-service/configure-custom-container"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container"
       verified: true
 ---
 # Failed to Forward Request (Azure App Service Linux)

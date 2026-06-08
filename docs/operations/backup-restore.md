@@ -11,13 +11,13 @@ content_validation:
   reviewer: agent
   core_claims:
     - claim: "App Service supports both scheduled backups and on-demand backups."
-      source: "https://learn.microsoft.com/azure/app-service/manage-backup"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/manage-backup"
       verified: true
     - claim: "App Service backup can include site content, app configuration, and optional connected database backups when supported."
-      source: "https://learn.microsoft.com/azure/app-service/manage-backup"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/manage-backup"
       verified: true
     - claim: "App Service backups are not a replacement for database-native point-in-time restore."
-      source: "https://learn.microsoft.com/azure/app-service/manage-backup"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/manage-backup"
       verified: true
 ---
 
@@ -298,10 +298,10 @@ For language-specific operational guidance, see:
 - [Operations Index](./index.md)
 - [Deployment Slots](./deployment-slots.md)
 - [Health and Recovery](./health-recovery.md)
-- [Back up and restore App Service apps (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/manage-backup)
-- [Disaster recovery guidance (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/manage-disaster-recovery)
+- [Back up and restore App Service apps (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/manage-backup)
+- [Disaster recovery guidance (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/manage-disaster-recovery)
 
 ## Sources
 
-- [Back up and restore App Service apps (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/manage-backup)
-- [Disaster recovery guidance (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/manage-disaster-recovery)
+- [Back up and restore App Service apps (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/manage-backup)
+- [Disaster recovery guidance (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/manage-disaster-recovery)

@@ -5,10 +5,10 @@ content_validation:
   reviewer: agent
   core_claims:
     - claim: "Metrics you might want to monitor include Average memory working set, CPU time, Memory working set, Requests, and Response time."
-      source: "https://learn.microsoft.com/azure/app-service/troubleshoot-performance-degradation"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-performance-degradation"
       verified: true
     - claim: "Troubleshooting performance degradation involves observing app behavior, collecting data, and mitigating the issue."
-      source: "https://learn.microsoft.com/azure/app-service/troubleshoot-performance-degradation"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-performance-degradation"
       verified: true
 content_sources:
   diagrams:

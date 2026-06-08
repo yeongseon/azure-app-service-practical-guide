@@ -228,4 +228,4 @@ The `Configuration > General settings` blade is the Portal verification surface 
 
 ## Sources
 - [Azure App Configuration documentation](https://learn.microsoft.com/en-us/azure/azure-app-configuration/overview)
-- [Configure app settings in App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/configure-common)
+- [Configure app settings in App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/configure-common)

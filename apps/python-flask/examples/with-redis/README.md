@@ -230,5 +230,5 @@ az role assignment create \
 ## See Also
 
 - [redis-py Documentation](https://redis-py.readthedocs.io/)
-- [Azure Cache for Redis](https://learn.microsoft.com/azure/azure-cache-for-redis/)
+- [Azure Cache for Redis](https://learn.microsoft.com/en-us/azure/azure-cache-for-redis/)
 - [Flask-Session](https://flask-session.readthedocs.io/)

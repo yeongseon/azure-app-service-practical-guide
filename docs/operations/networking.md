@@ -28,19 +28,19 @@ content_validation:
   reviewer: agent
   core_claims:
     - claim: "Access restrictions control inbound traffic to an App Service app."
-      source: "https://learn.microsoft.com/azure/app-service/networking-features"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/networking-features"
       verified: true
     - claim: "VNet integration is used for outbound access from App Service to private resources."
-      source: "https://learn.microsoft.com/azure/app-service/overview-vnet-integration"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration"
       verified: true
     - claim: "Private endpoint handles inbound traffic only and does not replace VNet integration for outbound traffic."
-      source: "https://learn.microsoft.com/azure/app-service/overview-private-endpoint"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-private-endpoint"
       verified: true
     - claim: "Access restriction rules are not evaluated for traffic that arrives through the private endpoint."
-      source: "https://learn.microsoft.com/azure/app-service/overview-private-endpoint"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-private-endpoint"
       verified: true
     - claim: "For App Service private endpoints, clients resolve app-name.azurewebsites.net through the privatelink.azurewebsites.net private DNS zone."
-      source: "https://learn.microsoft.com/azure/app-service/overview-private-endpoint"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-private-endpoint"
       verified: true
 ---
 
@@ -526,14 +526,14 @@ For language-specific operational guidance, see:
 - [Operations Index](./index.md)
 - [Security](./security.md)
 - [Health and Recovery](./health-recovery.md)
-- [App Service networking features (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/networking-features)
-- [Use private endpoints for apps (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-private-endpoint)
-- [Integrate your app with an Azure virtual network (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-vnet-integration)
-- [Configure Bastion for native client connections (Microsoft Learn)](https://learn.microsoft.com/azure/bastion/native-client)
-- [About Azure Bastion configuration settings (Microsoft Learn)](https://learn.microsoft.com/azure/bastion/configuration-settings)
+- [App Service networking features (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/networking-features)
+- [Use private endpoints for apps (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/overview-private-endpoint)
+- [Integrate your app with an Azure virtual network (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration)
+- [Configure Bastion for native client connections (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/bastion/native-client)
+- [About Azure Bastion configuration settings (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/bastion/configuration-settings)
 
 ## Sources
 
-- [App Service networking features (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/networking-features)
-- [Use private endpoints for apps (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-private-endpoint)
-- [Integrate your app with an Azure virtual network (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-vnet-integration)
+- [App Service networking features (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/networking-features)
+- [Use private endpoints for apps (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/overview-private-endpoint)
+- [Integrate your app with an Azure virtual network (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration)

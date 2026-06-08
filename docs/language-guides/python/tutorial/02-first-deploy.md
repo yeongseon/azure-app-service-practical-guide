@@ -160,4 +160,4 @@ After running `az webapp up` in this tutorial, the Overview blade is the first P
 ## Sources
 
 - [Quickstart: Deploy a Python web app (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/quickstart-python)
-- [Enable diagnostic logging for apps in Azure App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/troubleshoot-diagnostic-logs)
+- [Enable diagnostic logging for apps in Azure App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs)

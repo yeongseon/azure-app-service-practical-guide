@@ -127,5 +127,5 @@ The `Environment variables` blade with the `App settings` tab selected is the Po
 - [Logging & Monitoring Tutorial](../tutorial/04-logging-monitoring.md)
 
 ## Sources
-- [Deploy Next.js hybrid apps to Azure Static Web Apps (Microsoft Learn)](https://learn.microsoft.com/azure/static-web-apps/deploy-nextjs-hybrid)
-- [Configure Node.js on Azure App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/configure-language-nodejs)
+- [Deploy Next.js hybrid apps to Azure Static Web Apps (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/static-web-apps/deploy-nextjs-hybrid)
+- [Configure Node.js on Azure App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/configure-language-nodejs)

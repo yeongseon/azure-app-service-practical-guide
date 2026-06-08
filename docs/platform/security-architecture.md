@@ -37,19 +37,19 @@ content_validation:
   reviewer: agent
   core_claims:
     - claim: "Access Restrictions evaluate allow/deny rules by IP, CIDR, service tag, or virtual network source."
-      source: "https://learn.microsoft.com/azure/app-service/overview-security"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-security"
       verified: true
     - claim: "Private Endpoints expose app ingress via private IP in your virtual network."
-      source: "https://learn.microsoft.com/azure/app-service/overview-security"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-security"
       verified: true
     - claim: "Regional VNet Integration routes application egress into selected virtual network paths."
-      source: "https://learn.microsoft.com/azure/app-service/overview-vnet-integration"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration"
       verified: true
     - claim: "App Service supports configuring a minimum TLS version of 1.2 or higher for the web app and SCM site."
-      source: "https://learn.microsoft.com/azure/app-service/overview-security"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-security"
       verified: true
     - claim: "Managed identity replaces embedded credentials with workload-bound tokens issued by Microsoft Entra ID."
-      source: "https://learn.microsoft.com/azure/app-service/overview-security"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-security"
       verified: true
 ---
 
@@ -447,10 +447,10 @@ A durable security program treats configuration as code and operations as contin
 
 ## Sources
 
-- [App Service security overview](https://learn.microsoft.com/azure/app-service/overview-security)
-- [Security baseline for App Service](https://learn.microsoft.com/security/benchmark/azure/baselines/app-service-security-baseline)
-- [Networking features overview](https://learn.microsoft.com/azure/app-service/networking-features)
+- [App Service security overview](https://learn.microsoft.com/en-us/azure/app-service/overview-security)
+- [Security baseline for App Service](https://learn.microsoft.com/en-us/security/benchmark/azure/baselines/app-service-security-baseline)
+- [Networking features overview](https://learn.microsoft.com/en-us/azure/app-service/networking-features)
 - [Zero Trust for App Service](https://learn.microsoft.com/en-us/security/zero-trust/)
-- [Managed identities for App Service](https://learn.microsoft.com/azure/app-service/overview-managed-identity)
-- [Key Vault references](https://learn.microsoft.com/azure/app-service/app-service-key-vault-references)
-- [Microsoft Defender for App Service](https://learn.microsoft.com/azure/defender-for-cloud/defender-for-app-service-introduction)
+- [Managed identities for App Service](https://learn.microsoft.com/en-us/azure/app-service/overview-managed-identity)
+- [Key Vault references](https://learn.microsoft.com/en-us/azure/app-service/app-service-key-vault-references)
+- [Microsoft Defender for App Service](https://learn.microsoft.com/en-us/azure/defender-for-cloud/defender-for-app-service-introduction)

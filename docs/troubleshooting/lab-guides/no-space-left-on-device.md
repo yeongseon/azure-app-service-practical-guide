@@ -948,9 +948,9 @@ az group delete --name "$RG" --yes --no-wait
 
 ## Sources
 
-- [Operating system functionality on Azure App Service](https://learn.microsoft.com/azure/app-service/operating-system-functionality)
-- [Azure App Service plan overview](https://learn.microsoft.com/azure/app-service/overview-hosting-plans)
-- [Best practices for Azure App Service diagnostics](https://learn.microsoft.com/azure/app-service/troubleshoot-diagnostic-logs)
-- [Monitor App Service with Azure Monitor](https://learn.microsoft.com/azure/app-service/monitor-app-service)
-- [Configure Linux Python app on App Service](https://learn.microsoft.com/azure/app-service/configure-language-python)
-- [Azure App Service reliability](https://learn.microsoft.com/azure/reliability/reliability-app-service)
+- [Operating system functionality on Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/operating-system-functionality)
+- [Azure App Service plan overview](https://learn.microsoft.com/en-us/azure/app-service/overview-hosting-plans)
+- [Best practices for Azure App Service diagnostics](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs)
+- [Monitor App Service with Azure Monitor](https://learn.microsoft.com/en-us/azure/app-service/monitor-app-service)
+- [Configure Linux Python app on App Service](https://learn.microsoft.com/en-us/azure/app-service/configure-language-python)
+- [Azure App Service reliability](https://learn.microsoft.com/en-us/azure/reliability/reliability-app-service)

@@ -42,13 +42,13 @@ content_validation:
   reviewer: agent
   core_claims:
     - claim: "App Service continues to serve requests from the old container while the new container is pulled and started."
-      source: "https://learn.microsoft.com/azure/app-service/configure-custom-container"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container"
       verified: true
     - claim: "App Service only sends requests to the new container after it starts and is ready to receive requests."
-      source: "https://learn.microsoft.com/azure/app-service/configure-custom-container"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container"
       verified: true
     - claim: "If your custom container listens on a port other than 80, you must set the `WEBSITES_PORT` app setting."
-      source: "https://learn.microsoft.com/azure/app-service/configure-custom-container"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container"
       verified: true
 ---
 # Deployment Succeeded but Startup Failed (Azure App Service Linux)

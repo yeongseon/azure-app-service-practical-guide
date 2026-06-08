@@ -11,13 +11,13 @@ content_validation:
   reviewer: agent
   core_claims:
     - claim: "App Service costs are driven by plan SKU selection and the number of worker instances."
-      source: "https://learn.microsoft.com/azure/app-service/overview-manage-costs"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-manage-costs"
       verified: true
     - claim: "Autoscale on the App Service plan can adjust worker instance count to match demand."
-      source: "https://learn.microsoft.com/azure/app-service/manage-scale-up"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/manage-scale-up"
       verified: true
     - claim: "Schedule-based scaling can be used for predictable traffic windows."
-      source: "https://learn.microsoft.com/azure/app-service/manage-scale-up"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/manage-scale-up"
       verified: true
 ---
 
@@ -307,10 +307,10 @@ For language-specific operational guidance, see:
 - [Operations Index](./index.md)
 - [Scaling Operations](./scaling.md)
 - [Security](./security.md)
-- [Manage costs for App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-manage-costs)
-- [Cost management best practices (Microsoft Learn)](https://learn.microsoft.com/azure/cost-management-billing/costs/cost-mgt-best-practices)
+- [Manage costs for App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/overview-manage-costs)
+- [Cost management best practices (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/cost-management-billing/costs/cost-mgt-best-practices)
 
 ## Sources
 
-- [Manage costs for App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-manage-costs)
-- [Cost management best practices (Microsoft Learn)](https://learn.microsoft.com/azure/cost-management-billing/costs/cost-mgt-best-practices)
+- [Manage costs for App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/overview-manage-costs)
+- [Cost management best practices (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/cost-management-billing/costs/cost-mgt-best-practices)

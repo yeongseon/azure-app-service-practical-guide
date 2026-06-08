@@ -21,10 +21,10 @@ content_validation:
   reviewer: agent
   core_claims:
     - claim: "Azure App Service provides built-in authentication and authorization support."
-      source: "https://learn.microsoft.com/azure/app-service/overview-authentication-authorization"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization"
       verified: true
     - claim: "App Service authentication settings, if enabled, are applied during a slot swap."
-      source: "https://learn.microsoft.com/azure/app-service/deploy-staging-slots"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots"
       verified: true
 ---
 

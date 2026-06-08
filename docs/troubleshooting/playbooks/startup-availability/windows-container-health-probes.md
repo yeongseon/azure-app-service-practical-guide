@@ -29,13 +29,13 @@ content_validation:
   reviewer: agent
   core_claims:
     - claim: "App Service considers a Windows container successfully started when the container starts and responds to an HTTP ping."
-      source: "https://learn.microsoft.com/azure/app-service/configure-custom-container"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container"
       verified: true
     - claim: "If a Windows container starts but doesn't respond to pings after a certain amount of time, App Service logs an event in the Docker log."
-      source: "https://learn.microsoft.com/azure/app-service/configure-custom-container"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container"
       verified: true
     - claim: "Health Check monitors a configured path on already-running instances."
-      source: "https://learn.microsoft.com/azure/app-service/monitor-instances-health-check"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/monitor-instances-health-check"
       verified: true
 ---
 # Windows Container Startup and Health Probes (Azure App Service Windows)

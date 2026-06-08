@@ -5,19 +5,19 @@ content_validation:
   reviewer: agent
   core_claims:
     - claim: "VNet Integration is the primary App Service feature for private outbound connectivity."
-      source: "https://learn.microsoft.com/azure/app-service/networking-features"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/networking-features"
       verified: true
     - claim: "VNet Integration controls outbound connectivity. It does not make inbound access private by itself."
-      source: "https://learn.microsoft.com/azure/app-service/networking-features"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/networking-features"
       verified: true
     - claim: "Private Endpoint is the standard pattern for private inbound access to an App Service app."
-      source: "https://learn.microsoft.com/azure/app-service/networking-features"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/networking-features"
       verified: true
     - claim: "VNet Integration provides outbound private connectivity. Private Endpoint provides inbound private access. They solve different directions of traffic flow."
       source: "https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration"
       verified: true
     - claim: "possibleOutboundIpAddresses must be used for firewall allowlists as the active outbound IP set can change."
-      source: "https://learn.microsoft.com/azure/app-service/overview-inbound-outbound-ips"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-inbound-outbound-ips"
       verified: true
     - claim: "Enabling VNet Integration with route-all routes all outbound traffic through the VNet. The source IP remains one of the app's standard outbound IPs unless the integration subnet uses a NAT Gateway or routes traffic through a firewall or NVA."
       source: "https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration"
@@ -492,8 +492,8 @@ When run from a VM inside the VNet with the private DNS zone configured, the res
 
 ## Sources
 
-- [App Service networking features](https://learn.microsoft.com/azure/app-service/networking-features)
-- [Integrate App Service with virtual networks](https://learn.microsoft.com/azure/app-service/configure-vnet-integration-enable)
-- [Use private endpoints for App Service apps](https://learn.microsoft.com/azure/app-service/networking/private-endpoint)
-- [Hybrid Connections in App Service](https://learn.microsoft.com/azure/app-service/app-service-hybrid-connections)
-- [Azure DNS private zones](https://learn.microsoft.com/azure/dns/private-dns-overview)
+- [App Service networking features](https://learn.microsoft.com/en-us/azure/app-service/networking-features)
+- [Integrate App Service with virtual networks](https://learn.microsoft.com/en-us/azure/app-service/configure-vnet-integration-enable)
+- [Use private endpoints for App Service apps](https://learn.microsoft.com/en-us/azure/app-service/networking/private-endpoint)
+- [Hybrid Connections in App Service](https://learn.microsoft.com/en-us/azure/app-service/app-service-hybrid-connections)
+- [Azure DNS private zones](https://learn.microsoft.com/en-us/azure/dns/private-dns-overview)

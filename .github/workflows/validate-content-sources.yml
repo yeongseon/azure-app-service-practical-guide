@@ -5,6 +5,8 @@ on:
     paths:
       - 'docs/**/*.md'
       - 'scripts/**/*.py'
+      - 'apps/**'
+      - 'AGENTS.md'
       - '.github/workflows/validate-content-sources.yml'
   push:
     branches:
@@ -12,6 +14,8 @@ on:
     paths:
       - 'docs/**/*.md'
       - 'scripts/**/*.py'
+      - 'apps/**'
+      - 'AGENTS.md'
       - '.github/workflows/validate-content-sources.yml'
 
 jobs:
@@ -47,6 +51,10 @@ jobs:
       - name: Check frontmatter YAML style (canonical ruamel.yaml format)
         run: |
           python scripts/normalize_yaml_frontmatter.py --check
+      
+      - name: Check Microsoft Learn URL locale (en-us prefix required)
+        run: |
+          python scripts/normalize_mslearn_locale.py --check
       
       - name: Check for missing diagram IDs
         run: |

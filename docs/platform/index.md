@@ -81,4 +81,4 @@ For language-specific implementation details, see:
 
 ## Sources
 
-- [Azure App Service documentation (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/)
+- [Azure App Service documentation (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/)

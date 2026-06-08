@@ -26,9 +26,9 @@ content_sources:
       type: sequenceDiagram
       source: mslearn-adapted
       based_on:
-        - https://learn.microsoft.com/azure/app-service/configure-custom-container?tabs=debian&pivots=container-linux
-        - https://learn.microsoft.com/azure/app-service/deploy-container-github-action
-        - https://learn.microsoft.com/azure/role-based-access-control/role-assignments-cli
+        - https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container?tabs=debian&pivots=container-linux
+        - https://learn.microsoft.com/en-us/azure/app-service/deploy-container-github-action
+        - https://learn.microsoft.com/en-us/azure/role-based-access-control/role-assignments-cli
 validation:
   az_cli:
     last_tested: "2026-04-22"
@@ -333,8 +333,8 @@ az group delete --name "$RG" --yes --no-wait
 
 ## Sources
 
-- [Configure a custom container for App Service — use managed identity to pull from ACR](https://learn.microsoft.com/azure/app-service/configure-custom-container?tabs=debian&pivots=container-linux)
-- [Deploy a custom container to App Service with GitHub Actions](https://learn.microsoft.com/azure/app-service/deploy-container-github-action)
-- [Manage Azure role assignments using Azure CLI](https://learn.microsoft.com/azure/role-based-access-control/role-assignments-cli)
-- [Troubleshoot Azure RBAC](https://learn.microsoft.com/azure/role-based-access-control/troubleshooting)
-- [Azure built-in roles for Containers — AcrPull](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles/containers#acrpull)
+- [Configure a custom container for App Service — use managed identity to pull from ACR](https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container?tabs=debian&pivots=container-linux)
+- [Deploy a custom container to App Service with GitHub Actions](https://learn.microsoft.com/en-us/azure/app-service/deploy-container-github-action)
+- [Manage Azure role assignments using Azure CLI](https://learn.microsoft.com/en-us/azure/role-based-access-control/role-assignments-cli)
+- [Troubleshoot Azure RBAC](https://learn.microsoft.com/en-us/azure/role-based-access-control/troubleshooting)
+- [Azure built-in roles for Containers — AcrPull](https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles/containers#acrpull)

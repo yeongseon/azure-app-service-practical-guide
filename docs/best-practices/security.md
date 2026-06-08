@@ -5,16 +5,16 @@ content_validation:
   reviewer: agent
   core_claims:
     - claim: "App Service supports managed identities for secure access to Azure resources without storing credentials."
-      source: "https://learn.microsoft.com/azure/app-service/overview-managed-identity"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-managed-identity"
       verified: true
     - claim: "App Service provides built-in authentication and authorization support (Easy Auth) that can protect apps without code changes."
-      source: "https://learn.microsoft.com/azure/app-service/overview-authentication-authorization"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization"
       verified: true
     - claim: "Private endpoints allow apps to be accessed through a private IP address within a virtual network."
-      source: "https://learn.microsoft.com/azure/app-service/networking-features"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/networking-features"
       verified: true
     - claim: "App Service supports Key Vault references to securely access secrets without storing them in application settings."
-      source: "https://learn.microsoft.com/azure/app-service/app-service-key-vault-references"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/app-service-key-vault-references"
       verified: true
 content_sources:
   diagrams:
@@ -327,8 +327,8 @@ Validate these controls before go-live:
 
 ## Sources
 
-- [Security in Azure App Service](https://learn.microsoft.com/azure/app-service/overview-security)
-- [Authentication and authorization in App Service](https://learn.microsoft.com/azure/app-service/overview-authentication-authorization)
-- [Managed identities for Azure resources](https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/overview)
-- [Use Key Vault references for App Service](https://learn.microsoft.com/azure/app-service/app-service-key-vault-references)
-- [App Service networking features](https://learn.microsoft.com/azure/app-service/networking-features)
+- [Security in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/overview-security)
+- [Authentication and authorization in App Service](https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization)
+- [Managed identities for Azure resources](https://learn.microsoft.com/en-us/entra/identity/managed-identities-azure-resources/overview)
+- [Use Key Vault references for App Service](https://learn.microsoft.com/en-us/azure/app-service/app-service-key-vault-references)
+- [App Service networking features](https://learn.microsoft.com/en-us/azure/app-service/networking-features)

@@ -13,16 +13,16 @@ content_validation:
   reviewer: agent
   core_claims:
     - claim: "Deployment slots require an App Service Plan tier that supports slots, such as Standard, Premium, or Isolated."
-      source: "https://learn.microsoft.com/azure/app-service/deploy-staging-slots"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots"
       verified: true
     - claim: "Slot settings stay with the slot and do not swap into production."
-      source: "https://learn.microsoft.com/azure/app-service/deploy-staging-slots"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots"
       verified: true
     - claim: "App Service supports swap with preview before final cutover."
-      source: "https://learn.microsoft.com/azure/app-service/deploy-staging-slots"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots"
       verified: true
     - claim: "Auto-swap is not supported for web apps on Linux and Web App for Containers."
-      source: "https://learn.microsoft.com/azure/app-service/deploy-staging-slots"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots"
       verified: true
 ---
 

@@ -22,10 +22,10 @@ content_validation:
   reviewer: agent
   core_claims:
     - claim: "App Service can stream logs written to console output or files stored under /home/LogFiles for troubleshooting."
-      source: "https://learn.microsoft.com/azure/app-service/troubleshoot-diagnostic-logs"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs"
       verified: true
     - claim: "Average memory working set, CPU time, requests, and response time are metrics you can monitor when troubleshooting performance degradation."
-      source: "https://learn.microsoft.com/azure/app-service/troubleshoot-performance-degradation"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-performance-degradation"
       verified: true
 content_sources:
   diagrams:

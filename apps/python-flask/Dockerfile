@@ -1,5 +1,5 @@
 # Multi-stage build for Azure App Service with SSH support
-# https://learn.microsoft.com/azure/app-service/configure-custom-container
+# https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container
 
 # Stage 1: Build dependencies
 FROM python:3.11-slim as builder

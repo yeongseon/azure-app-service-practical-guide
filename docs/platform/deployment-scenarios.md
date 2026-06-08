@@ -4,59 +4,59 @@ description: A practical guide to choosing and implementing deployment architect
 content_sources:
   text:
     - type: mslearn-adapted
-      url: https://learn.microsoft.com/azure/app-service/overview-hosting-plans
+      url: https://learn.microsoft.com/en-us/azure/app-service/overview-hosting-plans
     - type: mslearn-adapted
-      url: https://learn.microsoft.com/azure/app-service/networking-features
+      url: https://learn.microsoft.com/en-us/azure/app-service/networking-features
     - type: mslearn-adapted
-      url: https://learn.microsoft.com/azure/app-service/deploy-run-package
+      url: https://learn.microsoft.com/en-us/azure/app-service/deploy-run-package
     - type: mslearn-adapted
-      url: https://learn.microsoft.com/azure/app-service/deploy-continuous-deployment
+      url: https://learn.microsoft.com/en-us/azure/app-service/deploy-continuous-deployment
     - type: mslearn-adapted
-      url: https://learn.microsoft.com/azure/app-service/overview-vnet-integration
+      url: https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration
     - type: mslearn-adapted
-      url: https://learn.microsoft.com/azure/app-service/environment/overview
+      url: https://learn.microsoft.com/en-us/azure/app-service/environment/overview
   diagrams:
     - id: scenario-overview-flow
       type: flowchart
       source: self-generated
       justification: "Synthesized from MSLearn App Service networking and hosting plan documentation"
       based_on:
-        - https://learn.microsoft.com/azure/app-service/overview-hosting-plans
-        - https://learn.microsoft.com/azure/app-service/networking-features
+        - https://learn.microsoft.com/en-us/azure/app-service/overview-hosting-plans
+        - https://learn.microsoft.com/en-us/azure/app-service/networking-features
     - id: scenario-a-public-basic
       type: flowchart
       source: self-generated
       justification: "Standard public deployment pattern for Free/Basic tiers"
       based_on:
-        - https://learn.microsoft.com/azure/app-service/overview-hosting-plans
+        - https://learn.microsoft.com/en-us/azure/app-service/overview-hosting-plans
     - id: scenario-b-vnet-integrated
       type: flowchart
       source: self-generated
       justification: "Standard enterprise VNet integration pattern"
       based_on:
-        - https://learn.microsoft.com/azure/app-service/overview-vnet-integration
+        - https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration
     - id: scenario-c-isolated-ase
       type: flowchart
       source: self-generated
       justification: "App Service Environment (ASE) architecture pattern"
       based_on:
-        - https://learn.microsoft.com/azure/app-service/environment/overview
+        - https://learn.microsoft.com/en-us/azure/app-service/environment/overview
 content_validation:
   status: verified
   last_reviewed: "2026-04-12"
   reviewer: agent
   core_claims:
     - claim: "By default, apps hosted in App Service are accessible directly through the internet."
-      source: "https://learn.microsoft.com/azure/app-service/networking-features"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/networking-features"
       verified: true
     - claim: "A VNet-integrated App Service app can access resources inside a virtual network and support private ingress by using private endpoints."
-      source: "https://learn.microsoft.com/azure/app-service/networking-features"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/networking-features"
       verified: true
     - claim: "Adding a private endpoint does not automatically disable the public endpoint; you must explicitly disable public network access in the Networking settings to achieve full isolation."
-      source: "https://learn.microsoft.com/azure/app-service/networking-features"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/networking-features"
       verified: true
     - claim: "The integration subnet must be delegated to `Microsoft.Web/serverFarms` and must be empty before configuration."
-      source: "https://learn.microsoft.com/azure/app-service/overview-vnet-integration"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration"
       verified: true
 ---
 
@@ -217,12 +217,12 @@ graph TD
 4. **DNS Resolution:** Ensure private DNS zones (`privatelink.azurewebsites.net`) are linked to your VNet when using Private Endpoints.
 
 ## See Also
-- [Networking features overview](https://learn.microsoft.com/azure/app-service/networking-features)
-- [Zero-downtime deployments with slots](https://learn.microsoft.com/azure/app-service/deploy-staging-slots)
-- [Security baseline for App Service](https://learn.microsoft.com/azure/app-service/security-baseline)
+- [Networking features overview](https://learn.microsoft.com/en-us/azure/app-service/networking-features)
+- [Zero-downtime deployments with slots](https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots)
+- [Security baseline for App Service](https://learn.microsoft.com/en-us/azure/app-service/security-baseline)
 
 ## Sources
-- Microsoft Learn: [App Service Environment Overview](https://learn.microsoft.com/azure/app-service/environment/overview)
-- Microsoft Learn: [VNet Integration](https://learn.microsoft.com/azure/app-service/overview-vnet-integration)
-- Microsoft Learn: [Deploy from Package](https://learn.microsoft.com/azure/app-service/deploy-run-package)
-- Microsoft Learn: [Continuous Deployment](https://learn.microsoft.com/azure/app-service/deploy-continuous-deployment)
+- Microsoft Learn: [App Service Environment Overview](https://learn.microsoft.com/en-us/azure/app-service/environment/overview)
+- Microsoft Learn: [VNet Integration](https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration)
+- Microsoft Learn: [Deploy from Package](https://learn.microsoft.com/en-us/azure/app-service/deploy-run-package)
+- Microsoft Learn: [Continuous Deployment](https://learn.microsoft.com/en-us/azure/app-service/deploy-continuous-deployment)

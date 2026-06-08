@@ -35,19 +35,19 @@ content_validation:
   reviewer: agent
   core_claims:
     - claim: "App Service supports platform hostnames and custom domains."
-      source: "https://learn.microsoft.com/azure/app-service/overview"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview"
       verified: true
     - claim: "Frontend components perform TLS termination"
-      source: "https://learn.microsoft.com/azure/app-service/overview"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview"
       verified: true
     - claim: "Frontend components perform hostname validation"
-      source: "https://learn.microsoft.com/azure/app-service/overview"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview"
       verified: true
     - claim: "Frontend components perform route selection to a healthy worker instance"
-      source: "https://learn.microsoft.com/azure/app-service/overview"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview"
       verified: true
     - claim: "By default, frontend routing distributes traffic across healthy instances."
-      source: "https://learn.microsoft.com/azure/app-service/overview"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview"
       verified: true
 ---
 # Request Lifecycle
@@ -295,10 +295,10 @@ For language-specific implementation details, see:
 - [How App Service Works](./architecture/index.md)
 - [Scaling](./scaling.md)
 - [Networking](./networking.md)
-- [Deployment Slots in App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/deploy-staging-slots)
-- [Inbound and outbound IPs (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-inbound-outbound-ips)
+- [Deployment Slots in App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots)
+- [Inbound and outbound IPs (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/overview-inbound-outbound-ips)
 
 ## Sources
 
-- [Deployment Slots in App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/deploy-staging-slots)
-- [Inbound and outbound IPs (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-inbound-outbound-ips)
+- [Deployment Slots in App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots)
+- [Inbound and outbound IPs (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/overview-inbound-outbound-ips)

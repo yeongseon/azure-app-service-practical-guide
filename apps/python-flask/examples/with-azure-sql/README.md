@@ -191,5 +191,5 @@ print(pyodbc.drivers())
 ## See Also
 
 - [pyodbc Documentation](https://github.com/mkleehammer/pyodbc)
-- [Azure SQL with Managed Identity](https://learn.microsoft.com/azure/azure-sql/database/authentication-azure-ad-user-assigned-managed-identity)
+- [Azure SQL with Managed Identity](https://learn.microsoft.com/en-us/azure/azure-sql/database/authentication-azure-ad-user-assigned-managed-identity)
 - [Managed Identity Recipe](../../docs/recipes/managed-identity.md)

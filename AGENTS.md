@@ -505,6 +505,33 @@ All content MUST be traceable to official Microsoft Learn documentation:
 - **Troubleshooting playbooks**: MAY synthesize MSLearn content with clear attribution
 - **Self-generated content**: MUST have justification explaining the source basis
 
+### Microsoft Learn URL Locale
+
+All `learn.microsoft.com` URLs MUST include the `en-us` locale prefix immediately after the hostname.
+
+**Canonical form** (the only form CI accepts):
+
+```
+https://learn.microsoft.com/en-us/azure/app-service/overview
+```
+
+**Non-conforming forms CI rejects** (described structurally to avoid triggering the locale check on this file):
+
+- URLs missing the `xx-xx/` locale segment — these geo-redirect per visitor location, producing reader-dependent content.
+- URLs using any `xx-xx/` value other than `en-us/` — inconsistent with the repo's single canonical form.
+
+**Rationale**:
+
+- **Reader-stable content**: every link resolves to the same English article regardless of visitor location.
+- **Reviewer parity**: quoted excerpts, anchors, and screenshots match what reviewers see when opening the link.
+- **Single canonical form**: simplifies cross-link audits and prevents URL drift between pages.
+
+**Enforcement**:
+
+- `scripts/normalize_mslearn_locale.py --check` runs in CI on every PR that touches `docs/`, `scripts/`, `apps/`, the workflow file, or `AGENTS.md`.
+- Run `python3 scripts/normalize_mslearn_locale.py --apply` locally to fix drift before pushing.
+- The check is a pure text transformation; HTTP reachability of URLs is validated separately by `scripts/validate_mslearn_urls.py`, which runs on push to `main`.
+
 ### Source Types
 
 | Type | Description | Allowed? |
@@ -531,7 +558,7 @@ content_sources:
       source: self-generated
       justification: "Synthesized from MSLearn articles X, Y, Z"
       based_on:
-        - https://learn.microsoft.com/...
+        - https://learn.microsoft.com/en-us/...
 ```
 
 ### Content Validation Tracking
@@ -579,17 +606,17 @@ Subsection landing pages that DO make factual claims (currently `platform/archit
 ---
 content_sources:
   - type: mslearn-adapted
-    url: https://learn.microsoft.com/azure/app-service/...
+    url: https://learn.microsoft.com/en-us/azure/app-service/...
 content_validation:
   status: verified  # verified | pending_review | unverified
   last_reviewed: 2026-04-12
   reviewer: agent  # agent | human
   core_claims:
     - claim: "App Service supports VNet integration for outbound traffic"
-      source: https://learn.microsoft.com/azure/app-service/overview-vnet-integration
+      source: https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration
       verified: true
     - claim: "Deployment slots allow zero-downtime deployments"
-      source: https://learn.microsoft.com/azure/app-service/deploy-staging-slots
+      source: https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots
       verified: true
 ---
 ```

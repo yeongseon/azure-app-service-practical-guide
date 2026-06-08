@@ -5,16 +5,16 @@ content_validation:
   reviewer: agent
   core_claims:
     - claim: "Health checks are the first reliability control in App Service."
-      source: "https://learn.microsoft.com/azure/app-service/monitor-instances-health-check"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/monitor-instances-health-check"
       verified: true
     - claim: "They allow unhealthy instances to be detected and removed from rotation."
-      source: "https://learn.microsoft.com/azure/app-service/monitor-instances-health-check"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/monitor-instances-health-check"
       verified: true
     - claim: "Single-region design is often acceptable for low-criticality apps, but production-critical systems should plan for regional disruption."
-      source: "https://learn.microsoft.com/azure/app-service/tutorial-multi-region-app"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/tutorial-multi-region-app"
       verified: true
     - claim: "Backups are a reliability control for data/configuration recovery, not a substitute for high availability."
-      source: "https://learn.microsoft.com/azure/app-service/manage-backup"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/manage-backup"
       verified: true
 content_sources:
   diagrams:
@@ -284,6 +284,6 @@ Expected behavior:
 ## Sources
 
 - [Best practices for Azure App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/app-service-best-practices)
-- [Monitor instances in Azure App Service with Health check (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/monitor-instances-health-check)
-- [Back up and restore your app in Azure App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/manage-backup)
-- [Create and manage deployment slots in Azure App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/deploy-staging-slots)
+- [Monitor instances in Azure App Service with Health check (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/monitor-instances-health-check)
+- [Back up and restore your app in Azure App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/manage-backup)
+- [Create and manage deployment slots in Azure App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots)

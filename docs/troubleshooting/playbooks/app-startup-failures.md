@@ -15,16 +15,16 @@ content_validation:
   reviewer: agent
   core_claims:
     - claim: "Azure App Service provides built-in diagnostic logging to help debug app issues."
-      source: "https://learn.microsoft.com/azure/app-service/troubleshoot-diagnostic-logs"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs"
       verified: true
     - claim: "App Service supports deployment logging, and deployment logging happens automatically."
-      source: "https://learn.microsoft.com/azure/app-service/troubleshoot-diagnostic-logs"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs"
       verified: true
     - claim: "App Service streams console output and files ending in .txt, .log, or .htm from the /home/LogFiles directory."
-      source: "https://learn.microsoft.com/azure/app-service/troubleshoot-diagnostic-logs"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs"
       verified: true
     - claim: "For Linux or custom containers, Kudu log downloads include the contents of the /home/LogFiles directory."
-      source: "https://learn.microsoft.com/azure/app-service/troubleshoot-diagnostic-logs"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs"
       verified: true
 ---
 

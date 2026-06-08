@@ -13,19 +13,19 @@ content_validation:
   reviewer: agent
   core_claims:
     - claim: "App Service Health Check sends HTTP requests to a configured path such as /health."
-      source: "https://learn.microsoft.com/azure/app-service/monitor-instances-health-check"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/monitor-instances-health-check"
       verified: true
     - claim: "When an instance becomes unhealthy, Health Check removes it from the load balancer."
-      source: "https://learn.microsoft.com/azure/app-service/monitor-instances-health-check"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/monitor-instances-health-check"
       verified: true
     - claim: "Auto-Heal can restart an app automatically based on conditions such as memory pressure or slow requests."
-      source: "https://learn.microsoft.com/azure/app-service/overview-diagnostics"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-diagnostics"
       verified: true
     - claim: "App Service Health Check pings each instance about once per minute, with a default of 10 consecutive failures before removal; the threshold is configurable via WEBSITE_HEALTHCHECK_MAXPINGFAILURES in the range 2 to 10."
-      source: "https://learn.microsoft.com/azure/app-service/monitor-instances-health-check"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/monitor-instances-health-check"
       verified: true
     - claim: "App Service Health Check will not remove the only running instance even if it is failing probes, so production workloads should run at least two instances."
-      source: "https://learn.microsoft.com/azure/app-service/monitor-instances-health-check"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/monitor-instances-health-check"
       verified: true
 ---
 
@@ -302,10 +302,10 @@ For language-specific operational guidance, see:
 - [Operations Index](./index.md)
 - [Scaling Operations](./scaling.md)
 - [Backup and Restore](./backup-restore.md)
-- [Health check in App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/monitor-instances-health-check)
-- [Diagnostics and auto-heal (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-diagnostics)
+- [Health check in App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/monitor-instances-health-check)
+- [Diagnostics and auto-heal (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/overview-diagnostics)
 
 ## Sources
 
-- [Health check in App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/monitor-instances-health-check)
-- [Diagnostics and auto-heal (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-diagnostics)
+- [Health check in App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/monitor-instances-health-check)
+- [Diagnostics and auto-heal (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/overview-diagnostics)

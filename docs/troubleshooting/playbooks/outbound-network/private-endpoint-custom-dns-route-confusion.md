@@ -16,10 +16,10 @@ content_validation:
   reviewer: agent
   core_claims:
     - claim: "Private Endpoint health, DNS resolution, and route policy are separate layers."
-      source: "https://learn.microsoft.com/azure/app-service/networking-features"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/networking-features"
       verified: true
     - claim: "Private connectivity requires both correct DNS answer and permitted network path."
-      source: "https://learn.microsoft.com/azure/app-service/overview-vnet-integration"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration"
       verified: true
 ---
 

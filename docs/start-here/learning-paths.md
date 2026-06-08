@@ -119,6 +119,6 @@ Read in order:
 
 ## Sources
 
-- [Get started with Azure App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/getting-started)
+- [Get started with Azure App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/getting-started)
 - [Deploy your app to Azure App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/getting-started)
-- [Azure App Service documentation hub (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/)
+- [Azure App Service documentation hub (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/)

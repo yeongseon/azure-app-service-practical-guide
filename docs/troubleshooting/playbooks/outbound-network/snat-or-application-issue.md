@@ -38,10 +38,10 @@ content_validation:
   reviewer: agent
   core_claims:
     - claim: "SNAT applies only to outbound connections to PUBLIC IP addresses. Private Endpoint and Service Endpoint traffic does NOT consume SNAT ports."
-      source: "https://learn.microsoft.com/azure/app-service/troubleshoot-intermittent-outbound-connection-errors"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-intermittent-outbound-connection-errors"
       verified: true
     - claim: "NAT Gateway provides 64,000 SNAT ports per public IP, shared across all instances."
-      source: "https://learn.microsoft.com/azure/app-service/troubleshoot-intermittent-outbound-connection-errors"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-intermittent-outbound-connection-errors"
       verified: true
 ---
 # SNAT or Application Issue? (Azure App Service Linux)
