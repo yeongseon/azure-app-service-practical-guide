@@ -1,10 +1,10 @@
 ---
 content_sources:
   diagrams:
-  - id: architecture
-    type: flowchart
-    source: mslearn-adapted
-    mslearn_url: https://learn.microsoft.com/en-us/azure/azure-sql/database/connect-query-python
+    - id: architecture
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/azure-sql/database/connect-query-python
 ---
 # Azure SQL with Managed Identity
 

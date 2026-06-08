@@ -1,16 +1,15 @@
 ---
 content_sources:
   diagrams:
-  - id: playbook-map
-    type: flowchart
-    source: self-generated
-    justification: Synthesized the playbook symptom map from Microsoft Learn troubleshooting
-      topics that anchor this section.
-    based_on:
-    - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
-    - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
-    - https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/troubleshoot-performance-degradation
-    - https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/connection-issues-with-ssl-or-tls/troubleshoot-domain-and-tls-ssl-certificates
+    - id: playbook-map
+      type: flowchart
+      source: self-generated
+      justification: Synthesized the playbook symptom map from Microsoft Learn troubleshooting topics that anchor this section.
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+        - https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/troubleshoot-performance-degradation
+        - https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/connection-issues-with-ssl-or-tls/troubleshoot-domain-and-tls-ssl-certificates
 ---
 # Playbooks
 

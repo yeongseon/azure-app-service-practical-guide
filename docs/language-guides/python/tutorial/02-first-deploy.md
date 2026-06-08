@@ -1,10 +1,10 @@
 ---
 content_sources:
   diagrams:
-  - id: 02-first-deployment-to-azure-app-service
-    type: flowchart
-    source: mslearn-adapted
-    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/quickstart-python
+    - id: 02-first-deployment-to-azure-app-service
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/quickstart-python
 ---
 # 02 - First Deployment to Azure App Service
 

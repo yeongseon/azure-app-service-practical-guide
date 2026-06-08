@@ -1,13 +1,12 @@
 ---
 content_sources:
   diagrams:
-  - id: reference-kudu-queries-diagram-1
-    type: flowchart
-    source: self-generated
-    justification: Self-generated reference diagram synthesized from official Azure
-      App Service documentation for this guide.
-    based_on:
-    - https://learn.microsoft.com/en-us/azure/app-service/resources-kudu
+    - id: reference-kudu-queries-diagram-1
+      type: flowchart
+      source: self-generated
+      justification: Self-generated reference diagram synthesized from official Azure App Service documentation for this guide.
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/resources-kudu
 ---
 # Kudu API Reference
 

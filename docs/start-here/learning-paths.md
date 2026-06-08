@@ -1,27 +1,24 @@
 ---
 content_sources:
   diagrams:
-  - id: start-here-learning-paths-diagram-1
-    type: graph
-    source: self-generated
-    justification: Self-generated navigation diagram synthesized from official Azure
-      App Service overview documentation for this guide.
-    based_on:
-    - https://learn.microsoft.com/en-us/azure/app-service/overview
-  - id: start-here-learning-paths-diagram-2
-    type: graph
-    source: self-generated
-    justification: Self-generated navigation diagram synthesized from official Azure
-      App Service overview documentation for this guide.
-    based_on:
-    - https://learn.microsoft.com/en-us/azure/app-service/overview
-  - id: start-here-learning-paths-diagram-3
-    type: graph
-    source: self-generated
-    justification: Self-generated navigation diagram synthesized from official Azure
-      App Service overview documentation for this guide.
-    based_on:
-    - https://learn.microsoft.com/en-us/azure/app-service/overview
+    - id: start-here-learning-paths-diagram-1
+      type: graph
+      source: self-generated
+      justification: Self-generated navigation diagram synthesized from official Azure App Service overview documentation for this guide.
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/overview
+    - id: start-here-learning-paths-diagram-2
+      type: graph
+      source: self-generated
+      justification: Self-generated navigation diagram synthesized from official Azure App Service overview documentation for this guide.
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/overview
+    - id: start-here-learning-paths-diagram-3
+      type: graph
+      source: self-generated
+      justification: Self-generated navigation diagram synthesized from official Azure App Service overview documentation for this guide.
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/overview
 ---
 # Learning Paths
 

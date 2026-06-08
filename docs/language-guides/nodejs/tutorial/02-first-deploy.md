@@ -1,14 +1,14 @@
 ---
 content_sources:
   diagrams:
-  - id: simple-architecture
-    type: flowchart
-    source: mslearn-adapted
-    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/quickstart-nodejs
-  - id: simple-flow
-    type: flowchart
-    source: mslearn-adapted
-    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/quickstart-nodejs
+    - id: simple-architecture
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/quickstart-nodejs
+    - id: simple-flow
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/quickstart-nodejs
 ---
 # 02. First Deploy
 

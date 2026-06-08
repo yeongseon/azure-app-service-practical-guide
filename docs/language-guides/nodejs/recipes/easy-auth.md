@@ -1,10 +1,10 @@
 ---
 content_sources:
   diagrams:
-  - id: app-service-built-in-authentication-easy-auth
-    type: flowchart
-    source: mslearn-adapted
-    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization
+    - id: app-service-built-in-authentication-easy-auth
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization
 ---
 # App Service Built-in Authentication (Easy Auth)
 

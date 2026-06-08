@@ -1,10 +1,10 @@
 ---
 content_sources:
   diagrams:
-  - id: vnet-integration
-    type: flowchart
-    source: mslearn-adapted
-    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration
+    - id: vnet-integration
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration
 ---
 # VNet Integration
 

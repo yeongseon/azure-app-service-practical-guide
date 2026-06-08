@@ -1,14 +1,14 @@
 ---
 content_sources:
   diagrams:
-  - id: diagram-1
-    type: flowchart
-    source: mslearn-adapted
-    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
-  - id: overview
-    type: flowchart
-    source: mslearn-adapted
-    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
+    - id: diagram-1
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
+    - id: overview
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
 ---
 # 01. Local Run
 

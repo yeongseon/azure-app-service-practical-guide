@@ -1,10 +1,10 @@
 ---
 content_sources:
   diagrams:
-  - id: architecture
-    type: flowchart
-    source: mslearn-adapted
-    mslearn_url: https://learn.microsoft.com/en-us/azure/azure-cache-for-redis/cache-python-get-started
+    - id: architecture
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/azure-cache-for-redis/cache-python-get-started
 ---
 # Redis Cache with redis-py
 

@@ -4,64 +4,58 @@ slug: troubleshooting-map
 doc_type: map
 section: visualization
 topics:
-- troubleshooting
-- navigation
-- diagnostics
+  - troubleshooting
+  - navigation
+  - diagnostics
 products:
-- azure-app-service
+  - azure-app-service
 related:
-- core-knowledge-graph
-- decision-tree
-- evidence-map
-- mental-model
+  - core-knowledge-graph
+  - decision-tree
+  - evidence-map
+  - mental-model
 prerequisites:
-- troubleshooting-architecture-overview
-summary: Visual navigation map for troubleshooting workflows, showing connections
-  between playbooks, labs, KQL queries, and evidence patterns.
+  - troubleshooting-architecture-overview
+summary: Visual navigation map for troubleshooting workflows, showing connections between playbooks, labs, KQL queries, and evidence patterns.
 status: stable
 last_reviewed: 2026-04-08
 content_sources:
   diagrams:
-  - id: visualization-troubleshooting-map-diagram-1
-    type: graph
-    source: self-generated
-    justification: Self-generated visualization synthesized from official Azure App
-      Service documentation to explain guide structure and relationships.
-    based_on:
-    - https://learn.microsoft.com/en-us/azure/app-service/overview
-    - https://learn.microsoft.com/en-us/azure/app-service/environment/overview
-  - id: visualization-troubleshooting-map-diagram-2
-    type: graph
-    source: self-generated
-    justification: Self-generated visualization synthesized from official Azure App
-      Service documentation to explain guide structure and relationships.
-    based_on:
-    - https://learn.microsoft.com/en-us/azure/app-service/overview
-    - https://learn.microsoft.com/en-us/azure/app-service/environment/overview
-  - id: visualization-troubleshooting-map-diagram-3
-    type: graph
-    source: self-generated
-    justification: Self-generated visualization synthesized from official Azure App
-      Service documentation to explain guide structure and relationships.
-    based_on:
-    - https://learn.microsoft.com/en-us/azure/app-service/overview
-    - https://learn.microsoft.com/en-us/azure/app-service/environment/overview
-  - id: visualization-troubleshooting-map-diagram-4
-    type: graph
-    source: self-generated
-    justification: Self-generated visualization synthesized from official Azure App
-      Service documentation to explain guide structure and relationships.
-    based_on:
-    - https://learn.microsoft.com/en-us/azure/app-service/overview
-    - https://learn.microsoft.com/en-us/azure/app-service/environment/overview
-  - id: visualization-troubleshooting-map-diagram-5
-    type: graph
-    source: self-generated
-    justification: Self-generated visualization synthesized from official Azure App
-      Service documentation to explain guide structure and relationships.
-    based_on:
-    - https://learn.microsoft.com/en-us/azure/app-service/overview
-    - https://learn.microsoft.com/en-us/azure/app-service/environment/overview
+    - id: visualization-troubleshooting-map-diagram-1
+      type: graph
+      source: self-generated
+      justification: Self-generated visualization synthesized from official Azure App Service documentation to explain guide structure and relationships.
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/overview
+        - https://learn.microsoft.com/en-us/azure/app-service/environment/overview
+    - id: visualization-troubleshooting-map-diagram-2
+      type: graph
+      source: self-generated
+      justification: Self-generated visualization synthesized from official Azure App Service documentation to explain guide structure and relationships.
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/overview
+        - https://learn.microsoft.com/en-us/azure/app-service/environment/overview
+    - id: visualization-troubleshooting-map-diagram-3
+      type: graph
+      source: self-generated
+      justification: Self-generated visualization synthesized from official Azure App Service documentation to explain guide structure and relationships.
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/overview
+        - https://learn.microsoft.com/en-us/azure/app-service/environment/overview
+    - id: visualization-troubleshooting-map-diagram-4
+      type: graph
+      source: self-generated
+      justification: Self-generated visualization synthesized from official Azure App Service documentation to explain guide structure and relationships.
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/overview
+        - https://learn.microsoft.com/en-us/azure/app-service/environment/overview
+    - id: visualization-troubleshooting-map-diagram-5
+      type: graph
+      source: self-generated
+      justification: Self-generated visualization synthesized from official Azure App Service documentation to explain guide structure and relationships.
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/overview
+        - https://learn.microsoft.com/en-us/azure/app-service/environment/overview
 ---
 # Troubleshooting Map
 

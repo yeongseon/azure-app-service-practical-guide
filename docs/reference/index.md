@@ -1,14 +1,13 @@
 ---
 content_sources:
   diagrams:
-  - id: reference-index-diagram-1
-    type: flowchart
-    source: self-generated
-    justification: Self-generated reference diagram synthesized from official Azure
-      App Service documentation for this guide.
-    based_on:
-    - https://learn.microsoft.com/en-us/azure/app-service/overview
-    - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+    - id: reference-index-diagram-1
+      type: flowchart
+      source: self-generated
+      justification: Self-generated reference diagram synthesized from official Azure App Service documentation for this guide.
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/overview
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
 ---
 # Reference
 

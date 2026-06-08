@@ -1,10 +1,10 @@
 ---
 content_sources:
   diagrams:
-  - id: how-easy-auth-fits-the-request-path
-    type: flowchart
-    source: mslearn-adapted
-    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization
+    - id: how-easy-auth-fits-the-request-path
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization
 ---
 # Easy Auth (Built-in Authentication)
 

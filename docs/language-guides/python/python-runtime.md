@@ -1,10 +1,10 @@
 ---
 content_sources:
   diagrams:
-  - id: python-runtime
-    type: flowchart
-    source: mslearn-adapted
-    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
+    - id: python-runtime
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
 ---
 # Python Runtime
 

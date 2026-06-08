@@ -1,22 +1,22 @@
 ---
 content_sources:
   diagrams:
-  - id: main-content
-    type: flowchart
-    source: mslearn-adapted
-    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
-  - id: basic-tier-b1-simple-public-endpoint
-    type: flowchart
-    source: mslearn-adapted
-    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
-  - id: standard-premium-tier-s1-p1v3-vnet-integrated
-    type: flowchart
-    source: mslearn-adapted
-    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
-  - id: isolated-tier-ase-v3-full-network-isolation
-    type: flowchart
-    source: mslearn-adapted
-    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
+    - id: main-content
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
+    - id: basic-tier-b1-simple-public-endpoint
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
+    - id: standard-premium-tier-s1-p1v3-vnet-integrated
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
+    - id: isolated-tier-ase-v3-full-network-isolation
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
 ---
 # Python Guide
 

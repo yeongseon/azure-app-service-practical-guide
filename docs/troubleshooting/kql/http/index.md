@@ -1,14 +1,13 @@
 ---
 content_sources:
   diagrams:
-  - id: troubleshooting-kql-http-index-diagram-1
-    type: graph
-    source: self-generated
-    justification: Self-generated troubleshooting diagram synthesized from Microsoft
-      Learn diagnostics and Azure App Service incident guidance for this guide.
-    based_on:
-    - https://learn.microsoft.com/en-us/azure/azure-monitor/logs/get-started-queries
-    - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
+    - id: troubleshooting-kql-http-index-diagram-1
+      type: graph
+      source: self-generated
+      justification: Self-generated troubleshooting diagram synthesized from Microsoft Learn diagnostics and Azure App Service incident guidance for this guide.
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/azure-monitor/logs/get-started-queries
+        - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
 ---
 # HTTP Queries
 

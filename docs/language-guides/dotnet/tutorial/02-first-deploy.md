@@ -1,14 +1,14 @@
 ---
 content_sources:
   diagrams:
-  - id: 02-first-deploy
-    type: flowchart
-    source: mslearn-adapted
-    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/quickstart-dotnetcore
-  - id: 02-first-deploy-flow
-    type: flowchart
-    source: mslearn-adapted
-    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/quickstart-dotnetcore
+    - id: 02-first-deploy
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/quickstart-dotnetcore
+    - id: 02-first-deploy-flow
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/quickstart-dotnetcore
 ---
 # 02 - First Deploy
 

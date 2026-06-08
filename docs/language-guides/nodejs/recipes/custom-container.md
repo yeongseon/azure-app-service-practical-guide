@@ -1,14 +1,14 @@
 ---
 content_sources:
   diagrams:
-  - id: custom-container-deployment
-    type: flowchart
-    source: mslearn-adapted
-    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container
-  - id: architecture
-    type: flowchart
-    source: mslearn-adapted
-    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container
+    - id: custom-container-deployment
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container
+    - id: architecture
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container
 ---
 # Custom Container Deployment
 

@@ -1,14 +1,14 @@
 ---
 content_sources:
   diagrams:
-  - id: diagram-1
-    type: flowchart
-    source: mslearn-adapted
-    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/deploy-continuous-deployment
-  - id: ci-cd-pipeline-flow
-    type: flowchart
-    source: mslearn-adapted
-    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/deploy-continuous-deployment
+    - id: diagram-1
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/deploy-continuous-deployment
+    - id: ci-cd-pipeline-flow
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/deploy-continuous-deployment
 ---
 # 06. CI/CD with GitHub Actions
 

@@ -4,44 +4,40 @@ slug: core-knowledge-graph
 doc_type: map
 section: visualization
 topics:
-- navigation
-- knowledge-graph
-- architecture
+  - navigation
+  - knowledge-graph
+  - architecture
 products:
-- azure-app-service
+  - azure-app-service
 related:
-- troubleshooting-map
-- learning-paths
-summary: Interactive visualization of the entire documentation structure showing relationships
-  between concepts, best practices, and troubleshooting resources.
+  - troubleshooting-map
+  - learning-paths
+summary: Interactive visualization of the entire documentation structure showing relationships between concepts, best practices, and troubleshooting resources.
 status: stable
 last_reviewed: 2026-04-08
 content_sources:
   diagrams:
-  - id: visualization-core-knowledge-graph-diagram-1
-    type: graph
-    source: self-generated
-    justification: Self-generated visualization synthesized from official Azure App
-      Service documentation to explain guide structure and relationships.
-    based_on:
-    - https://learn.microsoft.com/en-us/azure/app-service/overview
-    - https://learn.microsoft.com/en-us/azure/app-service/environment/overview
-  - id: visualization-core-knowledge-graph-diagram-2
-    type: graph
-    source: self-generated
-    justification: Self-generated visualization synthesized from official Azure App
-      Service documentation to explain guide structure and relationships.
-    based_on:
-    - https://learn.microsoft.com/en-us/azure/app-service/overview
-    - https://learn.microsoft.com/en-us/azure/app-service/environment/overview
-  - id: visualization-core-knowledge-graph-diagram-3
-    type: graph
-    source: self-generated
-    justification: Self-generated visualization synthesized from official Azure App
-      Service documentation to explain guide structure and relationships.
-    based_on:
-    - https://learn.microsoft.com/en-us/azure/app-service/overview
-    - https://learn.microsoft.com/en-us/azure/app-service/environment/overview
+    - id: visualization-core-knowledge-graph-diagram-1
+      type: graph
+      source: self-generated
+      justification: Self-generated visualization synthesized from official Azure App Service documentation to explain guide structure and relationships.
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/overview
+        - https://learn.microsoft.com/en-us/azure/app-service/environment/overview
+    - id: visualization-core-knowledge-graph-diagram-2
+      type: graph
+      source: self-generated
+      justification: Self-generated visualization synthesized from official Azure App Service documentation to explain guide structure and relationships.
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/overview
+        - https://learn.microsoft.com/en-us/azure/app-service/environment/overview
+    - id: visualization-core-knowledge-graph-diagram-3
+      type: graph
+      source: self-generated
+      justification: Self-generated visualization synthesized from official Azure App Service documentation to explain guide structure and relationships.
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/overview
+        - https://learn.microsoft.com/en-us/azure/app-service/environment/overview
 ---
 # Core Knowledge Graph
 

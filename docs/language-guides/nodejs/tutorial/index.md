@@ -1,14 +1,14 @@
 ---
 content_sources:
   diagrams:
-  - id: tutorial-progress
-    type: flowchart
-    source: mslearn-adapted
-    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
+    - id: tutorial-progress
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
 validation:
   az_cli:
-    last_tested: null
-    cli_version: null
+    last_tested:
+    cli_version:
     result: not_tested
 ---
 # Node.js Tutorial Overview

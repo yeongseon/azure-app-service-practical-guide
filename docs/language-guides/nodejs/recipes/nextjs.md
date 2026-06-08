@@ -1,10 +1,10 @@
 ---
 content_sources:
   diagrams:
-  - id: next-js-on-app-service
-    type: flowchart
-    source: mslearn-adapted
-    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
+    - id: next-js-on-app-service
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
 ---
 # Next.js on App Service
 

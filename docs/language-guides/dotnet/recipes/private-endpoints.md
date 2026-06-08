@@ -1,10 +1,10 @@
 ---
 content_sources:
   diagrams:
-  - id: private-endpoints
-    type: flowchart
-    source: mslearn-adapted
-    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/networking/private-endpoint
+    - id: private-endpoints
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/networking/private-endpoint
 ---
 # Private Endpoints
 

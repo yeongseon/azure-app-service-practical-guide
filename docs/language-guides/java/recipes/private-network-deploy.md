@@ -1,15 +1,14 @@
 ---
 content_sources:
   diagrams:
-  - id: private-network-deploy
-    type: flowchart
-    source: self-generated
-    justification: Synthesized end-to-end scenario from Microsoft Learn guidance for
-      App Service VNet integration, private endpoints, and managed identity.
-    based_on:
-    - https://learn.microsoft.com/en-us/azure/app-service/configure-vnet-integration-enable
-    - https://learn.microsoft.com/en-us/azure/app-service/networking/private-endpoint
-    - https://learn.microsoft.com/en-us/azure/app-service/overview-managed-identity
+    - id: private-network-deploy
+      type: flowchart
+      source: self-generated
+      justification: Synthesized end-to-end scenario from Microsoft Learn guidance for App Service VNet integration, private endpoints, and managed identity.
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/configure-vnet-integration-enable
+        - https://learn.microsoft.com/en-us/azure/app-service/networking/private-endpoint
+        - https://learn.microsoft.com/en-us/azure/app-service/overview-managed-identity
 ---
 # Private Network Deploy
 

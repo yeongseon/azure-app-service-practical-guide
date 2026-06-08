@@ -1,10 +1,10 @@
 ---
 content_sources:
   diagrams:
-  - id: native-dependencies
-    type: flowchart
-    source: mslearn-adapted
-    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
+    - id: native-dependencies
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
 ---
 # Native Dependencies
 

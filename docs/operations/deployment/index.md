@@ -1,16 +1,15 @@
 ---
 content_sources:
   diagrams:
-  - id: deployment-method-selection-flow
-    type: flowchart
-    source: self-generated
-    justification: Synthesized deployment decision flow from Microsoft Learn guidance
-      for ZIP deploy, GitHub Actions, deployment slots, and custom containers.
-    based_on:
-    - https://learn.microsoft.com/en-us/azure/app-service/deploy-zip
-    - https://learn.microsoft.com/en-us/azure/app-service/deploy-github-actions
-    - https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots
-    - https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container
+    - id: deployment-method-selection-flow
+      type: flowchart
+      source: self-generated
+      justification: Synthesized deployment decision flow from Microsoft Learn guidance for ZIP deploy, GitHub Actions, deployment slots, and custom containers.
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/deploy-zip
+        - https://learn.microsoft.com/en-us/azure/app-service/deploy-github-actions
+        - https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots
+        - https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container
 ---
 # Deployment Methods
 

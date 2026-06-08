@@ -4,24 +4,23 @@ slug: visualization-index
 doc_type: map
 section: visualization
 topics:
-- navigation
-- knowledge-graph
-- learning
+  - navigation
+  - knowledge-graph
+  - learning
 products:
-- azure-app-service
+  - azure-app-service
 summary: Interactive visual maps for navigating the Azure App Service documentation.
 status: stable
 last_reviewed: 2026-04-08
 content_sources:
   diagrams:
-  - id: visualization-index-diagram-1
-    type: flowchart
-    source: self-generated
-    justification: Self-generated visualization synthesized from official Azure App
-      Service documentation to explain guide structure and relationships.
-    based_on:
-    - https://learn.microsoft.com/en-us/azure/app-service/overview
-    - https://learn.microsoft.com/en-us/azure/app-service/environment/overview
+    - id: visualization-index-diagram-1
+      type: flowchart
+      source: self-generated
+      justification: Self-generated visualization synthesized from official Azure App Service documentation to explain guide structure and relationships.
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/overview
+        - https://learn.microsoft.com/en-us/azure/app-service/environment/overview
 ---
 # Visualization
 
