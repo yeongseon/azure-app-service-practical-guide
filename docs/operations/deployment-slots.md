@@ -9,7 +9,7 @@ content_sources:
         - https://learn.microsoft.com/en-us/azure/app-service/deploy-best-practices
 content_validation:
   status: verified
-  last_reviewed: "2026-04-12"
+  last_reviewed: "2026-06-08"
   reviewer: agent
   core_claims:
     - claim: "Deployment slots require an App Service Plan tier Standard or higher."
@@ -22,6 +22,12 @@ content_validation:
       source: "https://learn.microsoft.com/azure/app-service/deploy-staging-slots"
       verified: true
     - claim: "App Service supports swap with preview so target-slot settings can be applied before final cutover."
+      source: "https://learn.microsoft.com/azure/app-service/deploy-staging-slots"
+      verified: true
+    - claim: "On Windows, applicationInitialization in web.config declares URLs the platform pings on the target slot before completing a swap."
+      source: "https://learn.microsoft.com/azure/app-service/deploy-staging-slots"
+      verified: true
+    - claim: "On Linux, slot-swap warm-up is controlled by WEBSITE_SWAP_WARMUP_PING_PATH (path to ping) and WEBSITE_SWAP_WARMUP_PING_STATUSES (acceptable response codes; by default all responses are valid)."
       source: "https://learn.microsoft.com/azure/app-service/deploy-staging-slots"
       verified: true
 ---
@@ -140,6 +146,50 @@ Commonly slot-pinned categories:
 
 !!! warning "Keep critical secrets slot-sticky"
     Connection strings, external endpoint URLs, and diagnostic keys should be configured as slot settings when values differ between environments. Forgetting to mark them as sticky is one of the most common causes of post-swap production incidents.
+
+### Configure Slot Warm-Up Before Swap
+
+Slot swap is not instantaneous. Before the platform routes the new slot as production, it sends warm-up requests so the runtime can JIT, hydrate caches, open connection pools, and pass startup health checks. Configure the warm-up surface explicitly — relying on the default site root often misses critical initialization paths.
+
+**Windows: `applicationInitialization` in `web.config`**
+
+Ship a `web.config` in your deployment package that declares the URLs IIS should hit before completing a swap:
+
+```xml
+<configuration>
+  <system.webServer>
+    <applicationInitialization doAppInitAfterRestart="true">
+      <add initializationPage="/health" />
+      <add initializationPage="/api/warmup" />
+    </applicationInitialization>
+  </system.webServer>
+</configuration>
+```
+
+Each `initializationPage` is hit on the target slot during swap, and the swap blocks until each warm-up request returns or times out. Use a lightweight readiness URL plus any expensive paths you want primed (cache load, lookup table hydration, DI container build).
+
+**Linux: `WEBSITE_SWAP_WARMUP_PING_PATH` app setting**
+
+Linux App Service does not honor `web.config`. Use the slot-swap-specific warm-up app settings on the slot being swapped so the platform pings the configured path before completing the swap:
+
+```bash
+az webapp config appsettings set \
+  --resource-group $RG \
+  --name $APP_NAME \
+  --slot staging \
+  --settings \
+    WEBSITE_SWAP_WARMUP_PING_PATH=/health \
+    WEBSITE_SWAP_WARMUP_PING_STATUSES=200,202 \
+  --output json
+```
+
+- `WEBSITE_SWAP_WARMUP_PING_PATH` — path the platform pings on the target slot before completing the swap. Without it, the platform falls back to probing the site root (`/`), which may not exercise the code paths you want primed.
+- `WEBSITE_SWAP_WARMUP_PING_STATUSES` — comma-separated list of HTTP status codes that count as a successful warm-up. **By default, every response code (including 5xx) is treated as valid**, so if you want a failing endpoint to actually block the swap, set this explicitly to the codes you accept.
+
+!!! warning "Make warm-up actually gate the swap"
+    Because the default `WEBSITE_SWAP_WARMUP_PING_STATUSES` accepts every response code, a warm-up endpoint that returns 5xx will still pass the swap unless you restrict the acceptable codes via the setting above. Set `WEBSITE_SWAP_WARMUP_PING_STATUSES` so that real failures hold the swap. Also keep warm-up paths cheap, idempotent, and independent of swap-time configuration changes — for example, do not call downstream services that are themselves being swapped.
+
+    `WEBSITE_WARMUP_PATH` exists separately and applies to site **restarts** (not specifically to slot swap), so use the `WEBSITE_SWAP_WARMUP_PING_*` settings above to gate the swap itself.
 
 ### Deploy to Staging and Validate
 

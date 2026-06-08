@@ -7,12 +7,19 @@ content_sources:
     mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
 content_validation:
   status: verified
-  last_reviewed: '2026-05-23'
+  last_reviewed: '2026-06-08'
   reviewer: agent
   core_claims:
-  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
-      guidance.
-    source: https://learn.microsoft.com/en-us/azure/app-service/
+  - claim: 'On Azure App Service for Tomcat, `az webapp deploy --type war` (OneDeploy)
+      renames the uploaded WAR to `app.war` and places it at `/home/site/wwwroot/app.war`,
+      serving it at the root context (`/`); the default targets a single path, so
+      OneDeploy effectively supports one WAR per app at the default location.'
+    source: https://learn.microsoft.com/en-us/azure/app-service/configure-language-java-deploy-run
+    verified: true
+  - claim: Deploying multiple WARs to a single Tomcat instance on App Service requires
+      `--target-path` for OneDeploy, or an alternative deployment method such as
+      FTP/SCM file copy into the Tomcat `webapps` directory.
+    source: https://learn.microsoft.com/en-us/azure/app-service/configure-language-java-deploy-run
     verified: true
 ---
 # Java Runtime
@@ -142,6 +149,70 @@ spring.main.banner-mode=off
 |--------------|---------|
 | `management.endpoints.web.exposure.include=health,info` | Exposes the health and info management endpoints over HTTP. |
 | `spring.main.banner-mode=off` | Disables the Spring Boot startup banner in logs. |
+
+## Tomcat Hosting Model (WAR Deployment)
+
+This guide's baseline is Java SE with executable JARs (Spring Boot), but App Service Linux also provides a managed Tomcat container that runs traditional WAR deployments without you packaging the servlet container yourself.
+
+| Hosting model | Artifact | Startup |
+|---|---|---|
+| Java SE | executable JAR | platform invokes `java -jar` against your JAR |
+| Tomcat | WAR | Tomcat serves a WAR deployed via `az webapp deploy --type war` |
+
+Representative Linux stack identifiers (run `az webapp list-runtimes --os linux --output table` for the current authoritative list):
+
+- Java SE: `JAVA|17-java17`
+- Tomcat: `TOMCAT|10.1-java17`
+
+Set the Tomcat runtime stack:
+
+```bash
+az webapp config set \
+  --resource-group $RG \
+  --name $APP_NAME \
+  --linux-fx-version "TOMCAT|10.1-java17" \
+  --output json
+```
+
+| Command/Code | Purpose |
+|--------------|---------|
+| `az webapp config set` | Updates the App Service runtime configuration. |
+| `--linux-fx-version "TOMCAT|10.1-java17"` | Selects the managed Tomcat 10.1 container running on Java 17. |
+| `--output json` | Returns the runtime configuration change in JSON format. |
+
+Deploy a WAR to the running Tomcat:
+
+```bash
+az webapp deploy \
+  --resource-group $RG \
+  --name $APP_NAME \
+  --src-path ./target/myapp.war \
+  --type war \
+  --output json
+```
+
+**Deployment path conventions**
+
+`az webapp deploy --type war` uploads through the OneDeploy endpoint. By default, the WAR is renamed and placed under `/home/site/wwwroot/app.war`, regardless of the local file name, and is served at the root context (`/`). Because this default targets a single path, the OneDeploy method effectively supports one WAR per app.
+
+If you need to deploy multiple WARs to a single Tomcat instance, use `--target-path` to control where each artifact lands (for example, deploying to `webapps/<name>.war` under wwwroot), or use a multi-WAR-friendly deployment method such as FTP/SCM file copy into the Tomcat `webapps` directory. Consult Microsoft Learn for the authoritative behavior of each deployment method.
+
+**JVM tuning with `CATALINA_OPTS`**
+
+Tomcat reads `CATALINA_OPTS` (in addition to `JAVA_OPTS`) for server-process JVM flags. Use `CATALINA_OPTS` for Tomcat-specific tuning so the flags are unambiguously scoped to the servlet container:
+
+```bash
+az webapp config appsettings set \
+  --resource-group $RG \
+  --name $APP_NAME \
+  --settings "CATALINA_OPTS=-XX:InitialRAMPercentage=25.0 -XX:MaxRAMPercentage=70.0 -XX:+UseG1GC -XX:+ExitOnOutOfMemoryError" \
+  --output json
+```
+
+The heap sizing, GC, and OOM behavior guidance in the next section applies to both hosting models — the only difference is which environment variable carries the flags.
+
+!!! info "Choosing between Java SE and Tomcat"
+    Choose Tomcat when you have an existing WAR-based pipeline, dependency on servlet container features (JSP, JNDI resources), or organizational standardization on Tomcat. New greenfield services on App Service generally use Java SE with an embedded server (Spring Boot, Quarkus, Micronaut), which gives you full control over the container, framework version, and startup behavior. The remaining sections of this document focus on the Java SE hosting model used by the rest of this guide.
 
 ## Memory defaults and tuning heuristics
 

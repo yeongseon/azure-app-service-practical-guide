@@ -9,7 +9,7 @@ content_sources:
         - https://learn.microsoft.com/en-us/azure/app-service/overview-diagnostics
 content_validation:
   status: verified
-  last_reviewed: "2026-04-12"
+  last_reviewed: "2026-06-08"
   reviewer: agent
   core_claims:
     - claim: "App Service Health Check sends HTTP requests to a configured path such as /health."
@@ -20,6 +20,12 @@ content_validation:
       verified: true
     - claim: "Auto-Heal can restart an app automatically based on conditions such as memory pressure or slow requests."
       source: "https://learn.microsoft.com/azure/app-service/overview-diagnostics"
+      verified: true
+    - claim: "App Service Health Check pings each instance about once per minute, with a default of 10 consecutive failures before removal; the threshold is configurable via WEBSITE_HEALTHCHECK_MAXPINGFAILURES in the range 2 to 10."
+      source: "https://learn.microsoft.com/azure/app-service/monitor-instances-health-check"
+      verified: true
+    - claim: "App Service Health Check will not remove the only running instance even if it is failing probes, so production workloads should run at least two instances."
+      source: "https://learn.microsoft.com/azure/app-service/monitor-instances-health-check"
       verified: true
 ---
 
@@ -87,6 +93,29 @@ az webapp config show \
   --query "{healthCheckPath:healthCheckPath,minimumTls:minTlsVersion,alwaysOn:alwaysOn}" \
   --output json
 ```
+
+### Understand Platform Default Probe Behavior
+
+Once health check is enabled, the App Service platform probes each instance on a fixed cadence. Knowing the defaults helps you reason about removal latency and set realistic recovery SLOs.
+
+| Behavior | Default | Configurable via |
+|---|---|---|
+| Probe interval per instance | approximately 1 minute | not configurable |
+| Consecutive failures before removal | 10 | `WEBSITE_HEALTHCHECK_MAXPINGFAILURES` app setting (range 2-10) |
+| Single-instance safety net | platform never removes the only running instance | platform-enforced |
+
+Tune the failure threshold when you need faster or more lenient removal:
+
+```bash
+az webapp config appsettings set \
+  --resource-group $RG \
+  --name $APP_NAME \
+  --settings WEBSITE_HEALTHCHECK_MAXPINGFAILURES=5 \
+  --output json
+```
+
+!!! info "Plan for at least 2 instances in production"
+    Health check will not remove the only running instance, even if it is failing probes — this prevents total outage when no other instance is available to take traffic. To get the benefit of platform-side instance rotation, run at least 2 instances so an unhealthy instance can be replaced while a healthy one continues serving requests.
 
 ### Configure Auto-Heal for Memory Pressure
 

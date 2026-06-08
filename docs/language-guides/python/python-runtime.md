@@ -7,12 +7,19 @@ content_sources:
     mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
 content_validation:
   status: verified
-  last_reviewed: '2026-05-23'
+  last_reviewed: '2026-06-08'
   reviewer: agent
   core_claims:
-  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
-      guidance.
-    source: https://learn.microsoft.com/en-us/azure/app-service/
+  - claim: On Azure App Service for Linux Python, ASGI frameworks such as FastAPI
+      can be served via Gunicorn with a Uvicorn worker class (`-k uvicorn.workers.UvicornWorker`)
+      to bridge the synchronous Gunicorn process model to ASGI; this is a documented
+      common setup pattern for FastAPI on App Service.
+    source: https://learn.microsoft.com/en-us/azure/app-service/tutorial-ai-slm-fastapi
+    verified: true
+  - claim: The default App Service Linux Python container runs apps using the Gunicorn
+      WSGI HTTP server with extra arguments `--bind=0.0.0.0 --timeout 600`, behind
+      an Nginx reverse proxy.
+    source: https://learn.microsoft.com/en-us/azure/app-service/configure-language-python
     verified: true
 ---
 # Python Runtime
@@ -133,6 +140,52 @@ worker_class = "sync"
 timeout = int(os.getenv("GUNICORN_TIMEOUT", "120"))
 graceful_timeout = int(os.getenv("GUNICORN_GRACEFUL_TIMEOUT", "30"))
 ```
+
+### ASGI Frameworks with uvicorn
+
+For ASGI frameworks like FastAPI and Starlette, run `uvicorn` directly or run Gunicorn with the uvicorn worker class. Both patterns bind to the App Service-injected `PORT`.
+
+Direct uvicorn (FastAPI example):
+
+```bash
+uvicorn main:app --host 0.0.0.0 --port $PORT
+```
+
+Set as App Service startup command:
+
+```bash
+az webapp config set \
+  --resource-group $RG \
+  --name $APP_NAME \
+  --startup-file "uvicorn main:app --host 0.0.0.0 --port \$PORT"
+```
+
+Gunicorn with the uvicorn worker (recommended for production ASGI workloads that benefit from process-level worker management):
+
+```bash
+gunicorn main:app --bind=0.0.0.0:$PORT --worker-class uvicorn.workers.UvicornWorker
+```
+
+Set as App Service startup command:
+
+```bash
+az webapp config set \
+  --resource-group $RG \
+  --name $APP_NAME \
+  --startup-file "gunicorn main:app --bind=0.0.0.0:\$PORT --worker-class uvicorn.workers.UvicornWorker"
+```
+
+Pin both `uvicorn` and (when used) `gunicorn` in `requirements.txt` so Oryx installs them during build:
+
+```text
+fastapi
+uvicorn[standard]
+gunicorn
+```
+
+Add upper-bound pins (for example `fastapi<1`, `uvicorn[standard]<1`, `gunicorn<24`) once you have an integration-tested baseline; the unpinned form above is intended only to keep this example forward-compatible. Pin exact versions in your own `requirements.txt` for reproducible builds.
+
+Choose direct `uvicorn` for simplicity and small workloads. Choose Gunicorn + uvicorn worker when you need worker recycling, graceful restarts, and the same Gunicorn-style tuning options described in the next section. The Gunicorn settings under [Worker and Timeout Tuning](#worker-and-timeout-tuning) apply equally when `worker_class` is `uvicorn.workers.UvicornWorker`.
 
 ## Gunicorn Configuration
 

@@ -100,6 +100,9 @@ az webapp up --name $APP_NAME --resource-group $RG --location $LOCATION --runtim
     You can launch the app at http://app-express-tutorial-abc123.azurewebsites.net
     ```
 
+!!! warning "Build automation: quick-start vs production"
+    `az webapp up` performs an Oryx/Kudu build on App Service during deployment (equivalent to `SCM_DO_BUILD_DURING_DEPLOYMENT=true`). That is fine for this quick-start and for local development, but production deployments should publish a pre-built artifact and set `SCM_DO_BUILD_DURING_DEPLOYMENT=false` for deterministic, reproducible releases. See [Best Practices: SCM_DO_BUILD vs pre-built artifacts](../../../best-practices/deployment.md#scm_do_build_during_deployment-vs-pre-built-artifacts).
+
 ### Step 3: Verify deployment
 
 ```bash

@@ -7,12 +7,22 @@ content_sources:
     mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
 content_validation:
   status: verified
-  last_reviewed: '2026-05-23'
+  last_reviewed: '2026-06-08'
   reviewer: agent
   core_claims:
-  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
-      guidance.
-    source: https://learn.microsoft.com/en-us/azure/app-service/
+  - claim: ASP.NET Core in-process hosting on Windows IIS uses IISHttpServer (not Kestrel)
+      as the HTTP server, running inside the IIS worker process (w3wp.exe).
+    source: https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/aspnet-core-module
+    verified: true
+  - claim: ASP.NET Core out-of-process hosting on Windows IIS runs Kestrel in a separate
+      dotnet.exe process, with IIS acting as a reverse proxy via the ASP.NET Core
+      Module.
+    source: https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/aspnet-core-module
+    verified: true
+  - claim: On Linux App Service, .NET apps run with Kestrel as the entrypoint process
+      inside the container; there is no IIS, no ASP.NET Core Module, and web.config
+      is not consulted.
+    source: https://learn.microsoft.com/en-us/azure/app-service/configure-language-dotnetcore?pivots=platform-linux
     verified: true
 ---
 # .NET Runtime on Windows App Service (.NET 8)
@@ -23,10 +33,12 @@ Runtime alignment is critical for startup reliability. This reference summarizes
 ```mermaid
 graph TD
     A[App Service Front End] --> B[IIS + ASP.NET Core Module]
-    B --> C[dotnet process Kestrel]
-    C --> D[GuideApi net8.0]
-    E[HTTP_PLATFORM_PORT or PORT] --> C
-    F[App Settings and web.config] --> C
+    B -->|in-process| C1[w3wp.exe + IISHttpServer]
+    B -->|out-of-process| C2[dotnet.exe + Kestrel]
+    C1 --> D[GuideApi net8.0]
+    C2 --> D
+    E[HTTP_PLATFORM_PORT or PORT] --> C2
+    F[App Settings and web.config] --> D
 ```
 
 !!! tip "Common Guide Reference"
@@ -37,7 +49,7 @@ graph TD
 - Project SDK: `Microsoft.NET.Sdk.Web`
 - Target framework: `net8.0`
 - Core package: `Microsoft.ApplicationInsights.AspNetCore`
-- Hosting path: Windows App Service with IIS + handler + Kestrel
+- Hosting path: Windows App Service with IIS + ASP.NET Core Module (in-process via `IISHttpServer` inside `w3wp.exe`, or out-of-process via Kestrel in a separate `dotnet.exe`; see [Hosting Model](#hosting-model-in-process-vs-out-of-process))
 
 `GuideApi.csproj` excerpt:
 
@@ -77,7 +89,7 @@ builder.WebHost.UseUrls($"http://+:{port}");
 | `Environment.GetEnvironmentVariable("HTTP_PLATFORM_PORT")` | Reads the port assigned by Windows App Service hosting. |
 | `Environment.GetEnvironmentVariable("PORT")` | Falls back to another common hosting port variable. |
 | `?? "5000"` | Uses `5000` as the local default when no hosting variable is present. |
-| `builder.WebHost.UseUrls($"http://+:{port}")` | Binds the app to the resolved port for Kestrel startup. |
+| `builder.WebHost.UseUrls($"http://+:{port}")` | Binds the app to the resolved port (used by Kestrel in out-of-process hosting; ignored in in-process where IIS controls binding). |
 
 This pattern is safe for both App Service Windows and local fallback.
 
@@ -109,9 +121,68 @@ Typical concerns:
 
 Startup failures often come from mismatched `arguments` or missing published DLL.
 
+## Hosting Model: In-Process vs Out-of-Process
+
+On Windows App Service, the ASP.NET Core Module (ANCM) can host your app in one of two models. The choice affects request latency, process topology, and which HTTP server is in front of your code.
+
+**In-process (default since .NET Core 3.0)**
+
+The ASP.NET Core Module loads the .NET runtime and your app directly inside the IIS worker process (`w3wp.exe`). HTTP requests are handed off to your app via `IISHttpServer` — Kestrel is not used in this mode. There is one process and one HTTP listener (HTTP.sys via IIS).
+
+- Lower request latency — no inter-process hop between IIS and a separate .NET process.
+- Higher per-worker throughput.
+- `dotnet.exe` is not spawned; the app runs inside `w3wp.exe`.
+
+**Out-of-process**
+
+The ASP.NET Core Module spawns a separate `dotnet.exe` process that runs Kestrel, then reverse-proxies requests from IIS to Kestrel over `localhost`.
+
+- Useful when you specifically need Kestrel features that cannot run inside `w3wp.exe`.
+- Required for some scenarios that depend on a separate Kestrel process being addressable.
+- Adds one IIS-to-Kestrel reverse-proxy hop per request.
+
+**Set the model via `web.config`**
+
+The hosting model is selected by the `hostingModel` attribute on the `<aspNetCore>` element. Setting it explicitly avoids relying on SDK defaults:
+
+```xml
+<configuration>
+  <system.webServer>
+    <handlers>
+      <add name="aspNetCore" path="*" verb="*" modules="AspNetCoreModuleV2" resourceType="Unspecified" />
+    </handlers>
+    <aspNetCore processPath="dotnet"
+                arguments=".\GuideApi.dll"
+                stdoutLogEnabled="false"
+                stdoutLogFile=".\logs\stdout"
+                hostingModel="inprocess" />
+  </system.webServer>
+</configuration>
+```
+
+Valid `hostingModel` values: `inprocess` or `outofprocess`.
+
+You can also pin the hosting model in the project file so `dotnet publish` emits the right `web.config`:
+
+```xml
+<PropertyGroup>
+  <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+</PropertyGroup>
+```
+
+| Model | HTTP server in front of your app | Process | When to choose |
+|---|---|---|---|
+| In-process | `IISHttpServer` (inside `w3wp.exe`) | runs inside `w3wp.exe` | default — use unless you have a specific reason not to |
+| Out-of-process | Kestrel (in a separate `dotnet.exe`) | separate `dotnet.exe`, IIS reverse-proxies | required for custom Kestrel scenarios or legacy diagnostics |
+
+!!! warning "In-process startup failures and `HTTP Error 500.30`"
+    In-process startup failures surface as `HTTP Error 500.30 - ANCM In-Process Start Failure`. The error indicates the ASP.NET Core Module failed to load your app inside `w3wp.exe`. Capture stdout logs (set `stdoutLogEnabled="true"` in `web.config`) to see the actual startup exception. Out-of-process startup failures usually surface as `HTTP Error 502.5` with the underlying error in the spawned process's stdout.
+
 ## Kestrel runtime settings
 
-Kestrel stays your HTTP server runtime even behind IIS reverse proxy. Common tune points:
+Kestrel is your HTTP server runtime in **out-of-process** hosting (where IIS reverse-proxies to a separate `dotnet.exe` running Kestrel). In **in-process** hosting, the HTTP server is `IISHttpServer` instead of Kestrel — `ConfigureKestrel(...)` calls have no effect in that mode. Use `ConfigureIISServerOptions(...)` to tune the in-process server instead.
+
+Common Kestrel tune points (out-of-process only):
 
 - Request limits (`MaxRequestBodySize`) when needed.
 - Keep-alive and header timeouts for abuse resilience.
@@ -164,6 +235,40 @@ az webapp show --resource-group $RESOURCE_GROUP_NAME --name $WEB_APP_NAME --outp
 | `HTTP Error 500.30` | App failed during startup | Check runtime, config, startup exceptions |
 | Missing framework version | Runtime mismatch | Update stack or retarget build |
 | Port binding failure | Wrong URL binding assumptions | Ensure `HTTP_PLATFORM_PORT` flow used |
+
+## .NET on Linux App Service: Key Differences
+
+This document focuses on Windows App Service, where IIS hosts ASP.NET Core apps via the ASP.NET Core Module — the HTTP server depends on the chosen hosting model (`IISHttpServer` in-process inside `w3wp.exe`, or Kestrel in a separate `dotnet.exe` for out-of-process). .NET also runs on Linux App Service, but the hosting model is different: there is no IIS, no ASP.NET Core Module, and `web.config` is not consulted. Use this section to understand the differences if you deploy to Linux.
+
+| Concern | Windows App Service | Linux App Service |
+|---|---|---|
+| Process model | IIS via the ASP.NET Core Module (`AspNetCoreModuleV2`); HTTP server depends on hosting model (`IISHttpServer` in-process, Kestrel out-of-process) | Kestrel runs directly as the entrypoint process inside the container |
+| Reverse proxy | In-process: IIS (`w3wp.exe`) hosts the app directly via `IISHttpServer` (no proxy hop). Out-of-process: IIS reverse-proxies to Kestrel running in a separate `dotnet.exe` | platform front end forwards to Kestrel; no IIS layer |
+| Port variable | `HTTP_PLATFORM_PORT` (preferred), with `PORT` as fallback | `PORT` (typically `8080`) |
+| Startup config | `web.config` with `<aspNetCore>` element | startup command on the App Service app; `web.config` is ignored |
+| Hosting models | in-process or out-of-process (see [Hosting Model](#hosting-model-in-process-vs-out-of-process)) | not applicable — Kestrel is the only process |
+
+Linux runtime stack identifier:
+
+```bash
+az webapp config set \
+  --resource-group $RESOURCE_GROUP_NAME \
+  --name $WEB_APP_NAME \
+  --linux-fx-version "DOTNETCORE|8.0" \
+  --output json
+```
+
+Linux port binding pattern (no `HTTP_PLATFORM_PORT` involvement):
+
+```csharp
+var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+builder.WebHost.UseUrls($"http://+:{port}");
+```
+
+The `HTTP_PLATFORM_PORT` fallback shown in [Port and startup binding contract](#port-and-startup-binding-contract) is harmless on Linux — `HTTP_PLATFORM_PORT` is simply not set, so the lookup falls through to `PORT`. The same `Program.cs` snippet works on both Windows and Linux.
+
+!!! info "HTTP Error 500.30 is Windows-only"
+    Startup errors on Linux do not surface as `HTTP Error 500.30` because there is no ASP.NET Core Module to emit that error page. On Linux, startup failures show up as container restart loops in `az webapp log tail` and Application Insights — look for stack traces in stdout instead.
 
 ## Run It in the Portal
 
