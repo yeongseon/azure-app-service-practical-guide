@@ -1,14 +1,14 @@
 ---
 content_sources:
   diagrams:
-  - id: 02-first-deploy
-    type: flowchart
-    source: mslearn-adapted
-    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/quickstart-java
-  - id: deployment-flow
-    type: flowchart
-    source: mslearn-adapted
-    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/quickstart-java
+    - id: 02-first-deploy
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/quickstart-java
+    - id: deployment-flow
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/quickstart-java
 ---
 # 02. First Deploy
 

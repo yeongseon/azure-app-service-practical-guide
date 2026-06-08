@@ -1,14 +1,14 @@
 ---
 content_sources:
   diagrams:
-  - id: 01-run-flask-locally-with-app-service-parity
-    type: flowchart
-    source: mslearn-adapted
-    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
-  - id: validate-worker-and-timeout-behavior
-    type: flowchart
-    source: mslearn-adapted
-    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
+    - id: 01-run-flask-locally-with-app-service-parity
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
+    - id: validate-worker-and-timeout-behavior
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
 ---
 # 01 - Run Flask Locally with App Service Parity
 

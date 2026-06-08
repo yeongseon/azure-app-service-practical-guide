@@ -1,10 +1,10 @@
 ---
 content_sources:
   diagrams:
-  - id: architecture
-    type: flowchart
-    source: mslearn-adapted
-    mslearn_url: https://learn.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-python
+    - id: architecture
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-python
 ---
 # Bring Your Own Storage (BYOS)
 

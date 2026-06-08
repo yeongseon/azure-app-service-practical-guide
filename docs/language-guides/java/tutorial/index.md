@@ -1,17 +1,17 @@
 ---
 content_sources:
   text:
-  - type: mslearn-adapted
-    url: https://learn.microsoft.com/en-us/azure/app-service/quickstart-java
+    - type: mslearn-adapted
+      url: https://learn.microsoft.com/en-us/azure/app-service/quickstart-java
   diagrams:
-  - id: tutorial-flow
-    type: flowchart
-    source: mslearn-adapted
-    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/quickstart-java
+    - id: tutorial-flow
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/quickstart-java
 validation:
   az_cli:
-    last_tested: null
-    cli_version: null
+    last_tested:
+    cli_version:
     result: not_tested
 ---
 # Java Tutorial Index

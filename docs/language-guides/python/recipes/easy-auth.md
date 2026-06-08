@@ -1,10 +1,10 @@
 ---
 content_sources:
   diagrams:
-  - id: easy-auth
-    type: flowchart
-    source: mslearn-adapted
-    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization
+    - id: easy-auth
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization
 ---
 # Easy Auth
 

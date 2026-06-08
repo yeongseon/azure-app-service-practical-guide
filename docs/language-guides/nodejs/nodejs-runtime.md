@@ -1,10 +1,10 @@
 ---
 content_sources:
   diagrams:
-  - id: node-js-runtime-details
-    type: flowchart
-    source: mslearn-adapted
-    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
+    - id: node-js-runtime-details
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
 ---
 # Node.js Runtime Details
 

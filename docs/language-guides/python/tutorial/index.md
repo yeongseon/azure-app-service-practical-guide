@@ -1,20 +1,20 @@
 ---
 content_sources:
   text:
-  - type: mslearn-adapted
-    url: https://learn.microsoft.com/en-us/azure/app-service/quickstart-python?tabs=flask%2Cazure-cli
+    - type: mslearn-adapted
+      url: https://learn.microsoft.com/en-us/azure/app-service/quickstart-python?tabs=flask%2Cazure-cli
   diagrams:
-  - id: tutorial-path
-    type: flowchart
-    source: self-generated
-    justification: Overview sequence derived from the structure of this tutorial series.
-    based_on:
-    - https://learn.microsoft.com/en-us/azure/app-service/quickstart-python?tabs=flask%2Cazure-cli
-    - https://learn.microsoft.com/en-us/azure/app-service/app-service-web-tutorial-custom-domain
+    - id: tutorial-path
+      type: flowchart
+      source: self-generated
+      justification: Overview sequence derived from the structure of this tutorial series.
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/quickstart-python?tabs=flask%2Cazure-cli
+        - https://learn.microsoft.com/en-us/azure/app-service/app-service-web-tutorial-custom-domain
 validation:
   az_cli:
-    last_tested: null
-    cli_version: null
+    last_tested:
+    cli_version:
     result: not_tested
 ---
 # Python Tutorial Overview

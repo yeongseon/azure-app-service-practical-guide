@@ -1,13 +1,12 @@
 ---
 content_sources:
   diagrams:
-  - id: start-here-overview-diagram-1
-    type: graph
-    source: self-generated
-    justification: Self-generated navigation diagram synthesized from official Azure
-      App Service overview documentation for this guide.
-    based_on:
-    - https://learn.microsoft.com/en-us/azure/app-service/overview
+    - id: start-here-overview-diagram-1
+      type: graph
+      source: self-generated
+      justification: Self-generated navigation diagram synthesized from official Azure App Service overview documentation for this guide.
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/overview
 ---
 # Azure App Service Practical Guide
 

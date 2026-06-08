@@ -290,6 +290,52 @@ async (page) => {
 
 If any of the above ever becomes visible in a capture, treat it as a P0 issue: fail the capture, fix the helper, and re-shoot.
 
+### Frontmatter YAML Style
+
+Every Markdown file in `docs/` begins with a YAML frontmatter block delimited by `---`. The serialization style is **enforced by CI** and centralized in [`scripts/lib/yaml_style.py`](scripts/lib/yaml_style.py). Any script that mutates frontmatter MUST import `build_yaml()` from that module — direct use of PyYAML's `yaml.dump()` is forbidden because it silently reformats files on every run (quoting dates, flattening nested sequences, folding multi-line strings), producing noisy diffs and unstable history.
+
+#### Canonical style
+
+| Setting | Value | Why |
+|---|---|---|
+| Library | `ruamel.yaml` (`typ='rt'`, round-trip mode) | Preserves comments, quoting, and key order across load/dump cycles. PyYAML cannot. |
+| `indent(mapping=2, sequence=4, offset=2)` | `mapping=2`, `sequence=4`, `offset=2` | Matches the historical repository layout: list hyphens sit at column 2 under their parent key, list-item content at column 4. |
+| `preserve_quotes` | `True` | Existing files are normalized for *structure* only; intentionally quoted dates and strings are kept as-is to avoid surprising semantic changes (e.g., `"2026-04-12"` becoming a `datetime.date` object). |
+| `width` | `4096` | Practically disables line folding so long `claim`, `summary`, and `justification` strings stay on one line. Folding produces fragile diffs and harms grep-ability. |
+| `explicit_end` | `False` | Frontmatter is delimited by a single closing `---` (no `...` document terminator). |
+
+Example of correct style (matches the canonical output):
+
+```yaml
+---
+content_sources:
+  diagrams:
+    - id: deployment-method-selection-flow
+      type: flowchart
+      source: self-generated
+      justification: Synthesized deployment decision flow from Microsoft Learn guidance for ZIP deploy, GitHub Actions, deployment slots, and custom containers.
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/deploy-zip
+        - https://learn.microsoft.com/en-us/azure/app-service/deploy-github-actions
+---
+```
+
+#### Workflow
+
+1. **Never write frontmatter with PyYAML.** Any new generator or mutation tool MUST import `build_yaml()` from `scripts/lib/yaml_style.py`.
+2. **Bulk normalize when needed:**
+
+    ```bash
+    python3 scripts/normalize_yaml_frontmatter.py --apply
+    ```
+
+3. **CI enforces drift:** the `Validate Content Sources` workflow runs `python scripts/normalize_yaml_frontmatter.py --check` and fails if any frontmatter would change.
+4. **Body is preserved byte-exact.** The normalizer only rewrites the YAML region between the two `---` delimiters; the blank line (or its absence) between the closing `---` and the first body line is preserved as-is.
+
+#### When to update this section
+
+If [`scripts/lib/yaml_style.py`](scripts/lib/yaml_style.py) changes (different indent, width, or quoting policy), the table above MUST be updated in the same commit. The shared library is the source of truth; this section is the human-readable mirror.
+
 ### Admonition Indentation Rule
 
 For MkDocs admonitions (`!!!` / `???`), every line in the body must be indented by **4 spaces**.

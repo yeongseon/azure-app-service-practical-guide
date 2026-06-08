@@ -1,10 +1,10 @@
 ---
 content_sources:
   diagrams:
-  - id: cosmos-db
-    type: flowchart
-    source: mslearn-adapted
-    mslearn_url: https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/quickstart-python
+    - id: cosmos-db
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/quickstart-python
 ---
 # Cosmos DB
 

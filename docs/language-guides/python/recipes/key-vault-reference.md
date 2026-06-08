@@ -1,10 +1,10 @@
 ---
 content_sources:
   diagrams:
-  - id: architecture
-    type: flowchart
-    source: mslearn-adapted
-    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/app-service-key-vault-references
+    - id: architecture
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/app-service-key-vault-references
 ---
 # Key Vault References
 

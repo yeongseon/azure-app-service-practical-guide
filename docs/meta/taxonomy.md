@@ -4,24 +4,22 @@ slug: taxonomy
 doc_type: reference
 section: meta
 topics:
-- documentation
-- standards
-- metadata
+  - documentation
+  - standards
+  - metadata
 products:
-- azure-app-service
-summary: Standard taxonomy for document types, relationship fields, and frontmatter
-  schema.
+  - azure-app-service
+summary: Standard taxonomy for document types, relationship fields, and frontmatter schema.
 status: stable
 last_reviewed: 2026-04-08
 content_sources:
   diagrams:
-  - id: meta-taxonomy-diagram-1
-    type: flowchart
-    source: self-generated
-    justification: Self-generated navigation diagram synthesized from official Azure
-      App Service overview documentation for this guide.
-    based_on:
-    - https://learn.microsoft.com/en-us/azure/app-service/overview
+    - id: meta-taxonomy-diagram-1
+      type: flowchart
+      source: self-generated
+      justification: Self-generated navigation diagram synthesized from official Azure App Service overview documentation for this guide.
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/overview
 ---
 # Documentation Taxonomy
 

@@ -1,12 +1,12 @@
 ---
 content_sources:
   diagrams:
-  - id: java-mtls-client-certificate-flow
-    type: flowchart
-    source: mslearn-adapted
-    mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/app-service-web-configure-tls-mutual-auth
-    based_on:
-    - https://learn.microsoft.com/en-us/azure/app-service/configure-ssl-certificate-in-code
+    - id: java-mtls-client-certificate-flow
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/app-service-web-configure-tls-mutual-auth
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/configure-ssl-certificate-in-code
 ---
 # mTLS Client Certificates
 

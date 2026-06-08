@@ -1,10 +1,10 @@
 ---
 content_sources:
   diagrams:
-  - id: reference-architecture
-    type: flowchart
-    source: mslearn-adapted
-    mslearn_url: https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/quickstart-python
+    - id: reference-architecture
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/quickstart-python
 ---
 # Cosmos DB Integration
 

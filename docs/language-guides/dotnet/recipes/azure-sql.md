@@ -1,10 +1,10 @@
 ---
 content_sources:
   diagrams:
-  - id: azure-sql
-    type: flowchart
-    source: mslearn-adapted
-    mslearn_url: https://learn.microsoft.com/en-us/azure/azure-sql/database/connect-query-python
+    - id: azure-sql
+      type: flowchart
+      source: mslearn-adapted
+      mslearn_url: https://learn.microsoft.com/en-us/azure/azure-sql/database/connect-query-python
 ---
 # Azure SQL
 

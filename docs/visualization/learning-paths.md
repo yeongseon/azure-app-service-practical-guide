@@ -4,44 +4,40 @@ slug: learning-paths-visualization
 doc_type: map
 section: visualization
 topics:
-- learning
-- navigation
-- tutorials
+  - learning
+  - navigation
+  - tutorials
 products:
-- azure-app-service
+  - azure-app-service
 related:
-- core-knowledge-graph
-- start-here-learning-paths
-summary: Visual learning progressions for each language guide, showing the recommended
-  order and relationships between tutorials.
+  - core-knowledge-graph
+  - start-here-learning-paths
+summary: Visual learning progressions for each language guide, showing the recommended order and relationships between tutorials.
 status: stable
 last_reviewed: 2026-04-08
 content_sources:
   diagrams:
-  - id: visualization-learning-paths-diagram-1
-    type: graph
-    source: self-generated
-    justification: Self-generated visualization synthesized from official Azure App
-      Service documentation to explain guide structure and relationships.
-    based_on:
-    - https://learn.microsoft.com/en-us/azure/app-service/overview
-    - https://learn.microsoft.com/en-us/azure/app-service/environment/overview
-  - id: visualization-learning-paths-diagram-2
-    type: graph
-    source: self-generated
-    justification: Self-generated visualization synthesized from official Azure App
-      Service documentation to explain guide structure and relationships.
-    based_on:
-    - https://learn.microsoft.com/en-us/azure/app-service/overview
-    - https://learn.microsoft.com/en-us/azure/app-service/environment/overview
-  - id: visualization-learning-paths-diagram-3
-    type: graph
-    source: self-generated
-    justification: Self-generated visualization synthesized from official Azure App
-      Service documentation to explain guide structure and relationships.
-    based_on:
-    - https://learn.microsoft.com/en-us/azure/app-service/overview
-    - https://learn.microsoft.com/en-us/azure/app-service/environment/overview
+    - id: visualization-learning-paths-diagram-1
+      type: graph
+      source: self-generated
+      justification: Self-generated visualization synthesized from official Azure App Service documentation to explain guide structure and relationships.
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/overview
+        - https://learn.microsoft.com/en-us/azure/app-service/environment/overview
+    - id: visualization-learning-paths-diagram-2
+      type: graph
+      source: self-generated
+      justification: Self-generated visualization synthesized from official Azure App Service documentation to explain guide structure and relationships.
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/overview
+        - https://learn.microsoft.com/en-us/azure/app-service/environment/overview
+    - id: visualization-learning-paths-diagram-3
+      type: graph
+      source: self-generated
+      justification: Self-generated visualization synthesized from official Azure App Service documentation to explain guide structure and relationships.
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/overview
+        - https://learn.microsoft.com/en-us/azure/app-service/environment/overview
 ---
 # Learning Paths
 
