@@ -12,19 +12,32 @@ from __future__ import annotations
 
 import argparse
 import re
+import sys
 from datetime import date
 from pathlib import Path
 from typing import Any
 
 import yaml
 
-# Sections to scan (excludes language-guides tutorials and reference)
+# Sections to scan for content_validation metadata. The scope is intentionally
+# limited to factual-claim pages per AGENTS.md §Text Content Validation.
 SCAN_SECTIONS = [
     "platform",
     "best-practices",
     "operations",
     "troubleshooting",
 ]
+
+# Subpaths under SCAN_SECTIONS that do NOT require content_validation because
+# they are navigation, reference-lookup, or lab-evidence pages.
+EXCLUDED_SUBPATHS = (
+    "troubleshooting/kql",
+    "troubleshooting/lab-guides",
+)
+
+# Tautological claim marker - rejects placeholder claims such as
+# "This page uses Microsoft Learn as the primary source basis ..."
+TAUTOLOGICAL_CLAIM_MARKER = "primary source basis"
 
 # Status icons
 ICON_VERIFIED = "✅ Verified"
@@ -64,12 +77,13 @@ def scan_documents(docs_dir: Path) -> list[dict[str, Any]]:
             continue
 
         for md_file in section_dir.rglob("*.md"):
-            rel_in_section = md_file.relative_to(section_dir)
-            if md_file.name == "index.md" and rel_in_section != Path("index.md"):
+            if md_file.name == "index.md":
+                continue
+            rel_path = md_file.relative_to(docs_dir)
+            if any(str(rel_path).startswith(prefix) for prefix in EXCLUDED_SUBPATHS):
                 continue
 
             frontmatter = parse_frontmatter(md_file)
-            rel_path = md_file.relative_to(docs_dir)
 
             doc_info = {
                 "filepath": md_file,
@@ -82,15 +96,14 @@ def scan_documents(docs_dir: Path) -> list[dict[str, Any]]:
                 "validation_status": "no_metadata",
                 "core_claims_count": 0,
                 "verified_claims_count": 0,
+                "tautological_claims_count": 0,
                 "last_reviewed": None,
             }
 
             if frontmatter and isinstance(frontmatter, dict):
-                # Check content_sources
                 if "content_sources" in frontmatter:
                     doc_info["has_content_sources"] = True
 
-                # Check content_validation
                 cv = frontmatter.get("content_validation", {})
                 if cv and isinstance(cv, dict):
                     doc_info["has_content_validation"] = True
@@ -104,6 +117,13 @@ def scan_documents(docs_dir: Path) -> list[dict[str, Any]]:
                             1
                             for c in claims
                             if isinstance(c, dict) and c.get("verified", False)
+                        )
+                        doc_info["tautological_claims_count"] = sum(
+                            1
+                            for c in claims
+                            if isinstance(c, dict)
+                            and isinstance(c.get("claim"), str)
+                            and TAUTOLOGICAL_CLAIM_MARKER in c["claim"]
                         )
 
             documents.append(doc_info)
@@ -352,13 +372,39 @@ def main() -> None:
         raise SystemExit(1)
 
     documents = scan_documents(docs_dir)
+
+    tautological_docs = [d for d in documents if d["tautological_claims_count"] > 0]
+    if tautological_docs:
+        print(
+            f"ERROR: {len(tautological_docs)} document(s) contain tautological "
+            f"placeholder claims (text containing '{TAUTOLOGICAL_CLAIM_MARKER}').",
+            file=sys.stderr,
+        )
+        print(
+            "Tautological claims are forbidden by AGENTS.md \u00a7Text Content "
+            "Validation. Replace them with verifiable factual assertions or "
+            "remove the content_validation block via:",
+            file=sys.stderr,
+        )
+        print(
+            "  python3 scripts/remove_tautological_validation.py --apply",
+            file=sys.stderr,
+        )
+        print("Offending files:", file=sys.stderr)
+        for d in tautological_docs:
+            print(
+                f"  - {d['rel_path']} "
+                f"({d['tautological_claims_count']}/{d['core_claims_count']} claims)",
+                file=sys.stderr,
+            )
+        raise SystemExit(1)
+
     today = date.today()
     dashboard = generate_dashboard(documents, docs_dir, today)
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(dashboard, encoding="utf-8")
 
-    # Stats
     verified = sum(1 for d in documents if d["validation_status"] == "verified")
     print(
         f"Scanned {len(documents)} documents, "

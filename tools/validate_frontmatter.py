@@ -60,6 +60,12 @@ RELATIONSHIP_FIELDS = {
     "investigated_with_kql",
 }
 
+# Tautological claim marker - rejects placeholder core_claims such as
+# "This page uses Microsoft Learn as the primary source basis ..."
+# Must stay in sync with scripts/generate_content_validation_status.py
+# and scripts/remove_tautological_validation.py.
+TAUTOLOGICAL_CLAIM_MARKER = "primary source basis"
+
 
 class ValidationError:
     def __init__(self, file: Path, field: str, message: str, severity: str = "error"):
@@ -120,7 +126,9 @@ def validate_file(
         for field in REQUIRED_FIELDS:
             if field not in frontmatter:
                 errors.append(
-                    ValidationError(file_path, field, f"Missing required field: {field}")
+                    ValidationError(
+                        file_path, field, f"Missing required field: {field}"
+                    )
                 )
 
     if check_recommended:
@@ -168,6 +176,30 @@ def validate_file(
                         severity="warning",
                     )
                 )
+
+    cv = frontmatter.get("content_validation")
+    if isinstance(cv, dict):
+        claims = cv.get("core_claims", [])
+        if isinstance(claims, list):
+            for idx, claim in enumerate(claims):
+                if not isinstance(claim, dict):
+                    continue
+                claim_text = claim.get("claim", "")
+                if (
+                    isinstance(claim_text, str)
+                    and TAUTOLOGICAL_CLAIM_MARKER in claim_text
+                ):
+                    errors.append(
+                        ValidationError(
+                            file_path,
+                            "content_validation",
+                            f"Tautological core_claim #{idx + 1} contains "
+                            f"forbidden marker '{TAUTOLOGICAL_CLAIM_MARKER}'. "
+                            f"Replace with a verifiable factual assertion, or "
+                            f"remove the content_validation block via "
+                            f"`python3 scripts/remove_tautological_validation.py --apply`.",
+                        )
+                    )
 
     return errors
 

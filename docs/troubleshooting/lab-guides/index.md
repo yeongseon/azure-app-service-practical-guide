@@ -9,15 +9,6 @@ content_sources:
     based_on:
     - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
     - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
-content_validation:
-  status: verified
-  last_reviewed: '2026-05-23'
-  reviewer: agent
-  core_claims:
-  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
-      guidance.
-    source: https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
-    verified: true
 ---
 # Hands-on Labs
 
