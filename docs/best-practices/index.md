@@ -199,6 +199,16 @@ Treat this section as a living operational standard:
 - Revisit after platform capability updates on Microsoft Learn.
 - Revisit when cost targets force hosting or topology changes.
 
+### Verify best-practices surfaces in Azure Portal
+
+![app-test-20251107 | General settings | Web App | General settings | Stack settings | Health check | Path mappings | Error pages | Refresh | Platform settings | SCM Basic Auth Publishing Credentials | FTP Basic Auth Publishing Credentials | WebJobs runtime | FTP state | FTPS only | Inbound IP mode | IPv4 | HTTP version | 1.1 | HTTP 2.0 Proxy | Off | SSH | Always on | Session affinity | Session affinity proxy | HTTPS only | Minimum Inbound TLS Version | 1.2 | SCM Minimum Inbound TLS Version | 1.2 | Minimum Inbound TLS Cipher Suite | TLS_RSA_WITH_AES_128_CBC_SHA (Default) | End-to-end TLS encryption | Apply | Discard](../assets/best-practices/production-baseline/01-configuration-general.png)
+
+**[Observed]** `app-test-20251107 | General settings` `Web App` `General settings` `Stack settings` `Health check` `Path mappings` `Error pages` `Refresh` `Platform settings` `SCM Basic Auth Publishing Credentials` `FTP Basic Auth Publishing Credentials` `WebJobs runtime` `FTP state` `FTPS only` `Inbound IP mode` `IPv4` `HTTP version` `1.1` `HTTP 2.0 Proxy` `Off` `SSH` `Always on` `Session affinity` `Session affinity proxy` `HTTPS only` `Minimum Inbound TLS Version` `1.2` `SCM Minimum Inbound TLS Version` `1.2` `Minimum Inbound TLS Cipher Suite` `TLS_RSA_WITH_AES_128_CBC_SHA (Default)` `Change` `End-to-end TLS encryption` `Apply` `Discard`.
+
+**[Inferred]** The `Platform settings` rows `Always on`, `HTTPS only`, `Minimum Inbound TLS Version` set to `1.2`, and `FTP state` set to `FTPS only` overlap with the `Compute baseline` (`Always On`), `Transport and edge` (`HTTPS-only`, `TLS floor`), and `Connectivity` items listed in the [Decision areas covered](#decision-areas-covered) subsection above. The `SCM Basic Auth Publishing Credentials` and `FTP Basic Auth Publishing Credentials` rows both shown unchecked are consistent with the credential-hygiene framing in the [Quality gate before implementation](#quality-gate-before-implementation) checklist above ("Identity and secret strategy is approved").
+
+**[Not Proven]** The configured Application Insights instrumentation, managed identity assignment, deployment slot count, scale-out instance count, and access restriction rule list are not visible on this view. Whether `Always on` should be enabled for this workload is a decision recorded in a separate ADR and is not visible on this view. The `Change` link target for the `Minimum Inbound TLS Cipher Suite` row is not visible on this view.
+
 ## Advanced Topics
 
 - Build environment-specific baseline profiles (dev, test, prod) while preserving security minimums.
