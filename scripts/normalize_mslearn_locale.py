@@ -63,11 +63,19 @@ from pathlib import Path
 #   1. The Learn catalog API root segment ``api/`` (no locale exists; would 404)
 #   2. Title-Case locale variants such as ``en-US/`` (old AGENTS.md guidance)
 #   3. Script-tag locale variants such as ``zh-Hans/`` (valid Learn locale)
-#   4. Substring-only hosts such as ``mylearn.microsoft.com/`` or
-#      ``fakelearn.microsoft.com/`` (NOT the Learn host; rejected by the
-#      leading ``\b`` word boundary, which matches between ``/`` and ``l``
-#      but not between two word characters such as ``y`` and ``l``).
-LEARN_URL_RE = re.compile(r"\blearn\.microsoft\.com/(?P<seg>[A-Za-z]+(?:-[A-Za-z]+)?)/")
+#   4. Non-Learn hosts whose name ends in ``learn.microsoft.com`` because of a
+#      substring (``mylearn.microsoft.com``), a hyphenated prefix
+#      (``my-learn.microsoft.com``), or a subdomain
+#      (``foo.learn.microsoft.com``). A leading ``\b`` is NOT sufficient
+#      because ``-`` and ``.`` are non-word characters and produce a word
+#      boundary before ``l``. The negative lookbehind ``(?<![\w.-])`` rejects
+#      every hostname-valid character (letters, digits, underscore, dot,
+#      hyphen) so only a non-hostname separator (``/``, ``(``, ``"``,
+#      whitespace, start-of-string, etc.) is allowed immediately before
+#      ``learn``.
+LEARN_URL_RE = re.compile(
+    r"(?<![\w.-])learn\.microsoft\.com/(?P<seg>[A-Za-z]+(?:-[A-Za-z]+)?)/"
+)
 
 # Lowercase two-letter language-region form currently used by Learn article
 # locales (``en-us``, ``ja-jp``, ``ko-kr``), broadened to also recognize
