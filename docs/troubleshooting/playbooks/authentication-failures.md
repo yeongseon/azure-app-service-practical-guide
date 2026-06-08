@@ -14,19 +14,19 @@ content_validation:
   reviewer: agent
   core_claims:
     - claim: "Azure App Service provides built-in authentication and authorization capabilities that are often called Easy Auth."
-      source: "https://learn.microsoft.com/azure/app-service/overview-authentication-authorization"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization"
       verified: true
     - claim: "When App Service authentication is enabled, every incoming HTTP request passes through the authentication and authorization middleware before the application handles it."
-      source: "https://learn.microsoft.com/azure/app-service/overview-authentication-authorization"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization"
       verified: true
     - claim: "The App Service authentication middleware injects identity information into HTTP request headers."
-      source: "https://learn.microsoft.com/azure/app-service/overview-authentication-authorization"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization"
       verified: true
     - claim: "App Service exposes a Microsoft Entra sign-in endpoint at /.auth/login/aad."
-      source: "https://learn.microsoft.com/azure/app-service/overview-authentication-authorization"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization"
       verified: true
     - claim: "Enabling built-in authentication causes requests to be automatically redirected to HTTPS by default."
-      source: "https://learn.microsoft.com/azure/app-service/overview-authentication-authorization"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization"
       verified: true
 ---
 

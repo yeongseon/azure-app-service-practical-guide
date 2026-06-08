@@ -904,9 +904,9 @@ az group delete --name "$RG" --yes --no-wait
 
 ## Sources
 
-- [Configure a Linux Python app for Azure App Service](https://learn.microsoft.com/azure/app-service/configure-language-python)
-- [Configure a custom startup file for Linux apps in Azure App Service](https://learn.microsoft.com/azure/app-service/configure-language-python#container-characteristics)
-- [Configure a custom container for Azure App Service](https://learn.microsoft.com/azure/app-service/configure-custom-container)
-- [Deploy files to Azure App Service](https://learn.microsoft.com/azure/app-service/deploy-zip)
-- [Enable diagnostics logging for Azure App Service](https://learn.microsoft.com/azure/app-service/troubleshoot-diagnostic-logs)
-- [Monitor App Service with Azure Monitor](https://learn.microsoft.com/azure/app-service/monitor-app-service)
+- [Configure a Linux Python app for Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/configure-language-python)
+- [Configure a custom startup file for Linux apps in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/configure-language-python#container-characteristics)
+- [Configure a custom container for Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container)
+- [Deploy files to Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/deploy-zip)
+- [Enable diagnostics logging for Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs)
+- [Monitor App Service with Azure Monitor](https://learn.microsoft.com/en-us/azure/app-service/monitor-app-service)

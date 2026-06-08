@@ -174,9 +174,9 @@ The `Diagnose and solve problems` blade is the Portal counterpart to the `Diagno
 
 ## Sources
 
-- [Diagnose and Solve Problems in App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-diagnostics)
-- [Troubleshoot Diagnostic Logs in App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/troubleshoot-diagnostic-logs)
-- [Networking Features in App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/networking-features)
+- [Diagnose and Solve Problems in App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/overview-diagnostics)
+- [Troubleshoot Diagnostic Logs in App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs)
+- [Networking Features in App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/networking-features)
 
 ## Language-Specific Details
 

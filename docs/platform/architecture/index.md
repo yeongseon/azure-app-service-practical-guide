@@ -74,16 +74,16 @@ content_validation:
   reviewer: agent
   core_claims:
     - claim: "A single management-plane change (for example, changing an app setting) can trigger runtime recycle."
-      source: "https://learn.microsoft.com/azure/app-service/overview"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview"
       verified: true
     - claim: "At runtime, App Service frontends terminate inbound connections and route traffic to healthy worker instances."
-      source: "https://learn.microsoft.com/azure/app-service/overview"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview"
       verified: true
     - claim: "Scale-out adds new instances that must warm up."
-      source: "https://learn.microsoft.com/azure/app-service/overview-hosting-plans"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-hosting-plans"
       verified: true
     - claim: "The SCM site (`<app-name>.scm.azurewebsites.net`) is a companion management surface."
-      source: "https://learn.microsoft.com/azure/app-service/overview"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview"
       verified: true
 ---
 # How App Service Works
@@ -91,7 +91,7 @@ content_validation:
 Azure App Service is a managed hosting platform for web apps and APIs. You focus on application behavior, while Microsoft operates fleet management, patching, frontend routing, and worker lifecycle. This page builds the mental model you need for design reviews, deployment decisions, and production troubleshooting.
 
 !!! info "Scope of this page"
-    This page explains the **common mental model** for Azure App Service — architecture, deployment, storage, startup, and diagnostics. Some operational details lean toward **Linux and container** hosting. Where behavior differs by hosting mode (Windows code, Linux built-in, Linux custom container), the text calls it out explicitly. For isolated environments (ASE), see [Microsoft Learn: App Service Environment overview](https://learn.microsoft.com/azure/app-service/environment/overview).
+    This page explains the **common mental model** for Azure App Service — architecture, deployment, storage, startup, and diagnostics. Some operational details lean toward **Linux and container** hosting. Where behavior differs by hosting mode (Windows code, Linux built-in, Linux custom container), the text calls it out explicitly. For isolated environments (ASE), see [Microsoft Learn: App Service Environment overview](https://learn.microsoft.com/en-us/azure/app-service/environment/overview).
 
 !!! note "Community guide disclaimer"
     This field guide is a community-maintained learning resource. For authoritative platform behavior, always confirm with Microsoft Learn and Azure product documentation before production changes.
@@ -204,9 +204,9 @@ flowchart TD
 
 Learn references:
 
-- [App Service overview](https://learn.microsoft.com/azure/app-service/overview)
-- [App Service plan overview](https://learn.microsoft.com/azure/app-service/overview-hosting-plans)
-- [Reliability in App Service](https://learn.microsoft.com/azure/reliability/reliability-app-service)
+- [App Service overview](https://learn.microsoft.com/en-us/azure/app-service/overview)
+- [App Service plan overview](https://learn.microsoft.com/en-us/azure/app-service/overview-hosting-plans)
+- [Reliability in App Service](https://learn.microsoft.com/en-us/azure/reliability/reliability-app-service)
 
 ### [Beginner] Platform architecture at a glance
 
@@ -270,9 +270,9 @@ flowchart TD
 
 Microsoft Learn references:
 
-- [App Service overview](https://learn.microsoft.com/azure/app-service/overview)
-- [Kudu service overview](https://learn.microsoft.com/azure/app-service/resources-kudu)
-- [App Service Environment overview](https://learn.microsoft.com/azure/app-service/environment/overview)
+- [App Service overview](https://learn.microsoft.com/en-us/azure/app-service/overview)
+- [Kudu service overview](https://learn.microsoft.com/en-us/azure/app-service/resources-kudu)
+- [App Service Environment overview](https://learn.microsoft.com/en-us/azure/app-service/environment/overview)
 
 ---
 
@@ -316,8 +316,8 @@ App Service behavior is not identical across hosting modes. Most confusion comes
 
 Learn references:
 
-- [Configure a custom container for App Service](https://learn.microsoft.com/azure/app-service/configure-custom-container)
-- [App Service operating system functionality](https://learn.microsoft.com/azure/app-service/operating-system-functionality)
+- [Configure a custom container for App Service](https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container)
+- [App Service operating system functionality](https://learn.microsoft.com/en-us/azure/app-service/operating-system-functionality)
 
 ---
 
@@ -383,7 +383,7 @@ az webapp config appsettings list \
 Learn references:
 
 - [Manage an App Service app in Azure CLI](https://learn.microsoft.com/en-us/azure/app-service/quickstart-html)
-- [Configure app settings](https://learn.microsoft.com/azure/app-service/configure-common)
+- [Configure app settings](https://learn.microsoft.com/en-us/azure/app-service/configure-common)
 
 ---
 
@@ -429,8 +429,8 @@ Design implications:
 
 Learn references:
 
-- [Monitor App Service](https://learn.microsoft.com/azure/app-service/troubleshoot-diagnostic-logs)
-- [Reliability in App Service](https://learn.microsoft.com/azure/reliability/reliability-app-service)
+- [Monitor App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs)
+- [Reliability in App Service](https://learn.microsoft.com/en-us/azure/reliability/reliability-app-service)
 
 ---
 
@@ -494,9 +494,9 @@ az webapp config access-restriction show \
 
 Learn references:
 
-- [Kudu service overview](https://learn.microsoft.com/azure/app-service/resources-kudu)
-- [Set up Azure App Service access restrictions](https://learn.microsoft.com/azure/app-service/app-service-ip-restrictions)
-- [Configure a custom container](https://learn.microsoft.com/azure/app-service/configure-custom-container)
+- [Kudu service overview](https://learn.microsoft.com/en-us/azure/app-service/resources-kudu)
+- [Set up Azure App Service access restrictions](https://learn.microsoft.com/en-us/azure/app-service/app-service-ip-restrictions)
+- [Configure a custom container](https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container)
 
 ---
 
@@ -561,9 +561,9 @@ az webapp deploy \
 
 Learn references:
 
-- [Deploy to App Service with GitHub Actions](https://learn.microsoft.com/azure/app-service/deploy-github-actions)
-- [Deploy ZIP package](https://learn.microsoft.com/azure/app-service/deploy-zip)
-- [Oryx build system](https://learn.microsoft.com/azure/app-service/configure-language-nodejs#build-automation)
+- [Deploy to App Service with GitHub Actions](https://learn.microsoft.com/en-us/azure/app-service/deploy-github-actions)
+- [Deploy ZIP package](https://learn.microsoft.com/en-us/azure/app-service/deploy-zip)
+- [Oryx build system](https://learn.microsoft.com/en-us/azure/app-service/configure-language-nodejs#build-automation)
 
 ---
 
@@ -631,8 +631,8 @@ Preferred approach:
 
 Learn references:
 
-- [Operating system functionality in App Service](https://learn.microsoft.com/azure/app-service/operating-system-functionality)
-- [Best practices for App Service](https://learn.microsoft.com/azure/app-service/app-service-best-practices)
+- [Operating system functionality in App Service](https://learn.microsoft.com/en-us/azure/app-service/operating-system-functionality)
+- [Best practices for App Service](https://learn.microsoft.com/en-us/azure/app-service/app-service-best-practices)
 
 ---
 
@@ -675,8 +675,8 @@ flowchart TD
 
 Learn references:
 
-- [Monitor App Service instances by using Health Check](https://learn.microsoft.com/azure/app-service/monitor-instances-health-check)
-- [Reliability in App Service](https://learn.microsoft.com/azure/reliability/reliability-app-service)
+- [Monitor App Service instances by using Health Check](https://learn.microsoft.com/en-us/azure/app-service/monitor-instances-health-check)
+- [Reliability in App Service](https://learn.microsoft.com/en-us/azure/reliability/reliability-app-service)
 
 ---
 
@@ -731,8 +731,8 @@ Use one or more alternatives:
 
 Learn references:
 
-- [Set up staging environments in App Service](https://learn.microsoft.com/azure/app-service/deploy-staging-slots)
-- [Run your app from a ZIP package](https://learn.microsoft.com/azure/app-service/deploy-run-package)
+- [Set up staging environments in App Service](https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots)
+- [Run your app from a ZIP package](https://learn.microsoft.com/en-us/azure/app-service/deploy-run-package)
 
 ---
 
@@ -775,8 +775,8 @@ Use the `planId` to correlate app incidents with plan-level metrics in Azure Mon
 
 Learn references:
 
-- [Scale an app in Azure App Service](https://learn.microsoft.com/azure/app-service/manage-scale-up)
-- [Monitor App Service](https://learn.microsoft.com/azure/app-service/troubleshoot-diagnostic-logs)
+- [Scale an app in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/manage-scale-up)
+- [Monitor App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs)
 
 ---
 
@@ -849,8 +849,8 @@ flowchart TD
 
 Learn references:
 
-- [Reliability in App Service](https://learn.microsoft.com/azure/reliability/reliability-app-service)
-- [About availability zones](https://learn.microsoft.com/azure/reliability/availability-zones-overview)
+- [Reliability in App Service](https://learn.microsoft.com/en-us/azure/reliability/reliability-app-service)
+- [About availability zones](https://learn.microsoft.com/en-us/azure/reliability/availability-zones-overview)
 
 ---
 
@@ -877,21 +877,21 @@ For language-specific implementation details, see:
 
 ## Sources
 
-- [Azure App Service overview](https://learn.microsoft.com/azure/app-service/overview)
-- [App Service plan overview](https://learn.microsoft.com/azure/app-service/overview-hosting-plans)
-- [App Service Environment overview](https://learn.microsoft.com/azure/app-service/environment/overview)
-- [Kudu service overview](https://learn.microsoft.com/azure/app-service/resources-kudu)
-- [Configure a custom container for App Service](https://learn.microsoft.com/azure/app-service/configure-custom-container)
-- [Operating system functionality in App Service](https://learn.microsoft.com/azure/app-service/operating-system-functionality)
-- [Deploy ZIP package to App Service](https://learn.microsoft.com/azure/app-service/deploy-zip)
-- [Deploy to App Service by using GitHub Actions](https://learn.microsoft.com/azure/app-service/deploy-github-actions)
-- [Set up staging environments in App Service](https://learn.microsoft.com/azure/app-service/deploy-staging-slots)
-- [Run your app from a ZIP package](https://learn.microsoft.com/azure/app-service/deploy-run-package)
-- [Monitor App Service instances by using Health Check](https://learn.microsoft.com/azure/app-service/monitor-instances-health-check)
-- [Set up App Service access restrictions](https://learn.microsoft.com/azure/app-service/app-service-ip-restrictions)
-- [Reliability in App Service](https://learn.microsoft.com/azure/reliability/reliability-app-service)
-- [About availability zones](https://learn.microsoft.com/azure/reliability/availability-zones-overview)
-- [Troubleshoot diagnostic logs in App Service](https://learn.microsoft.com/azure/app-service/troubleshoot-diagnostic-logs)
-- [Best practices for Azure App Service](https://learn.microsoft.com/azure/app-service/app-service-best-practices)
-- [Configure app settings](https://learn.microsoft.com/azure/app-service/configure-common)
-- [Scale an app in Azure App Service](https://learn.microsoft.com/azure/app-service/manage-scale-up)
+- [Azure App Service overview](https://learn.microsoft.com/en-us/azure/app-service/overview)
+- [App Service plan overview](https://learn.microsoft.com/en-us/azure/app-service/overview-hosting-plans)
+- [App Service Environment overview](https://learn.microsoft.com/en-us/azure/app-service/environment/overview)
+- [Kudu service overview](https://learn.microsoft.com/en-us/azure/app-service/resources-kudu)
+- [Configure a custom container for App Service](https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container)
+- [Operating system functionality in App Service](https://learn.microsoft.com/en-us/azure/app-service/operating-system-functionality)
+- [Deploy ZIP package to App Service](https://learn.microsoft.com/en-us/azure/app-service/deploy-zip)
+- [Deploy to App Service by using GitHub Actions](https://learn.microsoft.com/en-us/azure/app-service/deploy-github-actions)
+- [Set up staging environments in App Service](https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots)
+- [Run your app from a ZIP package](https://learn.microsoft.com/en-us/azure/app-service/deploy-run-package)
+- [Monitor App Service instances by using Health Check](https://learn.microsoft.com/en-us/azure/app-service/monitor-instances-health-check)
+- [Set up App Service access restrictions](https://learn.microsoft.com/en-us/azure/app-service/app-service-ip-restrictions)
+- [Reliability in App Service](https://learn.microsoft.com/en-us/azure/reliability/reliability-app-service)
+- [About availability zones](https://learn.microsoft.com/en-us/azure/reliability/availability-zones-overview)
+- [Troubleshoot diagnostic logs in App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs)
+- [Best practices for Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/app-service-best-practices)
+- [Configure app settings](https://learn.microsoft.com/en-us/azure/app-service/configure-common)
+- [Scale an app in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/manage-scale-up)

@@ -25,10 +25,10 @@ content_validation:
   reviewer: agent
   core_claims:
     - claim: "App Service Auth or app auth layer challenges OPTIONS before CORS handling."
-      source: "https://learn.microsoft.com/azure/app-service/overview-authentication-authorization"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization"
       verified: true
     - claim: "SPA origin and token audience/issuer expectations use different domains (`contoso.com` vs `azurewebsites.net`)."
-      source: "https://learn.microsoft.com/azure/app-service/overview-authentication-authorization"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization"
       verified: true
 ---
 

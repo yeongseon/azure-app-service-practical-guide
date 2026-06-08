@@ -145,5 +145,5 @@ The Authentication blade in its empty state is the Portal entry point this recip
 - [Managed Identity](./managed-identity.md)
 
 ## Sources
-- [Configure Azure App Service to use Microsoft Entra ID login (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/configure-authentication-provider-aad)
-- [Working with user identities in Azure App Service authentication (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/configure-authentication-user-identities)
+- [Configure Azure App Service to use Microsoft Entra ID login (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/configure-authentication-provider-aad)
+- [Working with user identities in Azure App Service authentication (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/configure-authentication-user-identities)

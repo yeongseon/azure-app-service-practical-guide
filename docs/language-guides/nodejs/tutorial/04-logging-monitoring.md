@@ -1014,5 +1014,5 @@ This Application Insights Overview blade is the Portal destination for the telem
 - [Troubleshooting & Debugging](../../../reference/troubleshooting.md)
 
 ## Sources
-- [Diagnostic Settings Documentation](https://learn.microsoft.com/azure/azure-monitor/essentials/diagnostic-settings)
-- [Application Insights for Node.js](https://learn.microsoft.com/azure/azure-monitor/app/nodejs)
+- [Diagnostic Settings Documentation](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/diagnostic-settings)
+- [Application Insights for Node.js](https://learn.microsoft.com/en-us/azure/azure-monitor/app/nodejs)

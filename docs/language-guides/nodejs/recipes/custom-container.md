@@ -167,5 +167,5 @@ The Deployment Center `Containers (new)` tab is the Portal surface for the sidec
 - [CI/CD Tutorial](../tutorial/06-ci-cd.md)
 
 ## Sources
-- [Deploy a custom container to Azure App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/tutorial-custom-container)
-- [SSH access to Linux containers in App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/configure-linux-open-ssh-session)
+- [Deploy a custom container to Azure App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/tutorial-custom-container)
+- [SSH access to Linux containers in App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/configure-linux-open-ssh-session)

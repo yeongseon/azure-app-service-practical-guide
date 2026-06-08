@@ -30,10 +30,10 @@ content_validation:
   reviewer: agent
   core_claims:
     - claim: "`D:\\home` is persistent and Azure Storage-backed for the app, so growth survives worker restarts and scale operations."
-      source: "https://learn.microsoft.com/azure/app-service/resources-kudu"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/resources-kudu"
       verified: true
     - claim: "`D:\\local` is worker-local ephemeral disk, so files can disappear when the instance is recycled, moved, or replaced."
-      source: "https://learn.microsoft.com/azure/app-service/resources-kudu"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/resources-kudu"
       verified: true
 ---
 # Windows Filesystem Quotas and IIS Log Behaviors (Azure App Service Windows)

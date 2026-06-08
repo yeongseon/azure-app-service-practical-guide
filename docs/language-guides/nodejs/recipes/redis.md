@@ -138,5 +138,5 @@ The `Identity` blade visible here is relevant only if you switch this recipe fro
 - [Cosmos DB Integration](./cosmosdb.md)
 
 ## Sources
-- [Get started with Azure Cache for Redis and Node.js (Microsoft Learn)](https://learn.microsoft.com/azure/azure-cache-for-redis/cache-nodejs-get-started)
-- [Best practices for Azure Cache for Redis (Microsoft Learn)](https://learn.microsoft.com/azure/azure-cache-for-redis/cache-best-practices-development)
+- [Get started with Azure Cache for Redis and Node.js (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/azure-cache-for-redis/cache-nodejs-get-started)
+- [Best practices for Azure Cache for Redis (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/azure-cache-for-redis/cache-best-practices-development)

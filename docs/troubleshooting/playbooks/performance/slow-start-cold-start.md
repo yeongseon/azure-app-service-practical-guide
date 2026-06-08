@@ -16,10 +16,10 @@ content_validation:
   reviewer: agent
   core_claims:
     - claim: "`WEBSITES_CONTAINER_START_TIME_LIMIT` only changes startup timeout tolerance."
-      source: "https://learn.microsoft.com/azure/app-service/reference-app-settings"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/reference-app-settings"
       verified: true
     - claim: "`AlwaysOn=false` on smaller SKUs increases cold-start exposure."
-      source: "https://learn.microsoft.com/azure/app-service/reference-app-settings"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/reference-app-settings"
       verified: true
 ---
 

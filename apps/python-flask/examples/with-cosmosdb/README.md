@@ -181,5 +181,5 @@ Check that the Web App can reach Cosmos DB:
 
 ## See Also
 
-- [Cosmos DB Python SDK](https://learn.microsoft.com/python/api/overview/azure/cosmos-readme)
+- [Cosmos DB Python SDK](https://learn.microsoft.com/en-us/python/api/overview/azure/cosmos-readme)
 - [Managed Identity Recipe](../../docs/recipes/managed-identity.md)

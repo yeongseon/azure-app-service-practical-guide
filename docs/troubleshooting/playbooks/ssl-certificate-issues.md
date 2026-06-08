@@ -14,19 +14,19 @@ content_validation:
   reviewer: agent
   core_claims:
     - claim: "Azure App Service supports free App Service managed certificates, App Service certificates, Key Vault imported certificates, uploaded private certificates, and uploaded public certificates."
-      source: "https://learn.microsoft.com/azure/app-service/configure-ssl-certificate"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/configure-ssl-certificate"
       verified: true
     - claim: "A private certificate uploaded or imported to App Service must be a password-protected PFX file and include the full certificate chain."
-      source: "https://learn.microsoft.com/azure/app-service/configure-ssl-certificate"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/configure-ssl-certificate"
       verified: true
     - claim: "To secure a custom domain with a TLS binding, the certificate must include server authentication extended key usage and be signed by a trusted certificate authority."
-      source: "https://learn.microsoft.com/azure/app-service/configure-ssl-certificate"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/configure-ssl-certificate"
       verified: true
     - claim: "Private certificates uploaded or imported to App Service are stored in a deployment unit and shared with apps in the same resource group, region, and operating system combination."
-      source: "https://learn.microsoft.com/azure/app-service/configure-ssl-certificate"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/configure-ssl-certificate"
       verified: true
     - claim: "Free App Service managed certificates do not support wildcard certificates and are not exportable."
-      source: "https://learn.microsoft.com/azure/app-service/configure-ssl-certificate"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/configure-ssl-certificate"
       verified: true
 ---
 

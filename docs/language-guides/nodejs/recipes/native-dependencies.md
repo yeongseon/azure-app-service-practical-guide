@@ -125,5 +125,5 @@ The Log stream blade is the Portal surface for confirming that native Node.js mo
 - [How App Service Works](../../../platform/architecture/index.md)
 
 ## Sources
-- [Configure Node.js on Azure App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/configure-language-nodejs)
-- [Run a custom Linux container in App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/tutorial-custom-container)
+- [Configure Node.js on Azure App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/configure-language-nodejs)
+- [Run a custom Linux container in App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/tutorial-custom-container)

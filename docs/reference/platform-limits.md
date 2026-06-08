@@ -38,10 +38,10 @@ graph TD
 
 | Tier | Max Instances (Typical) | Deployment Slots (Typical) | Always On | Source |
 | :--- | :--- | :--- | :--- | :--- |
-| **Free (F1)** | 1 | 0 | No | [Azure App Service limits](https://learn.microsoft.com/azure/azure-resource-manager/management/azure-subscription-service-limits#app-service-limits) |
-| **Basic (B1)** | 3 | 0 | No | [Azure App Service limits](https://learn.microsoft.com/azure/azure-resource-manager/management/azure-subscription-service-limits#app-service-limits) |
-| **Standard (S1)** | 10 | 5 | Yes | [Azure App Service limits](https://learn.microsoft.com/azure/azure-resource-manager/management/azure-subscription-service-limits#app-service-limits) |
-| **Premium (P1V3 and above)** | 30+ | 20 | Yes | [Azure App Service limits](https://learn.microsoft.com/azure/azure-resource-manager/management/azure-subscription-service-limits#app-service-limits) |
+| **Free (F1)** | 1 | 0 | No | [Azure App Service limits](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/azure-subscription-service-limits#app-service-limits) |
+| **Basic (B1)** | 3 | 0 | No | [Azure App Service limits](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/azure-subscription-service-limits#app-service-limits) |
+| **Standard (S1)** | 10 | 5 | Yes | [Azure App Service limits](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/azure-subscription-service-limits#app-service-limits) |
+| **Premium (P1V3 and above)** | 30+ | 20 | Yes | [Azure App Service limits](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/azure-subscription-service-limits#app-service-limits) |
 
 !!! note "Regional and SKU variation"
     Effective limits can vary by region, subscription, and SKU generation.
@@ -68,8 +68,8 @@ graph TD
 | Limit/Behavior | Value / Pattern | Notes | Source |
 | :--- | :--- | :--- | :--- |
 | **SNAT ports per instance (common)** | **128** | Outbound-heavy apps can exhaust ports. | [Troubleshoot intermittent outbound connection errors](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-intermittent-outbound-connection-errors) |
-| **Outbound IPs** | Multiple, can change | Use `possibleOutboundIpAddresses` for allowlists. | [Azure App Service limits](https://learn.microsoft.com/azure/azure-resource-manager/management/azure-subscription-service-limits#app-service-limits) |
-| **WebSocket and long-lived connections** | Tier-dependent | Higher tiers support greater concurrency. | [Azure App Service limits](https://learn.microsoft.com/azure/azure-resource-manager/management/azure-subscription-service-limits#app-service-limits) |
+| **Outbound IPs** | Multiple, can change | Use `possibleOutboundIpAddresses` for allowlists. | [Azure App Service limits](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/azure-subscription-service-limits#app-service-limits) |
+| **WebSocket and long-lived connections** | Tier-dependent | Higher tiers support greater concurrency. | [Azure App Service limits](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/azure-subscription-service-limits#app-service-limits) |
 
 ## Diagnostics and Retention
 
@@ -102,9 +102,9 @@ The `Scale up (App Service plan)` blade is where you compare the plan SKUs that 
 
 ## Sources
 
-- [Azure App Service Limits (Microsoft Learn)](https://learn.microsoft.com/azure/azure-resource-manager/management/azure-subscription-service-limits#app-service-limits)
-- [App Service Plan Overview (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-hosting-plans)
-- [Best Practices for App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/app-service-best-practices)
+- [Azure App Service Limits (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/azure-subscription-service-limits#app-service-limits)
+- [App Service Plan Overview (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/overview-hosting-plans)
+- [Best Practices for App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/app-service-best-practices)
 
 ## Language-Specific Details
 

@@ -168,6 +168,6 @@ Most CLI verbs in this cheatsheet have a direct visual counterpart on this blade
 
 ## Sources
 
-- [Azure CLI Web App Commands (Microsoft Learn)](https://learn.microsoft.com/cli/azure/webapp)
-- [Azure CLI App Service Plan Commands (Microsoft Learn)](https://learn.microsoft.com/cli/azure/appservice/plan)
-- [Azure Monitor Metrics CLI (Microsoft Learn)](https://learn.microsoft.com/cli/azure/monitor/metrics)
+- [Azure CLI Web App Commands (Microsoft Learn)](https://learn.microsoft.com/en-us/cli/azure/webapp)
+- [Azure CLI App Service Plan Commands (Microsoft Learn)](https://learn.microsoft.com/en-us/cli/azure/appservice/plan)
+- [Azure Monitor Metrics CLI (Microsoft Learn)](https://learn.microsoft.com/en-us/cli/azure/monitor/metrics)

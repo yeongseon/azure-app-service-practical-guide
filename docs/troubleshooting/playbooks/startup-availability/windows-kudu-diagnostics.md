@@ -29,13 +29,13 @@ content_validation:
   reviewer: agent
   core_claims:
     - claim: "Kudu tools require the SCM endpoint at `https://<app-name>.scm.azurewebsites.net`."
-      source: "https://learn.microsoft.com/azure/app-service/resources-kudu"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/resources-kudu"
       verified: true
     - claim: "Kudu gives you information about your App Service app, including app settings, connection strings, environment variables, server variables, and HTTP headers."
-      source: "https://learn.microsoft.com/azure/app-service/resources-kudu"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/resources-kudu"
       verified: true
     - claim: "Kudu allows access with a REST API."
-      source: "https://learn.microsoft.com/azure/app-service/resources-kudu"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/resources-kudu"
       verified: true
 ---
 

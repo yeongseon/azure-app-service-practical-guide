@@ -122,5 +122,5 @@ This Identity blade is the Portal starting point for the Cosmos DB recipe's pass
 - [Configuration Tutorial](../tutorial/03-configuration.md)
 
 ## Sources
-- [Azure Cosmos DB for NoSQL quickstart with Node.js (Microsoft Learn)](https://learn.microsoft.com/azure/cosmos-db/nosql/quickstart-nodejs)
-- [Use managed identity to access Cosmos DB (Microsoft Learn)](https://learn.microsoft.com/azure/cosmos-db/managed-identity-based-authentication)
+- [Azure Cosmos DB for NoSQL quickstart with Node.js (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/quickstart-nodejs)
+- [Use managed identity to access Cosmos DB (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/cosmos-db/managed-identity-based-authentication)

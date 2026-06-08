@@ -5,13 +5,13 @@ content_validation:
   reviewer: agent
   core_claims:
     - claim: "Scale up increases CPU/RAM resources per instance by changing App Service plan SKU."
-      source: "https://learn.microsoft.com/azure/app-service/manage-scale-up"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/manage-scale-up"
       verified: true
     - claim: "Scale out increases instance count."
-      source: "https://learn.microsoft.com/azure/app-service/manage-scale-up"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/manage-scale-up"
       verified: true
     - claim: "Multiple apps can share one App Service plan."
-      source: "https://learn.microsoft.com/azure/app-service/manage-scale-up"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/manage-scale-up"
       verified: true
 content_sources:
   diagrams:
@@ -279,7 +279,7 @@ Capacity formula example:
 
 ## Sources
 
-- [Scale up an app in Azure App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/manage-scale-up)
-- [Get started with autoscale in Azure (Microsoft Learn)](https://learn.microsoft.com/azure/azure-monitor/autoscale/autoscale-get-started)
-- [App Service limits (Microsoft Learn)](https://learn.microsoft.com/azure/azure-resource-manager/management/azure-subscription-service-limits#app-service-limits)
+- [Scale up an app in Azure App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/manage-scale-up)
+- [Get started with autoscale in Azure (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/azure-monitor/autoscale/autoscale-get-started)
+- [App Service limits (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/azure-subscription-service-limits#app-service-limits)
 - [Best practices for Azure App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/app-service-best-practices)

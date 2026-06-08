@@ -40,16 +40,16 @@ content_validation:
   reviewer: agent
   core_claims:
     - claim: "Scale up changes the size/SKU of compute instances in your plan."
-      source: "https://learn.microsoft.com/azure/app-service/manage-scale-up"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/manage-scale-up"
       verified: true
     - claim: "Scale out adds more instances to distribute load."
-      source: "https://learn.microsoft.com/azure/app-service/manage-scale-up"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/manage-scale-up"
       verified: true
     - claim: "Autoscale affects plan capacity used by all co-hosted apps."
-      source: "https://learn.microsoft.com/azure/app-service/overview-hosting-plans"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-hosting-plans"
       verified: true
     - claim: "One noisy app can impact others."
-      source: "https://learn.microsoft.com/azure/app-service/overview-hosting-plans"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-hosting-plans"
       verified: true
 ---
 # Scaling
@@ -338,10 +338,10 @@ For language-specific implementation details, see:
 - [How App Service Works](./architecture/index.md)
 - [Request Lifecycle](./request-lifecycle.md)
 - [Networking](./networking.md)
-- [Scale up App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/manage-scale-up)
-- [Azure Monitor autoscale (Microsoft Learn)](https://learn.microsoft.com/azure/azure-monitor/autoscale/autoscale-get-started)
+- [Scale up App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/manage-scale-up)
+- [Azure Monitor autoscale (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/azure-monitor/autoscale/autoscale-get-started)
 
 ## Sources
 
-- [Scale up App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/manage-scale-up)
-- [Azure Monitor autoscale (Microsoft Learn)](https://learn.microsoft.com/azure/azure-monitor/autoscale/autoscale-get-started)
+- [Scale up App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/manage-scale-up)
+- [Azure Monitor autoscale (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/azure-monitor/autoscale/autoscale-get-started)

@@ -33,7 +33,7 @@ content_validation:
       source: "https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/troubleshoot-performance-degradation"
       verified: true
     - claim: "Kudu Process Explorer can be used to inspect `w3wp.exe` private bytes trend."
-      source: "https://learn.microsoft.com/azure/app-service/resources-kudu"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/resources-kudu"
       verified: true
 ---
 # Windows Memory Pressure and IIS Worker Recycling (Azure App Service Windows)

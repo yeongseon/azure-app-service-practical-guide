@@ -258,4 +258,4 @@ The Custom domains blade is the Portal verification surface for the `az webapp c
 
 ## Sources
 - [Azure Front Door Documentation](https://learn.microsoft.com/en-us/azure/frontdoor/)
-- [Map a custom domain to App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/app-service-web-tutorial-custom-domain)
+- [Map a custom domain to App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/app-service-web-tutorial-custom-domain)

@@ -22,19 +22,19 @@ content_validation:
   reviewer: agent
   core_claims:
     - claim: "An App Service Plan is the compute boundary that hosts one or more apps."
-      source: "https://learn.microsoft.com/azure/app-service/overview-hosting-plans"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-hosting-plans"
       verified: true
     - claim: "Co-hosted apps share compute resources."
-      source: "https://learn.microsoft.com/azure/app-service/overview-hosting-plans"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-hosting-plans"
       verified: true
     - claim: "Scaling at plan scope affects all apps in that plan."
-      source: "https://learn.microsoft.com/azure/app-service/overview-hosting-plans"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-hosting-plans"
       verified: true
     - claim: "Private endpoints provide inbound private access to an App Service app."
-      source: "https://learn.microsoft.com/azure/app-service/networking-features"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/networking-features"
       verified: true
     - claim: "Virtual network integration provides outbound access from an App Service app to private dependencies."
-      source: "https://learn.microsoft.com/azure/app-service/overview-vnet-integration"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration"
       verified: true
 ---
 
@@ -358,10 +358,10 @@ For language-specific implementation details, see:
 - [How App Service Works](./architecture/index.md)
 - [Hosting Models](./hosting-models.md)
 - [Networking](./networking.md)
-- [Managed identity for App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-managed-identity)
-- [Azure RBAC overview (Microsoft Learn)](https://learn.microsoft.com/azure/role-based-access-control/overview)
+- [Managed identity for App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/overview-managed-identity)
+- [Azure RBAC overview (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/role-based-access-control/overview)
 
 ## Sources
 
-- [Managed identity for App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-managed-identity)
-- [Azure RBAC overview (Microsoft Learn)](https://learn.microsoft.com/azure/role-based-access-control/overview)
+- [Managed identity for App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/overview-managed-identity)
+- [Azure RBAC overview (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/role-based-access-control/overview)

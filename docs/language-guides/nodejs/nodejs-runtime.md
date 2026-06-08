@@ -232,5 +232,5 @@ The `Environment variables` blade with the `App settings` tab selected is the Po
 - [CLI Cheatsheet](../../reference/cli-cheatsheet.md)
 
 ## Sources
-- [Configure Node.js on Azure App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/configure-language-nodejs)
-- [Node.js version support in App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/language-support-policy)
+- [Configure Node.js on Azure App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/configure-language-nodejs)
+- [Node.js version support in App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/language-support-policy)

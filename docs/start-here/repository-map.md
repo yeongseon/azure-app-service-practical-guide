@@ -82,6 +82,6 @@ graph TD
 
 ## Sources
 
-- [Azure App Service documentation hub (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/)
+- [Azure App Service documentation hub (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/)
 - [App Service architecture center (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/architecture/web-apps/)
-- [Azure App Service diagnostics overview (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-diagnostics)
+- [Azure App Service diagnostics overview (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/overview-diagnostics)

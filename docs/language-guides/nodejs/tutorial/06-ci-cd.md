@@ -269,4 +269,4 @@ The Deployment Center blade is the Portal entry point for wiring an App Service 
 
 ## Sources
 - [Azure OIDC Documentation (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/active-directory/develop/workload-identity-federation)
-- [Deploy to App Service using GitHub Actions (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/deploy-github-actions)
+- [Deploy to App Service using GitHub Actions (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/deploy-github-actions)

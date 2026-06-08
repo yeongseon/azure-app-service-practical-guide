@@ -15,10 +15,10 @@ content_validation:
   reviewer: agent
   core_claims:
     - claim: "Low CPU does not rule out dependency bottlenecks, worker starvation, or memory pressure as causes of high latency."
-      source: "https://learn.microsoft.com/azure/app-service/troubleshoot-performance-degradation"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-performance-degradation"
       verified: true
     - claim: "Diagnose and Solve Problems includes an SNAT Port Exhaustion detector."
-      source: "https://learn.microsoft.com/azure/app-service/troubleshoot-intermittent-outbound-connection-errors"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-intermittent-outbound-connection-errors"
       verified: true
 ---
 

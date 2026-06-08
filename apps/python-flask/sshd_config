@@ -1,5 +1,5 @@
 # SSH configuration for Azure App Service
-# https://learn.microsoft.com/azure/app-service/configure-linux-open-ssh-session
+# https://learn.microsoft.com/en-us/azure/app-service/configure-linux-open-ssh-session
 
 Port 2222
 ListenAddress 0.0.0.0

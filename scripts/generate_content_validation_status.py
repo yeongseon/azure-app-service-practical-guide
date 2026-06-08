@@ -327,7 +327,7 @@ def generate_dashboard(
     lines.append("---")
     lines.append("content_sources:")
     lines.append("  - type: mslearn-adapted")
-    lines.append("    url: https://learn.microsoft.com/azure/app-service/...")
+    lines.append("    url: https://learn.microsoft.com/en-us/azure/app-service/...")
     lines.append("content_validation:")
     lines.append("  status: verified")
     lines.append("  last_reviewed: 2026-04-12")
@@ -335,7 +335,7 @@ def generate_dashboard(
     lines.append("  core_claims:")
     lines.append('    - claim: "App Service supports VNet integration"')
     lines.append(
-        "      source: https://learn.microsoft.com/azure/app-service/overview-vnet-integration"
+        "      source: https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration"
     )
     lines.append("      verified: true")
     lines.append("---")

@@ -23,23 +23,23 @@ content_sources:
       type: flowchart
       source: mslearn-adapted
       based_on:
-        - https://learn.microsoft.com/azure/app-service/configure-custom-container?tabs=debian&pivots=container-linux
-        - https://learn.microsoft.com/azure/app-service/deploy-container-github-action
-        - https://learn.microsoft.com/azure/role-based-access-control/role-assignments-cli
-        - https://learn.microsoft.com/azure/role-based-access-control/troubleshooting
+        - https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container?tabs=debian&pivots=container-linux
+        - https://learn.microsoft.com/en-us/azure/app-service/deploy-container-github-action
+        - https://learn.microsoft.com/en-us/azure/role-based-access-control/role-assignments-cli
+        - https://learn.microsoft.com/en-us/azure/role-based-access-control/troubleshooting
 content_validation:
   status: verified
   last_reviewed: "2026-04-22"
   reviewer: agent
   core_claims:
     - claim: "Azure RBAC enforces a unique constraint on the combination of scope, principal, and role definition for role assignments."
-      source: "https://learn.microsoft.com/azure/role-based-access-control/role-assignments-cli"
+      source: "https://learn.microsoft.com/en-us/azure/role-based-access-control/role-assignments-cli"
       verified: true
     - claim: "App Service can pull container images from Azure Container Registry using its system-assigned managed identity when the identity is granted the AcrPull role on the registry."
-      source: "https://learn.microsoft.com/azure/app-service/configure-custom-container?tabs=debian&pivots=container-linux"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container?tabs=debian&pivots=container-linux"
       verified: true
     - claim: "Deployment Center configures container continuous deployment for App Service, including the registry credential model used to pull images on each deploy."
-      source: "https://learn.microsoft.com/azure/app-service/deploy-container-github-action"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/deploy-container-github-action"
       verified: true
 ---
 
@@ -368,8 +368,8 @@ az role assignment list --scope "$ACR_ID" \
 
 ## Sources
 
-- <https://learn.microsoft.com/azure/app-service/configure-custom-container?tabs=debian&pivots=container-linux>
-- <https://learn.microsoft.com/azure/app-service/deploy-container-github-action>
-- <https://learn.microsoft.com/azure/role-based-access-control/role-assignments-cli>
-- <https://learn.microsoft.com/azure/role-based-access-control/troubleshooting>
-- <https://learn.microsoft.com/azure/role-based-access-control/built-in-roles/containers#acrpull>
+- <https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container?tabs=debian&pivots=container-linux>
+- <https://learn.microsoft.com/en-us/azure/app-service/deploy-container-github-action>
+- <https://learn.microsoft.com/en-us/azure/role-based-access-control/role-assignments-cli>
+- <https://learn.microsoft.com/en-us/azure/role-based-access-control/troubleshooting>
+- <https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles/containers#acrpull>

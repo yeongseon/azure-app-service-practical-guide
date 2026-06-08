@@ -282,6 +282,6 @@ The `Logs` blade is where every query in this reference is pasted - this capture
 
 ## Sources
 
-- [Kusto Query Language Overview](https://learn.microsoft.com/azure/data-explorer/kusto/query/)
-- [Application Insights Data Model](https://learn.microsoft.com/azure/azure-monitor/app/data-model-complete)
-- [App Service Diagnostics and Logging](https://learn.microsoft.com/azure/app-service/troubleshoot-diagnostic-logs)
+- [Kusto Query Language Overview](https://learn.microsoft.com/en-us/azure/data-explorer/kusto/query/)
+- [Application Insights Data Model](https://learn.microsoft.com/en-us/azure/azure-monitor/app/data-model-complete)
+- [App Service Diagnostics and Logging](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs)

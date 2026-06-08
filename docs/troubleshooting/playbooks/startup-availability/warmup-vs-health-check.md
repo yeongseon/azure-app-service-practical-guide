@@ -15,13 +15,13 @@ content_validation:
   reviewer: agent
   core_claims:
     - claim: "Health Check evaluates already-running instances."
-      source: "https://learn.microsoft.com/azure/app-service/monitor-instances-health-check"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/monitor-instances-health-check"
       verified: true
     - claim: "Health Check removes unhealthy instances from the load balancer."
-      source: "https://learn.microsoft.com/azure/app-service/monitor-instances-health-check"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/monitor-instances-health-check"
       verified: true
     - claim: "When selecting the Health Check path, you should choose a path that returns 200 only when the app is fully warmed up."
-      source: "https://learn.microsoft.com/azure/app-service/monitor-instances-health-check"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/monitor-instances-health-check"
       verified: true
 ---
 

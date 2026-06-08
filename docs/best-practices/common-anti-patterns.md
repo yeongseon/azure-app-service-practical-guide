@@ -5,13 +5,13 @@ content_validation:
   reviewer: agent
   core_claims:
     - claim: "Secrets become harder to rotate, higher accidental exposure risk, and weak auditability"
-      source: "https://learn.microsoft.com/azure/app-service/overview-security"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-security"
       verified: true
     - claim: "Swap can move environment-specific config into production and break dependencies"
-      source: "https://learn.microsoft.com/azure/app-service/deploy-best-practices"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/deploy-best-practices"
       verified: true
     - claim: "Causes excessive socket churn and SNAT exhaustion under load"
-      source: "https://learn.microsoft.com/azure/app-service/app-service-best-practices"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/app-service-best-practices"
       verified: true
 content_sources:
   diagrams:
@@ -225,6 +225,6 @@ az webapp config appsettings list \
 ## Sources
 
 - [Best practices for Azure App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/app-service-best-practices)
-- [Secure Azure App Service apps (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-security)
-- [Troubleshoot outbound connection failures in Azure App Service (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/troubleshoot-intermittent-outbound-connection-errors)
-- [Monitor instances in Azure App Service with Health check (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/monitor-instances-health-check)
+- [Secure Azure App Service apps (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/overview-security)
+- [Troubleshoot outbound connection failures in Azure App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-intermittent-outbound-connection-errors)
+- [Monitor instances in Azure App Service with Health check (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/monitor-instances-health-check)

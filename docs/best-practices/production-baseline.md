@@ -24,16 +24,16 @@ content_validation:
   reviewer: agent
   core_claims:
     - claim: "App Service supports HTTPS Only setting to redirect all HTTP traffic to HTTPS."
-      source: "https://learn.microsoft.com/azure/app-service/configure-ssl-bindings"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/configure-ssl-bindings"
       verified: true
     - claim: "App Service allows configuration of minimum TLS version to enforce TLS 1.2 or higher."
-      source: "https://learn.microsoft.com/azure/app-service/configure-ssl-bindings"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/configure-ssl-bindings"
       verified: true
     - claim: "Health check removes unhealthy instances from the load balancer rotation after repeated failures."
-      source: "https://learn.microsoft.com/azure/app-service/monitor-instances-health-check"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/monitor-instances-health-check"
       verified: true
     - claim: "App Service supports system-assigned and user-assigned managed identities for secure Azure resource access."
-      source: "https://learn.microsoft.com/azure/app-service/overview-managed-identity"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-managed-identity"
       verified: true
 content_sources:
   diagrams:
@@ -386,7 +386,7 @@ Run this checklist before calling an app production-ready:
 ## Sources
 
 - [Overview of App Service best practices](https://learn.microsoft.com/en-us/azure/app-service/app-service-best-practices)
-- [Configure common App Service settings](https://learn.microsoft.com/azure/app-service/configure-common)
-- [Enable diagnostics in App Service](https://learn.microsoft.com/azure/app-service/troubleshoot-diagnostic-logs)
-- [Health check in App Service](https://learn.microsoft.com/azure/app-service/monitor-instances-health-check)
-- [Managed identities for Azure resources](https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/overview)
+- [Configure common App Service settings](https://learn.microsoft.com/en-us/azure/app-service/configure-common)
+- [Enable diagnostics in App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs)
+- [Health check in App Service](https://learn.microsoft.com/en-us/azure/app-service/monitor-instances-health-check)
+- [Managed identities for Azure resources](https://learn.microsoft.com/en-us/entra/identity/managed-identities-azure-resources/overview)

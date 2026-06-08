@@ -180,5 +180,5 @@ The Identity blade is the canonical Portal surface for the managed-identity flow
 - [Key Vault Reference Recipe](./key-vault-reference.md)
 
 ## Sources
-- [Official Managed Identity Overview](https://learn.microsoft.com/azure/app-service/overview-managed-identity)
-- [DefaultAzureCredential Reference](https://learn.microsoft.com/javascript/api/@azure/identity/defaultazurecredential)
+- [Official Managed Identity Overview](https://learn.microsoft.com/en-us/azure/app-service/overview-managed-identity)
+- [DefaultAzureCredential Reference](https://learn.microsoft.com/en-us/javascript/api/@azure/identity/defaultazurecredential)

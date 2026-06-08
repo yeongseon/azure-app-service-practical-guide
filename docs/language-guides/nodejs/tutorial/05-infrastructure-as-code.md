@@ -423,4 +423,4 @@ After running `az deployment group create --template-file ./infra/main.bicep`, t
 
 ## Sources
 - [Bicep Documentation](https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/)
-- [Deploy App Service resources with Bicep (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/provision-resource-bicep)
+- [Deploy App Service resources with Bicep (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/provision-resource-bicep)

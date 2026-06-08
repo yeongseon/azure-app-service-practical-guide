@@ -39,10 +39,10 @@ content_validation:
   reviewer: agent
   core_claims:
     - claim: "Regional VNet integration provides a network path, but does not automatically enable route-all or make all outbound traffic private."
-      source: "https://learn.microsoft.com/azure/app-service/overview-vnet-integration"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration"
       verified: true
     - claim: "DNS outcome depends on resolver configuration and zone linkage, while routing outcome depends on `vnetRouteAllEnabled` and subnet route tables."
-      source: "https://learn.microsoft.com/azure/app-service/networking-features"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/networking-features"
       verified: true
 ---
 # DNS Resolution with VNet-Integrated App Service (Azure App Service Linux)

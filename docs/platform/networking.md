@@ -55,28 +55,28 @@ content_validation:
   reviewer: agent
   core_claims:
     - claim: "By default, an app has a public endpoint."
-      source: "https://learn.microsoft.com/azure/app-service/networking-features"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/networking-features"
       verified: true
     - claim: "Access restrictions provide allow/deny controls evaluated before traffic reaches your app process."
-      source: "https://learn.microsoft.com/azure/app-service/networking-features"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/networking-features"
       verified: true
     - claim: "A private endpoint assigns a private IP for app access within your network boundary."
-      source: "https://learn.microsoft.com/azure/app-service/networking-features"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/networking-features"
       verified: true
     - claim: "VNet integration lets app outbound traffic reach private resources."
-      source: "https://learn.microsoft.com/azure/app-service/overview-vnet-integration"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration"
       verified: true
     - claim: "VNet integration controls outbound connectivity. It does not make your app privately reachable from clients."
-      source: "https://learn.microsoft.com/azure/app-service/overview-vnet-integration"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration"
       verified: true
     - claim: "possibleOutboundIpAddresses lists all IPs the app may ever use and must be used for firewall allowlists."
-      source: "https://learn.microsoft.com/azure/app-service/overview-inbound-outbound-ips"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-inbound-outbound-ips"
       verified: true
     - claim: "Outbound IPs change when scaling the App Service Plan, migrating to a different scale unit, or enabling VNet Integration."
-      source: "https://learn.microsoft.com/azure/app-service/overview-inbound-outbound-ips"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-inbound-outbound-ips"
       verified: true
     - claim: "Creating a Private Endpoint assigns a private IP but does not automatically disable the public endpoint."
-      source: "https://learn.microsoft.com/azure/app-service/networking/private-endpoint"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/networking/private-endpoint"
       verified: true
 ---
 # Networking
@@ -480,10 +480,10 @@ For language-specific implementation details, see:
 - [Request Lifecycle](./request-lifecycle.md)
 - [Scaling](./scaling.md)
 - [Resource Relationships](./resource-relationships.md)
-- [App Service networking features (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/networking-features)
-- [VNet integration overview (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-vnet-integration)
+- [App Service networking features (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/networking-features)
+- [VNet integration overview (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration)
 
 ## Sources
 
-- [App Service networking features (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/networking-features)
-- [VNet integration overview (Microsoft Learn)](https://learn.microsoft.com/azure/app-service/overview-vnet-integration)
+- [App Service networking features (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/networking-features)
+- [VNet integration overview (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration)
