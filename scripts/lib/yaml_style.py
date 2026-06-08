@@ -22,8 +22,10 @@ Style rules (must stay in sync with ``AGENTS.md`` §Frontmatter YAML Style):
 Consumed by:
 
 - ``scripts/normalize_yaml_frontmatter.py`` (bulk normalizer + CI check).
-- Any future generator or mutation tool MUST import :func:`build_yaml` rather
-  than instantiating ``YAML()`` directly or using ``yaml.dump`` from PyYAML.
+- Any future generator or mutation tool MUST import :func:`dump_frontmatter`
+  (preferred, single-call) or :func:`build_yaml` (when you need to call
+  ``load`` and ``dump`` on the same instance). Direct use of PyYAML's
+  ``yaml.dump`` is banned.
 """
 
 from __future__ import annotations

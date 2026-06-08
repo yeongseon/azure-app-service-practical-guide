@@ -322,15 +322,15 @@ content_sources:
 
 #### Workflow
 
-1. **Never write frontmatter with PyYAML.** Any new generator or mutation tool MUST import `build_yaml()` from `scripts/lib/yaml_style.py`.
+1. **Never write frontmatter with PyYAML.** Any new generator or mutation tool MUST import `build_yaml()` (or the higher-level `dump_frontmatter()` helper) from `scripts/lib/yaml_style.py`. `dump_frontmatter()` is the public single-call API used by `scripts/normalize_yaml_frontmatter.py` itself; prefer it over instantiating `build_yaml()` and managing a `StringIO` buffer manually.
 2. **Bulk normalize when needed:**
 
     ```bash
     python3 scripts/normalize_yaml_frontmatter.py --apply
     ```
 
-3. **CI enforces drift:** the `Validate Content Sources` workflow runs `python scripts/normalize_yaml_frontmatter.py --check` and fails if any frontmatter would change.
-4. **Body is preserved byte-exact.** The normalizer only rewrites the YAML region between the two `---` delimiters; the blank line (or its absence) between the closing `---` and the first body line is preserved as-is.
+3. **CI enforces drift:** the `Validate Content Sources` workflow runs `python scripts/normalize_yaml_frontmatter.py --check` and fails if any frontmatter would change. The workflow triggers on changes to `docs/**/*.md`, `scripts/**/*.py`, or the workflow itself, so that updates to the shared library or the normalizer always re-run the check. `ruamel.yaml` is pinned to a specific version in CI so the canonical bytes are reproducible across runs.
+4. **Body is preserved byte-exact for the repo invariant (UTF-8, no BOM, LF line endings).** The normalizer only rewrites the YAML region between the two `---` delimiters; the blank line (or its absence) between the closing `---` and the first body line is preserved as-is. Files with a UTF-8 BOM are silently skipped (the regex won't match), and files with CRLF line endings would be converted to LF on `--apply` -- no such files exist in this repo today, but if that ever changes, update this policy first.
 
 #### When to update this section
 

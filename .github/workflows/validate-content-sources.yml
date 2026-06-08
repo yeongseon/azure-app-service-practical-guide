@@ -4,11 +4,15 @@ on:
   pull_request:
     paths:
       - 'docs/**/*.md'
+      - 'scripts/**/*.py'
+      - '.github/workflows/validate-content-sources.yml'
   push:
     branches:
       - main
     paths:
       - 'docs/**/*.md'
+      - 'scripts/**/*.py'
+      - '.github/workflows/validate-content-sources.yml'
 
 jobs:
   validate-content-sources:
@@ -26,7 +30,7 @@ jobs:
       
       - name: Install dependencies
         run: |
-          pip install pyyaml ruamel.yaml
+          pip install pyyaml 'ruamel.yaml==0.19.1'
       
       - name: Validate mermaid format
         run: |

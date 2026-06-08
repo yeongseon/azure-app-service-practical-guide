@@ -20,8 +20,19 @@ Modes:
   CI and pre-commit hooks.
 - ``--apply``: write changes to disk.
 
-The script preserves the markdown body verbatim (byte-exact) so that the
-diff is strictly limited to frontmatter formatting changes.
+The script preserves the markdown body verbatim for the current repo
+invariant of **UTF-8 without BOM, LF line endings**. Files outside that
+invariant are handled defensively rather than transparently:
+
+- **BOM-prefixed files** are skipped silently because the leading
+  ``\ufeff`` makes the frontmatter regex miss; the file is left untouched.
+- **CRLF files** are read with Python's universal-newlines (``\r\n`` -> ``\n``)
+  and would be written back as LF on ``--apply``, which is a body change.
+  No CRLF files exist in this repo today; if that ever changes, document
+  the line-ending policy first or extend this script to preserve the
+  original line ending.
+
+The repo invariant is documented in ``AGENTS.md`` Frontmatter YAML Style.
 """
 
 from __future__ import annotations
@@ -33,7 +44,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from lib.yaml_style import build_yaml  # noqa: E402
+from lib.yaml_style import build_yaml, dump_frontmatter  # noqa: E402
 
 # Matches a frontmatter delimiter pair: ``---\n...\n---\n``. The body is
 # captured separately so it is preserved byte-for-byte during normalization.
@@ -59,19 +70,11 @@ def normalize_text(text: str) -> tuple[str, bool]:
     yaml_text = match.group(1)
     body = text[match.end() :]
 
-    yaml = build_yaml()
-    data = yaml.load(yaml_text)
+    data = build_yaml().load(yaml_text)
     if data is None:
         return text, False
 
-    from io import StringIO
-
-    buffer = StringIO()
-    yaml.dump(data, buffer)
-    new_yaml = buffer.getvalue()
-    if not new_yaml.endswith("\n"):
-        new_yaml = new_yaml + "\n"
-
+    new_yaml = dump_frontmatter(data)
     new_text = f"---\n{new_yaml}---\n" + body
     return new_text, new_text != text
 
@@ -103,7 +106,16 @@ def main() -> int:
     args = parser.parse_args()
 
     project_root = Path(__file__).resolve().parent.parent
-    docs_dir = project_root / args.docs_dir
+    docs_dir = (project_root / args.docs_dir).resolve()
+    try:
+        docs_dir.relative_to(project_root)
+    except ValueError:
+        print(
+            f"Error: --docs-dir must be inside the project root "
+            f"({project_root}); refusing to scan {docs_dir}",
+            file=sys.stderr,
+        )
+        return 1
     if not docs_dir.exists():
         print(f"Error: docs directory not found: {docs_dir}", file=sys.stderr)
         return 1
