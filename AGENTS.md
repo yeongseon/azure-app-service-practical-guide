@@ -495,7 +495,39 @@ content_sources:
 
 ### Text Content Validation
 
-Every non-tutorial document should include a `content_validation` block in frontmatter to track the verification status of its core claims.
+Factual-claim documents include a `content_validation` block in frontmatter to track the verification status of their core technical assertions.
+
+The single source of truth for "is this page in scope?" is [`scripts/lib/content_scope.py`](scripts/lib/content_scope.py) — specifically the `is_in_scope(rel_path)` function. Both `scripts/generate_content_validation_status.py` and `tools/validate_frontmatter.py` import this helper, so the dashboard and the validator are guaranteed to agree on scope. If you change the scope policy, update both `scripts/lib/content_scope.py` AND this section in the same commit.
+
+#### Scope
+
+The `content_validation` block is **required** on factual-claim pages under these sections:
+
+| Section | Required? | Examples |
+|---|---|---|
+| `docs/platform/` | Required (including factual subsection landing pages such as `platform/architecture/index.md` and `platform/containers/index.md`) | Hosting models, request lifecycle, scaling architecture |
+| `docs/best-practices/` | Required | Security, deployment, reliability patterns |
+| `docs/operations/` | Required | Deployment slots, health recovery, backup procedures |
+| `docs/troubleshooting/` | Required, except for the `EXCLUDED_SUBPATHS` and `NAVIGATION_INDEXES` listed below | Playbooks, methodology pages, first-10-minutes runbooks, decision tree, evidence map |
+
+The block is **forbidden** on these pages:
+
+- **Out-of-scope sections** — any path that does not start with `platform/`, `best-practices/`, `operations/`, or `troubleshooting/`. This covers `docs/start-here/`, `docs/visualization/`, `docs/meta/`, `docs/about.md`, `docs/index.md`, `docs/contributing/`, `docs/reference/`, and `docs/language-guides/` (tutorials, recipes, playbooks).
+- **`EXCLUDED_SUBPATHS`** under `troubleshooting/`:
+    - `troubleshooting/kql/` — KQL query packs make no factual assertions of their own
+    - `troubleshooting/lab-guides/` — labs use the evidence-integrity model (Falsification step) instead
+- **`NAVIGATION_INDEXES`** — section landing pages that only introduce a section and make no factual claims:
+    - `platform/index.md`
+    - `best-practices/index.md`
+    - `operations/index.md`
+    - `operations/deployment/index.md`
+    - `troubleshooting/index.md`
+    - `troubleshooting/first-10-minutes/index.md`
+    - `troubleshooting/playbooks/index.md`
+
+Subsection landing pages that DO make factual claims (currently `platform/architecture/index.md` and `platform/containers/index.md`) are intentionally NOT in `NAVIGATION_INDEXES` — they are treated like any other factual-claim page.
+
+#### Schema
 
 ```yaml
 ---
@@ -526,11 +558,12 @@ content_validation:
 
 #### Agent Rules for Content Validation
 
-1. When creating or modifying Platform, Best Practices, or Operations documents, add `content_validation` frontmatter.
-2. List 2-5 core claims that are factual assertions (not opinions or procedures).
-3. Each claim must have a Microsoft Learn source URL.
-4. Set `status: verified` only when ALL core claims have verified sources.
-5. Run `python3 scripts/generate_content_validation_status.py` after updates.
+1. Add `content_validation` only when the page is in scope per `scripts/lib/content_scope.is_in_scope`. Do NOT add it to out-of-scope pages — the validator (`tools/validate_frontmatter.py`) will fail with a "forbidden-but-present" error.
+2. If you create a new in-scope page, you MUST add `content_validation` — the validator will fail with a "required-but-missing" error otherwise.
+3. Each `core_claim` MUST be a verifiable factual assertion about Azure behavior (a quoted limit, a documented feature behavior, a configuration default). Meta-statements such as "this page uses Microsoft Learn as the primary source basis" are tautological and forbidden — the marker text `primary source basis` (case-insensitive) is rejected by both `tools/validate_frontmatter.py` and `scripts/generate_content_validation_status.py`. To clean up existing tautological blocks, run `python3 scripts/remove_tautological_validation.py --apply`.
+4. List 2-5 core claims per page; each MUST cite a Microsoft Learn URL.
+5. Set `status: verified` only when ALL core claims have verified sources.
+6. Run `python3 scripts/generate_content_validation_status.py` after updates to regenerate `docs/reference/content-validation-status.md`.
 
 ## Quality Gates & Verification
 

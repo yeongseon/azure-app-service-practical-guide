@@ -22,15 +22,6 @@ content_sources:
       App Service overview documentation for this guide.
     based_on:
     - https://learn.microsoft.com/en-us/azure/app-service/overview
-content_validation:
-  status: verified
-  last_reviewed: '2026-05-23'
-  reviewer: agent
-  core_claims:
-  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
-      guidance.
-    source: https://learn.microsoft.com/en-us/azure/app-service/overview
-    verified: true
 ---
 # Documentation Taxonomy
 

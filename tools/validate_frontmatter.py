@@ -1,16 +1,19 @@
 #!/usr/bin/env python3
-"""
-Validate frontmatter in documentation files.
+"""Validate frontmatter in documentation files.
 
 Checks for:
-- Required fields present
-- Valid doc_type values
+
+- Required core fields present
+- Valid ``doc_type`` values
 - Slug uniqueness
-- Related/prerequisite targets exist
+- Relationship targets resolve to known slugs
 - Proper YAML formatting
+- ``content_validation`` placement: required on in-scope factual-claim
+  pages, forbidden elsewhere (per ``scripts/lib/content_scope``)
+- ``content_validation`` claim quality: no tautological placeholder claims
 
 Usage:
-    python tools/validate_frontmatter.py [--fix]
+    python tools/validate_frontmatter.py [--fix] [--strict]
 """
 
 import argparse
@@ -21,7 +24,16 @@ from typing import Any
 
 import yaml
 
-DOCS_DIR = Path(__file__).parent.parent / "docs"
+REPO_ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(REPO_ROOT / "scripts"))
+
+from lib.content_scope import (  # noqa: E402
+    TAUTOLOGICAL_CLAIM_MARKER,
+    is_in_scope,
+    is_tautological_text,
+)
+
+DOCS_DIR = REPO_ROOT / "docs"
 
 VALID_DOC_TYPES = {
     "concept",
@@ -75,7 +87,6 @@ class ValidationError:
 
 
 def parse_frontmatter(file_path: Path) -> tuple[dict[str, Any] | None, str | None]:
-    """Extract YAML frontmatter and return it with any parse error."""
     try:
         content = file_path.read_text(encoding="utf-8")
     except Exception as e:
@@ -97,6 +108,66 @@ def parse_frontmatter(file_path: Path) -> tuple[dict[str, Any] | None, str | Non
         return None, f"Invalid YAML: {e}"
 
 
+def _validate_content_validation_placement(
+    file_path: Path,
+    frontmatter: dict[str, Any],
+) -> list[ValidationError]:
+    """Enforce required/forbidden placement of ``content_validation``.
+
+    The single source of truth is ``scripts/lib/content_scope.is_in_scope``;
+    this function only translates its boolean answer into validation errors
+    so a future scope change in the helper propagates here automatically.
+    """
+    errors: list[ValidationError] = []
+    rel = file_path.relative_to(DOCS_DIR)
+    cv = frontmatter.get("content_validation")
+    has_cv_block = isinstance(cv, dict)
+    in_scope = is_in_scope(rel)
+
+    if in_scope and not has_cv_block:
+        errors.append(
+            ValidationError(
+                file_path,
+                "content_validation",
+                "Required content_validation block is missing. This page is "
+                "in scope per AGENTS.md \u00a7Text Content Validation "
+                "(see scripts/lib/content_scope.is_in_scope).",
+            )
+        )
+    elif not in_scope and has_cv_block:
+        errors.append(
+            ValidationError(
+                file_path,
+                "content_validation",
+                "content_validation block is forbidden on this page type "
+                "(navigation, KQL pack, lab guide, tutorial, or non-factual "
+                "page). Remove the block per AGENTS.md \u00a7Text Content "
+                "Validation.",
+            )
+        )
+
+    if has_cv_block:
+        claims = cv.get("core_claims", [])
+        if isinstance(claims, list):
+            for idx, claim in enumerate(claims):
+                if not isinstance(claim, dict):
+                    continue
+                if is_tautological_text(claim.get("claim")):
+                    errors.append(
+                        ValidationError(
+                            file_path,
+                            "content_validation",
+                            f"Tautological core_claim #{idx + 1} contains "
+                            f"forbidden marker '{TAUTOLOGICAL_CLAIM_MARKER}'. "
+                            f"Replace with a verifiable factual assertion, or "
+                            f"remove the content_validation block via "
+                            f"`python3 scripts/remove_tautological_validation.py --apply`.",
+                        )
+                    )
+
+    return errors
+
+
 def validate_file(
     file_path: Path,
     all_slugs: set[str],
@@ -104,7 +175,6 @@ def validate_file(
     require_core_fields: bool,
     check_recommended: bool,
 ) -> list[ValidationError]:
-    """Validate a single file's frontmatter."""
     errors = []
 
     frontmatter, parse_error = parse_frontmatter(file_path)
@@ -120,7 +190,9 @@ def validate_file(
         for field in REQUIRED_FIELDS:
             if field not in frontmatter:
                 errors.append(
-                    ValidationError(file_path, field, f"Missing required field: {field}")
+                    ValidationError(
+                        file_path, field, f"Missing required field: {field}"
+                    )
                 )
 
     if check_recommended:
@@ -169,11 +241,12 @@ def validate_file(
                     )
                 )
 
+    errors.extend(_validate_content_validation_placement(file_path, frontmatter))
+
     return errors
 
 
 def collect_slugs(docs_dir: Path) -> tuple[set[str], dict[str, list[Path]]]:
-    """Collect all slugs and detect duplicates."""
     slugs: set[str] = set()
     slug_files: dict[str, list[Path]] = {}
 

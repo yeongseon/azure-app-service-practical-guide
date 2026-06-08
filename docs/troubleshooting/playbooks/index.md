@@ -11,15 +11,6 @@ content_sources:
     - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
     - https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/troubleshoot-performance-degradation
     - https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/connection-issues-with-ssl-or-tls/troubleshoot-domain-and-tls-ssl-certificates
-content_validation:
-  status: verified
-  last_reviewed: '2026-05-23'
-  reviewer: agent
-  core_claims:
-  - claim: This page uses Microsoft Learn as the primary source basis for its Azure-specific
-      guidance.
-    source: https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
-    verified: true
 ---
 # Playbooks
 

@@ -5,25 +5,6 @@ content_sources:
     type: flowchart
     source: mslearn-adapted
     mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/
-content_validation:
-  status: verified
-  last_reviewed: '2026-06-08'
-  reviewer: agent
-  core_claims:
-  - claim: ASP.NET Core in-process hosting on Windows IIS uses IISHttpServer (not Kestrel)
-      as the HTTP server, running inside the IIS worker process (w3wp.exe).
-    source: https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/aspnet-core-module
-    verified: true
-  - claim: ASP.NET Core out-of-process hosting on Windows IIS runs Kestrel in a separate
-      dotnet.exe process, with IIS acting as a reverse proxy via the ASP.NET Core
-      Module.
-    source: https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/aspnet-core-module
-    verified: true
-  - claim: On Linux App Service, .NET apps run with Kestrel as the entrypoint process
-      inside the container; there is no IIS, no ASP.NET Core Module, and web.config
-      is not consulted.
-    source: https://learn.microsoft.com/en-us/azure/app-service/configure-language-dotnetcore?pivots=platform-linux
-    verified: true
 ---
 # .NET Runtime on Windows App Service (.NET 8)
 

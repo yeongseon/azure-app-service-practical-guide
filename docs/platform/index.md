@@ -6,13 +6,7 @@ content_sources:
       source: mslearn-adapted
       mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview
       description: "Maps the guide's platform concept pages to the main Azure App Service concept areas described in Microsoft Learn."
-content_validation:
-  status: verified
-  last_reviewed: 2026-05-15
-  reviewer: agent
-  core_claims: []
 ---
-
 # Concepts
 
 This section explains Azure App Service platform behavior in a language-agnostic way. Use these documents to understand architecture, scaling, networking, and dependency relationships before diving into language-specific implementation details.
