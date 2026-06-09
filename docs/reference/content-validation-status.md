@@ -1,7 +1,8 @@
 ---
 content_sources:
-  - type: self-generated
-    justification: Auto-generated dashboard tracking content validation status
+  references:
+    - type: self-generated
+      justification: Auto-generated dashboard tracking content validation status
 ---
 
 # Content Validation Status
@@ -10,7 +11,7 @@ This page tracks `content_validation` metadata for **in-scope factual-claim docu
 
 ## Summary
 
-*Generated: 2026-06-08*
+*Generated: 2026-06-09*
 
 | Content Type | Total | Verified | Pending | Unverified | No Metadata |
 |---|---:|---:|---:|---:|---:|
@@ -148,8 +149,9 @@ For an in-scope page, add a `content_validation` block to its frontmatter:
 ```yaml
 ---
 content_sources:
-  - type: mslearn-adapted
-    url: https://learn.microsoft.com/en-us/azure/app-service/...
+  references:
+    - type: mslearn-adapted
+      url: https://learn.microsoft.com/en-us/azure/app-service/...
 content_validation:
   status: verified
   last_reviewed: 2026-04-12

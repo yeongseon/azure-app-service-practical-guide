@@ -1,6 +1,6 @@
 ---
 content_sources:
-  text:
+  references:
     - type: mslearn-adapted
       url: https://learn.microsoft.com/en-us/azure/app-service/quickstart-python?tabs=flask%2Cazure-cli
   diagrams:
