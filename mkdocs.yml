@@ -9,8 +9,8 @@ repo_url: https://github.com/yeongseon/azure-app-service-practical-guide
 theme:
   name: material
   language: en
-  favicon: assets/images/favicon.svg
-  logo: assets/images/favicon.svg
+  favicon: assets/favicon.svg
+  logo: assets/logo.svg
   palette:
     - scheme: default
       primary: blue
