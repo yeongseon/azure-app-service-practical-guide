@@ -138,6 +138,31 @@ def generate_dashboard(tutorials: list[dict[str, Any]], today: date) -> str:
         by_language.setdefault(lang, []).append(t)
 
     lines: list[str] = []
+    # Canonical content_sources frontmatter for the auto-generated pie chart.
+    # The file is path-skipped by scripts/validate_content_sources.py, but
+    # emitting canonical shape keeps the dashboard consistent with peer pages
+    # (e.g. content-validation-status.md) and aligns with sibling repositories.
+    lines.append("---")
+    lines.append("content_sources:")
+    lines.append("  diagrams:")
+    lines.append("    - id: tutorial-validation-status-pie")
+    lines.append("      type: pie")
+    lines.append("      source: self-generated")
+    lines.append(
+        "      justification: Auto-generated from tutorial validation frontmatter in this repository."
+    )
+    lines.append("content_validation:")
+    lines.append("  status: verified")
+    lines.append(f'  last_reviewed: "{today.isoformat()}"')
+    lines.append("  reviewer: ai-agent")
+    lines.append("  core_claims:")
+    lines.append(
+        '    - claim: "The dashboard is generated from validation frontmatter in repository Markdown files."'
+    )
+    lines.append("      source: scripts/generate_validation_status.py")
+    lines.append("      verified: true")
+    lines.append("---")
+    lines.append("")
     lines.append("# Tutorial Validation Status")
     lines.append("")
     lines.append(
@@ -164,7 +189,7 @@ def generate_dashboard(tutorials: list[dict[str, Any]], today: date) -> str:
     # Mermaid pie chart
     lines.append("<!-- diagram-id: tutorial-validation-status-pie -->")
     lines.append("```mermaid")
-    lines.append('pie title Tutorial Validation Status')
+    lines.append("pie title Tutorial Validation Status")
     if validated > 0:
         lines.append(f'    "Validated" : {validated}')
     if stale > 0:
@@ -254,11 +279,13 @@ def generate_dashboard(tutorials: list[dict[str, Any]], today: date) -> str:
     lines.append("python3 scripts/generate_validation_status.py")
     lines.append("```")
     lines.append("")
-    lines.append("!!! info \"Validation fields\"")
+    lines.append('!!! info "Validation fields"')
     lines.append("    - `result`: `pass`, `fail`, or `not_tested`")
     lines.append("    - `last_tested`: ISO date (YYYY-MM-DD) or `null`")
     lines.append("    - `cli_version`: Azure CLI version used")
-    lines.append(f"    - Tutorials older than {STALENESS_DAYS} days are flagged as **stale**")
+    lines.append(
+        f"    - Tutorials older than {STALENESS_DAYS} days are flagged as **stale**"
+    )
     lines.append("")
 
     # See Also
