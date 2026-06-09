@@ -45,6 +45,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -55,6 +57,11 @@ jobs:
         run: |
           pip install pyyaml 'ruamel.yaml==0.19.1'
       
+      - name: Run doctests for content_scope and validate_content_sources
+        run: |
+          python -m doctest scripts/lib/content_scope.py -v
+          python -m doctest scripts/validate_content_sources.py -v
+      
       - name: Validate mermaid format
         run: |
           python scripts/validate_mermaid_format.py
@@ -63,7 +70,11 @@ jobs:
         run: |
           python scripts/validate_mermaid_syntax.py
       
-      - name: Validate content sources
+      - name: Validate changed documentation quality
+        run: |
+          python scripts/validate_doc_quality.py --changed-only --base-ref "${{ github.event.pull_request.base.sha || 'HEAD~1' }}"
+      
+      - name: Audit existing content sources
         run: |
           python scripts/validate_content_sources.py
       
@@ -75,7 +86,7 @@ jobs:
         run: |
           python scripts/normalize_mslearn_locale.py --check
       
-      - name: Check for missing diagram IDs
+      - name: Audit existing diagram IDs
         run: |
           # Count mermaid blocks
           MERMAID_COUNT=$(grep -r '```mermaid' docs/ --include="*.md" | wc -l)
