@@ -1,10 +1,27 @@
+---
+content_sources:
+  diagrams:
+    - id: tutorial-validation-status-pie
+      type: pie
+      source: self-generated
+      justification: Auto-generated from tutorial validation frontmatter in this repository.
+content_validation:
+  status: verified
+  last_reviewed: "2026-06-09"
+  reviewer: ai-agent
+  core_claims:
+    - claim: "The dashboard is generated from validation frontmatter in repository Markdown files."
+      source: scripts/generate_validation_status.py
+      verified: true
+---
+
 # Tutorial Validation Status
 
 This page tracks which tutorials have been validated against real Azure deployments. Each tutorial can be tested via **az-cli** (manual CLI commands) or **Bicep** (infrastructure as code). Tutorials not tested within 90 days are marked as stale.
 
 ## Summary
 
-*Generated: 2026-06-08*
+*Generated: 2026-06-09*
 
 | Metric | Count |
 |---|---:|
