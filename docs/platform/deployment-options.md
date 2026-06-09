@@ -2,7 +2,7 @@
 title: Deployment Options Reference
 description: Comprehensive reference for all Azure App Service deployment methods, with Windows and Linux support matrix and real CLI examples.
 content_sources:
-  text:
+  references:
     - type: mslearn-adapted
       url: https://learn.microsoft.com/en-us/azure/app-service/deploy-zip
     - type: mslearn-adapted

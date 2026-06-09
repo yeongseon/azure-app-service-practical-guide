@@ -2,7 +2,7 @@
 title: Azure App Service Deployment Scenarios
 description: A practical guide to choosing and implementing deployment architectures across different Azure App Service SKUs.
 content_sources:
-  text:
+  references:
     - type: mslearn-adapted
       url: https://learn.microsoft.com/en-us/azure/app-service/overview-hosting-plans
     - type: mslearn-adapted
