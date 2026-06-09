@@ -1,6 +1,6 @@
 ---
 content_sources:
-  text:
+  references:
     - type: mslearn
       url: https://learn.microsoft.com/en-us/azure/app-service/tutorial-custom-container
     - type: mslearn
