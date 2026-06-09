@@ -390,30 +390,24 @@ def looks_placeholder_guid(value: str) -> bool:
     )
 
 
-# Names containing any of these substrings are treated as synthetic
-# documentation placeholders and exempt from the live-hostname guard.
-# Markers cover common Microsoft Learn conventions (myapp, your-app,
-# example, contoso) and explicit template tokens (placeholder, sample,
-# demo, '<' for angle-bracket variables). Keep this list narrow: any
-# marker added here becomes a hole that could let real PII through, so
-# prefer renaming a sample to match an existing marker over expanding
-# the list.
-_APP_SERVICE_PLACEHOLDER_MARKERS = (
-    "myapp",
-    "your-app",
-    "your-",
-    "example",
-    "placeholder",
-    "<",
-    "sample",
-    "demo",
-    "contoso",
-)
+# Names whose leading hostname label tokenizes to include any of these
+# tokens are treated as synthetic documentation placeholders and exempt
+# from the live-hostname guard.
+# WEB_APP_HOST_RE matches 'https://<label>.azurewebsites.net' or
+# 'https://<label>.scm.azurewebsites.net'. The leading hostname label
+# is tokenized on '-' and checked for exact-match against this
+# allowlist. Substring matching would be too permissive: real
+# hostnames such as 'contoso-prod', 'your-prod', or 'sampledemo'
+# would slip through. Keep this set narrow: any token added here
+# becomes a hole that could let real PII through, so prefer renaming
+# a sample to match an existing token over expanding the list.
+_APP_SERVICE_PLACEHOLDER_TOKENS = frozenset({"myapp"})
 
 
 def looks_placeholder_app_service_hostname(value: str) -> bool:
-    lowered = value.lower()
-    return any(marker in lowered for marker in _APP_SERVICE_PLACEHOLDER_MARKERS)
+    host = value.split("//", 1)[-1].split("/", 1)[0]
+    label = host.split(".", 1)[0].lower()
+    return bool(set(label.split("-")) & _APP_SERVICE_PLACEHOLDER_TOKENS)
 
 
 def validate_sensitive_values(findings: list[Finding], path: Path, text: str) -> None:
