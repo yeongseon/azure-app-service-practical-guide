@@ -390,6 +390,32 @@ def looks_placeholder_guid(value: str) -> bool:
     )
 
 
+# Names containing any of these substrings are treated as synthetic
+# documentation placeholders and exempt from the live-hostname guard.
+# Markers cover common Microsoft Learn conventions (myapp, your-app,
+# example, contoso) and explicit template tokens (placeholder, sample,
+# demo, '<' for angle-bracket variables). Keep this list narrow: any
+# marker added here becomes a hole that could let real PII through, so
+# prefer renaming a sample to match an existing marker over expanding
+# the list.
+_APP_SERVICE_PLACEHOLDER_MARKERS = (
+    "myapp",
+    "your-app",
+    "your-",
+    "example",
+    "placeholder",
+    "<",
+    "sample",
+    "demo",
+    "contoso",
+)
+
+
+def looks_placeholder_app_service_hostname(value: str) -> bool:
+    lowered = value.lower()
+    return any(marker in lowered for marker in _APP_SERVICE_PLACEHOLDER_MARKERS)
+
+
 def validate_sensitive_values(findings: list[Finding], path: Path, text: str) -> None:
     for number, line in enumerate(text.splitlines(), 1):
         if SUBSCRIPTION_ID_RE.search(line):
@@ -399,7 +425,8 @@ def validate_sensitive_values(findings: list[Finding], path: Path, text: str) ->
             add(findings, path, number, "Application Insights instrumentation key must be masked")
         if SECRET_VALUE_RE.search(line):
             add(findings, path, number, "secret-like value must be replaced with a placeholder")
-        if WEB_APP_HOST_RE.search(line):
+        host_match = WEB_APP_HOST_RE.search(line)
+        if host_match and not looks_placeholder_app_service_hostname(host_match.group(0)):
             add(findings, path, number, "live-looking App Service hostname must be replaced with a placeholder")
         if SENSITIVE_CONTEXT_RE.search(line):
             for guid in GUID_RE.findall(line):
