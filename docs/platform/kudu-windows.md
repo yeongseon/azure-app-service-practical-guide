@@ -54,7 +54,7 @@ The Kudu UI shipped with Windows App Service is the full [`projectkudu/kudu`](ht
 <!-- diagram-id: windows-kudu-surface-map -->
 ```mermaid
 flowchart TD
-    SCM["SCM site<br/>https://APP.scm.azurewebsites.net"] --> ENV["Environment<br/>/Env"]
+    SCM["SCM site<br/>app-name.scm.azurewebsites.net"] --> ENV["Environment<br/>/Env"]
     SCM --> DBG["Debug Console<br/>/DebugConsole"]
     SCM --> PE["Process Explorer<br/>/ProcessExplorer"]
     SCM --> EXT["Site Extensions<br/>/SiteExtensions"]

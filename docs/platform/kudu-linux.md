@@ -63,7 +63,7 @@ The Kudu UI shipped with Linux App Service is [`Azure-App-Service/KuduLite`](htt
 <!-- diagram-id: linux-kudu-surface-map -->
 ```mermaid
 flowchart TD
-    SCM["SCM site<br/>https://APP.scm.azurewebsites.net"] --> MOD["Modern UI<br/>/ (default)"]
+    SCM["SCM site<br/>app-name.scm.azurewebsites.net"] --> MOD["Modern UI<br/>/ (default)"]
     SCM --> CLA["Classic UI<br/>/oldui"]
     SCM --> API["REST API<br/>/api/*"]
     MOD --> DASH["Dashboard<br/>Overview + Instance selector"]
