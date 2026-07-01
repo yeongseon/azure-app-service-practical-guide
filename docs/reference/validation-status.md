@@ -7,7 +7,7 @@ content_sources:
       justification: Auto-generated from tutorial validation frontmatter in this repository.
 content_validation:
   status: verified
-  last_reviewed: "2026-06-09"
+  last_reviewed: "2026-07-02"
   reviewer: ai-agent
   core_claims:
     - claim: "The dashboard is generated from validation frontmatter in repository Markdown files."
@@ -21,7 +21,7 @@ This page tracks which tutorials have been validated against real Azure deployme
 
 ## Summary
 
-*Generated: 2026-06-09*
+*Generated: 2026-07-02*
 
 | Metric | Count |
 |---|---:|

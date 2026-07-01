@@ -311,6 +311,12 @@ nav:
         - troubleshooting/kql/http/5xx-trend-over-time.md
         - troubleshooting/kql/http/latency-trend-by-status-code.md
         - troubleshooting/kql/http/slowest-requests-by-path.md
+      - Windows httpPlatformHandler:
+        - troubleshooting/kql/windows-httpplatformhandler/index.md
+        - troubleshooting/kql/windows-httpplatformhandler/500-121-timeout-signature.md
+        - troubleshooting/kql/windows-httpplatformhandler/backend-orphan-timeline.md
+        - troubleshooting/kql/windows-httpplatformhandler/scwin32status-adaptive-extension.md
+        - troubleshooting/kql/windows-httpplatformhandler/timeout-cluster-statistics.md
       - Console:
         - troubleshooting/kql/console/index.md
         - troubleshooting/kql/console/container-binding-errors.md
@@ -336,6 +342,7 @@ nav:
       - troubleshooting/lab-guides/slot-swap-config-drift.md
       - troubleshooting/lab-guides/slow-start-cold-start.md
       - troubleshooting/lab-guides/snat-exhaustion.md
+      - troubleshooting/lab-guides/windows-java-httpplatformhandler-timeout.md
   - Reference:
     - reference/index.md
     - Validation Status: reference/validation-status.md
