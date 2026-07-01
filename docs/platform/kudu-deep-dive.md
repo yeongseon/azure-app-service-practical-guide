@@ -71,14 +71,14 @@ Every App Service app is paired with a **companion Kudu site** at a related host
 <!-- diagram-id: kudu-architecture-relationship -->
 ```mermaid
 flowchart TD
-    Browser[Browser / CLI / CI pipeline]
+    Browser["Browser / CLI / CI pipeline"]
     Browser -->|App traffic| AppHost["app-name.azurewebsites.net<br/>Main site"]
     Browser -->|Deployment / diagnostics| ScmHost["app-name.scm.azurewebsites.net<br/>SCM / Kudu site"]
     AppHost --> Plan[App Service Plan]
     ScmHost --> Plan
-    ScmHost -->|Writes deployment artifact| Storage[/home/site/wwwroot<br/>Shared persistent storage]
+    ScmHost -->|Writes deployment artifact| Storage["/home/site/wwwroot<br/>Shared persistent storage"]
     AppHost -->|Reads| Storage
-    ScmHost -->|REST + UI| Tools[Process Explorer / Debug Console / Site Extensions / WebSSH]
+    ScmHost -->|REST + UI| Tools["Process Explorer / Debug Console / Site Extensions / WebSSH"]
 ```
 
 | Aspect | Main site | SCM (Kudu) site |
@@ -103,10 +103,10 @@ flowchart TD
     Start[Need to use Kudu] --> Q1{Interactive or automated?}
     Q1 -->|Interactive| Q2{Microsoft Entra enabled?}
     Q1 -->|Automated CI/CD or script| Q3{Basic auth disabled?}
-    Q2 -->|Yes recommended| EntraUI[Portal: Advanced Tools button<br/>Single sign-on via Entra]
-    Q2 -->|No / Legacy| BasicUI[Direct URL with deployment user/password]
-    Q3 -->|Yes recommended| EntraAPI[OAuth 2.0 access token<br/>az account get-access-token]
-    Q3 -->|No / Legacy| BasicAPI[Basic auth with publishing credentials]
+    Q2 -->|Yes recommended| EntraUI["Portal: Advanced Tools button<br/>Single sign-on via Entra"]
+    Q2 -->|No / Legacy| BasicUI["Direct URL with deployment user/password"]
+    Q3 -->|Yes recommended| EntraAPI["OAuth 2.0 access token<br/>az account get-access-token"]
+    Q3 -->|No / Legacy| BasicAPI["Basic auth with publishing credentials"]
     EntraUI --> Done[Kudu+ web UI]
     BasicUI --> Done
     EntraAPI --> RestAPI[Kudu REST API]
