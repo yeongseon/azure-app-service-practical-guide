@@ -41,6 +41,10 @@ const PII_RULES = [
     pattern: /\b[0-9A-F]{32,}\b/g,
     replacement: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
   },
+  {
+    pattern: /\b[0-9a-f]{64}\b/g,
+    replacement: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+  },
 ];
 
 const PORTAL_BLUE = '#0078d4';

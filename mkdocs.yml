@@ -116,7 +116,10 @@ nav:
     - Web App for Containers: platform/containers/index.md
     - Deployment Options: platform/deployment-options.md
     - Deployment Scenarios: platform/deployment-scenarios.md
-    - Kudu Deep Dive: platform/kudu-deep-dive.md
+    - Kudu:
+      - Overview: platform/kudu-overview.md
+      - Kudu on Windows: platform/kudu-windows.md
+      - Kudu on Linux: platform/kudu-linux.md
   - Best Practices:
     - best-practices/index.md
     - best-practices/production-baseline.md

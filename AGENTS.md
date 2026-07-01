@@ -167,6 +167,7 @@ The helper applies replacements to text nodes **and** `aria-label` attributes ac
 | `Yeongseon Choe` (display name) | `Demo User` | Author display name. |
 | `yeongseon` (GitHub handle, bare token) | `demouser` | Author GitHub username surfaced in Deployment Center "Signed in as" panels and similar source-control integrations. Case-insensitive and word-bounded; runs AFTER the `Yeongseon Choe` rule so the full display-name form is preserved. |
 | Uppercase hex token ≥ 32 chars (Custom Domain Verification ID, other SHA-256-style identifiers) | 64-char `AAAA…A` placeholder | Custom Domain Verification IDs and similar long uppercase hex strings are real account-scoped tokens that the GUID regex does not match. Boundary-anchored so shorter hex substrings inside other tokens are not partially rewritten. |
+| Lowercase hex token exactly 64 chars (Docker container instance ID surfaced by KuduLite header and `/api/processes`, other SHA-256-style identifiers) | 64-char `aaaa…a` placeholder | Docker container instance IDs on Linux App Service are 64-char lowercase SHA-256-style identifiers rendered in the modern KuduLite UI header and `/api/processes` JSON responses. The uppercase 32+ rule does not match them because it is case-sensitive. Length-anchored at exactly 64 to avoid rewriting shorter hex substrings inside other tokens (KuduLite also displays a truncated 14-char prefix; the truncated form is not caught by design and is treated as low-risk because it rotates on every container restart). |
 | Account-menu avatar (cannot be rewritten) | Native Playwright mask, `maskColor='#0078d4'` | Blends with Portal command bar. The helper throws if the avatar selector matches nothing. |
 
 The replacement scope covers text nodes, `aria-label`, `title`, and the visible value of `input` / `textarea` controls so search bars and filter chips do not leak resource names.
@@ -203,6 +204,7 @@ async (page) => {
       { re: /Yeongseon\\s+Choe/g, val: 'Demo User' },
       { re: /\\byeongseon\\b/gi, val: 'demouser' },
       { re: /\\b[0-9A-F]{32,}\\b/g, val: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' },
+      { re: /\\b[0-9a-f]{64}\\b/g, val: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' },
     ];
     let count = 0;
     const applySubs = (input) => {
