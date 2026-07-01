@@ -11,12 +11,12 @@ This page tracks `content_validation` metadata for **in-scope factual-claim docu
 
 ## Summary
 
-*Generated: 2026-06-09*
+*Generated: 2026-07-01*
 
 | Content Type | Total | Verified | Pending | Unverified | No Metadata |
 |---|---:|---:|---:|---:|---:|
-| Mermaid Diagrams | 364 | 364 | 0 | 0 | 0 |
-| In-Scope Factual-Claim Documents | 71 | 71 | 0 | 0 | 0 |
+| Mermaid Diagrams | 366 | 366 | 0 | 0 | 0 |
+| In-Scope Factual-Claim Documents | 72 | 72 | 0 | 0 | 0 |
 
 !!! success "All In-Scope Documents Verified"
     Every in-scope factual-claim document has verified Microsoft Learn sources for its core claims.
@@ -24,7 +24,7 @@ This page tracks `content_validation` metadata for **in-scope factual-claim docu
 <!-- diagram-id: content-validation-status-pie -->
 ```mermaid
 pie title In-Scope Document Validation Status
-    "Verified" : 71
+    "Verified" : 72
 ```
 
 ## By Section
@@ -39,6 +39,7 @@ pie title In-Scope Document Validation Status
 | [Hosting Models](../platform/hosting-models.md) | ✅ | ✅ Verified | 5/5 | 2026-04-12 |
 | [Index](../platform/architecture/index.md) | ✅ | ✅ Verified | 4/4 | 2026-04-27 |
 | [Index](../platform/containers/index.md) | ✅ | ✅ Verified | 5/5 | 2026-05-01 |
+| [Kudu Deep Dive](../platform/kudu-deep-dive.md) | ✅ | ✅ Verified | 5/5 | 2026-06-30 |
 | [Mtls](../platform/mtls.md) | ✅ | ✅ Verified | 4/4 | 2026-04-25 |
 | [Networking](../platform/networking.md) | ✅ | ✅ Verified | 8/8 | 2026-04-12 |
 | [Request Lifecycle](../platform/request-lifecycle.md) | ✅ | ✅ Verified | 5/5 | 2026-04-12 |
