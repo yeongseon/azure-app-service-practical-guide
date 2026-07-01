@@ -23,6 +23,7 @@ graph TD
     B --> F[Intermittent 5xx]
     B --> G[No Space Left on Device]
     B --> H[Slow Start / Cold Start]
+    B --> O[Windows Java Timeout]
     C --> I[Container HTTP Pings]
     C --> J[Deployment Ok Startup Failed]
     C --> K[Failed to Forward Request]
@@ -57,6 +58,7 @@ The `Diagnose and solve problems` blade is the first Portal stop when running th
 | [Intermittent 5xx Under Load](intermittent-5xx.md) | Sporadic 5xx responses during traffic spikes | [Intermittent 5xx Under Load](../playbooks/performance/intermittent-5xx-under-load.md) |
 | [No Space Left on Device](no-space-left-on-device.md) | Disk full errors from /home or /tmp exhaustion | [No Space Left on Device](../playbooks/performance/no-space-left-on-device.md) |
 | [Slow Start / Cold Start](slow-start-cold-start.md) | First request slow after deploy or idle | [Slow Start / Cold Start vs Regression](../playbooks/performance/slow-start-cold-start.md) |
+| [Windows Java httpPlatformHandler Timeout](windows-java-httpplatformhandler-timeout.md) | 500.121.64 timeout signature under loopback saturation on Windows App Service Java SE | [Windows httpPlatformHandler KQL Pack](../kql/windows-httpplatformhandler/index.md) |
 
 ### Startup / Availability
 
