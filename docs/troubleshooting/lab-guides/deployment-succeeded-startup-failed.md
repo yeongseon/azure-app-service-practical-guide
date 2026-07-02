@@ -661,6 +661,17 @@ If you are the application administrator, you can access the diagnostic resource
 
 This aligns with upstream 503 and startup failure patterns.
 
+#### 4.2.4 Control-plane view: Deployment Center reports success
+
+While the runtime is failing, the App Service control plane still reports the deployment as successful. This is the central illusion of "deployment succeeded but startup failed."
+
+![Deployment Center Logs tab showing deployment ID e202129 with Status "Succeeded (Active)", author "N/A", message "OneDeploy", and timestamp 7/3/2026, 12:23:30 AM (2026-07-02T15:23:30Z UTC). The row's green Succeeded badge is the control-plane signal that misleads operators into believing the app is healthy.](../../assets/troubleshooting/deployment-center/02-depstart-successful-deploy.png)
+
+Purpose: Show that Deployment Center — the primary UI operators consult after a `az webapp deploy` — reports **Succeeded (Active)** for the exact deployment that produces a broken runtime.
+Look for: The green "Succeeded" badge on the row with `OneDeploy` message and the timestamp of the deployment that immediately preceded the failure window.
+Expected result: Deployment ID visible, Status column shows Succeeded, no error indication anywhere on this blade.
+Next step: Cross-reference this timestamp against `AppServicePlatformLogs` runtime failure events (§4.4.4) — the two events are 90-120 seconds apart, which is the diagnostic window operators must learn to inspect.
+
 ### 4.3 Trigger and recovery observations
 
 #### 4.3.1 Command change is explicit and minimal
@@ -737,9 +748,12 @@ Selected rows:
 | 2026-04-04T05:32:59.155215Z | / | 503 | 37700 |
 | 2026-04-04T05:16:36.397916Z | /api/zipdeploy | 202 | 2409 |
 
-#### 4.4.2 Console log evidence
+#### 4.4.2 Console log evidence (intended app-level cause, from prior artifact set)
 
 Artifact: `trigger/kql-console-20260404T060610Z.json`
+
+!!! note "Source and scope of this table"
+    The rows below are from an earlier reproduction run (April 2026 timestamps). They document the **intended** app-level cause — the `wrong_module` reference producing a Python `ModuleNotFoundError` inside the container — and are the reason the container process exits and never becomes healthy. In the current re-capture run for this lab (July 2026), `AppServiceConsoleLogs` remained empty despite `az webapp log config --application-logging filesystem --level information --docker-container-logging filesystem` being enabled; the platform pipeline captured the same failure but only via `AppServicePlatformLogs` (see §4.4.4). The observed empty-`AppServiceConsoleLogs` state is consistent with the container exiting before console output was collected in LAW; the exact STDOUT collector timing on this failure mode is not proven from the data captured here. The operational conclusion — for this failure mode, treat `AppServicePlatformLogs` as authoritative — holds regardless of the underlying mechanism.
 
 Critical rows:
 
@@ -750,7 +764,7 @@ Critical rows:
 | 2026-04-04T05:55:04.0838827Z | `ModuleNotFoundError: No module named 'wrong_module'` |
 | 2026-04-04T05:54:49.4185745Z | `Site's appCommandLine: ... wrong_module:app` |
 
-This is direct proof of startup command misconfiguration.
+This is direct proof of startup command misconfiguration **when console output is captured**. When it is not (as in the current run), the platform log evidence in §4.4.4 becomes the authoritative source for the failure lifecycle.
 
 #### 4.4.3 Platform log evidence
 
@@ -767,6 +781,100 @@ Representative messages:
 | 2026-04-04T05:55:35.0262875Z | `Site: app-labstartup-... stopped.` |
 
 This connects app-level exception to platform startup timeout behavior.
+
+#### 4.4.4 Live KQL evidence: startup lifecycle in AppServicePlatformLogs
+
+The following KQL, executed against `AppServicePlatformLogs` in the current lab workspace, categorizes every startup lifecycle event into a human-readable `Phase` column. It is the authoritative evidence for this run because `AppServiceConsoleLogs` did not capture container STDOUT before the process exited (see §4.4.2 note).
+
+```kusto
+AppServicePlatformLogs
+| where TimeGenerated > ago(90m)
+| extend Msg = tostring(coalesce(
+    column_ifexists("Message", ""),
+    column_ifexists("ResultDescription", ""),
+    column_ifexists("Details", "")
+))
+| where Msg has_any (
+    "PullingImage",
+    "MountingVolumes",
+    "exit code: 3",
+    "ContainerTimeout",
+    "terminated during site startup",
+    "Failed to start site",
+    "blocked due to multiple, consecutive cold start failures"
+)
+| extend Phase = case(
+    Msg has "PullingImage", "Pulling image",
+    Msg has "MountingVolumes", "Mounting volumes",
+    Msg has "exit code: 3", "Process exited (code 3)",
+    Msg has "ContainerTimeout", "Startup timeout (230s)",
+    Msg has "terminated during site startup", "Startup cancelled by platform",
+    Msg has "Failed to start site", "Site reverted/stopped",
+    Msg has "blocked due to multiple, consecutive cold start failures", "Cold-start safety block",
+    "Other"
+)
+| project TimeGenerated, Phase, Msg
+| order by TimeGenerated asc
+```
+
+![Log Analytics workspace log-labdepstart-lsjfe3fcifk5y showing the KQL query editor with the AppServicePlatformLogs Phase categorization query at the top, and a results grid below with 17 of 271 rows visible spanning 3:25:10 PM to 3:25:56 PM UTC. The Phase column cycles through "Pulling image", "Mounting volumes", "Process exited (code 3)", "Startup cancelled by platform", "Startup timeout (230s)", and "Site reverted/stopped" in strict chronological order, demonstrating the full container startup-failure lifecycle over roughly 46 seconds. Query completed in 1s 16ms.](../../assets/troubleshooting/log-analytics/04-depstart-startup-failed-kql.png)
+
+Purpose: Show the deterministic lifecycle that platform diagnostics record when a container fails to become healthy: image pull → volume mount → process exit (code 3) → platform cancels startup → startup timeout after 230s → site reverted/stopped. This lifecycle repeats on every restart attempt.
+Look for:
+
+- The `Phase` column matches the six stages described above.
+- The `TimeGenerated` column shows all six stages happen within one 40-60 second window per restart cycle.
+- The `Msg` column contains the raw platform strings (`Action: PullingImage`, `Container has finished running with exit code: 3`, `LastError: ContainerTimeout`) that support each Phase label.
+
+Expected result: 200+ rows (271 in this capture) over a 90-minute window, showing the container retry loop that runs until the platform's cold-start safety block engages.
+Next step: Use the timeline chart in §4.4.5 to see how these runtime events align against the control-plane deployment event.
+
+!!! warning "Diagnostic deviation from the original playbook"
+    The original intent for this lab was to capture `AppServiceConsoleLogs` rows containing the `ModuleNotFoundError` traceback around the startup timeout window. In this re-capture run, `AppServiceConsoleLogs` stayed at **0 rows** for the failure window even though diagnostic settings were enabled via `az webapp log config --application-logging filesystem --level information --docker-container-logging filesystem` and the site was restarted and probed multiple times. `AppServicePlatformLogs` grew normally (543 → 710 rows during the probe cycle), which confirms the LAW ingestion pipeline is working end-to-end. This observed asymmetry — platform events present, console events absent — is consistent with the container exiting before console output was collected in LAW; the exact STDOUT collector timing on this failure mode is not proven from the data captured here. **Operational takeaway** (holds regardless of the underlying mechanism): for `deployment succeeded but startup failed` scenarios where the container exits before the health probe, treat `AppServicePlatformLogs` as the authoritative evidence source rather than `AppServiceConsoleLogs`. The `Phase` categorization above is the reusable pattern.
+
+#### 4.4.5 Live KQL evidence: control-plane vs data-plane on the same timeline
+
+The following KQL renders a column chart that overlays the successful deployment event (from Deployment Center metadata) against the platform-terminated startup events (from `AppServicePlatformLogs`) on a single minute-binned timeline. The single orange bar at the deploy timestamp against a sustained wall of red/blue/teal runtime-failure bars is the visual proof that "deployment succeeded" and "app running healthily" are two disjoint claims.
+
+```kusto
+let deploy = datatable(TimeGenerated:datetime, Event:string) [
+    datetime(2026-07-02T15:23:30Z), "Deploy succeeded (control-plane)"
+];
+let runtime =
+    AppServicePlatformLogs
+    | where TimeGenerated > ago(120m)
+    | extend Msg = tostring(coalesce(
+        column_ifexists("Message", ""),
+        column_ifexists("ResultDescription", ""),
+        column_ifexists("Details", "")
+    ))
+    | where Msg has_any ("exit code: 3", "ContainerTimeout", "terminated during site startup")
+    | extend Event = case(
+        Msg has "exit code: 3", "Container exited (code 3)",
+        Msg has "ContainerTimeout", "Startup timeout",
+        "Platform cancelled startup"
+    )
+    | project TimeGenerated, Event;
+union deploy, runtime
+| summarize Count = count() by bin(TimeGenerated, 1m), Event
+| render columnchart
+```
+
+The `deploy` datatable row is synthesized from the Deployment Center capture in §4.2.4 because `AppServiceHTTPLogs` only captures traffic to the front-door `*.azurewebsites.net` hostname, not to the SCM/Kudu (`*.scm.azurewebsites.net`) endpoint that receives ZIP deploys. This is by design in App Service diagnostic settings.
+
+![Log Analytics workspace log-labdepstart-lsjfe3fcifk5y showing a stacked column chart with time on the x-axis (3:24 PM through 3:52 PM UTC) and event count on the y-axis (0 to 30). A single small orange bar at 3:24 PM labeled "Deploy succeeded (control-plane)" sits alone, followed by a two-minute gap, then a sustained wall of stacked teal/dark-blue/light-blue columns from 3:25 PM through 3:35 PM representing Startup timeout, Platform cancelled startup, and Container exited (code 3) events. A second wave of taller columns appears at 3:50-3:52 PM triggered by external probe traffic. The chart legend at the bottom lists all four event categories with color markers. Total: 36 records, query duration 1s 96ms.](../../assets/troubleshooting/log-analytics/05-depstart-runtime-vs-deploy-timeline.png)
+
+Purpose: Visually collapse the entire lab hypothesis into a single chart. The orange bar and the teal/blue bars are literally on the same time axis, in the same query result, in the same LAW workspace — and yet they represent completely disjoint outcomes.
+Look for:
+
+- The **single, isolated orange bar** at ~3:24 PM: this is the control-plane's report of success.
+- The **~2 minute quiet gap** immediately after: the platform is pulling the image and starting the container.
+- The **first sustained wave of colored bars** from 3:25 PM to ~3:35 PM: the container repeatedly fails to boot and platform terminates each attempt.
+- The **quiescence from 3:36 PM to 3:48 PM**: the platform's cold-start safety block engages and stops retrying.
+- The **second wave at 3:50-3:52 PM**: external HTTP probes to the front-door woke the container up, and it failed again identically.
+
+Expected result: One tiny orange bar (count = 1) against 35+ runtime failure bars. If your capture shows any other pattern (for example, no runtime bars at all, or the orange bar appearing after the runtime bars), the hypothesis is falsified — treat the container as healthy or investigate a different failure mode.
+Next step: In your own investigations, save this query into a Log Analytics workbook so any incident responder can render the same control-plane vs data-plane split for any deployment ID in under 60 seconds.
 
 ### 4.5 Postfix observations
 
