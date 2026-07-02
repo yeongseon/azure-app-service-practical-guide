@@ -131,7 +131,7 @@ When you analyze `AppServiceHTTPLogs`, the combination of `ScStatus=500`, `ScSub
 
 ### 1.4 Why 230s? The App Service front-end timeout
 
-The 230-second timeout is a fundamental platform limit in Azure App Service. It exists to prevent long-running, stalled, or malicious requests from indefinitely holding onto front-end resources. This limit is intentionally shorter than most client-side or gateway-side timeouts (like Azure Application Gateway's default 120s or 180s) to ensure the platform can recover quickly from worker-level failures.
+The 230-second timeout is a fundamental platform limit in Azure App Service. It exists to prevent long-running, stalled, or malicious requests from indefinitely holding onto front-end resources. This limit is intentionally set higher than most client-side or gateway-side timeouts (which are commonly configured well below 230 seconds), so those upstream timers typically fire first; a request that runs for the full 230 seconds and terminates with the front-end reset signature means no upstream layer imposed a shorter deadline.
 
 **The Timeout Sequence in Detail:**
 1.  **Ingress**: Request arrives at the App Service Front-End.
@@ -234,11 +234,11 @@ Even once you understand the mechanism, three platform-specific gaps make this f
 
 #### Gap 1: Auto-Heal events do not surface in `AppServicePlatformLogs`
 
-Auto-Heal actions (both Proactive Auto-Heal and customer-configured rules) do not consistently emit `AutoHealing` operation records to `AppServicePlatformLogs` on Windows Java SE. During this lab's preflight verification for mitigation M2, five minutes of sustained load that met a `count=5, timeInterval=2min` recycle rule produced zero matching rows in `AppServicePlatformLogs | where OperationName startswith "AutoHealing"`.
+Auto-Heal actions (both Proactive Auto-Heal and customer-configured rules) do not consistently emit `AutoHealing` operation records to `AppServicePlatformLogs` on Windows Java SE. `[Observed]` During this lab's preflight verification for mitigation M2, five minutes of sustained load that met a `count=5, timeInterval=2min` recycle rule produced zero matching rows in `AppServicePlatformLogs | where OperationName startswith "AutoHealing"`.
 
-**Impact**: Custom Auto-Heal (mitigation M2 in this lab) cannot be verified from platform logs. Whether the recycle actually occurred remains indeterminate, which is why this lab records the M2 verdict as **UNVERIFIABLE** rather than pass or fail.
+**Impact**: Custom Auto-Heal (mitigation M2 in this lab) cannot be verified from platform logs. `[Not Proven]` Whether the recycle actually occurred remains indeterminate, which is why this lab records the M2 verdict as **UNVERIFIABLE** rather than pass or fail.
 
-**Proxy signals when Auto-Heal telemetry is absent**:
+**Proxy signals when Auto-Heal telemetry is absent** `[Inferred]`:
 
 - A cliff-drop in `AppServiceHTTPLogs` request counts followed by a silence window and gradual ramp back (see Section 3.11.3).
 - `RoleInstance` value changes across consecutive log rows suggest instance recycling.
@@ -246,21 +246,21 @@ Auto-Heal actions (both Proactive Auto-Heal and customer-configured rules) do no
 
 #### Gap 2: `AppServiceHTTPLogs` ingest lag exceeds 60 seconds
 
-Windows App Service logs are buffered locally before shipping to Azure Monitor. During this lab's E3 mitigation probes, KQL queries executed within 60 seconds of an HTTP event returned zero rows for the just-completed request, even though `curl` had confirmed the platform returned the response. Extending the KQL time window by +300 seconds past the request end-time recovered all rows.
+Windows App Service logs are buffered locally before shipping to Azure Monitor. `[Measured]` During this lab's E3 mitigation probes, KQL queries executed within 60 seconds of an HTTP event returned zero rows for the just-completed request, even though `curl` had confirmed the platform returned the response. Extending the KQL time window by +300 seconds past the request end-time recovered all rows.
 
-**Impact**: Any KQL-based verification loop must include a 5-minute buffer past the last event of interest. Immediate post-test queries produce false negatives that are indistinguishable from the request never having reached the platform.
+**Impact** `[Inferred]`: Any KQL-based verification loop must include a 5-minute buffer past the last event of interest. Immediate post-test queries produce false negatives that are indistinguishable from the request never having reached the platform.
 
 **Practical rule**: Wait at least 5 minutes between the end of a load run and the first KQL verification query. When automating verification, extend the query window by 300 seconds past the last event timestamp. See the `iso_shift_seconds` helper in this lab's `verify.sh` reference implementation.
 
 #### Gap 3: Sparse public documentation for Windows Java SE plus `httpPlatformHandler`
 
-The public App Service troubleshooting corpus is Linux-heavy. Prior to this lab, all reproduction guides in this repository targeted Linux runtimes, and Microsoft Learn's Java troubleshooting content largely assumes Linux plus Tomcat directly rather than the Windows IIS plus `httpPlatformHandler` plus Spring Boot embedded Tomcat bridge. Concrete consequences:
+The public App Service troubleshooting corpus is Linux-heavy. `[Observed]` Prior to this lab, all reproduction guides in this repository targeted Linux runtimes, and Microsoft Learn's Java troubleshooting content largely assumes Linux plus Tomcat directly rather than the Windows IIS plus `httpPlatformHandler` plus Spring Boot embedded Tomcat bridge. Concrete consequences:
 
-- The `500.121.64` signature is not indexed in the Windows-specific troubleshooting articles under `learn.microsoft.com/en-us/troubleshoot/azure/app-service/`.
-- The interaction between `httpPlatformHandler.requestTimeout` and the ARR forwarder that produces `502.3.12002` near 60 seconds is documented separately in IIS and ASP.NET Core references but never in a unified App Service Java article.
-- Community search results for "App Service Java timeout 500" typically surface Linux plus Gunicorn or Tomcat guidance that does not apply to the Windows IIS bridge.
+- `[Observed]` The `500.121.64` signature is not indexed in the Windows-specific troubleshooting articles under `learn.microsoft.com/en-us/troubleshoot/azure/app-service/`.
+- `[Observed]` The interaction between `httpPlatformHandler.requestTimeout` and the ARR forwarder that produces `502.3.12002` near 60 seconds is documented separately in IIS and ASP.NET Core references but never in a unified App Service Java article.
+- `[Observed]` Community search results for "App Service Java timeout 500" typically surface Linux plus Gunicorn or Tomcat guidance that does not apply to the Windows IIS bridge.
 
-**Impact**: Support engineers and self-service investigators triaging Windows Java SE symptoms may be sent down Linux-oriented diagnostic paths (thread dumps via `jstack`, heap dumps via `jmap`, Tomcat `catalina.out` analysis) that miss the IIS-layer signal entirely.
+**Impact** `[Strongly Suggested]`: Support engineers and self-service investigators triaging Windows Java SE symptoms may be sent down Linux-oriented diagnostic paths (thread dumps via `jstack`, heap dumps via `jmap`, Tomcat `catalina.out` analysis) that miss the IIS-layer signal entirely.
 
 **Mitigation for readers**: Use this lab guide together with the [Windows KQL Query Pack for httpPlatformHandler](../kql/windows-httpplatformhandler/index.md) as the primary Windows Java SE troubleshooting reference until Microsoft Learn expands coverage.
 
@@ -575,9 +575,9 @@ The analysis below is based on a comprehensive set of artifacts collected from a
 ### 4.2 Baseline state (pre-E1: 3/3 at 500/121/0, TimeTaken ~230s, 0 rows win32=64)
 
 The baseline test involved three sequential requests to `/slow/240`. Because the requests were sequential, there was no contention for the Tomcat thread pool or the IIS queue.
--   **Results**: All three requests timed out at exactly ~230 seconds.
--   **Signature**: `500.121.0`.
--   **Key Insight**: In the sequential baseline, IIS recorded a `Win32Status=0` (Success/No Error). This proves that the `win32=64` (Reset) code only appears when there is concurrent pressure on the loopback interface or when the front-end's reset is processed in a specific state of the IIS socket buffer.
+-   **Results** `[Measured]`: All three requests timed out at exactly ~230 seconds.
+-   **Signature** `[Observed]`: `500.121.0`.
+-   **Key Insight** `[Inferred]`: In the sequential baseline, IIS recorded a `Win32Status=0` (Success/No Error). This proves that the `win32=64` (Reset) code only appears when there is concurrent pressure on the loopback interface or when the front-end's reset is processed in a specific state of the IIS socket buffer.
 
 ### 4.3 E1 evidence: per-rate saturation table (all 4 rates positive)
 
@@ -591,30 +591,30 @@ Running four distinct rates confirmed that the `500.121.64` signature is a direc
 | 4 | 1.05 | 15:15:19Z .. 15:20:19Z | 303 | 209 | 68.98 | **POSITIVE** |
 
 **Statistical Analysis of E1:**
--   **Consistency**: Across all rates, the `pct_64` remained remarkably stable between 65% and 70%. This suggests that once the thread pool is saturated, the front-end reset mechanism behaves predictably regardless of how "deep" the overload is.
--   **Saturation Threshold**: The B1 instance failed even at 0.5 req/s. Since the theoretical capacity is 0.83 req/s (200 threads / 240s), this 40% "capacity gap" is attributed to platform overhead and IIS queuing delays.
+-   **Consistency** `[Observed]`: Across all rates, the `pct_64` remained remarkably stable between 65% and 70%. This suggests that once the thread pool is saturated, the front-end reset mechanism behaves predictably regardless of how "deep" the overload is.
+-   **Saturation Threshold** `[Inferred]`: The B1 instance failed even at 0.5 req/s. Since the theoretical capacity is 0.83 req/s (200 threads / 240s), this 40% "capacity gap" is attributed to platform overhead and IIS queuing delays.
 
 ### 4.4 E2 evidence: sustained-load statistics (62% pct_64, latency distribution)
 
 The 15-minute sustained run at 0.5 req/s provided high-confidence data for the steady-state failure rate of a saturated worker.
 
--   **Sample Size**: 233 valid requests in the final analysis window.
--   **Signature Rate**: 62.00% of requests exhibited the `500.121.64` signature.
--   **Latency Profile (ms)**:
+-   **Sample Size** `[Measured]`: 233 valid requests in the final analysis window.
+-   **Signature Rate** `[Measured]`: 62.00% of requests exhibited the `500.121.64` signature.
+-   **Latency Profile (ms)** `[Measured]`:
     -   **P50 (Median)**: 230,007 ms
     -   **P95**: 230,035 ms
     -   **P99**: 230,096 ms
--   **Interpretation**: The extremely tight grouping (all within 100ms of the 230s limit) is a "smoking gun" for a platform-enforced timeout. If the timeout were coming from the application or IIS, we would see a much wider distribution based on processing time.
+-   **Interpretation** `[Strongly Suggested]`: The extremely tight grouping (all within 100ms of the 230s limit) is a "smoking gun" for a platform-enforced timeout. If the timeout were coming from the application or IIS, we would see a much wider distribution based on processing time.
 
 ### 4.5 E3 evidence: M1a mitigation probes (60s cutoff, 502.3.12002 signature)
 
 After deploying the `web.config` with `requestTimeout="00:01:00"`, the behavior changed significantly. This experiment proves that we can override the platform's default reset behavior.
 
--   **Probe 1**: Failed to return results due to KQL ingestion lag during the verification window.
--   **Probe 2**: Cut off at **62,723 ms** with signature `502.3.12002`.
--   **Probe 3**: Cut off at **59,248 ms** with signature `502.3.12002`.
+-   **Probe 1** `[Unknown]`: Failed to return results due to KQL ingestion lag during the verification window.
+-   **Probe 2** `[Measured]`: Cut off at **62,723 ms** with signature `502.3.12002`.
+-   **Probe 3** `[Measured]`: Cut off at **59,248 ms** with signature `502.3.12002`.
 
-**The Signature Shift**: The transition from `500.121.64` (at 230s) to `502.3.12002` (at 60s) is the definitive proof that the mitigation is active. The 62s and 59s values are consistent with the 60s configuration plus or minus network and IIS processing overhead.
+**The Signature Shift** `[Observed]`: The transition from `500.121.64` (at 230s) to `502.3.12002` (at 60s) is the definitive proof that the mitigation is active. The 62s and 59s values are consistent with the 60s configuration plus or minus network and IIS processing overhead.
 
 ### 4.6 KQL HTTP aggregate summary
 
@@ -622,8 +622,8 @@ Across all load experiments, we observed a total of ~1,177 requests. The cumulat
 
 ### 4.7 KQL latency profile by endpoint
 
--   `/slow/240`: Latency is bimodal—either very short (if rejected by Tomcat's internal queue) or ~230s (if queued by IIS). Mean latency was 230,012 ms.
--   `/health`: Mean latency 5 ms. Remained stable throughout the saturation event, indicating that IIS priority queueing for internal health probes is effective even when the loopback proxy is under heavy pressure.
+-   `/slow/240` `[Measured]`: Latency is bimodal—either very short (if rejected by Tomcat's internal queue) or ~230s (if queued by IIS). Mean latency was 230,012 ms.
+-   `/health` `[Observed]`: Mean latency 5 ms. Remained stable throughout the saturation event, indicating that IIS priority queueing for internal health probes is effective even when the loopback proxy is under heavy pressure. `[Inferred]`
 
 ### 4.8 Raw KQL sample rows (sanitized, use <subscription-id> placeholders)
 
@@ -656,11 +656,11 @@ Across all load experiments, we observed a total of ~1,177 requests. The cumulat
 | 0.90 req/s | 0.83 req/s | 1.08 | 65.7% |
 | 1.05 req/s | 0.83 req/s | 1.26 | 69.0% |
 
-**Note**: The error rate does not increase linearly with the overload ratio. This suggests that the front-end reset mechanism has a "saturation plateau" where it drops approximately two-thirds of the requests once the backend is fully blocked.
+**Note** `[Strongly Suggested]`: The error rate does not increase linearly with the overload ratio. This suggests that the front-end reset mechanism has a "saturation plateau" where it drops approximately two-thirds of the requests once the backend is fully blocked.
 
 ### 4.11 Hypothesis verdict
 
-**Supported.** The experiments confirm that `500.121.64` is the primary signature for loopback/thread-pool saturation on Windows Java SE. The arrival rate of 0.5 req/s is sufficient to trigger the failure on a B1 instance.
+**Supported.** `[Observed]` The experiments confirm that `500.121.64` is the primary signature for loopback/thread-pool saturation on Windows Java SE. The arrival rate of 0.5 req/s is sufficient to trigger the failure on a B1 instance.
 
 ### 4.12 Recommendations
 

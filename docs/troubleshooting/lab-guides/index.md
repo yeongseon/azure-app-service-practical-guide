@@ -36,8 +36,8 @@ graph TD
 
 Each lab includes:
 
-1. **main.bicep** — Infrastructure template (App Service Plan B1, App Service Python 3.11 Linux, Log Analytics, Diagnostic Settings)
-2. **app/** — Flask application designed to reproduce a specific symptom
+1. **main.bicep** — Infrastructure template (App Service Plan, App Service instance for the lab's target runtime, Log Analytics, Diagnostic Settings)
+2. **app/** — Application code (Python/Flask, Node.js, Java, or .NET depending on the lab) designed to reproduce a specific symptom
 3. **trigger.sh** — Script to trigger the symptom
 4. **verify.sh** — Script to query Log Analytics and confirm expected signals appeared
 5. **Documentation page** — Step-by-step walkthrough with KQL queries and expected observations
@@ -58,7 +58,7 @@ The `Diagnose and solve problems` blade is the first Portal stop when running th
 | [Intermittent 5xx Under Load](intermittent-5xx.md) | Sporadic 5xx responses during traffic spikes | [Intermittent 5xx Under Load](../playbooks/performance/intermittent-5xx-under-load.md) |
 | [No Space Left on Device](no-space-left-on-device.md) | Disk full errors from /home or /tmp exhaustion | [No Space Left on Device](../playbooks/performance/no-space-left-on-device.md) |
 | [Slow Start / Cold Start](slow-start-cold-start.md) | First request slow after deploy or idle | [Slow Start / Cold Start vs Regression](../playbooks/performance/slow-start-cold-start.md) |
-| [Windows Java httpPlatformHandler Timeout](windows-java-httpplatformhandler-timeout.md) | 500.121.64 timeout signature under loopback saturation on Windows App Service Java SE | [Windows httpPlatformHandler KQL Pack](../kql/windows-httpplatformhandler/index.md) |
+| [Windows Java httpPlatformHandler Timeout](windows-java-httpplatformhandler-timeout.md) | 500.121.64 timeout signature under loopback saturation on Windows App Service Java SE | No dedicated playbook — see [Windows httpPlatformHandler KQL Pack](../kql/windows-httpplatformhandler/index.md) |
 
 ### Startup / Availability
 
