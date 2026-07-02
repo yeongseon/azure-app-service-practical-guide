@@ -571,6 +571,17 @@ Interpretation:
 - App remained healthy and served multiple requests.
 - Baseline does not indicate immediate startup collapse.
 
+#### Portal reproduction: Health Check Instances tab
+
+The CLI-derived JSON above (`baseline/health.json`, `baseline/diag-stats.json`) shows the application-level `/health` endpoint returning `healthy` and the process serving requests normally. A re-execution of the lab on 2026-07-02 confirmed the same conclusion in the Azure Portal via the Health check blade → Instances tab. The captured evidence directly contradicts the naive prediction that `WEBSITES_PORT` diverging from the actual bind port would surface as unhealthy platform probes on this Linux build (see §4.10 for the executive finding).
+
+![Azure Portal Health check blade for the deployed Linux Web App showing the standard command bar (Save, Discard, Refresh, Troubleshoot, Metrics, Send us your feedback), two tabs "Health check" and "Instances" with Instances selected, a single informational banner reading "Instances is being moved to Settings. Click here to go to the new experience.", a descriptive paragraph explaining "View detailed information about the App Service plan instances hosting your app. Status provides information about the platform view of the instance hosting your app. Health Check probes a user-configurable endpoint to detect issues in your app and mitigate them.", and a table with columns Server, Status (sorted descending), Restart instance, and Physical zone containing a single row: server LW0SDLWK000D36, Status "Healthy" rendered in green with a check icon, a Restart action link, and "Not available" in the Physical zone column. The left navigation shows the Monitoring group expanded with Health check highlighted.](../../assets/troubleshooting/health-check/02-httppings-baseline-healthy.png)
+
+Purpose: Prove visually that Azure App Service's own Health check feature considered the single Basic-tier instance healthy while `WEBSITES_PORT` diverged from the actual bind port — the same fact §4.10 states as the lab's executive finding.
+Look for: The instance row shows `Status: Healthy` in green. The instance identifier (`LW0SDLWK000D36`) is the platform-assigned server name and will differ on every reproduction. `Physical zone: Not available` is expected on a Basic (B1) plan; zonal metadata is only surfaced on Premium v3 or higher.
+Access: Azure Portal → App Service `app-<baseName>-<suffix>` → left navigation → **Monitoring** → **Health check** → **Instances** tab.
+Reproduction note: `labs/container-http-pings/main.bicep` provisions the app without a `healthCheckPath`, so a fresh deployment renders an empty Instances table. Before this capture the reproduction ran `az webapp config set --resource-group $RG --name $APP_NAME --generic-configurations '{"healthCheckPath": "/health"}'` to enable the feature. This is a documentation-time addition to make the healthy state directly observable in the Portal; it does not change the lab's core finding, which was already established from CLI evidence alone.
+
 ### 4.5 Probe capture #1 (expected failure window)
 
 From `trigger/ping-failure-probes-20260404T053512Z.csv`:
@@ -627,6 +638,16 @@ Interpretation:
 
 - Log Analytics confirms CSV observations.
 - Probe windows align with successful HTTP responses.
+
+#### Portal reproduction: Empty AppServiceHTTPLogs during container-startup probe window
+
+The correlation table above uses user-driven curl traffic. A different but equally important observation is the *absence* of rows during the Azure platform's own container-startup probe window: `AppServiceHTTPLogs` receives **zero entries** while the platform is actively probing the container prior to accepting user traffic. This is a deliberate lab observation, not missing data — and it is essential context for interpreting the platform-log timeout messages captured in §4.9.
+
+![Azure Portal Log Analytics workspace Logs blade with a New Query 1 tab open in KQL mode. The Monaco editor shows a 6-line KQL query beginning with two `//` comment lines explaining "AppServiceHTTPLogs during Azure platform container-startup probe window" and "Container start: 2026-07-02T14:43:04Z, first user request: 2026-07-02T14:44:04Z", followed by an `AppServiceHTTPLogs` query using `where TimeGenerated between (datetime(2026-07-02T14:43:00Z) .. datetime(2026-07-02T14:44:00Z))`, a `project` of TimeGenerated, CsUriStem, ScStatus, TimeTaken, and an `order by TimeGenerated desc` clause. The Run button is above the editor with Time range set to "Set in query" and Show set to "1000 results". Below the editor a Results tab is selected next to a Chart tab, and an information panel reads "No results found from the specified time range" with a "Try selecting another time range" link. The bottom-left corner shows a query duration of "0s 539ms".](../../assets/troubleshooting/log-analytics/03-httppings-empty-http-window.png)
+
+Purpose: Show that Azure's platform-level startup probes (the ones that emit the "Container did not start within expected time limit" and "Pinging warmup path to ensure container is ready to receive requests" messages in §4.9) do **not** emit rows to `AppServiceHTTPLogs`. Only user-attributable traffic — curl, browsers, external monitors — appears in that table. The absence of HTTP log rows during the same window is therefore expected behavior, not evidence of a broken container.
+Look for: The "No results found from the specified time range" info panel, the `0s 539ms` query duration in the bottom-left (proving the query executed successfully and returned an empty result set rather than erroring), and the `between (datetime(...) .. datetime(...))` bounds spanning a 60-second window that fully brackets the container-start message at 14:43:04Z and stops one second before the first user request at 14:44:04Z.
+Access: Azure Portal → Log Analytics workspace `law-<baseName>-<suffix>` → **Logs** → paste the query shown in the editor. Adjust the `datetime(...)` bounds to match your own container-start UTC timestamp (obtainable from `AppServicePlatformLogs` filtered on the "Container `<app-name>` started successfully" message).
 
 ### 4.8 Console log evidence for bind port
 
