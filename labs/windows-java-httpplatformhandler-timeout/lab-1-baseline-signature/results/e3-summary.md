@@ -1,6 +1,6 @@
 # E3 stream absolute-vs-idle probe results (preliminary)
 
-- Target:     `https://app-winjavatol1-cevxrss3aa7mk.azurewebsites.net`
+- Target:     `https://app-winjavatol1-cevxrss3aa7mk.<azurewebsites-domain-redacted>`
 - Endpoint:   `/stream/300`
 - CSV:        `e3-stream-probe.csv`
 - Body:       `e3-stream-body.ndjson`

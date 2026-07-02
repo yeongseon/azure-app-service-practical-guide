@@ -6,7 +6,7 @@ WARNING: Initiating deployment
 WARNING: Deploying from local path: /Users/yeongseonchoe/GitHub/azure-app-service-practical-guide/labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/webconfig/web.config
 WARNING: Polling the status of sync deployment. Start Time: 2026-07-02 02:11:33.507971+00:00 UTC
 WARNING: Deployment has completed successfully
-WARNING: You can visit your app at: http://app-winjaval2cap-wjo6i7zextarg.azurewebsites.net
+WARNING: You can visit your app at: http://app-winjaval2cap-wjo6i7zextarg.<azurewebsites-domain-redacted>
 {
   "active": true,
   "author": "N/A",
@@ -18,7 +18,7 @@ WARNING: You can visit your app at: http://app-winjaval2cap-wjo6i7zextarg.azurew
   "is_readonly": true,
   "is_temp": false,
   "last_success_end_time": "2026-07-02T02:11:35.0068421Z",
-  "log_url": "https://app-winjaval2cap-wjo6i7zextarg.scm.azurewebsites.net/api/deployments/latest/log",
+  "log_url": "https://app-winjaval2cap-wjo6i7zextarg.scm.<azurewebsites-domain-redacted>/api/deployments/latest/log",
   "message": "OneDeploy",
   "progress": "",
   "provisioningState": "Succeeded",
@@ -27,5 +27,5 @@ WARNING: You can visit your app at: http://app-winjaval2cap-wjo6i7zextarg.azurew
   "start_time": "2026-07-02T02:11:33.5542397Z",
   "status": 4,
   "status_text": "",
-  "url": "https://app-winjaval2cap-wjo6i7zextarg.scm.azurewebsites.net/api/deployments/latest"
+  "url": "https://app-winjaval2cap-wjo6i7zextarg.scm.<azurewebsites-domain-redacted>/api/deployments/latest"
 }

@@ -6,10 +6,10 @@ Discovery gate results and routing decisions for the follow-on labs. All timesta
 
 | Field | Value |
 |---|---|
-| Subscription | MCAPS `00000000-0000-0000-0000-000000000000` |
+| Subscription | MCAPS `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx` |
 | Resource group | `rg-lab-winjavatimeout` |
 | App name | `app-winjavatimeout-eliroyg74lvho` |
-| App URL | `https://app-winjavatimeout-eliroyg74lvho.azurewebsites.net` |
+| App URL | `https://app-winjavatimeout-eliroyg74lvho.<azurewebsites-domain-redacted>` |
 | Region | `koreacentral` |
 | Plan SKU | `B1` (1 vCPU, 1.75 GB RAM) |
 | Runtime | Java SE 17 (Windows) |

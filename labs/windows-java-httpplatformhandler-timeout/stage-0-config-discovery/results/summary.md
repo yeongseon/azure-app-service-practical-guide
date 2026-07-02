@@ -1,6 +1,6 @@
 # Stage 0 timeout probe results
 
-- Target: `https://app-winjavatimeout-eliroyg74lvho.azurewebsites.net`
+- Target: `https://app-winjavatimeout-eliroyg74lvho.<azurewebsites-domain-redacted>`
 - Started: 2026-07-01T08:43:49Z
 - Ended:   2026-07-01T09:16:06Z
 

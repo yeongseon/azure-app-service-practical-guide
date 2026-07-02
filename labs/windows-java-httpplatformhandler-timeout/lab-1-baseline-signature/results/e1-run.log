@@ -1,4 +1,4 @@
-=== E1 baseline signature probe: https://app-winjavatol1-cevxrss3aa7mk.azurewebsites.net ===
+=== E1 baseline signature probe: https://app-winjavatol1-cevxrss3aa7mk.<azurewebsites-domain-redacted> ===
   Output dir:      ./results
   Endpoint:        /slow/240
   Iterations:      10 (baseline=10, max=20)

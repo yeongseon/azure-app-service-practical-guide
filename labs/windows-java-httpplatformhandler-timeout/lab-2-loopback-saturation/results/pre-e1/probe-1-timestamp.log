@@ -1,5 +1,5 @@
 probe_index: 1
-request_url: https://app-winjaval2cap-wjo6i7zextarg.azurewebsites.net/slow/240
+request_url: https://app-winjaval2cap-wjo6i7zextarg.<azurewebsites-domain-redacted>/slow/240
 started_utc: 2026-07-02T01:34:47Z
 ended_utc: 2026-07-02T01:38:38Z
 elapsed_seconds: 231

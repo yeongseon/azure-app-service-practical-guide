@@ -1,4 +1,4 @@
-=== Timeout probe target: https://app-winjavatimeout-eliroyg74lvho.azurewebsites.net ===
+=== Timeout probe target: https://app-winjavatimeout-eliroyg74lvho.<azurewebsites-domain-redacted> ===
   Output dir: ./results
   Probes:     60 180 210 220 225 240 300 360
   curl --max-time: 400s

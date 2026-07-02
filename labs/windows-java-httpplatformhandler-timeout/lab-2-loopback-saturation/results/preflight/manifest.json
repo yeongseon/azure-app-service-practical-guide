@@ -7,7 +7,7 @@
     "autoHealActionType": "LogEvent"
   },
   "preflight-status": "UNVERIFIABLE",
-  "webAppResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-lab-winjaval2sat/providers/Microsoft.Web/sites/app-winjaval2sat-4zen6v266tspy",
+  "webAppResourceId": "/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/rg-lab-winjaval2sat/providers/Microsoft.Web/sites/app-winjaval2sat-4zen6v266tspy",
   "artifactFiles": [
     "deploy-output.txt",
     "kql-result.json"

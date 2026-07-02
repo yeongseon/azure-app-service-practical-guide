@@ -154,6 +154,15 @@ DEPLOYMENT_NAME=${DEPLOYMENT_NAME}
 TEMPLATE_FILE=${TEMPLATE_FILE}
 EOF
 
+# Sanitize deployment artifacts. RAW_DIR contains subscription IDs, hostnames,
+# and public IPs that must not leave the developer machine unmasked. This is
+# the local defense; scripts/scan_lab_pii.py in CI is the merge-time gate.
+SANITIZED_DIR="${ARTIFACTS_DIR}/sanitized"
+echo "[deploy-lab] Sanitizing raw artifacts into ${SANITIZED_DIR}"
+python3 "${SCRIPT_DIR}/sanitize-artifacts.py" \
+  --input-dir "${RAW_DIR}" \
+  --output-dir "${SANITIZED_DIR}"
+
 echo "[deploy-lab] Completed"
 echo "  Resource Group : ${RG}"
 echo "  Plan           : ${PLAN}"
@@ -162,3 +171,4 @@ echo "  App URL        : ${APP_URL}"
 echo "  Deploy Output  : ${DEPLOY_OUTPUT_FILE}"
 echo "  Operations     : ${DEPLOY_OPERATIONS_FILE}"
 echo "  Env File       : ${ENV_FILE}"
+echo "  Sanitized      : ${SANITIZED_DIR}"

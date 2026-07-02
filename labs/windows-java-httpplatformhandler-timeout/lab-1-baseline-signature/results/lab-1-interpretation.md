@@ -6,11 +6,11 @@ Baseline signature verification for the `500.121.0` timeout on Windows App Servi
 
 | Field | Value |
 |---|---|
-| Subscription | MCAPS `00000000-0000-0000-0000-000000000000` |
+| Subscription | MCAPS `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx` |
 | Resource group | `rg-lab-winjavatol1` |
 | App name | `app-winjavatol1-cevxrss3aa7mk` |
-| App URL | `https://app-winjavatol1-cevxrss3aa7mk.azurewebsites.net` |
-| Log Analytics workspace | `law-winjavatol1-cevxrss3aa7mk` (customer id `7b9ca5c9-31da-4f69-9c4a-907b4630071c`) |
+| App URL | `https://app-winjavatol1-cevxrss3aa7mk.<azurewebsites-domain-redacted>` |
+| Log Analytics workspace | `law-winjavatol1-cevxrss3aa7mk` (customer id `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`) |
 | Region | `koreacentral` |
 | Plan SKU | `B1` (1 vCPU, 1.75 GB RAM) |
 | Runtime | Java SE 17 (Windows) |
@@ -104,7 +104,7 @@ All seven probes returned HTTP 401 despite `main.bicep` setting `basicPublishing
 Under design-proposal.md revision 2, this is a **valid falsification outcome** treated as documented "platform observability limitation" (decision-matrix row 2). It does not invalidate H1R, H2R, or H4; it only means the effective `httpPlatformHandler` config cannot be inspected on this environment. In an enterprise MCAPS subscription, engineers investigating this class of issue in production would typically fall back to:
 
 1. **Diagnose and Solve Problems** blade in the Azure Portal (managed identity, bypasses basic auth policy).
-2. **Kudu bearer-token auth** via `az account get-access-token --resource https://<app>.scm.azurewebsites.net` if the policy permits AAD-based SCM access.
+2. **Kudu bearer-token auth** via `az account get-access-token --resource https://<app>.scm.<azurewebsites-domain-redacted>` if the policy permits AAD-based SCM access.
 3. **Configure a customer-authored `web.config`** to install a permissive `httpPlatformHandler` element (which then becomes visible in `wwwroot`).
 
 The final lab guide should document paths #1 and #2 as the enterprise-safe alternatives.

@@ -4,7 +4,7 @@ Generated: 2026-07-01T10:54:35Z
 
 - App: `app-winjavatol1-cevxrss3aa7mk`
 - RG:  `rg-lab-winjavatol1`
-- Workspace: `law-winjavatol1-cevxrss3aa7mk` (customer id `7b9ca5c9-31da-4f69-9c4a-907b4630071c`)
+- Workspace: `law-winjavatol1-cevxrss3aa7mk` (customer id `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`)
 - Output dir: `./results`
 
 ## E1 baseline signature statistics
@@ -63,7 +63,7 @@ See `e2-kudu-fetch-manifest.csv` for the 7-probe manifest and `e2-httpplatform-g
 If H2R = FALSIFIED with `.64` present AND E1 ran < 20 iterations, re-run:
 
 ```bash
-ITERATIONS=20 bash run-e1-signature-probe.sh https://app-winjavatol1-cevxrss3aa7mk.azurewebsites.net ./results
+ITERATIONS=20 bash run-e1-signature-probe.sh https://app-winjavatol1-cevxrss3aa7mk.<azurewebsites-domain-redacted> ./results
 bash verify.sh app-winjavatol1-cevxrss3aa7mk rg-lab-winjavatol1 law-winjavatol1-cevxrss3aa7mk ./results
 ```
 

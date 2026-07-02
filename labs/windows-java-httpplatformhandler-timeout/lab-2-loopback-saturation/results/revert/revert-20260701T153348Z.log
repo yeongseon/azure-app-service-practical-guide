@@ -6,7 +6,7 @@ WARNING: Initiating deployment
 WARNING: Deploying from local path: /Users/yeongseonchoe/GitHub/azure-app-service-practical-guide/labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/../stage-0-config-discovery/app/target/app.jar
 WARNING: Polling the status of sync deployment. Start Time: 2026-07-01 15:34:10.935537+00:00 UTC
 WARNING: Deployment has completed successfully
-WARNING: You can visit your app at: http://app-winjaval2sat-4zen6v266tspy.azurewebsites.net
+WARNING: You can visit your app at: http://app-winjaval2sat-4zen6v266tspy.<azurewebsites-domain-redacted>
 {
   "active": true,
   "author": "N/A",
@@ -18,7 +18,7 @@ WARNING: You can visit your app at: http://app-winjaval2sat-4zen6v266tspy.azurew
   "is_readonly": true,
   "is_temp": false,
   "last_success_end_time": "2026-07-01T15:34:10.5652678Z",
-  "log_url": "https://app-winjaval2sat-4zen6v266tspy.scm.azurewebsites.net/api/deployments/latest/log",
+  "log_url": "https://app-winjaval2sat-4zen6v266tspy.scm.<azurewebsites-domain-redacted>/api/deployments/latest/log",
   "message": "OneDeploy",
   "progress": "",
   "provisioningState": "Succeeded",
@@ -27,7 +27,7 @@ WARNING: You can visit your app at: http://app-winjaval2sat-4zen6v266tspy.azurew
   "start_time": "2026-07-01T15:34:06.8925641Z",
   "status": 4,
   "status_text": "",
-  "url": "https://app-winjaval2sat-4zen6v266tspy.scm.azurewebsites.net/api/deployments/latest"
+  "url": "https://app-winjaval2sat-4zen6v266tspy.scm.<azurewebsites-domain-redacted>/api/deployments/latest"
 }
 http_code: 200
 time_total: 4.326089

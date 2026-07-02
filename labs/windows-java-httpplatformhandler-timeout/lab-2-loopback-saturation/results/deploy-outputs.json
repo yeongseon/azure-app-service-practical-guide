@@ -5,7 +5,7 @@
   },
   "logAnalyticsWorkspaceId": {
     "type": "String",
-    "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-lab-winjaval2cap/providers/Microsoft.OperationalInsights/workspaces/law-winjaval2cap-wjo6i7zextarg"
+    "value": "/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/rg-lab-winjaval2cap/providers/Microsoft.OperationalInsights/workspaces/law-winjaval2cap-wjo6i7zextarg"
   },
   "resourceGroupName": {
     "type": "String",
@@ -13,7 +13,7 @@
   },
   "webAppHostname": {
     "type": "String",
-    "value": "app-winjaval2cap-wjo6i7zextarg.azurewebsites.net"
+    "value": "app-winjaval2cap-wjo6i7zextarg.<azurewebsites-domain-redacted>"
   },
   "webAppName": {
     "type": "String",
@@ -21,6 +21,6 @@
   },
   "webAppResourceId": {
     "type": "String",
-    "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-lab-winjaval2cap/providers/Microsoft.Web/sites/app-winjaval2cap-wjo6i7zextarg"
+    "value": "/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/rg-lab-winjaval2cap/providers/Microsoft.Web/sites/app-winjaval2cap-wjo6i7zextarg"
   }
 }

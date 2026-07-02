@@ -38,7 +38,7 @@
     "http20Enabled": false,
     "http20ProxyFlag": 0,
     "httpLoggingEnabled": true,
-    "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-lab-winjaval2sat/providers/Microsoft.Web/sites/app-winjaval2sat-4zen6v266tspy/config/web",
+    "id": "/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/rg-lab-winjaval2sat/providers/Microsoft.Web/sites/app-winjaval2sat-4zen6v266tspy/config/web",
     "ipSecurityRestrictions": [
       {
         "action": "Allow",
@@ -145,7 +145,7 @@
     }
   ],
   "plan_config": {
-    "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-lab-winjaval2sat/providers/Microsoft.Web/serverfarms/asp-winjaval2sat-4zen6v266tspy",
+    "id": "/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/rg-lab-winjaval2sat/providers/Microsoft.Web/serverfarms/asp-winjaval2sat-4zen6v266tspy",
     "kind": "app",
     "location": "Korea Central",
     "name": "asp-winjaval2sat-4zen6v266tspy",
@@ -191,7 +191,7 @@
       "siteMode": null,
       "spotExpirationTime": null,
       "status": "Ready",
-      "subscription": "00000000-0000-0000-0000-000000000000",
+      "subscription": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
       "tags": null,
       "targetWorkerCount": 0,
       "targetWorkerSizeId": 0,
@@ -218,7 +218,7 @@
   "autoheal_rules": null,
   "diagnostic_settings": [
     {
-      "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg-lab-winjaval2sat/providers/microsoft.web/sites/app-winjaval2sat-4zen6v266tspy/providers/microsoft.insights/diagnosticSettings/diag-app-winjaval2sat-4zen6v266tspy",
+      "id": "/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourcegroups/rg-lab-winjaval2sat/providers/microsoft.web/sites/app-winjaval2sat-4zen6v266tspy/providers/microsoft.insights/diagnosticSettings/diag-app-winjaval2sat-4zen6v266tspy",
       "logs": [
         {
           "category": "AppServiceHTTPLogs",
@@ -290,7 +290,7 @@
       "name": "diag-app-winjaval2sat-4zen6v266tspy",
       "resourceGroup": "rg-lab-winjaval2sat",
       "type": "Microsoft.Insights/diagnosticSettings",
-      "workspaceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-lab-winjaval2sat/providers/Microsoft.OperationalInsights/workspaces/law-winjaval2sat-4zen6v266tspy"
+      "workspaceId": "/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/rg-lab-winjaval2sat/providers/Microsoft.OperationalInsights/workspaces/law-winjaval2sat-4zen6v266tspy"
     }
   ]
 }

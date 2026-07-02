@@ -9,7 +9,7 @@
     "deploySuccess": true,
     "warmupPassed": true
   },
-  "webAppResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-lab-winjaval2cap/providers/Microsoft.Web/sites/app-winjaval2cap-wjo6i7zextarg",
+  "webAppResourceId": "/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/rg-lab-winjaval2cap/providers/Microsoft.Web/sites/app-winjaval2cap-wjo6i7zextarg",
   "artifactFiles": [
     "deploy-log-primary-20260701T152224Z.txt",
     "deploy-log-primary-20260702T021119Z.txt",

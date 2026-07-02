@@ -90,7 +90,11 @@ jobs:
       - name: Check Microsoft Learn URL locale (en-us prefix required)
         run: |
           python scripts/normalize_mslearn_locale.py --check
-      
+
+      - name: Scan lab artifacts for PII (real UUIDs, emails, hostnames, public IPs)
+        run: |
+          python scripts/scan_lab_pii.py
+
       - name: Audit existing diagram IDs
         run: |
           # Count mermaid blocks

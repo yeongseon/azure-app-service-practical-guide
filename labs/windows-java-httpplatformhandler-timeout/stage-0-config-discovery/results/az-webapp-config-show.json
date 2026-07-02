@@ -37,7 +37,7 @@
   "http20Enabled": false,
   "http20ProxyFlag": 0,
   "httpLoggingEnabled": true,
-  "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-lab-winjavatimeout/providers/Microsoft.Web/sites/app-winjavatimeout-eliroyg74lvho/config/web",
+  "id": "/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/rg-lab-winjavatimeout/providers/Microsoft.Web/sites/app-winjavatimeout-eliroyg74lvho/config/web",
   "ipSecurityRestrictions": [
     {
       "action": "Allow",

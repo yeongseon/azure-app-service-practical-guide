@@ -1,6 +1,6 @@
 probe_index: 2
 canary: primary
-request_url: https://app-winjaval2sat-4zen6v266tspy.azurewebsites.net/slow/240
+request_url: https://app-winjaval2sat-4zen6v266tspy.<azurewebsites-domain-redacted>/slow/240
 started_utc: 2026-07-01T15:28:04Z
 ended_utc: 2026-07-01T15:29:08Z
 elapsed_seconds: 64
