@@ -130,6 +130,10 @@ flowchart TD
     style K fill:#ffebee
 ```
 
+| Command/Flag | Purpose |
+|---|---|
+| `az webapp deploy` | Deploy application code to the Web App via Kudu ZIP Deploy API |
+
 #### Portal view: Deployment Center (control-plane deployment status)
 
 ![Azure portal Deployment Center blade for app-test-20251107 with tabs Settings (active), Containers (new), Logs, FTPS Credentials; toolbar buttons Save (disabled), Discard (disabled), Refresh, Browse, Sync (disabled), Send us your feedback; info banner reading "You are now in the production slot, which is not recommended for setting up CI/CD. Learn more."; description text "Deploy and build code from your preferred source and build provider. Learn more."; a Source required dropdown reading "Select a code source"; left service navigation showing Overview, Activity log, Access control (IAM), Tags, Diagnose and solve problems, Microsoft Defender for Cloud, Events (preview), Log stream, AI (preview), Resource visualizer, expanded Favorites with Networking and API definition pinned, and an expanded Deployment group with Deployment slots and Deployment Center (selected); collapsed Settings, Performance, App Service plan, Development Tools, API, Monitoring, Automation, and Support + troubleshooting groups below.](../../assets/troubleshooting/deployment-center/01-deployment-center.png)
@@ -176,6 +180,10 @@ sequenceDiagram
     Probe->>Site: HTTP probe / warmup
     Site-->>Probe: 503 or timeout
 ```
+
+| Command/Flag | Purpose |
+|---|---|
+| `az webapp deploy --src-path package.zip` | Upload a ZIP package to the Web App; Kudu accepts the artifact even if the startup command is invalid |
 
 ### 1.4 Why `wrong_module:app` fails immediately
 
@@ -381,6 +389,15 @@ az deployment group create \
   --parameters "baseName=labstart"
 ```
 
+| Command/Flag | Purpose |
+|---|---|
+| `az group create` | Create the resource group for lab resources |
+| `--name` | Resource group name |
+| `--location` | Azure region for the resource group |
+| `az deployment group create` | Deploy the Bicep template to provision App Service with misconfigured startup command |
+| `--template-file` | Path to the Bicep template that sets `wrong_module:app` as the startup command |
+| `--parameters baseName` | Base name prefix for all generated resource names |
+
 Capture app name:
 
 ```bash
@@ -429,6 +446,12 @@ az webapp config show \
   --query "appCommandLine" \
   --output tsv
 ```
+
+| Command/Flag | Purpose |
+|---|---|
+| `az webapp config show` | Retrieve the Web App site configuration |
+| `--query "appCommandLine"` | Extract only the startup command to verify the module reference |
+| `--output tsv` | Plain text output for easy comparison before and after fix |
 
 ### 3.6 Probe health endpoint during recovery
 
@@ -896,6 +919,12 @@ graph TD
 ```bash
 az group delete --name "$RG" --yes --no-wait
 ```
+
+| Command/Flag | Purpose |
+|---|---|
+| `az group delete` | Delete the resource group and all contained lab resources |
+| `--yes` | Skip confirmation prompt for non-interactive execution |
+| `--no-wait` | Return immediately without waiting for deletion to complete |
 
 ## Related Playbook
 

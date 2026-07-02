@@ -300,6 +300,15 @@ az deployment group create \
   --parameters "baseName=$BASE_NAME"
 ```
 
+| Command/Flag | Purpose |
+|---|---|
+| `az group create` | Create the resource group for lab resources |
+| `--name` | Resource group name |
+| `--location` | Azure region for the resource group |
+| `az deployment group create` | Deploy the Bicep template to provision App Service with production and staging slots |
+| `--template-file` | Path to the Bicep template that configures sticky and non-sticky settings across slots |
+| `--parameters baseName` | Base name prefix for all generated resource names |
+
 ### 3.4 Resolve app and slot URLs
 
 ```bash
@@ -386,6 +395,12 @@ az webapp deployment slot swap \
   --slot "staging" \
   --target-slot "production"
 ```
+
+| Command/Flag | Purpose |
+|---|---|
+| `az webapp deployment slot swap` | Execute a slot swap operation between two deployment slots |
+| `--slot "staging"` | Source slot whose app context will move to the target |
+| `--target-slot "production"` | Destination slot that receives the swapped app context; sticky settings remain here |
 
 Wait for immediate post-swap stabilization:
 
@@ -841,6 +856,12 @@ graph TD
 ```bash
 az group delete --name "$RG" --yes --no-wait
 ```
+
+| Command/Flag | Purpose |
+|---|---|
+| `az group delete` | Delete the resource group and all contained lab resources |
+| `--yes` | Skip confirmation prompt for non-interactive execution |
+| `--no-wait` | Return immediately without waiting for deletion to complete |
 
 ## Related Playbook
 

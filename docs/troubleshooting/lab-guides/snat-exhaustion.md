@@ -334,6 +334,15 @@ az deployment group create \
   --template-file "$TEMPLATE_FILE"
 ```
 
+| Command/Flag | Purpose |
+|---|---|
+| `az group create` | Create a resource group to contain all lab resources |
+| `--name` | Resource group name |
+| `--location` | Azure region for the resource group |
+| `az deployment group create` | Deploy Azure resources from a Bicep template |
+| `--resource-group` | Target resource group for the deployment |
+| `--template-file` | Path to the Bicep template defining lab infrastructure (App Service, Log Analytics, diagnostics) |
+
 Capture app name:
 
 ```bash
@@ -361,6 +370,15 @@ az webapp deploy \
   --type zip \
   --restart true
 ```
+
+| Command/Flag | Purpose |
+|---|---|
+| `az webapp deploy` | Deploy application code to an App Service web app |
+| `--resource-group` | Resource group containing the web app |
+| `--name` | Web app name |
+| `--src-path` | Path to the application source directory to deploy |
+| `--type zip` | Deploy as a ZIP package |
+| `--restart true` | Restart the app after deployment to load new code |
 
 ### 3.5 Baseline checks
 
@@ -791,6 +809,13 @@ graph TD
 ```bash
 az group delete --name "$RG" --yes --no-wait
 ```
+
+| Command/Flag | Purpose |
+|---|---|
+| `az group delete` | Delete the resource group and all contained resources |
+| `--name` | Resource group to delete |
+| `--yes` | Skip confirmation prompt |
+| `--no-wait` | Return immediately without waiting for deletion to complete |
 
 ---
 

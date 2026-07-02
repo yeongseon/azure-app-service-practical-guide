@@ -328,6 +328,15 @@ az deployment group create \
     --parameters "baseName=labping"
 ```
 
+| Command/Flag | Purpose |
+|---|---|
+| `az group create` | Create the resource group for lab resources |
+| `--name` | Resource group name |
+| `--location` | Azure region for the resource group |
+| `az deployment group create` | Deploy the Bicep template to provision lab infrastructure |
+| `--template-file` | Path to the Bicep template that provisions App Service with port-mismatch configuration |
+| `--parameters baseName` | Base name prefix for all generated resource names |
+
 ### 3.4 Discover app identity
 
 ```bash
@@ -360,6 +369,14 @@ az webapp config appsettings list \
     --name "$APP_NAME" \
     --output json
 ```
+
+| Command/Flag | Purpose |
+|---|---|
+| `az webapp config show` | Retrieve the full site configuration including `linuxFxVersion` and startup command |
+| `az webapp config appsettings list` | List all application settings including `WEBSITES_PORT` to verify the port-mismatch setup |
+| `--resource-group` | Resource group containing the Web App |
+| `--name` | Web App name |
+| `--output json` | Full JSON output for artifact capture |
 
 ### 3.6 Verify application responses
 
@@ -820,6 +837,12 @@ graph TD
 ```bash
 az group delete --name "$RG" --yes --no-wait
 ```
+
+| Command/Flag | Purpose |
+|---|---|
+| `az group delete` | Delete the resource group and all contained lab resources |
+| `--yes` | Skip confirmation prompt for non-interactive execution |
+| `--no-wait` | Return immediately without waiting for deletion to complete |
 
 ---
 

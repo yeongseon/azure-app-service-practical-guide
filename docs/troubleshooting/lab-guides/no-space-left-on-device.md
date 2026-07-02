@@ -354,6 +354,16 @@ az deployment group create \
   --parameters "baseName=labnospace"
 ```
 
+| Command/Flag | Purpose |
+|---|---|
+| `az group create` | Create the resource group for all lab resources |
+| `--name` | Resource group name |
+| `--location` | Azure region for deployment |
+| `az deployment group create` | Deploy lab infrastructure using Bicep template |
+| `--resource-group` | Target resource group for the deployment |
+| `--template-file` | Path to Bicep template defining App Service plan and web app for storage testing |
+| `--parameters` | Override base name prefix for resource naming |
+
 Resolve app name from deployment outputs or app list:
 
 ```bash
@@ -373,6 +383,14 @@ az webapp deploy \
   --type startup
 ```
 
+| Command/Flag | Purpose |
+|---|---|
+| `az webapp deploy` | Deploy application code to the web app |
+| `--resource-group` | Resource group containing the app |
+| `--name` | Web app name |
+| `--src-path` | Path to the lab application directory |
+| `--type startup` | Deploy as startup script/directory deployment |
+
 If your CLI version requires explicit ZIP packaging for directory deploy,
 package and deploy with ZIP:
 
@@ -385,6 +403,14 @@ az webapp deploy \
   --src-path "/tmp/no-space-lab.zip" \
   --type zip
 ```
+
+| Command/Flag | Purpose |
+|---|---|
+| `az webapp deploy` | Deploy application as a ZIP package (alternative method) |
+| `--resource-group` | Resource group containing the app |
+| `--name` | Web app name |
+| `--src-path` | Path to the locally built ZIP archive |
+| `--type zip` | Deploy as ZIP package for CLI versions requiring explicit packaging |
 
 ### 3.5 Resolve app URL
 
@@ -936,6 +962,13 @@ graph TD
 ```bash
 az group delete --name "$RG" --yes --no-wait
 ```
+
+| Command/Flag | Purpose |
+|---|---|
+| `az group delete` | Remove the entire resource group and all lab resources |
+| `--name` | Resource group to delete |
+| `--yes` | Skip confirmation prompt |
+| `--no-wait` | Return immediately without waiting for deletion to complete |
 
 ---
 

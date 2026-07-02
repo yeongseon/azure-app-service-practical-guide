@@ -117,6 +117,13 @@ az account show --output table
 az --version | head -1   # Lab validated with Azure CLI 2.70.0
 ```
 
+| Command/Flag | Purpose |
+|---|---|
+| `az login` | Authenticate the CLI session with Azure |
+| `az account show` | Verify the active subscription context |
+| `--output table` | Display results in human-readable table format |
+| `az --version` | Confirm CLI version meets lab requirements (2.70.0) |
+
 Expected output: active subscription metadata and CLI version.
 
 ### Deploy baseline infrastructure
@@ -133,6 +140,15 @@ az deployment group create \
     --template-file "./labs/cd-reconnect-rbac-conflict/infra/main.bicep" \
     --parameters baseName="aspcdrbac"
 ```
+
+| Command/Flag | Purpose |
+|---|---|
+| `az group create` | Create the resource group for lab resources |
+| `--name` | Resource group name |
+| `--location` | Azure region for the resource group |
+| `az deployment group create` | Deploy the Bicep template to provision lab infrastructure |
+| `--template-file` | Path to the Bicep template that provisions App Service Plan, Web App, ACR, and Log Analytics |
+| `--parameters baseName` | Base name prefix for all generated resource names |
 
 Expected output pattern:
 
@@ -204,6 +220,16 @@ az deployment group create \
                  roleAssignmentName="$NEW_NAME"
 ```
 
+| Command/Flag | Purpose |
+|---|---|
+| `az webapp identity show` | Retrieve the system-assigned managed identity principal ID for the Web App |
+| `--query principalId` | Extract only the MI object ID used for role assignment |
+| `az deployment group create` | Deploy the role-assignment Bicep template to create an AcrPull binding |
+| `--template-file` | Points to the Bicep template that creates a `Microsoft.Authorization/roleAssignments` resource |
+| `--parameters principalObjectId` | The Web App MI principal to receive the AcrPull role |
+| `--parameters registryName` | Target ACR whose scope receives the role assignment |
+| `--parameters roleAssignmentName` | Custom GUID for the assignment; a fresh GUID on reconnect triggers the conflict |
+
 The `infra/role-assignment.bicep` template creates a single `Microsoft.Authorization/roleAssignments@2022-04-01` resource on the registry scope with `roleDefinitionId` set to the AcrPull built-in role (`7f951dda-4ed3-4680-a7ca-43fe172d538d`).
 
 Expected error output pattern from the second deployment:
@@ -233,6 +259,13 @@ az role assignment list \
     --query "[].{name:name, role:roleDefinitionName, scope:scope, principalType:principalType}" \
     --output table
 ```
+
+| Command/Flag | Purpose |
+|---|---|
+| `az role assignment list` | List all role assignments matching the specified principal and scope |
+| `--assignee` | Filter by the Web App managed identity principal ID |
+| `--scope` | Narrow results to the ACR resource scope where AcrPull is granted |
+| `--query` | JMESPath filter to show assignment name, role, scope, and principal type |
 
 Expected output pattern:
 
@@ -321,6 +354,12 @@ The cleanup script queues the resource group for deletion. Because the Web App's
 ```bash
 az group delete --name "$RG" --yes --no-wait
 ```
+
+| Command/Flag | Purpose |
+|---|---|
+| `az group delete` | Delete the resource group and all contained lab resources |
+| `--yes` | Skip confirmation prompt for non-interactive execution |
+| `--no-wait` | Return immediately without waiting for deletion to complete |
 
 ## Related Playbook
 

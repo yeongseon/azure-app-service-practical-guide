@@ -289,6 +289,16 @@ az deployment group create \
   --parameters baseName="labfwd"
 ```
 
+| Command/Flag | Purpose |
+|---|---|
+| `az group create` | Create the resource group for all lab resources |
+| `--name` | Resource group name |
+| `--location` | Azure region for deployment |
+| `az deployment group create` | Deploy lab infrastructure using Bicep template |
+| `--resource-group` | Target resource group for the deployment |
+| `--template-file` | Path to Bicep template defining App Service plan and web app |
+| `--parameters` | Override base name prefix for resource naming |
+
 ### 3.4 Resolve app name and URL
 
 ```bash
@@ -316,6 +326,14 @@ az webapp config show \
   --output tsv
 ```
 
+| Command/Flag | Purpose |
+|---|---|
+| `az webapp config show` | Retrieve app configuration to verify the startup command |
+| `--resource-group` | Resource group containing the app |
+| `--name` | Web app name |
+| `--query` | JMESPath to extract only the startup command string |
+| `--output tsv` | Raw value output for scripting |
+
 Expected failure-mode baseline:
 
 ```text
@@ -332,6 +350,15 @@ az webapp deploy \
   --type zip \
   --restart true
 ```
+
+| Command/Flag | Purpose |
+|---|---|
+| `az webapp deploy` | Deploy application package to the web app |
+| `--resource-group` | Resource group containing the app |
+| `--name` | Web app name |
+| `--src-path` | Path to the lab application directory |
+| `--type zip` | Deploy as ZIP package |
+| `--restart true` | Restart the app after deployment to apply the misconfigured startup command |
 
 ### 3.7 Trigger script (reproduce + fix)
 
@@ -370,6 +397,13 @@ az webapp config set \
   --name "$APP_NAME" \
   --startup-file "gunicorn --bind=0.0.0.0:8000 --timeout=120 --workers=2 app:app"
 ```
+
+| Command/Flag | Purpose |
+|---|---|
+| `az webapp config set` | Update app runtime configuration to fix the bind address |
+| `--resource-group` | Resource group containing the app |
+| `--name` | Web app name |
+| `--startup-file` | Custom startup command — changes bind from 127.0.0.1 to 0.0.0.0 so the platform can forward requests |
 
 After fix:
 
@@ -760,6 +794,13 @@ graph TD
 ```bash
 az group delete --name "$RG" --yes --no-wait
 ```
+
+| Command/Flag | Purpose |
+|---|---|
+| `az group delete` | Remove the entire resource group and all lab resources |
+| `--name` | Resource group to delete |
+| `--yes` | Skip confirmation prompt |
+| `--no-wait` | Return immediately without waiting for deletion to complete |
 
 ## Related Playbook
 

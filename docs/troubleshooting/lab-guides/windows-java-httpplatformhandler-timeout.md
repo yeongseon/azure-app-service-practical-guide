@@ -339,6 +339,12 @@ flowchart TD
     P4 -->|web.config update| P4_Result[502.3.12002 Verified]
 ```
 
+| Command/Flag | Purpose |
+|---|---|
+| `az deployment group create` | Provision B1 Windows Java SE infrastructure from Bicep (Phase 1) |
+| `az webapp deploy` | Upload JAR package and web.config to the App Service (Phase 1, Phase 4) |
+| `az group delete` | Clean up all lab resources after experiment |
+
 ### 3.1 Prerequisites
 
 Before starting, verify your environment:
@@ -378,6 +384,12 @@ The resource group acts as a logical container for all the lab's resources. Crea
 az group create --resource-group "$RG" --location "$LOCATION"
 ```
 
+| Command/Flag | Purpose |
+|---|---|
+| `az group create` | Create a resource group to contain all lab resources |
+| `--resource-group` | Resource group name |
+| `--location` | Azure region for the resource group |
+
 ### 3.4 Deploy Bicep (B1 Windows Java SE 17)
 
 The infrastructure for this lab is defined using Bicep, which provides a declarative way to provision Azure resources. This specific template configures:
@@ -394,6 +406,13 @@ az deployment group create \
   --template-file "labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/main.bicep" \
   --parameters baseName="$BASE_NAME" location="$LOCATION"
 ```
+
+| Command/Flag | Purpose |
+|---|---|
+| `az deployment group create` | Deploy Azure resources from a Bicep template |
+| `--resource-group` | Target resource group for the deployment |
+| `--template-file` | Path to the Bicep template (provisions B1 Windows plan, Java SE web app, Log Analytics, diagnostic settings) |
+| `--parameters` | Override template parameters for base name and region |
 
 **Verification**: After deployment, verify the Web App is reachable. It should return a default 404 or a welcome page if the app hasn't been deployed yet.
 
@@ -422,6 +441,14 @@ az webapp deploy \
   --src-path "target/app-1.0-SNAPSHOT.jar" \
   --type zip
 ```
+
+| Command/Flag | Purpose |
+|---|---|
+| `az webapp deploy` | Deploy application package to the App Service |
+| `--resource-group` | Resource group containing the web app |
+| `--name` | Web app name |
+| `--src-path` | Path to the compiled JAR artifact |
+| `--type zip` | Deploy as a ZIP package (App Service extracts it at the site root) |
 
 ### 3.6 Baseline health checks (single /slow/240 probe)
 
@@ -495,6 +522,14 @@ az webapp deploy \
 # These should now return 502 errors in ~60 seconds instead of 500 errors in ~230 seconds.
 bash run-e3-probes.sh --count 3
 ```
+
+| Command/Flag | Purpose |
+|---|---|
+| `az webapp deploy` | Deploy a file to the App Service |
+| `--resource-group` | Resource group containing the web app |
+| `--name` | Web app name |
+| `--src-path` | Local path to the web.config file to upload |
+| `--type static` | Deploy as a static file to wwwroot (does not trigger ZIP extraction or build) |
 
 ![Kudu Debug Console CMD session showing web.config in D:\home\site\wwwroot with requestTimeout="00:01:00" inside the httpPlatform element](../../assets/troubleshooting/kudu/05-webconfig-verified.png)
 
@@ -604,6 +639,14 @@ az webapp config show \
     --query 'autoHealRules' \
     --output json
 ```
+
+| Command/Flag | Purpose |
+|---|---|
+| `az webapp config show` | Retrieve the web app's current configuration |
+| `--resource-group` | Resource group containing the web app |
+| `--name` | Web app name |
+| `--query` | JMESPath filter to extract only the Auto-Heal rules section |
+| `--output json` | Return structured JSON for rule verification |
 
 Expected output (fields relevant to the rule):
 
@@ -840,6 +883,13 @@ To avoid ongoing costs, delete the resource group.
 ```bash
 az group delete --resource-group "$RG" --yes --no-wait
 ```
+
+| Command/Flag | Purpose |
+|---|---|
+| `az group delete` | Delete the resource group and all contained resources |
+| `--resource-group` | Resource group to delete |
+| `--yes` | Skip confirmation prompt |
+| `--no-wait` | Return immediately without waiting for deletion to complete |
 
 ---
 

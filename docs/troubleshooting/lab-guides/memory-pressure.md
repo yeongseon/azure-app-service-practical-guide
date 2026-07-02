@@ -354,6 +354,13 @@ az bicep version
 az account show --output table
 ```
 
+| Command/Flag | Purpose |
+|---|---|
+| `az version` | Verify Azure CLI is installed and display installed version |
+| `az bicep version` | Confirm Bicep CLI is available for template deployment |
+| `az account show` | Verify the active subscription context before deployment |
+| `--output table` | Display output in human-readable table format |
+
 Expected checks:
 
 - Azure CLI installed and authenticated
@@ -377,6 +384,12 @@ export APP_PACKAGE_PATH="/tmp/memory-pressure-app.zip"
 az group create --name "$RG" --location "$LOCATION"
 ```
 
+| Command/Flag | Purpose |
+|---|---|
+| `az group create` | Create a resource group to contain all lab resources |
+| `--name` | Resource group name |
+| `--location` | Azure region for the resource group |
+
 Example output:
 
 <!-- Verified: real az CLI output from koreacentral, 2026-05-01 -->
@@ -398,6 +411,13 @@ az deployment group create \
   --template-file "labs/memory-pressure/main.bicep" \
   --parameters baseName="$BASE_NAME" location="$LOCATION"
 ```
+
+| Command/Flag | Purpose |
+|---|---|
+| `az deployment group create` | Deploy Azure resources from a Bicep template |
+| `--resource-group` | Target resource group for the deployment |
+| `--template-file` | Path to the Bicep template defining lab infrastructure (App Service, Log Analytics) |
+| `--parameters` | Override template parameters for base name and region |
 
 Capture outputs:
 
@@ -524,6 +544,13 @@ az monitor log-analytics query \
   --output json
 ```
 
+| Command/Flag | Purpose |
+|---|---|
+| `az monitor log-analytics query` | Execute a KQL query against a Log Analytics workspace |
+| `--workspace` | Log Analytics workspace customer ID to query |
+| `--analytics-query` | KQL query filtering AppServiceHTTPLogs for request status and timing |
+| `--output json` | Return raw JSON for programmatic analysis |
+
 #### Console logs query
 
 ```bash
@@ -533,6 +560,12 @@ az monitor log-analytics query \
   --output json
 ```
 
+| Command/Flag | Purpose |
+|---|---|
+| `az monitor log-analytics query` | Execute a KQL query against a Log Analytics workspace |
+| `--analytics-query` | KQL query filtering AppServiceConsoleLogs for OOM and worker timeout signatures |
+| `--output json` | Return raw JSON for programmatic analysis |
+
 #### Platform logs query
 
 ```bash
@@ -541,6 +574,12 @@ az monitor log-analytics query \
   --analytics-query "AppServicePlatformLogs | where TimeGenerated > ago(2h) | project TimeGenerated, Level, Message | order by TimeGenerated desc" \
   --output json
 ```
+
+| Command/Flag | Purpose |
+|---|---|
+| `az monitor log-analytics query` | Execute a KQL query against a Log Analytics workspace |
+| `--analytics-query` | KQL query filtering AppServicePlatformLogs for lifecycle and restart events |
+| `--output json` | Return raw JSON for programmatic analysis |
 
 ### 3.11 KQL query snippets for portal use
 
@@ -915,6 +954,13 @@ graph TD
 ```bash
 az group delete --name "$RG" --yes --no-wait
 ```
+
+| Command/Flag | Purpose |
+|---|---|
+| `az group delete` | Delete the resource group and all contained resources |
+| `--name` | Resource group to delete |
+| `--yes` | Skip confirmation prompt |
+| `--no-wait` | Return immediately without waiting for deletion to complete |
 
 ---
 

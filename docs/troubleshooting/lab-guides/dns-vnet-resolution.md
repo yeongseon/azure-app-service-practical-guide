@@ -371,6 +371,16 @@ az deployment group create \
     --parameters "baseName=labdns"
 ```
 
+| Command/Flag | Purpose |
+|---|---|
+| `az group create` | Create the resource group for all lab resources |
+| `--name` | Resource group name |
+| `--location` | Azure region for resource group deployment |
+| `az deployment group create` | Deploy lab infrastructure using Bicep template |
+| `--resource-group` | Target resource group for the deployment |
+| `--template-file` | Path to Bicep template defining VNet, DNS zone, and app resources |
+| `--parameters` | Override base name prefix for resource naming |
+
 ### 3.4 Discover app name and URL
 
 ```bash
@@ -395,6 +405,14 @@ az webapp show \
     --query "{name:name,state:state,defaultHostName:defaultHostName}" \
     --output table
 ```
+
+| Command/Flag | Purpose |
+|---|---|
+| `az webapp show` | Display app properties to confirm deployment state |
+| `--resource-group` | Resource group containing the app |
+| `--name` | Web app name |
+| `--query` | JMESPath expression selecting name, state, and hostname for baseline verification |
+| `--output table` | Tabular format for quick visual inspection |
 
 ### 3.5 Capture baseline endpoint evidence
 
@@ -459,6 +477,13 @@ az webapp config show \
     --output json
 ```
 
+| Command/Flag | Purpose |
+|---|---|
+| `az webapp config show` | Retrieve full app configuration including networking properties |
+| `--resource-group` | Resource group containing the app |
+| `--name` | Web app name |
+| `--output json` | JSON output to inspect vnetName, vnetRouteAllEnabled, and DNS settings |
+
 Inspect:
 
 - `vnetName`
@@ -518,6 +543,13 @@ az network private-dns link vnet list \
     --zone-name "privatelink.blob.core.windows.net" \
     --output table
 ```
+
+| Command/Flag | Purpose |
+|---|---|
+| `az network private-dns link vnet list` | List VNet links to verify the private DNS zone is connected to the app VNet |
+| `--resource-group` | Resource group containing the private DNS zone |
+| `--zone-name` | Private DNS zone to inspect (privatelink zone for the target service) |
+| `--output table` | Tabular format for quick link status inspection |
 
 Example record check command:
 
@@ -889,6 +921,13 @@ graph TD
 ```bash
 az group delete --name "$RG" --yes --no-wait
 ```
+
+| Command/Flag | Purpose |
+|---|---|
+| `az group delete` | Remove the entire resource group and all lab resources |
+| `--name` | Resource group to delete |
+| `--yes` | Skip confirmation prompt |
+| `--no-wait` | Return immediately without waiting for deletion to complete |
 
 ## Related Playbook
 

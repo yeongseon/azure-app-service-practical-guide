@@ -298,6 +298,16 @@ az deployment group create \
   --parameters "baseName=$BASE_NAME"
 ```
 
+| Command/Flag | Purpose |
+|---|---|
+| `az group create` | Create the resource group for all lab resources |
+| `--name` | Resource group name |
+| `--location` | Azure region for deployment |
+| `az deployment group create` | Deploy lab infrastructure using Bicep template |
+| `--resource-group` | Target resource group for the deployment |
+| `--template-file` | Path to Bicep template defining App Service plan and web app for cold-start testing |
+| `--parameters` | Override base name prefix for resource naming |
+
 Capture app name:
 
 ```bash
@@ -328,6 +338,12 @@ curl --silent --show-error "$APP_URL/health"
 curl --silent --show-error "$APP_URL/diag/stats"
 curl --silent --show-error "$APP_URL/timing"
 ```
+
+| Command/Flag | Purpose |
+|---|---|
+| `az webapp config show` | Retrieve app configuration to confirm plan tier and runtime settings |
+| `--resource-group` | Resource group containing the app |
+| `--name` | Web app name |
 
 Observed baseline artifact evidence (sanitized):
 
@@ -374,6 +390,16 @@ az webapp deploy \
   --restart true
 ```
 
+| Command/Flag | Purpose |
+|---|---|
+| `az webapp deploy` | Deploy application package to the web app |
+| `--resource-group` | Resource group containing the app |
+| `--name` | Web app name |
+| `--src-path` | Path to the pre-built ZIP package |
+| `--type zip` | Deploy as ZIP package |
+| `--clean true` | Remove existing files before deployment to ensure a clean state |
+| `--restart true` | Restart the app to trigger a cold start for measurement |
+
 #### 3.6.2 Measure request latency
 
 ```bash
@@ -390,6 +416,12 @@ az webapp restart \
 
 curl --silent --show-error --output /dev/null --write-out "%{time_total}\n" "$APP_URL/timing"
 ```
+
+| Command/Flag | Purpose |
+|---|---|
+| `az webapp restart` | Force a cold start by restarting the app container |
+| `--resource-group` | Resource group containing the app |
+| `--name` | Web app name to restart |
 
 ### 3.7 Collect KQL evidence
 
@@ -738,6 +770,13 @@ graph TD
 ```bash
 az group delete --name "$RG" --yes --no-wait
 ```
+
+| Command/Flag | Purpose |
+|---|---|
+| `az group delete` | Remove the entire resource group and all lab resources |
+| `--name` | Resource group to delete |
+| `--yes` | Skip confirmation prompt |
+| `--no-wait` | Return immediately without waiting for deletion to complete |
 
 ## Related Playbook
 

@@ -333,6 +333,13 @@ az bicep version
 az account show --output table
 ```
 
+| Command/Flag | Purpose |
+|---|---|
+| `az version` | Verify Azure CLI is installed and display installed version |
+| `az bicep version` | Confirm Bicep CLI is available for template deployment |
+| `az account show` | Verify the active subscription context before deployment |
+| `--output table` | Display output in human-readable table format |
+
 ### 3.2 Set standard variables
 
 ```bash
@@ -348,6 +355,12 @@ export APP_PACKAGE_PATH="/tmp/intermittent-5xx-app.zip"
 az group create --name "$RG" --location "$LOCATION"
 ```
 
+| Command/Flag | Purpose |
+|---|---|
+| `az group create` | Create a resource group to contain all lab resources |
+| `--name` | Resource group name |
+| `--location` | Azure region for the resource group |
+
 ### 3.4 Deploy Bicep (actual lab template path)
 
 ```bash
@@ -356,6 +369,13 @@ az deployment group create \
   --template-file "labs/intermittent-5xx/main.bicep" \
   --parameters baseName="$BASE_NAME" location="$LOCATION"
 ```
+
+| Command/Flag | Purpose |
+|---|---|
+| `az deployment group create` | Deploy Azure resources from a Bicep template |
+| `--resource-group` | Target resource group for the deployment |
+| `--template-file` | Path to the Bicep template defining lab infrastructure (App Service, Log Analytics) |
+| `--parameters` | Override template parameters for base name and region |
 
 Extract deployment outputs:
 
@@ -462,6 +482,13 @@ az monitor log-analytics query \
   --output json
 ```
 
+| Command/Flag | Purpose |
+|---|---|
+| `az monitor log-analytics query` | Execute a KQL query against a Log Analytics workspace |
+| `--workspace` | Log Analytics workspace customer ID to query |
+| `--analytics-query` | KQL query projecting per-request HTTP details for timing analysis |
+| `--output json` | Return raw JSON for programmatic analysis |
+
 #### Status by endpoint query
 
 ```bash
@@ -471,6 +498,12 @@ az monitor log-analytics query \
   --output json
 ```
 
+| Command/Flag | Purpose |
+|---|---|
+| `az monitor log-analytics query` | Execute a KQL query against a Log Analytics workspace |
+| `--analytics-query` | KQL query summarizing status code distribution (200/499/5xx) per endpoint |
+| `--output json` | Return raw JSON for programmatic analysis |
+
 #### Endpoint latency profile query
 
 ```bash
@@ -479,6 +512,12 @@ az monitor log-analytics query \
   --analytics-query "AppServiceHTTPLogs | where TimeGenerated > ago(2h) | summarize avgMs=avg(TimeTaken), p95Ms=percentile(TimeTaken,95), maxMs=max(TimeTaken) by CsUriStem | order by p95Ms desc" \
   --output json
 ```
+
+| Command/Flag | Purpose |
+|---|---|
+| `az monitor log-analytics query` | Execute a KQL query against a Log Analytics workspace |
+| `--analytics-query` | KQL query computing latency percentiles (avg, p95, max) per endpoint |
+| `--output json` | Return raw JSON for programmatic analysis |
 
 #### Console and platform query
 
@@ -493,6 +532,14 @@ az monitor log-analytics query \
   --analytics-query "AppServicePlatformLogs | where TimeGenerated > ago(2h) | project TimeGenerated, Level, Message | order by TimeGenerated desc" \
   --output json
 ```
+
+| Command/Flag | Purpose |
+|---|---|
+| `az monitor log-analytics query` | Execute a KQL query against a Log Analytics workspace |
+| `--workspace` | Log Analytics workspace customer ID to query |
+| `--analytics-query` (first) | KQL query filtering AppServiceConsoleLogs for runtime output and errors |
+| `--analytics-query` (second) | KQL query filtering AppServicePlatformLogs for lifecycle events |
+| `--output json` | Return raw JSON for programmatic analysis |
 
 ### 3.10 KQL snippets for portal troubleshooting
 
@@ -841,6 +888,13 @@ graph TD
 ```bash
 az group delete --name "$RG" --yes --no-wait
 ```
+
+| Command/Flag | Purpose |
+|---|---|
+| `az group delete` | Delete the resource group and all contained resources |
+| `--name` | Resource group to delete |
+| `--yes` | Skip confirmation prompt |
+| `--no-wait` | Return immediately without waiting for deletion to complete |
 
 ---
 
