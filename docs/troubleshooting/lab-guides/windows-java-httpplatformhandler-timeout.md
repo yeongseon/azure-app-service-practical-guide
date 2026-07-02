@@ -164,6 +164,12 @@ Saturation is a math problem. If you have 200 Tomcat threads and each request ta
 
 Within a few minutes, the queue at the `httpPlatformHandler` grows so long that requests wait in line for 230+ seconds before they even reach a Tomcat thread. This is loopback saturation. It is not a failure of the Java code itself, but a failure of the **concurrency model** to keep up with the arrival rate. The bottleneck is the number of available processing slots (threads) relative to the time each slot is held.
 
+![Kudu Process Explorer showing the w3wp.exe -> httpPlatformHandler -> java.exe process tree with CPU and memory columns](../../assets/troubleshooting/kudu/04-process-explorer-java.png)
+
+Purpose: Confirm the process hierarchy that `httpPlatformHandler` maintains on Windows App Service.
+Look for: `w3wp.exe` (IIS worker) as the parent of the Java bootstrap chain that terminates in `java.exe` (the Spring Boot application). Under saturation, `java.exe` accumulates CPU time and threads while the loopback proxy holds requests in the IIS queue.
+Access: Kudu (Advanced Tools) -> **Process explorer**.
+
 **IIS vs Tomcat Queuing:**
 -   **Tomcat Queue**: Tomcat has its own `acceptCount` (default 100). Once the 200 threads are full, 100 more requests can wait in Tomcat's internal queue.
 -   **IIS Queue**: When Tomcat's `acceptCount` is also full, IIS (via the `httpPlatformHandler`) begins to queue the requests.
@@ -490,6 +496,12 @@ az webapp deploy \
 bash run-e3-probes.sh --count 3
 ```
 
+![Kudu Debug Console CMD session showing web.config in D:\home\site\wwwroot with requestTimeout="00:01:00" inside the httpPlatform element](../../assets/troubleshooting/kudu/05-webconfig-verified.png)
+
+Purpose: Verify that OneDeploy (`--type static`) placed `web.config` at the site root without disturbing `app.jar`.
+Look for: `web.config` present in the `/wwwroot` file listing next to `app.jar`, and the console output showing `requestTimeout="00:01:00"` inside the `<httpPlatform>` element.
+Access: Kudu (Advanced Tools) -> **Debug console** -> `CMD` -> `cd site\wwwroot` -> `type web.config`.
+
 ### 3.10 Query Log Analytics
 
 Wait 5 minutes for logs to ingest. Windows App Service logs are buffered locally before being shipped to Azure Monitor, which causes a consistent ingestion delay.
@@ -509,6 +521,12 @@ AppServiceHTTPLogs
 | extend Pct_64 = round(100.0 * FE_Reset_64 / TotalRequests, 2)
 | order by TimeGenerated asc
 ```
+
+![Azure Log Analytics results table showing 5-minute bins with TotalRequests, FE_Reset_64, Handler_Timeout_12002, and Pct_64 columns for the signature-transition query](../../assets/troubleshooting/log-analytics/02-http-500-121-signature.png)
+
+Purpose: Confirm the signature-transition query returns the expected table shape and non-zero rows during the saturation and mitigation windows.
+Look for: `FE_Reset_64` counts during the saturation window (E1/E2) and `Handler_Timeout_12002` counts during the mitigation window (E3). `Pct_64` should drop toward zero once the `web.config` mitigation is deployed and traffic shifts to the `502.3.12002` signature.
+Access: Azure Portal -> Log Analytics workspace `law-<baseName>-<suffix>` -> **Logs** -> paste the KQL above.
 
 ### 3.11 Advanced KQL Analysis
 
@@ -558,6 +576,71 @@ AppServiceHTTPLogs
 ```
 
 **Analysis**: A "cliff" in the request count followed by a period of silence and then a gradual ramp-up is a classic signature of a container restart or instance recycling.
+
+### 3.12 M2 — Auto-Heal automated remediation (optional layer)
+
+M1a addresses the failure mode preventively by shortening `requestTimeout` so the handler releases the socket before the front-end resets. Auto-Heal (M2) adds a reactive layer: when a burst of `500.121.64` events still occurs, App Service recycles the worker process to reset the thread pool and drop any wedged requests.
+
+**When to enable M2**:
+
+-   After confirming M1a is deployed and healthy.
+-   When you expect occasional traffic bursts that could still saturate the thread pool despite the `requestTimeout` mitigation.
+-   When you want automated recovery without waiting for on-call intervention.
+
+**Enable via Bicep** (this lab uses this path):
+
+```bash
+bash enable-autoheal-m2.sh
+```
+
+The script redeploys the Bicep template with `enableCustomAutoHeal=true` and `autoHealActionType=Recycle`. It waits for the Web App to return to a healthy state before finishing.
+
+**Verify the rule from the CLI**:
+
+```bash
+az webapp config show \
+    --resource-group "$RG" \
+    --name "$APP_NAME" \
+    --query 'autoHealRules' \
+    --output json
+```
+
+Expected output (fields relevant to the rule):
+
+```json
+{
+  "actions": {
+    "actionType": "Recycle",
+    "minProcessExecutionTime": "00:01:00"
+  },
+  "triggers": {
+    "statusCodes": [
+      {
+        "count": 5,
+        "path": "/slow/240",
+        "status": 500,
+        "subStatus": 121,
+        "timeInterval": "00:02:00",
+        "win32Status": 64
+      }
+    ]
+  }
+}
+```
+
+**Verify the rule from the Portal**:
+
+![Azure Portal Auto-Heal blade showing Custom Auto-Heal Rules Enabled=On with a Recycle Process action targeting HTTP 500.121 win32=64 on /slow/240 with 5 requests in 120 seconds and 60-second startup override](../../assets/troubleshooting/configuration/03-autoheal-m2-rules.png)
+
+Purpose: Confirm the Auto-Heal rule is active and correctly scoped after the M2 Bicep redeploy.
+Look for: `Custom Auto-Heal Rules Enabled: On`, and the `Current Settings` box reading "Recycle the process when 5 requests matching path '/slow/240' end up with HTTP Status 500.121 and win-32 status 64 in a duration of 120 seconds".
+Access: Azure Portal -> App Service -> **Diagnose and solve problems** -> **Diagnostic Tools** -> **Auto-Heal**.
+
+!!! note "Signature scope trade-off"
+    The trigger targets `win32Status=64` (`ERROR_NETNAME_DELETED`) specifically. This is the front-end-reset signature that dominates under sustained concurrent saturation (E1/E2 evidence: 62-70% of requests in the measured saturation windows). It intentionally does NOT match the `win32Status=0` variant seen in the sequential baseline (Section 4.2), avoiding false positives if repeated serialized probes or other non-saturation traffic on `/slow/240` produce the `.0` variant. If your production traffic profile produces the `.0` variant frequently, add a second rule with `win32Status=0` **and** a `path` constraint to keep the trigger scoped.
+
+!!! warning "Auto-Heal is reactive, not preventive"
+    Auto-Heal recycles the process only *after* the burst threshold (5 requests in 120 seconds) is reached. Every request that contributed to the trigger still failed with a 230-second front-end reset. M1a (`requestTimeout` shortening) remains the primary mitigation; M2 layers automated recovery on top.
 
 ---
 

@@ -1,0 +1,14 @@
+probe_index: 2
+request_url: https://app-winjaval2cap-wjo6i7zextarg.azurewebsites.net/slow/240
+started_utc: 2026-07-02T01:39:07Z
+ended_utc: 2026-07-02T01:42:58Z
+elapsed_seconds: 231
+curl_exit_code: 0
+---curl-timing---
+time_namelookup:  0.119634s
+time_connect:     0.321202s
+time_appconnect:  0.618621s
+time_pretransfer: 0.618647s
+time_starttransfer: 230.763653s
+time_total:       230.767362s
+http_code:        500

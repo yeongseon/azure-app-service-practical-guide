@@ -1,0 +1,13 @@
+[
+  {
+    "TableName": "PrimaryResult",
+    "max_TimeTaken": "230007",
+    "mean_TimeTaken": "230001.3",
+    "min_TimeTaken": "229993",
+    "row_count": "10",
+    "status_500_121_count": "10",
+    "stdev_TimeTaken": "5.437524320469748",
+    "win32_64_count": "0",
+    "win32_zero_count": "10"
+  }
+]

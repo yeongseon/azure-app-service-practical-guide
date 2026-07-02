@@ -1,0 +1,15 @@
+{
+  "experiment": "preflight",
+  "startedAt": "2026-07-01T16:21:15Z",
+  "endedAt": "2026-07-01T16:25:26Z",
+  "params": {
+    "mode": "kql-only",
+    "autoHealActionType": "LogEvent"
+  },
+  "preflight-status": "UNVERIFIABLE",
+  "webAppResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-lab-winjaval2sat/providers/Microsoft.Web/sites/app-winjaval2sat-4zen6v266tspy",
+  "artifactFiles": [
+    "deploy-output.txt",
+    "kql-result.json"
+  ]
+}

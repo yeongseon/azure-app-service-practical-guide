@@ -1,0 +1,12 @@
+path,http_code,bytes,outfile
+/api/vfs/site/wwwroot/,200,613,kudu-wwwroot-listing.json
+/api/vfs/site/wwwroot/web.config,404,62,kudu-web-config.xml.http-404
+/api/environment,200,74,kudu-environment.json
+/api/settings,200,855,kudu-settings.json
+/api/scm/info,200,121,kudu-scm-info.json
+/api/diagnostics/runtime,200,1706,kudu-diagnostics-runtime.json
+/api/processes,200,841,kudu-processes.json
+/api/vfs/site/,200,1091,kudu-site-listing.json
+/api/vfs/site/wwwroot/App_Data/,404,62,kudu-appdata-listing.json.http-404
+/api/command,200,482,kudu-command-dir-wwwroot.json
+/api/command,200,106,kudu-command-dir-config.json

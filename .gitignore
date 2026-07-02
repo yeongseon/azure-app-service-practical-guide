@@ -1,6 +1,9 @@
 # MkDocs
 site/
 
+# MCP browser capture artifacts (Playwright DOM dumps, not authoritative content)
+.playwright-mcp/
+
 # Python
 __pycache__/
 *.py[cod]
@@ -51,6 +54,7 @@ labs/*/deploy.zip
 apps/**/infra/main.json
 apps/**/infra/profiles/*.json
 apps/**/infra/modules/*.json
+labs/**/main.json
 
 # Environment
 .env

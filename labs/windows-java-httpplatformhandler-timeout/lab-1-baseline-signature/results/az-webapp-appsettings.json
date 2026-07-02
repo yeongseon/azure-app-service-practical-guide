@@ -1,0 +1,17 @@
+[
+  {
+    "name": "WEBSITE_JAVA_JAR_FILE_NAME",
+    "slotSetting": false,
+    "value": "app.jar"
+  },
+  {
+    "name": "WEBSITE_PROACTIVE_AUTOHEAL_ENABLED",
+    "slotSetting": false,
+    "value": "false"
+  },
+  {
+    "name": "SPRING_MVC_ASYNC_REQUEST_TIMEOUT",
+    "slotSetting": false,
+    "value": "600000"
+  }
+]

@@ -1,0 +1,21 @@
+{
+  "experiment": "autoheal-enable",
+  "startedAt": "2026-07-02T02:23:03Z",
+  "endedAt": "2026-07-02T02:26:00Z",
+  "status": "succeeded",
+  "note": "Script exited early due to query-path bug in verification step, but Bicep deployment and Auto-Heal config verified via CLI",
+  "params": {
+    "enableCustomAutoHeal": true,
+    "autoHealActionType": "Recycle",
+    "autoHealEnabled": true,
+    "win32StatusTrigger": 64,
+    "triggerPath": "/slow/240",
+    "triggerCount": 5,
+    "triggerInterval": "00:02:00",
+    "minProcessExecutionTime": "00:01:00",
+    "warmupPassed": true
+  },
+  "artifactFiles": [
+    "autoheal-verify.json"
+  ]
+}

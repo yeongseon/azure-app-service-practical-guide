@@ -1,0 +1,26 @@
+=== E1 baseline signature probe: https://app-winjavatol1-cevxrss3aa7mk.azurewebsites.net ===
+  Output dir:      ./results
+  Endpoint:        /slow/240
+  Iterations:      10 (baseline=10, max=20)
+  curl --max-time: 400s
+  Pacing:          backend completion (Thread.sleep ends ~10s after client cut) + 10s buffer
+
+Running 10 iterations of /slow/240
+  iter 1/10: http=500 time=230.664435s curl_exit=0 pacing_sleep=19s
+  iter 2/10: http=500 time=230.665107s curl_exit=0 pacing_sleep=19s
+  iter 3/10: http=500 time=230.699105s curl_exit=0 pacing_sleep=19s
+  iter 4/10: http=500 time=230.719540s curl_exit=0 pacing_sleep=19s
+  iter 5/10: http=500 time=230.675099s curl_exit=0 pacing_sleep=19s
+  iter 6/10: http=500 time=230.730103s curl_exit=0 pacing_sleep=19s
+  iter 7/10: http=500 time=230.682451s curl_exit=0 pacing_sleep=19s
+  iter 8/10: http=500 time=230.879593s curl_exit=0 pacing_sleep=19s
+  iter 9/10: http=500 time=230.665140s curl_exit=0 pacing_sleep=19s
+  iter 10/10: http=500 time=230.757789s curl_exit=0 pacing_sleep=19s
+
+=== Writing preliminary summary to ./results/e1-summary.md ===
+
+E1 complete. Client-side data written to:
+  CSV:     ./results/e1-signature-probes.csv
+  Summary: ./results/e1-summary.md
+
+Next: bash run-e2-config-visibility.sh <APP_NAME> <RESOURCE_GROUP_NAME> ./results

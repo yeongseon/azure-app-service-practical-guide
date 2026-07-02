@@ -1,0 +1,43 @@
+{
+  "metrics": {
+    "iterations": {
+      "count": 140,
+      "rate": 0.27449052984242317
+    },
+    "dropped_iterations": {},
+    "http_reqs": {
+        "count": 140,
+        "rate": 0.27449052984242317
+      },
+    "vus_max": {
+        "value": 300,
+        "min": 300,
+        "max": 300
+      },
+    "http_req_failed": {
+        "fails": 0,
+        "rate": 1,
+        "passes": 140
+      },
+    "http_req_duration": {
+        "med": 230171.551,
+        "max": 230378.787,
+        "p(90)": 230206.6197,
+        "p(95)": 230211.05020000003,
+        "avg": 230174.64042142857,
+        "min": 230127.679
+      }
+  },
+  "root_group": {
+    "checks": [],
+    "name": "",
+    "path": "",
+    "id": "d41d8cd98f00b204e9800998ecf8427e",
+    "groups": []
+  },
+  "state": {
+    "isStdOutTTY": false,
+    "isStdErrTTY": false,
+    "testRunDurationMs": 510035.811
+  }
+}

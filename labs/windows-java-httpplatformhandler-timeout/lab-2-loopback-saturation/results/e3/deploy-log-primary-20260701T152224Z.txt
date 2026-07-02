@@ -1,0 +1,31 @@
+=== Primary: OneDeploy --type static ===
+Timestamp: 2026-07-01T15:22:24Z
+Command: az webapp deploy --resource-group rg-lab-winjaval2sat --name app-winjaval2sat-4zen6v266tspy --type static --target-path web.config --src-path /Users/yeongseonchoe/GitHub/azure-app-service-practical-guide/labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/webconfig/web.config --async false
+
+WARNING: Initiating deployment
+WARNING: Deploying from local path: /Users/yeongseonchoe/GitHub/azure-app-service-practical-guide/labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/webconfig/web.config
+WARNING: Polling the status of sync deployment. Start Time: 2026-07-01 15:22:39.488430+00:00 UTC
+WARNING: Deployment has completed successfully
+WARNING: You can visit your app at: http://app-winjaval2sat-4zen6v266tspy.azurewebsites.net
+{
+  "active": true,
+  "author": "N/A",
+  "author_email": "N/A",
+  "complete": true,
+  "deployer": "OneDeploy",
+  "end_time": "2026-07-01T15:22:39.0356381Z",
+  "id": "195a61311c8e42fb86c9f2becf7cbfad",
+  "is_readonly": true,
+  "is_temp": false,
+  "last_success_end_time": "2026-07-01T15:22:39.0356381Z",
+  "log_url": "https://app-winjaval2sat-4zen6v266tspy.scm.azurewebsites.net/api/deployments/latest/log",
+  "message": "OneDeploy",
+  "progress": "",
+  "provisioningState": "Succeeded",
+  "received_time": "2026-07-01T15:22:37.1427988Z",
+  "site_name": "app-winjaval2sat-4zen6v266tspy",
+  "start_time": "2026-07-01T15:22:37.4552617Z",
+  "status": 4,
+  "status_text": "",
+  "url": "https://app-winjaval2sat-4zen6v266tspy.scm.azurewebsites.net/api/deployments/latest"
+}

@@ -1,0 +1,10 @@
+probe_index: 2
+canary: primary
+request_url: https://app-winjaval2sat-4zen6v266tspy.azurewebsites.net/slow/240
+started_utc: 2026-07-01T15:28:04Z
+ended_utc: 2026-07-01T15:29:08Z
+elapsed_seconds: 64
+curl_exit_code: 0
+http_code: 502
+time_starttransfer: 63.357596
+time_total: 63.358670

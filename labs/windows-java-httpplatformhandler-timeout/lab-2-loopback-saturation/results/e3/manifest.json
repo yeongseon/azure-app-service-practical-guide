@@ -1,0 +1,18 @@
+{
+  "experiment": "m1a-deploy",
+  "startedAt": "2026-07-02T02:11:19Z",
+  "endedAt": "2026-07-02T02:16:31Z",
+  "params": {
+    "canary": "primary",
+    "sourceFile": "web.config",
+    "deployMethod": "static",
+    "deploySuccess": true,
+    "warmupPassed": true
+  },
+  "webAppResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-lab-winjaval2cap/providers/Microsoft.Web/sites/app-winjaval2cap-wjo6i7zextarg",
+  "artifactFiles": [
+    "deploy-log-primary-20260701T152224Z.txt",
+    "deploy-log-primary-20260702T021119Z.txt",
+    "primary"
+  ]
+}

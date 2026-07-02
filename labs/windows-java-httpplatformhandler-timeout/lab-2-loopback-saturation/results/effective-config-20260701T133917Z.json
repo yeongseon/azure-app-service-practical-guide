@@ -1,0 +1,296 @@
+{
+  "webapp_config": {
+    "acrUseManagedIdentityCreds": false,
+    "acrUserManagedIdentityId": null,
+    "alwaysOn": true,
+    "apiDefinition": null,
+    "apiManagementConfig": null,
+    "appCommandLine": "",
+    "appSettings": null,
+    "autoHealEnabled": false,
+    "autoHealRules": null,
+    "autoSwapSlotName": null,
+    "azureStorageAccounts": {},
+    "connectionStrings": null,
+    "cors": null,
+    "defaultDocuments": [
+      "Default.htm",
+      "Default.html",
+      "Default.asp",
+      "index.htm",
+      "index.html",
+      "iisstart.htm",
+      "default.aspx",
+      "index.php",
+      "hostingstart.html"
+    ],
+    "detailedErrorLoggingEnabled": true,
+    "documentRoot": null,
+    "elasticWebAppScaleLimit": 0,
+    "experiments": {
+      "rampUpRules": []
+    },
+    "ftpsState": "Disabled",
+    "functionAppScaleLimit": null,
+    "functionsRuntimeScaleMonitoringEnabled": false,
+    "handlerMappings": null,
+    "healthCheckPath": null,
+    "http20Enabled": false,
+    "http20ProxyFlag": 0,
+    "httpLoggingEnabled": true,
+    "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-lab-winjaval2sat/providers/Microsoft.Web/sites/app-winjaval2sat-4zen6v266tspy/config/web",
+    "ipSecurityRestrictions": [
+      {
+        "action": "Allow",
+        "description": "Allow all access",
+        "headers": null,
+        "ipAddress": "Any",
+        "name": "Allow all",
+        "priority": 2147483647,
+        "subnetMask": null,
+        "subnetTrafficTag": null,
+        "tag": null,
+        "vnetSubnetResourceId": null,
+        "vnetTrafficTag": null
+      }
+    ],
+    "ipSecurityRestrictionsDefaultAction": null,
+    "javaContainer": "JAVA",
+    "javaContainerVersion": "SE",
+    "javaVersion": "17",
+    "keyVaultReferenceIdentity": null,
+    "kind": null,
+    "limits": null,
+    "linuxFxVersion": "",
+    "loadBalancing": "LeastRequests",
+    "localMySqlEnabled": false,
+    "location": "Korea Central",
+    "logsDirectorySizeLimit": 35,
+    "machineKey": null,
+    "managedPipelineMode": "Integrated",
+    "managedServiceIdentityId": null,
+    "metadata": null,
+    "minTlsCipherSuite": null,
+    "minTlsVersion": "1.2",
+    "minimumElasticInstanceCount": 0,
+    "name": "app-winjaval2sat-4zen6v266tspy",
+    "netFrameworkVersion": "v4.0",
+    "nodeVersion": "",
+    "numberOfWorkers": 1,
+    "phpVersion": "5.6",
+    "powerShellVersion": "",
+    "preWarmedInstanceCount": 0,
+    "publicNetworkAccess": null,
+    "publishingUsername": "REDACTED",
+    "push": null,
+    "pythonVersion": "",
+    "remoteDebuggingEnabled": false,
+    "remoteDebuggingVersion": null,
+    "requestTracingEnabled": true,
+    "requestTracingExpirationTime": "9999-12-31T23:59:00+00:00",
+    "resourceGroup": "rg-lab-winjaval2sat",
+    "scmIpSecurityRestrictions": [
+      {
+        "action": "Allow",
+        "description": "Allow all access",
+        "headers": null,
+        "ipAddress": "Any",
+        "name": "Allow all",
+        "priority": 2147483647,
+        "subnetMask": null,
+        "subnetTrafficTag": null,
+        "tag": null,
+        "vnetSubnetResourceId": null,
+        "vnetTrafficTag": null
+      }
+    ],
+    "scmIpSecurityRestrictionsDefaultAction": null,
+    "scmIpSecurityRestrictionsUseMain": false,
+    "scmMinTlsVersion": "1.2",
+    "scmType": "None",
+    "tracingOptions": null,
+    "type": "Microsoft.Web/sites/config",
+    "use32BitWorkerProcess": true,
+    "virtualApplications": [
+      {
+        "physicalPath": "site\\wwwroot",
+        "preloadEnabled": true,
+        "virtualDirectories": null,
+        "virtualPath": "/"
+      }
+    ],
+    "vnetName": "",
+    "vnetPrivatePortsCount": 0,
+    "vnetRouteAllEnabled": false,
+    "webSocketsEnabled": false,
+    "websiteTimeZone": null,
+    "windowsFxVersion": null,
+    "xManagedServiceIdentityId": null
+  },
+  "webapp_appsettings": [
+    {
+      "name": "WEBSITE_JAVA_JAR_FILE_NAME",
+      "slotSetting": false,
+      "value": "app.jar"
+    },
+    {
+      "name": "WEBSITE_PROACTIVE_AUTOHEAL_ENABLED",
+      "slotSetting": false,
+      "value": "false"
+    },
+    {
+      "name": "SPRING_MVC_ASYNC_REQUEST_TIMEOUT",
+      "slotSetting": false,
+      "value": "600000"
+    }
+  ],
+  "plan_config": {
+    "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-lab-winjaval2sat/providers/Microsoft.Web/serverfarms/asp-winjaval2sat-4zen6v266tspy",
+    "kind": "app",
+    "location": "Korea Central",
+    "name": "asp-winjaval2sat-4zen6v266tspy",
+    "properties": {
+      "adminRuntimeSiteName": null,
+      "adminSiteName": null,
+      "asyncScalingEnabled": false,
+      "computeMode": "Dedicated",
+      "createdTime": "2026-07-01T13:33:41.95",
+      "currentNumberOfWorkers": 1,
+      "currentNumberOfZonesUtilized": 1,
+      "currentWorkerSize": "Small",
+      "currentWorkerSizeId": 0,
+      "elasticScaleEnabled": false,
+      "eligibleLogCategories": "",
+      "existingServerFarmIds": null,
+      "freeOfferExpirationTime": null,
+      "geoRegion": "Korea Central",
+      "hostingEnvironment": null,
+      "hostingEnvironmentId": null,
+      "hostingEnvironmentProfile": null,
+      "hyperV": false,
+      "isCustomMode": false,
+      "isSpot": false,
+      "isXenon": false,
+      "kind": "app",
+      "kubeEnvironmentProfile": null,
+      "maximumElasticWorkerCount": 1,
+      "maximumNumberOfWorkers": 3,
+      "maximumNumberOfZones": 3,
+      "mdmId": "waws-prod-se1-023_588",
+      "migrateToVMSS": null,
+      "name": "asp-winjaval2sat-4zen6v266tspy",
+      "numberOfSites": 1,
+      "numberOfWorkers": 1,
+      "perSiteScaling": false,
+      "planName": "VirtualDedicatedPlan",
+      "powerState": "Running",
+      "provisioningState": "Succeeded",
+      "reserved": false,
+      "resourceGroup": "rg-lab-winjaval2sat",
+      "serverFarmId": 588,
+      "siteMode": null,
+      "spotExpirationTime": null,
+      "status": "Ready",
+      "subscription": "00000000-0000-0000-0000-000000000000",
+      "tags": null,
+      "targetWorkerCount": 0,
+      "targetWorkerSizeId": 0,
+      "targetWorkerSku": null,
+      "vnetConnectionsMax": 2,
+      "vnetConnectionsUsed": 0,
+      "webSiteId": null,
+      "webSpace": "rg-lab-winjaval2sat-KoreaCentralwebspace",
+      "workerSize": "Small",
+      "workerSizeId": 0,
+      "workerTierName": null,
+      "zoneRedundant": false
+    },
+    "resourceGroup": "rg-lab-winjaval2sat",
+    "sku": {
+      "capacity": 1,
+      "family": "B",
+      "name": "B1",
+      "size": "B1",
+      "tier": "Basic"
+    },
+    "type": "Microsoft.Web/serverfarms"
+  },
+  "autoheal_rules": null,
+  "diagnostic_settings": [
+    {
+      "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg-lab-winjaval2sat/providers/microsoft.web/sites/app-winjaval2sat-4zen6v266tspy/providers/microsoft.insights/diagnosticSettings/diag-app-winjaval2sat-4zen6v266tspy",
+      "logs": [
+        {
+          "category": "AppServiceHTTPLogs",
+          "enabled": true,
+          "retentionPolicy": {
+            "days": 0,
+            "enabled": false
+          }
+        },
+        {
+          "category": "AppServiceConsoleLogs",
+          "enabled": true,
+          "retentionPolicy": {
+            "days": 0,
+            "enabled": false
+          }
+        },
+        {
+          "category": "AppServiceAppLogs",
+          "enabled": true,
+          "retentionPolicy": {
+            "days": 0,
+            "enabled": false
+          }
+        },
+        {
+          "category": "AppServicePlatformLogs",
+          "enabled": true,
+          "retentionPolicy": {
+            "days": 0,
+            "enabled": false
+          }
+        },
+        {
+          "category": "AppServiceIPSecAuditLogs",
+          "enabled": true,
+          "retentionPolicy": {
+            "days": 0,
+            "enabled": false
+          }
+        },
+        {
+          "category": "AppServiceAuditLogs",
+          "enabled": false,
+          "retentionPolicy": {
+            "days": 0,
+            "enabled": false
+          }
+        },
+        {
+          "category": "AppServiceAuthenticationLogs",
+          "enabled": false,
+          "retentionPolicy": {
+            "days": 0,
+            "enabled": false
+          }
+        }
+      ],
+      "metrics": [
+        {
+          "category": "AllMetrics",
+          "enabled": true,
+          "retentionPolicy": {
+            "days": 0,
+            "enabled": false
+          }
+        }
+      ],
+      "name": "diag-app-winjaval2sat-4zen6v266tspy",
+      "resourceGroup": "rg-lab-winjaval2sat",
+      "type": "Microsoft.Insights/diagnosticSettings",
+      "workspaceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-lab-winjaval2sat/providers/Microsoft.OperationalInsights/workspaces/law-winjaval2sat-4zen6v266tspy"
+    }
+  ]
+}

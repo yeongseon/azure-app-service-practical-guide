@@ -1,0 +1,11 @@
+{
+  "baseName": "winjaval2cap",
+  "resourceGroup": "rg-lab-winjaval2cap",
+  "webAppName": "app-winjaval2cap-wjo6i7zextarg",
+  "webAppHostname": "app-winjaval2cap-wjo6i7zextarg.azurewebsites.net",
+  "webAppResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-lab-winjaval2cap/providers/Microsoft.Web/sites/app-winjaval2cap-wjo6i7zextarg",
+  "logAnalyticsWorkspaceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-lab-winjaval2cap/providers/Microsoft.OperationalInsights/workspaces/law-winjaval2cap-wjo6i7zextarg",
+  "appServicePlanName": "asp-winjaval2cap-wjo6i7zextarg",
+  "location": "koreacentral",
+  "deployedAt": "2026-07-02T01:32:54Z"
+}

@@ -1,0 +1,8 @@
+probe_id,method,path_or_command,http_code,bytes,outfile
+P1,GET,/api/vfs/systemdrive/inetpub/config/applicationHost.config,401,0,e2-p1-inetpub-applicationhost.config.http-401
+P2,GET,/api/vfs/systemdrive/Windows/System32/inetsrv/config/applicationHost.config,401,0,e2-p2-inetsrv-applicationhost.config.http-401
+P3,POST,dir C:\home\site,401,0,e2-p3-dir-home-site.json.http-401
+P4,POST,type C:\home\site\config\applicationHost.xdt,401,0,e2-p4-applicationhost-xdt.json.http-401
+P5,POST,dir C:\home\LogFiles\httpPlatform,401,0,e2-p5-dir-httpplatform-logs.json.http-401
+P6,GET,/api/vfs/LogFiles/httpPlatform/,401,0,e2-p6-vfs-httpplatform-listing.json.http-401
+P7,POST,reg query HKLM\System\CurrentControlSet\Services\W3SVC\Parameters,401,0,e2-p7-reg-w3svc.json.http-401

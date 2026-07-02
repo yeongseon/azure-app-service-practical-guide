@@ -1,0 +1,36 @@
+=== Timeout probe target: https://app-winjavatimeout-eliroyg74lvho.azurewebsites.net ===
+  Output dir: ./results
+  Probes:     60 180 210 220 225 240 300 360
+  curl --max-time: 400s
+  Sleep between probes: 15s
+
+Step 1/2: /slow/{n} probes (no bytes emitted until completion)
+  /slow/60: http=200 time=61.425287s curl_exit=0
+  waiting 15s (backend completion + buffer)
+  /slow/180: http=200 time=180.646660s curl_exit=0
+  waiting 15s (backend completion + buffer)
+  /slow/210: http=200 time=210.802651s curl_exit=0
+  waiting 15s (backend completion + buffer)
+  /slow/220: http=200 time=220.840205s curl_exit=0
+  waiting 15s (backend completion + buffer)
+  /slow/225: http=200 time=225.751277s curl_exit=0
+  waiting 15s (backend completion + buffer)
+  /slow/240: http=500 time=230.688024s curl_exit=0
+  waiting 19s (backend completion + buffer)
+  /slow/300: http=500 time=230.714654s curl_exit=0
+  waiting 79s (backend completion + buffer)
+  /slow/360: http=500 time=230.682930s curl_exit=0
+  waiting 139s (backend completion + buffer)
+
+Step 2/2: /stream/300 probe (H7 idle-vs-absolute-timeout falsification)
+  /stream/300: http=200 time=32.226953s curl_exit=0 bytes=145
+
+=== Writing summary to ./results/summary.md ===
+
+Probe complete. Results:
+  CSV (slow):    ./results/slow-probes.csv
+  CSV (stream):  ./results/stream-probes.csv
+  Stream body:   ./results/stream-body.ndjson
+  Summary:       ./results/summary.md
+
+Next: bash collect-effective-config.sh <APP_NAME> <RESOURCE_GROUP_NAME> ./results

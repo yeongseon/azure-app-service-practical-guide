@@ -1,0 +1,13 @@
+[
+  {
+    "CsBytes": "946",
+    "CsUriStem": "/stream/300",
+    "ScBytes": "445",
+    "ScStatus": "500",
+    "ScSubStatus": "121",
+    "ScWin32Status": "0",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-07-01T10:42:11.8339167Z",
+    "TimeTaken": "230005"
+  }
+]

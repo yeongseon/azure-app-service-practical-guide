@@ -1,0 +1,20 @@
+{
+  "experiment": "e3",
+  "startedAt": "2026-07-01T15:23:44Z",
+  "endedAt": "2026-07-01T15:33:24Z",
+  "params": {
+    "canary": "primary",
+    "probeCount": 3,
+    "probeDuration": 240,
+    "endpoint": "/slow/240"
+  },
+  "webAppResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-lab-winjaval2sat/providers/Microsoft.Web/sites/app-winjaval2sat-4zen6v266tspy",
+  "artifactFiles": [
+    "probe-1-response.log",
+    "probe-1.log",
+    "probe-2-response.log",
+    "probe-2.log",
+    "probe-3-response.log",
+    "probe-3.log"
+  ]
+}

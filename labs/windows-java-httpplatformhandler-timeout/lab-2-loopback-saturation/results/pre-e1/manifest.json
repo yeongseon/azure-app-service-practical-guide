@@ -1,0 +1,23 @@
+{
+  "experiment": "pre-e1",
+  "runId": null,
+  "startedAt": "2026-07-02T01:34:47Z",
+  "endedAt": "2026-07-02T01:47:48Z",
+  "params": {
+    "probeCount": 3,
+    "probeDuration": 240,
+    "endpoint": "/slow/240"
+  },
+  "webAppResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-lab-winjaval2cap/providers/Microsoft.Web/sites/app-winjaval2cap-wjo6i7zextarg",
+  "artifactFiles": [
+    "baseline.log",
+    "curl-format.txt",
+    "kql-baseline-rows.json",
+    "probe-1-response.log",
+    "probe-1-timestamp.log",
+    "probe-2-response.log",
+    "probe-2-timestamp.log",
+    "probe-3-response.log",
+    "probe-3-timestamp.log"
+  ]
+}

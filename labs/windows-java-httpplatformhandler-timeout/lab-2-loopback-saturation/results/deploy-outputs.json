@@ -1,0 +1,26 @@
+{
+  "appServicePlanName": {
+    "type": "String",
+    "value": "asp-winjaval2cap-wjo6i7zextarg"
+  },
+  "logAnalyticsWorkspaceId": {
+    "type": "String",
+    "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-lab-winjaval2cap/providers/Microsoft.OperationalInsights/workspaces/law-winjaval2cap-wjo6i7zextarg"
+  },
+  "resourceGroupName": {
+    "type": "String",
+    "value": "rg-lab-winjaval2cap"
+  },
+  "webAppHostname": {
+    "type": "String",
+    "value": "app-winjaval2cap-wjo6i7zextarg.azurewebsites.net"
+  },
+  "webAppName": {
+    "type": "String",
+    "value": "app-winjaval2cap-wjo6i7zextarg"
+  },
+  "webAppResourceId": {
+    "type": "String",
+    "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-lab-winjaval2cap/providers/Microsoft.Web/sites/app-winjaval2cap-wjo6i7zextarg"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "experiment": "e1",
+  "runId": 1,
+  "startedAt": "2026-07-01T13:58:46Z",
+  "endedAt": "2026-07-01T14:18:17Z",
+  "params": {
+    "rate": 0.5,
+    "duration": "15m",
+    "drain": 240
+  },
+  "webAppResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-lab-winjaval2sat/providers/Microsoft.Web/sites/app-winjaval2sat-4zen6v266tspy",
+  "artifactFiles": [
+    "k6-stdout.log",
+    "k6-summary.json"
+  ]
+}

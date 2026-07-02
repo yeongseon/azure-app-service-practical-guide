@@ -1,0 +1,24 @@
+{
+  "actions": {
+    "actionType": "Recycle",
+    "customAction": null,
+    "minProcessExecutionTime": "00:01:00"
+  },
+  "triggers": {
+    "privateBytesInKb": 0,
+    "requests": null,
+    "slowRequests": null,
+    "slowRequestsWithPath": [],
+    "statusCodes": [
+      {
+        "count": 5,
+        "path": "/slow/240",
+        "status": 500,
+        "subStatus": 121,
+        "timeInterval": "00:02:00",
+        "win32Status": 64
+      }
+    ],
+    "statusCodesRange": []
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "experiment": "revert",
+  "startedAt": "2026-07-01T15:33:48Z",
+  "endedAt": "2026-07-01T15:35:27Z",
+  "params": {
+    "jarPath": "app.jar",
+    "cleanDeploy": true,
+    "warmupPassed": true,
+    "sanityHttpCode": "200",
+    "sanityTimeTotal": "4.326089"
+  },
+  "webAppResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-lab-winjaval2sat/providers/Microsoft.Web/sites/app-winjaval2sat-4zen6v266tspy",
+  "artifactFiles": [
+    "revert-20260701T153348Z.log"
+  ]
+}

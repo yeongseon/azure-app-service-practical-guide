@@ -1,0 +1,18 @@
+[
+  {
+    "ScStatus": "500",
+    "ScSubStatus": "121",
+    "ScWin32Status": "0",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-07-02T01:39:14.4682318Z",
+    "TimeTaken": "229998"
+  },
+  {
+    "ScStatus": "500",
+    "ScSubStatus": "121",
+    "ScWin32Status": "0",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-07-02T01:43:13.9600503Z",
+    "TimeTaken": "230004"
+  }
+]

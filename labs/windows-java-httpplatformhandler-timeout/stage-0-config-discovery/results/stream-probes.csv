@@ -1,0 +1,2 @@
+requested_seconds,http_code,time_total_sec,curl_exit_code,bytes_received,started_utc,ended_utc
+300,200,32.226953,0,145,2026-07-01T09:15:34Z,2026-07-01T09:16:06Z
