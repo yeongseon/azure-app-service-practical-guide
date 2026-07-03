@@ -89,7 +89,7 @@ Each slot is a separate runtime endpoint with its own hostname and runtime lifec
 flowchart TD
     subgraph AppService[Single App Service App]
         P[Production Slot\nHostname: app.azurewebsites.net]
-        S[Staging Slot\nHostname: app-staging.azurewebsites.net]
+        S[Staging Slot\nHostname: staging.azurewebsites.net]
     end
     U[Users] --> P
     O[Operators/Testers] --> S
@@ -653,6 +653,26 @@ Using timestamp differences from before/after JSON:
 
 This indicates new process generations became active during swap lifecycle.
 
+#### 4.7.1 Sticky/non-sticky configuration (portal verification)
+
+To confirm which app settings are eligible to move with the swap (and therefore which can drive the process regeneration observed in the timestamp deltas above), the Environment variables blade was captured against the production slot from a fresh live reproduction:
+
+![Azure portal Environment variables blade for Web App app-labslot-x6ybh6bakgipy with breadcrumb "Home > app-labslot-x6ybh6bakgipy". Blade heading reads "app-labslot-x6ybh6bakgipy | Environment variables" and the "App settings" tab is active (sibling tab: Connection strings). The grid has five columns in order: Name, Value, Deployment slot setting, Source, Delete. Three rows are shown, all with values hidden behind "Show value" links and Source "App Service". The DB_CONNECTION_STRING row has the Deployment slot setting checkbox CHECKED (sticky). The FEATURE_FLAG row has the Deployment slot setting checkbox UNCHECKED (non-sticky). The SCM_DO_BUILD_DURING_DEPLOYMENT row has the Deployment slot setting checkbox UNCHECKED (non-sticky). The left navigation shows Settings expanded with Environment variables highlighted. Apply and Discard buttons at the bottom are both disabled, confirming the displayed state matches the persisted configuration.](../../assets/troubleshooting/configuration/04-slotswap-sticky-vs-nonsticky.png)
+
+**Purpose**: Cross-verify visually that the Portal control-plane marks `DB_CONNECTION_STRING` as slot-sticky and `FEATURE_FLAG` and `SCM_DO_BUILD_DURING_DEPLOYMENT` as non-sticky. This complements the runtime timestamp deltas in the table above by showing the platform-level precondition consistent with the swap-driven restart interpretation used here: only non-sticky app settings move to the destination slot on swap, and only settings whose value actually changes on swap trigger a process regeneration.
+
+**Look for**:
+
+- Blade heading reads "app-labslot-x6ybh6bakgipy | Environment variables" with the App settings tab active.
+- `DB_CONNECTION_STRING` row: Deployment slot setting checkbox CHECKED.
+- `FEATURE_FLAG` row: Deployment slot setting checkbox UNCHECKED.
+- `SCM_DO_BUILD_DURING_DEPLOYMENT` row: Deployment slot setting checkbox UNCHECKED.
+- Apply and Discard buttons at the bottom are both disabled (no pending edits, so the displayed state equals the persisted state).
+
+**Expected result**: The sticky checkbox on `DB_CONNECTION_STRING` matches the `slotConfigNames.appSettingNames` array in `main.bicep` (only `DB_CONNECTION_STRING` is registered as sticky). If the Portal instead showed `FEATURE_FLAG` as sticky or `DB_CONNECTION_STRING` as non-sticky, the runtime behavior in section 4.5 (FEATURE_FLAG swapped, DB stayed) would not reproduce, and the process-restart deltas above would need to be attributed to an unrelated cause such as a worker recycle.
+
+**Next step**: Cross-check this Portal state against section 4.6's programmatic assertions (`feature_swapped = True`, `db_sticky = True`) — the two evidence layers should agree. If they disagree (Portal shows one contract, runtime observes another), suspect a race between Bicep re-deployment and the swap trigger, and re-verify by running `az webapp config appsettings list --slot production` against the parent site resource.
+
 ### 4.8 `/diag/slots` snapshots and config hash evolution
 
 Pre-swap production (`baseline/diag-slots-prod.json`):
@@ -672,6 +692,27 @@ Post-swap sample (`trigger/diag-slots-postswap-20260404T055128Z.json`):
 ```json
 {"config_hash":"4069415d1d95ca3d38f723e476f8956726634a0b7fddf338499168a7d7198b3d","current_config":{"DB_CONNECTION_STRING":"prod-server.database.windows.net","FEATURE_FLAG":"v2","PROCESS_START_UTC":"2026-04-04T05:46:57.025552+00:00","WEBSITE_SLOT_NAME":"Production"}}
 ```
+
+#### 4.8.1 Swap operation activity log (portal verification)
+
+To confirm that the config hash transition captured in the JSON snapshots above is correlated with a distinct ARM control-plane action, the Activity log blade was captured and the "Swap Web App Slots" row was expanded from a fresh live reproduction:
+
+![Azure portal Activity log blade for Web App app-labslot-x6ybh6bakgipy with breadcrumb "Home > app-labslot-x6ybh6bakgipy". Blade heading reads "app-labslot-x6ybh6bakgipy | Activity log" and the left navigation shows Activity log highlighted. The main grid shows 5 items filtered by Subscription "Visual Studio Enterprise Subscription" and Resource "app-labslot-x6ybh6bakgipy". Rows include Get Web App Publishing Profile, Swap Web App Slots (selected/highlighted), 'auditIfNotExists' Policy action, UpdateWebSite, and CreateWebSite. The right complementary detail panel is open on the Swap Web App Slots row with sub-heading "Fri Jul 03 2026 11:34:58 GMT+0900 (Korean Standard Time)" and tabs Summary, JSON, Change history — Summary tab is active. The selected row shows Status "Succeeded". Detail rows show a full ARM resource path ending in "/slots/staging", Operation name "Swap Web App Slots", Time stamp "Fri Jul 03 2026 11:34:58 GMT+0900 (Korean Standard Time)", and Event initiated by "user@example.com".](../../assets/troubleshooting/activity-log/03-slotswap-swap-operation.png)
+
+**Purpose**: Provide an independent ARM control-plane record that the swap operation whose runtime effects are captured in the JSON snapshots above actually completed as a discrete action, correlated in time with the config hash transition from `027d…` (pre-swap) to `4069…` (post-swap). The Activity log and the `/diag/slots` runtime endpoint measure different layers (ARM operation acknowledgement vs. data-plane environment observation), so this capture cross-verifies for existence and time-window alignment — not for exact timestamp equality with `PROCESS_START_UTC`.
+
+**Look for**:
+
+- Blade heading reads "app-labslot-x6ybh6bakgipy | Activity log".
+- The grid contains a row with Operation name "Swap Web App Slots".
+- The selected "Swap Web App Slots" row shows Status "Succeeded".
+- Detail panel Resource path ends in `/slots/staging` — the swap operation is scoped to the source slot per ARM semantics.
+- Detail panel Time stamp falls in the same window as the `PROCESS_START_UTC` regeneration observed in section 4.7's timestamp deltas.
+- Detail panel Event initiated by shows a real identity (sanitized in this capture to `user@example.com`).
+
+**Expected result**: Exactly one "Swap Web App Slots" row per swap trigger, with a Succeeded status. The detail panel time stamp is consistent with (not necessarily identical to) the process-restart deltas in section 4.7 — the ARM operation completes when the platform accepts the swap, while the runtime `PROCESS_START_UTC` advances when the destination worker observes the new environment and re-initializes.
+
+**Next step**: If the Activity log shows the swap as Failed or Cancelled while section 4.6's `feature_swapped = True` still holds, treat it as a control-plane vs. data-plane inconsistency — capture the JSON tab of the failed operation record and open a support case referencing both the Activity log JSON and the `/diag/slots` config hash transition so the platform team can reconcile the two evidence layers.
 
 ### 4.9 KQL export volume summary
 
