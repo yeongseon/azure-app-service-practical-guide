@@ -50,8 +50,25 @@ const PII_RULES = [
     replacement: '00000000000000000000000000000000',
   },
   {
+    // Public IPv4 (any non-RFC1918). Must run BEFORE the RFC1918 rule so
+    // that the RFC1918 replacement value 10.0.0.0 is never seen by this
+    // rule. Replacement uses RFC 5737 TEST-NET-1 (192.0.2.0/24), the IETF
+    // documentation range for IPv4.
+    pattern: /\b(?!10\.)(?!172\.(?:1[6-9]|2[0-9]|3[01])\.)(?!192\.168\.)(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])(?:\.(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])){3}\b/g,
+    replacement: '192.0.2.1',
+  },
+  {
     pattern: /\b(?:10\.(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\.(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\.(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])|172\.(?:1[6-9]|2[0-9]|3[01])\.(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\.(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])|192\.168\.(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\.(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]))\b/g,
     replacement: '10.0.0.0',
+  },
+  {
+    // IPv6 (any, including compressed `::`). Placed at the end so it never
+    // sees hex tokens masked by earlier hex-token rules. Replacement uses
+    // RFC 3849 (2001:db8::/32), the IETF documentation range for IPv6.
+    // Known limitations: does not match IPv4-mapped IPv6 (`::ffff:192.0.2.1`)
+    // or zone identifiers (`fe80::1%eth0`) - neither appears in Portal blades.
+    pattern: /(?<![:.a-fA-F0-9])(?:(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|(?:[0-9a-fA-F]{1,4}:){1,7}:|(?:[0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|(?:[0-9a-fA-F]{1,4}:){1,5}(?::[0-9a-fA-F]{1,4}){1,2}|(?:[0-9a-fA-F]{1,4}:){1,4}(?::[0-9a-fA-F]{1,4}){1,3}|(?:[0-9a-fA-F]{1,4}:){1,3}(?::[0-9a-fA-F]{1,4}){1,4}|(?:[0-9a-fA-F]{1,4}:){1,2}(?::[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:(?::[0-9a-fA-F]{1,4}){1,6}|:(?:(?::[0-9a-fA-F]{1,4}){1,7}|:))(?![:.a-fA-F0-9])/g,
+    replacement: '2001:db8::1',
   },
 ];
 
