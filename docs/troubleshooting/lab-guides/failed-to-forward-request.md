@@ -575,6 +575,26 @@ Important interpretation:
 - Recovery probe capture appears to have occurred during restart/warmup churn.
 - Postfix diagnostics (below) later prove successful recovery and corrected bind.
 
+#### 4.3.3 Live Log Stream during a fresh reproduction
+
+To visually confirm the container never completes startup during the failing phase, a fresh reproduction against a newly-deployed instance produced this Kudu Log Stream evidence:
+
+![Kudu Log Stream (KuduLite /logs endpoint) for app-fwdreq-476vrs7nbusvk showing 480 streamed log entries in the failing window. The stream is filled with red PLAT ERROR rows citing LastError ContainerTimeout with LastErrorTimestamp 07/03/2026 01:09:28. Additional entries include "Container did not start within expected time limit of 230s", "Details: Pinging warmup path to ensure container is ready to receive requests", "State: Stopping, Action: StoppingSite / StoppingSiteContainers", "Site container: app-fwdreq-476vrs7nbusvk terminated during site startup", "Container is terminated. Total time elapsed: 5874 ms", and "Cancelling site startup". The instance identifier displayed is a 12-character truncated hash (4956fd0f71e6...) and the container ID prefix is likewise truncated (f4cc33111242).](../../assets/troubleshooting/kudu/06-fwdreq-process-not-listening.png)
+
+**Purpose**: Prove that the container never completes startup during the failing phase, so no worker process ever listens on any port. Complements the process-level view that Windows-only Kudu Process Explorer would show, since the equivalent Linux endpoint (`/api/processes`) is not supported on the Linux stack.
+
+**Look for**:
+
+- `PLAT ERROR` rows citing `LastError: ContainerTimeout`.
+- Repeated `Container did not start within expected time limit of 230s`.
+- `State: Stopping, Action: StoppingSite / StoppingSiteContainers` sequences.
+- `Site container ... terminated during site startup` events.
+- No `Listening at:` bind announcement from gunicorn anywhere in the stream.
+
+**Expected result**: A continuous stream of `ContainerTimeout` and `Stopping` events with no worker bind lines. This confirms the container fails during startup, before or during gunicorn's bind attempt.
+
+**Next step**: Cross-check programmatically with a Log Analytics KQL query (section 4.5.1) to confirm that `AppServiceConsoleLogs` contains zero bind-line events in the same window.
+
 ### 4.4 HTTP KQL analysis
 
 Source: `trigger/kql-http-20260404T060610Z.json`
@@ -623,6 +643,25 @@ Interpretation:
 
 - Confirms runtime listener used loopback during failing phase.
 - This supports the exact hypothesized mechanism.
+
+#### 4.5.1 Live KQL confirmation from a fresh reproduction
+
+To confirm the analysis programmatically against a freshly-deployed instance, the following Log Analytics query counted bind-line events in the failing 1-hour window:
+
+![Azure portal Log Analytics workspace log-fwdreq-476vrs7nbusvk Logs blade with a New Query 1 tab open. Query editor shows six lines of KQL: three inline comments explaining the failing window and the hypothesis, then AppServiceConsoleLogs, `| where TimeGenerated > ago(1h)`, and `| summarize BindLinesFound = countif(ResultDescription contains "Listening at")`. Toolbar reads Run, Time range Set in query, Show 1000 results, KQL mode. Results tab is active with a single column named BindLinesFound and a single row expanded showing value 0. Bottom-left footer shows execution time 1s 150ms and Display time (UTC+00:00). Bottom-right footer reads Query details, 1 - 1 of 1.](../../assets/troubleshooting/log-analytics/06-fwdreq-bind-line-absent.png)
+
+**Purpose**: Prove programmatically that no `Listening at:` bind announcement was recorded in `AppServiceConsoleLogs` during the failing window in the fresh reproduction, and that this vacuous-zero result is consistent with the container never completing startup (as shown in section 4.3.3).
+
+**Look for**:
+
+- `BindLinesFound = 0` scalar result.
+- Query execution time (`1s 150ms`) indicating a successful query, not a timeout.
+- Row counter `1 - 1 of 1` confirming a single scalar aggregate.
+- Query text matches the stored analysis pattern (`ResultDescription contains "Listening at"`).
+
+**Expected result**: `BindLinesFound = 0`. The container terminated before gunicorn flushed any bind announcement to stdout, so no bind-line events were ingested into `AppServiceConsoleLogs`. This differs from the stored dataset (section 4.5, 47 rows including a loopback bind), which captured a run where gunicorn briefly bound to `127.0.0.1:8000` before the platform gave up on the warmup probe. Both failure modes share the same root cause (loopback binding hard-coded in `appCommandLine`).
+
+**Next step**: Compare with `AppServicePlatformLogs` in the same window, which still contains `ContainerTimeout` events, to prove that the zero bind-line count is a real absence of stdout output, not a Log Analytics ingestion outage.
 
 ### 4.6 Platform KQL analysis (startup/probe timeout evidence)
 
