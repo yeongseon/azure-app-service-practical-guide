@@ -140,6 +140,58 @@ def changed_markdown_files(base_ref: str) -> list[Path]:
     return files
 
 
+HUNK_HEADER_RE = re.compile(r"^@@ -\d+(?:,\d+)? \+(\d+)(?:,(\d+))? @@")
+
+
+def changed_line_ranges(base_ref: str, path: Path) -> list[tuple[int, int]] | None:
+    """Return the added/modified line ranges (1-indexed, inclusive) in ``path``
+    versus ``base_ref``.
+
+    Returns:
+        - ``None`` if the diff cannot be computed. Callers should treat this as
+          "unknown scope, validate everything" so an infrastructure hiccup does
+          not silently disable CLI checks.
+        - An empty list if the file has no added/modified lines (for example a
+          pure-deletion change), meaning no CLI fence or line was changed and
+          therefore no new CLI regressions can have been introduced.
+        - A list of ``(start, end)`` tuples otherwise, one per hunk.
+    """
+    rel_path = str(path.relative_to(ROOT))
+    cmd = ["git", "diff", "--unified=0", base_ref, "--", rel_path]
+    result = subprocess.run(cmd, cwd=ROOT, text=True, capture_output=True)
+    if result.returncode != 0:
+        return None
+    ranges: list[tuple[int, int]] = []
+    for line in result.stdout.splitlines():
+        match = HUNK_HEADER_RE.match(line)
+        if not match:
+            continue
+        new_start = int(match.group(1))
+        new_count = int(match.group(2)) if match.group(2) else 1
+        if new_count == 0:
+            # Pure deletion at this hunk; no added lines in the new file.
+            continue
+        ranges.append((new_start, new_start + new_count - 1))
+    return ranges
+
+
+def overlaps_changed(
+    start: int, end: int, ranges: list[tuple[int, int]] | None
+) -> bool:
+    """Return True if ``[start, end]`` overlaps any changed range.
+
+    Passing ``None`` disables scoping and validates the fence unconditionally.
+    This preserves ``--all`` and ``--files`` behavior when the caller does not
+    compute changed ranges.
+    """
+    if ranges is None:
+        return True
+    for changed_start, changed_end in ranges:
+        if start <= changed_end and changed_start <= end:
+            return True
+    return False
+
+
 def all_markdown_files() -> list[Path]:
     return sorted(DOCS.rglob("*.md"))
 
@@ -214,11 +266,18 @@ def require_sections(
     found = headings(text)
     for name in names:
         if name not in found:
-            add(findings, path, 1, f"{label} document is missing required section '## {name}'")
+            add(
+                findings,
+                path,
+                1,
+                f"{label} document is missing required section '## {name}'",
+            )
 
 
 def validate_tail_sections(findings: list[Finding], path: Path, text: str) -> None:
-    if should_skip_policy(path) or "docs/reference/content-validation-status.md" == rel(path):
+    if should_skip_policy(path) or "docs/reference/content-validation-status.md" == rel(
+        path
+    ):
         return
     if "docs/reference/validation-status.md" == rel(path):
         return
@@ -229,7 +288,12 @@ def validate_tail_sections(findings: list[Finding], path: Path, text: str) -> No
     if not sources:
         add(findings, path, 1, "document is missing final '## Sources' section")
     if see and sources and see.start() > sources.start():
-        add(findings, path, line_of(text, sources.start()), "'## See Also' must appear before '## Sources'")
+        add(
+            findings,
+            path,
+            line_of(text, sources.start()),
+            "'## See Also' must appear before '## Sources'",
+        )
 
 
 def validate_templates(findings: list[Finding], path: Path, text: str) -> None:
@@ -240,7 +304,9 @@ def validate_templates(findings: list[Finding], path: Path, text: str) -> None:
         return
     section = parts[1]
     if section == "best-practices":
-        require_sections(findings, path, text, BEST_PRACTICES_SECTIONS, "Best Practices")
+        require_sections(
+            findings, path, text, BEST_PRACTICES_SECTIONS, "Best Practices"
+        )
     elif section == "operations":
         require_sections(findings, path, text, OPERATIONS_SECTIONS, "Operations")
     elif (
@@ -250,7 +316,9 @@ def validate_templates(findings: list[Finding], path: Path, text: str) -> None:
         and "playbooks" not in parts
         and "first-10-minutes" not in parts
     ):
-        require_sections(findings, path, text, TROUBLESHOOTING_SECTIONS, "Troubleshooting")
+        require_sections(
+            findings, path, text, TROUBLESHOOTING_SECTIONS, "Troubleshooting"
+        )
 
 
 def validate_content_validation(
@@ -266,7 +334,12 @@ def validate_content_validation(
     }
     content_validation = frontmatter.get("content_validation")
     if needs_validation and not isinstance(content_validation, dict):
-        add(findings, path, 1, "platform/best-practices/operations docs require content_validation metadata")
+        add(
+            findings,
+            path,
+            1,
+            "platform/best-practices/operations docs require content_validation metadata",
+        )
         return
     if not isinstance(content_validation, dict):
         return
@@ -275,7 +348,12 @@ def validate_content_validation(
     if status == "verified":
         for claim in claims:
             if isinstance(claim, dict) and claim.get("verified") is False:
-                add(findings, path, 1, "status is verified but at least one core_claim has verified: false")
+                add(
+                    findings,
+                    path,
+                    1,
+                    "status is verified but at least one core_claim has verified: false",
+                )
                 break
 
 
@@ -301,7 +379,12 @@ def validate_mermaid_metadata(
         return
     ids, has_top_level_diagrams = diagram_metadata(frontmatter)
     if has_top_level_diagrams:
-        add(findings, path, 1, "diagram metadata must be under content_sources.diagrams, not top-level diagrams")
+        add(
+            findings,
+            path,
+            1,
+            "diagram metadata must be under content_sources.diagrams, not top-level diagrams",
+        )
     if not isinstance(frontmatter.get("content_sources"), dict):
         # Skip diagram metadata enforcement for files without content_sources;
         # this avoids failing on existing documentation debt.
@@ -313,30 +396,53 @@ def validate_mermaid_metadata(
         nearby = "\n".join(lines[max(0, start - 4) : start - 1])
         match = re.search(r"<!--\s*diagram-id:\s*([A-Za-z0-9_.-]+)\s*-->", nearby)
         if not match:
-            add(findings, path, start, "Mermaid block is missing a preceding diagram-id comment")
+            add(
+                findings,
+                path,
+                start,
+                "Mermaid block is missing a preceding diagram-id comment",
+            )
             continue
         diagram_id = match.group(1)
         if ids and diagram_id not in ids:
-            add(findings, path, start, f"diagram-id '{diagram_id}' is missing from content_sources.diagrams")
+            add(
+                findings,
+                path,
+                start,
+                f"diagram-id '{diagram_id}' is missing from content_sources.diagrams",
+            )
 
 
-def validate_cli_blocks(findings: list[Finding], path: Path, text: str) -> None:
+def validate_cli_blocks(
+    findings: list[Finding],
+    path: Path,
+    text: str,
+    changed_ranges: list[tuple[int, int]] | None = None,
+) -> None:
     if should_skip_policy(path):
         return
     parts = path.relative_to(ROOT).parts
-    require_explanation_table = not ("playbooks" in parts or "first-10-minutes" in parts)
+    require_explanation_table = not (
+        "playbooks" in parts or "first-10-minutes" in parts
+    )
     for start, end, _lang, body, lines in iter_code_fences(text):
         if not re.search(r"(^|\s)az\s+", body):
             continue
         if require_explanation_table and not has_table_near(lines, start, end):
-            add(findings, path, start, "Azure CLI code block needs a nearby command explanation table")
+            if overlaps_changed(start, end, changed_ranges):
+                add(
+                    findings,
+                    path,
+                    start,
+                    "Azure CLI code block needs a nearby command explanation table",
+                )
         for offset, line in enumerate(body.splitlines(), start + 1):
             az_index = line.find("az ")
             if az_index == -1:
                 continue
             az_part = line[az_index:]
             match = AZ_SHORT_FLAG_RE.search(az_part)
-            if match:
+            if match and overlaps_changed(offset, offset, changed_ranges):
                 add(
                     findings,
                     path,
@@ -349,7 +455,12 @@ def validate_generic_phrases(findings: list[Finding], path: Path, text: str) -> 
     for phrase in GENERIC_PHRASES:
         start = text.find(phrase)
         if start != -1:
-            add(findings, path, line_of(text, start), f"generated placeholder phrase remains: {phrase!r}")
+            add(
+                findings,
+                path,
+                line_of(text, start),
+                f"generated placeholder phrase remains: {phrase!r}",
+            )
 
 
 def validate_lab_sections(findings: list[Finding], path: Path, text: str) -> None:
@@ -421,23 +532,52 @@ def looks_placeholder_app_service_hostname(value: str) -> bool:
 def validate_sensitive_values(findings: list[Finding], path: Path, text: str) -> None:
     for number, line in enumerate(text.splitlines(), 1):
         if SUBSCRIPTION_ID_RE.search(line):
-            add(findings, path, number, "real-looking subscription ID must be replaced with <subscription-id>")
+            add(
+                findings,
+                path,
+                number,
+                "real-looking subscription ID must be replaced with <subscription-id>",
+            )
         app_key = APP_INSIGHTS_KEY_RE.search(line)
         if app_key and not looks_placeholder_guid(app_key.group(1)):
-            add(findings, path, number, "Application Insights instrumentation key must be masked")
+            add(
+                findings,
+                path,
+                number,
+                "Application Insights instrumentation key must be masked",
+            )
         if SECRET_VALUE_RE.search(line):
-            add(findings, path, number, "secret-like value must be replaced with a placeholder")
+            add(
+                findings,
+                path,
+                number,
+                "secret-like value must be replaced with a placeholder",
+            )
         host_match = WEB_APP_HOST_RE.search(line)
-        if host_match and not looks_placeholder_app_service_hostname(host_match.group(0)):
-            add(findings, path, number, "live-looking App Service hostname must be replaced with a placeholder")
+        if host_match and not looks_placeholder_app_service_hostname(
+            host_match.group(0)
+        ):
+            add(
+                findings,
+                path,
+                number,
+                "live-looking App Service hostname must be replaced with a placeholder",
+            )
         if SENSITIVE_CONTEXT_RE.search(line):
             for guid in GUID_RE.findall(line):
                 if not looks_placeholder_guid(guid):
-                    add(findings, path, number, "real-looking Azure identifier must be masked")
+                    add(
+                        findings,
+                        path,
+                        number,
+                        "real-looking Azure identifier must be masked",
+                    )
                     break
 
 
-def validate_file(path: Path) -> list[Finding]:
+def validate_file(
+    path: Path, changed_ranges: list[tuple[int, int]] | None = None
+) -> list[Finding]:
     text = path.read_text(encoding="utf-8", errors="ignore")
     frontmatter, _body_start = load_frontmatter(text)
     findings: list[Finding] = []
@@ -445,7 +585,7 @@ def validate_file(path: Path) -> list[Finding]:
     validate_templates(findings, path, text)
     validate_content_validation(findings, path, frontmatter, text)
     validate_mermaid_metadata(findings, path, text, frontmatter)
-    validate_cli_blocks(findings, path, text)
+    validate_cli_blocks(findings, path, text, changed_ranges=changed_ranges)
     validate_generic_phrases(findings, path, text)
     validate_lab_sections(findings, path, text)
     validate_file_references(findings, path, text)
@@ -456,22 +596,35 @@ def validate_file(path: Path) -> list[Finding]:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     group = parser.add_mutually_exclusive_group()
-    group.add_argument("--changed-only", action="store_true", help="validate Markdown files changed from --base-ref")
-    group.add_argument("--all", action="store_true", help="validate every Markdown file under docs/")
-    parser.add_argument("--base-ref", default="HEAD~1", help="base ref for --changed-only")
+    group.add_argument(
+        "--changed-only",
+        action="store_true",
+        help="validate Markdown files changed from --base-ref",
+    )
+    group.add_argument(
+        "--all", action="store_true", help="validate every Markdown file under docs/"
+    )
+    parser.add_argument(
+        "--base-ref", default="HEAD~1", help="base ref for --changed-only"
+    )
     parser.add_argument("--files", nargs="*", help="explicit files to validate")
-    parser.add_argument("--max-errors", type=int, default=200, help="maximum number of errors to print")
+    parser.add_argument(
+        "--max-errors", type=int, default=200, help="maximum number of errors to print"
+    )
     return parser.parse_args()
 
 
 def main() -> int:
     args = parse_args()
+    changed_ranges_map: dict[Path, list[tuple[int, int]] | None] = {}
     if args.files:
         files = [ROOT / item for item in args.files if item.endswith(".md")]
     elif args.all:
         files = all_markdown_files()
     else:
         files = changed_markdown_files(args.base_ref)
+        for path in files:
+            changed_ranges_map[path] = changed_line_ranges(args.base_ref, path)
     files = [path for path in files if path.exists() and DOCS in path.parents]
     if not files:
         print("No documentation files to validate.")
@@ -479,7 +632,9 @@ def main() -> int:
 
     findings: list[Finding] = []
     for path in files:
-        findings.extend(validate_file(path))
+        findings.extend(
+            validate_file(path, changed_ranges=changed_ranges_map.get(path))
+        )
 
     if not findings:
         print(f"Documentation quality gate passed for {len(files)} file(s).")
@@ -494,7 +649,9 @@ def main() -> int:
             print(f"{relative}:{finding.line}: error: {finding.message}")
     if len(findings) > args.max_errors:
         print(f"... {len(findings) - args.max_errors} more error(s) not shown")
-    print(f"Documentation quality gate failed: {len(findings)} error(s) across {len(files)} file(s).")
+    print(
+        f"Documentation quality gate failed: {len(findings)} error(s) across {len(files)} file(s)."
+    )
     return 1
 
 
