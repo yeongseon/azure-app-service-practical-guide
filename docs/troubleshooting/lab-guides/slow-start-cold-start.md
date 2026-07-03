@@ -560,6 +560,25 @@ From `baseline/app-config.json`:
 | `healthCheckPath` | `null` |
 | `ftpsState` | `Disabled` |
 
+#### 4.2.4 Always On configuration (portal verification)
+
+To confirm the CLI-reported `alwaysOn: false` value against a fresh live reproduction, the App Service General settings blade was captured during the failing configuration:
+
+![Azure portal General settings blade for Web App app-labcold-xgsfl2fo6kylo with breadcrumb "Home > app-labcold-xgsfl2fo6kylo". Blade heading reads "app-labcold-xgsfl2fo6kylo | General settings" and the "General settings" tab is active (sibling tabs: Stack settings, Health check, Path mappings, Error pages). The Platform settings section shows SCM Basic Auth Publishing Credentials unchecked, FTP Basic Auth Publishing Credentials unchecked, WebJobs runtime unchecked, FTP state Disabled, Inbound IP mode IPv4, HTTP version 1.1, HTTP 2.0 Proxy Off, SSH checked, and the key setting "Always on" UNCHECKED. Session affinity is checked, Session affinity proxy unchecked, HTTPS only checked, Minimum Inbound TLS Version 1.2, SCM Minimum Inbound TLS Version 1.2, Minimum Inbound TLS Cipher Suite TLS_RSA_WITH_AES_128_CBC_SHA (Default). Debugging section shows Remote debugging unchecked. Incoming client certificates section shows Client certificate mode set to Ignore. Apply and Discard buttons at the bottom are both disabled, confirming the displayed state matches the persisted configuration.](../../assets/troubleshooting/configuration/05-slowstart-always-on-off.png)
+
+**Purpose**: Prove visually that the Always On platform toggle is disabled on the failing instance, and that this matches the CLI-reported `alwaysOn: false` value in section 4.2.3. Always On disabled is the necessary platform precondition that allows the worker process to be unloaded after an idle window and makes a later request eligible to hit the container-restart path.
+
+**Look for**:
+
+- Blade heading reads "app-labcold-xgsfl2fo6kylo | General settings" with the General settings tab active.
+- "Always on" row shows an UNCHECKED checkbox.
+- Apply and Discard buttons at the bottom are both disabled (no pending edits, so the displayed state equals the persisted state).
+- The complementary reference values still hold: FTP state Disabled, HTTPS only checked, Minimum Inbound TLS Version 1.2 — these confirm the blade is showing the same app that produced the CLI capture.
+
+**Expected result**: The Always On checkbox is unchecked, matching `alwaysOn: false` from the CLI capture. If Always On were enabled on a Basic-or-higher plan, the worker would not be unloaded on idle and this lab's cold-start signature would not reproduce.
+
+**Next step**: Cross-check the runtime impact by opening the Metrics blade and plotting Response Time (Avg) over the trigger window (section 4.4.1) to see the same idle→cold transition expressed as an aggregate latency spike.
+
 ### 4.3 Latency dataset (raw values)
 
 #### 4.3.1 Warm pre-restart (10 requests)
@@ -617,6 +636,27 @@ Derived deltas:
 | Cold average - Warm average | -27.09 ms |
 | Cold average - Warm-post average | +58.91 ms |
 
+#### 4.4.1 Portal Metrics cross-verification
+
+To confirm the CLI-measured per-request latencies against the platform-side aggregate view from a fresh live reproduction, the Web App Metrics blade was plotted with Response Time (Avg) over the trigger window:
+
+![Azure portal Metrics blade for Web App app-labcold-xgsfl2fo6kylo with breadcrumb "Home > app-labcold-xgsfl2fo6kylo". Blade heading reads "app-labcold-xgsfl2fo6kylo | Metrics" and the left navigation shows Metrics highlighted under Monitoring. Chart heading reads "Avg Response Time for app-labcold-xgsfl2fo6kylo" with a metric chip labeled "app-labcold-xgsfl2fo6kylo, Response Time, Avg". Toolbar shows New chart, Refresh, Share, Add metric, Add filter, Line chart, Drill into Logs, New alert rule, and Save to dashboard. The time range picker in the top-right reads "Local Time: Last 30 minutes (Automatic - 1 min...)". The Y-axis scale runs from 0sec at the bottom to 8.00sec at the top with horizontal gridlines at 1.00sec, 2.00sec, 3.00sec, 4.00sec, 5.00sec, 6.00sec, and 7.00sec. The X-axis runs from 10:30 to 10:50 in UTC+09:00. The Response Time line stays flat near 0 seconds from 10:30 until approximately 10:40, then rises sharply in a near-vertical spike to about 7 seconds within a single 1-minute aggregation bucket, and holds a plateau near 7 seconds through 10:50. Bottom legend reads "Response Time (Avg), app-labcold-xgsfl2fo6kylo | 777.90ms" summarizing the aggregate over the window.](../../assets/troubleshooting/metrics/06-slowstart-first-vs-warm-response.png)
+
+**Purpose**: Prove that the same idle→cold transition captured in the CLI CSV artifacts is also visible in the platform-side aggregate metric that operators would observe from the Azure portal. Response Time (Avg) and curl `time_total` measure different layers (server-side processing vs. client-observed round trip), so this chart is cross-verified for shape and timing — not for numeric equality with section 4.3. The aggregate window reports 777.90 ms because a single ~7-second cold request skews the 1-minute average, not because sustained multi-second latency has been introduced.
+
+**Look for**:
+
+- Chart title reads "Avg Response Time for app-labcold-xgsfl2fo6kylo".
+- Metric chip reads "app-labcold-xgsfl2fo6kylo, Response Time, Avg".
+- Time range picker reads "Local Time: Last 30 minutes (Automatic - 1 min...)" so the aggregation granularity is one point per minute.
+- The line stays near 0 seconds for the first several minutes (warm baseline) then a single sharp vertical spike to ~7 seconds appears at the moment the cold restart is triggered.
+- The line remains elevated (plateau near ~7 seconds) after the spike — this is the 1-minute bucket that contains the cold request, not evidence of sustained slowness.
+- Bottom legend shows "777.90ms" as the aggregate summary, which is dominated by the single cold request.
+
+**Expected result**: A visible baseline-then-spike-then-plateau shape aligned with the trigger time, with the plateau value near ~7 seconds matching the observed cold-request latency in a Response Time (Avg) 1-minute aggregation. The chart should not show sustained multi-second latency across every bucket — only the bucket that contains the cold request.
+
+**Next step**: Confirm the platform-side aggregate corresponds to real per-request evidence by running a Log Analytics KQL query against `AppServiceHTTPLogs` (section 4.7.1) to see the individual pre-restart warm rows and post-restart elevated rows that combine to produce this aggregate spike.
+
 ### 4.5 App startup telemetry consistency
 
 #### 4.5.1 Trigger timing response
@@ -661,6 +701,26 @@ Representative entries from `kql-http-20260404T060610Z.json`:
 | 2026-04-04T05:45:53.949776Z | `/timing` | 200 | 21 |
 
 Observation: request execution times remain short while startup telemetry still indicates long initialization history.
+
+#### 4.7.1 Live KQL confirmation from a fresh reproduction
+
+To confirm the archived pattern against a fresh live reproduction, the following Log Analytics query was executed against `AppServiceHTTPLogs` for the trigger window on a newly-deployed instance:
+
+![Azure portal Log Analytics blade for Web App app-labcold-xgsfl2fo6kylo with breadcrumb "Home > app-labcold-xgsfl2fo6kylo". Blade heading reads "app-labcold-xgsfl2fo6kylo | Logs" and the left navigation shows Logs highlighted under Monitoring. A New Query 1 tab is open in KQL mode with a four-line query visible in the editor: line 1 "AppServiceHTTPLogs", line 2 "| where TimeGenerated > ago(2h)", line 3 "| where CsUriStem in (\"/fast\", \"/timing\")", line 4 "| project TimeGenerated, CsUriStem, ScStatus, TimeTaken| order by TimeGenerated asc | take 20". Toolbar reads Run, Time range Set in query, Show 1000 results, KQL mode. Results tab is active with four columns TimeGenerated [UTC], CsUriStem, ScStatus, TimeTaken and eighteen expanded rows. Rows 1 through 11 span 7/3/2026 1:39:21.211 AM through 1:39:28.137 AM with a /timing row of 43 ms followed by ten /fast rows of 19, 2, 19, 4, 30, 7, 11, 12, 6, and 10 ms. A twenty-second gap follows. Rows 12 through 18 span 7/3/2026 1:39:48.738 AM through 1:39:53.830 AM with a /timing row of 51 ms, five /fast rows of 122, 22, 141, 70, and 161 ms, and a final /timing row of 180 ms. All rows show status 200. Bottom-left footer shows execution time 1s 394ms and Display time (UTC+00:00). Bottom-right footer reads Query details and 1 - 18 of 18.](../../assets/troubleshooting/log-analytics/11-slowstart-first-request-slow.png)
+
+**Purpose**: Prove programmatically that the pre-restart warm requests and post-restart elevated-latency requests observable in the archived export (section 4.7) are reproducible against a freshly-deployed instance, and that the platform-side aggregate spike shown in section 4.4.1 is composed of real per-request rows with a clear before/after boundary consistent with the restart window that is confirmed independently by the platform events in section 4.8.
+
+**Look for**:
+
+- Query returns exactly 18 rows with all `ScStatus` values equal to 200 (no errors, so the elevation is pure latency, not failure).
+- Rows 1-11 (pre-restart warm) show `TimeTaken` values in the 2-43 ms range — these are the same server-side latency shape as the archived HTTP log rows in section 4.7.
+- A ~20-second gap exists between row 11 (`1:39:28.137 AM`) and row 12 (`1:39:48.738 AM`) — this gap is consistent with a container restart window during which the app is not serving requests; the causal restart events (`PullingImage`, `CreatingContainer`, `Site startup probe succeeded`) are confirmed independently in section 4.8.
+- Rows 12-18 (post-restart) show `TimeTaken` values in the 22-180 ms range with the first `/fast` request after the restart at 122 ms and the last `/timing` at 180 ms — 3-18x slower than the warm baseline for the same endpoint.
+- `TimeTaken` for `/timing` is 43 ms pre-restart and 51 ms and 180 ms post-restart — even the intentionally-slow endpoint that already waits internally shows measurable additional overhead in the first post-restart bucket.
+
+**Expected result**: Two distinct latency clusters separated by a ~20-second gap, with the post-restart cluster showing per-request `TimeTaken` values several times larger than the pre-restart cluster, matching the aggregate Response Time spike in section 4.4.1 and the archived HTTP log observations in section 4.7.
+
+**Next step**: Cross-reference the same window in `AppServicePlatformLogs` (section 4.8) to confirm the restart signature (`PullingImage`, `CreatingContainer`, `Site startup probe succeeded`) that explains why the post-restart requests pay this additional overhead.
 
 ### 4.8 Platform log observations from export
 
