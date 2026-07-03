@@ -718,6 +718,26 @@ Key insight:
 - `/tmp` remained with substantial free bytes,
   while `/home` exhausted to zero.
 
+#### 4.5.2 Kudu SSH `df -h` output (portal verification)
+
+To cross-verify the final `/home` used_percent = 100.00 row in the §4.5.1 snapshots table against live filesystem state, the Kudu SCM Debug Console was opened against the same Web App from a fresh live reproduction and `df -h` was executed with the Filesystem column intentionally omitted for PII safety:
+
+![Kudu SCM Diagnostic Console for Web App app-labdisk-uz2rvn6exc56q showing an SSH terminal session. Top navigation bar reads Azure App Service with tabs Environment, SSH, Bash (active), Log stream, AI Playground Preview, and account label user@example.com on the right. Terminal displays the tabular output of `df -h --output=size,used,avail,pcent,target` (Filesystem column intentionally omitted for PII safety) with 10 mount rows: overlay root at 35G/20G/15G 59% /, tmpfs /dev at 64M/0/64M 0%, shm /dev/shm at 64M/0/64M 0%, tmpfs /sys/fs/cgroup at 928M/0/928M 0%, SMB share /home at 10G/10G/0 100%, /dev/sda3 /temp at 63G/6.9G/53G 12%, devtmpfs /dev/tty at 4.0M/0/4.0M 0%, tmpfs /proc/acpi at 928M/0/928M 0%, tmpfs /sys/firmware at 928M/0/928M 0%, tmpfs /proc/scsi at 928M/0/928M 0%. The /home row shows 100% Use%, contrasted with 0-59% on the other 9 mounts. Bottom status bar reads "SSH CONNECTION ESTABLISHED" with a green background. Shell prompt shows kudu_ssh_user followed by a short 12-character container hostname, then :/$. No source-device paths or SMB mount paths are shown because the Filesystem column is excluded; only the mounted-on targets remain visible.](../../assets/troubleshooting/kudu/07-nolabspace-df-output.png)
+
+**Purpose**: Cross-verify visually that the platform-reported `/home` mount is at 100% Use% at the same point in time when the app's own `/disk-status` endpoint reports `used_percent = 100.00` and `free_bytes = 0` (row 6 of the §4.5.1 snapshots table). This complements the app-layer JSON evidence by showing the OS-layer `df` view directly, so a reviewer can rule out the possibility that the app's `shutil.disk_usage()` reading disagrees with what the kernel reports.
+
+**Look for**:
+
+- Top navigation bar shows the Kudu SCM header ("Azure App Service") with the Bash tab active — this confirms the capture is from the Kudu Debug Console, not the runtime container's own shell.
+- The row `10G 10G 0 100% /home` — Size, Used, Avail, Use%, Mounted on. Used equals Size, Available is 0, Use% is 100.
+- Every other mount is well below 100% (max is 59% on the overlay root at 35G/20G) — proving the exhaustion is scoped to the `/home` SMB share and is not a broader disk failure.
+- The Filesystem column is intentionally missing (only 5 columns instead of the default 6) because `--output=size,used,avail,pcent,target` was used to prevent the SMB mount path from being rendered in the capture.
+- Bottom green status bar reads "SSH CONNECTION ESTABLISHED", indicating a live SSH channel into the container.
+
+**Expected result**: The `/home` Use% shown in this Kudu capture (100%) equals the `used_percent` value in the final row of the §4.5.1 snapshots table (100.00) — the OS-layer `df` output and the app-layer `/disk-status` endpoint agree that the mount is fully exhausted. If instead the Kudu output showed `/home` at some intermediate percent (say 87%) while the app kept reporting 100%, that disagreement would suggest a stale disk-usage cache inside the Python process or a bug in `shutil.disk_usage()` on this platform, and the ENOSPC classification would need to be reconsidered.
+
+**Next step**: If a future reproduction shows the same `/home 100%` state in Kudu but the app's `/health` endpoint still returns 200 (as documented in §4.10), this is the expected split-behavior signature — the app process is alive and answers health probes, but any code path that writes to `/home` will raise `OSError: [Errno 28]`. Do not restart the app to "clear" the state; first delete or move files out of `/home` (for example via the app's cleanup path or manual file removal) so the same evidence pattern can be captured again on the next cycle.
+
 ### 4.6 HTTP telemetry evidence
 
 Artifact: `trigger/kql-http-20260404T060610Z.json`
@@ -759,6 +779,27 @@ Rows containing `ENOSPC` indicators:
 
 This confirms application-level exception path,
 not only HTTP status symptom.
+
+#### 4.7.1 Log Analytics KQL query (portal verification)
+
+To cross-verify the two `ENOSPC` console rows exported to `trigger/kql-console-20260404T060610Z.json` above, the Log Analytics workspace Logs blade was opened against the same workspace from a fresh live reproduction and the identical KQL query was executed interactively:
+
+![Azure portal Log Analytics workspace Logs blade for workspace log-labdisk-uz2rvn6exc56q with breadcrumb "Home > log-labdisk-uz2rvn6exc56q". Blade heading reads "log-labdisk-uz2rvn6exc56q | Logs" and the sub-heading reads "Log Analytics workspace". The left navigation shows Logs highlighted, with sibling entries Overview, Activity log, Access control (IAM), Tags, Diagnose and solve problems, Resource visualizer, Settings, Classic, Monitoring, Automation, and Help. The query editor tab reads "New Query 1*" and the KQL editor shows the query `AppServiceConsoleLogs | where ResultDescription has "No space left on device" | project TimeGenerated, ResultDescription | order by TimeGenerated desc | take 10`. The query bar has a green Run button, Time range set to "Last 24 hours", Show set to "1000 results", and the mode dropdown is on "KQL mode". The Results tab is active (sibling tab: Chart). The grid has two columns "TimeGenerated [UTC]" and "ResultDescription" with two rows: row one is "7/3/2026, 3:34:09.791 AM" and "OSError: [Errno 28] No space left on device"; row two is "7/3/2026, 3:34:09.773 AM" and "[2026-07-03 03:34:09,755] ERROR in app: fill-home failed with disk error: [Errno 28] No space left on device". Bottom left shows query duration "0s 459ms". Bottom right shows "Query details" and pagination "1 - 2 of 2".](../../assets/troubleshooting/log-analytics/07-nolabspace-enospc-console-kql.png)
+
+**Purpose**: Provide an independent Portal-side execution of the same KQL query whose exported results are stored in `trigger/kql-console-20260404T060610Z.json`, so a reviewer can confirm that the two `ENOSPC` rows shown in the §4.7 table are not an artifact of local export tooling (`az monitor log-analytics query`) but are the same records the Log Analytics service returns to an interactive Portal query against the `AppServiceConsoleLogs` table.
+
+**Look for**:
+
+- Blade heading reads "log-labdisk-uz2rvn6exc56q | Logs" and the sub-heading reads "Log Analytics workspace" — this confirms the query ran against the same workspace used for this lab's exported KQL evidence.
+- The KQL editor shows exactly the query `AppServiceConsoleLogs | where ResultDescription has "No space left on device" | project TimeGenerated, ResultDescription | order by TimeGenerated desc | take 10` — the `has` operator matches whole tokens, so the filter is anchored on the specific phrase "No space left on device" and cannot silently match a substring inside an unrelated log line.
+- The Results grid shows exactly 2 rows (pagination "1 - 2 of 2") — the same row count as the §4.7 table.
+- Row 1 ResultDescription contains `OSError: [Errno 28] No space left on device` — Python's standard exception message for ENOSPC.
+- Row 2 ResultDescription contains `[Errno 28] No space left on device` inside the app-level `fill-home failed with disk error` string — the app's own exception handler surfaced the same errno.
+- Query duration in bottom left reads a small millisecond value (here `0s 459ms`) — confirming the workspace is not throttled and the query hit indexed data.
+
+**Expected result**: The row count in the Portal (2) matches the row count in the exported JSON referenced by §4.7 (also 2). The two `TimeGenerated` values in the Portal fall within seconds of each other and are ordered by descending time, consistent with a single write attempt raising the OS-level `OSError` (row 1) and the app's exception handler logging the wrapped error message (row 2, logged milliseconds earlier). If instead the Portal returned zero rows against the same 24-hour window, suspect a Diagnostic Settings misconfiguration on the Web App (the `AppServiceConsoleLogs` category may not be enabled) and re-check `az monitor diagnostic-settings list --resource $APP` before concluding the ENOSPC log path is broken.
+
+**Next step**: If the KQL row count in a future reproduction is much higher than 2 (say 20+), the app is retrying the failing `/fill-home` endpoint on its own — check the client-side reproduction script (`labs/no-space-left-on-device/trigger.sh`) for an inadvertent retry loop, because the intended lab shape is a single failed write followed by manual investigation, not a retry storm.
 
 ### 4.8 Platform telemetry context
 
