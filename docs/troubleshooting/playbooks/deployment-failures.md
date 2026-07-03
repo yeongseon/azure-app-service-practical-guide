@@ -223,7 +223,7 @@ Sample output:
     "complete": true,
     "deployer": "ZipDeploy",
     "end_time": "2026-04-07T08:11:39Z",
-    "id": "e4a2a5d6-1111-2222-3333-444444444444",
+    "id": "00000000-0000-0000-0000-000000000000",
     "message": "Created via push deployment"
   }
 ]
@@ -248,7 +248,7 @@ Sample output:
 
 ```json
 {
-  "host": "app-contoso.azurewebsites.net",
+  "host": "<azurewebsites-domain-redacted>",
   "slotSwapStatus": {
     "destinationSlotName": "production",
     "sourceSlotName": "staging",

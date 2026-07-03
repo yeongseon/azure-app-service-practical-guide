@@ -65,7 +65,7 @@ For this incident class, prove DNS answer, route path, and policy allowance inde
 
 ## 3. Competing Hypotheses
 - H1: Private DNS zone is missing, unlinked, or has wrong A record.
-- H2: Custom DNS does not forward `privatelink.*` zones correctly (e.g., missing conditional forwarding to Azure DNS `168.63.129.16`, or enterprise resolver misconfiguration).
+- H2: Custom DNS does not forward `privatelink.*` zones correctly (e.g., missing conditional forwarding to Azure DNS `<ip-redacted>`, or enterprise resolver misconfiguration).
 - H3: Route confusion (route-all off, conflicting UDR, split-horizon design mismatch).
 - H4: Private path is blocked or stale (NSG/firewall deny, endpoint not approved, old DNS cache).
 
@@ -88,7 +88,7 @@ For this incident class, prove DNS answer, route path, and policy allowance inde
 
 #### Portal view: Networking blade as the layer-separation control panel
 
-![Azure portal Networking blade showing Inbound traffic configuration column (Public network access Enabled with no access restrictions Using default behavior, App assigned address Not configured, Private endpoints 0 private endpoints, Inbound IPv4 20.200.197.3, Inbound IPv6 2603:1040:f05:3::208, Optional inbound services Azure Front Door) and Outbound traffic configuration column (Virtual network integration Not configured, Hybrid connections Not configured, Outbound DNS Default Azure-provided, list of Outbound IPv4 and IPv6 addresses), Integration subnet configuration card showing NAT gateway N/A, NSG N/A, UDR N/A, toolbar with Refresh, Troubleshoot, Send us your feedback buttons](../../../assets/troubleshooting/networking/01-networking-hub.png)
+![Azure portal Networking blade showing Inbound traffic configuration column (Public network access Enabled with no access restrictions Using default behavior, App assigned address Not configured, Private endpoints 0 private endpoints, Inbound IPv4 <ip-redacted>, Inbound IPv6 2603:1040:f05:3::208, Optional inbound services Azure Front Door) and Outbound traffic configuration column (Virtual network integration Not configured, Hybrid connections Not configured, Outbound DNS Default Azure-provided, list of Outbound IPv4 and IPv6 addresses), Integration subnet configuration card showing NAT gateway N/A, NSG N/A, UDR N/A, toolbar with Refresh, Troubleshoot, Send us your feedback buttons](../../../assets/troubleshooting/networking/01-networking-hub.png)
 
 The `Networking` blade enforces the playbook's central diagnostic principle — Private Endpoint health, DNS resolution, and route policy are separate layers and must be verified independently — by surfacing each layer in its own card. Verify in this exact order: first the `Outbound traffic configuration > Virtual network integration` field to confirm the integration subnet exists (the prerequisite for private DNS zone lookups to even reach the integration VNet); second the `Outbound DNS` field to confirm the resolver path (`Default (Azure-provided)` returns private zone records only if zones are linked to the integration VNet, while `Custom` bypasses Azure DNS entirely — H2 territory); third the `Integration subnet configuration` card's `NSG` and `UDR` fields to confirm no route table is steering traffic to a firewall that blocks the dependency's private IP (H3/H4). The `Inbound traffic configuration > Private endpoints` link shows endpoints *into* the App Service itself, which is unrelated to outbound private-endpoint dependency resolution — a common point of confusion this playbook explicitly disambiguates. Use the `Troubleshoot` toolbar button to launch the integrated network diagnostics that test each layer's reachability with one click.
 
@@ -245,7 +245,7 @@ VirtualNetworkSubnetId                                                          
 ```
 
 !!! tip "How to Read This"
-    In the dns-vnet incident, `/resolve` proved `stlabdnsvnet....blob.core.windows.net` and `stlabdnsvnet....privatelink.blob.core.windows.net` resolved to public `20.60.200.161`, and `/connect` showed SSL failure to the privatelink URL. That evidence is definitive for DNS/link/forwarding misconfiguration, not endpoint approval failure.
+    In the dns-vnet incident, `/resolve` proved `stlabdnsvnet....blob.core.windows.net` and `stlabdnsvnet....privatelink.blob.core.windows.net` resolved to public `<ip-redacted>`, and `/connect` showed SSL failure to the privatelink URL. That evidence is definitive for DNS/link/forwarding misconfiguration, not endpoint approval failure.
 
 ## 6. Validation and Disproof by Hypothesis
 
@@ -278,7 +278,7 @@ AppServiceConsoleLogs
 
 ### H2: Custom DNS is not forwarding to Azure DNS
 **Signals that support**
-- Query against custom DNS fails, but query against `168.63.129.16` returns expected private IP.
+- Query against custom DNS fails, but query against `<ip-redacted>` returns expected private IP.
 - Failures affect multiple private endpoint dependencies.
 
 **Signals that weaken**
@@ -289,7 +289,7 @@ AppServiceConsoleLogs
 ```bash
 az network vnet show --resource-group <resource-group> --name <vnet-name> --query "dhcpOptions.dnsServers"
 nslookup <dependency-fqdn> <custom-dns-ip>
-nslookup <dependency-fqdn> 168.63.129.16
+nslookup <dependency-fqdn> <ip-redacted>
 az webapp show --resource-group <resource-group> --name <app-name> --query "siteConfig.vnetRouteAllEnabled"
 ```
 
@@ -360,7 +360,7 @@ AppServiceConsoleLogs
 | Signal | Normal private endpoint path | Abnormal route/DNS confusion pattern |
 |---|---|---|
 | Public storage FQDN resolution | May resolve publicly from non-private path contexts | In-app private scenario should use private chain, not public answer |
-| `*.privatelink.blob.core.windows.net` resolution | Resolves to private IP (10.x) tied to private endpoint NIC | Resolves to public IP `20.60.200.161` |
+| `*.privatelink.blob.core.windows.net` resolution | Resolves to private IP (10.x) tied to private endpoint NIC | Resolves to public IP `<ip-redacted>` |
 | `/connect` to privatelink URL | TLS/connect success using private route | SSL/connect failure due to public endpoint routing |
 | Private endpoint state | Approved/Succeeded and matched DNS mapping | Endpoint may appear healthy while DNS points elsewhere |
 | App/platform startup logs | Healthy | Healthy (not a startup issue) |
@@ -368,14 +368,14 @@ AppServiceConsoleLogs
 
 ## 7. Likely Root Cause Patterns
 - Pattern A: Private DNS zone link missing for the integration VNet.
-- Pattern B: Custom DNS forwarder does not correctly resolve `privatelink.*` zones (missing conditional forwarding to Azure DNS `168.63.129.16` or Azure DNS Private Resolver misconfiguration).
+- Pattern B: Custom DNS forwarder does not correctly resolve `privatelink.*` zones (missing conditional forwarding to Azure DNS `<ip-redacted>` or Azure DNS Private Resolver misconfiguration).
 - Pattern C: Route-all expectation mismatch with UDR/firewall design.
 - Pattern D: NSG/firewall deny introduced during policy hardening.
 - Pattern E: Endpoint recreation changed private IP, but caches retained old mapping.
 
 ## 8. Immediate Mitigations
 - Fix zone link and A record for the affected private zone. **Risk: Low**.
-- Add conditional forwarding for private zones to `168.63.129.16`. **Risk: Medium** (shared impact if misconfigured).
+- Add conditional forwarding for private zones to `<ip-redacted>`. **Risk: Medium** (shared impact if misconfigured).
 - Align route-all and UDR behavior with intended architecture. **Risk: Medium** (egress behavior can shift broadly).
 - Add explicit allow rules for integration subnet to endpoint IP/port. **Risk: Medium** (scope carefully).
 - Temporarily shorten DNS TTL during cutover and monitor cache convergence. **Risk: Low**.

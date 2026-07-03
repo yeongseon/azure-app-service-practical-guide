@@ -243,7 +243,13 @@ def validate_templates(findings: list[Finding], path: Path, text: str) -> None:
         require_sections(findings, path, text, BEST_PRACTICES_SECTIONS, "Best Practices")
     elif section == "operations":
         require_sections(findings, path, text, OPERATIONS_SECTIONS, "Operations")
-    elif section == "troubleshooting" and "lab-guides" not in parts and "kql" not in parts:
+    elif (
+        section == "troubleshooting"
+        and "lab-guides" not in parts
+        and "kql" not in parts
+        and "playbooks" not in parts
+        and "first-10-minutes" not in parts
+    ):
         require_sections(findings, path, text, TROUBLESHOOTING_SECTIONS, "Troubleshooting")
 
 
@@ -317,10 +323,12 @@ def validate_mermaid_metadata(
 def validate_cli_blocks(findings: list[Finding], path: Path, text: str) -> None:
     if should_skip_policy(path):
         return
+    parts = path.relative_to(ROOT).parts
+    require_explanation_table = not ("playbooks" in parts or "first-10-minutes" in parts)
     for start, end, _lang, body, lines in iter_code_fences(text):
         if not re.search(r"(^|\s)az\s+", body):
             continue
-        if not has_table_near(lines, start, end):
+        if require_explanation_table and not has_table_near(lines, start, end):
             add(findings, path, start, "Azure CLI code block needs a nearby command explanation table")
         for offset, line in enumerate(body.splitlines(), start + 1):
             az_index = line.find("az ")

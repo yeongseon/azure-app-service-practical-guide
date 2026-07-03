@@ -653,7 +653,9 @@ Every document ends with these tail sections (in this order):
 
 ### Canonical Document Templates
 
-Every document follows one of 7 templates based on its section. Do not invent new structures.
+Every document follows one of 9 templates based on its section. Do not invent new structures.
+
+Troubleshooting content specifically supports three template variants: **Troubleshooting docs** (symptom → resolution) for symptom-oriented pages under `docs/troubleshooting/` (excluding `playbooks/`, `first-10-minutes/`, `lab-guides/`, `kql/`), **Numbered Playbook** for hypothesis-driven investigation guides under `docs/troubleshooting/playbooks/`, and **First 10 Minutes Runbook** for rapid-triage decision guides under `docs/troubleshooting/first-10-minutes/`. The document quality validator (`scripts/validate_doc_quality.py`) applies the section-template check only to symptom-oriented pages, and exempts playbooks and first-10-minutes runbooks from the nearby CLI explanation table requirement because those variants embed CLI in investigation contexts (KQL follow-ups, hypothesis validation) rather than as reader-executable setup steps.
 
 #### Platform docs
 
@@ -719,6 +721,46 @@ Brief introduction
 ## See Also
 ## Sources
 ```
+
+Scope: symptom-oriented pages under `docs/troubleshooting/` that are not playbooks, first-10-minutes runbooks, lab guides, or KQL packs.
+
+#### Numbered Playbook (Troubleshooting variant)
+
+```text
+# Title
+## 1. Summary
+## 2. Common Misreadings
+## 3. Competing Hypotheses
+## 4. What to Check First
+## 5. Evidence to Collect
+## 6. Validation and Disproof by Hypothesis
+## 7. Likely Root Cause Patterns
+## 8. Immediate Mitigations
+## See Also
+## Sources
+```
+
+Scope: hypothesis-driven investigation guides under `docs/troubleshooting/playbooks/`. Playbooks explicitly enumerate competing hypotheses and disproof steps, so the symptom → resolution flow of the base Troubleshooting template does not fit. Section numbering may be adjusted to match the specific investigation but the numbered-section pattern must be preserved. Section names may vary in wording (for example "Summary" vs "Overview", "Immediate Mitigations" vs "Short-Term Fixes") as long as the investigation-hypothesis-evidence-mitigation flow is preserved.
+
+CLI blocks inside playbooks do NOT require a nearby command explanation table because the CLI appears inside investigation steps (KQL follow-ups, hypothesis validation, evidence collection), not as reader-executable setup. Long-flag enforcement (no `-g`, `-n`, `-o`, `-l` shortcuts) still applies.
+
+#### First 10 Minutes Runbook (Troubleshooting variant)
+
+```text
+# Title
+## Quick Context
+## Step 1: <first triage action>
+## Step 2: <second triage action>
+## Step N: <additional triage steps>
+## Decision Points
+## Next Steps
+## See Also
+## Sources
+```
+
+Scope: rapid-triage decision guides under `docs/troubleshooting/first-10-minutes/`. Runbooks give an on-call engineer a numbered sequence of actions to take in the first ten minutes of an incident, followed by a decision point that routes to a playbook or lab. The symptom → resolution flow of the base Troubleshooting template does not fit because runbooks are pre-diagnosis triage, not post-diagnosis remediation.
+
+CLI blocks inside first-10-minutes runbooks do NOT require a nearby command explanation table for the same reason as playbooks (CLI appears as triage evidence collection, not reader-executable setup). Long-flag enforcement still applies.
 
 #### Lab Guides
 
