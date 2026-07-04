@@ -30,19 +30,7 @@ content_sources:
 
 Security in Azure App Service is strongest when controls are layered: identity, secret management, authentication, network isolation, edge protection, and strict application policy. This guide defines practical defaults for production architecture decisions.
 
-## Prerequisites
-
-- Existing Web App and App Service Plan
-- Azure Entra tenant and required permissions
-- Security ownership defined across application, platform, and network teams
-- Variables set:
-    - `RG`
-    - `APP_NAME`
-    - `KV_NAME`
-
-## Main Content
-
-### Security objective
+## Why This Matters
 
 Adopt a defense-in-depth model so a single control failure does not immediately expose the workload.
 
@@ -64,7 +52,19 @@ flowchart TD
     G --> G1[Key Vault References]
 ```
 
-### 1) Managed identity first (system vs user-assigned)
+## Recommended Practices
+
+### Prerequisites
+
+- Existing Web App and App Service Plan
+- Azure Entra tenant and required permissions
+- Security ownership defined across application, platform, and network teams
+- Variables set:
+    - `RG`
+    - `APP_NAME`
+    - `KV_NAME`
+
+### Managed identity first (system vs user-assigned)
 
 Managed identity should be the default credential model for App Service apps accessing Azure dependencies.
 
@@ -84,6 +84,10 @@ az webapp identity assign \
   --output json
 ```
 
+| Command | Purpose | Key flags |
+|---|---|---|
+| `az webapp identity assign` | Enable system-assigned managed identity on the web app | `--resource-group`, `--name` scope the target; no identity ID needed for system-assigned |
+
 Attach user-assigned identity:
 
 ```bash
@@ -93,6 +97,10 @@ az webapp identity assign \
   --identities "/subscriptions/<subscription-id>/resourceGroups/$RG/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id-shared-app" \
   --output json
 ```
+
+| Command | Purpose | Key flags |
+|---|---|---|
+| `az webapp identity assign --identities` | Attach an existing user-assigned managed identity to the web app | `--identities` takes the full resource ID of the userAssignedIdentity |
 
 Verify identity configuration:
 
@@ -104,6 +112,10 @@ az webapp identity show \
   --output json
 ```
 
+| Command | Purpose | Key flags |
+|---|---|---|
+| `az webapp identity show` | Read the current identity configuration for verification | `--query` extracts `type`, `principalId`, and `userAssignedIdentities` for RBAC follow-up |
+
 #### Portal view: Identity blade
 
 ![Identity blade for a Web App with two tabs — System assigned (active) and User assigned. A descriptive header explains that a system-assigned managed identity is restricted to one per resource, tied to the lifecycle of the resource, allows RBAC permissions to be granted in Azure, and is authenticated with Microsoft Entra ID so no credentials need to be stored in code. The command bar shows Save, Discard, Refresh, Troubleshoot, and Got feedback? actions. The Status control is a two-state toggle currently set to Off, with On as the alternative position. No Object (principal) ID, Permissions, or Azure role assignments are shown because the identity is not yet enabled.](../assets/best-practices/security/01-identity-blade.png)
@@ -113,7 +125,7 @@ The Identity blade is the surface where the "managed identity first" principle i
 !!! info "Start with least privilege"
     Grant only the minimum required roles at the narrowest possible scope. Review and trim permissions regularly.
 
-### 2) Use Key Vault references for secret material
+### Use Key Vault references for secret material
 
 Do not place raw secrets in source code, pipeline variables without governance, or ad hoc app settings.
 
@@ -133,6 +145,10 @@ az webapp config appsettings set \
   --output json
 ```
 
+| Command | Purpose | Key flags |
+|---|---|---|
+| `az webapp config appsettings set` | Set an app setting whose value is a Key Vault reference | `--settings NAME=@Microsoft.KeyVault(SecretUri=...)` uses reference syntax that resolves at runtime |
+
 Inspect setting metadata safely:
 
 ```bash
@@ -143,10 +159,14 @@ az webapp config appsettings list \
   --output json
 ```
 
+| Command | Purpose | Key flags |
+|---|---|---|
+| `az webapp config appsettings list` | Inspect a Key Vault reference setting without exposing secret contents | `--query "[?name=='X']"` filters to the one setting; the `value` field shows the reference expression, not the resolved secret |
+
 !!! warning "Reference syntax does not replace authorization"
     Key Vault references work only when network access and identity permissions are correctly configured. Confirm both during deployment validation.
 
-### 3) Use Easy Auth for platform authentication
+### Use Easy Auth for platform authentication
 
 App Service Authentication/Authorization (Easy Auth) is a strong default for many web and API workloads.
 
@@ -167,6 +187,10 @@ az webapp auth update \
   --output json
 ```
 
+| Command | Purpose | Key flags |
+|---|---|---|
+| `az webapp auth update` | Enable Easy Auth (App Service Authentication) with Entra ID as the provider | `--enabled true` activates Easy Auth; `--action LoginWithAzureActiveDirectory` sets the unauthenticated-request policy |
+
 Review auth configuration:
 
 ```bash
@@ -176,10 +200,14 @@ az webapp auth show \
   --output json
 ```
 
+| Command | Purpose | Key flags |
+|---|---|---|
+| `az webapp auth show` | Review the current Easy Auth configuration | Returns provider settings, enabled state, and unauthenticated action for audit |
+
 !!! info "Platform auth and app auth must be intentional"
     If you combine Easy Auth with custom in-app authorization logic, clearly define responsibility boundaries to avoid conflicting behavior.
 
-### 4) Apply network isolation by default
+### Apply network isolation by default
 
 Security posture improves significantly when internet exposure is reduced and explicitly controlled.
 
@@ -211,7 +239,12 @@ az webapp config access-restriction add \
   --output json
 ```
 
-### 5) Integrate WAF for edge protection
+| Command | Purpose | Key flags |
+|---|---|---|
+| `az webapp config access-restriction add --action Allow` | Add an explicit allow rule for a trusted CIDR range | `--priority` controls evaluation order (lower first); `--ip-address` accepts CIDR notation |
+| `az webapp config access-restriction add --action Deny` | Add a catch-all deny rule as the final priority | `--priority 2147483647` places the rule last; `--ip-address 0.0.0.0/0` matches all remaining traffic |
+
+### Integrate WAF for edge protection
 
 For internet-facing applications, place a Web Application Firewall layer in front of App Service.
 
@@ -229,7 +262,7 @@ WAF value areas:
 !!! warning "WAF is not a substitute for app security"
     WAF reduces risk but does not replace secure coding, input validation, patch management, and least-privilege identity.
 
-### 6) CORS configuration with explicit origins
+### CORS configuration with explicit origins
 
 CORS should be explicit, minimal, and environment-specific.
 
@@ -243,6 +276,10 @@ az webapp cors add \
   --output json
 ```
 
+| Command | Purpose | Key flags |
+|---|---|---|
+| `az webapp cors add` | Add explicit CORS origins to the app | `--allowed-origins` takes a space-separated list of exact origin URLs; wildcards are discouraged in production |
+
 Show configured origins:
 
 ```bash
@@ -251,6 +288,10 @@ az webapp cors show \
   --name $APP_NAME \
   --output json
 ```
+
+| Command | Purpose | Key flags |
+|---|---|---|
+| `az webapp cors show` | Show the currently configured CORS origins | Output lists all `allowedOrigins` currently on the app for audit |
 
 Remove obsolete origin:
 
@@ -262,10 +303,14 @@ az webapp cors remove \
   --output json
 ```
 
+| Command | Purpose | Key flags |
+|---|---|---|
+| `az webapp cors remove` | Remove obsolete CORS origins from the app | `--allowed-origins` takes the exact origin URL to delete; must match a currently configured origin |
+
 !!! warning "Avoid wildcard origins in production"
     `*` origins increase exposure and can undermine frontend trust boundaries. Prefer exact origin lists with regular review.
 
-### 7) Enforce transport security baseline
+### Enforce transport security baseline
 
 Even with other controls, transport settings are non-negotiable:
 
@@ -290,7 +335,27 @@ az webapp config set \
   --output json
 ```
 
-### 8) Security review checklist
+| Command | Purpose | Key flags |
+|---|---|---|
+| `az webapp update --https-only true` | Enforce HTTPS-only for all inbound traffic | Redirects HTTP requests to HTTPS at the platform edge |
+| `az webapp config set --min-tls-version 1.2 --ftps-state Disabled` | Set the minimum inbound TLS version and disable insecure FTP modes | `--min-tls-version` accepts `1.0`, `1.1`, `1.2`, or `1.3`; `--ftps-state Disabled` blocks FTP and FTPS deployment protocols |
+
+### Advanced Topics
+
+- Use conditional access and identity protection policies for operator access paths.
+- Add workload identity governance with periodic role attestation.
+- Correlate WAF events, App Service logs, and identity logs for incident investigations.
+- Apply policy-as-code to block insecure transport and missing identity configurations.
+
+## Common Mistakes / Anti-Patterns
+
+- Long-lived secrets hardcoded in app settings.
+- Shared broad-privilege identity across unrelated workloads.
+- Easy Auth enabled without clear route-level authorization model.
+- Public exposure left open during or after private endpoint rollout.
+- Wildcard CORS used permanently because of early integration convenience.
+
+## Validation Checklist
 
 Validate these controls before go-live:
 
@@ -302,21 +367,6 @@ Validate these controls before go-live:
 - [ ] CORS origins explicitly listed and environment-specific.
 - [ ] HTTPS/TLS baseline enforced.
 - [ ] Security logs routed to centralized monitoring.
-
-### 9) Common security anti-patterns
-
-- Long-lived secrets hardcoded in app settings.
-- Shared broad-privilege identity across unrelated workloads.
-- Easy Auth enabled without clear route-level authorization model.
-- Public exposure left open during or after private endpoint rollout.
-- Wildcard CORS used permanently because of early integration convenience.
-
-## Advanced Topics
-
-- Use conditional access and identity protection policies for operator access paths.
-- Add workload identity governance with periodic role attestation.
-- Correlate WAF events, App Service logs, and identity logs for incident investigations.
-- Apply policy-as-code to block insecure transport and missing identity configurations.
 
 ## See Also
 
