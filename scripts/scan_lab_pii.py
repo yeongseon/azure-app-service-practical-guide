@@ -140,6 +140,27 @@ BEARER_RE = re.compile(r"\bBearer\s+[A-Za-z0-9._\-+/=]{20,}", re.IGNORECASE)
 SAS_RE = re.compile(r"[?&]sig=[A-Za-z0-9%_\-+/=]{20,}", re.IGNORECASE)
 IP_RE = re.compile(r"\b(?:\d{1,3}\.){3}\d{1,3}\b")
 
+# IPv6 regex mirrors the JS helper regex in portal-capture-helpers.js
+# (nine-branch pattern covering full form + all compressed :: positions).
+# Uses lookbehind/lookahead on [:.a-fA-F0-9] to avoid partial matches
+# inside larger hex tokens (GUIDs, 32-char / 64-char hashes) that other
+# rules already handle.
+IPV6_RE = re.compile(
+    r"(?<![:.a-fA-F0-9])"
+    r"(?:"
+    r"(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}"
+    r"|(?:[0-9a-fA-F]{1,4}:){1,7}:"
+    r"|(?:[0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}"
+    r"|(?:[0-9a-fA-F]{1,4}:){1,5}(?::[0-9a-fA-F]{1,4}){1,2}"
+    r"|(?:[0-9a-fA-F]{1,4}:){1,4}(?::[0-9a-fA-F]{1,4}){1,3}"
+    r"|(?:[0-9a-fA-F]{1,4}:){1,3}(?::[0-9a-fA-F]{1,4}){1,4}"
+    r"|(?:[0-9a-fA-F]{1,4}:){1,2}(?::[0-9a-fA-F]{1,4}){1,5}"
+    r"|[0-9a-fA-F]{1,4}:(?::[0-9a-fA-F]{1,4}){1,6}"
+    r"|:(?:(?::[0-9a-fA-F]{1,4}){1,7}|:)"
+    r")"
+    r"(?![:.a-fA-F0-9])"
+)
+
 BINARY_EXTENSIONS = frozenset(
     {
         ".png",
@@ -237,6 +258,11 @@ def find_pii(text: str) -> Iterable[tuple[int, str, str]]:
             candidate = match.group(0)
             if is_public_ip(candidate):
                 yield lineno, "public-ip", candidate
+
+        for match in IPV6_RE.finditer(line):
+            value = match.group(0)
+            if is_public_ip(value):
+                yield lineno, "public-ipv6", value
 
 
 def tracked_files(paths: list[str]) -> list[Path]:

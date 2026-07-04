@@ -658,7 +658,7 @@ Selected payload excerpt:
   "resolutions": [
     {
       "hostname": "management.azure.com",
-      "resolved_ips": ["2603:1030:a0b::10", "<ip-redacted>"]
+      "resolved_ips": ["<ip-redacted>", "<ip-redacted>"]
     },
     {
       "hostname": "stlabdnsfbg6cycknd2gm.blob.core.windows.net",
