@@ -9,7 +9,8 @@ set -euo pipefail
 #
 # Per design-proposal.md lines 343-366, Residual C (Oracle-approved).
 
-readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+readonly SCRIPT_DIR
 readonly DEPLOY_METADATA="$SCRIPT_DIR/results/deploy-metadata.json"
 readonly EXPERIMENT="preflight"
 
@@ -26,12 +27,18 @@ if [[ ! -f "$DEPLOY_METADATA" ]]; then
     exit 1
 fi
 
-readonly APP="$(python3 -c "import json; d=json.load(open('$DEPLOY_METADATA')); print(d['webAppName'])")"
-readonly HOSTNAME="$(python3 -c "import json; d=json.load(open('$DEPLOY_METADATA')); print(d['webAppHostname'])")"
-readonly WEB_APP_RESOURCE_ID="$(python3 -c "import json; d=json.load(open('$DEPLOY_METADATA')); print(d['webAppResourceId'])")"
-readonly RG="$(python3 -c "import json; d=json.load(open('$DEPLOY_METADATA')); print(d['resourceGroup'])")"
-readonly WORKSPACE_ID="$(python3 -c "import json; d=json.load(open('$DEPLOY_METADATA')); print(d['logAnalyticsWorkspaceId'])")"
-readonly BASE_NAME="$(python3 -c "import json; d=json.load(open('$DEPLOY_METADATA')); print(d['baseName'])")"
+APP="$(python3 -c "import json; d=json.load(open('$DEPLOY_METADATA')); print(d['webAppName'])")"
+readonly APP
+HOSTNAME="$(python3 -c "import json; d=json.load(open('$DEPLOY_METADATA')); print(d['webAppHostname'])")"
+readonly HOSTNAME
+WEB_APP_RESOURCE_ID="$(python3 -c "import json; d=json.load(open('$DEPLOY_METADATA')); print(d['webAppResourceId'])")"
+readonly WEB_APP_RESOURCE_ID
+RG="$(python3 -c "import json; d=json.load(open('$DEPLOY_METADATA')); print(d['resourceGroup'])")"
+readonly RG
+WORKSPACE_ID="$(python3 -c "import json; d=json.load(open('$DEPLOY_METADATA')); print(d['logAnalyticsWorkspaceId'])")"
+readonly WORKSPACE_ID
+BASE_NAME="$(python3 -c "import json; d=json.load(open('$DEPLOY_METADATA')); print(d['baseName'])")"
+readonly BASE_NAME
 
 if [[ -z "$APP" || -z "$HOSTNAME" || -z "$RG" || -z "$WORKSPACE_ID" ]]; then
     echo >&2 "ERROR: Could not parse deploy-metadata.json fields"
@@ -42,7 +49,8 @@ fi
 readonly RESULTS_DIR="$SCRIPT_DIR/results/$EXPERIMENT"
 mkdir -p "$RESULTS_DIR"
 
-readonly STARTED_AT="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+STARTED_AT="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+readonly STARTED_AT
 readonly BICEP_FILE="${SCRIPT_DIR}/main.bicep"
 
 # --- Write manifest helper ---

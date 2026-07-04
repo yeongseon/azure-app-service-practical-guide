@@ -10,7 +10,8 @@ set -euo pipefail
 # KQL verification deferred to verify.sh --experiment e2.
 # Per design-proposal.md lines 295-337 (Oracle-approved).
 
-readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+readonly SCRIPT_DIR
 readonly DEPLOY_METADATA="$SCRIPT_DIR/results/deploy-metadata.json"
 readonly EXPERIMENT="e2"
 
@@ -54,8 +55,10 @@ if [[ ! -f "$DEPLOY_METADATA" ]]; then
     exit 1
 fi
 
-readonly HOSTNAME="$(python3 -c "import json; d=json.load(open('$DEPLOY_METADATA')); print(d['webAppHostname'])")"
-readonly WEB_APP_RESOURCE_ID="$(python3 -c "import json; d=json.load(open('$DEPLOY_METADATA')); print(d['webAppResourceId'])")"
+HOSTNAME="$(python3 -c "import json; d=json.load(open('$DEPLOY_METADATA')); print(d['webAppHostname'])")"
+readonly HOSTNAME
+WEB_APP_RESOURCE_ID="$(python3 -c "import json; d=json.load(open('$DEPLOY_METADATA')); print(d['webAppResourceId'])")"
+readonly WEB_APP_RESOURCE_ID
 
 if [[ -z "$HOSTNAME" || -z "$WEB_APP_RESOURCE_ID" ]]; then
     echo >&2 "ERROR: Could not parse webAppHostname or webAppResourceId from deploy-metadata.json"
@@ -72,7 +75,8 @@ if [[ ! -f "$K6_SCRIPT" ]]; then
     exit 1
 fi
 
-readonly STARTED_AT="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+STARTED_AT="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+readonly STARTED_AT
 
 # --- Trap for graceful abort ---
 PARTIAL=false

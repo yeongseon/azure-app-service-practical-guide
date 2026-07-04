@@ -10,7 +10,8 @@ set -euo pipefail
 #
 # Per design-proposal.md lines 220-228 (Oracle-approved).
 
-readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+readonly SCRIPT_DIR
 readonly DEPLOY_METADATA="$SCRIPT_DIR/results/deploy-metadata.json"
 readonly EXPERIMENT="e3"
 
@@ -30,10 +31,14 @@ if [[ ! -f "$DEPLOY_METADATA" ]]; then
     exit 1
 fi
 
-readonly APP="$(python3 -c "import json; d=json.load(open('$DEPLOY_METADATA')); print(d['webAppName'])")"
-readonly HOSTNAME="$(python3 -c "import json; d=json.load(open('$DEPLOY_METADATA')); print(d['webAppHostname'])")"
-readonly WEB_APP_RESOURCE_ID="$(python3 -c "import json; d=json.load(open('$DEPLOY_METADATA')); print(d['webAppResourceId'])")"
-readonly RG="$(python3 -c "import json; d=json.load(open('$DEPLOY_METADATA')); print(d['resourceGroup'])")"
+APP="$(python3 -c "import json; d=json.load(open('$DEPLOY_METADATA')); print(d['webAppName'])")"
+readonly APP
+HOSTNAME="$(python3 -c "import json; d=json.load(open('$DEPLOY_METADATA')); print(d['webAppHostname'])")"
+readonly HOSTNAME
+WEB_APP_RESOURCE_ID="$(python3 -c "import json; d=json.load(open('$DEPLOY_METADATA')); print(d['webAppResourceId'])")"
+readonly WEB_APP_RESOURCE_ID
+RG="$(python3 -c "import json; d=json.load(open('$DEPLOY_METADATA')); print(d['resourceGroup'])")"
+readonly RG
 
 if [[ -z "$APP" || -z "$HOSTNAME" || -z "$RG" ]]; then
     echo >&2 "ERROR: Could not parse deploy-metadata.json fields"
@@ -57,15 +62,17 @@ fi
 readonly JAR_DIR="${SCRIPT_DIR}/../stage-0-config-discovery/app/target"
 STAGE0_JAR=""
 if compgen -G "${JAR_DIR}/*.jar" >/dev/null 2>&1; then
-    STAGE0_JAR="$(ls -1 "${JAR_DIR}"/*.jar | head -1)"
+    STAGE0_JAR="$(find "${JAR_DIR}" -maxdepth 1 -type f -name '*.jar' -print | head -n 1)"
 fi
 
 # --- Output directory ---
 readonly RESULTS_DIR="$SCRIPT_DIR/results/$EXPERIMENT"
 mkdir -p "$RESULTS_DIR"
 
-readonly STARTED_AT="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-readonly DEPLOY_LOG="$RESULTS_DIR/deploy-log-${CANARY}-$(date -u +%Y%m%dT%H%M%SZ).txt"
+STARTED_AT="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+readonly STARTED_AT
+DEPLOY_LOG="$RESULTS_DIR/deploy-log-${CANARY}-$(date -u +%Y%m%dT%H%M%SZ).txt"
+readonly DEPLOY_LOG
 
 echo >&2 "=== E3: Deploy web.config (M1a) ==="
 echo >&2 "  Canary:  $CANARY"

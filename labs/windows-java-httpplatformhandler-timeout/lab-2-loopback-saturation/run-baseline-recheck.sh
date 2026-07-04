@@ -13,7 +13,8 @@ set -euo pipefail
 #
 # Per design-proposal.md lines 98-133 (Oracle-approved).
 
-readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+readonly SCRIPT_DIR
 readonly DEPLOY_METADATA="$SCRIPT_DIR/results/deploy-metadata.json"
 readonly EXPERIMENT="pre-e1"
 readonly PROBE_ENDPOINT="/slow/240"
@@ -29,8 +30,10 @@ if [[ ! -f "$DEPLOY_METADATA" ]]; then
     exit 1
 fi
 
-readonly HOSTNAME="$(python3 -c "import json; d=json.load(open('$DEPLOY_METADATA')); print(d['webAppHostname'])")"
-readonly WEB_APP_RESOURCE_ID="$(python3 -c "import json; d=json.load(open('$DEPLOY_METADATA')); print(d['webAppResourceId'])")"
+HOSTNAME="$(python3 -c "import json; d=json.load(open('$DEPLOY_METADATA')); print(d['webAppHostname'])")"
+readonly HOSTNAME
+WEB_APP_RESOURCE_ID="$(python3 -c "import json; d=json.load(open('$DEPLOY_METADATA')); print(d['webAppResourceId'])")"
+readonly WEB_APP_RESOURCE_ID
 
 if [[ -z "$HOSTNAME" || -z "$WEB_APP_RESOURCE_ID" ]]; then
     echo >&2 "ERROR: Could not parse webAppHostname or webAppResourceId from deploy-metadata.json"
@@ -41,10 +44,12 @@ readonly RESULTS_DIR="$SCRIPT_DIR/results/$EXPERIMENT"
 mkdir -p "$RESULTS_DIR"
 
 readonly BASE_URL="https://${HOSTNAME}"
-readonly STARTED_AT="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+STARTED_AT="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+readonly STARTED_AT
 
 # --- Trap for graceful abort ---
 PARTIAL=false
+# shellcheck disable=SC2329  # invoked indirectly via `trap cleanup SIGINT SIGTERM` below
 cleanup() {
     if [[ "$PARTIAL" == "true" ]]; then
         echo >&2 "WARN: Aborted mid-run. Partial artifacts in $RESULTS_DIR"

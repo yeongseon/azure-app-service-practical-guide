@@ -8,7 +8,8 @@ set -euo pipefail
 #
 # Per design-proposal.md lines 401-436 (Oracle-approved).
 
-readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+readonly SCRIPT_DIR
 readonly DEPLOY_METADATA="$SCRIPT_DIR/results/deploy-metadata.json"
 readonly EXPERIMENT="e4"
 
@@ -43,10 +44,14 @@ if [[ ! -f "$DEPLOY_METADATA" ]]; then
     exit 1
 fi
 
-readonly APP="$(python3 -c "import json; d=json.load(open('$DEPLOY_METADATA')); print(d['webAppName'])")"
-readonly HOSTNAME="$(python3 -c "import json; d=json.load(open('$DEPLOY_METADATA')); print(d['webAppHostname'])")"
-readonly WEB_APP_RESOURCE_ID="$(python3 -c "import json; d=json.load(open('$DEPLOY_METADATA')); print(d['webAppResourceId'])")"
-readonly RG="$(python3 -c "import json; d=json.load(open('$DEPLOY_METADATA')); print(d['resourceGroup'])")"
+APP="$(python3 -c "import json; d=json.load(open('$DEPLOY_METADATA')); print(d['webAppName'])")"
+readonly APP
+HOSTNAME="$(python3 -c "import json; d=json.load(open('$DEPLOY_METADATA')); print(d['webAppHostname'])")"
+readonly HOSTNAME
+WEB_APP_RESOURCE_ID="$(python3 -c "import json; d=json.load(open('$DEPLOY_METADATA')); print(d['webAppResourceId'])")"
+readonly WEB_APP_RESOURCE_ID
+RG="$(python3 -c "import json; d=json.load(open('$DEPLOY_METADATA')); print(d['resourceGroup'])")"
+readonly RG
 
 if [[ -z "$APP" || -z "$HOSTNAME" || -z "$RG" ]]; then
     echo >&2 "ERROR: Could not parse deploy-metadata.json fields"
@@ -62,7 +67,8 @@ readonly BASE_URL="https://${HOSTNAME}"
 readonly RESULTS_DIR="$SCRIPT_DIR/results/$EXPERIMENT/rate-${RATE}"
 mkdir -p "$RESULTS_DIR"
 
-readonly STARTED_AT="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+STARTED_AT="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+readonly STARTED_AT
 
 # --- Preflight: verify Auto-Heal is enabled ---
 echo >&2 "=== E4: M2 Auto-Heal load run ==="

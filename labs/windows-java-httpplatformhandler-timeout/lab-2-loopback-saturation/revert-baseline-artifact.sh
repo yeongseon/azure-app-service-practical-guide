@@ -34,7 +34,7 @@ fi
 readonly JAR_DIR="${SCRIPT_DIR}/../stage-0-config-discovery/app/target"
 STAGE0_JAR=""
 if compgen -G "${JAR_DIR}/*.jar" >/dev/null 2>&1; then
-    STAGE0_JAR="$(ls -1 "${JAR_DIR}"/*.jar | head -1)"
+    STAGE0_JAR="$(find "${JAR_DIR}" -maxdepth 1 -type f -name '*.jar' -print | head -n 1)"
 fi
 
 if [[ -z "$STAGE0_JAR" || ! -f "$STAGE0_JAR" ]]; then
