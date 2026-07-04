@@ -30,7 +30,7 @@ content_sources:
 
 Reliability in Azure App Service comes from deliberate architecture and operational discipline. This guide focuses on practical design decisions that reduce outage frequency, shorten recovery time, and improve user trust.
 
-## Reliability Goals
+## Why This Matters
 
 For production systems, reliability should be expressed through measurable targets:
 
@@ -42,7 +42,9 @@ For production systems, reliability should be expressed through measurable targe
 !!! info "Reliability is multi-layered"
     Platform health, application behavior, and dependency resilience all contribute to end-to-end uptime.
 
-## Prerequisites
+## Recommended Practices
+
+### Prerequisites
 
 Before implementing advanced reliability patterns, ensure:
 
@@ -51,18 +53,18 @@ Before implementing advanced reliability patterns, ensure:
 - Backups are configured and periodically tested
 - Incident runbooks have clear ownership and escalation
 
-## Health Check Probe Configuration
+### Health Check Probe Configuration
 
 Health checks are the first reliability control in App Service. They allow unhealthy instances to be detected and removed from rotation.
 
-### Design Principles for Health Endpoints
+#### Design Principles for Health Endpoints
 
 - Keep response lightweight and deterministic
 - Validate required dependencies (database, cache, key services)
 - Separate readiness from deep diagnostics where possible
 - Return clear status codes and minimal payload
 
-### Example Health Check Configuration
+#### Example Health Check Configuration
 
 ```bash
 az webapp config set \
@@ -71,14 +73,18 @@ az webapp config set \
     --generic-configurations '{"healthCheckPath":"/healthz"}'
 ```
 
-### What a Good `/healthz` Should Validate
+| Command | Purpose | Key flags |
+|---|---|---|
+| `az webapp config set --generic-configurations '{"healthCheckPath":"/healthz"}'` | Register the health-probe path so App Service can remove unhealthy instances from rotation | `--generic-configurations` accepts a JSON string; `healthCheckPath` is the property the platform reads to enable health probing |
+
+#### What a Good `/healthz` Should Validate
 
 - Process liveness and request handling loop
 - Dependency connectivity with timeout guard
 - Critical configuration presence
 - Version metadata for rollout debugging
 
-#### Portal view: Health check blade
+##### Portal view: Health check blade
 
 ![Health check blade for a Web App with two tabs — Health check (active) and Instances — and a command bar showing Save, Discard, Refresh, Troubleshoot, Metrics, and Send us your feedback actions. The first blue info banner reads "Your site has a single instance which will not be removed if it becomes unhealthy. However, after one hour of continuous unhealthy pings, the instance will be replaced. You can still set up Azure Monitor Alerts based on the health status." The second blue info banner reads "Health check is being moved to Configuration. Click here to go to the new experience." A descriptive line explains "Health check increases your application's availability by removing unhealthy instances from the load balancer. If your instance remains unhealthy, it will be replaced" with a Learn more link. The Health check enablement checkbox below is unchecked, so no path or threshold fields are visible. The left navigation shows Monitoring expanded with Alerts, Metrics, Logs, Health check (active), and Application Insights entries.](../assets/best-practices/reliability/01-health-check.png)
 
@@ -87,11 +93,24 @@ The Health check blade is the platform's enforcement point for the rotation-remo
 !!! warning "Do not fake healthy status"
     If key dependencies are unavailable, return unhealthy. Hiding failures delays detection and increases incident impact.
 
-## Multi-Region Deployment Patterns
+### Minimum Instance Count for High Availability
+
+For production workloads, run at least two instances.
+
+Why minimum two instances matters:
+
+- Reduces single-instance failure impact
+- Supports rolling maintenance without complete service loss
+- Improves resilience during transient host issues
+
+!!! danger "Single instance is a single failure domain"
+    One instance in production means any restart, crash, or host issue can become user-visible downtime.
+
+### Multi-Region Deployment Patterns
 
 Single-region design is often acceptable for low-criticality apps, but production-critical systems should plan for regional disruption.
 
-### Pattern 1: Active-Passive
+#### Pattern 1: Active-Passive
 
 - Primary region serves all traffic
 - Secondary region stays warm for failover
@@ -107,7 +126,7 @@ Cons:
 - Secondary capacity may be underutilized
 - Failover testing is mandatory to avoid surprise failures
 
-### Pattern 2: Active-Active
+#### Pattern 2: Active-Active
 
 - Multiple regions serve traffic concurrently
 - Global routing distributes traffic by priority, latency, or geography
@@ -123,7 +142,7 @@ Cons:
 - Higher architecture and operations complexity
 - Harder consistency and incident isolation
 
-### Reliability Architecture with Health Checks
+#### Reliability Architecture with Health Checks
 
 <!-- diagram-id: reliability-architecture-with-health-checks -->
 ```mermaid
@@ -140,7 +159,7 @@ flowchart TD
     M --> O[On-call and incident runbook]
 ```
 
-## Graceful Shutdown and SIGTERM Handling
+### Graceful Shutdown and SIGTERM Handling
 
 App Service can recycle instances during scale, patching, and deployment events. Applications must handle termination signals gracefully.
 
@@ -152,13 +171,13 @@ App Service can recycle instances during scale, patching, and deployment events.
 
     Treat the grace period as small and configurable, not as a fixed platform guarantee. In-flight request completion, connection draining, and cleanup work must finish well within whatever window your hosting model provides.
 
-### Why SIGTERM Handling Matters
+#### Why SIGTERM Handling Matters
 
 - Prevents abrupt termination of in-flight requests
 - Reduces partial writes and data corruption risk
 - Enables cleaner release transitions and scale-in events
 
-### Graceful Shutdown Checklist
+#### Graceful Shutdown Checklist
 
 - Trap termination signals in application runtime
 - Stop accepting new requests quickly (close the listener or health endpoint)
@@ -170,18 +189,18 @@ App Service can recycle instances during scale, patching, and deployment events.
 !!! note "Language-specific implementation"
     Use this document for design guidance, then implement signal handlers in your language guide runtime section.
 
-## Retry and Circuit Breaker Patterns
+### Retry and Circuit Breaker Patterns
 
 Most production outages are dependency-driven, not web-tier-driven. Reliability requires controlled failure handling for downstream calls.
 
-### Retry Best Practices
+#### Retry Best Practices
 
 - Retry only transient failure types
 - Use exponential backoff with jitter
 - Set upper bounds on attempts and timeout budget
 - Avoid infinite retries
 
-### Circuit Breaker Best Practices
+#### Circuit Breaker Best Practices
 
 - Open circuit when error threshold exceeded
 - Fail fast while circuit is open
@@ -191,18 +210,18 @@ Most production outages are dependency-driven, not web-tier-driven. Reliability 
 !!! warning "Retries can amplify outages"
     Without backoff and limits, retries create thundering herds against already-failing dependencies.
 
-## Backup and Restore Strategy
+### Backup and Restore Strategy
 
 Backups are a reliability control for data/configuration recovery, not a substitute for high availability.
 
-### Strategy Components
+#### Strategy Components
 
 - Scheduled app backups with defined retention
 - Database-native backup alignment with app backup schedule
 - Storage account durability review
 - Documented restore sequence and ownership
 
-### Validation Requirements
+#### Validation Requirements
 
 - Perform periodic restore drills in non-production
 - Measure real restore time against RTO target
@@ -215,29 +234,20 @@ az webapp config backup show \
     --webapp-name $APP_NAME
 ```
 
-## Minimum Instance Count for High Availability
+| Command | Purpose | Key flags |
+|---|---|---|
+| `az webapp config backup show` | Inspect the current backup configuration to verify schedule, retention, and storage target | Uses `--webapp-name` (not `--name`) to target the app; use `--resource-group` to scope |
 
-For production workloads, run at least two instances.
+### Failure Scenario Planning
 
-Why minimum two instances matters:
-
-- Reduces single-instance failure impact
-- Supports rolling maintenance without complete service loss
-- Improves resilience during transient host issues
-
-!!! danger "Single instance is a single failure domain"
-    One instance in production means any restart, crash, or host issue can become user-visible downtime.
-
-## Failure Scenario Planning
-
-### Scenario A: One Instance Unhealthy
+#### Scenario A: One Instance Unhealthy
 
 Expected behavior:
 
 - Health checks detect and remove unhealthy instance from rotation
 - Remaining instances continue serving traffic
 
-### Scenario B: Dependency Latency Spike
+#### Scenario B: Dependency Latency Spike
 
 Expected behavior:
 
@@ -245,7 +255,7 @@ Expected behavior:
 - Circuit breaker opens if sustained failures occur
 - Alerting notifies operators before full outage
 
-### Scenario C: Regional Outage
+#### Scenario C: Regional Outage
 
 Expected behavior:
 
@@ -253,25 +263,62 @@ Expected behavior:
 - Secondary region serves traffic within RTO
 - Post-failover validation runbook executes
 
-## Reliability Operating Model
+### Reliability Operating Model
 
-### Pre-Production
+#### Pre-Production
 
 - Load and chaos-style failure testing
 - Dependency failure simulations
 - Runbook dry-runs for failover and restore
 
-### Production
+#### Production
 
 - SLO dashboards and error budget tracking
 - Alert tuning to reduce noise and improve signal
 - Weekly review of high-severity incident trends
 
-### Post-Incident
+#### Post-Incident
 
 - Root cause analysis with timeline accuracy
 - Preventive action items with ownership and deadlines
 - Documentation updates in operations and best-practices sections
+
+## Common Mistakes / Anti-Patterns
+
+### Single instance in production
+
+One instance in production means any restart, crash, or host issue can become user-visible downtime. Run at least two instances (see [Minimum Instance Count](#minimum-instance-count-for-high-availability)).
+
+### Health check that always returns success
+
+Returning healthy when key dependencies are unavailable hides failures and delays incident detection. Health probes must fail when the app cannot serve real traffic — a probe that always reports healthy converts a fast rotation event into a slow full-hour instance replacement.
+
+### Retry without backoff or upper bound
+
+Unbounded or immediate retries create thundering herds against already-failing dependencies. Combine exponential backoff, jitter, and per-attempt timeout budgets. Cap the total attempt count so retry logic does not amplify the outage.
+
+### Treating backup as a substitute for HA
+
+Backups recover data and configuration but do not deliver availability during a live outage. Pair backups with high availability (minimum two instances) and multi-region design so backup remains a recovery control, not a downtime workaround.
+
+### Deep health checks that run full diagnostics
+
+Health probes that hit every dependency deeply can cascade failures under load and increase mean-time-to-restore. Keep probes lightweight and deterministic. Separate readiness from deep diagnostics so a slow dependency check does not trigger rotation of a still-serving instance.
+
+## Validation Checklist
+
+Before calling a reliability posture production-ready, verify:
+
+- [ ] Availability, RTO, and RPO targets are documented and reviewed.
+- [ ] Health endpoint validates critical dependencies with bounded timeout.
+- [ ] Health check is enabled in the App Service configuration (Portal or CLI).
+- [ ] Minimum 2 instances configured for production workloads.
+- [ ] Multi-region pattern (active-passive or active-active) is chosen when SLO requires regional resilience.
+- [ ] SIGTERM handler and grace-period configuration are validated for the hosting model.
+- [ ] Retry logic uses exponential backoff, jitter, and attempt caps.
+- [ ] Circuit breaker thresholds are tuned and emit state metrics.
+- [ ] Backup schedule aligned with database backup schedule; restore drill executed within RTO.
+- [ ] Failover runbook rehearsed for all documented scenarios (unhealthy instance, dependency spike, regional outage).
 
 ## See Also
 
