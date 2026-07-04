@@ -13,6 +13,12 @@ content_validation:
     - claim: "Causes excessive socket churn and SNAT exhaustion under load"
       source: "https://learn.microsoft.com/en-us/azure/app-service/app-service-best-practices"
       verified: true
+    - claim: "Run minimum two instances in production for high availability"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/app-service-best-practices"
+      verified: true
+    - claim: "Configure a health check path so the platform can remove unhealthy instances from rotation"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/monitor-instances-health-check"
+      verified: true
 content_sources:
   diagrams:
     - id: anti-pattern-detection-flow
@@ -117,6 +123,8 @@ Use an anti-pattern review gate in architecture and change workflows:
 - Exceptions require documented risk acceptance and expiry date
 
 ## Common Mistakes / Anti-Patterns
+
+<!-- Maintainer note: The "Recommended Practices" H3s above and the "Anti-Pattern Catalog" table below are a paired maintenance surface. Each catalog row was re-homed into the corresponding Recommended Practices H3; edits to either surface should update the other to keep guidance coherent. -->
 
 ### Anti-Pattern Catalog
 
@@ -281,6 +289,8 @@ az webapp config appsettings list \
 - [Best Practices - Deployment](./deployment.md)
 - [Best Practices - Scaling](./scaling.md)
 - [Best Practices - Reliability](./reliability.md)
+- [Best Practices - Security](./security.md)
+- [Best Practices - Production Baseline](./production-baseline.md)
 
 ## Sources
 
@@ -288,3 +298,6 @@ az webapp config appsettings list \
 - [Secure Azure App Service apps (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/overview-security)
 - [Troubleshoot outbound connection failures in Azure App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-intermittent-outbound-connection-errors)
 - [Monitor instances in Azure App Service with Health check (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/monitor-instances-health-check)
+- [Use Key Vault references in App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/app-service-key-vault-references)
+- [Deployment best practices for App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/deploy-best-practices)
+- [Set up staging environments in App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots)
