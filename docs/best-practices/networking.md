@@ -355,11 +355,11 @@ az webapp show \
 
 Example output (PII masked):
 
-<!-- Verified: real az CLI output from koreacentral, 2026-05-01 -->
+<!-- Verified: real az CLI output from koreacentral, 2026-05-01; IP values redacted 2026-07-04 -->
 ```json
 {
-  "active": "4.217.128.55,4.217.128.64,4.217.128.65,4.217.128.66,4.217.128.67,4.217.128.80,20.41.120.146,20.196.112.47,20.41.120.193,20.196.112.79,20.41.120.195,20.196.112.159,20.41.66.225",
-  "possible": "20.194.32.78,20.194.38.125,20.194.38.174,20.194.38.52,20.194.7.226,20.194.7.69,20.196.112.159,20.196.112.173,20.196.112.182,20.196.112.202,20.196.112.213,20.196.112.228,20.196.112.47,20.196.112.79,20.41.120.146,20.41.120.148,20.41.120.149,20.41.120.151,20.41.120.154,20.41.120.193,20.41.120.195,20.41.120.200,20.41.120.201,20.41.120.202,20.41.66.225,4.217.128.55,4.217.128.64,4.217.128.65,4.217.128.66,4.217.128.67,4.217.128.80"
+  "active": "<13 outbound IPv4 addresses; run the az webapp show command above to retrieve current values>",
+  "possible": "<31 additional outbound IPv4 addresses; the union of active + possible is the full allowlist candidate set>"
 }
 ```
 

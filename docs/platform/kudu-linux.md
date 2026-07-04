@@ -217,9 +217,9 @@ The modern UI Log Stream is the fastest way to isolate whether a symptom is comi
 
 ### Portal view: Modern UI Log Stream — Platform logs
 
-![KuduLite modern UI Log Stream page — Platform filter. Same layout as the Application view but LOG TYPE chip now shows "Platform" (highlighted blue). Terminal panel shows different content: "PLAT ... appsvc/kudulite:bookworm_20260513.7.tuxprod pulled from 10.1.0.5:13209" and "PLAT ... container 025febf58056_app-stacktrace-repro-demouser-20260625_kudu started" and "PLAT ... probe /robots933456.txt returned 404".](../assets/platform/kudu/12-linux-modern-logs-platform.png)
+![KuduLite modern UI Log Stream page — Platform filter. Same layout as the Application view but LOG TYPE chip now shows "Platform" (highlighted blue). Terminal panel shows different content: "PLAT ... appsvc/kudulite:bookworm_20260513.7.tuxprod pulled from 10.0.0.0:13209" and "PLAT ... container 025febf58056_app-stacktrace-repro-demouser-20260625_kudu started" and "PLAT ... probe /robots933456.txt returned 404".](../assets/platform/kudu/12-linux-modern-logs-platform.png)
 
-> [Observed] Switching LOG TYPE to `Platform` replaces the stream contents with lines prefixed `PLAT` — image-pull events (`appsvc/kudulite:bookworm_20260513.7.tuxprod pulled from 10.1.0.5:13209`), container start events (`container 025febf58056_app-stacktrace-repro-demouser-20260625_kudu started`), and warm-up probe events (`probe /robots933456.txt returned 404`).
+> [Observed] Switching LOG TYPE to `Platform` replaces the stream contents with lines prefixed `PLAT` — image-pull events (`appsvc/kudulite:bookworm_20260513.7.tuxprod pulled from 10.0.0.0:13209`), container start events (`container 025febf58056_app-stacktrace-repro-demouser-20260625_kudu started`), and warm-up probe events (`probe /robots933456.txt returned 404`).
 >
 > [Inferred] Platform logs are what the App Service Linux host writes about container lifecycle — image pulls, container starts, health probes, container restarts. These logs are visible only through the Log Stream (or the underlying `/home/LogFiles/*_docker.log` file); they are NOT emitted by your application code, so the split between "Application" and "Platform" is the fastest way to answer "is this my bug or a platform issue?"
 
