@@ -25,7 +25,9 @@ content_sources:
 
 This document catalogs high-impact App Service anti-patterns that frequently cause outages, security incidents, cost spikes, and difficult troubleshooting cycles. Use it as a review checklist during design, architecture review, and release readiness gates.
 
-## How to Use This Guide
+## Why This Matters
+
+Most recurring App Service incidents are caused by a small set of known anti-patterns. Systematically eliminating them during design review, pre-production, and post-incident planning is the highest-leverage reliability work a team can do.
 
 Apply this guide in three moments:
 
@@ -35,8 +37,6 @@ Apply this guide in three moments:
 
 !!! info "Anti-patterns are preventable"
     Most recurring App Service incidents are caused by a small set of known anti-patterns that can be eliminated early.
-
-## Anti-Pattern Detection Flow
 
 <!-- diagram-id: anti-pattern-detection-flow -->
 ```mermaid
@@ -54,7 +54,71 @@ flowchart TD
     J -- No --> K[Escalate architecture review]
 ```
 
-## Anti-Pattern Catalog
+## Recommended Practices
+
+### Configuration: use Key Vault, slot settings, and externalized state
+
+The disciplined configuration pattern for App Service has four elements:
+
+- Use Key Vault references with managed identity and a documented secret rotation runbook.
+- Mark app settings and connection strings as slot settings where required, so environment-specific values stay with the slot during swap.
+- Use a production-safe configuration profile with debug disabled.
+- Externalize state to durable services (Storage, database, cache) instead of relying on mutable local file writes.
+
+### Deployment: CI/CD with slots, immutable artifacts, tested rollback
+
+The disciplined deployment pattern has four elements:
+
+- Use CI/CD with versioned artifacts and deployment slots (not FTP).
+- Deploy to a staging slot, warm-up, validate, then swap to production.
+- Build once in CI, publish immutable artifacts, and keep deployment deterministic.
+- Document and test swap-back and previous-artifact restore procedures before you need them.
+
+### Networking: bind to 0.0.0.0, pool connections, plan VNet paths early
+
+The disciplined networking pattern has four elements:
+
+- Bind the app process to `0.0.0.0` and the expected platform port so it is reachable from the App Service front end.
+- Use connection pooling, keep-alive, and dependency SDK reuse to avoid SNAT exhaustion.
+- Add timeout, retry with jitter, and circuit breaker behavior for outbound calls.
+- Design egress paths early and validate dependency reachability pre-go-live, including VNet integration where required.
+
+### Security: production SKU, managed identity, enforce HTTPS/TLS
+
+The disciplined security pattern has three elements:
+
+- Use a production-appropriate Standard or Premium SKU based on SLO and load profile, not B1 for critical workloads.
+- Use managed identities and granular RBAC at the minimum required scope, not broad-scoped service principals.
+- Enforce HTTPS-only, a modern TLS policy, and secure cookie headers on every production app.
+
+### Performance: minimum two instances, Always On, externalize sessions
+
+The disciplined performance pattern has three elements:
+
+- Run a minimum of two instances in production for high availability.
+- Enable Always On for continuously serving production web apps to avoid cold starts on idle recycle.
+- Externalize session state and disable ARR affinity for stateless services so scale-out actually distributes load.
+
+### Monitoring: health checks, diagnostic logs, SLO-aligned alerts
+
+The disciplined monitoring pattern has four elements:
+
+- Configure a health check path and verify dependency-aware readiness so the platform can remove unhealthy instances from rotation.
+- Enable diagnostic logs, traces, and metric alerts with a retention policy.
+- Add SLO-aligned alerts for p95 latency, error rate, and dependency failures — not CPU alone.
+- Emit deployment markers and release metadata into the monitoring system to correlate incidents with releases.
+
+### Governance Pattern
+
+Use an anti-pattern review gate in architecture and change workflows:
+
+- Design review checklist must include this document
+- Production change approval requires anti-pattern attestation
+- Exceptions require documented risk acceptance and expiry date
+
+## Common Mistakes / Anti-Patterns
+
+### Anti-Pattern Catalog
 
 Use the following table as a policy baseline.
 
@@ -83,7 +147,7 @@ Use the following table as a policy baseline.
 | Monitoring | Alerting only on CPU and ignoring latency/error rate | Misses user-impact incidents where CPU appears normal | Add SLO-aligned alerts for p95 latency, error rate, and dependency failures |
 | Monitoring | No deployment annotation in telemetry | Hard to correlate incidents with release events | Emit deployment markers and release metadata into monitoring system |
 
-## High-Risk Anti-Patterns to Eliminate First
+### High-Risk Anti-Patterns to Eliminate First
 
 If you cannot fix everything immediately, prioritize these first:
 
@@ -102,9 +166,9 @@ If you cannot fix everything immediately, prioritize these first:
 
 The Diagnose and solve problems blade is the App Service equivalent of an anti-pattern detection gate after the fact — it surfaces the symptoms left behind by the patterns this guide eliminates upfront. The visible `Risk alerts: Availability — 2 Critical` panel is the platform's own confirmation that this particular app is hitting at least two anti-patterns from the catalog above; clicking through shows which ones (most commonly single-instance HA, missing health check, or SNAT/timeout patterns flagged by the platform). The seven `Troubleshooting categories` map cleanly onto the anti-pattern table sections — `Availability and Performance` reveals single-instance and missing-health-check anti-patterns, `Configuration and Management` surfaces slot-setting and EasyAuth misconfigurations, `Networking` exposes SNAT and outbound dependency anti-patterns, and `Risk Assessments` is the closest platform equivalent to a pre-go-live anti-pattern review. Treat any non-zero `Risk alerts` count as a release blocker, not as ambient noise.
 
-## Category Deep Dive
+### Category Deep Dive
 
-### Configuration Anti-Patterns
+#### Configuration Anti-Patterns
 
 Common symptoms:
 
@@ -118,7 +182,7 @@ Remediation baseline:
 - Slot setting review in each release checklist
 - Secret source policy (Key Vault by default)
 
-### Deployment Anti-Patterns
+#### Deployment Anti-Patterns
 
 Common symptoms:
 
@@ -132,7 +196,7 @@ Remediation baseline:
 - Slot-based validation and controlled swap
 - Rollback rehearsal before high-risk changes
 
-### Networking Anti-Patterns
+#### Networking Anti-Patterns
 
 Common symptoms:
 
@@ -146,7 +210,7 @@ Remediation baseline:
 - Add explicit timeout and retry budgets
 - Validate network design with load tests
 
-### Security Anti-Patterns
+#### Security Anti-Patterns
 
 Common symptoms:
 
@@ -160,7 +224,7 @@ Remediation baseline:
 - Key Vault reference policy
 - Security baseline validation in CI/CD
 
-### Performance Anti-Patterns
+#### Performance Anti-Patterns
 
 Common symptoms:
 
@@ -174,7 +238,7 @@ Remediation baseline:
 - Autoscale tied to meaningful metrics
 - Session/state design aligned to horizontal scaling
 
-### Monitoring Anti-Patterns
+#### Monitoring Anti-Patterns
 
 Common symptoms:
 
@@ -188,22 +252,14 @@ Remediation baseline:
 - Actionable alert thresholds with ownership
 - Deployment and incident timeline correlation
 
-## Governance Pattern
-
-Use an anti-pattern review gate in architecture and change workflows:
-
-- Design review checklist must include this document
-- Production change approval requires anti-pattern attestation
-- Exceptions require documented risk acceptance and expiry date
-
-## Operational Review Checklist
+## Validation Checklist
 
 Before production release, validate:
 
-- No critical anti-pattern remains unresolved
-- All high-risk exceptions have mitigation owners
-- Deployment, monitoring, and rollback controls are tested
-- Runbooks match current architecture
+- [ ] No critical anti-pattern remains unresolved.
+- [ ] All high-risk exceptions have mitigation owners.
+- [ ] Deployment, monitoring, and rollback controls are tested.
+- [ ] Runbooks match current architecture.
 
 ```bash
 # Example: verify key settings surface for review
@@ -211,6 +267,10 @@ az webapp config appsettings list \
     --resource-group $RG \
     --name $APP_NAME
 ```
+
+| Command | Purpose | Key flags |
+|---|---|---|
+| `az webapp config appsettings list` | Dump all app settings so the anti-pattern review checklist can be applied against actual configuration state | `--resource-group` scopes the query; `--name` targets the specific web app |
 
 ## See Also
 
