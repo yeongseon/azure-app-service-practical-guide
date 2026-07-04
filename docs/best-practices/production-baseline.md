@@ -46,19 +46,7 @@ content_sources:
 
 This guide defines a minimum production baseline for Azure App Service workloads. Use it to establish consistent defaults before language-specific implementation and before environment-specific optimization.
 
-## Prerequisites
-
-- Azure subscription with permission to configure App Service resources
-- Existing resource group, App Service Plan, and Web App
-- Shared ownership between application and platform teams for baseline standards
-- Variables set:
-    - `RG`
-    - `APP_NAME`
-    - `PLAN_NAME`
-
-## Main Content
-
-### Baseline intent
+## Why This Matters
 
 The goal of a production baseline is to reduce accidental risk. Teams should not negotiate core controls app-by-app. Instead, establish defaults once and apply them consistently.
 
@@ -87,7 +75,19 @@ flowchart TD
     G --> G2[Connection strings avoided where possible]
 ```
 
-### 1) App Service Plan selection
+## Recommended Practices
+
+### Prerequisites
+
+- Azure subscription with permission to configure App Service resources
+- Existing resource group, App Service Plan, and Web App
+- Shared ownership between application and platform teams for baseline standards
+- Variables set:
+    - `RG`
+    - `APP_NAME`
+    - `PLAN_NAME`
+
+### App Service Plan selection
 
 Plan tier selection is a design decision, not only a cost decision.
 
@@ -118,6 +118,10 @@ az appservice plan show \
   --output json
 ```
 
+| Command | Purpose | Key flags |
+|---|---|---|
+| `az appservice plan show` | Read the current plan SKU, tier, and worker count | `--query` filters to SKU/tier/workers; `--output json` for structured output |
+
 Sample output (PII-masked):
 
 ```json
@@ -128,7 +132,7 @@ Sample output (PII-masked):
 }
 ```
 
-### 2) Runtime safety defaults
+### Runtime safety defaults
 
 Every production app should enforce these settings:
 
@@ -153,6 +157,11 @@ az webapp update \
   --output json
 ```
 
+| Command | Purpose | Key flags |
+|---|---|---|
+| `az webapp config set` | Enable Always On and enforce minimum TLS 1.2 | `--always-on true` activates keep-alive pings; `--min-tls-version 1.2` rejects older TLS clients |
+| `az webapp update` | Enable HTTPS-only redirect | `--https-only true` redirects all HTTP requests to HTTPS |
+
 #### Portal view: Configuration General settings
 
 ![Configuration General settings blade for a Web App with five tabs — General settings (active), Stack settings, Health check, Path mappings, Error pages — and a Refresh action. Platform settings section lists SCM Basic Auth Publishing Credentials (unchecked), FTP Basic Auth Publishing Credentials (unchecked), WebJobs runtime (unchecked), FTP state (FTPS only), Inbound IP mode (IPv4), HTTP version (1.1), HTTP 2.0 Proxy (Off), SSH (checked), Always on (unchecked), Session affinity (checked), Session affinity proxy (unchecked), HTTPS only (unchecked), Minimum Inbound TLS Version (1.2), SCM Minimum Inbound TLS Version (1.2), Minimum Inbound TLS Cipher Suite (TLS_RSA_WITH_AES_128_CBC_SHA, Default), and End-to-end TLS encryption (unchecked). Apply and Discard buttons are at the bottom of the blade.](../assets/best-practices/production-baseline/01-configuration-general.png)
@@ -175,6 +184,11 @@ az webapp config show \
   --output json
 ```
 
+| Command | Purpose | Key flags |
+|---|---|---|
+| `az webapp show` | Confirm HTTPS-only flag and current app state | `--query` filters to httpsOnly, state, and hostNames |
+| `az webapp config show` | Verify Always On and TLS settings are active | `--query` filters to alwaysOn, minTlsVersion, and http20Enabled |
+
 !!! info "Always On matters for non-request workloads"
     Apps with scheduled background jobs, cache warm-up, or token refresh logic can fail unpredictably if Always On is disabled.
 
@@ -189,7 +203,7 @@ az webapp config show \
 
     Design startup paths to be fast and idempotent even with Always On enabled.
 
-### 3) Health check configuration
+### Health check configuration
 
 Health checks are required for stable traffic handling and reliable restart behavior.
 
@@ -210,6 +224,10 @@ az webapp config set \
   --output json
 ```
 
+| Command | Purpose | Key flags |
+|---|---|---|
+| `az webapp config set` | Register the health-probe path for load-balancer checks | `--generic-configurations` sets healthCheckPath to `/health` |
+
 Validate endpoint behavior:
 
 ```bash
@@ -219,7 +237,7 @@ curl --silent --show-error --fail "https://$APP_NAME.azurewebsites.net/health"
 !!! warning "Do not make health checks too deep"
     Health checks should detect readiness, not run expensive full-system diagnostics. Deep checks can create cascading failures under load.
 
-### 4) Diagnostic logging baseline
+### Diagnostic logging baseline
 
 At minimum, production workloads should have:
 
@@ -241,6 +259,10 @@ az webapp log config \
   --output json
 ```
 
+| Command | Purpose | Key flags |
+|---|---|---|
+| `az webapp log config` | Enable web-server and application file-system logging | `--web-server-logging filesystem` enables IIS/nginx logs; `--application-logging filesystem` enables app-level logs; `--level information` sets verbosity |
+
 For centralized retention and analytics, route diagnostics to Log Analytics / Azure Monitor.
 
 Example diagnostic settings creation:
@@ -255,6 +277,10 @@ az monitor diagnostic-settings create \
   --output json
 ```
 
+| Command | Purpose | Key flags |
+|---|---|---|
+| `az monitor diagnostic-settings create` | Route platform logs and metrics to a Log Analytics workspace | `--workspace` targets the destination; `--logs` enables HTTP, Console, and Platform log categories; `--metrics` enables AllMetrics |
+
 !!! info "Category names can vary by API version"
     Validate available diagnostic categories in your environment and API version before automation. Keep your IaC and CLI commands aligned.
 
@@ -266,7 +292,11 @@ az monitor diagnostic-settings list \
   --output json
 ```
 
-### 5) App settings vs slot settings
+| Command | Purpose | Key flags |
+|---|---|---|
+| `az monitor diagnostic-settings list` | Enumerate active diagnostic settings for the web app | `--resource` identifies the target app by resource ID |
+
+### App settings vs slot settings
 
 Separate configuration by lifecycle behavior:
 
@@ -289,6 +319,10 @@ az webapp config appsettings set \
   --output json
 ```
 
+| Command | Purpose | Key flags |
+|---|---|---|
+| `az webapp config appsettings set` | Set a non-sticky app setting | `--settings` defines key=value pairs that travel with the deployment |
+
 Mark selected settings as slot-specific:
 
 ```bash
@@ -299,10 +333,14 @@ az webapp config appsettings set \
   --output json
 ```
 
+| Command | Purpose | Key flags |
+|---|---|---|
+| `az webapp config appsettings set` | Mark settings as slot-sticky for swap safety | `--slot-settings` defines key=value pairs that remain bound to the slot during swap |
+
 !!! warning "Misclassified settings break swaps"
     If environment-specific values are not sticky, slot swap can promote invalid endpoints or credentials into production.
 
-### 6) Managed identity over connection strings
+### Managed identity over connection strings
 
 Prefer managed identity for Azure service access to remove static credential handling from applications.
 
@@ -322,6 +360,10 @@ az webapp identity assign \
   --output json
 ```
 
+| Command | Purpose | Key flags |
+|---|---|---|
+| `az webapp identity assign` | Enable system-assigned managed identity on the web app | `--resource-group` and `--name` identify the target app |
+
 Inspect identity state:
 
 ```bash
@@ -331,6 +373,10 @@ az webapp identity show \
   --query "{type:type,principalId:principalId,tenantId:tenantId}" \
   --output json
 ```
+
+| Command | Purpose | Key flags |
+|---|---|---|
+| `az webapp identity show` | Inspect the current managed identity assignment | `--query` filters to type, principalId, and tenantId |
 
 Sample output (PII-masked):
 
@@ -348,7 +394,22 @@ When migration from connection strings is not immediate:
 2. Assign minimum required privileges.
 3. Track retirement date for each remaining secret.
 
-### Baseline verification checklist
+### Advanced Topics
+
+- Create separate baselines for internet-facing APIs, internal apps, and batch-triggered web workloads.
+- Automate baseline enforcement with Azure Policy and IaC validation gates.
+- Add synthetic probes that confirm full request path behavior, not only process liveness.
+- Correlate baseline deviations with incident metrics to prioritize hardening work.
+
+## Common Mistakes / Anti-Patterns
+
+- Treating B1 as permanent production infrastructure.
+- Enabling logs without retention or query ownership.
+- Using health checks that always return success.
+- Keeping production credentials as plain app settings.
+- Performing slot swaps without sticky setting review.
+
+## Validation Checklist
 
 Run this checklist before calling an app production-ready:
 
@@ -360,21 +421,6 @@ Run this checklist before calling an app production-ready:
 - [ ] Diagnostic logging categories enabled and retained centrally.
 - [ ] Slot settings defined for environment-specific values.
 - [ ] Managed identity enabled and permissions scoped.
-
-### Common baseline anti-patterns
-
-- Treating B1 as permanent production infrastructure.
-- Enabling logs without retention or query ownership.
-- Using health checks that always return success.
-- Keeping production credentials as plain app settings.
-- Performing slot swaps without sticky setting review.
-
-## Advanced Topics
-
-- Create separate baselines for internet-facing APIs, internal apps, and batch-triggered web workloads.
-- Automate baseline enforcement with Azure Policy and IaC validation gates.
-- Add synthetic probes that confirm full request path behavior, not only process liveness.
-- Correlate baseline deviations with incident metrics to prioritize hardening work.
 
 ## See Also
 
