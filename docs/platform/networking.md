@@ -350,10 +350,15 @@ az webapp show \
 
 Example output (PII masked):
 
+| Output field | Meaning | Operational use |
+|---|---|---|
+| `active` | Currently in-use outbound IPs on this plan | Diagnostic snapshot only — do **not** allowlist |
+| `possible` | Full candidate set the plan could rotate through | Union of active+possible is the correct allowlist |
+
 <!-- Verified: real az CLI output from koreacentral, 2026-05-01; IP values redacted 2026-07-04 -->
 ```json
 {
-  "active": "<13 outbound IPv4 addresses; run the az webapp show command above to retrieve current values>",
+  "active": "<13 outbound IPv4 addresses; run the command above to retrieve current values>",
   "possible": "<31 additional outbound IPv4 addresses; the union of active + possible is the full allowlist candidate set>"
 }
 ```

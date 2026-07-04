@@ -41,6 +41,17 @@ content_sources:
 
 Networking design in Azure App Service is primarily about controlling direction and trust boundaries: private inbound paths, predictable outbound paths, and reliable DNS behavior across those paths.
 
+## Why This Matters
+
+Networking is the first control plane an App Service workload exposes to the outside world, and it is also the layer that most often fails silently in production. Getting these decisions right up front is materially cheaper than retrofitting them:
+
+- Outbound IPs can change under scale operations, region moves, or SKU changes — hard-coded allowlists break with no explicit warning.
+- Private Endpoint and VNet Integration solve different problems (inbound privacy vs outbound reachability); confusing them leads to either data-plane exposure or broken egress.
+- SNAT port exhaustion presents as intermittent connectivity issues that are indistinguishable from remote-service faults without the right diagnostic signals in place.
+- DNS resolution paths differ across shared-plan, VNet-integrated, and Private Endpoint topologies; a stale mental model causes reproducible-but-unexplained lookup failures.
+
+This document consolidates the concrete design and validation practices that keep those failure modes from becoming incidents.
+
 ## Prerequisites
 
 - Existing Web App and App Service Plan
@@ -53,7 +64,7 @@ Networking design in Azure App Service is primarily about controlling direction 
     - `INTEGRATION_SUBNET_NAME`
     - `PRIVATE_ENDPOINT_SUBNET_NAME`
 
-## Main Content
+## Recommended Practices
 
 ### Networking goals for production
 
@@ -298,18 +309,7 @@ az webapp config access-restriction add \
 
 The Access Restrictions blade is where the layered inbound model described above is enforced. The visible default state shows the two most important behaviors this guide warns against assuming away: `Public network access` is `Enabled (using default behavior)` meaning the app is publicly reachable, and the implicit `Allow all` rule at priority `2147483647` with `Unmatched rule action: Allow` means that without any explicit rules, every source is permitted. The `Main site` and `Advanced tool site` tabs separate runtime traffic from SCM/Kudu management traffic — both must be hardened. After running the `az webapp config access-restriction add` command above with priority 100, the new `AllowCorp` rule should appear above the default `Allow all` row, and the `Unmatched rule action` should be flipped to `Deny` to convert the implicit allow-by-default posture into an explicit deny-by-default posture.
 
-### 7) Outbound dependency validation checklist
-
-Before production cutover:
-
-- [ ] App can resolve private dependency FQDNs correctly.
-- [ ] App can connect to dependency private endpoints.
-- [ ] Connection pooling is enabled and tuned.
-- [ ] Dependency timeouts are explicit and bounded.
-- [ ] Retry policy prevents connection storms.
-- [ ] NAT/SNAT behavior is observed under peak load tests.
-
-### 8) Troubleshooting patterns to pre-plan
+### 7) Troubleshooting patterns to pre-plan
 
 Include these commands in runbooks:
 
@@ -330,7 +330,7 @@ az network private-dns record-set a list \
   --output table
 ```
 
-### 9) Manage IP address changes proactively
+### 8) Manage IP address changes proactively
 
 App Service IP addresses are not static. Treating them as fixed causes allowlist drift, broken firewall rules, and silent connectivity failures after scale events.
 
@@ -355,10 +355,15 @@ az webapp show \
 
 Example output (PII masked):
 
+| Output field | Meaning | Operational use |
+|---|---|---|
+| `active` | Currently in-use outbound IPs on this plan | Diagnostic snapshot only — do **not** allowlist |
+| `possible` | Full candidate set the plan could rotate through | Union of active+possible is the correct allowlist |
+
 <!-- Verified: real az CLI output from koreacentral, 2026-05-01; IP values redacted 2026-07-04 -->
 ```json
 {
-  "active": "<13 outbound IPv4 addresses; run the az webapp show command above to retrieve current values>",
+  "active": "<13 outbound IPv4 addresses; run the command above to retrieve current values>",
   "possible": "<31 additional outbound IPv4 addresses; the union of active + possible is the full allowlist candidate set>"
 }
 ```
@@ -468,13 +473,24 @@ When run from a VM inside the VNet with the private DNS zone configured, the res
         --output json
     ```
 
-### Common networking anti-patterns
+## Common Mistakes / Anti-Patterns
 
 - Enabling VNet Integration but forgetting DNS design.
 - Creating private endpoints without private DNS zone links.
 - Assuming private endpoint also controls outbound traffic.
 - Treating intermittent timeouts as dependency faults without SNAT analysis.
 - Using Hybrid Connections as a permanent architecture without review.
+
+## Validation Checklist
+
+Before production cutover:
+
+- [ ] App can resolve private dependency FQDNs correctly.
+- [ ] App can connect to dependency private endpoints.
+- [ ] Connection pooling is enabled and tuned.
+- [ ] Dependency timeouts are explicit and bounded.
+- [ ] Retry policy prevents connection storms.
+- [ ] NAT/SNAT behavior is observed under peak load tests.
 
 ## Advanced Topics
 
