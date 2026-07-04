@@ -49,7 +49,7 @@ readonly STARTED_AT
 
 # --- Trap for graceful abort ---
 PARTIAL=false
-# shellcheck disable=SC2329  # invoked indirectly via `trap cleanup SIGINT SIGTERM` below
+# shellcheck disable=SC2317,SC2329  # invoked indirectly via `trap cleanup SIGINT SIGTERM` below; older CI ShellCheck (Ubuntu apt ~0.9/0.10) also reports SC2317 on body statements
 cleanup() {
     if [[ "$PARTIAL" == "true" ]]; then
         echo >&2 "WARN: Aborted mid-run. Partial artifacts in $RESULTS_DIR"

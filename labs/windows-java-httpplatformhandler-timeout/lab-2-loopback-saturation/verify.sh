@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC2329
+# shellcheck disable=SC2317,SC2329
+# SC2317: older CI ShellCheck (Ubuntu apt ~0.9/0.10) misflags helper functions
+# in this shell library as unreachable; they are invoked indirectly from later
+# case/if branches and dispatched at runtime. Local ShellCheck 0.11.0 correctly
+# recognizes reachability. Scoped to this file to preserve SC2317 elsewhere.
+# SC2329: functions invoked via trap or indirect dispatch below.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
