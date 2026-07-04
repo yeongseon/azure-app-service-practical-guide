@@ -79,7 +79,11 @@ Read in order:
     - [Networking](../platform/networking.md)
     - [Resource Relationships](../platform/resource-relationships.md)
 3. Best Practices sequence:
-    - [Production Baseline](../best-practices/production-baseline.md)    - [Scaling](../best-practices/scaling.md)    - [Reliability](../best-practices/reliability.md)    - [Common Anti-Patterns](../best-practices/common-anti-patterns.md)4. Operations sequence:
+    - [Production Baseline](../best-practices/production-baseline.md)
+    - [Scaling](../best-practices/scaling.md)
+    - [Reliability](../best-practices/reliability.md)
+    - [Common Anti-Patterns](../best-practices/common-anti-patterns.md)
+4. Operations sequence:
     - [Operations Index](../operations/index.md)
     - [Scaling Operations](../operations/scaling.md)
     - [Health and Recovery](../operations/health-recovery.md)
