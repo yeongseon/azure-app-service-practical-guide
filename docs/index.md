@@ -78,6 +78,7 @@ Primary product reference: [Azure App Service overview](https://learn.microsoft.
 ## See Also
 
 - [Start here](start-here/overview.md)
+- [Scenario Router](start-here/scenario-router.md)
 
 ## Sources
 

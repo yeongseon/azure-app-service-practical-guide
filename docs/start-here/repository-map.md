@@ -74,6 +74,7 @@ graph TD
 
 - [Azure App Service Practical Guide](./overview.md)
 - [Learning Paths](./learning-paths.md)
+- [Scenario Router](./scenario-router.md)
 - [Platform](../platform/index.md)
 - [Best Practices](../best-practices/index.md)
 - [Operations](../operations/index.md)

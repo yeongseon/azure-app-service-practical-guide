@@ -63,6 +63,7 @@ graph TD
 ## See Also
 
 - [Learning Paths](./learning-paths.md)
+- [Scenario Router](./scenario-router.md)
 - [Repository Map](./repository-map.md)
 - [Platform](../platform/index.md)
 - [Operations](../operations/index.md)
