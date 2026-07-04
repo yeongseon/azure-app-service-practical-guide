@@ -27,7 +27,9 @@ content_sources:
 
 Scaling guidance in App Service is a design decision, not only an operational toggle. This document helps you choose the right scaling model based on workload characteristics, architecture constraints, and cost boundaries.
 
-## Scaling Objectives
+## Why This Matters
+
+Scaling decisions determine whether your workload can absorb traffic bursts, survive instance loss, and stay within cost boundaries.
 
 A production scaling strategy should balance:
 
@@ -39,7 +41,9 @@ A production scaling strategy should balance:
 !!! info "Design judgment layer"
     Platform documentation explains what scaling options exist. This guide explains when and why to choose each option.
 
-## Prerequisites
+## Recommended Practices
+
+### Prerequisites
 
 Before tuning scaling behavior:
 
@@ -48,11 +52,11 @@ Before tuning scaling behavior:
 - Configure health checks and application telemetry
 - Validate statelessness assumptions for horizontal scaling
 
-## Vertical vs Horizontal Scaling Decision
+### Vertical vs Horizontal Scaling Decision
 
 Both scale-up and scale-out are valid. The right choice depends on bottlenecks and application architecture.
 
-### Vertical Scaling (Scale Up)
+#### Vertical Scaling (Scale Up)
 
 Scale up increases CPU/RAM resources per instance by changing App Service plan SKU.
 
@@ -68,7 +72,7 @@ Limitations:
 - Some outages affect all workload on the plan
 - Unit cost can rise quickly at higher tiers
 
-### Horizontal Scaling (Scale Out)
+#### Horizontal Scaling (Scale Out)
 
 Scale out increases instance count.
 
@@ -83,13 +87,13 @@ Limitations:
 - Session state and cache locality can complicate behavior
 - Downstream systems must tolerate increased parallel calls
 
-#### Portal view: Scale out (App Service plan) blade
+##### Portal view: Scale out (App Service plan) blade
 
 ![Scale out (App Service plan) blade for a Linux plan with a Refresh button and a Send us your feedback action. The Pricing plan section lists Current plan (Premium v3 P0V3 with a Change link), Price (instance) 0.091 USD/hour (66.065 USD/month), Memory (GB) 4, Maximum scale (instance) 30, Active instance count 1, Maximum available zones 3 with a Get more info link, and a Zone Redundancy checkbox that is unchecked alongside an info banner reading "Minimum of two instances required." The Scaling section explains manual versus autoscale behavior and presents three Scale out method radio buttons — Manual (selected) with the subtitle "Maintain a constant instance count for your application", Automatic with "Platform managed scale out and in based on traffic", and Rules Based with "User defined rules to scale on a schedule or based on any app metric". An Instance count slider is set to 1, an Async scaling checkbox below it is unchecked, and Save and Discard buttons are at the bottom of the blade.](../assets/best-practices/scaling/01-scale-out.png)
 
 The Scale out blade is the operational expression of the horizontal-scaling decision tree below. The three `Scale out method` radio buttons separate the three valid strategies in practice: `Manual` for fixed capacity, `Automatic` for platform-managed scaling against HTTP traffic, and `Rules Based` for the custom autoscale rules this guide recommends for CPU and queue-length triggers. The visible defaults here are also the most common single-region anti-patterns called out elsewhere in this document: `Active instance count: 1` is a single failure domain, and `Zone Redundancy` is unchecked because zone redundancy requires a minimum of two instances. Validate this blade matches the design intent — `Maximum scale (instance): 30` is the SKU ceiling, but the autoscale `max instance count` you choose must sit below it with headroom for emergency manual scaling.
 
-### Scaling Decision Tree
+#### Scaling Decision Tree
 
 <!-- diagram-id: scaling-decision-tree -->
 ```mermaid
@@ -106,11 +110,11 @@ flowchart TD
     I --> K[Set min/max and cool-down policies]
 ```
 
-## Auto-Scale Rules Design
+### Auto-Scale Rules Design
 
 Autoscale rules should be intentional and measurable. Avoid reactive chaos by using small, tested rule sets.
 
-### CPU-Based Rules
+#### CPU-Based Rules
 
 CPU is useful as a broad saturation indicator.
 
@@ -119,7 +123,7 @@ Example baseline:
 - Scale out when average CPU > 70% for 10 minutes
 - Scale in when average CPU < 35% for 20 minutes
 
-### HTTP Queue Length Rules
+#### HTTP Queue Length Rules
 
 Queue length is a strong signal when request concurrency exceeds instance capacity.
 
@@ -128,7 +132,7 @@ Use when:
 - CPU is not saturated but response times rise
 - Workloads have blocking I/O and thread-pool pressure
 
-### Custom Metrics Rules
+#### Custom Metrics Rules
 
 Custom metrics are valuable for domain-specific bottlenecks.
 
@@ -141,7 +145,7 @@ Examples:
 !!! warning "Avoid conflicting rules"
     Multiple aggressive rules on different metrics can cause oscillation (thrashing). Use cool-down windows and clear priority logic.
 
-## Scale-Out Limits per SKU
+### Scale-Out Limits per SKU
 
 App Service scaling limits vary by tier and region capability. Plan limits should be checked before setting autoscale ceilings.
 
@@ -154,7 +158,7 @@ Design recommendations:
 !!! note "Treat limits as design inputs"
     Do not discover scaling limits during an incident. Validate limits in advance and document expected capacity.
 
-## Per-App Scaling
+### Per-App Scaling
 
 Multiple apps can share one App Service plan. Per-app scaling allows each app to scale independently within plan constraints.
 
@@ -169,11 +173,11 @@ Trade-offs:
 - Capacity planning becomes more complex
 - Noisy-neighbor risk still exists at plan resource level
 
-## Local Cache and ARR Affinity Considerations
+### Local Cache and ARR Affinity Considerations
 
 Scaling strategy is tightly coupled to state behavior.
 
-### ARR Affinity
+#### ARR Affinity
 
 ARR affinity (sticky sessions) pins clients to instances.
 
@@ -186,7 +190,7 @@ Recommendation:
 - Prefer external distributed session stores over ARR affinity
 - Disable ARR affinity for truly stateless workloads
 
-### Local Cache
+#### Local Cache
 
 Local cache can improve read performance for some workloads, but do not treat it as a shared persistence layer.
 
@@ -197,7 +201,7 @@ Local cache can improve read performance for some workloads, but do not treat it
 !!! tip "Stateless first"
     If scale-out reliability is a goal, design for stateless request processing and externalize mutable state.
 
-## Practical Autoscale Configuration Pattern
+### Practical Autoscale Configuration Pattern
 
 1. Set `minimum instance count` based on baseline traffic and HA needs
 2. Set `maximum instance count` from cost and limit analysis
@@ -218,7 +222,25 @@ az appservice plan show \
     --name $PLAN_NAME
 ```
 
-## Common Scaling Failure Modes
+| Command | Purpose | Key flags |
+|---|---|---|
+| `az webapp config set --always-on true` | Prevent idle recycle from causing cold starts in the production workload | `--always-on true` enables platform-managed keep-warm; `--resource-group` and `--name` scope the change to a single app |
+| `az appservice plan show` | Read current App Service plan tier and capacity context to validate scaling ceiling | `--name` targets the plan (not the app); `--resource-group` scopes lookup |
+
+### Capacity Planning Baseline
+
+For each app, maintain a simple capacity sheet with:
+
+- Requests per second at steady and peak windows
+- Per-instance throughput estimate at acceptable latency
+- Safety factor for unexpected demand spikes
+- Maximum expected dependency concurrency
+
+Capacity formula example:
+
+`required_instances = (peak_rps / per_instance_rps) * safety_factor`
+
+## Common Mistakes / Anti-Patterns
 
 ### Mode 1: Scaling Does Not Improve Latency
 
@@ -250,24 +272,20 @@ Action:
 - Externalize session state
 - Validate load-balancer behavior with synthetic traffic
 
-## Capacity Planning Baseline
+## Validation Checklist
 
-For each app, maintain a simple capacity sheet with:
+Before promoting scaling configuration to production, verify:
 
-- Requests per second at steady and peak windows
-- Per-instance throughput estimate at acceptable latency
-- Safety factor for unexpected demand spikes
-- Maximum expected dependency concurrency
-
-Capacity formula example:
-
-`required_instances = (peak_rps / per_instance_rps) * safety_factor`
-
-## Governance and Review Cadence
-
-- Monthly review of autoscale metrics and incidents
-- Pre-event scale rehearsal for known peak periods
-- Post-incident scaling retrospective with updated runbook
+- [ ] Baseline traffic and latency metrics are captured (established from Prerequisites).
+- [ ] SLOs are defined for availability, p95 latency, and error rate.
+- [ ] Health checks and application telemetry are configured.
+- [ ] Statelessness assumption is validated for the workload.
+- [ ] Autoscale minimum count meets HA target (baseline: 2 for production).
+- [ ] Autoscale maximum count sits below SKU hard limit with headroom.
+- [ ] Scale-out and scale-in rules do not oscillate under synthetic load.
+- [ ] ARR affinity setting matches actual state model (stateless → disabled).
+- [ ] Capacity sheet exists with peak RPS, per-instance throughput, and safety factor.
+- [ ] Monthly autoscale review and pre-event rehearsal are scheduled.
 
 ## See Also
 
