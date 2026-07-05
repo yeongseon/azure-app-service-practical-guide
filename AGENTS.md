@@ -700,6 +700,35 @@ Brief introduction
 ## Sources
 ```
 
+Files under `docs/operations/deployment/**/*.md` that describe a deployment mechanism use a separate sub-template — see [Deployment Method Reference (Operations variant)](#deployment-method-reference-operations-variant) below.
+
+#### Deployment Method Reference (Operations variant)
+
+```text
+# Title
+Brief introduction
+## Main Content
+### <method-specific subsections>
+## Advanced Topics
+## See Also
+## Sources
+```
+
+Scope: files under `docs/operations/deployment/**/*.md` that describe a deployment mechanism (ZIP deploy, slot swap mechanics, GitHub Actions workflow, container deploy) rather than a step-by-step operational procedure. Currently applies to:
+
+- `docs/operations/deployment/zip-deploy.md`
+- `docs/operations/deployment/slots-and-swap.md`
+- `docs/operations/deployment/github-actions.md`
+- `docs/operations/deployment/container-deploy.md`
+
+These files intentionally omit the Prerequisites / When to Use / Procedure / Verification / Rollback structure because their content shape is "how the deployment method works," not "step-by-step procedure to run." Operational runbooks that actually walk a reader through a procedure (for example `docs/operations/deployment-slots.md` at the top level of `operations/`) MUST use the full Operations template.
+
+**Validator status (current)**: `scripts/validate_doc_quality.py` does NOT currently have a path-based carve-out for `docs/operations/deployment/**/*.md`. Running the validator with `--all` flags these 4 files with missing-section errors as historical debt. Change-scoped CI (the default) does NOT fail on unchanged files, so this documented exception does not break normal commit flow.
+
+**When editing these files**: preserve the sub-template shape. Do NOT force-fit into the full Operations template. If the validator's `--all` output is used for cleanup work, treat these 4 files as documented exceptions unless a separate scope adds a formal validator carve-out.
+
+**When adding a new file under `docs/operations/deployment/`**: follow this sub-template if the content is method reference. If the content is a step-by-step runbook, place the file at the top level of `docs/operations/` and follow the full Operations template.
+
 #### Tutorial docs (Language Guides)
 
 ```text
