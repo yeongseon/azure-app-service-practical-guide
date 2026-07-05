@@ -27,13 +27,24 @@ content_validation:
 
 # mTLS Failures
 
-## Symptom
+This playbook covers mutual TLS (mTLS) failures on Azure App Service, ranging from client certificate configuration issues to app-side chain validation and certificate loading problems.
+
+## 1. Summary
+
+### Symptoms
 
 - `X-ARR-ClientCert` is missing in app code
 - App Service returns `403` when inbound client certificates are required
 - Application code fails certificate parsing or trust validation
 - Outbound mTLS calls fail because the client certificate cannot be found or loaded
 - ASE deployments show behavior differences between expected private ingress and actual certificate flow
+
+### Common error messages
+
+- `X-ARR-ClientCert` header absent from the request
+- `403` from the App Service front end
+- Chain validation failure in application code
+- `clientCertEnabled` is false in site configuration
 
 <!-- diagram-id: app-service-mtls-troubleshooting-flow -->
 ```mermaid
@@ -46,23 +57,53 @@ flowchart TD
     A -->|ASE topology confusion| F[Check ingress path and ASE design]
 ```
 
-## Possible Causes
+## 2. Common Misreadings
 
-- `clientCertEnabled` is false
-- request path is covered by `clientCertExclusionPaths`
-- caller used HTTP instead of HTTPS
-- caller never presented a certificate to the front end
-- application assumed the platform validated the chain
-- outbound certificate thumbprint or path is wrong
-- App Service certificate-loading configuration is incomplete
-- ASE ingress topology is different from what the application team assumed
-- an upstream gateway or proxy changes how client-certificate authentication is performed before the request reaches App Service
+| Observation | Often Misread As | Actually Means |
+|---|---|---|
+| `X-ARR-ClientCert` missing | Platform bug | `clientCertEnabled=false` or `clientCertExclusionPaths` matches the request path |
+| `403` from front end | App-side auth failure | Caller never presented a certificate; platform rejected the handshake |
+| App parses `X-ARR-ClientCert` and fails | Certificate is corrupt | App is treating base64-encoded content as full PEM without adding markers |
+| Outbound certificate not found | Certificate did not upload | `WEBSITE_LOAD_CERTIFICATES` thumbprint mismatch, OS-specific store path wrong, or app not restarted after config change |
+| Behavior differs on ASE | ASE bug | Ingress topology is different from public multitenant path; upstream gateway may alter certificate flow |
 
-## Diagnosis Steps
+## 3. Competing Hypotheses
 
-### 1. `X-ARR-ClientCert` header missing at the app
+| Hypothesis | Key Discriminator |
+|---|---|
+| H1: `clientCertEnabled` false or exclusion path match | `az webapp show --query clientCertEnabled` returns false, or request path matches an entry in `clientCertExclusionPaths` |
+| H2: Caller not presenting certificate | Request without `--cert` returns 403; request with `--cert` reaches the app |
+| H3: App-side chain/parse failure | Certificate is present in the header but parsing or validation throws in application code |
+| H4: Outbound cert not loaded correctly | `WEBSITE_LOAD_CERTIFICATES` set but application-side lookup returns null |
+| H5: ASE ingress topology confusion | Behavior differs between multitenant test app and ASE-hosted app despite identical configuration |
 
-Check the site settings:
+## 4. What to Check First
+
+1. Confirm `clientCertEnabled` is true and `clientCertMode` matches the intended behavior:
+
+    ```bash
+    az webapp show \
+      --resource-group $RG \
+      --name $APP_NAME \
+      --query "{clientCertEnabled:clientCertEnabled,clientCertMode:clientCertMode,clientCertExclusionPaths:clientCertExclusionPaths,httpsOnly:httpsOnly}" \
+      --output json
+    ```
+
+2. Verify the request path is not covered by `clientCertExclusionPaths`.
+
+3. Confirm the expected certificate thumbprint matches and the application has restarted after configuration change.
+
+4. For ASE deployments, verify where ingress actually enters the App Service front-end layer.
+
+    #### Portal view: Networking blade as entry point for mTLS configuration
+
+    ![Azure portal Networking blade showing Inbound traffic configuration column (Public network access Enabled with no access restrictions Using default behavior, App assigned address Not configured, Private endpoints 0 private endpoints, Inbound IPv4 <ip-redacted>, Inbound IPv6 <ipv6-redacted>) and Outbound traffic configuration column (Virtual network integration Not configured, Hybrid connections Not configured, Outbound DNS Default Azure-provided, list of Outbound IPv4 and IPv6 addresses), Integration subnet configuration card showing NAT gateway N/A, NSG N/A, UDR N/A, toolbar with Refresh, Troubleshoot, Send us your feedback buttons](../../assets/troubleshooting/networking/01-networking-hub.png)
+
+    The `Networking` blade is the orientation surface for inbound-path verification. The `Inbound traffic configuration` column lists `Public network access` (`Enabled with no access restrictions`), `Private endpoints` (`0 private endpoints`), `Inbound IPv4` (`<ip-redacted>`), and `Inbound IPv6` (`<ipv6-redacted>`) — together these describe every surface on which an inbound client connection (including an mTLS handshake) can land for this app. The `Outbound traffic configuration` column (`Virtual network integration: Not configured`, `Hybrid connections: Not configured`) confirms no VNet egress detour exists in this baseline. The toolbar `Troubleshoot` button is the platform-supplied network-diagnostics launcher.
+
+## 5. Evidence to Collect
+
+### 5.1 CLI Investigation
 
 ```bash
 az webapp show \
@@ -71,16 +112,6 @@ az webapp show \
   --query "{clientCertEnabled:clientCertEnabled,clientCertMode:clientCertMode,clientCertExclusionPaths:clientCertExclusionPaths,httpsOnly:httpsOnly}" \
   --output json
 ```
-
-Interpretation:
-
-- `clientCertEnabled=false`: missing header is expected
-- request path matches `clientCertExclusionPaths`: missing header can be expected on that route
-- `httpsOnly=false`: callers may be bypassing the intended TLS path
-
-### 2. `403` from the front end with `clientCertMode=Required`
-
-Compare a request without and with a certificate:
 
 ```bash
 curl --include "https://$APP_NAME.azurewebsites.net/cert-info"
@@ -91,54 +122,104 @@ curl --include \
   "https://$APP_NAME.azurewebsites.net/cert-info"
 ```
 
-If only the second request reaches the app, the platform enforcement path is working and the failing caller is not presenting a certificate.
+### 5.2 What to Look For
 
-### 3. Chain validation failure in app code
+- `clientCertEnabled=false`: missing header is expected
+- Request path matches `clientCertExclusionPaths`: missing header can be expected on that route
+- `httpsOnly=false`: callers may be bypassing the intended TLS path
+- If only the second request (with `--cert`) reaches the app, the platform enforcement path is working and the failing caller is not presenting a certificate
+- Treating `X-ARR-ClientCert` as full PEM instead of base64 content
+- Failing to add PEM markers before parsing
+- Validating only CN when the security model depends on issuer or SAN
+- Expired intermediate or untrusted issuing CA in your application trust policy
 
-Check for these patterns:
+## 6. Validation and Disproof by Hypothesis
 
-- treating `X-ARR-ClientCert` as full PEM instead of base64 content
-- failing to add PEM markers before parsing
-- validating only CN when the security model depends on issuer or SAN
-- expired intermediate or untrusted issuing CA in your application trust policy
+### H1: X-ARR-ClientCert header missing
 
-### 4. `WEBSITE_LOAD_CERTIFICATES` is set but the cert is still missing
+**Proves if** `clientCertEnabled` is false, or the request path matches a `clientCertExclusionPaths` entry, or `httpsOnly` is false and callers are using HTTP.
 
-Verify:
+**Disproves if** `clientCertEnabled` is true, request path is not excluded, and HTTPS is enforced.
 
-- thumbprint matches exactly
-- expected certificate format was uploaded
-- the application is looking in the correct OS-specific location or store
-- the app restarted after configuration change
+Validation steps:
+
+1. Confirm `clientCertEnabled` is true.
+2. Confirm the request path is not covered by `clientCertExclusionPaths`.
+3. Confirm `httpsOnly` is true or callers are verified to be using HTTPS.
+
+### H2: 403 from front end with certificate required
+
+**Proves if** a request without `--cert` returns 403 while a request with `--cert` reaches the app.
+
+**Disproves if** both requests (with and without certificate) fail identically, suggesting a different cause.
+
+Validation steps:
+
+1. Compare a request without and with a certificate using `curl`.
+2. If only the second request reaches the app, the failing caller is not presenting a certificate.
+
+### H3: Chain validation failure in app code
+
+**Proves if** the certificate is present in the `X-ARR-ClientCert` header but parsing or validation throws in application code.
+
+**Disproves if** the header is absent (which points to H1 or H2 instead).
+
+Validation steps:
+
+1. Check for treating `X-ARR-ClientCert` as full PEM instead of base64 content.
+2. Check for failing to add PEM markers before parsing.
+3. Check for validating only CN when the security model depends on issuer or SAN.
+4. Check for expired intermediate or untrusted issuing CA in the application trust policy.
+
+### H4: WEBSITE_LOAD_CERTIFICATES certificate missing
+
+**Proves if** `WEBSITE_LOAD_CERTIFICATES` is set but the application-side lookup returns null or cannot find the certificate.
+
+**Disproves if** the certificate loads correctly and the issue is in a different stage of the mTLS flow.
+
+Validation steps:
+
+1. Verify thumbprint matches exactly.
+2. Verify expected certificate format was uploaded.
+3. Verify the application is looking in the correct OS-specific location or store.
+4. Verify the app restarted after configuration change.
 
 !!! warning "Certificate-loading details are OS-specific"
     On App Service, outbound certificate access differs between Windows and Linux. Validate your exact hosting OS before debugging application code.
 
-### 5. ASE-specific ingress confusion
+### H5: ASE-specific ingress topology
 
-For ASE or ILB ASE deployments, confirm:
+**Proves if** behavior differs between a multitenant test app and an ASE-hosted app despite identical configuration.
 
-- where ingress actually enters the App Service front-end layer
-- whether an upstream proxy or gateway changes the expected request path
-- whether the ingress chain preserves the standard `X-ARR-ClientCert` application contract
+**Disproves if** the same behavior manifests on both multitenant and ASE environments.
 
-#### Portal view: Networking blade as entry point for mTLS configuration
+Validation steps:
 
-![Azure portal Networking blade showing Inbound traffic configuration column (Public network access Enabled with no access restrictions Using default behavior, App assigned address Not configured, Private endpoints 0 private endpoints, Inbound IPv4 <ip-redacted>, Inbound IPv6 <ipv6-redacted>) and Outbound traffic configuration column (Virtual network integration Not configured, Hybrid connections Not configured, Outbound DNS Default Azure-provided, list of Outbound IPv4 and IPv6 addresses), Integration subnet configuration card showing NAT gateway N/A, NSG N/A, UDR N/A, toolbar with Refresh, Troubleshoot, Send us your feedback buttons](../../assets/troubleshooting/networking/01-networking-hub.png)
+1. Confirm where ingress actually enters the App Service front-end layer.
+2. Confirm whether an upstream proxy or gateway changes the expected request path.
+3. Confirm whether the ingress chain preserves the standard `X-ARR-ClientCert` application contract.
 
-The `Networking` blade is the orientation surface for inbound-path verification. The `Inbound traffic configuration` column lists `Public network access` (`Enabled with no access restrictions`), `Private endpoints` (`0 private endpoints`), `Inbound IPv4` (`<ip-redacted>`), and `Inbound IPv6` (`<ipv6-redacted>`) — together these describe every surface on which an inbound client connection (including an mTLS handshake) can land for this app. The `Outbound traffic configuration` column (`Virtual network integration: Not configured`, `Hybrid connections: Not configured`) confirms no VNet egress detour exists in this baseline. The toolbar `Troubleshoot` button is the platform-supplied network-diagnostics launcher.
+## 7. Likely Root Cause Patterns
 
-## Resolution
+| Pattern | Evidence | Resolution |
+|---|---|---|
+| Client cert not enabled | `clientCertEnabled=false` | Enable client certificate authentication and choose the intended `clientCertMode` |
+| Exclusion path unexpectedly matches | Request path in `clientCertExclusionPaths` | Remove only the exclusion entries no longer needed |
+| HTTP instead of HTTPS | `httpsOnly=false` and callers use HTTP | Enable HTTPS-only and retest |
+| PEM reconstruction bug | App treats base64 content as full PEM | Prepend and append PEM markers before parsing `X-ARR-ClientCert` |
+| ASE ingress differs from multitenant | Behavior gap between test app and ASE app | Document the actual front-end trust boundary for ASE; do not assume public path parity |
 
-- Enable `clientCertEnabled` and set the intended `clientCertMode`
-- remove only the exclusion paths you no longer need
-- enforce HTTPS-only and retest with an actual client certificate
-- reconstruct PEM correctly before parsing `X-ARR-ClientCert`
-- validate the certificate chain and authorization policy in application code
-- correct outbound certificate thumbprint, path, or store lookup logic
-- review ASE ingress design and document the actual front-end trust boundary instead of assuming ASE behaves exactly like the public multitenant ingress path
+## 8. Immediate Mitigations
 
-## Prevention
+1. Enable `clientCertEnabled` and set the intended `clientCertMode`
+2. Remove only the exclusion paths you no longer need
+3. Enforce HTTPS-only and retest with an actual client certificate
+4. Reconstruct PEM correctly before parsing `X-ARR-ClientCert`
+5. Validate the certificate chain and authorization policy in application code
+6. Correct outbound certificate thumbprint, path, or store lookup logic
+7. Review ASE ingress design and document the actual front-end trust boundary instead of assuming ASE behaves exactly like the public multitenant ingress path
+
+## 9. Prevention
 
 - Keep inbound and outbound mTLS runbooks separate
 - add a lower-environment `/cert-info` diagnostics endpoint for rollout testing
