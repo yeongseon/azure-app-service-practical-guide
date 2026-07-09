@@ -4,6 +4,9 @@ site/
 # MCP browser capture artifacts (Playwright DOM dumps, not authoritative content)
 .playwright-mcp/
 
+# Sisyphus agent artifacts (repo-local coordination plans should not be committed)
+.sisyphus/
+
 # Python
 __pycache__/
 *.py[cod]
