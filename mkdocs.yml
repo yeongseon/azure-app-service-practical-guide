@@ -353,12 +353,12 @@ nav:
     - reference/platform-limits.md
     - reference/troubleshooting.md
     - reference/kudu-queries.md
-  - Visualization:
-    - visualization/index.md
-    - visualization/core-knowledge-graph.md
-    - visualization/troubleshooting-map.md
-    - visualization/learning-paths.md
-  - Meta:
-    - meta/taxonomy.md
+    - Visualization:
+      - visualization/index.md
+      - visualization/core-knowledge-graph.md
+      - visualization/troubleshooting-map.md
+      - visualization/learning-paths.md
+    - Meta:
+      - meta/taxonomy.md
   - Contributing:
     - contributing/index.md
