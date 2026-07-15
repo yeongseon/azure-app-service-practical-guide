@@ -4,6 +4,10 @@
 
 📘 Documentation site: <https://yeongseon.github.io/azure-app-service-practical-guide/>
 
+[![Docs](https://github.com/yeongseon/azure-app-service-practical-guide/actions/workflows/docs.yml/badge.svg)](https://github.com/yeongseon/azure-app-service-practical-guide/actions/workflows/docs.yml)
+[![CI](https://github.com/yeongseon/azure-app-service-practical-guide/actions/workflows/app-infra-ci.yml/badge.svg)](https://github.com/yeongseon/azure-app-service-practical-guide/actions/workflows/app-infra-ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 Comprehensive guide for running web applications on Azure App Service — from first deployment to production troubleshooting.
 
 ## What's Inside
