@@ -110,11 +110,9 @@ When DNS failures occur in a VNet-integrated App Service Linux app, treat resolv
 - Private Endpoint + Private DNS zone linkage health.
 - Azure DNS Private Resolver inbound/outbound endpoint path (if used).
 
-#### Portal view: Networking blade for VNet integration and DNS resolver verification
+#### Portal view
 
-![Azure portal Networking blade showing Inbound traffic configuration column (Public network access Enabled with no access restrictions Using default behavior, App assigned address Not configured, Private endpoints 0 private endpoints, Inbound IPv4 <ip-redacted>, Inbound IPv6 <ipv6-redacted>) and Outbound traffic configuration column (Virtual network integration Not configured, Hybrid connections Not configured, Outbound DNS Default Azure-provided, list of Outbound IPv4 and IPv6 addresses), Integration subnet configuration card showing NAT gateway N/A, NSG N/A, UDR N/A, toolbar with Refresh, Troubleshoot, Send us your feedback buttons](../../../assets/troubleshooting/networking/01-networking-hub.png)
-
-The `Networking` blade exposes the two settings that determine DNS outcome for VNet-integrated apps: `Virtual network integration` (which subnet the resolver requests originate from) and `Outbound DNS` (which resolver is used). The screenshot above shows the unintegrated baseline where `Virtual network integration: Not configured` and `Outbound DNS: Default (Azure-provided)` mean all lookups go to Azure-provided DNS (`<ip-redacted>`) — Private DNS zone records will not be returned unless the integration subnet's VNet has the relevant `privatelink.*` zone link, which is exactly the H2 misconfiguration. After enabling VNet integration, the `Outbound DNS` field reads `Custom` if `WEBSITE_DNS_SERVER` is set in app settings (H3) or `Inherited from VNet` if the integration VNet has `dhcpOptions.dnsServers` populated; both are explicit override paths to investigate. Click `Virtual network integration` → `Configuration` to view the integration subnet and confirm it matches the subnet linked to the private DNS zones your app needs to resolve.
+The App Service **Networking** blade exposes the two settings that determine DNS outcome for a VNet-integrated app: `Virtual network integration` (which subnet resolver requests originate from) and `Outbound DNS` (which resolver is used). Rather than read it as one screenshot, walk it as an ordered trail. See [Section 10 — Portal Evidence](#10-portal-evidence) for the step-by-step diagnostic walk of this blade, keyed to each card in the order you should verify it.
 
 ### Investigation Notes
 - Regional VNet integration provides a network path, but does not automatically enable route-all or make all outbound traffic private. DNS outcome depends on resolver configuration and zone linkage, while routing outcome depends on `vnetRouteAllEnabled` and subnet route tables — these are separate checks.
@@ -275,6 +273,22 @@ stlabdnsvnet         10.20.2.4
 !!! tip "How to Read This"
     If private zone links or A records are missing/incorrect, the app can resolve to public IPs even with VNet integration enabled. VNet integration confirms network path, not DNS correctness.
 
+### Dependency Telemetry (Application Insights)
+
+When the app is instrumented with Application Insights, the `dependencies` table records the resolved outcome of each outbound call. A DNS failure surfaces here as a failed dependency whose `data`/`target` shows the hostname that could not be resolved, which is more precise than the `499` latency spikes in `AppServiceHTTPLogs`.
+
+```kusto
+dependencies
+| where timestamp > ago(6h)
+| where success == false
+| summarize Failures=count(), P95Ms=percentile(duration, 95), SampleResult=any(resultCode), SampleData=any(data)
+          by target, type, bin(timestamp, 5m)
+| order by Failures desc, timestamp desc
+```
+
+!!! tip "How to Read This"
+    A `target` that is a private-dependency FQDN with failures clustered around resolver `SERVFAIL`/timeout behavior supports **H1** (custom resolver path) or **H2** (missing zone link). Failures that appear and disappear across short windows for the same `target` — especially near TTL or scale events — support **H4** (split-brain/cache). Cross-check the failing `target` against the private DNS zone link and record checks in Section 6.
+
 ## 6. Validation and Disproof by Hypothesis
 
 ### H1: Custom DNS server path is broken
@@ -427,6 +441,46 @@ az monitor metrics list --resource "/subscriptions/<subscription-id>/resourceGro
 - Establish resolver health monitoring and synthetic DNS probes from representative app subnets.
 - Document split-brain design explicitly (which resolver should return public vs private answers and why).
 - Add deployment guardrails: change-review checks for DNS app settings and private DNS link integrity.
+
+## 10. Portal Evidence
+
+This section walks the App Service **Networking** blade **in diagnostic order**, as a *step-by-step* trail rather than a single blade read. All four steps below read different cards of the **same** capture — the blade is one screen, but the diagnostic value comes from reading its cards in the order that separates a resolver-path problem (H1/H3) from a private-zone linkage problem (H2) from a route-reachability precondition (H4). The capture is a real, PII-cleaned Azure Portal screenshot from a Linux App Service; the inbound/outbound IP values shown are RFC-5737 (`192.0.2.x`) and RFC-3849 (`2001:db8::`) documentation ranges, not real addresses.
+
+![Azure portal Networking blade for a Linux Web App, showing the Inbound traffic configuration column (Public network access Enabled with no access restrictions, App assigned address Not configured, Private endpoints 0 private endpoints, Inbound IPv4 and IPv6 addresses) and the Outbound traffic configuration column (Virtual network integration Not configured, Hybrid connections Not configured, Outbound DNS Default Azure-provided, Outbound IPv4 and IPv6 address lists), with the Integration subnet configuration card showing NAT gateway N/A, Network security group N/A, User defined route N/A, and a toolbar with Refresh, Troubleshoot, and Send us your feedback buttons](../../../assets/troubleshooting/networking/01-networking-hub.png)
+
+### Step 1 — Confirm the resolver-origin prerequisite: `Outbound traffic configuration > Virtual network integration`
+
+Purpose: DNS answers depend on *which subnet* the app's resolver requests originate from — Private DNS zone records are only returned when the query reaches the integration VNet those zones are linked to.
+Look for: The **Outbound traffic configuration** column, **Virtual network integration** row.
+Expected result: A subnet ID means lookups originate from that integration subnet, so `privatelink.*` zones linked to its VNet can be returned. The captured `Not configured` state means the app resolves over the default path and never consults private zones linked to any integration VNet.
+Abnormal: `Not configured` while private-dependency names are expected to resolve privately is the root precondition for **H2** (zone linkage cannot help an unintegrated app). Confirm integration, then re-check the resolver.
+Next step: Read the **Outbound DNS** row to identify the resolver in effect.
+
+### Step 2 — Identify the resolver path: `Outbound traffic configuration > Outbound DNS`
+
+Purpose: Decide whether the app uses Azure-provided DNS, a custom resolver from app settings, or the integration VNet's DNS servers — each has a different failure mode across H1/H3.
+Look for: The **Outbound DNS** row.
+Expected result: `Default (Azure-provided)` — the value shown in this capture — sends lookups to Azure DNS `168.63.129.16`, which returns private zone records **only** when the matching `privatelink.*` zone is linked to the integration VNet. Once VNet integration is in place this row instead reflects the resolver origin: an app-settings override (`WEBSITE_DNS_SERVER`, an **H3** app-level override) or the integration VNet's own `dhcpOptions.dnsServers` (an **H1** custom-resolver path). Those non-default states are not present in this capture — confirm the live value on your own blade rather than assuming a specific label string.
+Abnormal: The captured `Default (Azure-provided)` combined with a public-IP answer for a private dependency (Section 5, `/resolve`) points to a missing zone link (**H2**). A custom-resolver value that cannot forward `privatelink.*` is an **H1/H3** finding.
+Next step: Read the **Integration subnet configuration** card to confirm the resolver is reachable over the network path.
+
+### Step 3 — Verify route reachability to the resolver: `Integration subnet configuration` (User defined route / NSG)
+
+Purpose: A custom or private resolver is only useful if the integration subnet can actually reach it — a UDR or NSG can silently break the path and produce resolver timeouts that look like DNS misconfiguration.
+Look for: The **Integration subnet configuration** card — the **User defined route** and **Network security group** rows.
+Expected result: For the resolver path to work, no UDR should black-hole the resolver's IP and no NSG should block DNS (UDP/TCP 53). The captured `N/A` values indicate no route table or NSG is attached (consistent with the `Not configured` integration state from Step 1).
+Abnormal: A UDR or NSG that blocks the resolver's IP/port produces `SERVFAIL`/timeout signatures (Section 6, H1) that are route problems masquerading as DNS problems — validate with effective routes and in-app `nslookup`.
+Next step: Disambiguate the inbound `Private endpoints` red herring (Step 4).
+
+### Step 4 — Disambiguate the inbound `Private endpoints` red herring
+
+Purpose: Prevent the common misread that the inbound **Private endpoints** count proves the dependency resolves and connects privately.
+Look for: The **Inbound traffic configuration** column, **Private endpoints** row (captured as `0 private endpoints`).
+Expected result: This count describes private endpoints *into the App Service itself* (inbound access to the app), not the DNS resolution of the app's *outbound* dependencies. A `0` here says nothing about whether `privatelink.*` names resolve correctly for the app.
+Abnormal: Concluding "DNS is fine because a private endpoint exists" (Section 2, Common Misreadings) is a category error — private endpoint object health and private-name resolution are independent. Use the `Troubleshoot` toolbar button to launch the integrated network diagnostics, then confirm resolution with in-app lookups (Section 6).
+
+!!! warning "Do not screenshot secrets or real addresses"
+    When capturing the Networking blade, never include real subscription/tenant identifiers, and follow the repository PII text-replacement rules. The inbound/outbound IP values in this capture are RFC-5737 / RFC-3849 documentation ranges, not live addresses.
 
 ## See Also
 - [`../../kql/http/5xx-trend-over-time.md`](../../kql/http/5xx-trend-over-time.md)
