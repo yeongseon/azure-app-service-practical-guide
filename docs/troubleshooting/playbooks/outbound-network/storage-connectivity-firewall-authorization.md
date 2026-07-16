@@ -233,58 +233,100 @@ az storage account show --resource-group <resource-group> --name <storage-accoun
 
 ## 10. Portal Evidence
 
-This section separates **verified screenshot evidence** from **navigation-only evidence**. The Layer 2, Layer 3, and Layer 4 steps are backed by real, PII-cleaned Azure Portal captures taken from a live repro environment. The Layer 1 step remains a step-by-step Portal *navigation* checklist with no screenshot, because DNS resolution is verified from inside the runtime rather than from a static blade. Do not treat a navigation-only step as if a screenshot exists.
+This section walks the four connectivity layers **in diagnostic order (Layer 1 → Layer 4)**, each as a *step-by-step* trail rather than a single blade. Layers 2, 3, and 4 are backed by real, PII-cleaned Azure Portal captures taken from a live repro environment (a Linux Python App Service and a Standard StorageV2 account, both in the same resource group). Layer 1 is a reproducible **command** procedure with representative output, because DNS resolution is verified from inside the runtime rather than from a static blade — the Kudu SSH console renders its output on an HTML canvas that the repository PII text-replacement tooling cannot sanitize, so it is intentionally documented as text, not a screenshot. Do not treat the Layer 1 command output as if a verified screenshot exists.
+
+### Layer 1 — DNS resolution (command procedure, no screenshot)
+
+Resolve the storage FQDN from *inside* the runtime, because the app's own resolver — not your workstation — decides which endpoint the app reaches.
+
+Step 1 — Open a shell on the app:
+
+1. Open the App Service in the Azure Portal.
+2. Go to **Development Tools** → **Advanced Tools (Kudu)** → **Go**, then open **SSH** (or use **Diagnose and solve problems** for a read-only view).
+
+Step 2 — Resolve the storage endpoint and inspect the CNAME chain:
+
+```bash
+nslookup <storage-account-name>.blob.core.windows.net
+```
+
+Representative output for a public-access account (no private endpoint):
+
+```text
+<storage-account-name>.blob.core.windows.net	canonical name = blob.<stamp>.store.core.windows.net.
+Name:	blob.<stamp>.store.core.windows.net
+Address: 20.150.x.x
+```
+
+Purpose: Prove the app resolves the storage FQDN to the intended endpoint before blaming the firewall or RBAC.
+Look for: The CNAME target (`blob.<stamp>.store.core.windows.net` for the public path, or a `privatelink.blob.core.windows.net` chain for a private endpoint) and the final `Address`.
+Expected result: A public-access path resolves to a **public** Azure Storage IP from Microsoft-published Azure public ranges (observed examples may include `20.x.x.x` or `4.x.x.x`); a private endpoint path resolves *through* the `privatelink.blob.core.windows.net` zone to the **private** endpoint NIC IP inside the integrated VNet.
+Abnormal: `NXDOMAIN` (name does not exist); a public IP returned when a private endpoint is required (missing `privatelink` Private DNS zone link); or a private IP that does not match the expected private endpoint NIC IP. Any of these supports an H1 (DNS) finding. Only after DNS resolves to the intended endpoint should you move to Layer 2.
 
 ### Layer 2 — App Service outbound routing evidence (captured)
 
-![App Service Networking blade showing outbound Virtual network integration is Not configured](../../../assets/troubleshooting/networking/01-networking-hub.png)
+Step 1 — Confirm the app and its hosting from the **Overview** blade:
+
+![App Service Overview blade for a running Linux Python 3.12 web app, showing the resource group, Basic B1 plan, and the Networking section with outbound IP addresses](../../../assets/troubleshooting/networking/02-app-overview.png)
+
+Purpose: Establish the app baseline (runtime, plan, region) so the routing state you inspect next is attributed to the right resource.
+Look for: **Status: Running**, the **Operating System / Runtime Stack**, the **App Service Plan**, and the **Networking** section at the bottom listing the app's outbound IP addresses.
+Expected result: A running app with a known plan and region. Note the outbound IP addresses — these are the source addresses a storage IP-rule allowlist would have to match on the public path.
+Next step: Open the **Networking** blade (left nav) to read the outbound routing configuration.
+
+Step 2 — Read the outbound routing configuration on the **Networking** blade:
+
+![App Service Networking blade showing Outbound traffic configuration with Virtual network integration set to Not configured and Outbound DNS set to Default Azure-provided](../../../assets/troubleshooting/networking/03-app-networking-blade.png)
 
 Purpose: Confirm the App Service outbound routing state before diagnosing the storage firewall or a private endpoint, because a routing gap masquerades as a firewall or authorization problem.
-Look for: The **Outbound traffic configuration** panel, especially `Virtual network integration: Not configured`, and the listed outbound IP addresses.
-Expected result: For a storage private endpoint or a storage VNet rule to work, `Virtual network integration` must be configured to the intended subnet. A `Not configured` state (as shown) supports a Layer 2 routing finding — the app egresses over the public path.
-Next step: Open the **Virtual Network Integration** blade to confirm the delegated integration subnet before treating the failure as a storage firewall (Layer 3) or RBAC (Layer 4) problem.
-
-![App Service Virtual Network Integration blade showing no virtual network integration configured](../../../assets/troubleshooting/vnet-integration/01-vnet-integration.png)
-
-Purpose: Verify the exact VNet integration state for the app.
-Look for: The `No virtual network integration configured` message and the `Add virtual network integration` action.
-Expected result: An app that must reach storage through a private endpoint or a storage VNet rule needs VNet integration configured to the intended subnet. `No virtual network integration configured` confirms H2 (routing).
-Next step: Configure VNet integration (or correct the subnet / `vnetRouteAllEnabled` setting) before treating the issue as a storage firewall or data-plane authorization problem.
-
-### Layer 1 — DNS evidence checklist (navigation-only)
-
-No screenshot is currently referenced. Inspect in-app resolution directly from the Linux runtime:
-
-1. Open the App Service in the Azure Portal.
-2. Go to **Diagnose and solve problems**, or open **Advanced Tools (Kudu)** and use the SSH/console to run `nslookup` / `getent hosts` against the storage FQDN (for example `<storage-account-name>.blob.core.windows.net`).
-3. Compare the resolved address against the intended access path.
-
-Expected: A public-access storage path resolves to the public storage endpoint; a private endpoint path resolves to the private endpoint NIC IP.
-Abnormal: `NXDOMAIN`; a public IP returned when a private endpoint is required; or a private IP from the wrong VNet / endpoint. Any of these supports H1 (DNS).
+Look for: The **Outbound traffic configuration** panel — specifically `Virtual network integration: Not configured`, `Outbound DNS: Default (Azure-provided)`, and the `Integration subnet configuration` rows (NAT gateway / Network security group / User defined route all `N/A` when no VNet is attached).
+Expected result: For a storage **private endpoint** or a storage **VNet rule** to take effect, `Virtual network integration` must be configured to the intended subnet. The captured `Not configured` state means the app egresses over the **public** path with Azure-default DNS — so a private endpoint or VNet rule on the storage side cannot be reached, supporting an H2 (routing) finding.
+Next step: If the app is *supposed* to reach storage privately, configure VNet integration to the delegated subnet (and set `vnetRouteAllEnabled` as needed) before treating the failure as a storage firewall (Layer 3) or RBAC (Layer 4) problem. If the app is supposed to use the public path, proceed to Layer 3.
 
 ### Layer 3 — Storage firewall evidence (captured)
 
-![Storage account Networking blade showing Public network access set to Disabled](../../../assets/troubleshooting/storage-firewall/01-networking-disabled.png)
+Step 1 — Read the storage firewall state at a glance from the **Overview** blade:
 
-Purpose: Confirm the storage-side network authorization state (Layer 3), inspected on the **storage account** rather than the App Service, because a firewall block and a data-plane authorization gap both surface as `403` and must be disambiguated.
-Look for: The **Public access** tab of the storage account **Networking** blade — specifically `Public network access`, and the **Resource settings** note about whether virtual network and IP rules are in effect.
-Expected result: For the app to reach the account over the public path, `Public network access` must be `Enabled` with a matching VNet/IP rule, or the app must reach an approved private endpoint. The captured `Public network access: Disabled` state (with the note `Virtual networks and IP address(es) settings are not in effect. Public network access is disabled.`) blocks all public egress — including the app's public outbound path — and supports an H3 (storage firewall) finding.
-Next step: For this captured `Public network access: Disabled` state, use a private endpoint plus matching private DNS. A `Microsoft.Storage` service endpoint plus a virtual network rule is *not* sufficient on its own here — service-endpoint and IP rules are ignored while public access is disabled, so that path also requires re-enabling public access to **Selected networks** first. Resolve the network path before treating the failure as a Layer 4 authorization problem. Remember that same-region App Service IP allowlist rules are ignored (see the warning in Section 6, H3).
+![Storage account Overview blade Properties tab, with the Networking section showing Public network access set to Disabled and Security showing Storage account key access Disabled](../../../assets/troubleshooting/storage-firewall/01-storage-overview.png)
+
+Purpose: Get the storage-side network and key posture in one view before opening the detailed Networking blade, because `Public network access: Disabled` alone explains a total egress block.
+Look for: The **Networking** section (`Public network access`, `Private endpoint connections`) and the **Security** section (`Storage account key access`). The captured account shows `Public network access: Disabled` **and** `Storage account key access: Disabled`.
+Expected result: For the app to reach the account over the **public** path, `Public network access` must be `Enabled` with a matching VNet/IP rule. A `Disabled` state blocks all public egress — including the app's public outbound path.
+Next step: Open the **Networking** blade to confirm exactly why the rules are not in effect.
+
+Step 2 — Confirm the firewall detail on the **Networking** blade:
+
+![Storage account Networking blade Public access tab, showing Public network access Disabled and the note that virtual network and IP address settings are not in effect because public network access is disabled](../../../assets/troubleshooting/storage-firewall/02-networking-disabled.png)
+
+Purpose: Disambiguate a firewall block from a data-plane authorization gap (Layer 4), since both surface as `403`.
+Look for: The **Public access** tab — `Public network access`, and the **Resource settings** note about whether virtual network and IP rules are in effect.
+Expected result: The captured `Public network access: Disabled` state (with the note `Virtual networks and IP address(es) settings are not in effect. Public network access is disabled.`) supports an H3 (storage firewall) finding.
+Next step: For this `Disabled` state, use a private endpoint plus matching private DNS. A `Microsoft.Storage` service endpoint plus a virtual network rule is *not* sufficient on its own here — service-endpoint and IP rules are ignored while public access is disabled, so that path also requires re-enabling public access to **Selected networks** first. Resolve the network path before treating the failure as a Layer 4 authorization problem. Remember that same-region App Service IP allowlist rules are ignored (see the warning in Section 6, H3).
 
 ### Layer 4 — Data-plane authorization evidence (captured)
 
-![Storage account Access control (IAM) Role assignments tab filtered to the App Service managed identity, showing only a Reader role at This resource scope](../../../assets/troubleshooting/storage-iam/01-role-assignments.png)
+Step 1 — Open the storage account **Access control (IAM)** blade:
 
-Purpose: Confirm whether the App Service managed identity holds a *data-plane* storage role (Layer 4), inspected on the **storage account** IAM blade — but only meaningful after the network path (Layer 3) is proven open.
-Look for: The **Access control (IAM)** → **Role assignments** tab, filtered by the app's managed identity name. Check the **Role** and **Scope** columns for each assignment.
-Expected result: The identity must hold the correct data-plane role for the target service:
+![Storage account Access control (IAM) Check access landing page, with the Role assignments, Roles, and Deny assignments tabs and the Grant/View/Deny access cards](../../../assets/troubleshooting/storage-iam/01-iam-landing.png)
+
+Purpose: Reach the storage-account IAM surface — the only place that reveals whether the app's managed identity holds a *data-plane* role. This is only meaningful after the network path (Layer 3) is proven open.
+Look for: The **Access control (IAM)** blade with the **Check access / Role assignments / Roles / Deny assignments** tabs.
+Next step: Open the **Role assignments** tab to enumerate the identity's roles and their scopes.
+
+Step 2 — Enumerate the managed identity's roles on the **Role assignments** tab:
+
+![Storage account Access control IAM Role assignments tab grouped by role, showing the App Service managed identity under the Reader group with the Reader role scoped to This resource and no data-plane storage role](../../../assets/troubleshooting/storage-iam/02-role-assignments.png)
+
+Purpose: Confirm whether the App Service managed identity holds a *data-plane* storage role (Layer 4).
+Look for: The **Role assignments** tab (grouped by **Role**). Locate the app's managed identity and read its **Role** and **Scope** columns. In the capture, the app identity appears under the **Reader** group with `Reader` at `This resource` scope.
+Expected result: The identity must hold the correct **data-plane** role for the target service:
 
 - Blob: **Storage Blob Data Reader / Contributor / Owner** as appropriate.
 - Queue: **Storage Queue Data Contributor** (or the equivalent required role).
 - Table: **Storage Table Data Contributor** (or the equivalent required role).
 
-Abnormal: The captured state shows the managed identity holding only a management-plane **Reader** role at `This resource` scope and no data-plane role — a `Reader` grants control-plane read but zero blob/queue/table data access, so managed-identity data-plane calls return `403 AuthorizationFailure` unless another valid credential (shared key or SAS) is used. This supports an H4 (data-plane authorization) finding.
-Next step: Assign the correct data-plane role at the appropriate scope. If the app uses shared-key authorization, check the storage account **Configuration** blade for `Allow storage account key access`; if it uses SAS, confirm the token source has not expired.
+Abnormal: The captured state shows the managed identity holding only a management-plane **Reader** role at `This resource` scope and no data-plane role — a `Reader` grants control-plane read but zero blob/queue/table data access, so managed-identity data-plane calls return HTTP `403` with a Storage authorization error such as `AuthorizationPermissionMismatch` or `AuthorizationFailure` unless another valid credential (shared key or SAS) is used. This supports an H4 (data-plane authorization) finding. Evaluate this layer only once DNS (Layer 1), routing (Layer 2), and the storage firewall (Layer 3) are aligned — i.e. when the app receives a Storage `403` rather than a DNS failure, timeout, or connection refusal; otherwise the data plane is still unreachable and RBAC cannot be meaningfully diagnosed.
+Next step: Assign the correct data-plane role at the appropriate scope. If the app uses shared-key authorization, check the storage account **Configuration** blade for `Allow storage account key access` (the Overview capture in Layer 3, Step 1 shows it `Disabled`); if it uses SAS, confirm the token source has not expired.
 
 !!! warning "Do not screenshot secrets"
     When capturing storage-account blades, never include connection strings, account keys, SAS tokens, or account-specific identifiers. Follow the repository PII text-replacement rules.
