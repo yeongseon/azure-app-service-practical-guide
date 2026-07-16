@@ -236,6 +236,23 @@ az role assignment list --assignee $APP_PRINCIPAL_ID --scope $STORAGE_ID --outpu
 | `--assignee $APP_PRINCIPAL_ID` | Filters the role assignments to the web app identity. |
 | `--scope $STORAGE_ID` | Limits the results to the storage account scope. |
 
+### Step 10: Restrict the storage account's public network access
+
+With the private endpoint, private DNS zone, and RBAC role in place, close the storage account's public endpoint.
+
+```bash
+az storage account update --resource-group $RG --name $STORAGE_NAME --public-network-access Disabled --default-action Deny
+```
+
+| Command/Parameter | Purpose |
+|-------------------|---------|
+| `az storage account update` | Updates the storage account network configuration. |
+| `--public-network-access Disabled` | Turns off the public endpoint; only private endpoints can reach the account. |
+| `--default-action Deny` | Denies traffic not matched by an explicit network rule. |
+
+!!! note "Network path and data authorization are independent"
+    Disabling public access controls only the **network path**; the `Storage Blob Data Contributor` role granted in Step 6 handles data authorization. See [App Service to Azure Storage connectivity](../../../platform/storage-connectivity.md).
+
 ## Verification
 
 - `az webapp vnet-integration list` shows the integration subnet

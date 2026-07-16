@@ -263,6 +263,28 @@ The built-in `/home` mount is shared across all instances of your app. This mean
 !!! warning "Avoid `/home` for high-frequency writes"
     The built-in `/home` Azure Files mount is designed for deployment artifacts and logs. Using it for application-level writes (e.g., a write per HTTP request) causes I/O contention and slow response times. Use a BYOS **Azure Files** mount, or write to Blob Storage via SDK instead.
 
+## Storage Network Configuration
+
+A BYOS mount reaches the storage account over the network like any other client, so the storage account's firewall applies to the mount just as it applies to SDK calls. If you lock the storage account down, the mount can fail unless you also open a supported network path.
+
+!!! warning "Storage firewall works only through service endpoints or private endpoints"
+    When the storage account's public network access is restricted, App Service can reach a BYOS mount **only** through [service endpoints](https://learn.microsoft.com/en-us/azure/storage/common/storage-network-security#grant-access-from-a-virtual-network) or [private endpoints](https://learn.microsoft.com/en-us/azure/storage/common/storage-private-endpoints), and only when the app has [virtual network integration](https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration) enabled. A plain IP allowlist on the storage firewall is not a supported path for mounts.
+
+| Storage firewall state | BYOS mount works? | Required configuration |
+|------------------------|-------------------|------------------------|
+| Public access enabled (default) | Yes | None — mount reaches the account over the public endpoint |
+| Firewall with IP allowlist | Not reliable | App Service outbound IPs are shared and, in the same region, **not honored** by the storage firewall (see note below) |
+| Firewall + service endpoint | Yes | VNet integration + `Microsoft.Storage` service endpoint on the integration subnet |
+| Public access disabled + private endpoint | Yes | VNet integration + private endpoint + `privatelink.file.core.windows.net` (or `.blob.`) private DNS |
+
+!!! note "Same-region IP allowlists are ignored"
+    If you add App Service outbound IP addresses to the storage firewall while the app and storage account are in the **same region**, those IP restrictions are **not honored**. Use a service endpoint or private endpoint instead of an IP allowlist for same-region access. See [Mount Azure Storage as a local share](https://learn.microsoft.com/en-us/azure/app-service/configure-connect-to-azure-storage).
+
+!!! tip "Azure Files over VNet integration needs port 445 and `WEBSITE_CONTENTOVERVNET`"
+    When mounting Azure Files through virtual network integration, ensure outbound TCP **port 445** is open on the integration subnet's route, and set the app setting `WEBSITE_CONTENTOVERVNET=1`. Blob mounts do not use SMB and are unaffected by the port 445 requirement, but they remain **read-only**.
+
+For the full four-layer model (DNS resolution, routing, storage firewall, and data-plane authorization) that governs every App Service to Storage connection — including BYOS mounts and SDK calls — see [App Service to Azure Storage connectivity](../../../platform/storage-connectivity.md).
+
 ## Disabling the Built-in `/home` Persistence
 
 !!! note "Custom containers only"
@@ -337,6 +359,7 @@ The `Environment variables` blade with the `App settings` tab selected is the Po
 ## See Also
 - [Managed Identity](./managed-identity.md)
 - [Key Vault References](./key-vault-reference.md)
+- [App Service to Azure Storage connectivity](../../../platform/storage-connectivity.md)
 
 ## Sources
 - [Mount Azure Storage as a local share (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/configure-connect-to-azure-storage)

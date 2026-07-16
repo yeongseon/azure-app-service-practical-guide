@@ -153,6 +153,45 @@ az network private-endpoint create --resource-group $RG --name pe-storage-blob -
 | `--group-id blob` | Connects the endpoint to the Blob service subresource. |
 | `--connection-name pe-storage-blob-connection` | Names the private link connection object. |
 
+### Step 7: Create a private DNS zone and link it to the VNet
+
+A private endpoint only helps if the app's DNS resolves the **standard** storage FQDN to the private IP. Create the `privatelink.blob.core.windows.net` zone, link it to the VNet, and wire the private endpoint to it with a DNS zone group.
+
+```bash
+az network private-dns zone create --resource-group $RG --name "privatelink.blob.core.windows.net"
+az network private-dns link vnet create --resource-group $RG --zone-name "privatelink.blob.core.windows.net" --name link-blob --virtual-network $VNET_NAME --registration-enabled false
+az network private-endpoint dns-zone-group create --resource-group $RG --endpoint-name pe-storage-blob --name pe-storage-blob-zonegroup --private-dns-zone "privatelink.blob.core.windows.net" --zone-name blob
+```
+
+| Command/Parameter | Purpose |
+|-------------------|---------|
+| `az network private-dns zone create` | Creates the private DNS zone for the Blob service. |
+| `--name "privatelink.blob.core.windows.net"` | Uses the required privatelink zone name for Blob storage. |
+| `az network private-dns link vnet create` | Links the zone to the VNet so the app resolves private records. |
+| `--registration-enabled false` | The zone is for resolution only, not auto-registration. |
+| `az network private-endpoint dns-zone-group create` | Binds the private endpoint's A record into the zone automatically. |
+| `--zone-name blob` | Matches the Blob subresource group used on the private endpoint. |
+
+!!! warning "Always resolve the standard FQDN"
+    Point your app settings and code at `https://$STORAGE_NAME.blob.core.windows.net`. The Private DNS zone resolves that standard name to the private endpoint IP. Never hardcode the `privatelink.` hostname.
+
+### Step 8: Restrict the storage account's public network access
+
+With the private path in place, close the public endpoint so the account is reachable only through the private endpoint.
+
+```bash
+az storage account update --resource-group $RG --name $STORAGE_NAME --public-network-access Disabled --default-action Deny
+```
+
+| Command/Parameter | Purpose |
+|-------------------|---------|
+| `az storage account update` | Updates the storage account network configuration. |
+| `--public-network-access Disabled` | Turns off the public endpoint entirely; only private endpoints can reach the account. |
+| `--default-action Deny` | Denies any traffic not matched by an explicit network rule. |
+
+!!! note "Public access vs. authorization are separate"
+    Disabling public access controls the **network path** only. The app's managed identity still needs a data-plane role such as **Storage Blob Data Contributor** to read or write data. See [App Service to Azure Storage connectivity](../../../platform/storage-connectivity.md).
+
 ## Verification
 
 ```bash
@@ -190,6 +229,7 @@ The `Access Restrictions` blade is the Portal surface that shows whether this ap
 - [VNet Integration](./vnet-integration.md)
 - [Private Endpoints](./private-endpoints.md)
 - [Managed Identity](./managed-identity.md)
+- [App Service to Azure Storage connectivity](../../../platform/storage-connectivity.md)
 - [02 - First Deployment to Azure App Service](../tutorial/02-first-deploy.md)
 
 ## Sources

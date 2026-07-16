@@ -11,12 +11,12 @@ This page tracks `content_validation` metadata for **in-scope factual-claim docu
 
 ## Summary
 
-*Generated: 2026-07-02*
+*Generated: 2026-07-16*
 
 | Content Type | Total | Verified | Pending | Unverified | No Metadata |
 |---|---:|---:|---:|---:|---:|
-| Mermaid Diagrams | 378 | 378 | 0 | 0 | 0 |
-| In-Scope Factual-Claim Documents | 74 | 74 | 0 | 0 | 0 |
+| Mermaid Diagrams | 383 | 383 | 0 | 0 | 0 |
+| In-Scope Factual-Claim Documents | 76 | 76 | 0 | 0 | 0 |
 
 !!! success "All In-Scope Documents Verified"
     Every in-scope factual-claim document has verified Microsoft Learn sources for its core claims.
@@ -24,7 +24,7 @@ This page tracks `content_validation` metadata for **in-scope factual-claim docu
 <!-- diagram-id: content-validation-status-pie -->
 ```mermaid
 pie title In-Scope Document Validation Status
-    "Verified" : 74
+    "Verified" : 76
 ```
 
 ## By Section
@@ -43,20 +43,21 @@ pie title In-Scope Document Validation Status
 | [Kudu Overview](../platform/kudu-overview.md) | ✅ | ✅ Verified | 5/5 | 2026-07-01 |
 | [Kudu Windows](../platform/kudu-windows.md) | ✅ | ✅ Verified | 4/4 | 2026-07-01 |
 | [Mtls](../platform/mtls.md) | ✅ | ✅ Verified | 4/4 | 2026-04-25 |
-| [Networking](../platform/networking.md) | ✅ | ✅ Verified | 8/8 | 2026-04-12 |
+| [Networking](../platform/networking.md) | ✅ | ✅ Verified | 10/10 | 2026-07-16 |
 | [Request Lifecycle](../platform/request-lifecycle.md) | ✅ | ✅ Verified | 5/5 | 2026-04-12 |
 | [Resource Relationships](../platform/resource-relationships.md) | ✅ | ✅ Verified | 5/5 | 2026-04-12 |
 | [Scaling](../platform/scaling.md) | ✅ | ✅ Verified | 4/4 | 2026-04-12 |
 | [Security Architecture](../platform/security-architecture.md) | ✅ | ✅ Verified | 5/5 | 2026-04-12 |
+| [Storage Connectivity](../platform/storage-connectivity.md) | ✅ | ✅ Verified | 6/6 | 2026-07-16 |
 
 ### Best Practices
 
 | Document | Has Sources | Status | Claims | Last Reviewed |
 |---|---|---|---|---|
-| [Common Anti Patterns](../best-practices/common-anti-patterns.md) | ✅ | ✅ Verified | 3/3 | 2026-04-12 |
+| [Common Anti Patterns](../best-practices/common-anti-patterns.md) | ✅ | ✅ Verified | 6/6 | 2026-04-12 |
 | [Deployment](../best-practices/deployment.md) | ✅ | ✅ Verified | 3/3 | 2026-04-12 |
 | [Mtls](../best-practices/mtls.md) | ✅ | ✅ Verified | 4/4 | 2026-04-25 |
-| [Networking](../best-practices/networking.md) | ✅ | ✅ Verified | 7/7 | 2026-04-12 |
+| [Networking](../best-practices/networking.md) | ✅ | ✅ Verified | 9/9 | 2026-04-12 |
 | [Production Baseline](../best-practices/production-baseline.md) | ✅ | ✅ Verified | 4/4 | 2026-04-12 |
 | [Reliability](../best-practices/reliability.md) | ✅ | ✅ Verified | 4/4 | 2026-04-12 |
 | [Scaling](../best-practices/scaling.md) | ✅ | ✅ Verified | 3/3 | 2026-04-12 |
@@ -115,6 +116,7 @@ pie title In-Scope Document Validation Status
 | [Snat Or Application Issue](../troubleshooting/playbooks/outbound-network/snat-or-application-issue.md) | ✅ | ✅ Verified | 2/2 | 2026-04-12 |
 | [Ssl Certificate Issues](../troubleshooting/playbooks/ssl-certificate-issues.md) | ✅ | ✅ Verified | 5/5 | 2026-04-12 |
 | [Startup Availability](../troubleshooting/first-10-minutes/startup-availability.md) | ✅ | ✅ Verified | 2/2 | 2026-04-12 |
+| [Storage Connectivity Firewall Authorization](../troubleshooting/playbooks/outbound-network/storage-connectivity-firewall-authorization.md) | ✅ | ✅ Verified | 4/4 | 2026-07-16 |
 | [Troubleshooting Method](../troubleshooting/methodology/troubleshooting-method.md) | ✅ | ✅ Verified | 2/2 | 2026-04-12 |
 | [Warmup Vs Health Check](../troubleshooting/playbooks/startup-availability/warmup-vs-health-check.md) | ✅ | ✅ Verified | 3/3 | 2026-04-12 |
 | [Windows Container Health Probes](../troubleshooting/playbooks/startup-availability/windows-container-health-probes.md) | ✅ | ✅ Verified | 3/3 | 2026-04-12 |

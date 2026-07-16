@@ -16,7 +16,7 @@ related:
   - networking-best-practices
 summary: Inbound and outbound networking controls - access restrictions, private endpoints, VNet integration.
 status: stable
-last_reviewed: 2026-04-08
+last_reviewed: 2026-07-16
 content_sources:
   diagrams:
     - id: networking-model-overview
@@ -51,7 +51,7 @@ content_sources:
       description: "Shows the CNAME-to-private-DNS resolution flow used by App Service private endpoints."
 content_validation:
   status: verified
-  last_reviewed: "2026-04-12"
+  last_reviewed: "2026-07-16"
   reviewer: agent
   core_claims:
     - claim: "By default, an app has a public endpoint."
@@ -77,6 +77,12 @@ content_validation:
       verified: true
     - claim: "Creating a Private Endpoint assigns a private IP but does not automatically disable the public endpoint."
       source: "https://learn.microsoft.com/en-us/azure/app-service/networking/private-endpoint"
+      verified: true
+    - claim: "With Route All enabled, the source IP of outbound traffic is still one of the app's listed outbound IPs unless a NAT gateway or firewall performs SNAT in the path."
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration"
+      verified: true
+    - claim: "Connectivity to global Azure Storage can fail for VNet-integrated apps when Route All is enabled and the app does not use service endpoints, private endpoints, or UDRs, because traffic falls back to the default internet route."
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration"
       verified: true
 ---
 # Networking
@@ -373,7 +379,16 @@ Example output (PII masked):
 
 #### Outbound IP behavior with VNet Integration
 
-When VNet Integration is enabled with `WEBSITE_VNET_ROUTE_ALL=1`, outbound traffic exits through the delegated integration subnet — not through the platform's shared outbound IPs. The effective egress IP becomes the NAT IP of the subnet (or a NAT Gateway if attached).
+When VNet Integration is enabled with `WEBSITE_VNET_ROUTE_ALL=1` (Route All), outbound traffic is **routed** into the delegated integration subnet, where it becomes subject to the subnet's NSGs and route tables. Routing alone does **not** change your app's source IP. Per Microsoft Learn, when outbound internet traffic routing is enabled, the source address of outbound traffic is still one of the IPs listed in the app's properties (`possibleOutboundIpAddresses`) — unless a service that performs SNAT sits in the path:
+
+| Egress configuration | Effective source IP seen by the destination |
+|---|---|
+| VNet Integration + Route All, no NAT Gateway or firewall | Still one of the app's platform outbound IPs (`possibleOutboundIpAddresses`) |
+| VNet Integration + NAT Gateway on the integration subnet | The NAT Gateway's public IP |
+| VNet Integration + route table (UDR) forcing traffic through a firewall/NVA | The firewall/NVA outbound IP |
+
+!!! warning "Route All does not, by itself, give you a dedicated egress IP"
+    A common misconception is that enabling Route All makes traffic exit from a single "subnet NAT IP". It does not. The subnet has no NAT IP unless you explicitly attach a [NAT Gateway](https://learn.microsoft.com/en-us/azure/app-service/networking/nat-gateway-integration). Without a NAT Gateway or firewall, the destination still sees one of the app's `possibleOutboundIpAddresses`.
 
 ```bash
 # Check current VNet integration state
@@ -396,7 +411,10 @@ Example output:
 ]
 ```
 
-After enabling VNet Integration and `WEBSITE_VNET_ROUTE_ALL=1`, downstream services that allowlisted the previous platform outbound IPs will lose connectivity. Update allowlists to reflect the subnet's egress IP.
+Because Route All by itself does not change the source IP, downstream firewalls that already allowlist the app's `possibleOutboundIpAddresses` keep working after you enable integration. You only need to change an allowlist when you add a **NAT Gateway** or route through a **firewall** — in that case, allowlist that service's outbound IP instead.
+
+!!! tip "Reaching a firewalled Azure Storage account"
+    Route All plus a Storage firewall is a frequent failure mode: per Microsoft Learn, connectivity to global Azure Storage can fail for VNet-integrated apps when Route All is enabled and the app does **not** use service endpoints, private endpoints, or UDRs — traffic falls back to the default internet route, which the Storage firewall then blocks. Prefer a **private endpoint** (or a service endpoint on the integration subnet) over IP allowlisting. See [App Service to Azure Storage connectivity](storage-connectivity.md) for the full decision model.
 
 #### Inbound IP addresses and Private Endpoint
 
@@ -485,10 +503,10 @@ For language-specific implementation details, see:
 - [Request Lifecycle](./request-lifecycle.md)
 - [Scaling](./scaling.md)
 - [Resource Relationships](./resource-relationships.md)
-- [App Service networking features (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/networking-features)
-- [VNet integration overview (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration)
+- [App Service to Azure Storage connectivity](./storage-connectivity.md)
 
 ## Sources
 
 - [App Service networking features (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/networking-features)
 - [VNet integration overview (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration)
+- [NAT gateway integration (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/networking/nat-gateway-integration)

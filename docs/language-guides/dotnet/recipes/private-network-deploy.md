@@ -298,6 +298,7 @@ The `Access Restrictions` blade is the Portal surface that shows whether the ASP
 - [VNet Integration](vnet-integration.md)
 - [Private Endpoints](private-endpoints.md)
 - [Managed Identity](managed-identity.md)
+- [App Service to Azure Storage connectivity](../../../platform/storage-connectivity.md)
 
 ## Sources
 
