@@ -113,6 +113,7 @@ nav:
     - Hosting Models: platform/hosting-models.md
     - Scaling: platform/scaling.md
     - Networking: platform/networking.md
+    - App Service to Azure Storage: platform/storage-connectivity.md
     - mTLS: platform/mtls.md
     - Web App for Containers: platform/containers/index.md
     - Deployment Options: platform/deployment-options.md
