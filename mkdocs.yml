@@ -303,6 +303,7 @@ nav:
         - troubleshooting/playbooks/outbound-network/dns-resolution-vnet-integrated-app-service.md
         - troubleshooting/playbooks/outbound-network/private-endpoint-custom-dns-route-confusion.md
         - troubleshooting/playbooks/outbound-network/snat-or-application-issue.md
+        - troubleshooting/playbooks/outbound-network/storage-connectivity-firewall-authorization.md
     - Methodology:
       - troubleshooting/methodology/troubleshooting-method.md
       - troubleshooting/methodology/detector-map.md
