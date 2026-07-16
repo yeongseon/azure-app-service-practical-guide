@@ -250,6 +250,8 @@ Step 2 — Resolve the storage endpoint and inspect the CNAME chain:
 nslookup <storage-account-name>.blob.core.windows.net
 ```
 
+This example targets the **Blob** endpoint; substitute the relevant suffix (`.queue.`, `.table.`, `.file.`) for the service the app actually calls.
+
 Representative output for a public-access account (no private endpoint):
 
 ```text
@@ -260,7 +262,7 @@ Address: 20.150.x.x
 
 Purpose: Prove the app resolves the storage FQDN to the intended endpoint before blaming the firewall or RBAC.
 Look for: The CNAME target (`blob.<stamp>.store.core.windows.net` for the public path, or a `privatelink.blob.core.windows.net` chain for a private endpoint) and the final `Address`.
-Expected result: A public-access path resolves to a **public** Azure Storage IP from Microsoft-published Azure public ranges (observed examples may include `20.x.x.x` or `4.x.x.x`); a private endpoint path resolves *through* the `privatelink.blob.core.windows.net` zone to the **private** endpoint NIC IP inside the integrated VNet.
+Expected result: A public-access path resolves to a **public** Azure Storage IP from Microsoft-published Azure public ranges (validate a specific address against the `Storage` service tag in the [Azure IP Ranges and Service Tags](https://learn.microsoft.com/en-us/azure/virtual-network/service-tags-overview) JSON; observed examples may include `20.x.x.x` or `4.x.x.x`); a private endpoint path resolves *through* the `privatelink.blob.core.windows.net` zone to the **private** endpoint NIC IP inside the integrated VNet.
 Abnormal: `NXDOMAIN` (name does not exist); a public IP returned when a private endpoint is required (missing `privatelink` Private DNS zone link); or a private IP that does not match the expected private endpoint NIC IP. Any of these supports an H1 (DNS) finding. Only after DNS resolves to the intended endpoint should you move to Layer 2.
 
 ### Layer 2 — App Service outbound routing evidence (captured)
@@ -272,6 +274,7 @@ Step 1 — Confirm the app and its hosting from the **Overview** blade:
 Purpose: Establish the app baseline (runtime, plan, region) so the routing state you inspect next is attributed to the right resource.
 Look for: **Status: Running**, the **Operating System / Runtime Stack**, the **App Service Plan**, and the **Networking** section at the bottom listing the app's outbound IP addresses.
 Expected result: A running app with a known plan and region. Note the outbound IP addresses — these are the source addresses a storage IP-rule allowlist would have to match on the public path.
+Caveat: When the app and the storage account are in the **same Azure region**, storage IP network rules do **not** reliably match these public outbound IPs — Azure may route the traffic over the backbone so it arrives with an internal address the IP rule never sees. Do not rely on a same-region IP allowlist; use a VNet rule or private endpoint instead (this is expanded in Layer 3, Step 2, and Section 6, H3).
 Next step: Open the **Networking** blade (left nav) to read the outbound routing configuration.
 
 Step 2 — Read the outbound routing configuration on the **Networking** blade:
@@ -291,7 +294,7 @@ Step 1 — Read the storage firewall state at a glance from the **Overview** bla
 
 Purpose: Get the storage-side network and key posture in one view before opening the detailed Networking blade, because `Public network access: Disabled` alone explains a total egress block.
 Look for: The **Networking** section (`Public network access`, `Private endpoint connections`) and the **Security** section (`Storage account key access`). The captured account shows `Public network access: Disabled` **and** `Storage account key access: Disabled`.
-Expected result: For the app to reach the account over the **public** path, `Public network access` must be `Enabled` with a matching VNet/IP rule. A `Disabled` state blocks all public egress — including the app's public outbound path.
+Expected result: For the app to reach the account over the **public** path, `Public network access` must be either `Enabled from all networks` (no rule required) **or** `Enabled from selected virtual networks and IP addresses` with a VNet/IP rule that matches the app's source. A `Disabled` state blocks all public egress — including the app's public outbound path.
 Next step: Open the **Networking** blade to confirm exactly why the rules are not in effect.
 
 Step 2 — Confirm the firewall detail on the **Networking** blade:
@@ -319,14 +322,14 @@ Step 2 — Enumerate the managed identity's roles on the **Role assignments** ta
 
 Purpose: Confirm whether the App Service managed identity holds a *data-plane* storage role (Layer 4).
 Look for: The **Role assignments** tab (grouped by **Role**). Locate the app's managed identity and read its **Role** and **Scope** columns. In the capture, the app identity appears under the **Reader** group with `Reader` at `This resource` scope.
-Expected result: The identity must hold the correct **data-plane** role for the target service:
+Expected result: The identity must hold an appropriate **data-plane** role for the operation — choose the least-privilege role that covers the required action (read vs write):
 
 - Blob: **Storage Blob Data Reader / Contributor / Owner** as appropriate.
 - Queue: **Storage Queue Data Contributor** (or the equivalent required role).
 - Table: **Storage Table Data Contributor** (or the equivalent required role).
 
 Abnormal: The captured state shows the managed identity holding only a management-plane **Reader** role at `This resource` scope and no data-plane role — a `Reader` grants control-plane read but zero blob/queue/table data access, so managed-identity data-plane calls return HTTP `403` with a Storage authorization error such as `AuthorizationPermissionMismatch` or `AuthorizationFailure` unless another valid credential (shared key or SAS) is used. This supports an H4 (data-plane authorization) finding. Evaluate this layer only once DNS (Layer 1), routing (Layer 2), and the storage firewall (Layer 3) are aligned — i.e. when the app receives a Storage `403` rather than a DNS failure, timeout, or connection refusal; otherwise the data plane is still unreachable and RBAC cannot be meaningfully diagnosed.
-Next step: Assign the correct data-plane role at the appropriate scope. If the app uses shared-key authorization, check the storage account **Configuration** blade for `Allow storage account key access` (the Overview capture in Layer 3, Step 1 shows it `Disabled`); if it uses SAS, confirm the token source has not expired.
+Next step: Assign the correct data-plane role at the appropriate scope. If the app uses shared-key authorization, check the storage account **Configuration** blade for `Allow storage account key access` (the Overview capture in Layer 3, Step 1 shows it `Disabled`). If it uses a SAS, note that `Allow storage account key access: Disabled` invalidates **account SAS and service SAS** (both signed with the account key) but **not user delegation SAS** (signed with a Microsoft Entra key) — confirm which SAS type the app uses and that the token has not expired.
 
 !!! warning "Do not screenshot secrets"
     When capturing storage-account blades, never include connection strings, account keys, SAS tokens, or account-specific identifiers. Follow the repository PII text-replacement rules.
