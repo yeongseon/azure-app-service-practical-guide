@@ -28,6 +28,9 @@ content_validation:
     - claim: "Azure Storage firewall grants access from a virtual network through service endpoints or private endpoints; when a service endpoint is used, the source address is the private subnet address, so public IP allowlist rules no longer apply to that traffic."
       source: "https://learn.microsoft.com/en-us/azure/storage/common/storage-network-security"
       verified: true
+    - claim: "Azure Storage IP network rules have no effect on requests originating from the same Azure region as the storage account, because same-region Azure services communicate over private Azure IP addresses instead of public outbound IPs."
+      source: "https://learn.microsoft.com/en-us/azure/storage/common/storage-network-security-limitations#restrictions-for-ip-network-rules"
+      verified: true
 content_sources:
   diagrams:
     - id: app-service-networking-topology
@@ -487,10 +490,10 @@ When your app connects to Azure Storage (Blob, Files, Queue, Table) and the stor
 | Private endpoint | Strict private-only access, cross-region, hub-spoke | VNet integration + private endpoint + `privatelink.<service>.core.windows.net` private DNS zone; disable storage public network access |
 
 !!! warning "Do not rely on outbound IP allowlists for same-region Storage access"
-    App Service outbound IPs are shared across the scale unit and can change. For same-region App Service to Storage traffic, IP-based storage firewall rules are **not honored**. Use a service endpoint or private endpoint, not an IP allowlist. See [App Service to Azure Storage connectivity](../platform/storage-connectivity.md) for the full decision model.
+    App Service outbound IPs are shared across the scale unit and can change. For same-region App Service to Storage traffic, IP-based storage firewall rules are **not honored** — [Microsoft Learn documents](https://learn.microsoft.com/en-us/azure/storage/common/storage-network-security-limitations#restrictions-for-ip-network-rules) that IP network rules have no effect on requests from the same region because same-region Azure services use private Azure IP addresses. Use a service endpoint or private endpoint, not an IP allowlist. See [App Service to Azure Storage connectivity](../platform/storage-connectivity.md) for the full decision model.
 
 !!! tip "Network access and data authorization are independent layers"
-    Passing the storage firewall (network layer) does not grant data access. The identity must still hold a data-plane RBAC role such as **Storage Blob Data Reader**, or use a valid shared key / SAS. A `403` after the firewall opens is almost always a missing data-plane role, not a network problem.
+    Passing the storage firewall (network layer) does not grant data access. The identity must still hold a data-plane RBAC role such as **Storage Blob Data Reader**, or use a valid shared key / SAS. A `403` / `AuthorizationFailure` is ambiguous — it can be a network-rule denial *or* a missing data-plane role. Confirm the network path is open (and check the Storage error detail) before concluding it is a role gap.
 
 ## Common Mistakes / Anti-Patterns
 
@@ -534,3 +537,4 @@ Before production cutover:
 - [Hybrid Connections in App Service](https://learn.microsoft.com/en-us/azure/app-service/app-service-hybrid-connections)
 - [Azure DNS private zones](https://learn.microsoft.com/en-us/azure/dns/private-dns-overview)
 - [Configure Azure Storage firewalls and virtual networks](https://learn.microsoft.com/en-us/azure/storage/common/storage-network-security)
+- [Restrictions for IP network rules](https://learn.microsoft.com/en-us/azure/storage/common/storage-network-security-limitations#restrictions-for-ip-network-rules)

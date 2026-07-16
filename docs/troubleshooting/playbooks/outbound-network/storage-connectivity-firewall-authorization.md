@@ -24,6 +24,9 @@ content_validation:
     - claim: "When a service endpoint is used, the source address of the request switches to a private VNet address, so public IP network rules no longer apply to that traffic."
       source: "https://learn.microsoft.com/en-us/azure/storage/common/storage-network-security"
       verified: true
+    - claim: "IP network rules have no effect on requests originating from the same Azure region as the storage account, because same-region Azure services use private Azure IP addresses."
+      source: "https://learn.microsoft.com/en-us/azure/storage/common/storage-network-security-limitations#restrictions-for-ip-network-rules"
+      verified: true
 ---
 
 # App Service to Azure Storage: Firewall and Authorization Confusion (Linux)
@@ -33,7 +36,7 @@ content_validation:
 Outbound calls from an Azure App Service Linux app to an Azure Storage account (Blob, Files, Queue, or Table) fail. Symptoms include connection timeouts, `AuthorizationFailure` / `403` responses, `This request is not authorized to perform this operation`, or a hostname that resolves to a public IP instead of the expected private endpoint IP.
 
 ### Why this scenario is confusing
-An App Service to Storage connection must pass through four independent layers — **DNS resolution**, **routing / egress path**, **storage firewall (network authorization)**, and **data-plane authorization** — and each layer fails with a different signature. A `403` after opening the firewall is almost always a *data-plane authorization* problem, not a network problem, yet operators often keep tuning the firewall. Conversely, a timeout is a *network path* problem that no RBAC change will fix.
+An App Service to Storage connection must pass through four independent layers — **DNS resolution**, **routing / egress path**, **storage firewall (network authorization)**, and **data-plane authorization** — and each layer fails with a different signature. A `403` / `AuthorizationFailure` is ambiguous on its own: the storage firewall (a network-rule denial) and a data-plane authorization gap (missing role, expired SAS, disabled shared key) can *both* surface as `403 AuthorizationFailure`. Do not assume a `403` is a role problem until you have checked the Storage error detail, the account's network rules, the request's effective source, and the identity's role assignments. Conversely, a timeout is a *network path* problem that no RBAC change will fix.
 
 ### Troubleshooting decision flow
 <!-- diagram-id: storage-connectivity-four-layer-flow -->
@@ -48,10 +51,10 @@ flowchart TD
     E --> G[Connect succeeds]
     F --> H2[H2: Routing or storage firewall block]
     G --> I{HTTP status of data call}
-    I --> J[403 AuthorizationFailure]
-    I --> K[403 with source IP note]
-    J --> H4[H4: Data-plane authorization gap]
-    K --> H3[H3: Storage firewall rule mismatch]
+    I --> J[403 / AuthorizationFailure]
+    J --> L{Check error detail, network rules, effective source, role assignments}
+    L --> H3[H3: Storage firewall / network rule mismatch]
+    L --> H4[H4: Data-plane authorization gap]
 ```
 
 ### Scope and limitations
@@ -93,7 +96,7 @@ Prove each layer independently and in order: **(1)** the storage FQDN resolves t
 
 ### Investigation Notes
 - Always validate from inside the Linux App Service runtime; external resolver behavior is not authoritative.
-- A `403 AuthorizationFailure` after a firewall change is a data-plane role problem, not a firewall problem.
+- A `403` / `AuthorizationFailure` is ambiguous: it can be a storage network-rule (firewall) denial *or* a data-plane role/credential gap. Distinguish them by checking the Storage error detail, the account network rules, the request's effective source, and the role assignments — a data-plane gap is confirmed only after the network path is proven open.
 - Passing the storage network rules does not grant data access — that still requires a shared key, SAS, or data-plane RBAC role.
 - When a service endpoint is used, the request's source becomes a private VNet address, so public IP allowlist rules no longer apply.
 - Keep all timeline correlation in UTC.
@@ -197,7 +200,7 @@ az storage account show --resource-group <resource-group> --name <storage-accoun
 ```
 
 !!! tip "How to Read This"
-    Control-plane roles like **Contributor** or **Owner** do NOT grant data-plane access to blobs, files, queues, or tables. Assign a data-plane role such as **Storage Blob Data Reader/Contributor**, **Storage File Data SMB Share Reader/Contributor**, **Storage Queue Data Contributor**, or **Storage Table Data Contributor** to the app's identity.
+    Control-plane roles like **Contributor** or **Owner** do NOT grant data-plane access to blobs, files, queues, or tables. For code that calls the storage data plane with a managed identity, assign a data-plane role such as **Storage Blob Data Reader/Contributor**, **Storage Queue Data Contributor**, or **Storage Table Data Contributor** to the app's identity. The **Storage File Data SMB Share Reader/Contributor** roles apply only to identity-based SMB access to Azure Files — they do **not** apply to an App Service *Bring Your Own Storage* (BYOS) path mount, which authenticates with the storage account key, not with the app's managed identity or RBAC. A BYOS mount therefore fails on the account key or storage firewall path, not on a missing SMB share role.
 
 ### Normal vs Abnormal Comparison
 
@@ -206,7 +209,7 @@ az storage account show --resource-group <resource-group> --name <storage-accoun
 | Storage FQDN resolution | Resolves to the intended (private or public) IP | Resolves to public IP when private endpoint expected, or NXDOMAIN |
 | TCP connect to 443 | Succeeds | Times out (routing / firewall block) |
 | Firewall admits request | Service endpoint or private endpoint rule matches | `defaultAction Deny` with no matching VNet/private-endpoint rule |
-| Data call HTTP status | 200 / 201 | `403 AuthorizationFailure` (missing data-plane role) |
+| Data call HTTP status | 200 / 201 | `403 AuthorizationFailure` (network-rule denial *or* missing data-plane role — disambiguate before fixing) |
 | Interpretation | All four layers aligned | One layer blocks; identify which by signature |
 
 ## 7. Likely Root Cause Patterns
@@ -226,7 +229,7 @@ az storage account show --resource-group <resource-group> --name <storage-accoun
 - Standardize on managed identity + data-plane RBAC for storage access; avoid connection strings.
 - Automate storage onboarding checks: firewall default action, VNet/private-endpoint rule, private DNS link, and required data-plane role.
 - Add synthetic probes from App Service runtime that both resolve and perform a real data-plane read against critical storage dependencies.
-- Document the four-layer model in runbooks so a `403` is triaged as authorization, not network.
+- Document the four-layer model in runbooks so a `403` is disambiguated across the storage firewall (network authorization) and data-plane authorization, instead of being assumed to be one or the other.
 
 ## See Also
 - [App Service to Azure Storage connectivity](../../../platform/storage-connectivity.md)
@@ -238,9 +241,8 @@ az storage account show --resource-group <resource-group> --name <storage-accoun
 
 ## Sources
 - [Configure Azure Storage firewalls and virtual networks](https://learn.microsoft.com/en-us/azure/storage/common/storage-network-security)
+- [Restrictions for IP network rules](https://learn.microsoft.com/en-us/azure/storage/common/storage-network-security-limitations#restrictions-for-ip-network-rules)
 - [Authorize access to data in Azure Storage](https://learn.microsoft.com/en-us/azure/storage/common/authorize-data-access)
 - [Integrate your app with an Azure virtual network](https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration)
 - [Azure App Service networking features](https://learn.microsoft.com/en-us/azure/app-service/networking-features)
 - [Assign an Azure role for access to blob data](https://learn.microsoft.com/en-us/azure/storage/blobs/assign-azure-role-data-access)
-</content>
-</invoke>

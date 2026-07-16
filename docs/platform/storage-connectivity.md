@@ -57,6 +57,9 @@ content_validation:
     - claim: "Connectivity to global Azure Storage can fail for VNet-integrated apps when Route All is enabled and the app does not use service endpoints, private endpoints, or UDRs, because traffic falls back to the default internet route."
       source: "https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration"
       verified: true
+    - claim: "IP network rules have no effect on requests that originate from the same Azure region as the storage account, because same-region Azure services communicate over private Azure IP addresses rather than public outbound IPs."
+      source: "https://learn.microsoft.com/en-us/azure/storage/common/storage-network-security-limitations#restrictions-for-ip-network-rules"
+      verified: true
 ---
 # App Service to Azure Storage connectivity
 
@@ -130,12 +133,15 @@ Rule types (used by "Selected networks"):
 | Rule type | Use when | Requires |
 |---|---|---|
 | **Virtual network rule** | The app reaches Storage from a subnet | A **service endpoint** on the subnet (`Microsoft.Storage` same-region, `Microsoft.Storage.Global` cross-region) |
-| **IP network rule** | A fixed public IP (e.g., on-premises, NAT Gateway) | The public IP range on the allow list |
+| **IP network rule** | A fixed public IP (e.g., on-premises, NAT Gateway) **in a different region** from the Storage account | The public IP range on the allow list (not honored for same-region Azure service traffic) |
 | **Resource instance rule** | An Azure resource that cannot be isolated by VNet/IP | The resource instance identity |
 | **Trusted service exception** | An Azure service (logging, metrics) outside your network boundary | The trusted-services toggle |
 
 !!! note "Service endpoint changes the source IP"
     When a subnet has a Storage service endpoint enabled, its traffic uses a **private** IP as the source. As a result, **IP network rules** that permitted that subnet's former public IP no longer apply — you must use a **virtual network rule** instead.
+
+!!! warning "IP network rules are ignored for same-region Azure traffic"
+    Storage IP network rules match only **public internet** source addresses. When App Service and the Storage account are in the **same region**, requests travel over the Azure backbone with an internal source address, so an IP rule listing the app's public outbound IP is silently ignored. For same-region access, use a **service endpoint + virtual network rule** or a **private endpoint**.
 
 ### Layer 4 — Authorization
 
@@ -151,10 +157,13 @@ The reachability of a firewalled account depends on the **routing** you configur
 
 | Routing from app | Storage firewall = All networks | Storage firewall = Selected networks | Storage firewall = Disabled |
 |---|---|---|---|
-| No VNet Integration | Reachable (public IP) | **Blocked** unless the app's public outbound IP is in an IP rule | **Blocked** (no private path) |
+| No VNet Integration | Reachable (public IP) | **Blocked** — an IP network rule for the app's public outbound IP only helps when the app and Storage are in **different** regions; **same-region** IP rules are not honored (see caveat below) | **Blocked** (no private path) |
 | VNet Integration, service endpoint on subnet | Reachable | Reachable **if** a matching VNet rule + `Microsoft.Storage[.Global]` endpoint exists | **Blocked** (service endpoint still uses the public endpoint) |
 | VNet Integration + Private Endpoint + Private DNS | Reachable (private IP) | Reachable (private endpoints bypass firewall rules) | **Reachable** (private endpoint is the only allowed path) |
 | VNet Integration + Route All, no endpoints | Reachable (internet fallback) | **Blocked** (internet source not allowed) | **Blocked** |
+
+!!! warning "Same-region IP network rules are not honored"
+    Azure Storage IP network rules apply only to requests that arrive from **public internet** source addresses. Traffic from an Azure service (including App Service) to a Storage account in the **same region** is routed over the Azure backbone with an internal source address, so an IP network rule listing the app's public outbound IP is **silently ignored** for same-region traffic. Use a **service endpoint with a virtual network rule** or a **private endpoint** instead. Public IP rules are only useful for cross-region or on-premises callers.
 
 ### Failure decision model
 
@@ -183,6 +192,7 @@ flowchart TD
 ## Sources
 
 - [Azure Storage firewall rules and network access (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/storage/common/storage-network-security)
+- [Restrictions for IP network rules (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/storage/common/storage-network-security-limitations#restrictions-for-ip-network-rules)
 - [Integrate your app with an Azure virtual network (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration)
 - [Use private endpoints for App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/networking/private-endpoint)
 - [Authorize access to data in Azure Storage (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/storage/common/authorize-data-access)

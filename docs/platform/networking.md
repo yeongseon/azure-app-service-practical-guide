@@ -504,9 +504,9 @@ For language-specific implementation details, see:
 - [Scaling](./scaling.md)
 - [Resource Relationships](./resource-relationships.md)
 - [App Service to Azure Storage connectivity](./storage-connectivity.md)
-- [App Service networking features (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/networking-features)
-- [VNet integration overview (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration)
-- [NAT gateway integration (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/networking/nat-gateway-integration)
+
+## Sources
 
 - [App Service networking features (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/networking-features)
 - [VNet integration overview (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration)
+- [NAT gateway integration (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/networking/nat-gateway-integration)

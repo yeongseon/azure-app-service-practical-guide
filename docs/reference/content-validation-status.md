@@ -48,7 +48,7 @@ pie title In-Scope Document Validation Status
 | [Resource Relationships](../platform/resource-relationships.md) | ✅ | ✅ Verified | 5/5 | 2026-04-12 |
 | [Scaling](../platform/scaling.md) | ✅ | ✅ Verified | 4/4 | 2026-04-12 |
 | [Security Architecture](../platform/security-architecture.md) | ✅ | ✅ Verified | 5/5 | 2026-04-12 |
-| [Storage Connectivity](../platform/storage-connectivity.md) | ✅ | ✅ Verified | 5/5 | 2026-07-16 |
+| [Storage Connectivity](../platform/storage-connectivity.md) | ✅ | ✅ Verified | 6/6 | 2026-07-16 |
 
 ### Best Practices
 
@@ -57,7 +57,7 @@ pie title In-Scope Document Validation Status
 | [Common Anti Patterns](../best-practices/common-anti-patterns.md) | ✅ | ✅ Verified | 6/6 | 2026-04-12 |
 | [Deployment](../best-practices/deployment.md) | ✅ | ✅ Verified | 3/3 | 2026-04-12 |
 | [Mtls](../best-practices/mtls.md) | ✅ | ✅ Verified | 4/4 | 2026-04-25 |
-| [Networking](../best-practices/networking.md) | ✅ | ✅ Verified | 8/8 | 2026-04-12 |
+| [Networking](../best-practices/networking.md) | ✅ | ✅ Verified | 9/9 | 2026-04-12 |
 | [Production Baseline](../best-practices/production-baseline.md) | ✅ | ✅ Verified | 4/4 | 2026-04-12 |
 | [Reliability](../best-practices/reliability.md) | ✅ | ✅ Verified | 4/4 | 2026-04-12 |
 | [Scaling](../best-practices/scaling.md) | ✅ | ✅ Verified | 3/3 | 2026-04-12 |
@@ -116,7 +116,7 @@ pie title In-Scope Document Validation Status
 | [Snat Or Application Issue](../troubleshooting/playbooks/outbound-network/snat-or-application-issue.md) | ✅ | ✅ Verified | 2/2 | 2026-04-12 |
 | [Ssl Certificate Issues](../troubleshooting/playbooks/ssl-certificate-issues.md) | ✅ | ✅ Verified | 5/5 | 2026-04-12 |
 | [Startup Availability](../troubleshooting/first-10-minutes/startup-availability.md) | ✅ | ✅ Verified | 2/2 | 2026-04-12 |
-| [Storage Connectivity Firewall Authorization](../troubleshooting/playbooks/outbound-network/storage-connectivity-firewall-authorization.md) | ✅ | ✅ Verified | 3/3 | 2026-07-16 |
+| [Storage Connectivity Firewall Authorization](../troubleshooting/playbooks/outbound-network/storage-connectivity-firewall-authorization.md) | ✅ | ✅ Verified | 4/4 | 2026-07-16 |
 | [Troubleshooting Method](../troubleshooting/methodology/troubleshooting-method.md) | ✅ | ✅ Verified | 2/2 | 2026-04-12 |
 | [Warmup Vs Health Check](../troubleshooting/playbooks/startup-availability/warmup-vs-health-check.md) | ✅ | ✅ Verified | 3/3 | 2026-04-12 |
 | [Windows Container Health Probes](../troubleshooting/playbooks/startup-availability/windows-container-health-probes.md) | ✅ | ✅ Verified | 3/3 | 2026-04-12 |
