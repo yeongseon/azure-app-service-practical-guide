@@ -106,11 +106,9 @@ Start by proving or disproving SNAT with the SNAT Port Exhaustion and TCP Connec
 - VNet integration status (if applicable).
 - NAT Gateway configuration (if applicable).
 
-#### Portal view: Networking blade for SNAT-bypass topology verification
+#### Portal view
 
-![Azure portal Networking blade showing Inbound traffic configuration column (Public network access Enabled with no access restrictions Using default behavior, App assigned address Not configured, Private endpoints 0 private endpoints, Inbound IPv4 <ip-redacted>, Inbound IPv6 <ipv6-redacted>) and Outbound traffic configuration column (Virtual network integration Not configured, Hybrid connections Not configured, Outbound DNS Default Azure-provided, list of Outbound IPv4 and IPv6 addresses), Integration subnet configuration card showing NAT gateway N/A, NSG N/A, UDR N/A, toolbar with Refresh, Troubleshoot, Send us your feedback buttons](../../../assets/troubleshooting/networking/01-networking-hub.png)
-
-The `Networking` blade is the single source of truth for whether the app is using SNAT bypass mechanisms (NAT Gateway, Private Endpoints to dependencies) that this playbook recommends as the durable fix for H1. The `Outbound traffic configuration` column shown above reveals an apartment-style baseline: `Virtual network integration: Not configured` and (implied from that) `NAT gateway: N/A` mean every outbound call from this app shares the default per-instance pool of 128 preallocated SNAT ports — the exact constraint that causes the timeout-cluster signature documented in Section 5. If `Virtual network integration` shows a subnet ID and the `Integration subnet configuration` card reports `NAT gateway: <name>`, SNAT is bypassed for traffic flowing through that NAT Gateway's port pool (~64,000 ports per public IP). Click `Virtual network integration` to inspect or configure the subnet, then verify Private Endpoint targets in the `Inbound traffic configuration > Private endpoints` link (though for SNAT bypass, the relevant Private Endpoints are on the *dependency* resources, not on the App Service itself).
+The App Service **Networking** blade is the single source of truth for whether the app uses the SNAT-mitigation mechanisms — a NAT Gateway (dedicated, expanded SNAT port pool) or Private Endpoints to dependencies (which bypass SNAT entirely) — that this playbook recommends as the durable fix for H1. Rather than read it as one screenshot, walk it as an ordered trail. See [Section 10 — Portal Evidence](#10-portal-evidence) for the step-by-step diagnostic walk of this blade, keyed to each card in the order you should verify it.
 
 ### Investigation Notes
 - SNAT applies only to outbound connections to PUBLIC IP addresses. Private Endpoint and Service Endpoint traffic does NOT consume SNAT ports.
@@ -279,6 +277,21 @@ VirtualNetworkSubnetId                                                          
 !!! tip "How to Read This"
     This confirms runtime shape (4 sync workers) and networking posture. Correlate with SNAT detector trends: if ports are saturated during `/outbound` spikes, H1 dominates; if not, H2 (application connection pattern) dominates.
 
+### Dependency Telemetry (Application Insights)
+
+When the app is instrumented with Application Insights, the `dependencies` table exposes the per-target outbound call rate and duration — the signal that separates SNAT pressure (H1, broad degradation across many public targets) from a single-dependency problem (H4).
+
+```kusto
+dependencies
+| where timestamp > ago(6h)
+| summarize Calls=count(), Failures=countif(success == false), P95Ms=percentile(duration, 95), DcountTargets=dcount(target)
+          by bin(timestamp, 5m)
+| order by timestamp desc
+```
+
+!!! tip "How to Read This"
+    A high, rising `Calls` rate with a large `DcountTargets` (many distinct public targets in the same window) and failures clustered near a connect-timeout boundary supports **H1** (SNAT exhaustion) — the app is opening too many short-lived outbound connections across a broad fan-out. A low `DcountTargets` (failures concentrated on one or two targets) points to **H4** (a single downstream dependency) instead. To see the per-target breakdown, add `target, type` back into the `by` clause.
+
 ## 6. Validation and Disproof by Hypothesis
 
 ### H1: SNAT port exhaustion
@@ -407,6 +420,46 @@ AppServiceConsoleLogs
 - Add NAT Gateway for non-Azure outbound traffic.
 - Implement circuit breaker pattern for dependency calls.
 - Monitor SNAT usage as a standard operational metric.
+
+## 10. Portal Evidence
+
+This section walks the App Service **Networking** blade **in diagnostic order**, as a *step-by-step* trail rather than a single blade read. All four steps below read different cards of the **same** capture — the blade is one screen, but the diagnostic value comes from reading its cards in the order that establishes whether the app is on the constrained default SNAT pool (supports H1) or has a SNAT-mitigation topology in place — an expanded NAT Gateway pool or a dependency-side Private Endpoint bypass, which weakens H1 and shifts focus to H2/H3/H4. The capture is a real, PII-cleaned Azure Portal screenshot from a Linux App Service; the inbound/outbound IP values shown are RFC-5737 (`192.0.2.x`) and RFC-3849 (`2001:db8::`) documentation ranges, not real addresses.
+
+![Azure portal Networking blade for a Linux Web App, showing the Inbound traffic configuration column (Public network access Enabled with no access restrictions, App assigned address Not configured, Private endpoints 0 private endpoints, Inbound IPv4 and IPv6 addresses) and the Outbound traffic configuration column (Virtual network integration Not configured, Hybrid connections Not configured, Outbound DNS Default Azure-provided, Outbound IPv4 and IPv6 address lists), with the Integration subnet configuration card showing NAT gateway N/A, Network security group N/A, User defined route N/A, and a toolbar with Refresh, Troubleshoot, and Send us your feedback buttons](../../../assets/troubleshooting/networking/01-networking-hub.png)
+
+### Step 1 — Establish the SNAT-mitigation prerequisite: `Outbound traffic configuration > Virtual network integration`
+
+Purpose: A NAT Gateway (expanded port pool) and dependency-side Private Endpoints (true SNAT bypass) — the two durable SNAT-mitigation paths — both require VNet integration first. Confirm whether the prerequisite exists before interpreting SNAT pressure.
+Look for: The **Outbound traffic configuration** column, **Virtual network integration** row.
+Expected result: A subnet ID here means the app *can* route outbound through a NAT Gateway or reach dependencies over Private Endpoints. The captured `Not configured` state means no mitigation is possible — every outbound call to a **public** IP shares the default per-instance pool of 128 preallocated SNAT ports.
+Abnormal: `Not configured` combined with the timeout-cluster signature in Section 5 supports **H1** (SNAT exhaustion) — the app is on the constrained default pool. Fix requires VNet integration first.
+Next step: Read the **Integration subnet configuration** card to check for a NAT Gateway.
+
+### Step 2 — Check for a dedicated SNAT port pool: `Integration subnet configuration > NAT gateway`
+
+Purpose: A NAT Gateway replaces the 128-port per-instance default with a much larger shared pool (~64,000 ports per public IP), which is the primary platform-level fix for H1.
+Look for: The **Integration subnet configuration** card, **NAT gateway** row.
+Expected result: A NAT Gateway name here means SNAT is served from the NAT Gateway's dedicated port pool (~64,000 ports per public IP) rather than the constrained default pool — H1 is unlikely and you should pivot to H2 (app connection management). The captured `N/A` confirms no NAT Gateway, so the constrained default pool is still in force (consistent with the `Not configured` integration state from Step 1).
+Abnormal: `N/A` while the app makes high volumes of short-lived outbound connections to public endpoints strengthens **H1**. Note `Network security group` and `User defined route` in the same card also read `N/A` — no route/NSG interference to consider here.
+Next step: Read the **Outbound IPv4 addresses** list to understand the shared source-IP baseline the default pool draws from.
+
+### Step 3 — Note the shared outbound source pool: `Outbound traffic configuration > Outbound IPv4 addresses`
+
+Purpose: On the default (non-NAT-Gateway) path, all instances share this set of platform outbound IPs, and the per-instance 128-port SNAT allocation is drawn against them — this is the resource H1 exhausts.
+Look for: The **Outbound IPv4 addresses** (and **Outbound IPv6 addresses**) list.
+Expected result: A fixed set of platform-assigned addresses. On the default path these are shared and cannot be expanded without a NAT Gateway or scale-out (which adds per-instance pools but does not fix a bad connection pattern — see Section 7, Pattern D).
+Abnormal: Nothing abnormal is visible here directly; this step establishes *why* the port pool is finite. Correlate with the **SNAT Port Exhaustion** detector in App Service Diagnostics (Section 4) to quantify saturation during incident windows.
+Next step: Disambiguate the inbound `Private endpoints` red herring (Step 4).
+
+### Step 4 — Disambiguate the inbound `Private endpoints` red herring
+
+Purpose: Prevent the common misread that the inbound **Private endpoints** count reflects SNAT-bypass coverage. For SNAT bypass, the Private Endpoints that matter are on the *dependency* resources, not on the App Service itself.
+Look for: The **Inbound traffic configuration** column, **Private endpoints** row (captured as `0 private endpoints`).
+Expected result: This count describes private endpoints *into the App Service* (inbound access to the app). Private Endpoint traffic to *dependencies* does not consume SNAT ports, but that configuration lives on the dependency resources and is not shown by this count.
+Abnormal: Concluding "SNAT bypass is not configured because inbound private endpoints is 0" is a category error. Use the `Troubleshoot` toolbar button to launch the integrated network diagnostics for outbound reachability, and verify dependency-side Private Endpoints on those resources directly.
+
+!!! warning "Do not screenshot secrets or real addresses"
+    When capturing the Networking blade, never include real subscription/tenant identifiers, and follow the repository PII text-replacement rules. The inbound/outbound IP values in this capture are RFC-5737 / RFC-3849 documentation ranges, not live addresses.
 
 ## See Also
 - [`../../kql/http/latency-trend-by-status-code.md`](../../kql/http/latency-trend-by-status-code.md)

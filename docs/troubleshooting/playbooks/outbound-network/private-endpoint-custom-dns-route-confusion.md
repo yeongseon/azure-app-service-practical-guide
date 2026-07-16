@@ -86,11 +86,9 @@ For this incident class, prove DNS answer, route path, and policy allowance inde
 - Private DNS zone links and A record values.
 - Effective routes and NSG rules on integration/private endpoint subnets.
 
-#### Portal view: Networking blade as the layer-separation control panel
+#### Portal view
 
-![Azure portal Networking blade showing Inbound traffic configuration column (Public network access Enabled with no access restrictions Using default behavior, App assigned address Not configured, Private endpoints 0 private endpoints, Inbound IPv4 <ip-redacted>, Inbound IPv6 <ipv6-redacted>) and Outbound traffic configuration column (Virtual network integration Not configured, Hybrid connections Not configured, Outbound DNS Default Azure-provided, list of Outbound IPv4 and IPv6 addresses), Integration subnet configuration card showing NAT gateway N/A, NSG N/A, UDR N/A, toolbar with Refresh, Troubleshoot, Send us your feedback buttons](../../../assets/troubleshooting/networking/01-networking-hub.png)
-
-The `Networking` blade enforces the playbook's central diagnostic principle — Private Endpoint health, DNS resolution, and route policy are separate layers and must be verified independently — by surfacing each layer in its own card. Verify in this exact order: first the `Outbound traffic configuration > Virtual network integration` field to confirm the integration subnet exists (the prerequisite for private DNS zone lookups to even reach the integration VNet); second the `Outbound DNS` field to confirm the resolver path (`Default (Azure-provided)` returns private zone records only if zones are linked to the integration VNet, while `Custom` bypasses Azure DNS entirely — H2 territory); third the `Integration subnet configuration` card's `NSG` and `UDR` fields to confirm no route table is steering traffic to a firewall that blocks the dependency's private IP (H3/H4). The `Inbound traffic configuration > Private endpoints` link shows endpoints *into* the App Service itself, which is unrelated to outbound private-endpoint dependency resolution — a common point of confusion this playbook explicitly disambiguates. Use the `Troubleshoot` toolbar button to launch the integrated network diagnostics that test each layer's reachability with one click.
+The App Service **Networking** blade is the single control panel that separates the three layers this playbook keeps apart — DNS answer, route path, and policy allowance. Rather than read it as one screenshot, walk it as an ordered trail. See [Section 10 — Portal Evidence](#10-portal-evidence) for the step-by-step diagnostic walk of this blade, keyed to each card in the order you should verify it.
 
 ### Investigation Notes
 - Always validate from inside Linux App Service runtime; external resolver behavior is not authoritative.
@@ -247,6 +245,22 @@ VirtualNetworkSubnetId                                                          
 !!! tip "How to Read This"
     In the dns-vnet incident, `/resolve` proved `stlabdnsvnet....blob.core.windows.net` and `stlabdnsvnet....privatelink.blob.core.windows.net` resolved to public `<ip-redacted>`, and `/connect` showed SSL failure to the privatelink URL. That evidence is definitive for DNS/link/forwarding misconfiguration, not endpoint approval failure.
 
+### Dependency Telemetry (Application Insights)
+
+When the app is instrumented with Application Insights, the `dependencies` table records each outbound call's target, result, and duration — the most direct telemetry for a private-endpoint dependency failure. `AppServiceHTTPLogs` only shows the *inbound* request that triggered the call; `dependencies` shows the outbound leg itself.
+
+```kusto
+dependencies
+| where timestamp > ago(6h)
+| where type in ("HTTP", "Azure blob", "Azure queue", "Azure table", "SQL")
+| summarize Calls=count(), Failures=countif(success == false), P95Ms=percentile(duration, 95)
+          by target, type, bin(timestamp, 5m)
+| order by Failures desc, timestamp desc
+```
+
+!!! tip "How to Read This"
+    A `target` resolving to a **public** FQDN (or a spike in `Failures` with `duration` near a TLS/connect timeout) for a dependency that should be private confirms the traffic is not taking the private endpoint path — corroborating the `/resolve` and `/connect` evidence above. Correlate the failing `target` with the private DNS zone and route checks in Section 6.
+
 ## 6. Validation and Disproof by Hypothesis
 
 ### H1: Private DNS zone/link/record is wrong
@@ -386,6 +400,46 @@ AppServiceConsoleLogs
 - Add CI policy tests to block route/NSG changes that break private endpoint reachability.
 - Run synthetic DNS + TCP probes from App Service runtime for critical dependencies.
 - Track DNS change windows with explicit rollback paths.
+
+## 10. Portal Evidence
+
+This section walks the App Service **Networking** blade **in diagnostic order**, as a *step-by-step* trail rather than a single blade read. All four steps below read different cards of the **same** capture — the blade is one screen, but the diagnostic value comes from reading its cards in the order that separates a DNS problem (H1/H2) from a route problem (H3) from a policy/stale-state problem (H4). The capture is a real, PII-cleaned Azure Portal screenshot from a Linux App Service; the inbound/outbound IP values shown are RFC-5737 (`192.0.2.x`) and RFC-3849 (`2001:db8::`) documentation ranges, not real addresses.
+
+![Azure portal Networking blade for a Linux Web App, showing the Inbound traffic configuration column (Public network access Enabled with no access restrictions, App assigned address Not configured, Private endpoints 0 private endpoints, Inbound IPv4 and IPv6 addresses) and the Outbound traffic configuration column (Virtual network integration Not configured, Hybrid connections Not configured, Outbound DNS Default Azure-provided, Outbound IPv4 and IPv6 address lists), with the Integration subnet configuration card showing NAT gateway N/A, Network security group N/A, User defined route N/A, and a toolbar with Refresh, Troubleshoot, and Send us your feedback buttons](../../../assets/troubleshooting/networking/01-networking-hub.png)
+
+### Step 1 — Confirm the integration prerequisite: `Outbound traffic configuration > Virtual network integration`
+
+Purpose: Before DNS or routes can matter, the app must actually egress *through* the integration VNet — otherwise private DNS zones linked to that VNet are never consulted and the private endpoint is unreachable by design.
+Look for: The **Outbound traffic configuration** column, **Virtual network integration** row.
+Expected result: For any private-endpoint dependency, this must name an integration subnet. The captured `Not configured` state means the app egresses over the **public** path by default — without VNet integration the app does not use Private DNS zones linked to the integration VNet, so the `privatelink.*` private-IP answer is not returned and the private endpoint path stays unreachable regardless of zone or route configuration.
+Abnormal: `Not configured` while the dependency is expected over a private endpoint supports an H1/H2 finding at the routing prerequisite level — fix VNet integration first, then re-verify DNS. Only once integration is configured should you read Step 2.
+Next step: Read the **Outbound DNS** row to establish which resolver answers the app's lookups.
+
+### Step 2 — Establish the resolver path: `Outbound traffic configuration > Outbound DNS`
+
+Purpose: Decide whether the app resolves through Azure-provided DNS (which returns private zone records only when zones are linked to the integration VNet) or a custom resolver (which bypasses Azure DNS and must forward `privatelink.*` itself).
+Look for: The **Outbound DNS** row.
+Expected result: `Default (Azure-provided)` — the value shown in this capture — returns the private endpoint's private IP **only if** the matching `privatelink.*` Private DNS zone is linked to the integration VNet; a custom-resolver value means an enterprise resolver decides the answer and must conditionally forward the `privatelink.*` zones to Azure DNS `168.63.129.16`. Confirm the live value on your own blade rather than assuming a specific label string.
+Abnormal: The captured `Default (Azure-provided)` state combined with a public-IP resolution result (see Section 5, `/resolve`) points to a missing zone link — an **H1** finding. A custom-resolver value that cannot resolve the `privatelink.*` chain is an **H2** finding.
+Next step: Read the **Integration subnet configuration** card to rule out a route or policy block on the path to the private IP.
+
+### Step 3 — Rule out route/policy interference: `Integration subnet configuration` (NSG / User defined route)
+
+Purpose: Even with a correct private IP answer, a route table or NSG on the integration subnet can steer or block traffic to the dependency's private IP — this is the H3 (route confusion) / H4 (blocked path) layer.
+Look for: The **Integration subnet configuration** card — the **Network security group** and **User defined route** rows (and **NAT gateway**, which affects public egress).
+Expected result: For a direct private path, no UDR should redirect the dependency's private IP to an NVA/firewall that denies it, and no NSG rule should block the destination port. The captured `N/A` values indicate no route table or NSG is attached (consistent with the `Not configured` integration state from Step 1).
+Abnormal: A UDR whose next hop is a firewall that denies the private IP/port, or an NSG deny rule, supports an **H3/H4** finding — validate with effective routes and `nc`/`curl` from inside the app (Section 6, H3/H4).
+Next step: Confirm you are not misreading an inbound control as an outbound one (Step 4).
+
+### Step 4 — Disambiguate the inbound `Private endpoints` red herring
+
+Purpose: Prevent the single most common misread of this blade — treating the inbound **Private endpoints** count as evidence about the *outbound* dependency.
+Look for: The **Inbound traffic configuration** column, **Private endpoints** row (captured as `0 private endpoints`).
+Expected result: This count describes private endpoints *into the App Service itself* (inbound access to the app), which is unrelated to the app's *outbound* call to a private-endpoint dependency. A `0` here says nothing about whether the app can reach its dependency privately.
+Abnormal: Concluding "outbound is broken because inbound private endpoints is 0" is a category error. Use the `Troubleshoot` toolbar button to launch the integrated network diagnostics, which test each outbound layer's reachability directly.
+
+!!! warning "Do not screenshot secrets or real addresses"
+    When capturing the Networking blade, never include real subscription/tenant identifiers, and follow the repository PII text-replacement rules. The inbound/outbound IP values in this capture are RFC-5737 / RFC-3849 documentation ranges, not live addresses.
 
 ## See Also
 - [`../../kql/http/5xx-trend-over-time.md`](../../kql/http/5xx-trend-over-time.md)
