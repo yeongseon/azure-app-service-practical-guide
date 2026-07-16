@@ -233,7 +233,7 @@ az storage account show --resource-group <resource-group> --name <storage-accoun
 
 ## 10. Portal Evidence
 
-This section separates **verified screenshot evidence** from **navigation-only evidence**. The Layer 2 steps are backed by real, PII-cleaned Azure Portal captures. The Layer 1, Layer 3, and Layer 4 steps are step-by-step Portal *navigation* checklists with no screenshot — storage-side captures require a live repro environment and will be added only after they are captured, PII-cleaned, and visually verified. Do not treat a navigation-only step as if a screenshot exists.
+This section separates **verified screenshot evidence** from **navigation-only evidence**. The Layer 2, Layer 3, and Layer 4 steps are backed by real, PII-cleaned Azure Portal captures taken from a live repro environment. The Layer 1 step remains a step-by-step Portal *navigation* checklist with no screenshot, because DNS resolution is verified from inside the runtime rather than from a static blade. Do not treat a navigation-only step as if a screenshot exists.
 
 ### Layer 2 — App Service outbound routing evidence (captured)
 
@@ -262,42 +262,32 @@ No screenshot is currently referenced. Inspect in-app resolution directly from t
 Expected: A public-access storage path resolves to the public storage endpoint; a private endpoint path resolves to the private endpoint NIC IP.
 Abnormal: `NXDOMAIN`; a public IP returned when a private endpoint is required; or a private IP from the wrong VNet / endpoint. Any of these supports H1 (DNS).
 
-### Layer 3 — Storage firewall evidence checklist (navigation-only)
+### Layer 3 — Storage firewall evidence (captured)
 
-No screenshot is currently referenced. Inspect the **storage account** (not the App Service):
+![Storage account Networking blade showing Public network access set to Disabled](../../../assets/troubleshooting/storage-firewall/01-networking-disabled.png)
 
-1. Open the storage account in the Azure Portal.
-2. Go to **Networking** → **Firewalls and virtual networks**.
-3. Inspect `Public network access`, the default firewall action, virtual network rules, IP rules, and **Private endpoint connections**.
+Purpose: Confirm the storage-side network authorization state (Layer 3), inspected on the **storage account** rather than the App Service, because a firewall block and a data-plane authorization gap both surface as `403` and must be disambiguated.
+Look for: The **Public access** tab of the storage account **Networking** blade — specifically `Public network access`, and the **Resource settings** note about whether virtual network and IP rules are in effect.
+Expected result: For the app to reach the account over the public path, `Public network access` must be `Enabled` with a matching VNet/IP rule, or the app must reach an approved private endpoint. The captured `Public network access: Disabled` state (with the note `Virtual networks and IP address(es) settings are not in effect. Public network access is disabled.`) blocks all public egress — including the app's public outbound path — and supports an H3 (storage firewall) finding.
+Next step: For this captured `Public network access: Disabled` state, use a private endpoint plus matching private DNS. A `Microsoft.Storage` service endpoint plus a virtual network rule is *not* sufficient on its own here — service-endpoint and IP rules are ignored while public access is disabled, so that path also requires re-enabling public access to **Selected networks** first. Resolve the network path before treating the failure as a Layer 4 authorization problem. Remember that same-region App Service IP allowlist rules are ignored (see the warning in Section 6, H3).
 
-Expected: The app's effective outbound source is admitted — an approved private endpoint with matching DNS, or a `Microsoft.Storage` service endpoint plus a matching virtual network rule.
-Abnormal: Default action `Deny` with no matching VNet / IP / private endpoint rule; `Public network access` disabled while the app still egresses publicly; or a private endpoint that exists while DNS/routing still sends traffic to the public endpoint. These support H3 (storage firewall). Remember that same-region App Service IP allowlist rules are ignored (see the warning in Section 6, H3).
+### Layer 4 — Data-plane authorization evidence (captured)
 
-### Layer 4 — Data-plane authorization evidence checklist (navigation-only)
+![Storage account Access control (IAM) Role assignments tab filtered to the App Service managed identity, showing only a Reader role at This resource scope](../../../assets/troubleshooting/storage-iam/01-role-assignments.png)
 
-No screenshot is currently referenced. Inspect the **storage account** IAM and auth configuration:
+Purpose: Confirm whether the App Service managed identity holds a *data-plane* storage role (Layer 4), inspected on the **storage account** IAM blade — but only meaningful after the network path (Layer 3) is proven open.
+Look for: The **Access control (IAM)** → **Role assignments** tab, filtered by the app's managed identity name. Check the **Role** and **Scope** columns for each assignment.
+Expected result: The identity must hold the correct data-plane role for the target service:
 
-1. Open the storage account in the Azure Portal.
-2. Go to **Access control (IAM)** → **Role assignments**.
-3. Filter by the App Service managed identity.
-4. Confirm the required *data-plane* role exists for the target service:
-    - Blob: **Storage Blob Data Reader / Contributor / Owner** as appropriate.
-    - Queue: **Storage Queue Data Contributor** (or the equivalent required role).
-    - Table: **Storage Table Data Contributor** (or the equivalent required role).
-5. If the app uses shared-key authorization, check the storage account **Configuration** blade for `Allow storage account key access`. If the app uses SAS, inspect the SAS value from the app setting, Key Vault secret, or deployment secret source and confirm it has not expired.
+- Blob: **Storage Blob Data Reader / Contributor / Owner** as appropriate.
+- Queue: **Storage Queue Data Contributor** (or the equivalent required role).
+- Table: **Storage Table Data Contributor** (or the equivalent required role).
 
-Expected: The app's managed identity holds the correct data-plane role at the appropriate scope.
-Abnormal: Only management-plane roles such as **Contributor** / **Reader** are assigned; the role is on the wrong scope; or the app uses shared key / SAS while shared key is disabled or the SAS has expired. These support H4 (data-plane authorization) — but only after the network path is proven open.
+Abnormal: The captured state shows the managed identity holding only a management-plane **Reader** role at `This resource` scope and no data-plane role — a `Reader` grants control-plane read but zero blob/queue/table data access, so managed-identity data-plane calls return `403 AuthorizationFailure` unless another valid credential (shared key or SAS) is used. This supports an H4 (data-plane authorization) finding.
+Next step: Assign the correct data-plane role at the appropriate scope. If the app uses shared-key authorization, check the storage account **Configuration** blade for `Allow storage account key access`; if it uses SAS, confirm the token source has not expired.
 
 !!! warning "Do not screenshot secrets"
-    When capturing storage-account blades in the future, never include connection strings, account keys, SAS tokens, or account-specific identifiers. Follow the repository PII text-replacement rules.
-
-### Future capture backlog
-
-The following verified storage-side screenshots would upgrade the navigation-only checklists above and are tracked for a follow-up capture pass:
-
-- Storage account **Networking** blade showing the firewall default action, VNet rules, IP rules, and private endpoint connections (Layer 3).
-- Storage account **Access control (IAM)** blade showing the App Service managed identity with a storage *data-plane* role such as **Storage Blob Data Contributor** (Layer 4).
+    When capturing storage-account blades, never include connection strings, account keys, SAS tokens, or account-specific identifiers. Follow the repository PII text-replacement rules.
 
 ## See Also
 - [App Service to Azure Storage connectivity](../../../platform/storage-connectivity.md)

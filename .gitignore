@@ -69,3 +69,6 @@ labs/**/main.json
 
 # Playwright scripts
 .playwright-scripts/
+
+# Agent scratch workspace (never commit)
+.agent-scratch/
