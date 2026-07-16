@@ -19,6 +19,9 @@ content_validation:
     - claim: "Configure a health check path so the platform can remove unhealthy instances from rotation"
       source: "https://learn.microsoft.com/en-us/azure/app-service/monitor-instances-health-check"
       verified: true
+    - claim: "Azure Storage firewall access from a virtual network is granted through service endpoints or private endpoints; passing the storage network rules does not by itself authorize data access, which still requires a shared key, SAS, or a data-plane RBAC role."
+      source: "https://learn.microsoft.com/en-us/azure/storage/common/storage-network-security"
+      verified: true
 content_sources:
   diagrams:
     - id: anti-pattern-detection-flow
@@ -144,6 +147,9 @@ Use the following table as a policy baseline.
 | Networking | Connection-per-request outbound pattern | Causes excessive socket churn and SNAT exhaustion under load | Use connection pooling, keep-alive, and dependency SDK reuse |
 | Networking | Assuming DNS/egress always stable without retry policy | Transient failures become user-facing errors | Add timeout, retry with jitter, and circuit breaker behavior |
 | Networking | Not planning VNet integration and outbound dependency paths | Leads to late-stage connectivity failures and hard troubleshooting | Design egress paths early and validate dependency reachability pre-go-live |
+| Networking | Hardcoding `privatelink.*.core.windows.net` FQDNs in application config | Private endpoint DNS is resolved by the private DNS zone, not by app config; hardcoded privatelink hostnames break when the zone or endpoint changes and mask real resolution failures | Use the standard public service hostname (for example `account.blob.core.windows.net`) and let the linked private DNS zone resolve it to the private IP |
+| Networking | Assuming Route All / private endpoint on the app also makes Storage private-only | Route All changes only the outbound path and source IP handling; it does not disable the storage account's public endpoint. Inbound privacy on the app does not lock down the dependency | Restrict the storage account separately: set `public-network-access Disabled` and `default-action Deny`, then add a service endpoint or private endpoint |
+| Networking | Confusing network access with data-plane authorization for Storage | Opening the storage firewall does not grant data access; a `403` after the firewall passes is a missing RBAC role, not a network fault | Treat network reachability and data authorization as independent layers — assign a data-plane role such as Storage Blob Data Reader in addition to opening the network path |
 | Security | Running production on B1 for critical workloads | Limited scale, weaker isolation characteristics, and insufficient resilience margin | Use production-appropriate Standard/Premium SKU based on SLO and load profile |
 | Security | Using broad-scoped service principals without least privilege | Compromise impact is amplified and audit posture weakens | Use managed identities and granular RBAC at minimum required scope |
 | Security | Not enforcing HTTPS and secure transport defaults | Increases risk of data exposure and mixed-mode security gaps | Enforce HTTPS-only, modern TLS policy, and secure cookie headers |
@@ -284,6 +290,7 @@ az webapp config appsettings list \
 
 - [Platform - How App Service Works](../platform/architecture/index.md)
 - [Platform - Networking](../platform/networking.md)
+- [Platform - App Service to Azure Storage connectivity](../platform/storage-connectivity.md)
 - [Operations - Security](../operations/security.md)
 - [Operations - Deployment Slots](../operations/deployment-slots.md)
 - [Best Practices - Deployment](./deployment.md)
