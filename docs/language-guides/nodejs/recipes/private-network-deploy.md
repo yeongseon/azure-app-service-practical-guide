@@ -277,6 +277,23 @@ az network private-endpoint list --resource-group $RG --output table
 | `--output table` | Formats the validation output for quick inspection. |
 | `az network private-endpoint list` | Confirms the private endpoints are provisioned in the resource group. |
 
+### Restrict the storage account's public network access
+
+With the private endpoint and private DNS zone in place, close the storage account's public endpoint so it is reachable only through the private path.
+
+```bash
+az storage account update --resource-group $RG --name $STORAGE_NAME --public-network-access Disabled --default-action Deny
+```
+
+| Command/Parameter | Purpose |
+|-------------------|---------|
+| `az storage account update` | Updates the storage account network configuration. |
+| `--public-network-access Disabled` | Turns off the public endpoint; only private endpoints can reach the account. |
+| `--default-action Deny` | Denies traffic not matched by an explicit network rule. |
+
+!!! note "Network path and data authorization are independent"
+    Disabling public access controls only the **network path**. The managed identity still needs a data-plane role such as **Storage Blob Data Contributor**. See [App Service to Azure Storage connectivity](../../../platform/storage-connectivity.md).
+
 ## Verification
 
 - `az webapp vnet-integration list` shows the expected VNet and delegated subnet.
@@ -315,6 +332,7 @@ The `Access Restrictions` blade is the Portal surface that shows whether this ap
 - [Private Endpoints](./private-endpoints.md)
 - [Managed Identity](./managed-identity.md)
 - [Key Vault References](./key-vault-reference.md)
+- [App Service to Azure Storage connectivity](../../../platform/storage-connectivity.md)
 
 ## Sources
 
