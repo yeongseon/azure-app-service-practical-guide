@@ -231,6 +231,74 @@ az storage account show --resource-group <resource-group> --name <storage-accoun
 - Add synthetic probes from App Service runtime that both resolve and perform a real data-plane read against critical storage dependencies.
 - Document the four-layer model in runbooks so a `403` is disambiguated across the storage firewall (network authorization) and data-plane authorization, instead of being assumed to be one or the other.
 
+## 10. Portal Evidence
+
+This section separates **verified screenshot evidence** from **navigation-only evidence**. The Layer 2 steps are backed by real, PII-cleaned Azure Portal captures. The Layer 1, Layer 3, and Layer 4 steps are step-by-step Portal *navigation* checklists with no screenshot — storage-side captures require a live repro environment and will be added only after they are captured, PII-cleaned, and visually verified. Do not treat a navigation-only step as if a screenshot exists.
+
+### Layer 2 — App Service outbound routing evidence (captured)
+
+![App Service Networking blade showing outbound Virtual network integration is Not configured](../../../assets/troubleshooting/networking/01-networking-hub.png)
+
+Purpose: Confirm the App Service outbound routing state before diagnosing the storage firewall or a private endpoint, because a routing gap masquerades as a firewall or authorization problem.
+Look for: The **Outbound traffic configuration** panel, especially `Virtual network integration: Not configured`, and the listed outbound IP addresses.
+Expected result: For a storage private endpoint or a storage VNet rule to work, `Virtual network integration` must be configured to the intended subnet. A `Not configured` state (as shown) supports a Layer 2 routing finding — the app egresses over the public path.
+Next step: Open the **Virtual Network Integration** blade to confirm the delegated integration subnet before treating the failure as a storage firewall (Layer 3) or RBAC (Layer 4) problem.
+
+![App Service Virtual Network Integration blade showing no virtual network integration configured](../../../assets/troubleshooting/vnet-integration/01-vnet-integration.png)
+
+Purpose: Verify the exact VNet integration state for the app.
+Look for: The `No virtual network integration configured` message and the `Add virtual network integration` action.
+Expected result: An app that must reach storage through a private endpoint or a storage VNet rule needs VNet integration configured to the intended subnet. `No virtual network integration configured` confirms H2 (routing).
+Next step: Configure VNet integration (or correct the subnet / `vnetRouteAllEnabled` setting) before treating the issue as a storage firewall or data-plane authorization problem.
+
+### Layer 1 — DNS evidence checklist (navigation-only)
+
+No screenshot is currently referenced. Inspect in-app resolution directly from the Linux runtime:
+
+1. Open the App Service in the Azure Portal.
+2. Go to **Diagnose and solve problems**, or open **Advanced Tools (Kudu)** and use the SSH/console to run `nslookup` / `getent hosts` against the storage FQDN (for example `<storage-account-name>.blob.core.windows.net`).
+3. Compare the resolved address against the intended access path.
+
+Expected: A public-access storage path resolves to the public storage endpoint; a private endpoint path resolves to the private endpoint NIC IP.
+Abnormal: `NXDOMAIN`; a public IP returned when a private endpoint is required; or a private IP from the wrong VNet / endpoint. Any of these supports H1 (DNS).
+
+### Layer 3 — Storage firewall evidence checklist (navigation-only)
+
+No screenshot is currently referenced. Inspect the **storage account** (not the App Service):
+
+1. Open the storage account in the Azure Portal.
+2. Go to **Networking** → **Firewalls and virtual networks**.
+3. Inspect `Public network access`, the default firewall action, virtual network rules, IP rules, and **Private endpoint connections**.
+
+Expected: The app's effective outbound source is admitted — an approved private endpoint with matching DNS, or a `Microsoft.Storage` service endpoint plus a matching virtual network rule.
+Abnormal: Default action `Deny` with no matching VNet / IP / private endpoint rule; `Public network access` disabled while the app still egresses publicly; or a private endpoint that exists while DNS/routing still sends traffic to the public endpoint. These support H3 (storage firewall). Remember that same-region App Service IP allowlist rules are ignored (see the warning in Section 6, H3).
+
+### Layer 4 — Data-plane authorization evidence checklist (navigation-only)
+
+No screenshot is currently referenced. Inspect the **storage account** IAM and auth configuration:
+
+1. Open the storage account in the Azure Portal.
+2. Go to **Access control (IAM)** → **Role assignments**.
+3. Filter by the App Service managed identity.
+4. Confirm the required *data-plane* role exists for the target service:
+    - Blob: **Storage Blob Data Reader / Contributor / Owner** as appropriate.
+    - Queue: **Storage Queue Data Contributor** (or the equivalent required role).
+    - Table: **Storage Table Data Contributor** (or the equivalent required role).
+5. If the app uses shared-key authorization, check the storage account **Configuration** blade for `Allow storage account key access`. If the app uses SAS, inspect the SAS value from the app setting, Key Vault secret, or deployment secret source and confirm it has not expired.
+
+Expected: The app's managed identity holds the correct data-plane role at the appropriate scope.
+Abnormal: Only management-plane roles such as **Contributor** / **Reader** are assigned; the role is on the wrong scope; or the app uses shared key / SAS while shared key is disabled or the SAS has expired. These support H4 (data-plane authorization) — but only after the network path is proven open.
+
+!!! warning "Do not screenshot secrets"
+    When capturing storage-account blades in the future, never include connection strings, account keys, SAS tokens, or account-specific identifiers. Follow the repository PII text-replacement rules.
+
+### Future capture backlog
+
+The following verified storage-side screenshots would upgrade the navigation-only checklists above and are tracked for a follow-up capture pass:
+
+- Storage account **Networking** blade showing the firewall default action, VNet rules, IP rules, and private endpoint connections (Layer 3).
+- Storage account **Access control (IAM)** blade showing the App Service managed identity with a storage *data-plane* role such as **Storage Blob Data Contributor** (Layer 4).
+
 ## See Also
 - [App Service to Azure Storage connectivity](../../../platform/storage-connectivity.md)
 - [Best Practices - Networking](../../../best-practices/networking.md)
