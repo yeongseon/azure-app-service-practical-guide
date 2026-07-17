@@ -104,7 +104,7 @@ The Environment page is one of the most commonly used Kudu tools. It reveals exa
 
 ### Portal view: Kudu Environment / App Settings page
 
-![Kudu Environment (/Env) page on a Windows App Service. Top navigation shows Environment (current), Debug console (dropdown), Process explorer, Tools (dropdown), Site extensions, and a user@example.com account label. The page has an Index of anchor links: System Info, App Settings, Connection Strings, Environment variables, PATH, HTTP Headers, Server variables. The System info section lists OS version Microsoft Windows NT 10.0.20348.0, 64 bit system True, 64 bit process False, Processor count 8, Machine name WEBWK000002, Short instance id 92ca53, CLR version 4.0.30319.42000, IIS command line including `-ap "~1app-kudu-capture-msit-win"` and a `\\.\pipe\iisipm…` named pipe identifier, C:\home usage 1,024 MB total / 1,023 MB free (green), C:\local usage 500 MB total / 499 MB free (green). The AppSettings section lists key=value pairs including aspnet:PortableCompilationOutput=true, aspnet:DisableFcnDaclRead=true, SCM_GIT_USERNAME=windowsazure, SCM_GIT_EMAIL=windowsazure, ScmType=None, WEBSITE_AUTH_ENABLED=False, WEBSITE_DEFAULT_HOSTNAME=app-kudu-capture-msit-win.azurewebsites.net, WEBSITE_SITE_NAME=app-kudu-capture-msit-win.](../assets/platform/kudu/02-environment-appsettings.png)
+[[[ shot("platform--kudu--02-environment-appsettings") ]]]
 
 > [Observed] The Index navigates to seven anchored sections on the same scrollable page (System Info, App Settings, Connection Strings, Environment variables, PATH, HTTP Headers, Server variables). System info reports a clean disk picture (`C:\home` 1,023 MB free of 1,024 MB; `C:\local` 499 MB free of 500 MB, both in green), and AppSettings shows platform-injected keys like `WEBSITE_DEFAULT_HOSTNAME` and `WEBSITE_SITE_NAME` alongside `ScmType=None`.
 >
@@ -132,7 +132,7 @@ Windows Kudu exposes both CMD and PowerShell as browser-based shells. Both share
 
 #### Portal view: Kudu Debug Console (CMD) with site/wwwroot listing
 
-![Kudu Debug Console (CMD) on Windows. Top navigation shows Environment, Debug console (dropdown, current), Process explorer, Tools, Site extensions, user@example.com. Top half of the page is a file tree pane rooted at /home with breadcrumb navigation. Bottom half is a CMD shell at the prompt `C:\home\site\wwwroot>` with the `dir` command output listing files such as `hostingstart.html` with date stamps and sizes.](../assets/platform/kudu/03-debug-console-cmd.png)
+[[[ shot("platform--kudu--03-debug-console-cmd") ]]]
 
 > [Observed] The Debug Console is a split-pane UI — a file tree rooted at `/home` on top, a CMD shell at `C:\home\site\wwwroot>` on the bottom. Running `dir` from the shell shows the contents of `C:\home\site\wwwroot\`.
 >
@@ -156,7 +156,7 @@ for /f "delims=" %f in ('dir /b /a-d /o-d C:\home\LogFiles\*.log') do type "C:\h
 
 #### Portal view: Kudu Debug Console (PowerShell) variant
 
-![Kudu Debug Console (PowerShell) on Windows. Top half shows the same /home file tree as the CMD variant. Bottom half is a PowerShell shell at prompt `PS C:\home\site\wwwroot>` with the `Get-ChildItem` command output formatted as a structured object table — columns Mode, LastWriteTime, Length, and Name, which is the standard PowerShell pipeline format. Top nav shows Environment, Debug console (dropdown current, PowerShell variant), Process explorer, Tools, Site extensions, user@example.com.](../assets/platform/kudu/04-debug-console-powershell.png)
+[[[ shot("platform--kudu--04-debug-console-powershell") ]]]
 
 > [Observed] The split-pane layout is identical to the CMD variant, but the bottom shell renders PowerShell's columnar object output (Mode / LastWriteTime / Length / Name) instead of CMD's flat text.
 >
@@ -208,7 +208,7 @@ Site Extensions add gallery-installed agents (Application Insights Profiler, Cra
 
 ### Portal view: Kudu Site Extensions gallery
 
-![Kudu Site Extensions Gallery on Windows. Top nav shows Environment, Debug console, Process explorer, Tools, Site extensions (current), user@example.com. Two tabs: Installed and Gallery (current/active). The Gallery view displays a grid of extension cards including: ASP.NET Core Logging Integration v10.0.9, New Relic .NET Agent v1.6.0, .NET Datadog APM v3.48.0, AppDynamics 4.5 v26.5.0, OzCode Production Debugger, JENNIFER .NET Agent, File Counter, Azure Let's Encrypt, IIS.Compression. Each card shows the package version, a short description, and a + (Add) button.](../assets/platform/kudu/05-site-extensions.png)
+[[[ shot("platform--kudu--05-site-extensions") ]]]
 
 > [Observed] The Gallery tab is active (vs the Installed tab). The visible cards span observability agents (New Relic, Datadog, AppDynamics, JENNIFER), debugging tools (OzCode), and platform utilities (Azure Let's Encrypt, IIS.Compression).
 >
@@ -249,7 +249,7 @@ A memory dump captures a full process image (heap, stacks, loaded modules, threa
 
 ### Portal view: Kudu Process page with diagnostic dump capture
 
-![Kudu Process Explorer 'w3wp.exe : 5384 Properties' dialog on Windows. Five tabs across the top: General (current), Modules, Handles, Threads, Environment Variables. The General tab shows fields: id 5384, name w3wp, file name `C:\Windows\SysWOW64\inetsrv\w3wp.exe`, command line including `-ap "~1app-kudu-capture-msit-win"` and the IIS pipe identifier `\\.\pipe\iisipm00000000-0000-0000-0000-000000000000`, user name `IIS APPPOOL\app-kudu-capture-msit-win`, is scm site true, is webjob true, handle count 1356, thread count 54, plus memory metrics. Two prominent action buttons at the bottom: `Kill` (red) and `Download memory dump` (blue). A Close button is in the dialog header.](../assets/platform/kudu/07-diagnostic-dump.png)
+[[[ shot("platform--kudu--07-diagnostic-dump") ]]]
 
 > [Observed] The General tab shows process metadata (id, working binary, command line, identity, handle/thread counts) and exposes two action buttons: `Kill` (red) and `Download memory dump` (blue). The `is scm site : true` field is set on this process row.
 >
