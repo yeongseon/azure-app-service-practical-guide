@@ -42,7 +42,7 @@ screenshots:
 
 - id: 02-storage-networking-selected-networks
   file: platform/storage-connectivity/02-storage-networking-selected-networks.webp
-  alt: Storage Networking blade with Public network access set to Enabled from selected virtual networks and IP addresses, showing the Virtual networks and Firewall rule sections
+  alt: Storage Networking blade with Public network access set to Enabled from selected virtual networks and IP addresses, showing the Access rules, Virtual networks, IPv4 addresses, and Exceptions settings
   page: Storage account → Networking → Firewalls and virtual networks
   captured: '2026-07-17'
   verified: '2026-07-17'
