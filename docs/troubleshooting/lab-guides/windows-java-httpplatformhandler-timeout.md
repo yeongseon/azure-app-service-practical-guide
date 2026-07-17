@@ -164,7 +164,7 @@ Saturation is a math problem. If you have 200 Tomcat threads and each request ta
 
 Within a few minutes, the queue at the `httpPlatformHandler` grows so long that requests wait in line for 230+ seconds before they even reach a Tomcat thread. This is loopback saturation. It is not a failure of the Java code itself, but a failure of the **concurrency model** to keep up with the arrival rate. The bottleneck is the number of available processing slots (threads) relative to the time each slot is held.
 
-![Kudu Process Explorer showing the w3wp.exe -> httpPlatformHandler -> java.exe process tree with CPU and memory columns](../../assets/troubleshooting/kudu/04-process-explorer-java.png)
+[[[ shot("troubleshooting--kudu--04-process-explorer-java") ]]]
 
 Purpose: Confirm the process hierarchy that `httpPlatformHandler` maintains on Windows App Service.
 Look for: `w3wp.exe` (IIS worker) as the parent of the Java bootstrap chain that terminates in `java.exe` (the Spring Boot application). Under saturation, `java.exe` accumulates CPU time and threads while the loopback proxy holds requests in the IIS queue.
@@ -531,7 +531,7 @@ bash run-e3-probes.sh --count 3
 | `--src-path` | Local path to the web.config file to upload |
 | `--type static` | Deploy as a static file to wwwroot (does not trigger ZIP extraction or build) |
 
-![Kudu Debug Console CMD session showing web.config in D:\home\site\wwwroot with requestTimeout="00:01:00" inside the httpPlatform element](../../assets/troubleshooting/kudu/05-webconfig-verified.png)
+[[[ shot("troubleshooting--kudu--05-webconfig-verified") ]]]
 
 Purpose: Verify that OneDeploy (`--type static`) placed `web.config` at the site root without disturbing `app.jar`.
 Look for: `web.config` present in the `/wwwroot` file listing next to `app.jar`, and the console output showing `requestTimeout="00:01:00"` inside the `<httpPlatform>` element.

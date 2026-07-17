@@ -281,3 +281,45 @@ screenshots:
   diff_threshold: 0.02
   captured: '2026-07-18'
   verified: '2026-07-18'
+- id: troubleshooting--kudu--02-kudu-home
+  file: troubleshooting/kudu/troubleshooting--kudu--02-kudu-home.webp
+  alt: 'Kudu+ Environment home page. Top navigation lists Environment, Debug console (dropdown), Process explorer, Tools (dropdown), Site extensions, and a user@example.com (PII masked) account label. The Environment heading lists Build 2026.5.1.3 (Commit: f4ee002fc6), Azure App Service <ip-redacted> (release_ANT108-f8334366)+f833436623d9273dc099f581aebca802e0a126fd, Site up time 00.00:06:39, Site folder C:\home, Temp folder C:\local\Temp\. The REST API heading with caption "(works best when using a JSON viewer extension)" is followed by a list of items: App Settings, Deployments, Source control info, Files, Log streaming (use curl, not browser!), Processes and mini-dumps, Runtime versions, Site Extensions (installed | feed), Web hooks, WebJobs (all | triggered | continuous), Functions (list | host config). The footer states "More information about Kudu can be found on the wiki."'
+  page: troubleshooting/kudu
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'
+- id: troubleshooting--kudu--03-process-explorer
+  file: troubleshooting/kudu/troubleshooting--kudu--03-process-explorer.webp
+  alt: 'Kudu+ Process Explorer page. Top navigation shows Environment, Debug console (dropdown), Process explorer (current), Tools (dropdown), Site extensions, user@example.com (PII masked) account label. The page heading reads Process Explorer. A Find Handle... button sits above a Refresh link. The table has columns name, pid, user_name, total_cpu_time, working_set, private_memory, thread_count, properties, profiling. Row 1: w3wp.exe, 1760, app-test-windows-20260608, 3 s, 6,044 KB, 52,008 KB, 31, Properties.. button, Collect IIS Events checkbox, Start Profiling button. Row 2: w3wp.exe with an scm badge, 6200, app-test-windows-20260608, 14 s, 44,096 KB, 76,112 KB, 32, Properties.. button, Collect IIS Events checkbox, Start Profiling button.'
+  page: troubleshooting/kudu
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'
+- id: troubleshooting--kudu--04-process-explorer-java
+  file: troubleshooting/kudu/troubleshooting--kudu--04-process-explorer-java.webp
+  alt: Kudu Process Explorer showing the w3wp.exe -> httpPlatformHandler -> java.exe process tree with CPU and memory columns
+  page: troubleshooting/kudu
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'
+- id: troubleshooting--kudu--05-webconfig-verified
+  file: troubleshooting/kudu/troubleshooting--kudu--05-webconfig-verified.webp
+  alt: Kudu Debug Console CMD session showing web.config in D:\home\site\wwwroot with requestTimeout="00:01:00" inside the httpPlatform element
+  page: troubleshooting/kudu
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'
+- id: troubleshooting--kudu--06-fwdreq-process-not-listening
+  file: troubleshooting/kudu/troubleshooting--kudu--06-fwdreq-process-not-listening.webp
+  alt: 'Kudu Log Stream (KuduLite /logs endpoint) for app-fwdreq-476vrs7nbusvk showing 480 streamed log entries in the failing window. The stream is filled with red PLAT ERROR rows citing LastError ContainerTimeout with LastErrorTimestamp 07/03/2026 01:09:28. Additional entries include "Container did not start within expected time limit of 230s", "Details: Pinging warmup path to ensure container is ready to receive requests", "State: Stopping, Action: StoppingSite / StoppingSiteContainers", "Site container: app-fwdreq-476vrs7nbusvk terminated during site startup", "Container is terminated. Total time elapsed: 5874 ms", and "Cancelling site startup". The instance identifier displayed is a 12-character truncated hash (4956fd0f71e6...) and the container ID prefix is likewise truncated (f4cc33111242).'
+  page: troubleshooting/kudu
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'
+- id: troubleshooting--kudu--07-nolabspace-df-output
+  file: troubleshooting/kudu/troubleshooting--kudu--07-nolabspace-df-output.webp
+  alt: 'Kudu SCM Diagnostic Console for Web App app-labdisk-uz2rvn6exc56q showing an SSH terminal session. Top navigation bar reads Azure App Service with tabs Environment, SSH, Bash (active), Log stream, AI Playground Preview, and account label user@example.com on the right. Terminal displays the tabular output of `df -h --output=size,used,avail,pcent,target` (Filesystem column intentionally omitted for PII safety) with 10 mount rows: overlay root at 35G/20G/15G 59% /, tmpfs /dev at 64M/0/64M 0%, shm /dev/shm at 64M/0/64M 0%, tmpfs /sys/fs/cgroup at 928M/0/928M 0%, SMB share /home at 10G/10G/0 100%, /dev/sda3 /temp at 63G/6.9G/53G 12%, devtmpfs /dev/tty at 4.0M/0/4.0M 0%, tmpfs /proc/acpi at 928M/0/928M 0%, tmpfs /sys/firmware at 928M/0/928M 0%, tmpfs /proc/scsi at 928M/0/928M 0%. The /home row shows 100% Use%, contrasted with 0-59% on the other 9 mounts. Bottom status bar reads "SSH CONNECTION ESTABLISHED" with a green background. Shell prompt shows kudu_ssh_user followed by a short 12-character container hostname, then :/$. No source-device paths or SMB mount paths are shown because the Filesystem column is excluded; only the mounted-on targets remain visible.'
+  page: troubleshooting/kudu
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'

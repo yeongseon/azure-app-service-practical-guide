@@ -90,7 +90,7 @@ When you open the SCM URL on a **Windows** App Service, you land on the Kudu Env
 
 ### Portal view: Kudu Environment home with REST API inventory
 
-![Kudu Environment home page. Top navigation lists Environment, Debug console (dropdown), Process explorer, Tools (dropdown), Site extensions, and a user@example.com (PII masked) account label. The Environment heading lists Build 2026.5.1.3 (Commit: f4ee002fc6), Azure App Service 108.0.7.45 (release_ANT108-f8334366)+f833436623d9273dc099f581aebca802e0a126fd, Site up time 00.00:06:39, Site folder C:\home, Temp folder C:\local\Temp\. The REST API heading with caption "(works best when using a JSON viewer extension)" is followed by a list of items: App Settings, Deployments, Source control info, Files, Log streaming (use curl, not browser!), Processes and mini-dumps, Runtime versions, Site Extensions (installed | feed), Web hooks, WebJobs (all | triggered | continuous), Functions (list | host config). The footer states "More information about Kudu can be found on the wiki."](../assets/troubleshooting/kudu/02-kudu-home.png)
+[[[ shot("troubleshooting--kudu--02-kudu-home") ]]]
 
 > [Observed] The Environment landing page exposes build/version info (`Build 2026.5.1.3`, `Azure App Service 108.0.7.45`), site uptime, and filesystem roots (`Site folder C:\home`, `Temp folder C:\local\Temp\`). Below that, a REST API section lists eleven entries: App Settings, Deployments, Source control info, Files, Log streaming, Processes and mini-dumps, Runtime versions, Site Extensions, Web hooks, WebJobs, Functions. The top nav separately exposes five tabs: Environment, Debug console, Process explorer, Tools, Site extensions.
 >
@@ -187,7 +187,7 @@ Process Explorer is the only Kudu surface that exposes **live per-process state*
 
 ### Portal view: Kudu Process Explorer with w3wp.exe rows
 
-![Kudu Process Explorer page. Top navigation shows Environment, Debug console (dropdown), Process explorer (current), Tools (dropdown), Site extensions, user@example.com (PII masked) account label. The page heading reads Process Explorer. A Find Handle... button sits above a Refresh link. The table has columns name, pid, user_name, total_cpu_time, working_set, private_memory, thread_count, properties, profiling. Row 1: w3wp.exe, 1760, app-test-windows-20260608, 3 s, 6,044 KB, 52,008 KB, 31, Properties.. button, Collect IIS Events checkbox, Start Profiling button. Row 2: w3wp.exe with an scm badge, 6200, app-test-windows-20260608, 14 s, 44,096 KB, 76,112 KB, 32, Properties.. button, Collect IIS Events checkbox, Start Profiling button.](../assets/troubleshooting/kudu/03-process-explorer.png)
+[[[ shot("troubleshooting--kudu--03-process-explorer") ]]]
 
 > [Observed] The table lists two `w3wp.exe` rows on this idle app — one unbadged (pid 1760, private memory 52,008 KB, 31 threads) and one carrying an `scm` badge (pid 6200, private memory 76,112 KB, 32 threads). Each row exposes `Properties..`, a `Collect IIS Events` checkbox, and a `Start Profiling` button.
 >
