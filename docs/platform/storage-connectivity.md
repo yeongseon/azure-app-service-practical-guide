@@ -116,6 +116,14 @@ Routing decides which path a request takes out of the app:
 !!! danger "Route All + firewalled global Storage is a common outage"
     Per Microsoft Learn, connectivity to global Azure Storage can fail for VNet-integrated apps when Route All is enabled and the app does **not** use service endpoints, private endpoints, or UDRs — the traffic is expected to route via the default internet route, which a Storage firewall then blocks. This is especially common when the storage account is in a **different region** than the virtual network. Fix it by adding a service endpoint (`Microsoft.Storage.Global` for cross-region), a private endpoint, or a UDR — not by widening the firewall.
 
+![App Service Overview blade showing Virtual network integration bound to vnet-storageconn-demo/snet-integration](../assets/platform/storage-connectivity/04-appservice-overview-vnet-integration.png)
+
+Purpose: Confirm the app has VNet Integration in place, which is the prerequisite for the private routing paths in this layer.
+
+Look for: The **Networking** section's **Virtual network integration** value (`vnet-storageconn-demo/snet-integration`) and **Private endpoint connections** count.
+
+Expected result: A named `vnet/subnet` next to **Virtual network integration** means the app can route outbound traffic through that integration subnet; an empty value means the app has no VNet path and only the internet route is available.
+
 ### Layer 3 — Storage firewall
 
 The Storage account's **Networking** blade has three public-network-access modes and four rule types.
@@ -127,6 +135,32 @@ Public network access modes:
 | **Enabled from all networks** | Any source may reach the public endpoint (subject to Layer 4). |
 | **Enabled from selected virtual networks and IP addresses** | Only the configured VNet rules, IP rules, resource-instance rules, and trusted-service exceptions are allowed; everything else gets `403`. |
 | **Disabled** | The public endpoint is off entirely; only **private endpoints** can reach the account. |
+
+The three modes appear on the Storage account's **Networking → Public access** tab:
+
+![Storage Networking blade with Public network access set to Enabled from all networks](../assets/platform/storage-connectivity/01-storage-networking-all-networks.png)
+
+Purpose: Show the least-restrictive mode, where any source may reach the public endpoint.
+
+Look for: **Public network access** set to **Enabled from all networks**. No virtual network or IP allow list is required in this mode.
+
+Expected result: Any client can open a TCP connection to the public endpoint; access is then gated solely by Layer 4 authorization.
+
+![Storage Networking blade with Public network access set to Enabled from selected virtual networks and IP addresses, showing the Virtual networks and Firewall rule sections](../assets/platform/storage-connectivity/02-storage-networking-selected-networks.png)
+
+Purpose: Show the mode that enforces an explicit allow list of virtual networks and IP ranges.
+
+Look for: **Public network access** set to **Enabled from selected virtual networks and IP addresses**, and the **Virtual networks**, **Firewall**, and **Exceptions** sections that define the allowed sources.
+
+Expected result: Only sources matching a configured VNet rule, IP rule, resource-instance rule, or trusted-service exception are allowed; every other source receives `403`.
+
+![Storage Networking blade with Public network access set to Disabled, noting that virtual network and IP settings are not in effect](../assets/platform/storage-connectivity/03-storage-networking-disabled.png)
+
+Purpose: Show the most-restrictive mode, where the public endpoint is turned off.
+
+Look for: **Public network access** set to **Disabled** and the note that **virtual networks and IP address settings are not in effect**.
+
+Expected result: The public endpoint rejects all traffic; only a **private endpoint** can reach the account. Any VNet or IP rules are inert until public access is re-enabled.
 
 Rule types (used by "Selected networks"):
 
