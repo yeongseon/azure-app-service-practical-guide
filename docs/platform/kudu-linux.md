@@ -127,7 +127,7 @@ Opening the SCM URL on a Linux App Service today lands you on the modern KuduLit
 
 ### Portal view: KuduLite modern UI landing page
 
-![KuduLite modern UI landing page. Left sidebar in dark navy with sections OVERVIEW (active: Dashboard), MONITORING (Logs, Log Stream), TOOLS (SSH, File Manager, Process Explorer, Deployments, AI Playground), CONFIGURATION (Environment). Top header shows KUDU LITE branding, build "20260513.7 | Instance: 1270773dcc5849 | Switch". Main pane title "Dashboard" with subtitle "Welcome to Kudu, the deployment engine for Azure App Service. Learn more.". Three sub-sections: (1) SKU Information — SKU: LinuxFree, App Service Plan: ASP-rgstacktracerepro-b74e, App Type: Node.js 22-lts. (2) Logs & Diagnostics card linking to Logs, Log Stream. (3) Tools card linking to SSH, File Manager, Process Explorer, Deployments, AI Playground. (4) Environment card linking to Environment page.](../assets/platform/kudu/10-linux-modern-dashboard.png)
+[[[ shot("platform--kudu--10-linux-modern-dashboard") ]]]
 
 > [Observed] The sidebar exposes 8 tools grouped into 4 categories (OVERVIEW / MONITORING / TOOLS / CONFIGURATION). The header shows the KuduLite build (`20260513.7`), the current instance ID (`1270773dcc5849`), and a `Switch` link that opens the instance selector. The SKU Information block reports `LinuxFree` (the Free tier used for this capture) and the app type (`Node.js 22-lts`) that Oryx detected.
 >
@@ -141,7 +141,7 @@ Both UIs expose the same underlying `/api/environment` data, but present it very
 
 ### Portal view: KuduLite modern UI Environment page
 
-![KuduLite modern UI Environment page. Left sidebar with CONFIGURATION → Environment highlighted. Main pane title "Environment". Sections in table layout: SYSTEM INFO with fields OS Name: Unix, OS Version: 6.6.139.1-1.cm2, 64-bit System: True, 64-bit Process: True, Processor Count: 1, Machine Name: 8448e0b625b7, Instance ID: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa (PII masked), CLR Version: 8.0.27, Kudu Version: 1.0.0.0, Site Up Time: 00.00:12:34, Site Folder: /home, Temp Folder: /tmp, Current Working Directory: /opt/Kudu.](../assets/platform/kudu/19-linux-modern-environment.png)
+[[[ shot("platform--kudu--19-linux-modern-environment") ]]]
 
 > [Observed] The Machine Name is `8448e0b625b7` — a 12-char Docker container short hostname. The CLR version is `8.0.27` (Kudu itself is a .NET app), and the Current Working Directory is `/opt/Kudu` — the container path where the Kudu binaries live. The 64-char Instance ID field is fully masked to `aaaa…a` in the capture, confirming the PII regex correctly caught this lowercase-hex-64 token before rendering.
 >
@@ -149,7 +149,7 @@ Both UIs expose the same underlying `/api/environment` data, but present it very
 
 ### Portal view: KuduLite classic UI Environment page
 
-![KuduLite classic UI Environment page at /oldui/env. Top navigation shows Environment (current), SSH, Bash, Log stream, Process explorer, AI Playground PREVIEW. Main content area displays same system data as the modern UI but formatted as bullet lists: "System info" section lists OS Name: Unix, OS Version: 6.6.139.1-1.cm2, 64 bit system: True, 64 bit process: True, Processor count: 1, Machine name: 8448e0b625b7, Instance ID: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, CLR version: 8.0.27, Kudu version: 1.0.0.0, Site up time: 00.00:12:34, Site folder: /home, Temp folder: /tmp. Below that, AppSettings, Connection Strings, Environment Variables, PATH, HTTP Headers, Server Variables sections each show key-value pairs.](../assets/platform/kudu/23-linux-classic-environment.png)
+[[[ shot("platform--kudu--23-linux-classic-environment") ]]]
 
 > [Observed] Same data as the modern UI — Machine Name `8448e0b625b7`, CLR `8.0.27`, Kudu `1.0.0.0` — but rendered as flat bullet lists on a single scrollable page. The classic UI uses only 5 top-nav tabs (Environment / SSH / Bash / Log stream / Process explorer) plus the AI Playground preview link.
 >
@@ -163,7 +163,7 @@ Linux App Service runs your app in one container and Kudu itself in a **separate
 
 ### Portal view: Modern UI — SSH into the application container
 
-![KuduLite modern UI SSH terminal (Application tab). Left sidebar with TOOLS → SSH highlighted. Header banner "SSH SESSION" with two tabs: APPLICATION (active, green underline) and KUDU. Info line: "ssh://root@169.254.129.2:2222". Terminal shows a black background with green text: "Welcome to the Application container terminal!" followed by prompt "root@7f19815b2b2b:/home#". A `node --version` command has been run showing "v22.22.2".](../assets/platform/kudu/14-linux-modern-ssh-app.png)
+[[[ shot("platform--kudu--14-linux-modern-ssh-app") ]]]
 
 > [Observed] The APPLICATION tab connects to `ssh://root@169.254.129.2:2222` and lands as `root` in the app container with hostname `7f19815b2b2b`. Node.js is available inside this container (`node --version` returned `v22.22.2` — matching the `Node.js 22-lts` runtime reported on the dashboard).
 >
@@ -171,7 +171,7 @@ Linux App Service runs your app in one container and Kudu itself in a **separate
 
 ### Portal view: Modern UI — SSH into the Kudu container
 
-![KuduLite modern UI SSH terminal (Kudu tab). Left sidebar with TOOLS → SSH highlighted. Header banner "SSH SESSION" with two tabs: APPLICATION and KUDU (active, green underline). Info line: "ssh://kudu_ssh_user@127.0.0.6:22". Terminal shows a black background with green text: "Welcome to the Kudu container terminal!" followed by prompt "kudu_ssh_user@8448e0b625b7:/$". Commands executed: `hostname` returned "8448e0b625b7", `cat /etc/os-release | head -3` shows "PRETTY_NAME=\"Debian GNU/Linux 12 (bookworm)\"", and `ls /home` shows: "ASP.NET  DeploymentLogStream  LogFiles  services  site  u087d495a1c1802fef35731".](../assets/platform/kudu/15-linux-modern-ssh-kudu.png)
+[[[ shot("platform--kudu--15-linux-modern-ssh-kudu") ]]]
 
 > [Observed] The KUDU tab connects to `ssh://kudu_ssh_user@127.0.0.6:22` and lands as `kudu_ssh_user` in the Kudu container with hostname `8448e0b625b7` (Debian 12 bookworm). Listing `/home` shows the shared-storage mount with 6 entries: `ASP.NET`, `DeploymentLogStream`, `LogFiles`, `services`, `site`, and a per-app scratch directory `u087d495a1c1802fef35731`.
 >
@@ -179,7 +179,7 @@ Linux App Service runs your app in one container and Kudu itself in a **separate
 
 ### Portal view: Classic UI — WebSSH (equivalent to modern APPLICATION tab)
 
-![KuduLite classic UI WebSSH terminal at /oldui/webssh. Simple black terminal box with green text on white page background. Terminal shows: "Welcome to the Application container terminal!" prompt "root@7f19815b2b2b:/home#". Info banner above terminal: "SSH into the app container - ssh://root@169.254.129.2:2222".](../assets/platform/kudu/25-linux-classic-webssh.png)
+[[[ shot("platform--kudu--25-linux-classic-webssh") ]]]
 
 > [Observed] Classic UI WebSSH connects to exactly the same `ssh://root@169.254.129.2:2222` endpoint as the modern UI APPLICATION tab and lands at the same `root@7f19815b2b2b:/home` prompt. The chrome is different (single fullscreen terminal, no tab bar) but the underlying shell is identical.
 >
@@ -187,7 +187,7 @@ Linux App Service runs your app in one container and Kudu itself in a **separate
 
 ### Portal view: Classic UI — Bash console (equivalent to modern KUDU tab)
 
-![KuduLite classic UI Bash console at /oldui/webssh/host. Simple black terminal box on white background. Terminal shows: "Welcome to the Kudu container terminal!" prompt "kudu_ssh_user@8448e0b625b7:/$". Info banner above terminal: "Bash into the Kudu container - ssh://kudu_ssh_user@127.0.0.6:22".](../assets/platform/kudu/24-linux-classic-bash.png)
+[[[ shot("platform--kudu--24-linux-classic-bash") ]]]
 
 > [Observed] The classic UI's "Bash" tab connects to `ssh://kudu_ssh_user@127.0.0.6:22` — the same endpoint the modern UI labels "SSH → KUDU". Prompt (`kudu_ssh_user@8448e0b625b7`) and hostname (`8448e0b625b7`) match the modern UI KUDU tab exactly.
 >
@@ -209,7 +209,7 @@ The modern UI Log Stream is the fastest way to isolate whether a symptom is comi
 
 ### Portal view: Modern UI Log Stream — Application logs
 
-![KuduLite modern UI Log Stream page — Application filter. Left sidebar with MONITORING → Log Stream highlighted. Main pane title "Log Stream" with subtitle "Live log tail from all instances". Filter chip row: TIMEFRAME (Last 1 hour), INSTANCE (All instances), CONTAINER (All containers), LOG TYPE (Application, highlighted blue), LEVEL (All levels). Terminal panel with dark background shows time-stamped lines like "2026-07-01T10:30:00.182Z INFO Request received GET /healthz" and "2026-07-01T10:30:01.045Z INFO Response sent 200 in 42ms". Right-side controls: Pause, Clear, Download.](../assets/platform/kudu/11-linux-modern-logs-app.png)
+[[[ shot("platform--kudu--11-linux-modern-logs-app") ]]]
 
 > [Observed] The filter row exposes five chips: TIMEFRAME, INSTANCE, CONTAINER, LOG TYPE, LEVEL. LOG TYPE is set to `Application` — the terminal shows time-stamped INFO lines matching typical Express request/response logging. The lines start with the ISO 8601 timestamp (`2026-07-01T10:30:00.182Z`) and end with a status code and duration.
 >
@@ -217,7 +217,7 @@ The modern UI Log Stream is the fastest way to isolate whether a symptom is comi
 
 ### Portal view: Modern UI Log Stream — Platform logs
 
-![KuduLite modern UI Log Stream page — Platform filter. Same layout as the Application view but LOG TYPE chip now shows "Platform" (highlighted blue). Terminal panel shows different content: "PLAT ... appsvc/kudulite:bookworm_20260513.7.tuxprod pulled from 10.0.0.0:13209" and "PLAT ... container 025febf58056_app-stacktrace-repro-demouser-20260625_kudu started" and "PLAT ... probe /robots933456.txt returned 404".](../assets/platform/kudu/12-linux-modern-logs-platform.png)
+[[[ shot("platform--kudu--12-linux-modern-logs-platform") ]]]
 
 > [Observed] Switching LOG TYPE to `Platform` replaces the stream contents with lines prefixed `PLAT` — image-pull events (`appsvc/kudulite:bookworm_20260513.7.tuxprod pulled from 10.0.0.0:13209`), container start events (`container 025febf58056_app-stacktrace-repro-demouser-20260625_kudu started`), and warm-up probe events (`probe /robots933456.txt returned 404`).
 >
@@ -251,7 +251,7 @@ The modern UI File Manager exposes the shared `/home` mount that both containers
 
 ### Portal view: Modern UI File Manager at `/home`
 
-![KuduLite modern UI File Manager page. Left sidebar with TOOLS → File Manager highlighted. Header shows path breadcrumb "/home". Main pane shows a Windows-Explorer-style file table with columns: NAME, TYPE, SIZE, MODIFIED. Rows visible: LogFiles (folder), site (folder), u087d495a1c1802fef35731 (folder — deployment scratch), DeploymentLogStream (folder), services (folder), ASP.NET (folder), .bash_history (file, 2 KB), .gitconfig (file, 1 KB). Right-side action buttons: New Folder, Upload, Refresh.](../assets/platform/kudu/16-linux-modern-filemanager.png)
+[[[ shot("platform--kudu--16-linux-modern-filemanager") ]]]
 
 > [Observed] The root of `/home` contains 6 folders and 2 dotfiles. The folders are: `LogFiles/` (per-instance log storage), `site/` (contains `wwwroot`), `u087d495a1c1802fef35731/` (deployment scratch — the same per-app directory visible in the Kudu SSH `ls /home` output), `DeploymentLogStream/`, `services/`, `ASP.NET/`.
 >
@@ -259,7 +259,7 @@ The modern UI File Manager exposes the shared `/home` mount that both containers
 
 ### Portal view: Modern UI File Manager at `/home/LogFiles`
 
-![KuduLite modern UI File Manager page inside /home/LogFiles. Breadcrumb "/home/LogFiles". Header banner: badges labeled CURRENT INSTANCE (green) and KUDU LOGS / PLATFORM LOGS / CONTAINER STDOUT/STDERR (three color-coded tags). File table shows log files with names like: 2026_07_01_10-30-0-182_default_docker.log (application stdout, ~12 KB), 2026_07_01_10-30-0-182_docker.log (platform log, ~34 KB), 2026_07_01_10-30-0-182_default_scm_docker.log (Kudu log, ~8 KB). Sub-folder entries: kudu/, http/, DetailedErrors/.](../assets/platform/kudu/17-linux-modern-filemanager-logs.png)
+[[[ shot("platform--kudu--17-linux-modern-filemanager-logs") ]]]
 
 > [Observed] `/home/LogFiles/` uses a three-way naming convention that maps directly to the Log Stream filters: `*_default_docker.log` = CONTAINER STDOUT/STDERR (application), `*_docker.log` = PLATFORM LOGS, `*_default_scm_docker.log` = KUDU LOGS. The header badges (CURRENT INSTANCE + the three log-type tags) confirm this mapping in the UI. Filenames embed the ISO-8601 date, hour, and short instance ID (`2026_07_01_10-30-0-182`).
 >
@@ -273,7 +273,7 @@ The Process Explorer surfaces the live process table inside the current containe
 
 ### Portal view: Modern UI Process Explorer
 
-![KuduLite modern UI Process Explorer page. Left sidebar with TOOLS → Process Explorer highlighted. Header shows Instance selector (currently 127077). Main table has columns: PID, USER, COMMAND, CPU%, MEM (RSS), STARTED, ACTIONS. Single visible row: PID 1860, USER root, COMMAND "node /home/site/wwwroot/server.js", CPU 0.5%, MEM 87 MB, STARTED 10:29:00. ACTIONS column shows two buttons per row: `withHeap` + `Collect Dump` (blue) and `60s` + `Start Profiling` (green).](../assets/platform/kudu/18-linux-modern-process-explorer.png)
+[[[ shot("platform--kudu--18-linux-modern-process-explorer") ]]]
 
 > [Observed] Modern UI Process Explorer shows the process table scoped to the current instance (selected in the header). This app has a single visible row: PID 1860, running `node /home/site/wwwroot/server.js` as `root`. Two action buttons per row: `withHeap` + `Collect Dump` captures a language-specific dump (Node.js writes a `.heapsnapshot`), and `60s` + `Start Profiling` runs a 60-second CPU sampling profile.
 >
@@ -281,7 +281,7 @@ The Process Explorer surfaces the live process table inside the current containe
 
 ### Portal view: Classic UI Process Explorer
 
-![KuduLite classic UI Process Explorer page at /oldui/processexplorer. Simple HTML table on white background. Columns: id, name, file name, cpu time, working set, private memory, threads, handles, is scm site, actions. Single visible row: id 1860, name node, file name /home/site/wwwroot/server.js, cpu time 00:00:15, working set 87 MB, private memory 92 MB, threads 8, handles 42, is scm site False. Actions column shows teal buttons: `Properties`, `Kill`, `Dump`, `Profile`.](../assets/platform/kudu/26-linux-classic-process-explorer.png)
+[[[ shot("platform--kudu--26-linux-classic-process-explorer") ]]]
 
 > [Observed] Classic UI Process Explorer shows the same PID 1860 `node` row as the modern UI but exposes more columns per row (cpu time, working set, private memory, threads, handles) and uses a wider action button set (`Properties`, `Kill`, `Dump`, `Profile`). The `is scm site: False` field confirms this is the app container, not Kudu.
 >
@@ -301,7 +301,7 @@ The modern UI's Deployments page is a runtime-aware upload wizard scoped to the 
 
 ### Portal view: Modern UI Deployments (Preview) upload wizard
 
-![KuduLite modern UI Deployments page. Left sidebar with TOOLS → Deployments highlighted. Main pane title "Deploy your Node.js 22-lts app" with PREVIEW badge. Two-step wizard: (1) Upload — drag-and-drop area labeled "Drop your artifact here or click to browse. Max 1 GB. Supported formats: .zip, .tar.gz". (2) Deploy — button labeled "Deploy". Below the wizard: informational card "This will replace the current running artifact. Rollback via /api/deployments PUT after the swap.".](../assets/platform/kudu/20-linux-modern-deployments.png)
+[[[ shot("platform--kudu--20-linux-modern-deployments") ]]]
 
 > [Observed] The wizard is scoped to the detected runtime (`Node.js 22-lts`) — the title reads "Deploy your Node.js 22-lts app" rather than a generic "Upload". Two steps: Upload (drag-drop, 1 GB max, `.zip` or `.tar.gz`) then Deploy. An informational card below reminds operators that this replaces the running artifact and points at the REST rollback path.
 >
@@ -309,7 +309,7 @@ The modern UI's Deployments page is a runtime-aware upload wizard scoped to the 
 
 ### Portal view: Classic UI — direct browse of `/deploymentlogs/`
 
-![Classic Kudu deployment logs index at /deploymentlogs/. Bare HTML page with the title "Index of /deploymentlogs/". Two columns visible: Name and Size. Single entry: 2fdaf3202902-1c8a4b-... .txt (4155 bytes). No wizard, no action buttons — pure directory listing.](../assets/platform/kudu/27-linux-classic-deployment-logs.png)
+[[[ shot("platform--kudu--27-linux-classic-deployment-logs") ]]]
 
 > [Observed] The classic UI's deployment-log surface is a bare HTTP index at `/deploymentlogs/`, showing raw `.txt` log files (a single 4155-byte log in this capture). No upload wizard, no rollback UI.
 >
@@ -323,7 +323,7 @@ The AI Playground is a sidecar Small Language Model (SLM) surface — it expects
 
 ### Portal view: Modern UI AI Playground
 
-![KuduLite modern UI AI Playground page. Left sidebar with TOOLS → AI Playground highlighted. Main pane title "SIDECAR PLAYGROUND" with PREVIEW badge. Orange info callout: "No SLM is configured yet. Configure a sidecar container that exposes an OpenAI-compatible endpoint at localhost:11434/v1/chat/completions to enable the playground.". Below that, code sample tabs: C#, Python, Node.js (Node.js active). Node.js sample shows fetch('http://localhost:11434/v1/chat/completions', ...) with a JSON body containing "model" and "messages" fields.](../assets/platform/kudu/21-linux-modern-ai-playground.png)
+[[[ shot("platform--kudu--21-linux-modern-ai-playground") ]]]
 
 > [Observed] The page is titled "SIDECAR PLAYGROUND" with a PREVIEW badge. An orange callout confirms no SLM is configured on this app and specifies the expected endpoint (`localhost:11434/v1/chat/completions` — an OpenAI-compatible chat completions API). Code samples are provided in C#, Python, and Node.js — the Node.js sample uses `fetch()` with a JSON body containing `model` and `messages` fields.
 >

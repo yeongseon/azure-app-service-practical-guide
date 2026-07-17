@@ -152,7 +152,7 @@ The Azure Portal exposes Kudu under `Development Tools > Advanced Tools` in ever
 
 #### Portal view: Advanced Tools entry point in the Web App blade
 
-![Azure Portal Web App blade with Advanced Tools selected. Left navigation lists Overview, Activity log, Access control (IAM), Tags, ..., Settings, Deployment, Events, Monitoring, and Development Tools (group expanded). The Development Tools group shows SSH, Advanced Tools (highlighted as the current selection), and Recommended services. Right pane shows the Advanced Tools description: "Kudu is the engine behind a number of features in Azure App Service related to source control based deployment, and other deployment methods like Dropbox and OneDrive sync." Two buttons appear: "Open in a new tab" (link-styled) and "Go →" (blue, primary).](../assets/platform/kudu/01-advanced-tools-entry.png)
+[[[ shot("platform--kudu--01-advanced-tools-entry") ]]]
 
 > [Observed] The Development Tools group is expanded in the left nav, and `Advanced Tools` is the highlighted entry. The right pane shows only a short Kudu description plus a primary `Go →` button — there is no inline Kudu UI on this blade.
 >
@@ -311,7 +311,7 @@ Kudu owns the deployment ledger. Every push, ZIP deploy, or container pull write
 
 #### Portal view: Deployment Center Logs tab (the portal-side view of Kudu deployment history)
 
-![Azure Portal Deployment Center blade with Logs tab active. Page title 'Deployment Center'. Four tabs across the top: Settings, Containers (new), Logs (current/highlighted), FTPS Credentials. Command bar shows Refresh and Delete actions. A banner alert reads 'CI/CD is not configured. To start, go to Settings tab and set up CI/CD.' The Logs table has columns Time, Deployment ID, Author, Status, Message. One group header 'Thursday, June 25, 2026 (1)' with a single row: Time `6/25/2026, 04:10:21 PM`, Deployment ID `0f7d078`, Author `N/A`, Status `Succeeded (Active)`, Message `OneDeploy`. Left navigation shows the Deployment Center entry highlighted. Top-right account avatar is masked with solid Portal-blue.](../assets/platform/kudu/08-deployments-history.png)
+[[[ shot("platform--kudu--08-deployments-history") ]]]
 
 > [Observed] The Logs tab lists one deployment from 2026-06-25 16:10:21, deployment ID `0f7d078`, status `Succeeded (Active)`, message `OneDeploy`. The CI/CD banner indicates no automated pipeline is currently wired to this app.
 >
