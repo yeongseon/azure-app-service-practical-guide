@@ -116,7 +116,7 @@ Routing decides which path a request takes out of the app:
 !!! danger "Route All + firewalled global Storage is a common outage"
     Per Microsoft Learn, connectivity to global Azure Storage can fail for VNet-integrated apps when Route All is enabled and the app does **not** use service endpoints, private endpoints, or UDRs — the traffic is expected to route via the default internet route, which a Storage firewall then blocks. This is especially common when the storage account is in a **different region** than the virtual network. Fix it by adding a service endpoint (`Microsoft.Storage.Global` for cross-region), a private endpoint, or a UDR — not by widening the firewall.
 
-![App Service Overview blade showing Virtual network integration bound to vnet-storageconn-demo/snet-integration](../assets/platform/storage-connectivity/04-appservice-overview-vnet-integration.png)
+[[[ shot("04-appservice-overview-vnet-integration") ]]]
 
 Purpose: Confirm the app has VNet Integration in place, which is the prerequisite for the private routing paths in this layer.
 
@@ -138,7 +138,7 @@ Public network access modes:
 
 The three modes appear on the Storage account's **Networking → Public access** tab:
 
-![Storage Networking blade with Public network access set to Enabled from all networks](../assets/platform/storage-connectivity/01-storage-networking-all-networks.png)
+[[[ shot("01-storage-networking-all-networks") ]]]
 
 Purpose: Show the least-restrictive mode, where any source may reach the public endpoint.
 
@@ -146,7 +146,7 @@ Look for: **Public network access** set to **Enabled from all networks**. No vir
 
 Expected result: Any client can open a TCP connection to the public endpoint; access is then gated solely by Layer 4 authorization.
 
-![Storage Networking blade with Public network access set to Enabled from selected virtual networks and IP addresses, showing the Virtual networks and Firewall rule sections](../assets/platform/storage-connectivity/02-storage-networking-selected-networks.png)
+[[[ shot("02-storage-networking-selected-networks") ]]]
 
 Purpose: Show the mode that enforces an explicit allow list of virtual networks and IP ranges.
 
@@ -154,7 +154,7 @@ Look for: **Public network access** set to **Enabled from selected virtual netwo
 
 Expected result: Only sources matching a configured VNet rule, IP rule, resource-instance rule, or trusted-service exception are allowed; every other source receives `403`.
 
-![Storage Networking blade with Public network access set to Disabled, noting that virtual network and IP settings are not in effect](../assets/platform/storage-connectivity/03-storage-networking-disabled.png)
+[[[ shot("03-storage-networking-disabled") ]]]
 
 Purpose: Show the most-restrictive mode, where the public endpoint is turned off.
 

@@ -410,7 +410,9 @@ The goal is to prevent leaking **real Azure account information**, not to mask o
 
 ### Portal Screenshot Capture (PII Replacement Rules)
 
-Azure Portal screenshots in `docs/assets/**/*.png` MUST use **text replacement** (not black-box redaction). Black rectangles look like leaks and break visual continuity; replaced placeholders read as documentation examples.
+Azure Portal screenshots in `docs/assets/**/*.png` and `docs/assets/**/*.webp` MUST use **text replacement** (not black-box redaction). Black rectangles look like leaks and break visual continuity; replaced placeholders read as documentation examples.
+
+Screenshots may be committed as WebP produced by the manifest-driven capture pipeline (`scripts/capture/`), which downscales the raw PNG and re-encodes it. When a capture is optimized to WebP, the **final rendered `.webp`** — not only the raw PNG — MUST be visually verified for PII and caption accuracy before merge. A PII or caption defect introduced or hidden by re-encoding is treated the same as one in a raw PNG.
 
 #### Capture method
 
