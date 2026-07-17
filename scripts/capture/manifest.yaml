@@ -64,3 +64,66 @@ screenshots:
   captured: '2026-07-17'
   verified: '2026-07-17'
   diff_threshold: 0.02
+- id: operations--backup-restore--01-backups
+  file: operations/backup-restore/operations--backup-restore--01-backups.webp
+  alt: "Backups blade for the Web App with the command bar offering Backup Now (disabled), Configure custom backups, Reset custom backups (disabled), Restore, Refresh, Troubleshoot, and Documentation actions. An info banner reads \"App backups happen automatically every hour. If you need a different backup schedule, you can also configure custom backups, but you'll also need to set up a separate storage account. To start the restore process, select a backup. Automatic backups retention schedule follows different patterns.\" with a Learn more link. Two summary tiles show Oldest backup \"5/8/2026\" and Automatic backup \"Every 1 hour\". A filter row shows three removable chips (Type : All, Status : All, Time range : None), an Add filter button, and a Reset link, followed by \"Showing 10 of 240 results\". The backup table has columns Backup time (sorted descending), Status, Type, and Restore. Ten rows show hourly backups from 6/7/2026 9:47:05 AM to 6/7/2026 6:47:07 PM, each with Status \"Succeeded\" (green checkmark), Type \"Automatic\", and an individual Restore action icon. Pagination at the bottom reads \"Showing 1 - 10 of 240 results\" with page numbers 1 through 5."
+  page: operations/backup-restore
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'
+- id: operations--cost-optimization--01-cost-analysis
+  file: operations/cost-optimization/operations--cost-optimization--01-cost-analysis.webp
+  alt: 'Cost analysis blade scoped to the resource group rg-test-20251107 with a command bar offering Save, Save as, Delete view (disabled), Share, Subscribe, Refresh, Download, Cost by resource, Configure resource group, Feedback, Try preview, and Help actions. The filter row shows Scope "rg-test-20251107", View "AccumulatedCosts", a Jun 2026 date selector, and an Add filter button. Three KPI tiles read ACTUAL COST (USD) "$16.55", FORECAST: CHART VIEW ON "$80.38", and BUDGET: NONE "--". Group by is set to None, Granularity to Accumulated, and chart type to Area. An area chart from Jun 1 to Jun 30 shows accumulated cost in dark green ramping to roughly $17 by Jun 7 and forecast cost in light green continuing up to $80 by Jun 30. Three donut breakdowns at the bottom show Service name (Azure App Service $13.39, Microsoft Defender for... $3.11, Azure DNS $0.05, Bandwidth <$0.01), Location (kr central $16.50, global $0.05), and Resource (asp-test-20251107 $16.37, app-test-20251107 $0.13, domain-test-202511... $0.02, app-test-20251107.n... $0.02, app-test-20251107... <$0.01). The Cost Management group in the left navigation has Cost analysis selected with Cost alerts (preview), Budgets, and Advisor recommendations beneath it.'
+  page: operations/cost-optimization
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'
+- id: operations--deployment--container--01-deployment-center-container
+  file: operations/deployment/container/operations--deployment--container--01-deployment-center-container.webp
+  alt: 'Azure Portal Create Web App wizard with the Container tab selected and Basics, Database, Container (selected), Networking, Monitor + secure, Tags, and Review + create tab strip visible. Header text reads "Select your preferred source for container images. You can change these settings and other dependencies after creating the app. Learn more". A Sidecar support toggle is ON with the label "Enhanced configuration with sidecar support on Learn More". The Image Source field shows three radio options: Quickstart (selected), Azure Container Registry, and Other container registries; the Name field is set to main. A Quickstart options section follows with Sample dropdown set to NGINX and the helper text "NGINX web server default site.", a disabled Image and tag field showing mcr.microsoft.com/appsvc/staticsite:latest, and Port set to 80. Bottom toolbar buttons are Review + create (primary), < Previous, and Next : Networking >.'
+  page: operations/deployment/container
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'
+- id: operations--health-recovery--01-availability-performance
+  file: operations/health-recovery/operations--health-recovery--01-availability-performance.webp
+  alt: Availability and Performance diagnostic blade reached from Diagnose and solve problems for the Web App, with a left navigation listing Overview (highlighted) and a long catalog of diagnostic tools (App Down Workflow, Web App Down, Application Logs, Web App Slow, CPU Usage, Memory Usage, Web App Restarted, Web App Troubleshooter, Application Changes, Container Issues, Health Check feature, Http 4xx errors, Linux - Host Disk Space Usage, Linux - Number of Running C..., Linux CPU Drill Down, Linux Memory Drill Down, Linux Swap Space Low, Process Full List, Process List, SNAT Failed Connection Endp..., SNAT Port Exhaustion, Site Status History). The main pane has a "Search for common problems or tools" search box and a command bar with AI-powered Diagnostics (preview), Refresh, Feedback, and Get Resiliency Score report actions. A header reads "Availability and Performance - Check your app's health and discover app or platform issues." with a Time Range (UTC) "Last 24 Hours" filter chip. Two KPI tiles read Failed Requests "0 %" (green check, subtitle "Failed Requests") and App Performance "63 ms" (green check, subtitle "90th Percentile"). A Graph dropdown is set to "Requests and Errors" with a None label on the right. An area chart with x-axis spanning 06-06 12:00 to 06-07 10:00 UTC and y-axis 0.00 to 32.00 Request Count shows three prominent spikes around 06-06 14:00, 06-06 20:00, and 2026-06-07 00:00, with green Http2xx and orange Http4xx contributions; a legend at the bottom maps green to Http2xx, yellow to Http3xx, orange to Http4xx, and red to Http5xx.
+  page: operations/health-recovery
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'
+- id: operations--incoming-client-certificates--01-tls-ssl-bindings
+  file: operations/incoming-client-certificates/operations--incoming-client-certificates--01-tls-ssl-bindings.webp
+  alt: "Custom domains blade for the Web App with a Refresh and Troubleshoot command bar and a wide orange info banner reading \"Update: We've made changes after July 2025 to support more customers. Some previously impacted scenarios are no longer affected. Learn more\". A description reads \"Configure and manage custom domains assigned to your app. Learn more\". Two read-only fields show IP address \"<ip-redacted>\" (with copy icon) and Custom Domain Verification ID (a masked AAAAAAAAAAAAA... value with copy icon). A Filter by keywords search, Add filter button, \"1 items\" counter, and Add custom domain / Buy App Service domain / Delete (disabled) actions sit above a table with columns Custom domains, Status, Solution, Binding type, Certificate used, and Actions. The only visible row is the default \"app-appsvc-guide-recap.azurewebsites.net\" host with Status \"Secured\", all other columns \"-\", and no actions. The left navigation has Custom domains highlighted under the Settings group."
+  page: operations/incoming-client-certificates
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'
+- id: operations--outbound-client-certificates--01-certificates
+  file: operations/outbound-client-certificates/operations--outbound-client-certificates--01-certificates.webp
+  alt: "Certificates blade for the Web App with a Refresh, Troubleshoot, and Send us your feedback command bar and a wide orange info banner reading \"Update: We've made changes after July 2025 to support more customers. Some previously impacted scenarios are no longer affected. Learn more\". Three sibling tabs at the top — Managed certificates, Bring your own certificates (.pfx) (selected and underlined), and Public key certificates (.cer) — separate the certificate types. Beneath the active tab a description reads \"Private key certificates (.pfx) can be used for TLS/SSL bindings and can be loaded to the certificate store for your app to consume. To understand how to load the certificates for your app to consume click on the learn more link.\" A Filter by keywords search box, Add filter button, \"1 items\" counter, and Add certificate / Delete (disabled) actions sit above a table with columns Certificate Status, Domain, Certificate Name, Expiration..., Thumbprint, Det..., and Delete. The single row shows Certificate Status \"No action needed\" (green checkmark), Domain \"app.contoso.com,www.app-test-202...\", Certificate Name \"app.contoso.com-app-test-20251107\", Expiration \"11/6/2026\", a masked Thumbprint (AAAAAAAAAAAAAAA...), an overflow Det... menu, and a trash Delete icon. Pagination at the bottom reads \"Page 1 of 1\" with Items per page 50. The left navigation has Certificates highlighted under the Settings group."
+  page: operations/outbound-client-certificates
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'
+- id: operations--scaling--01-autoscale-rules
+  file: operations/scaling/operations--scaling--01-autoscale-rules.webp
+  alt: "Autoscale setting blade for the App Service plan asp-test-20251107 with breadcrumb \"asp-test-20251107 | Scale out (App Service plan)\" and a command bar offering Save, Discard, Refresh, Logs, and Feedback. Five tabs are visible — Configure (active), Run history, JSON, Notify, and Diagnostic settings. An introductory paragraph describes Autoscale and links to \"Learn more about Azure Autoscale\" and \"view the how-to video\". A \"Choose how to scale your resource\" section presents two tiles: Manual scale (unselected, \"Maintain a fixed instance count\") and Custom autoscale (selected with blue border and filled radio, \"Scale on any schedule, based on any metrics\"). The Custom autoscale section shows Autoscale setting name \"asp-test-20251107-Autoscale-869\", Resource group \"rg-test-20251107\", and Instance count \"1\". A Default scale condition block titled \"Auto created default scale condition\" follows with a Delete warning info banner (\"The very last or default recurrence rule cannot be deleted. Instead, you can disable autoscale to turn off autoscale.\"), Scale mode radio buttons Scale based on a metric (selected) and Scale to a specific instance count, a Rules warning reading \"Scale is based on metric trigger rules but no rule(s) is defined; click Add a rule to create a rule. For example: 'Add a rule that increases instance count by 1 when CPU Percentage is above 70%'. If no rules are defined, the resource will be set to default instance count.\", an Instance limits row with Minimum 1, Maximum 1, and Default 1 (all green-checked), and a Schedule note \"This scale condition is executed when none of the other scale condition(s) match\"."
+  page: operations/scaling
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'
+- id: operations--security--01-authentication
+  file: operations/security/operations--security--01-authentication.webp
+  alt: Authentication blade for the Web App with a minimal command bar offering Refresh, Troubleshoot, and Send us your feedback actions. The main content area is an empty state with a large silhouette-and-key avatar icon, a heading "Add an identity provider", a subtitle reading "Choose an identity provider to manage the user identities and authentication flow for your application. Providers include Microsoft, Facebook, Google, and Twitter.", a "Learn more about identity providers" link, and a primary blue "Add identity provider" call-to-action button. The left navigation has the Settings group highlighted.
+  page: operations/security
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'
+- id: operations--deployment-slots--01-deployment-slots
+  file: operations/deployment-slots/operations--deployment-slots--01-deployment-slots.webp
+  alt: 'Deployment slots blade for the Web App with the command bar offering Save (disabled), Discard (disabled), Add, Swap, Logs, Refresh, and Send us your feedback actions. An info banner reads "Deployment slots are live apps with their own hostnames. App content and configurations elements can be swapped between two deployment slots, including the production slot." A table with columns Name, Status, App service plan, and Traffic % shows two rows: the first is "app-test-20251107" with a green PRODUCTION badge, Status "Running", App service plan "asp-test-20251107", and Traffic % "70" (read-only); the second is "app-test-20251107-staging" with Status "Running", App service plan "asp-test-20251107", and Traffic % "30" (editable). The Deployment group in the left navigation is highlighted.'
+  page: operations/deployment-slots
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'

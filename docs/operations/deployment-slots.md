@@ -113,7 +113,7 @@ az webapp deployment slot list \
 
 #### Portal view: Deployment slots blade
 
-![Deployment slots blade for the Web App with the command bar offering Save (disabled), Discard (disabled), Add, Swap, Logs, Refresh, and Send us your feedback actions. An info banner reads "Deployment slots are live apps with their own hostnames. App content and configurations elements can be swapped between two deployment slots, including the production slot." A table with columns Name, Status, App service plan, and Traffic % shows two rows: the first is "app-test-20251107" with a green PRODUCTION badge, Status "Running", App service plan "asp-test-20251107", and Traffic % "70" (read-only); the second is "app-test-20251107-staging" with Status "Running", App service plan "asp-test-20251107", and Traffic % "30" (editable). The Deployment group in the left navigation is highlighted.](../assets/operations/deployment-slots/01-deployment-slots.png)
+[[[ shot("operations--deployment-slots--01-deployment-slots") ]]]
 
 The Deployment slots blade confirms that the `az webapp deployment slot create` command produced the expected topology. Both rows share the same `App service plan` (`asp-test-20251107`) because slots run on the parent plan and consume its worker capacity — sizing the plan for production load alone will starve the staging slot during pre-swap validation. The green `PRODUCTION` badge on the parent slot is the platform's anchor for the swap target, and the editable `Traffic %` column (`70` / `30`) is the canary-routing surface used later in this guide. The toolbar `Swap` action is the manual equivalent of `az webapp deployment slot swap`, and `Logs` is where to look first if a swap fails the post-warm-up health probe.
 
