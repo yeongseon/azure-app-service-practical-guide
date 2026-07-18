@@ -648,7 +648,7 @@ Interpretation:
 
 To confirm the analysis programmatically against a freshly-deployed instance, the following Log Analytics query counted bind-line events in the failing 1-hour window:
 
-![Azure portal Log Analytics workspace log-fwdreq-476vrs7nbusvk Logs blade with a New Query 1 tab open. Query editor shows six lines of KQL: three inline comments explaining the failing window and the hypothesis, then AppServiceConsoleLogs, `| where TimeGenerated > ago(1h)`, and `| summarize BindLinesFound = countif(ResultDescription contains "Listening at")`. Toolbar reads Run, Time range Set in query, Show 1000 results, KQL mode. Results tab is active with a single column named BindLinesFound and a single row expanded showing value 0. Bottom-left footer shows execution time 1s 150ms and Display time (UTC+00:00). Bottom-right footer reads Query details, 1 - 1 of 1.](../../assets/troubleshooting/log-analytics/06-fwdreq-bind-line-absent.png)
+[[[ shot("troubleshooting--log-analytics--06-fwdreq-bind-line-absent") ]]]
 
 **Purpose**: Prove programmatically that no `Listening at:` bind announcement was recorded in `AppServiceConsoleLogs` during the failing window in the fresh reproduction, and that this vacuous-zero result is consistent with the container never completing startup (as shown in section 4.3.3).
 
