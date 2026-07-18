@@ -386,3 +386,66 @@ screenshots:
   diff_threshold: 0.02
   captured: '2026-07-18'
   verified: '2026-07-18'
+- id: troubleshooting--configuration--01-always-on
+  file: troubleshooting/configuration/troubleshooting--configuration--01-always-on.webp
+  alt: Azure portal Configuration > General settings blade for app-test-20251107 with tabs General settings (active), Stack settings, Path mappings, Error pages; left service navigation showing Overview, Activity log, Access control (IAM), Tags, Diagnose and solve problems, Microsoft Defender for Cloud, Events (preview), Resource visualizer, Favorites (with Networking and API definition pinned), and a collapsed Settings group; a Platform settings panel listing SCM Basic Auth Publishing Credentials, FTP Basic Auth Publishing Credentials, WebJobs runtime, FTP state (FTPS only), Inbound IP mode (IPv4), HTTP version (1.1), HTTP 2.0 Proxy (Off), SSH (enabled), Always on (toggle disabled), Session affinity (enabled), Session affinity proxy (disabled), HTTPS only (disabled), Minimum Inbound TLS Version (1.2), SCM Minimum Inbound TLS Version (1.2), Minimum Inbound TLS Cipher Suite (TLS_RSA_WITH_AES_128_CBC_SHA, Default), and End-to-end TLS encryption (disabled); Apply and Discard action buttons at the bottom.
+  page: troubleshooting/configuration
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'
+- id: troubleshooting--configuration--03-autoheal-m2-rules
+  file: troubleshooting/configuration/troubleshooting--configuration--03-autoheal-m2-rules.webp
+  alt: Azure Portal Auto-Heal blade showing Custom Auto-Heal Rules Enabled=On with a Recycle Process action targeting HTTP 500.121 win32=64 on /slow/240 with 5 requests in 120 seconds and 60-second startup override
+  page: troubleshooting/configuration
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'
+- id: troubleshooting--configuration--04-slotswap-sticky-vs-nonsticky
+  file: troubleshooting/configuration/troubleshooting--configuration--04-slotswap-sticky-vs-nonsticky.webp
+  alt: 'Azure portal Environment variables blade for Web App app-labslot-x6ybh6bakgipy with breadcrumb "Home > app-labslot-x6ybh6bakgipy". Blade heading reads "app-labslot-x6ybh6bakgipy | Environment variables" and the "App settings" tab is active (sibling tab: Connection strings). The grid has five columns in order: Name, Value, Deployment slot setting, Source, Delete. Three rows are shown, all with values hidden behind "Show value" links and Source "App Service". The DB_CONNECTION_STRING row has the Deployment slot setting checkbox CHECKED (sticky). The FEATURE_FLAG row has the Deployment slot setting checkbox UNCHECKED (non-sticky). The SCM_DO_BUILD_DURING_DEPLOYMENT row has the Deployment slot setting checkbox UNCHECKED (non-sticky). The left navigation shows Settings expanded with Environment variables highlighted. Apply and Discard buttons at the bottom are both disabled, confirming the displayed state matches the persisted configuration.'
+  page: troubleshooting/configuration
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'
+- id: troubleshooting--configuration--05-slowstart-always-on-off
+  file: troubleshooting/configuration/troubleshooting--configuration--05-slowstart-always-on-off.webp
+  alt: 'Azure portal General settings blade for Web App app-labcold-xgsfl2fo6kylo with breadcrumb "Home > app-labcold-xgsfl2fo6kylo". Blade heading reads "app-labcold-xgsfl2fo6kylo | General settings" and the "General settings" tab is active (sibling tabs: Stack settings, Health check, Path mappings, Error pages). The Platform settings section shows SCM Basic Auth Publishing Credentials unchecked, FTP Basic Auth Publishing Credentials unchecked, WebJobs runtime unchecked, FTP state Disabled, Inbound IP mode IPv4, HTTP version 1.1, HTTP 2.0 Proxy Off, SSH checked, and the key setting "Always on" UNCHECKED. Session affinity is checked, Session affinity proxy unchecked, HTTPS only checked, Minimum Inbound TLS Version 1.2, SCM Minimum Inbound TLS Version 1.2, Minimum Inbound TLS Cipher Suite TLS_RSA_WITH_AES_128_CBC_SHA (Default). Debugging section shows Remote debugging unchecked. Incoming client certificates section shows Client certificate mode set to Ignore. Apply and Discard buttons at the bottom are both disabled, confirming the displayed state matches the persisted configuration.'
+  page: troubleshooting/configuration
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'
+- id: troubleshooting--metrics--02-response-time
+  file: troubleshooting/metrics/troubleshooting--metrics--02-response-time.webp
+  alt: 'Azure portal Metrics blade for app-test-20251107 with chart title Avg Response Time for app-test-20251107; time range selector showing Local Time: Last 24 hours (Automatic - 5 minutes); toolbar with New chart, Refresh, Share, and on the right Line chart, Drill into Logs, New alert rule, Save to dashboard, Chart settings; configurator row showing Scope app-test-20251107, Metric Namespace App Service standard metrics, Metric Response Time, Aggregation Avg with a blue confirmation check icon; the chart Y-axis ranging from 0sec to 120.00ms across 20ms gridlines; a dotted blue Response Time series showing a startup spike approaching 120ms in the first hour after Mon 08 followed by a quick descent to baseline near 0sec for the remainder of the 24-hour window, with secondary small bumps in the same early period; a hover tooltip at Jun 07 7:05 PM reading Response Time (Avg), app-test-20251107, 10.60ms; and a legend below the chart showing Response Time (Avg), app-test-20251107, 10.60ms.'
+  page: troubleshooting/metrics
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'
+- id: troubleshooting--metrics--06-slowstart-first-vs-warm-response
+  file: troubleshooting/metrics/troubleshooting--metrics--06-slowstart-first-vs-warm-response.webp
+  alt: 'Azure portal Metrics blade for Web App app-labcold-xgsfl2fo6kylo with breadcrumb "Home > app-labcold-xgsfl2fo6kylo". Blade heading reads "app-labcold-xgsfl2fo6kylo | Metrics" and the left navigation shows Metrics highlighted under Monitoring. Chart heading reads "Avg Response Time for app-labcold-xgsfl2fo6kylo" with a metric chip labeled "app-labcold-xgsfl2fo6kylo, Response Time, Avg". Toolbar shows New chart, Refresh, Share, Add metric, Add filter, Line chart, Drill into Logs, New alert rule, and Save to dashboard. The time range picker in the top-right reads "Local Time: Last 30 minutes (Automatic - 1 min...)". The Y-axis scale runs from 0sec at the bottom to 8.00sec at the top with horizontal gridlines at 1.00sec, 2.00sec, 3.00sec, 4.00sec, 5.00sec, 6.00sec, and 7.00sec. The X-axis runs from 10:30 to 10:50 in UTC+09:00. The Response Time line stays flat near 0 seconds from 10:30 until approximately 10:40, then rises sharply in a near-vertical spike to about 7 seconds within a single 1-minute aggregation bucket, and holds a plateau near 7 seconds through 10:50. Bottom legend reads "Response Time (Avg), app-labcold-xgsfl2fo6kylo | 777.90ms" summarizing the aggregate over the window.'
+  page: troubleshooting/metrics
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'
+- id: troubleshooting--metrics--08-mempressure-memory-working-set
+  file: troubleshooting/metrics/troubleshooting--metrics--08-mempressure-memory-working-set.webp
+  alt: 'Azure portal Metrics blade for Web App app-labmem-hch2g6gq7u63u with breadcrumb "Home > app-labmem-hch2g6gq7u63u". Blade heading reads "app-labmem-hch2g6gq7u63u | Metrics" and the sub-heading reads "Web App". The top toolbar shows New chart, Refresh, and Share, with a "UTC Time: Last hour (1 minute)" selector on the far right. Below is a chart panel with title "Max Memory working set for app-labmem-hch2g6gq7u63u" and a chart-level command bar with Add metric, disabled Add filter, disabled Apply splitting, Line chart, Drill into Logs, New alert rule, and Save to dashboard. The metric pill row shows one collapsed pill "app-labmem-hch2g6gq7u6... Memory working set, Max" with an X close button. The chart canvas has a Y-axis 0B-1.2GB with tick marks at 100MB, 200MB, 300MB, 400MB, 500MB, 600MB, 700MB, 800MB, 900MB, 1GB, 1.1GB, and 1.2GB, and an X-axis with labels 4 AM, 4:15, and 4:30 and a UTC label on the far right. A single blue line plots memory working set values, showing a flat near-zero baseline from 4 AM to ~4:12, a first spike between 200MB and 300MB shortly after 4:15 UTC (leak phase peak), a rapid climb from ~4:22 to a sharp peak at ~1.1GB just before 4:30 (heavy phase peak), and a drop to a sustained ~130MB plateau after 4:30. The legend at the bottom reads "Memory working set (Max), app-labmem-hch2g6gq7u63u 1.1GB" with a filled blue color chip. The left navigation panel highlights Metrics as the active blade, with visible siblings Overview, Activity log, Access control (IAM), Tags, Diagnose and solve problems, Microsoft Defender for Cloud, Events (preview), AI (preview), Resource visualizer, Favorites (expanded with Networking and API definition), Deployment, Settings (expanded with Environment variables, Configuration, Instances, Authentication, Identity, Backups, Custom domains, Certificates, Networking, WebJobs, and Service Connector).'
+  page: troubleshooting/metrics
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'
+- id: troubleshooting--networking--02-app-overview
+  file: troubleshooting/networking/troubleshooting--networking--02-app-overview.webp
+  alt: App Service Overview blade for a running Linux Python 3.12 web app, showing the resource group, Basic B1 plan, and the Networking section with outbound IP addresses
+  page: troubleshooting/networking
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'
+- id: troubleshooting--networking--03-app-networking-blade
+  file: troubleshooting/networking/troubleshooting--networking--03-app-networking-blade.webp
+  alt: App Service Networking blade showing Outbound traffic configuration with Virtual network integration set to Not configured and Outbound DNS set to Default Azure-provided
+  page: troubleshooting/networking
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'

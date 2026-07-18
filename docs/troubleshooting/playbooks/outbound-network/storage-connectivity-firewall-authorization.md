@@ -269,7 +269,7 @@ Abnormal: `NXDOMAIN` (name does not exist); a public IP returned when a private 
 
 Step 1 — Confirm the app and its hosting from the **Overview** blade:
 
-![App Service Overview blade for a running Linux Python 3.12 web app, showing the resource group, Basic B1 plan, and the Networking section with outbound IP addresses](../../../assets/troubleshooting/networking/02-app-overview.png)
+[[[ shot("troubleshooting--networking--02-app-overview") ]]]
 
 Purpose: Establish the app baseline (runtime, plan, region) so the routing state you inspect next is attributed to the right resource.
 Look for: **Status: Running**, the **Operating System / Runtime Stack**, the **App Service Plan**, and the **Networking** section at the bottom listing the app's outbound IP addresses.
@@ -279,7 +279,7 @@ Next step: Open the **Networking** blade (left nav) to read the outbound routing
 
 Step 2 — Read the outbound routing configuration on the **Networking** blade:
 
-![App Service Networking blade showing Outbound traffic configuration with Virtual network integration set to Not configured and Outbound DNS set to Default Azure-provided](../../../assets/troubleshooting/networking/03-app-networking-blade.png)
+[[[ shot("troubleshooting--networking--03-app-networking-blade") ]]]
 
 Purpose: Confirm the App Service outbound routing state before diagnosing the storage firewall or a private endpoint, because a routing gap masquerades as a firewall or authorization problem.
 Look for: The **Outbound traffic configuration** panel — specifically `Virtual network integration: Not configured`, `Outbound DNS: Default (Azure-provided)`, and the `Integration subnet configuration` rows (NAT gateway / Network security group / User defined route all `N/A` when no VNet is attached).
