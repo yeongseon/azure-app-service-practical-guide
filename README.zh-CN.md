@@ -78,26 +78,6 @@ mkdocs serve
 | [azure-kubernetes-service-practical-guide](https://github.com/yeongseon/azure-kubernetes-service-practical-guide) | Azure Kubernetes Service (AKS) 实操指南 |
 | [azure-monitoring-practical-guide](https://github.com/yeongseon/azure-monitoring-practical-guide) | Azure Monitoring 实操指南 |
 
-## 从旧仓库迁移 (Migration from Legacy Repos)
-
-本仓库整合了之前托管在独立仓库中的实验：
-
-| 旧仓库 | 状态 | 已迁移至 |
-|---|---|---|
-| [lab-memory-pressure](https://github.com/yeongseon/lab-memory-pressure) | 已归档 | [App Service: Memory Pressure](docs/troubleshooting/lab-guides/memory-pressure.md) |
-| [lab-node-memory-pressure](https://github.com/yeongseon/lab-node-memory-pressure) | 已归档 | [App Service: Memory Pressure](docs/troubleshooting/lab-guides/memory-pressure.md) (Node.js 对比) |
-
-### 为什么要整合？
-
-- **可发现性 (Discoverability)**：所有 PaaS 故障排除实验的单一位置
-- **相互引用**：服务间的轻松比较（App Service vs Functions vs Container Apps）
-- **一致的方法论**：共享的实验模板和证据模型
-- **更易于维护**：单一文档站点，统一的 CI/CD
-
-### 旧仓库政策
-
-旧仓库已归档，但仍可供参考。新的实验应添加到此整合仓库中。
-
 ## 免责声明 (Disclaimer)
 
 这是一个独立的社区项目。与 Microsoft 无关，也不受其认可。Azure 和 App Service 是 Microsoft Corporation 的商标。

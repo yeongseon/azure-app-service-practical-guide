@@ -78,26 +78,6 @@ Azure App Service のパターンを示す最小限のリファレンスアプ�
 | [azure-kubernetes-service-practical-guide](https://github.com/yeongseon/azure-kubernetes-service-practical-guide) | Azure Kubernetes Service (AKS) 実務ガイド |
 | [azure-monitoring-practical-guide](https://github.com/yeongseon/azure-monitoring-practical-guide) | Azure Monitoring 実務ガイド |
 
-## レガシーリポジトリからの移行 (Migration from Legacy Repos)
-
-このリポジトリは、以前は個別のリポジトリでホストされていた実験を統合したものです：
-
-| レガシーリポジトリ | ステータス | 移行先 |
-|---|---|---|
-| [lab-memory-pressure](https://github.com/yeongseon/lab-memory-pressure) | アーカイブ済み | [App Service: Memory Pressure](docs/troubleshooting/lab-guides/memory-pressure.md) |
-| [lab-node-memory-pressure](https://github.com/yeongseon/lab-node-memory-pressure) | アーカイブ済み | [App Service: Memory Pressure](docs/troubleshooting/lab-guides/memory-pressure.md) (Node.js との比較) |
-
-### 統合する理由
-
-- **発見しやすさ (Discoverability)**: すべての PaaS トラブルシューティング実験のための単一の場所
-- **相互参照**: サービス間 (App Service vs Functions vs Container Apps) の簡単な比較
-- **一貫した方法論**: 共有された実験テンプレートとエビデンスモデル
-- **メンテナンスの容易さ**: 単一のドキュメントサイト、統合された CI/CD
-
-### レガシーリポジトリのポリシー
-
-レガシーリポジトリはアーカイブされていますが、参照のために引き続きアクセス可能です。新しい実験は、この統合されたリポジトリに追加する必要があります。
-
 ## 免責事項 (Disclaimer)
 
 これは独立したコミュニティプロジェクトです。Microsoft との提携や承認を受けているものではありません。Azure および App Service は Microsoft Corporation の商標です。

@@ -78,26 +78,6 @@ Azure App Service 패턴을 보여주는 최소한의 참조 애플리케이션�
 | [azure-kubernetes-service-practical-guide](https://github.com/yeongseon/azure-kubernetes-service-practical-guide) | Azure Kubernetes Service (AKS) 실무 가이드 |
 | [azure-monitoring-practical-guide](https://github.com/yeongseon/azure-monitoring-practical-guide) | Azure Monitoring 실무 가이드 |
 
-## 기존 저장소로부터의 마이그레이션 (Migration from Legacy Repos)
-
-이 저장소는 이전에 개별 저장소에서 호스팅되던 실험들을 통합합니다:
-
-| 기존 저장소 | 상태 | 마이그레이션 대상 |
-|---|---|---|
-| [lab-memory-pressure](https://github.com/yeongseon/lab-memory-pressure) | 보관됨(Archived) | [App Service: Memory Pressure](docs/troubleshooting/lab-guides/memory-pressure.md) |
-| [lab-node-memory-pressure](https://github.com/yeongseon/lab-node-memory-pressure) | 보관됨(Archived) | [App Service: Memory Pressure](docs/troubleshooting/lab-guides/memory-pressure.md) (Node.js 비교) |
-
-### 통합 이유
-
-- **발견 가능성(Discoverability)**: 모든 PaaS 트러블슈팅 실험을 위한 단일 위치
-- **교차 참조**: 서비스 간 쉬운 비교 (App Service vs Functions vs Container Apps)
-- **일관된 방법론**: 공유된 실험 템플릿 및 증거 모델
-- **쉬운 유지 관리**: 단일 문서 사이트, 통합된 CI/CD
-
-### 기존 저장소 정책
-
-기존 저장소는 보관되지만 참조를 위해 계속 접근 가능합니다. 새로운 실험은 이 통합된 저장소에 추가되어야 합니다.
-
 ## 면책 조항 (Disclaimer)
 
 이 프로젝트는 독립적인 커뮤니티 프로젝트입니다. Microsoft와 제휴하거나 보증을 받지 않았습니다. Azure 및 App Service는 Microsoft Corporation의 상표입니다.
