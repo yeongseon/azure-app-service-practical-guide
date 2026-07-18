@@ -579,7 +579,7 @@ Important interpretation:
 
 To visually confirm the container never completes startup during the failing phase, a fresh reproduction against a newly-deployed instance produced this Kudu Log Stream evidence:
 
-![Kudu Log Stream (KuduLite /logs endpoint) for app-fwdreq-476vrs7nbusvk showing 480 streamed log entries in the failing window. The stream is filled with red PLAT ERROR rows citing LastError ContainerTimeout with LastErrorTimestamp 07/03/2026 01:09:28. Additional entries include "Container did not start within expected time limit of 230s", "Details: Pinging warmup path to ensure container is ready to receive requests", "State: Stopping, Action: StoppingSite / StoppingSiteContainers", "Site container: app-fwdreq-476vrs7nbusvk terminated during site startup", "Container is terminated. Total time elapsed: 5874 ms", and "Cancelling site startup". The instance identifier displayed is a 12-character truncated hash (4956fd0f71e6...) and the container ID prefix is likewise truncated (f4cc33111242).](../../assets/troubleshooting/kudu/06-fwdreq-process-not-listening.png)
+[[[ shot("troubleshooting--kudu--06-fwdreq-process-not-listening") ]]]
 
 **Purpose**: Prove that the container never completes startup during the failing phase, so no worker process ever listens on any port. Complements the process-level view that Windows-only Kudu Process Explorer would show, since the equivalent Linux endpoint (`/api/processes`) is not supported on the Linux stack.
 
