@@ -554,3 +554,101 @@ screenshots:
   diff_threshold: 0.02
   captured: '2026-07-18'
   verified: '2026-07-18'
+- id: platform--architecture--01-app-service-overview
+  file: platform/architecture/platform--architecture--01-app-service-overview.webp
+  alt: 'Azure portal Overview blade for `app-appsvc-guide-recap` (Web App) with a command bar (`Browse`, `Stop`, `Swap`, `Restart`, `Delete`, `Refresh`, `Download publish profile`, `Reset publish profile`, `Share to mobile`, `Send us your feedback`) and an Essentials panel showing Resource group `rg-p2b-recapture`, Status `Running`, Location `Korea Central`, Subscription `Visual Studio Enterprise Subscription`, Subscription ID `00000000-0000-0000-0000-000000000000`, Default domain `app-appsvc-guide-recap.azurewebsites.net`, App Service Plan `plan-p2b-recapture (B1: 1)`, Operating System `Linux`, and Health Check `Not Configured`. The Properties tab is selected (next to Monitoring, Logs, Capabilities, Notifications (0), Recommendations) and surfaces Web app (`Name: app-appsvc-guide-recap`, `Publishing model: Code`, `Runtime Stack: Python - 3.11`, `Runtime status: Healthy`), Domains (`Default domain: app-appsvc-guide-recap.azurewebsites.net`, `Custom domain: Add custom domain`), Hosting (`Plan Type: App Service plan`, `Name: plan-p2b-recapture`, `Operating System: Linux`, `Instance Count: 1`, `SKU and size: Basic (B1)` with `Scale up` link), Deployment Center (`Last deployment: No deployments found`, `Deployment provider: None`), Application Insights (`Name: Enable Application Insights`), and Networking (`Inbound IP addresses: 192.0.2.1, 2001:db8::1`, `Private endpoint connections: 0 private endpoints`, `Virtual network integration: Not configured`). Left nav under the search box lists Overview (selected), Activity log, Access control (IAM), Tags, Diagnose and solve problems, Microsoft Defender for Cloud, Events (preview), AI (preview), Resource visualizer, a Favorites group (Networking, API definition), and collapsed groups Deployment and Settings.'
+  page: platform/architecture
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'
+- id: platform--authentication-architecture--01-authentication-blade
+  file: platform/authentication-architecture/platform--authentication-architecture--01-authentication-blade.webp
+  alt: Authentication blade for the `app-test-20251107` Web App showing the empty state with a grey illustration of a person holding a key, the heading "Add an identity provider", and the description "Choose an identity provider to manage the user identities and authentication flow for your application. Providers include Microsoft, Facebook, Google, and Twitter." A "Learn more about identity providers" link sits below the description and a primary blue "Add identity provider" button is centered beneath it. The command bar contains Refresh, Troubleshoot, and Send us your feedback. The left navigation shows the Settings group highlighted (Authentication is opened from it), with entries Overview, Activity log, Access control (IAM), Tags, Diagnose and solve problems, Microsoft Defender for Cloud, Events (preview), Log stream, AI (preview), and Resource visualizer above collapsed groups.
+  page: platform/authentication-architecture
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'
+- id: platform--containers--01-deployment-center-containers
+  file: platform/containers/platform--containers--01-deployment-center-containers.webp
+  alt: Deployment Center blade for a Web App with the "Containers (new)" tab selected. The body shows an empty containers table with column headers Name, Type, Source, Image, Tag, Port, and Logs, and an introductory line "Enhance site functionality by adding sidecar containers. Learn more". A command bar above the table contains Refresh, Add (split dropdown), Delete (disabled), and Send us your feedback buttons. Tabs across the top of the blade include Settings, Containers (new) (selected), Logs, and FTPS Credentials. The left navigation shows Deployment Center selected under the Deployment group.
+  page: platform/containers
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'
+- id: platform--deployment-options--01-deployment-center
+  file: platform/deployment-options/platform--deployment-options--01-deployment-center.webp
+  alt: 'Deployment Center blade for the `app-test-20251107` Web App with the "Settings" tab selected (next to "Containers (new)", "Logs", and "FTPS Credentials"). The command bar contains Save, Discard, Refresh, Browse, Sync, and Send us your feedback. A blue info banner reads "You are now in the production slot, which is not recommended for setting up CI/CD. Learn more". Below it, the text "Deploy and build code from your preferred source and build provider." precedes a required Source field rendered as an empty dropdown labeled "Select a code source". The left navigation shows Deployment Center highlighted under the Deployment group (below Deployment slots).'
+  page: platform/deployment-options
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'
+- id: platform--deployment-scenarios--01-deployment-slots
+  file: platform/deployment-scenarios/platform--deployment-scenarios--01-deployment-slots.webp
+  alt: 'Deployment slots blade for the `app-test-20251107` Web App showing two slots in a table with columns Name, Status, App service plan, and Traffic %. The first row is `app-test-20251107` with a green PRODUCTION badge, Status "Running", App service plan `asp-test-20251107`, and Traffic % 70 (read-only). The second row is `app-test-20251107-staging`, Status "Running", App service plan `asp-test-20251107`, and an editable Traffic % field set to 30 — demonstrating a 70/30 partial-traffic routing configuration during canary testing. The command bar contains Save, Discard, Add, Swap, Logs, Refresh, and Send us your feedback; the left navigation shows the Deployment group highlighted.'
+  page: platform/deployment-scenarios
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'
+- id: platform--hosting-models--01-app-service-plan
+  file: platform/hosting-models/platform--hosting-models--01-app-service-plan.webp
+  alt: App Service plan Overview blade for the Linux plan `asp-test-20251107` in Korea Central. The Essentials panel shows Resource group `rg-test-20251107`, Status "Ready", Location "Korea Central", Subscription "Visual Studio Enterprise Subscription", Subscription ID `00000000-0000-0000-0000-000000000000`, Pricing plan "P0v3", Instance count 1, App(s) / Slots "1 / 1", Operating System "Linux", and Zone redundant "Disabled". The command bar contains Delete and Send us your feedback. Below the Essentials panel a row of monitoring charts shows CPU Percentage (Avg 4.5667%), Memory Percentage (Avg 46.0833%), Data In (Sum 4.93kB), and a Data Out time-series chart.
+  page: platform/hosting-models
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'
+- id: platform--mtls--01-custom-domains-tls
+  file: platform/mtls/platform--mtls--01-custom-domains-tls.webp
+  alt: 'Custom domains blade for a Web App in the pre-binding state. The top of the blade shows two read-only fields — `IP address` (`<ip-redacted>`) and `Custom Domain Verification ID` (masked for documentation) — followed by a `Filter by keywords` search box and an `Add filter` button. The command bar above the table contains `Add custom domain`, `Buy App Service domain`, and a disabled `Delete` button. A `1 items` count precedes the table, whose columns are Custom domains, Status, Solution, Binding type, Certificate used, and Actions. The only visible row is the default `app-appsvc-guide-recap.azurewebsites.net` host with `Status: Secured`; the other columns are `-` because no custom domain has been added yet. The left navigation shows Custom domains highlighted under Settings.'
+  page: platform/mtls
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'
+- id: platform--networking--01-networking-blade
+  file: platform/networking/platform--networking--01-networking-blade.webp
+  alt: 'Networking blade for the `app-appsvc-guide-recap` Web App split into an Inbound traffic configuration card and an Outbound traffic configuration card, with the command bar Refresh, Troubleshoot, and Send us your feedback. The Inbound card shows Public network access "Enabled with no access restrictions (Using default behavior)", App assigned address "Not configured", Private endpoints "0 private endpoints", Inbound IPv4 addresses `192.0.2.1`, and Inbound IPv6 addresses `2001:db8::1`; an Optional inbound services subsection lists Azure Front Door with a "View details" link. The Outbound card shows Virtual network integration "Not configured", Hybrid connections "Not configured", Outbound DNS "Default (Azure-provided)", and long comma-separated Outbound IPv4 (`192.0.2.1`) and Outbound IPv6 (`2001:db8::1`) address lists; an Integration subnet configuration subsection shows NAT gateway, Network security group, and User defined route all "N/A". The left navigation shows Networking highlighted under Settings.'
+  page: platform/networking
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'
+- id: platform--networking--02-nat-gateway-config
+  file: platform/networking/platform--networking--02-nat-gateway-config.webp
+  alt: Azure portal Overview blade for a NAT gateway named natgw-appservice-demo. The Essentials panel shows Resource group rg-natgw-capture, Location Korea Central, Subscription Visual Studio Enterprise Subscription, Subscription ID 00000000-0000-0000-0000-000000000000, Virtual network vnet-natgw-demo, Subnets 1, SKU Standard, Public IP addresses 1, and Public IP prefixes 0. Two configuration cards read "Configure outbound IP addresses" and "Configure networking", the latter describing which subnets of a virtual network should use this NAT gateway.
+  page: platform/networking
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'
+- id: platform--request-lifecycle--01-log-stream
+  file: platform/request-lifecycle/platform--request-lifecycle--01-log-stream.webp
+  alt: 'Log stream blade for a Web App showing the live runtime log feed. The top filter bar has "Log Level" dropdown, "Stop" / "Copy" / "Clear" buttons, a "Logs" radio set with "Runtime" selected (Platform unselected), an Instances selector with a worker instance ID, and a Lookback period of "Last 30 minutes". The main panel renders a dark console with time-stamped log lines emitted by an azure.core.pipeline.policies.http_logging_policy showing Request URL, Request method (POST), Request headers (Content-Type, Content-Length, Accept, x-ms-client-request-id, User-Agent), Response status 200, and "Transmission succeeded: Item received: 3. Items accepted: 3" entries from the Azure Monitor OpenTelemetry exporter. The left navigation shows Log stream selected under the Monitoring group.'
+  page: platform/request-lifecycle
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'
+- id: platform--resource-relationships--01-resource-group
+  file: platform/resource-relationships/platform--resource-relationships--01-resource-group.webp
+  alt: Resource group overview blade for `rg-test-20251107` in Korea Central showing an Essentials panel with Subscription "Visual Studio Enterprise Subscription", Subscription ID `00000000-0000-0000-0000-000000000000`, Deployments "2 Failed, 4 Succeeded", and Location "Korea Central". The Resources tab (next to Recommendations) lists all 11 related resources with columns Name, Type, and Location — `ai-test-20251107` (Application Insights), `app-test-20251107` (App Service), `app-test-20251107.net` (App Service Domain), `app-test-20251107.net` (DNS zone), `app-test-20251107.net-app-test-20251107` (Microsoft.Web certificate), `staging (app-test-20251107/staging)` (App Service (Slot)), `Application Insights Smart Detection` (Action group), `asp-test-20251107` (App Service plan), `domain-test-20251107.com` (App Service Domain), `domain-test-20251107.com` (DNS zone), and `Failure Anomalies - ai-test-20251107` (Smart detector alert rule). The command bar includes Create, Manage view, Delete resource group, Refresh, Export to CSV, Open query, Assign tags, Move, Delete, and Export template buttons.
+  page: platform/resource-relationships
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'
+- id: platform--scaling--01-scale-out
+  file: platform/scaling/platform--scaling--01-scale-out.webp
+  alt: Scale out (App Service plan) blade for the Linux plan `asp-test-20251107`, opened with the command bar Refresh and Send us your feedback. A Pricing plan section shows Current plan "Premium v3 P0V3" (with a Change link), Price (instance) "0.091 USD/hour (66.065 USD/month)", Memory (GB) 4, Maximum scale (instance) 30, Active instance count 1, Maximum available zones 3, and a Zone Redundancy checkbox annotated "Minimum of two instances required." A Scaling section explains manual, rule-based, and automatic scaling, then presents a "Scale out method" radio group — Manual (selected), Automatic, and Rules Based — followed by an Instance count slider set to 1 and a disabled Save / Discard command bar.
+  page: platform/scaling
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'
+- id: platform--scaling--02-scale-up
+  file: platform/scaling/platform--scaling--02-scale-up.webp
+  alt: Scale up (App Service plan) blade for the Linux plan `asp-test-20251107` with `Hardware view` selected next to `Feature view`. The main table groups pricing plans into `Dev/Test`, `Production`, and `Legacy`, and shows columns for Name, ACU/vCPU, vCPU, Memory (GB), Remote Storage (GB), Scale (instance), SLA, Cost per hour (instance), and Cost per month (instance). Visible rows include `Free F1`, `Basic B1`, `Basic B2`, `Basic B3`, `Premium v3 P0V3`, `Premium v3 P1V3`, `Premium v3 P2V3`, `Premium v3 P3V3`, `Premium v3 P1mv3`, `Premium v3 P2mv3`, `Premium v3 P3mv3`, `Premium v3 P4mv3`, and `Premium v3 P5mv3`; the `Premium v3 P0V3` row is selected. A `Select` button appears at the bottom of the blade.
+  page: platform/scaling
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'
+- id: platform--security-architecture--01-identity-blade
+  file: platform/security-architecture/platform--security-architecture--01-identity-blade.webp
+  alt: Identity blade for the `app-test-20251107` Web App showing tabs "System assigned" (selected) and "User assigned". The System assigned panel begins with the description "A system assigned managed identity is restricted to one per resource and is tied to the lifecycle of this resource. You can grant permissions to the managed identity by using Azure role-based access control (Azure RBAC). The managed identity is authenticated with Microsoft Entra ID, so you don't have to store any credentials in code." A command bar with Save, Discard, Refresh, Troubleshoot, and "Got feedback?" sits above a single Status toggle set to "Off" (Off/On) — no Object (principal) ID or Permissions section is shown because the identity is not yet enabled. The left navigation shows Identity selected under the Settings group.
+  page: platform/security-architecture
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'

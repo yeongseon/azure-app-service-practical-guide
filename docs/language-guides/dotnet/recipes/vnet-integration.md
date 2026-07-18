@@ -162,7 +162,7 @@ var redis = await ConnectionMultiplexer.ConnectAsync($"{redisHost}:{redisPort},s
 
 #### Portal view: Networking blade (Virtual network integration not yet configured)
 
-![App Service Networking blade for a Web App split into Inbound traffic configuration and Outbound traffic configuration cards. The Inbound card shows Public network access "Enabled (unrestricted)", Access restriction status "Not configured", Private endpoints "0", and FTP basic auth status. The Outbound card shows Virtual network integration "Not configured", Outbound addresses (a comma-separated list of platform-assigned IPs), and links to configure VNet integration and hybrid connections. A central panel labels the rows as inbound and outbound configuration columns.](../../../assets/platform/networking/01-networking-blade.png)
+[[[ shot("platform--networking--01-networking-blade") ]]]
 
 The Networking blade is the Portal surface where this recipe's outbound VNet connection becomes visible for the ASP.NET Core app. In the pre-recipe state shown here, `Virtual network integration: Not configured` is the key row; after `az webapp vnet-integration add`, this is the row to revisit to confirm the app is attached to the delegated subnet, which is the precondition for the recipe's `Microsoft.Data.SqlClient` and `StackExchange.Redis` connections to reach backend services over the private network. The `Inbound traffic configuration` card remains separate, which matches the recipe's point that VNet integration changes outbound connectivity rather than inbound exposure on its own.
 

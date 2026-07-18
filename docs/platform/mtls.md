@@ -63,7 +63,7 @@ For inbound mutual TLS, App Service terminates TLS at the front end and forwards
 
 #### Portal view: Custom domains and TLS bindings
 
-![Custom domains blade for a Web App in the pre-binding state. The top of the blade shows two read-only fields — `IP address` (`<ip-redacted>`) and `Custom Domain Verification ID` (masked for documentation) — followed by a `Filter by keywords` search box and an `Add filter` button. The command bar above the table contains `Add custom domain`, `Buy App Service domain`, and a disabled `Delete` button. A `1 items` count precedes the table, whose columns are Custom domains, Status, Solution, Binding type, Certificate used, and Actions. The only visible row is the default `app-appsvc-guide-recap.azurewebsites.net` host with `Status: Secured`; the other columns are `-` because no custom domain has been added yet. The left navigation shows Custom domains highlighted under Settings.](../assets/platform/mtls/01-custom-domains-tls.png)
+[[[ shot("platform--mtls--01-custom-domains-tls") ]]]
 
 The Custom domains blade is where the inbound TLS surface becomes concrete for client-certificate designs. In this empty-state capture, only the default `*.azurewebsites.net` hostname is present and its Solution, Binding type, and Certificate used columns are all `-`, which makes the precondition explicit: mTLS for custom hostnames starts only after you add and bind those hostnames. Once custom domain rows appear with `SNI SSL` and a populated `Certificate used` value, `clientCertEnabled` and `clientCertMode` decide whether App Service then asks the client to present a certificate and forward `X-ARR-ClientCert` to your app.
 

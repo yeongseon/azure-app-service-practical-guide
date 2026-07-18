@@ -256,7 +256,7 @@ Ensure you are hitting the correct base URL and port (`localhost:8080` by defaul
 
 #### Portal view: App Service plan (Linux) - the deployment target this tutorial emulates locally
 
-![App Service Plan overview blade showing the Linux plan asp-test-20251107 in Korea Central with Pricing tier "Premium0 V3", App Service Plan kind "Linux", Status "Ready", Operating system "Linux", and 1 instance; the right-side charts show CPU Percentage and Memory Percentage time-series for the plan and a list of the apps and slots hosted on the plan including app-test-20251107 and its staging slot.](../../../assets/platform/hosting-models/01-app-service-plan.png)
+[[[ shot("platform--hosting-models--01-app-service-plan") ]]]
 
 Your local Spring Boot + Maven Wrapper setup in this tutorial is meant to mirror the runtime shape of a Linux App Service app, not every plan-level limit shown on this blade. The visible `Operating system: Linux` confirms the worker OS, and the hosted-app list on the right shows that an App Service plan is the shared deployment target used by later tutorials. The `CPU Percentage` and `Memory Percentage` charts are the Portal-side signals you compare against when local `./mvnw spring-boot:run` tests suggest the JVM is using too much CPU or heap memory under load. Use this blade to verify that the target app runs on a Linux App Service plan before moving from local validation to Azure deployment.
 

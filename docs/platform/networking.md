@@ -114,7 +114,7 @@ graph TD
 
 #### Portal view: Networking blade
 
-![App Service Networking blade for a Web App split into Inbound traffic configuration and Outbound traffic configuration cards. The Inbound card shows Public network access "Enabled (unrestricted)", Access restriction status "Not configured", Private endpoints "0", and FTP basic auth status. The Outbound card shows Virtual network integration "Not configured", Outbound addresses (a comma-separated list of platform-assigned IPs), and links to configure VNet integration and hybrid connections. A central panel labels the rows as inbound and outbound configuration columns.](../assets/platform/networking/01-networking-blade.png)
+[[[ shot("platform--networking--01-networking-blade") ]]]
 
 The Networking blade separates App Service networking into the two planes operators actually manage: ingress and egress. On the inbound side, `Public network access`, `Access restriction status`, and `Private endpoints` tell you whether requests arrive over an open public edge, rule-filtered access path, or Private Link. On the outbound side, `Virtual network integration` and the listed `Outbound addresses` show how the app reaches downstream resources, which is the core distinction behind VNet integration versus private inbound publishing.
 
@@ -392,7 +392,7 @@ When VNet Integration is enabled with `WEBSITE_VNET_ROUTE_ALL=1` (Route All), ou
 
 ##### Portal view: NAT Gateway configuration
 
-![Azure portal Overview blade for a NAT gateway named natgw-appservice-demo. The Essentials panel shows Resource group rg-natgw-capture, Location Korea Central, Subscription Visual Studio Enterprise Subscription, Subscription ID 00000000-0000-0000-0000-000000000000, Virtual network vnet-natgw-demo, Subnets 1, SKU Standard, Public IP addresses 1, and Public IP prefixes 0. Two configuration cards read "Configure outbound IP addresses" and "Configure networking", the latter describing which subnets of a virtual network should use this NAT gateway.](../assets/platform/networking/02-nat-gateway-config.png)
+[[[ shot("platform--networking--02-nat-gateway-config") ]]]
 
 A NAT Gateway is the managed Azure egress option for giving a VNet-integrated app a deterministic outbound IP (a firewall/NVA reached via a UDR — the third row of the table above — is another). The **Public IP addresses** count in the Essentials panel is the pool that outbound traffic is SNATed through — those addresses (not `possibleOutboundIpAddresses`) are what a downstream firewall sees once the integration **Subnets** are associated to the gateway via **Configure networking**. Confirm both the associated subnet and the attached public IP address (or addresses) here before allowlisting the NAT Gateway's IP downstream.
 
