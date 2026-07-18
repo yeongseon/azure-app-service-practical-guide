@@ -449,3 +449,108 @@ screenshots:
   diff_threshold: 0.02
   captured: '2026-07-18'
   verified: '2026-07-18'
+- id: troubleshooting--activity-log--03-slotswap-swap-operation
+  file: troubleshooting/activity-log/troubleshooting--activity-log--03-slotswap-swap-operation.webp
+  alt: Azure portal Activity log blade for Web App app-labslot-x6ybh6bakgipy with breadcrumb "Home > app-labslot-x6ybh6bakgipy". Blade heading reads "app-labslot-x6ybh6bakgipy | Activity log" and the left navigation shows Activity log highlighted. The main grid shows 5 items filtered by Subscription "Visual Studio Enterprise Subscription" and Resource "app-labslot-x6ybh6bakgipy". Rows include Get Web App Publishing Profile, Swap Web App Slots (selected/highlighted), 'auditIfNotExists' Policy action, UpdateWebSite, and CreateWebSite. The right complementary detail panel is open on the Swap Web App Slots row with sub-heading "Fri Jul 03 2026 11:34:58 GMT+0900 (Korean Standard Time)" and tabs Summary, JSON, Change history — Summary tab is active. The selected row shows Status "Succeeded". Detail rows show a full ARM resource path ending in "/slots/staging", Operation name "Swap Web App Slots", Time stamp "Fri Jul 03 2026 11:34:58 GMT+0900 (Korean Standard Time)", and Event initiated by "user@example.com".
+  page: troubleshooting/activity-log
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'
+- id: troubleshooting--app-service-plan--01-asp-overview
+  file: troubleshooting/app-service-plan/troubleshooting--app-service-plan--01-asp-overview.webp
+  alt: 'Azure portal Overview blade for the asp-test-20251107 App Service Plan (Linux plan). The header shows the plan name with Pin, Favorite, More content actions, and Close buttons; below it the toolbar exposes Delete and Send us your feedback. The Essentials panel includes View Cost and JSON View links at its top-right; the left side lists Resource group rg-test-20251107, Status Ready, Location Korea Central, Subscription Visual Studio Enterprise Subscription, Subscription ID 00000000-0000-0000-0000-000000000000, and Tags (Add tags). The right side of Essentials lists Pricing plan P0v3, Instance count 1, App(s) / Slots 1 / 1, Operating System Linux, and Zone redundant Disabled. Four pinned metric charts are visible below Essentials: CPU Percentage (Avg 4.45% with peaks near 10%), Memory Percentage (Avg 46.3333% as a near-flat band around 45%), Data In (Sum 15.85 kB with intermittent spikes up to 4 kB), and Data Out (only the upper chart area is visible; the numeric summary below the chart is cut off below the fold). The left navigation panel highlights Overview as the active blade, with Activity log, Access control (IAM), Tags, Diagnose and solve problems, Events (preview), Resource visualizer, Settings (collapsed), Monitoring (collapsed), Automation (collapsed), and Help (collapsed) listed below.'
+  page: troubleshooting/app-service-plan
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'
+- id: troubleshooting--deployment-center--01-deployment-center
+  file: troubleshooting/deployment-center/troubleshooting--deployment-center--01-deployment-center.webp
+  alt: Azure portal Deployment Center blade for app-test-20251107 with tabs Settings (active), Containers (new), Logs, FTPS Credentials; toolbar buttons Save (disabled), Discard (disabled), Refresh, Browse, Sync (disabled), Send us your feedback; info banner reading "You are now in the production slot, which is not recommended for setting up CI/CD. Learn more."; description text "Deploy and build code from your preferred source and build provider. Learn more."; a Source required dropdown reading "Select a code source"; left service navigation showing Overview, Activity log, Access control (IAM), Tags, Diagnose and solve problems, Microsoft Defender for Cloud, Events (preview), Log stream, AI (preview), Resource visualizer, expanded Favorites with Networking and API definition pinned, and an expanded Deployment group with Deployment slots and Deployment Center (selected); collapsed Settings, Performance, App Service plan, Development Tools, API, Monitoring, Automation, and Support + troubleshooting groups below.
+  page: troubleshooting/deployment-center
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'
+- id: troubleshooting--deployment-center--02-depstart-successful-deploy
+  file: troubleshooting/deployment-center/troubleshooting--deployment-center--02-depstart-successful-deploy.webp
+  alt: Deployment Center Logs tab showing deployment ID e202129 with Status "Succeeded (Active)", author "N/A", message "OneDeploy", and timestamp 7/3/2026, 12:23:30 AM (2026-07-02T15:23:30Z UTC). The row's green Succeeded badge is the control-plane signal that misleads operators into believing the app is healthy.
+  page: troubleshooting/deployment-center
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'
+- id: troubleshooting--deployments--01-cdrecon-role-assignment-conflict
+  file: troubleshooting/deployments/troubleshooting--deployments--01-cdrecon-role-assignment-conflict.webp
+  alt: 'Azure portal Deployment overview blade titled "lab-ra-reconnect | Overview" (Deployment) with breadcrumb Home > rg-asp-lab-cd-rbac | Deployments, a toolbar of Delete, Cancel (disabled), Redeploy, Download, Refresh, and left nav Overview (selected), Inputs, Outputs, Template. A red-icon banner across the top reads "The role assignment already exists. The ID of the existing role assignment is 00000000000000000000000000000000. Click here for details" (PII masked). Below the banner: a "Your deployment failed" heading next to a Diagnose with Copilot button; a metadata block showing Deployment name lab-ra-reconnect, Subscription Visual Studio Enterprise Subscription (PII masked), Resource group rg-asp-lab-cd-rbac, Start time 7/2/2026 10:51:21 PM, Correlation ID 00000000-0000-0000-0000-000000000000 (PII masked). An expanded "Deployment details" section shows a single-row table with columns Resource, Type, Status, Operation details - the row displays a red-X error icon, a Resource value 00000000-0000-0000-0000-000000000000 (the roleAssignmentName GUID, PII masked), Type Microsoft.Authorization/roleAssi..., Status "Conflict (Error details)" link, and an "Operation details" link. A right-hand sidebar promotes Microsoft Defender for Cloud, Free Microsoft tutorials, and Work with an expert.'
+  page: troubleshooting/deployments
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'
+- id: troubleshooting--diagnose-and-solve--03-diagnose-hub
+  file: troubleshooting/diagnose-and-solve/troubleshooting--diagnose-and-solve--03-diagnose-hub.webp
+  alt: 'Azure portal Diagnose and solve problems blade for app-test-20251107 (Web App). The blade header shows the resource title with Favorite (star) and More content actions (...) buttons on the left, and a prominent red Close (X) button at the far right. Below the header, the toolbar shows a Search for common problems or tools box, a Refresh button, and a Feedback button. Two tabs are visible: Common Solutions (selected and underlined) and AI-powered Diagnostics (preview). The Risk alerts section at the top displays a single card titled Availability with a red X icon, the count 2 Critical, and a View more details link. Below that, the Troubleshooting categories section shows seven tiles arranged in two rows: Availability and Performance with sub-links Application Logs, App Down Workflow, Web App Down; Configuration and Management with sub-links Investigate EasyAuth errors, IP Address Configuration, All Scaling Operations; Risk Assessments with sub-links Availability risks, Configuration risks; Deployment with sub-link Troubleshoot; Networking with sub-link Troubleshoot; Diagnostic Tools with sub-links Auto-Heal, Network Troubleshooter, Advanced Application Restart; and Load Test your App with sub-link Create Load Test. The Popular troubleshooting tools section at the bottom lists Application Logs, App Down Workflow, Web App Down, and Web App Slow as quick-access links. The left navigation panel highlights Diagnose and solve problems as the active blade, with Overview, Activity log, Access control (IAM), Tags, Microsoft Defender for Cloud, Events (preview), Log stream, AI (preview), Resource visualizer, Favorites (expanded with Networking and API definition), Deployment, Settings, Performance, App Service plan, Development Tools, API, Monitoring, Automation, and Support + troubleshooting also visible.'
+  page: troubleshooting/diagnose-and-solve
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'
+- id: troubleshooting--health-check--01-health-check
+  file: troubleshooting/health-check/troubleshooting--health-check--01-health-check.webp
+  alt: Azure portal Health check blade for app-test-20251107 with tabs Health check (active), Instances; toolbar buttons Save, Discard, Refresh, Troubleshoot, Metrics, Send us your feedback; info banner reading "Your site has a single instance which will not be removed if it becomes unhealthy. However, after one hour of continuous unhealthy pings, the instance will be replaced. You can still set up Azure Monitor Alerts based on the health status."; second info banner reading "Health check is being moved to Configuration. Click here to go to the new experience."; description text "Health check increases your application's availability by removing unhealthy instances from the load balancer. If your instance remains unhealthy, it will be replaced." followed by a Learn more link; a single Health check toggle row with the checkbox in the unchecked state; left service navigation showing Overview, Activity log, Access control (IAM), Tags, Diagnose and solve problems, Microsoft Defender for Cloud, Events (preview), Log stream, AI (preview), Resource visualizer, expanded Favorites with Networking and API definition pinned, and an expanded Monitoring group with Alerts, Metrics, Logs, Health check (selected), Application Insights.
+  page: troubleshooting/health-check
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'
+- id: troubleshooting--health-check--02-httppings-baseline-healthy
+  file: troubleshooting/health-check/troubleshooting--health-check--02-httppings-baseline-healthy.webp
+  alt: 'Azure Portal Health check blade for the deployed Linux Web App showing the standard command bar (Save, Discard, Refresh, Troubleshoot, Metrics, Send us your feedback), two tabs "Health check" and "Instances" with Instances selected, a single informational banner reading "Instances is being moved to Settings. Click here to go to the new experience.", a descriptive paragraph explaining "View detailed information about the App Service plan instances hosting your app. Status provides information about the platform view of the instance hosting your app. Health Check probes a user-configurable endpoint to detect issues in your app and mitigate them.", and a table with columns Server, Status (sorted descending), Restart instance, and Physical zone containing a single row: server LW0SDLWK000D36, Status "Healthy" rendered in green with a check icon, a Restart action link, and "Not available" in the Physical zone column. The left navigation shows the Monitoring group expanded with Health check highlighted.'
+  page: troubleshooting/health-check
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'
+- id: troubleshooting--iam--01-cdrecon-post-recovery-iam
+  file: troubleshooting/iam/troubleshooting--iam--01-cdrecon-post-recovery-iam.webp
+  alt: 'Azure portal Access control (IAM) blade titled "acraspcdrbach35exq2xl2hpq | Access control (IAM)" (Container registry) with breadcrumb Home > acraspcdrbach35exq2xl2hpq, a toolbar of Add, Download role assignments, Edit columns, Refresh, Delete, Feedback, and left nav Access control (IAM) (selected). Tab strip shows Check access, Role assignments (selected), Roles, Deny assignments. A summary reads "Number of role assignments for this subscription 23 of 4000". Filter chips are set to Type: All, Role: All, Scope: This resource, Group by: Role. Sub-tabs show All (1), Job function roles (1), Privileged administrator roles (0). The results grid has columns Name, Type, Role, Scope, Condition. An expanded "AcrPull (1)" group contains a single row: a Container registry icon, Name app-aspcdrbac-h35exq2xl2hpq with a secondary line 00000000-0000-0000-0000-000000000... (Managed identity clientId, PII masked), Type Managed identity, Role AcrPull (link), Scope "This resource", Condition None. Footer reads "Showing 1 - 1 of 1 results."'
+  page: troubleshooting/iam
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'
+- id: troubleshooting--kudu--01-overview
+  file: troubleshooting/kudu/troubleshooting--kudu--01-overview.webp
+  alt: 'Azure portal Overview blade for the app-test-windows-20260608 Web App. The top command bar shows Browse, Stop, Swap, Restart, Delete, Refresh, Download publish profile, Reset publish profile, Share to mobile, Send us your feedback. The Essentials section lists Resource group rg-test-windows-20260608, Status Running, Location Korea Central, Subscription Visual Studio Enterprise Subscription, Subscription ID 00000000-0000-0000-0000-000000000000 (PII masked), Default domain <azurewebsites-domain-redacted>, App Service Plan asp-test-windows-20260608 (B1: 1), Operating System Windows, Health Check Not Configured. The Properties tab is selected, showing a Web app card with Name app-test-windows-20260608, Publishing model Code, Runtime Stack Dotnet - v8.0, and a Hosting card with Plan Type App Service plan, Name asp-test-windows-20260608, Operating System Windows, Instance Count 1, SKU and size Basic (B1). The left navigation rail lists Overview, Activity log, Access control (IAM), Tags, Diagnose and solve problems, Microsoft Defender for Cloud, Events (preview), Log stream, AI (preview), Resource visualizer, Networking, Deployment, Settings, Performance, App Service plan, Development Tools, API, Monitoring, Automation, Support + troubleshooting.'
+  page: troubleshooting/kudu
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'
+- id: troubleshooting--storage-firewall--01-storage-overview
+  file: troubleshooting/storage-firewall/troubleshooting--storage-firewall--01-storage-overview.webp
+  alt: Storage account Overview blade Properties tab, with the Networking section showing Public network access set to Disabled and Security showing Storage account key access Disabled
+  page: troubleshooting/storage-firewall
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'
+- id: troubleshooting--storage-firewall--02-networking-disabled
+  file: troubleshooting/storage-firewall/troubleshooting--storage-firewall--02-networking-disabled.webp
+  alt: Storage account Networking blade Public access tab, showing Public network access Disabled and the note that virtual network and IP address settings are not in effect because public network access is disabled
+  page: troubleshooting/storage-firewall
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'
+- id: troubleshooting--storage-iam--01-iam-landing
+  file: troubleshooting/storage-iam/troubleshooting--storage-iam--01-iam-landing.webp
+  alt: Storage account Access control (IAM) Check access landing page, with the Role assignments, Roles, and Deny assignments tabs and the Grant/View/Deny access cards
+  page: troubleshooting/storage-iam
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'
+- id: troubleshooting--storage-iam--02-role-assignments
+  file: troubleshooting/storage-iam/troubleshooting--storage-iam--02-role-assignments.webp
+  alt: Storage account Access control IAM Role assignments tab grouped by role, showing the App Service managed identity under the Reader group with the Reader role scoped to This resource and no data-plane storage role
+  page: troubleshooting/storage-iam
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'
+- id: troubleshooting--vnet-integration--01-vnet-integration
+  file: troubleshooting/vnet-integration/troubleshooting--vnet-integration--01-vnet-integration.webp
+  alt: 'Azure portal Virtual Network Integration blade for app-test-20251107 (Web App). Heading reads "Virtual Network Integration" with subtitle "app-test-20251107". The toolbar shows three buttons: Disconnect (disabled), Refresh, and Troubleshoot (disabled). The main content area displays a centered angle-bracket placeholder icon with the message "No virtual network integration configured" and an "Add virtual network integration" primary button beneath it, followed by a "Learn more" link. The breadcrumb at the top confirms navigation from Home to the app-test-20251107 App Service resource.'
+  page: troubleshooting/vnet-integration
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'
