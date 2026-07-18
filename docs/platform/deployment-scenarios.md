@@ -115,7 +115,7 @@ graph TD
 
 #### Portal view: Deployment slots
 
-![Deployment slots blade for a Web App showing two slots in a table: the Production slot (default) and a "staging" slot, each with columns App URL, Status (both "Running"), Source, Auto Swap, and Traffic %. The Production slot shows 70% traffic and the staging slot shows 30%, demonstrating a partial-traffic routing configuration during canary testing. The command bar contains "Add Slot" and "Swap" buttons; the left navigation shows Deployment slots selected under the Deployment group.](../assets/platform/deployment-scenarios/01-deployment-slots.png)
+[[[ shot("platform--deployment-scenarios--01-deployment-slots") ]]]
 
 The Deployment slots blade turns release strategy into concrete routing controls. Separate `Production` and `staging` rows, each with its own `App URL`, `Status`, and `Traffic %`, show that slots are distinct runtime targets even though they live under one app and plan boundary. The `70%` / `30%` split and the `Swap` button map directly to canary and cutover scenarios: you can shift live traffic gradually, then promote the staged build into production once behavior is verified.
 

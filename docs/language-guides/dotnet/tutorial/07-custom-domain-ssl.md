@@ -258,7 +258,7 @@ Check hostname binding list and ensure the custom host is attached to the right 
 
 #### Portal view: Custom domains blade (post-binding verification)
 
-![Custom domains blade for a Web App in the pre-binding state. The top of the blade shows two read-only fields — `IP address` (`<ip-redacted>`) and `Custom Domain Verification ID` (masked for documentation) — followed by a `Filter by keywords` search box and an `Add filter` button. The command bar above the table contains `Add custom domain`, `Buy App Service domain`, and a disabled `Delete` button. A `1 items` count precedes the table, whose columns are Custom domains, Status, Solution, Binding type, Certificate used, and Actions. The only visible row is the default `app-appsvc-guide-recap.azurewebsites.net` host with `Status: Secured`; the other columns are `-` because no custom domain has been added yet. The left navigation shows Custom domains highlighted under Settings.](../../../assets/platform/mtls/01-custom-domains-tls.png)
+[[[ shot("platform--mtls--01-custom-domains-tls") ]]]
 
 The Custom domains blade is the Portal verification surface for the `az webapp config hostname add` and `az webapp config ssl bind` steps in this tutorial. This capture shows the before-state: only the default `*.azurewebsites.net` hostname is present, while the `IP address` field at the top is the value you compare against the apex-domain `A` record during setup and `Add custom domain` is the visible Portal entry point for the same hostname-binding flow. After DNS validation and certificate binding for the .NET app, return to this blade and confirm your added hostname rows show `Status: Secured`, `Binding type: SNI SSL`, and a populated `Certificate used` value.
 

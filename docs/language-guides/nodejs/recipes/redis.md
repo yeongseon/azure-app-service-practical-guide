@@ -128,7 +128,7 @@ az webapp config appsettings set --name $APP_NAME --resource-group $RG --setting
 
 #### Portal view: Identity blade (optional Microsoft Entra authentication path)
 
-![Identity blade for a Web App showing tabs "System assigned" (selected) and "User assigned". The System assigned panel displays a Status toggle currently "Off" with description "When enabled, Azure will create an identity for this resource in Microsoft Entra ID". Save and Discard buttons appear at the top; below the Status row a "Permissions" section explains role assignments for the identity, and the Object (principal) ID field is empty pending enablement. The left navigation shows Identity selected under the Settings group.](../../../assets/platform/security-architecture/01-identity-blade.png)
+[[[ shot("platform--security-architecture--01-identity-blade") ]]]
 
 The `Identity` blade visible here is relevant only if you switch this recipe from the default `REDIS_CONNECTION_STRING` key-based flow to a Microsoft Entra-authenticated Redis connection. In the visible pre-enable state, `System assigned` is selected and `Status` is still `Off`; turning it `On` is the Portal step that creates the app identity before any Redis-side Entra mapping can be granted. For the recipe's default flow, keep using the `REDIS_CONNECTION_STRING` app setting with the `ioredis` `new Redis(process.env.REDIS_CONNECTION_STRING, {...})` configuration shown above.
 

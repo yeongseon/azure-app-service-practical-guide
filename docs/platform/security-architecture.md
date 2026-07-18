@@ -206,7 +206,7 @@ Managed identity replaces embedded credentials with workload-bound tokens issued
 
 ##### Portal view: Identity blade
 
-![Identity blade for a Web App showing tabs "System assigned" (selected) and "User assigned". The System assigned panel displays a Status toggle currently "Off" with description "When enabled, Azure will create an identity for this resource in Microsoft Entra ID". Save and Discard buttons appear at the top; below the Status row a "Permissions" section explains role assignments for the identity, and the Object (principal) ID field is empty pending enablement. The left navigation shows Identity selected under the Settings group.](../assets/platform/security-architecture/01-identity-blade.png)
+[[[ shot("platform--security-architecture--01-identity-blade") ]]]
 
 The Identity blade exposes the two managed identity lifecycles that matter for App Service security design. The `System assigned` tab, `Status` toggle, and empty `Object (principal) ID` field show that enabling this option creates a workload-bound service principal for just this app, while the `User assigned` tab points to reusable identities that can be attached separately. The `Permissions` section ties the concept to runtime access: token issuance is only half of the model, because you still grant RBAC roles to whichever identity type the app will use.
 
