@@ -817,7 +817,7 @@ AppServicePlatformLogs
 | order by TimeGenerated asc
 ```
 
-![Log Analytics workspace log-labdepstart-lsjfe3fcifk5y showing the KQL query editor with the AppServicePlatformLogs Phase categorization query at the top, and a results grid below with 17 of 271 rows visible spanning 3:25:10 PM to 3:25:56 PM UTC. The Phase column cycles through "Pulling image", "Mounting volumes", "Process exited (code 3)", "Startup cancelled by platform", "Startup timeout (230s)", and "Site reverted/stopped" in strict chronological order, demonstrating the full container startup-failure lifecycle over roughly 46 seconds. Query completed in 1s 16ms.](../../assets/troubleshooting/log-analytics/04-depstart-startup-failed-kql.png)
+[[[ shot("troubleshooting--log-analytics--04-depstart-startup-failed-kql") ]]]
 
 Purpose: Show the deterministic lifecycle that platform diagnostics record when a container fails to become healthy: image pull → volume mount → process exit (code 3) → platform cancels startup → startup timeout after 230s → site reverted/stopped. This lifecycle repeats on every restart attempt.
 Look for:
@@ -862,7 +862,7 @@ union deploy, runtime
 
 The `deploy` datatable row is synthesized from the Deployment Center capture in §4.2.4 because `AppServiceHTTPLogs` only captures traffic to the front-door `*.azurewebsites.net` hostname, not to the SCM/Kudu (`*.scm.azurewebsites.net`) endpoint that receives ZIP deploys. This is by design in App Service diagnostic settings.
 
-![Log Analytics workspace log-labdepstart-lsjfe3fcifk5y showing a stacked column chart with time on the x-axis (3:24 PM through 3:52 PM UTC) and event count on the y-axis (0 to 30). A single small orange bar at 3:24 PM labeled "Deploy succeeded (control-plane)" sits alone, followed by a two-minute gap, then a sustained wall of stacked teal/dark-blue/light-blue columns from 3:25 PM through 3:35 PM representing Startup timeout, Platform cancelled startup, and Container exited (code 3) events. A second wave of taller columns appears at 3:50-3:52 PM triggered by external probe traffic. The chart legend at the bottom lists all four event categories with color markers. Total: 36 records, query duration 1s 96ms.](../../assets/troubleshooting/log-analytics/05-depstart-runtime-vs-deploy-timeline.png)
+[[[ shot("troubleshooting--log-analytics--05-depstart-runtime-vs-deploy-timeline") ]]]
 
 Purpose: Visually collapse the entire lab hypothesis into a single chart. The orange bar and the teal/blue bars are literally on the same time axis, in the same query result, in the same LAW workspace — and yet they represent completely disjoint outcomes.
 Look for:

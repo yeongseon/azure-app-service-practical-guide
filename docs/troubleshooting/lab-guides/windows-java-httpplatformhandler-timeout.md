@@ -557,7 +557,7 @@ AppServiceHTTPLogs
 | order by TimeGenerated asc
 ```
 
-![Azure Log Analytics results table showing 5-minute bins with TotalRequests, FE_Reset_64, Handler_Timeout_12002, and Pct_64 columns for the signature-transition query](../../assets/troubleshooting/log-analytics/02-http-500-121-signature.png)
+[[[ shot("troubleshooting--log-analytics--02-http-500-121-signature") ]]]
 
 Purpose: Confirm the signature-transition query returns the expected table shape and non-zero rows during the saturation and mitigation windows.
 Look for: `FE_Reset_64` counts during the saturation window (E1/E2) and `Handler_Timeout_12002` counts during the mitigation window (E3). `Pct_64` should drop toward zero once the `web.config` mitigation is deployed and traffic shifts to the `502.3.12002` signature.

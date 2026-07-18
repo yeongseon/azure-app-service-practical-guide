@@ -323,3 +323,66 @@ screenshots:
   diff_threshold: 0.02
   captured: '2026-07-18'
   verified: '2026-07-18'
+- id: troubleshooting--log-analytics--02-http-500-121-signature
+  file: troubleshooting/log-analytics/troubleshooting--log-analytics--02-http-500-121-signature.webp
+  alt: Azure Log Analytics results table showing 5-minute bins with TotalRequests, FE_Reset_64, Handler_Timeout_12002, and Pct_64 columns for the signature-transition query
+  page: troubleshooting/log-analytics
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'
+- id: troubleshooting--log-analytics--03-httppings-empty-http-window
+  file: troubleshooting/log-analytics/troubleshooting--log-analytics--03-httppings-empty-http-window.webp
+  alt: 'Azure Portal Log Analytics workspace Logs blade with a New Query 1 tab open in KQL mode. The Monaco editor shows a 6-line KQL query beginning with two `//` comment lines explaining "AppServiceHTTPLogs during Azure platform container-startup probe window" and "Container start: 2026-07-02T14:43:04Z, first user request: 2026-07-02T14:44:04Z", followed by an `AppServiceHTTPLogs` query using `where TimeGenerated between (datetime(2026-07-02T14:43:00Z) .. datetime(2026-07-02T14:44:00Z))`, a `project` of TimeGenerated, CsUriStem, ScStatus, TimeTaken, and an `order by TimeGenerated desc` clause. The Run button is above the editor with Time range set to "Set in query" and Show set to "1000 results". Below the editor a Results tab is selected next to a Chart tab, and an information panel reads "No results found from the specified time range" with a "Try selecting another time range" link. The bottom-left corner shows a query duration of "0s 539ms".'
+  page: troubleshooting/log-analytics
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'
+- id: troubleshooting--log-analytics--04-depstart-startup-failed-kql
+  file: troubleshooting/log-analytics/troubleshooting--log-analytics--04-depstart-startup-failed-kql.webp
+  alt: Log Analytics workspace log-labdepstart-lsjfe3fcifk5y showing the KQL query editor with the AppServicePlatformLogs Phase categorization query at the top, and a results grid below with 17 of 271 rows visible spanning 3:25:10 PM to 3:25:56 PM UTC. The Phase column cycles through "Pulling image", "Mounting volumes", "Process exited (code 3)", "Startup cancelled by platform", "Startup timeout (230s)", and "Site reverted/stopped" in strict chronological order, demonstrating the full container startup-failure lifecycle over roughly 46 seconds. Query completed in 1s 16ms.
+  page: troubleshooting/log-analytics
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'
+- id: troubleshooting--log-analytics--05-depstart-runtime-vs-deploy-timeline
+  file: troubleshooting/log-analytics/troubleshooting--log-analytics--05-depstart-runtime-vs-deploy-timeline.webp
+  alt: 'Log Analytics workspace log-labdepstart-lsjfe3fcifk5y showing a stacked column chart with time on the x-axis (3:24 PM through 3:52 PM UTC) and event count on the y-axis (0 to 30). A single small orange bar at 3:24 PM labeled "Deploy succeeded (control-plane)" sits alone, followed by a two-minute gap, then a sustained wall of stacked teal/dark-blue/light-blue columns from 3:25 PM through 3:35 PM representing Startup timeout, Platform cancelled startup, and Container exited (code 3) events. A second wave of taller columns appears at 3:50-3:52 PM triggered by external probe traffic. The chart legend at the bottom lists all four event categories with color markers. Total: 36 records, query duration 1s 96ms.'
+  page: troubleshooting/log-analytics
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'
+- id: troubleshooting--log-analytics--06-fwdreq-bind-line-absent
+  file: troubleshooting/log-analytics/troubleshooting--log-analytics--06-fwdreq-bind-line-absent.webp
+  alt: 'Azure portal Log Analytics workspace log-fwdreq-476vrs7nbusvk Logs blade with a New Query 1 tab open. Query editor shows six lines of KQL: three inline comments explaining the failing window and the hypothesis, then AppServiceConsoleLogs, `| where TimeGenerated > ago(1h)`, and `| summarize BindLinesFound = countif(ResultDescription contains "Listening at")`. Toolbar reads Run, Time range Set in query, Show 1000 results, KQL mode. Results tab is active with a single column named BindLinesFound and a single row expanded showing value 0. Bottom-left footer shows execution time 1s 150ms and Display time (UTC+00:00). Bottom-right footer reads Query details, 1 - 1 of 1.'
+  page: troubleshooting/log-analytics
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'
+- id: troubleshooting--log-analytics--09-5xx-latency-percentiles-kql
+  file: troubleshooting/log-analytics/troubleshooting--log-analytics--09-5xx-latency-percentiles-kql.webp
+  alt: 'Azure portal Log Analytics workspace Logs blade for workspace law-lab5xx-o4evin7tt76tc with breadcrumb "Home > law-lab5xx-o4evin7tt76tc". Blade heading reads "law-lab5xx-o4evin7tt76tc | Logs" and the sub-heading reads "Log Analytics workspace". The left navigation shows Logs highlighted, with sibling entries Overview, Activity log, Access control (IAM), Tags, Diagnose and solve problems, Resource visualizer, Settings, Classic, Monitoring, Automation, and Help. The query editor tab reads "New Query 1*" and the KQL editor shows a five-line query: line 1 `AppServiceHTTPLogs`, line 2 `| where TimeGenerated > ago(1h)`, line 3 `| where CsUriStem in ("/slow", "/fast")`, line 4 `| summarize avgMs=avg(TimeTaken), p95Ms=percentile(TimeTaken, 95), maxMs=max(TimeTaken) by CsUriStem, ScStatus`, line 5 `| order by p95Ms desc`. The query bar has a green Run button, Time range set to "Set in query", Show set to "1000 results", and the mode dropdown is on "KQL mode". The Results tab is active (sibling tab: Chart). The grid has five columns "CsUriStem", "ScStatus", "avgMs", "p95Ms", "maxMs" with 4 rows sorted by p95Ms desc: `/slow` 499 44652.38461538462 44693 44693, `/fast` 499 44548 44548 44548, `/slow` 200 20850.14285714286 33975 33975, `/fast` 200 4997.5 9992 9992. Bottom left shows query duration "1s 37ms" and "Display time (UTC+00:00)". Bottom right shows "Query details" and pagination "1 - 4 of 4".'
+  page: troubleshooting/log-analytics
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'
+- id: troubleshooting--log-analytics--09-5xx-status-by-endpoint-kql
+  file: troubleshooting/log-analytics/troubleshooting--log-analytics--09-5xx-status-by-endpoint-kql.webp
+  alt: 'Azure portal Log Analytics workspace Logs blade for workspace law-lab5xx-o4evin7tt76tc with breadcrumb "Home > law-lab5xx-o4evin7tt76tc". Blade heading reads "law-lab5xx-o4evin7tt76tc | Logs" and the sub-heading reads "Log Analytics workspace". The left navigation shows Logs highlighted, with sibling entries Overview, Activity log, Access control (IAM), Tags, Diagnose and solve problems, Resource visualizer, Settings, Classic, Monitoring, Automation, and Help. The query editor tab reads "New Query 1*" and the KQL editor shows a four-line query: line 1 `AppServiceHTTPLogs`, line 2 `| where TimeGenerated > ago(1h)`, line 3 `| summarize total=count(), s200=countif(ScStatus==200), s499=countif(ScStatus==499) by CsUriStem`, line 4 `| order by total desc`. The query bar has a green Run button, Time range set to "Set in query", Show set to "1000 results", and the mode dropdown is on "KQL mode". The Results tab is active (sibling tab: Chart). The grid has four columns "CsUriStem", "total", "s200", "s499" with 5 rows: `/slow` 20 7 13, `/fast` 3 2 1, `/diag/stats` 2 1 1, `/` 1 1 0, `/health` 1 1 0. Bottom left shows query duration "0s 515ms" and "Display time (UTC+00:00)". Bottom right shows "Query details" and pagination "1 - 5 of 5".'
+  page: troubleshooting/log-analytics
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'
+- id: troubleshooting--log-analytics--10-snat-outbound-status-distribution-kql
+  file: troubleshooting/log-analytics/troubleshooting--log-analytics--10-snat-outbound-status-distribution-kql.webp
+  alt: "Azure portal Log Analytics workspace Logs blade for workspace log-labsnat-6kr7mkxulwioo with breadcrumb \"Home > log-labsnat-6kr7mkxulwioo\". Blade heading reads \"log-labsnat-6kr7mkxulwioo | Logs\" and the sub-heading reads \"Log Analytics workspace\". The left navigation shows Logs highlighted, with sibling entries Overview, Activity log, Access control (IAM), Tags, Diagnose and solve problems, Resource visualizer, Settings, Classic, Monitoring, Automation, and Help. The query editor tab reads \"New Query 1*\" and the KQL editor shows a five-line query: line 1 `AppServiceHTTPLogs`, line 2 `| where TimeGenerated > ago(2h)`, line 3 `| where CsUriStem == '/outbound'`, line 4 `| summarize Count = count() by ScStatus`, line 5 `| order by ScStatus asc`. The query bar has a green Run button, Time range set to \"Set in query\", Show set to \"1000 results\", and the mode dropdown is on \"KQL mode\". The Results tab is active (sibling tab: Chart). The grid has two columns \"ScStatus\", \"Count\" with 3 rows: `200` 12, `499` 152, `502` 4. Bottom left shows query duration \"1s 531ms\" and \"Display time (UTC+00:00)\". Bottom right shows \"Query details\" and pagination \"1 - 3 of 3\"."
+  page: troubleshooting/log-analytics
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'
+- id: troubleshooting--log-analytics--11-dns-vnet-http-status-distribution-kql
+  file: troubleshooting/log-analytics/troubleshooting--log-analytics--11-dns-vnet-http-status-distribution-kql.webp
+  alt: "Azure portal Log Analytics workspace Logs blade for workspace log-labdns-6uaab57jk7zl2 with breadcrumb \"Home > log-labdns-6uaab57jk7zl2\". Blade heading reads \"log-labdns-6uaab57jk7zl2 | Logs\" and the sub-heading reads \"Log Analytics workspace\". The left navigation shows Logs highlighted, with sibling entries Overview, Activity log, Access control (IAM), Tags, Diagnose and solve problems, Resource visualizer, Settings, Classic, Monitoring, Automation, and Help. The query editor tab reads \"New Query 1*\" and the KQL editor shows a five-line query: line 1 `AppServiceHTTPLogs`, line 2 `| where TimeGenerated > ago(2h)`, line 3 `| where CsUriStem in ('/resolve', '/connect')`, line 4 `| summarize Count = count() by CsUriStem, ScStatus`, line 5 `| order by CsUriStem asc, ScStatus asc`. The query bar has a blue Run button, Time range set to \"Set in query\", Show set to \"1000 results\", and the mode dropdown is on \"KQL mode\". The Results tab is active (sibling tab: Chart). The grid has three columns \"CsUriStem\", \"ScStatus\", \"Count\" with 2 rows: `/connect` `200` `6`, and `/resolve` `200` `6`. Bottom left shows query duration \"1s 51ms\" and \"Display time (UTC+00:00)\". Bottom right shows \"Query details\" and pagination \"1 - 2 of 2\"."
+  page: troubleshooting/log-analytics
+  diff_threshold: 0.02
+  captured: '2026-07-18'
+  verified: '2026-07-18'
