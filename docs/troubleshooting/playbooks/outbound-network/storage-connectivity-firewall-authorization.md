@@ -290,7 +290,7 @@ Next step: If the app is *supposed* to reach storage privately, configure VNet i
 
 Step 1 — Read the storage firewall state at a glance from the **Overview** blade:
 
-![Storage account Overview blade Properties tab, with the Networking section showing Public network access set to Disabled and Security showing Storage account key access Disabled](../../../assets/troubleshooting/storage-firewall/01-storage-overview.png)
+[[[ shot("troubleshooting--storage-firewall--01-storage-overview") ]]]
 
 Purpose: Get the storage-side network and key posture in one view before opening the detailed Networking blade, because `Public network access: Disabled` alone explains a total egress block.
 Look for: The **Networking** section (`Public network access`, `Private endpoint connections`) and the **Security** section (`Storage account key access`). The captured account shows `Public network access: Disabled` **and** `Storage account key access: Disabled`.
@@ -299,7 +299,7 @@ Next step: Open the **Networking** blade to confirm exactly why the rules are no
 
 Step 2 — Confirm the firewall detail on the **Networking** blade:
 
-![Storage account Networking blade Public access tab, showing Public network access Disabled and the note that virtual network and IP address settings are not in effect because public network access is disabled](../../../assets/troubleshooting/storage-firewall/02-networking-disabled.png)
+[[[ shot("troubleshooting--storage-firewall--02-networking-disabled") ]]]
 
 Purpose: Disambiguate a firewall block from a data-plane authorization gap (Layer 4), since both surface as `403`.
 Look for: The **Public access** tab — `Public network access`, and the **Resource settings** note about whether virtual network and IP rules are in effect.
@@ -310,7 +310,7 @@ Next step: For this `Disabled` state, use a private endpoint plus matching priva
 
 Step 1 — Open the storage account **Access control (IAM)** blade:
 
-![Storage account Access control (IAM) Check access landing page, with the Role assignments, Roles, and Deny assignments tabs and the Grant/View/Deny access cards](../../../assets/troubleshooting/storage-iam/01-iam-landing.png)
+[[[ shot("troubleshooting--storage-iam--01-iam-landing") ]]]
 
 Purpose: Reach the storage-account IAM surface — the only place that reveals whether the app's managed identity holds a *data-plane* role. This is only meaningful after the network path (Layer 3) is proven open.
 Look for: The **Access control (IAM)** blade with the **Check access / Role assignments / Roles / Deny assignments** tabs.
@@ -318,7 +318,7 @@ Next step: Open the **Role assignments** tab to enumerate the identity's roles a
 
 Step 2 — Enumerate the managed identity's roles on the **Role assignments** tab:
 
-![Storage account Access control IAM Role assignments tab grouped by role, showing the App Service managed identity under the Reader group with the Reader role scoped to This resource and no data-plane storage role](../../../assets/troubleshooting/storage-iam/02-role-assignments.png)
+[[[ shot("troubleshooting--storage-iam--02-role-assignments") ]]]
 
 Purpose: Confirm whether the App Service managed identity holds a *data-plane* storage role (Layer 4).
 Look for: The **Role assignments** tab (grouped by **Role**). Locate the app's managed identity and read its **Role** and **Scope** columns. In the capture, the app identity appears under the **Reader** group with `Reader` at `This resource` scope.

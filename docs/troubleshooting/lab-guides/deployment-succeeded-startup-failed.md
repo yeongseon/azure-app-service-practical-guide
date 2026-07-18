@@ -136,7 +136,7 @@ flowchart TD
 
 #### Portal view: Deployment Center (control-plane deployment status)
 
-![Azure portal Deployment Center blade for app-test-20251107 with tabs Settings (active), Containers (new), Logs, FTPS Credentials; toolbar buttons Save (disabled), Discard (disabled), Refresh, Browse, Sync (disabled), Send us your feedback; info banner reading "You are now in the production slot, which is not recommended for setting up CI/CD. Learn more."; description text "Deploy and build code from your preferred source and build provider. Learn more."; a Source required dropdown reading "Select a code source"; left service navigation showing Overview, Activity log, Access control (IAM), Tags, Diagnose and solve problems, Microsoft Defender for Cloud, Events (preview), Log stream, AI (preview), Resource visualizer, expanded Favorites with Networking and API definition pinned, and an expanded Deployment group with Deployment slots and Deployment Center (selected); collapsed Settings, Performance, App Service plan, Development Tools, API, Monitoring, Automation, and Support + troubleshooting groups below.](../../assets/troubleshooting/deployment-center/01-deployment-center.png)
+[[[ shot("troubleshooting--deployment-center--01-deployment-center") ]]]
 
 The `Deployment Center` blade is the Portal-visible surface of the same Kudu ZIP Deploy / Oryx build pipeline that the diagram above traces from box A to box C. When this lab's `az webapp deploy --type zip` command completes, this blade is where an operator first looks to confirm "the deployment worked" - the `Settings` tab reports the configured source, the `Logs` tab lists each deployment ID with a `Success` status, and the production-slot banner reflects the lab's single-slot setup. The critical insight is that this entire blade is a control-plane view: a green `Success` here only tells you the package was accepted, unpacked, and that the startup command was scheduled - it tells you nothing about whether the worker actually imported `app:app`, bound `PORT`, or passed the warmup probe (boxes D through K in the diagram). Treat this blade as "deployment delivered to the host" evidence only, and pair it with the runtime evidence from sections 3.6 through 3.10 before declaring an incident resolved.
 
@@ -665,7 +665,7 @@ This aligns with upstream 503 and startup failure patterns.
 
 While the runtime is failing, the App Service control plane still reports the deployment as successful. This is the central illusion of "deployment succeeded but startup failed."
 
-![Deployment Center Logs tab showing deployment ID e202129 with Status "Succeeded (Active)", author "N/A", message "OneDeploy", and timestamp 7/3/2026, 12:23:30 AM (2026-07-02T15:23:30Z UTC). The row's green Succeeded badge is the control-plane signal that misleads operators into believing the app is healthy.](../../assets/troubleshooting/deployment-center/02-depstart-successful-deploy.png)
+[[[ shot("troubleshooting--deployment-center--02-depstart-successful-deploy") ]]]
 
 Purpose: Show that Deployment Center — the primary UI operators consult after a `az webapp deploy` — reports **Succeeded (Active)** for the exact deployment that produces a broken runtime.
 Look for: The green "Succeeded" badge on the row with `OneDeploy` message and the timestamp of the deployment that immediately preceded the failure window.
