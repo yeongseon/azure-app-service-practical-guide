@@ -673,7 +673,7 @@ Expected output (fields relevant to the rule):
 
 **Verify the rule from the Portal**:
 
-![Azure Portal Auto-Heal blade showing Custom Auto-Heal Rules Enabled=On with a Recycle Process action targeting HTTP 500.121 win32=64 on /slow/240 with 5 requests in 120 seconds and 60-second startup override](../../assets/troubleshooting/configuration/03-autoheal-m2-rules.png)
+[[[ shot("troubleshooting--configuration--03-autoheal-m2-rules") ]]]
 
 Purpose: Confirm the Auto-Heal rule is active and correctly scoped after the M2 Bicep redeploy.
 Look for: `Custom Auto-Heal Rules Enabled: On`, and the `Current Settings` box reading "Recycle the process when 5 requests matching path '/slow/240' end up with HTTP Status 500.121 and win-32 status 64 in a duration of 120 seconds".
