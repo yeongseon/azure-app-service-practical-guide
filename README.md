@@ -91,26 +91,6 @@ Contributions welcome! Please see our [Contributing Guide](https://yeongseon.git
 | [azure-architecture-practical-guide](https://github.com/yeongseon/azure-architecture-practical-guide) | Azure Architecture practical guide |
 | [azure-monitoring-practical-guide](https://github.com/yeongseon/azure-monitoring-practical-guide) | Azure Monitoring practical guide |
 
-## Migration from Legacy Repos
-
-This repository consolidates experiments previously hosted in individual repositories:
-
-| Legacy Repository | Status | Migrated To |
-|---|---|---|
-| [lab-memory-pressure](https://github.com/yeongseon/lab-memory-pressure) | Archived | [App Service: Memory Pressure](docs/troubleshooting/lab-guides/memory-pressure.md) |
-| [lab-node-memory-pressure](https://github.com/yeongseon/lab-node-memory-pressure) | Archived | [App Service: Memory Pressure](docs/troubleshooting/lab-guides/memory-pressure.md) (Node.js comparison) |
-
-### Why Consolidate?
-
-- **Discoverability**: Single location for all PaaS troubleshooting experiments
-- **Cross-referencing**: Easy comparison across services (App Service vs Functions vs Container Apps)
-- **Consistent methodology**: Shared experiment template and evidence model
-- **Easier maintenance**: Single documentation site, unified CI/CD
-
-### Legacy Repo Policy
-
-Legacy repositories are archived but remain accessible for reference. New experiments should be added to this consolidated repository.
-
 ## Disclaimer
 
 This is an independent community project. Not affiliated with or endorsed by Microsoft. Azure and App Service are trademarks of Microsoft Corporation.
