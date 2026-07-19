@@ -96,6 +96,13 @@ flowchart TD
         --output table
     ```
 
+    | Command | Purpose |
+    |---------|---------|
+    | `az webapp config hostname list --resource-group $RG --webapp-name $APP_NAME --output table` | Lists the hostname bindings currently configured on the web app. |
+    | `--resource-group $RG` | Selects the resource group that contains the target web app or related resource. |
+    | `--webapp-name $APP_NAME` | Specifies the target web app name for the hostname-binding lookup. |
+    | `--output table` | Formats the command output as a readable table for quick triage. |
+
 2. **Inspect certificate inventory**
 
     ```bash
@@ -103,6 +110,12 @@ flowchart TD
         --resource-group $RG \
         --output table
     ```
+
+    | Command | Purpose |
+    |---------|---------|
+    | `az webapp config ssl list --resource-group $RG --output table` | Lists uploaded or imported certificates available to the app in this resource group. |
+    | `--resource-group $RG` | Selects the resource group that contains the target web app or related resource. |
+    | `--output table` | Formats the command output as a readable table for quick triage. |
 
 3. **Inspect SSL bindings on the app**
 
@@ -114,6 +127,14 @@ flowchart TD
         --output table
     ```
 
+    | Command | Purpose |
+    |---------|---------|
+    | `az webapp show --resource-group $RG --name $APP_NAME --query "hostNameSslStates[].{name:name,sslState:sslState,thumbprint:thumbprint}" --output table` | Shows the hostname SSL binding entries so you can verify which thumbprint is attached to each hostname. |
+    | `--resource-group $RG` | Selects the resource group that contains the target web app or related resource. |
+    | `--name $APP_NAME` | Specifies the target web app name for this command. |
+    | `--query "hostNameSslStates[].{name:name,sslState:sslState,thumbprint:thumbprint}"` | Applies this JMESPath filter/projection to the Azure CLI JSON before it is formatted. |
+    | `--output table` | Formats the command output as a readable table for quick triage. |
+
 4. **Confirm HTTPS-only and host state**
 
     ```bash
@@ -123,6 +144,14 @@ flowchart TD
         --query "{httpsOnly:httpsOnly,hostNames:hostNames,state:state}" \
         --output json
     ```
+
+    | Command | Purpose |
+    |---------|---------|
+    | `az webapp show --resource-group $RG --name $APP_NAME --query "{httpsOnly:httpsOnly,hostNames:hostNames,state:state}" --output json` | Shows the HTTPS-only setting, bound hostnames, and app state so you can confirm the TLS entrypoint is configured as expected. |
+    | `--resource-group $RG` | Selects the resource group that contains the target web app or related resource. |
+    | `--name $APP_NAME` | Specifies the target web app name for this command. |
+    | `--query "{httpsOnly:httpsOnly,hostNames:hostNames,state:state}"` | Projects only these named top-level properties into a smaller object before formatting the output. |
+    | `--output json` | Formats the command output as JSON for full-fidelity inspection. |
 
 #### Portal view: Networking blade as entry point for TLS bindings and hostname state
 
@@ -202,6 +231,13 @@ az webapp config hostname list \
     --output json
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp config hostname list --resource-group $RG --webapp-name $APP_NAME --output json` | Lists the hostname bindings currently configured on the web app. |
+| `--resource-group $RG` | Selects the resource group that contains the target web app or related resource. |
+| `--webapp-name $APP_NAME` | Specifies the target web app name for the hostname-binding lookup. |
+| `--output json` | Formats the command output as JSON for full-fidelity inspection. |
+
 Sample output:
 
 ```json
@@ -225,6 +261,13 @@ az webapp config ssl list \
     --query "[].{hostNames:hostNames,expirationDate:expirationDate,thumbprint:thumbprint}" \
     --output table
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az webapp config ssl list --resource-group $RG --query "[].{hostNames:hostNames,expirationDate:expirationDate,thumbprint:thumbprint}" --output table` | Lists uploaded or imported certificates available to the app in this resource group. |
+| `--resource-group $RG` | Selects the resource group that contains the target web app or related resource. |
+| `--query "[].{hostNames:hostNames,expirationDate:expirationDate,thumbprint:thumbprint}"` | Projects each returned array element into the listed fields before formatting the output. |
+| `--output table` | Formats the command output as a readable table for quick triage. |
 
 Sample output:
 

@@ -269,6 +269,36 @@ az webapp deployment slot swap --resource-group <resource-group> --name <app-nam
 az webapp log tail --resource-group <resource-group> --name <app-name> --slot <staging-slot>
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp config appsettings list --resource-group <resource-group> --name <app-name> --slot <staging-slot> --query "[?name=='WEBSITE_SWAP_WARMUP_PING_PATH' \|\| name=='WEBSITE_SWAP_WARMUP_PING_STATUSES' \|\| name=='WEBSITES_CONTAINER_START_TIME_LIMIT' \|\| name=='WEBSITES_PORT'].{name:name,value:value}" --output table` | Lists app settings so you can verify the effective configuration keys involved in this scenario. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `--slot <staging-slot>` | Scopes the read or update to this deployment slot instead of the production slot. |
+| `--query "[?name=='WEBSITE_SWAP_WARMUP_PING_PATH' \|\| name=='WEBSITE_SWAP_WARMUP_PING_STATUSES' \|\| name=='WEBSITES_CONTAINER_START_TIME_LIMIT' \|\| name=='WEBSITES_PORT'].{name:name,value:value}"` | Filters the returned list with JMESPath, then projects only the named fields into a smaller object per item. |
+| `--output table` | Formats the command output as a readable table for quick triage. |
+| `az webapp config appsettings list --resource-group <resource-group> --name <app-name> --slot production --query "[?name=='WEBSITES_PORT' \|\| name=='PORT' \|\| name=='DATABASE_URL' \|\| name=='FEATURE_FLAGS'].{name:name,slot:'production',value:value}" --output table` | Lists app settings so you can verify the effective configuration keys involved in this scenario. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `--slot production` | Targets the production slot explicitly. |
+| `--query "[?name=='WEBSITES_PORT' \|\| name=='PORT' \|\| name=='DATABASE_URL' \|\| name=='FEATURE_FLAGS'].{name:name,slot:'production',value:value}"` | Filters the returned list with JMESPath, then projects only the named fields into a smaller object per item. |
+| `--output table` | Formats the command output as a readable table for quick triage. |
+| `az webapp config appsettings list --resource-group <resource-group> --name <app-name> --slot <staging-slot> --query "[?name=='WEBSITES_PORT' \|\| name=='PORT' \|\| name=='DATABASE_URL' \|\| name=='FEATURE_FLAGS'].{name:name,slot:'<staging-slot>',value:value}" --output table` | Lists app settings so you can verify the effective configuration keys involved in this scenario. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `--slot <staging-slot>` | Scopes the read or update to this deployment slot instead of the production slot. |
+| `--query "[?name=='WEBSITES_PORT' \|\| name=='PORT' \|\| name=='DATABASE_URL' \|\| name=='FEATURE_FLAGS'].{name:name,slot:'<staging-slot>',value:value}"` | Filters the returned list with JMESPath, then projects only the named fields into a smaller object per item. |
+| `--output table` | Formats the command output as a readable table for quick triage. |
+| `az webapp deployment slot swap --resource-group <resource-group> --name <app-name> --slot <staging-slot> --target-slot production` | Starts a slot swap so you can reproduce or validate swap behavior between the source and target slots. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `--slot <staging-slot>` | Identifies the source slot involved in the swap operation. |
+| `--target-slot production` | Identifies the destination slot that receives traffic during the swap. |
+| `az webapp log tail --resource-group <resource-group> --name <app-name> --slot <staging-slot>` | Streams live app and platform log output from the target web app while you reproduce the issue. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `--slot <staging-slot>` | Scopes the read or update to this deployment slot instead of the production slot. |
+
 **Example Output:**
 
 ```text
@@ -337,6 +367,22 @@ az webapp log tail --resource-group <resource-group> --name <app-name> --slot <s
 az webapp config appsettings set --resource-group <resource-group> --name <app-name> --slot <staging-slot> --settings WEBSITES_CONTAINER_START_TIME_LIMIT=600
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp config appsettings list --resource-group <resource-group> --name <app-name> --slot <staging-slot>` | Lists app settings so you can verify the effective configuration keys involved in this scenario. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `--slot <staging-slot>` | Scopes the read or update to this deployment slot instead of the production slot. |
+| `az webapp log tail --resource-group <resource-group> --name <app-name> --slot <staging-slot>` | Streams live app and platform log output from the target web app while you reproduce the issue. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `--slot <staging-slot>` | Scopes the read or update to this deployment slot instead of the production slot. |
+| `az webapp config appsettings set --resource-group <resource-group> --name <app-name> --slot <staging-slot> --settings WEBSITES_CONTAINER_START_TIME_LIMIT=600` | Updates app settings so you can change the startup, warm-up, or health configuration under test. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `--slot <staging-slot>` | Scopes the read or update to this deployment slot instead of the production slot. |
+| `--settings WEBSITES_CONTAINER_START_TIME_LIMIT=600` | Writes the listed app-setting key/value pairs onto the target app or slot. |
+
 ### H2: Warm-up path or accepted statuses are misconfigured
 **Support signals**
 - Warm-up path returns redirects, 401/403, or 404 during startup.
@@ -361,6 +407,23 @@ az webapp config appsettings list --resource-group <resource-group> --name <app-
 az webapp config appsettings set --resource-group <resource-group> --name <app-name> --slot <staging-slot> --settings WEBSITE_SWAP_WARMUP_PING_PATH=/ready WEBSITE_SWAP_WARMUP_PING_STATUSES=200,202
 az webapp deployment slot swap --resource-group <resource-group> --name <app-name> --slot <staging-slot> --target-slot production
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az webapp config appsettings list --resource-group <resource-group> --name <app-name> --slot <staging-slot>` | Lists app settings so you can verify the effective configuration keys involved in this scenario. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `--slot <staging-slot>` | Scopes the read or update to this deployment slot instead of the production slot. |
+| `az webapp config appsettings set --resource-group <resource-group> --name <app-name> --slot <staging-slot> --settings WEBSITE_SWAP_WARMUP_PING_PATH=/ready WEBSITE_SWAP_WARMUP_PING_STATUSES=200,202` | Updates app settings so you can change the startup, warm-up, or health configuration under test. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `--slot <staging-slot>` | Scopes the read or update to this deployment slot instead of the production slot. |
+| `--settings WEBSITE_SWAP_WARMUP_PING_PATH=/ready WEBSITE_SWAP_WARMUP_PING_STATUSES=200,202` | Writes the listed app-setting key/value pairs onto the target app or slot. |
+| `az webapp deployment slot swap --resource-group <resource-group> --name <app-name> --slot <staging-slot> --target-slot production` | Starts a slot swap so you can reproduce or validate swap behavior between the source and target slots. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `--slot <staging-slot>` | Identifies the source slot involved in the swap operation. |
+| `--target-slot production` | Identifies the destination slot that receives traffic during the swap. |
 
 ### H3: Slot-specific configuration drift breaks staging warm-up
 **Support signals**
@@ -387,6 +450,21 @@ az webapp config appsettings list --resource-group <resource-group> --name <app-
 az webapp config connection-string list --resource-group <resource-group> --name <app-name> --slot <staging-slot>
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp config appsettings list --resource-group <resource-group> --name <app-name> --slot production` | Lists app settings so you can verify the effective configuration keys involved in this scenario. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `--slot production` | Targets the production slot explicitly. |
+| `az webapp config appsettings list --resource-group <resource-group> --name <app-name> --slot <staging-slot>` | Lists app settings so you can verify the effective configuration keys involved in this scenario. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `--slot <staging-slot>` | Scopes the read or update to this deployment slot instead of the production slot. |
+| `az webapp config connection-string list --resource-group <resource-group> --name <app-name> --slot <staging-slot>` | Lists connection strings so you can compare effective dependency configuration across slots. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `--slot <staging-slot>` | Scopes the read or update to this deployment slot instead of the production slot. |
+
 ### H4: Health Check behavior conflicts with swap warm-up timing
 **Support signals**
 - Health endpoint performs deep dependency checks and intermittently fails under cold start.
@@ -411,6 +489,22 @@ az webapp config show --resource-group <resource-group> --name <app-name> --slot
 az webapp config set --resource-group <resource-group> --name <app-name> --slot <staging-slot> --generic-configurations "{\"healthCheckPath\":\"/health/light\"}"
 az webapp restart --resource-group <resource-group> --name <app-name> --slot <staging-slot>
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az webapp config show --resource-group <resource-group> --name <app-name> --slot <staging-slot>` | Shows the effective site configuration so you can inspect the runtime or startup-related properties. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `--slot <staging-slot>` | Scopes the read or update to this deployment slot instead of the production slot. |
+| `az webapp config set --resource-group <resource-group> --name <app-name> --slot <staging-slot> --generic-configurations "{\"healthCheckPath\":\"/health/light\"}"` | Updates generic site configuration properties so you can change health-check or runtime behavior. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `--slot <staging-slot>` | Scopes the read or update to this deployment slot instead of the production slot. |
+| `--generic-configurations "{\"healthCheckPath\":\"/health/light\"}"` | Applies the supplied raw site-configuration JSON properties in one update call. |
+| `az webapp restart --resource-group <resource-group> --name <app-name> --slot <staging-slot>` | Restarts the web app so the updated configuration or image is exercised again. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `--slot <staging-slot>` | Scopes the read or update to this deployment slot instead of the production slot. |
 
 ### Normal vs Abnormal Comparison
 

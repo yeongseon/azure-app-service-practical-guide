@@ -270,6 +270,31 @@ az webapp config appsettings set --resource-group <resource-group> --name <app-n
 az webapp deployment slot swap --resource-group <resource-group> --name <app-name> --slot <staging-slot> --target-slot production
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp config appsettings list --resource-group <resource-group> --name <app-name> --slot <staging-slot> --query "[?name=='WEBSITE_WARMUP_PATH' \|\| name=='WEBSITE_WARMUP_STATUSES' \|\| name=='WEBSITE_SWAP_WARMUP_PING_PATH' \|\| name=='WEBSITE_SWAP_WARMUP_PING_STATUSES' \|\| name=='WEBSITES_CONTAINER_START_TIME_LIMIT'].{name:name,value:value}" --output table` | Lists app settings so you can verify the effective configuration keys involved in this scenario. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `--slot <staging-slot>` | Scopes the read or update to this deployment slot instead of the production slot. |
+| `--query "[?name=='WEBSITE_WARMUP_PATH' \|\| name=='WEBSITE_WARMUP_STATUSES' \|\| name=='WEBSITE_SWAP_WARMUP_PING_PATH' \|\| name=='WEBSITE_SWAP_WARMUP_PING_STATUSES' \|\| name=='WEBSITES_CONTAINER_START_TIME_LIMIT'].{name:name,value:value}"` | Filters the returned list with JMESPath, then projects only the named fields into a smaller object per item. |
+| `--output table` | Formats the command output as a readable table for quick triage. |
+| `az webapp config show --resource-group <resource-group> --name <app-name> --slot <staging-slot> --query "{healthCheckPath:healthCheckPath,linuxFxVersion:linuxFxVersion,appCommandLine:appCommandLine}" --output table` | Shows the effective site configuration so you can inspect the runtime or startup-related properties. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `--slot <staging-slot>` | Scopes the read or update to this deployment slot instead of the production slot. |
+| `--query "{healthCheckPath:healthCheckPath,linuxFxVersion:linuxFxVersion,appCommandLine:appCommandLine}"` | Projects only these named top-level properties into a smaller object before formatting the output. |
+| `--output table` | Formats the command output as a readable table for quick triage. |
+| `az webapp config appsettings set --resource-group <resource-group> --name <app-name> --slot <staging-slot> --settings WEBSITE_SWAP_WARMUP_PING_PATH=/ready WEBSITE_SWAP_WARMUP_PING_STATUSES=200,202` | Updates app settings so you can change the startup, warm-up, or health configuration under test. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `--slot <staging-slot>` | Scopes the read or update to this deployment slot instead of the production slot. |
+| `--settings WEBSITE_SWAP_WARMUP_PING_PATH=/ready WEBSITE_SWAP_WARMUP_PING_STATUSES=200,202` | Writes the listed app-setting key/value pairs onto the target app or slot. |
+| `az webapp deployment slot swap --resource-group <resource-group> --name <app-name> --slot <staging-slot> --target-slot production` | Starts a slot swap so you can reproduce or validate swap behavior between the source and target slots. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `--slot <staging-slot>` | Identifies the source slot involved in the swap operation. |
+| `--target-slot production` | Identifies the destination slot that receives traffic during the swap. |
+
 **Example Output:**
 
 ```text
@@ -321,6 +346,19 @@ az webapp log tail --resource-group <resource-group> --name <app-name>
 az webapp config appsettings set --resource-group <resource-group> --name <app-name> --settings WEBSITES_CONTAINER_START_TIME_LIMIT=600
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp config appsettings list --resource-group <resource-group> --name <app-name>` | Lists app settings so you can verify the effective configuration keys involved in this scenario. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `az webapp log tail --resource-group <resource-group> --name <app-name>` | Streams live app and platform log output from the target web app while you reproduce the issue. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `az webapp config appsettings set --resource-group <resource-group> --name <app-name> --settings WEBSITES_CONTAINER_START_TIME_LIMIT=600` | Updates app settings so you can change the startup, warm-up, or health configuration under test. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `--settings WEBSITES_CONTAINER_START_TIME_LIMIT=600` | Writes the listed app-setting key/value pairs onto the target app or slot. |
+
 ### H2: Health Check endpoint is heavy
 **Support signals**
 - Startup succeeds but running instances later fail health checks.
@@ -345,6 +383,19 @@ az monitor log-analytics query --workspace <workspace-id> --analytics-query "App
 az webapp config set --resource-group <resource-group> --name <app-name> --generic-configurations "{\"healthCheckPath\":\"/health/light\"}"
 az webapp restart --resource-group <resource-group> --name <app-name>
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az monitor log-analytics query --workspace <workspace-id> --analytics-query "AppServiceHTTPLogs \| where CsUriStem == '/health' \| summarize count() by ScStatus"` | Runs the supplied KQL directly against the Log Analytics workspace for a quick evidence check. |
+| `--workspace <workspace-id>` | Specifies the Log Analytics workspace ID that Azure Monitor queries. |
+| `--analytics-query "AppServiceHTTPLogs \| where CsUriStem == '/health' \| summarize count() by ScStatus"` | Supplies the KQL statement that Azure Monitor should execute against the workspace. |
+| `az webapp config set --resource-group <resource-group> --name <app-name> --generic-configurations "{\"healthCheckPath\":\"/health/light\"}"` | Updates generic site configuration properties so you can change health-check or runtime behavior. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `--generic-configurations "{\"healthCheckPath\":\"/health/light\"}"` | Applies the supplied raw site-configuration JSON properties in one update call. |
+| `az webapp restart --resource-group <resource-group> --name <app-name>` | Restarts the web app so the updated configuration or image is exercised again. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
 
 ### H3: Path mismatch between warm-up behavior and Health Check
 **Support signals**
@@ -371,6 +422,19 @@ az webapp config set --resource-group <resource-group> --name <app-name> --gener
 az webapp restart --resource-group <resource-group> --name <app-name>
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp show --resource-group <resource-group> --name <app-name>` | Shows the web app resource so you can inspect the current site configuration before changing probe settings. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `az webapp config set --resource-group <resource-group> --name <app-name> --generic-configurations "{\"healthCheckPath\":\"/health\"}"` | Updates generic site configuration properties so you can change health-check or runtime behavior. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `--generic-configurations "{\"healthCheckPath\":\"/health\"}"` | Applies the supplied raw site-configuration JSON properties in one update call. |
+| `az webapp restart --resource-group <resource-group> --name <app-name>` | Restarts the web app so the updated configuration or image is exercised again. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+
 ### H4: Port or bind mismatch during startup
 **Support signals**
 - Console shows bind to `127.0.0.1` or non-expected port.
@@ -395,6 +459,19 @@ az webapp config appsettings list --resource-group <resource-group> --name <app-
 az webapp config appsettings set --resource-group <resource-group> --name <app-name> --settings WEBSITES_PORT=8000 PORT=8000
 az webapp restart --resource-group <resource-group> --name <app-name>
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az webapp config appsettings list --resource-group <resource-group> --name <app-name>` | Lists app settings so you can verify the effective configuration keys involved in this scenario. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `az webapp config appsettings set --resource-group <resource-group> --name <app-name> --settings WEBSITES_PORT=8000 PORT=8000` | Updates app settings so you can change the startup, warm-up, or health configuration under test. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `--settings WEBSITES_PORT=8000 PORT=8000` | Writes the listed app-setting key/value pairs onto the target app or slot. |
+| `az webapp restart --resource-group <resource-group> --name <app-name>` | Restarts the web app so the updated configuration or image is exercised again. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
 
 ### Normal vs Abnormal Comparison
 

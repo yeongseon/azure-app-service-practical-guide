@@ -107,6 +107,24 @@ az webapp config container show --resource-group <resource-group> --name <app-na
 az webapp config appsettings list --resource-group <resource-group> --name <app-name> --query "[?name=='WEBSITES_CONTAINER_START_TIME_LIMIT' || name=='WEBSITES_PORT' || name=='WEBSITE_HEALTHCHECK_PATH' || name=='WEBSITE_HEALTHCHECK_MAXPINGFAILURES'].{name:name,value:value}" --output table
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp show --resource-group <resource-group> --name <app-name> --query "{name:name,state:state,kind:kind}" --output table` | Shows the app name, state, and kind so you can confirm you are inspecting the expected Windows container app. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `--query "{name:name,state:state,kind:kind}"` | Projects only these named top-level properties into a smaller object before formatting the output. |
+| `--output table` | Formats the command output as a readable table for quick triage. |
+| `az webapp config container show --resource-group <resource-group> --name <app-name> --query "{windowsFxVersion:windowsFxVersion,linuxFxVersion:linuxFxVersion}" --output table` | Shows the current container image and registry configuration for the web app. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `--query "{windowsFxVersion:windowsFxVersion,linuxFxVersion:linuxFxVersion}"` | Projects only these named top-level properties into a smaller object before formatting the output. |
+| `--output table` | Formats the command output as a readable table for quick triage. |
+| `az webapp config appsettings list --resource-group <resource-group> --name <app-name> --query "[?name=='WEBSITES_CONTAINER_START_TIME_LIMIT' \|\| name=='WEBSITES_PORT' \|\| name=='WEBSITE_HEALTHCHECK_PATH' \|\| name=='WEBSITE_HEALTHCHECK_MAXPINGFAILURES'].{name:name,value:value}" --output table` | Lists app settings so you can verify the effective configuration keys involved in this scenario. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `--query "[?name=='WEBSITES_CONTAINER_START_TIME_LIMIT' \|\| name=='WEBSITES_PORT' \|\| name=='WEBSITE_HEALTHCHECK_PATH' \|\| name=='WEBSITE_HEALTHCHECK_MAXPINGFAILURES'].{name:name,value:value}"` | Filters the returned list with JMESPath, then projects only the named fields into a smaller object per item. |
+| `--output table` | Formats the command output as a readable table for quick triage. |
+
 ### Fast triage checklist
 - Confirm `windowsFxVersion` is populated and `linuxFxVersion` is null/empty.
 - Confirm `WEBSITES_CONTAINER_START_TIME_LIMIT` is explicitly set for large Windows images.
@@ -249,6 +267,29 @@ az webapp config appsettings set --resource-group <resource-group> --name <app-n
 # Restart after setting change
 az webapp restart --resource-group <resource-group> --name <app-name>
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az webapp config appsettings list --resource-group <resource-group> --name <app-name> --query "[?name=='WEBSITES_CONTAINER_START_TIME_LIMIT' \|\| name=='WEBSITES_PORT' \|\| name=='WEBSITE_HEALTHCHECK_PATH' \|\| name=='WEBSITE_HEALTHCHECK_MAXPINGFAILURES'].{name:name,value:value}" --output table` | Lists app settings so you can verify the effective configuration keys involved in this scenario. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `--query "[?name=='WEBSITES_CONTAINER_START_TIME_LIMIT' \|\| name=='WEBSITES_PORT' \|\| name=='WEBSITE_HEALTHCHECK_PATH' \|\| name=='WEBSITE_HEALTHCHECK_MAXPINGFAILURES'].{name:name,value:value}"` | Filters the returned list with JMESPath, then projects only the named fields into a smaller object per item. |
+| `--output table` | Formats the command output as a readable table for quick triage. |
+| `az webapp config show --resource-group <resource-group> --name <app-name> --query "{healthCheckPath:healthCheckPath,windowsFxVersion:windowsFxVersion,alwaysOn:alwaysOn}" --output table` | Shows the effective site configuration so you can inspect the runtime or startup-related properties. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `--query "{healthCheckPath:healthCheckPath,windowsFxVersion:windowsFxVersion,alwaysOn:alwaysOn}"` | Projects only these named top-level properties into a smaller object before formatting the output. |
+| `--output table` | Formats the command output as a readable table for quick triage. |
+| `az webapp log tail --resource-group <resource-group> --name <app-name>` | Streams live app and platform log output from the target web app while you reproduce the issue. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `az webapp config appsettings set --resource-group <resource-group> --name <app-name> --settings WEBSITES_CONTAINER_START_TIME_LIMIT=900` | Updates app settings so you can change the startup, warm-up, or health configuration under test. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `--settings WEBSITES_CONTAINER_START_TIME_LIMIT=900` | Writes the listed app-setting key/value pairs onto the target app or slot. |
+| `az webapp restart --resource-group <resource-group> --name <app-name>` | Restarts the web app so the updated configuration or image is exercised again. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
 
 **Example Output:**
 

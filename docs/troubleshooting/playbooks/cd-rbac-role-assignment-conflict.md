@@ -137,6 +137,18 @@ az role assignment show \
     --output json
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `SUBSCRIPTION_ID="<subscription-id>"` | Sets a local shell variable used by the commands in this troubleshooting step. |
+| `ROLE_ASSIGNMENT_ID="<role-assignment-id>"` | Sets a local shell variable used by the commands in this troubleshooting step. |
+| `az role assignment list --subscription "$SUBSCRIPTION_ID" --query "[?name=='$ROLE_ASSIGNMENT_ID']" --output json` | Lists role assignments so you can inspect the existing RBAC entries involved in the incident. |
+| `--subscription "$SUBSCRIPTION_ID"` | Scopes the RBAC lookup to the specified Azure subscription. |
+| `--query "[?name=='$ROLE_ASSIGNMENT_ID']"` | Filters the returned list with this JMESPath expression before Azure CLI formats the output. |
+| `--output json` | Formats the command output as JSON for full-fidelity inspection. |
+| `az role assignment show --ids "/subscriptions/$SUBSCRIPTION_ID/providers/Microsoft.Authorization/roleAssignments/$ROLE_ASSIGNMENT_ID" --output json` | Shows one specific role assignment so you can inspect its principal, role, and scope. |
+| `--ids "/subscriptions/$SUBSCRIPTION_ID/providers/Microsoft.Authorization/roleAssignments/$ROLE_ASSIGNMENT_ID"` | Targets the exact ARM resource ID of the object to show or delete. |
+| `--output json` | Formats the command output as JSON for full-fidelity inspection. |
+
 The output reveals the principal ID, role definition (`AcrPull`), and scope (the registry) of the conflicting assignment, which is enough to confirm hypothesis H1 or H2.
 
 ### Cross-check related leftovers
@@ -155,6 +167,34 @@ az webapp config show --name "$APP_NAME" --resource-group "$RG" \
     --query "{linuxFxVersion:linuxFxVersion, acrUseManagedIdentityCreds:acrUseManagedIdentityCreds, acrUserManagedIdentityID:acrUserManagedIdentityID}" \
     --output table
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `RG="<your-resource-group>"` | Sets a local shell variable used by the commands in this troubleshooting step. |
+| `APP_NAME="<your-web-app-name>"` | Sets a local shell variable used by the commands in this troubleshooting step. |
+| `ACR_NAME="<your-acr-name>"` | Sets a local shell variable used by the commands in this troubleshooting step. |
+| `ACR_ID=$(az acr show --name "$ACR_NAME" --resource-group "$RG" --query id --output tsv)` | Captures the command output into a local shell variable for reuse in later commands. |
+| `--name "$ACR_NAME"` | Specifies the Azure Container Registry name to inspect. |
+| `--resource-group "$RG"` | Selects the resource group that contains the target web app or related resource. |
+| `--query id` | Returns only the resource `id` field from the command output. |
+| `--output tsv` | Formats the command output as tab-separated text so it can be captured cleanly into a shell variable. |
+| `APP_PRINCIPAL_ID=$(az webapp identity show --name "$APP_NAME" --resource-group "$RG" --query principalId --output tsv)` | Captures the command output into a local shell variable for reuse in later commands. |
+| `--name "$APP_NAME"` | Specifies the target web app name for this command. |
+| `--resource-group "$RG"` | Selects the resource group that contains the target web app or related resource. |
+| `--query principalId` | Returns only the managed identity `principalId` value from the command output. |
+| `--output tsv` | Formats the command output as tab-separated text so it can be captured cleanly into a shell variable. |
+| `az role assignment list --scope "$ACR_ID" --output table` | Lists role assignments so you can inspect the existing RBAC entries involved in the incident. |
+| `--scope "$ACR_ID"` | Limits the role-assignment lookup to this Azure resource scope. |
+| `--output table` | Formats the command output as a readable table for quick triage. |
+| `az role assignment list --assignee "$APP_PRINCIPAL_ID" --all --output table` | Lists role assignments for the specified principal so you can see what access that identity already has. |
+| `--assignee "$APP_PRINCIPAL_ID"` | Limits the role-assignment lookup to the specified principal or object ID. |
+| `--all` | Includes all visible assignments for the specified principal instead of a narrower default result set. |
+| `--output table` | Formats the command output as a readable table for quick triage. |
+| `az webapp config show --name "$APP_NAME" --resource-group "$RG" --query "{linuxFxVersion:linuxFxVersion, acrUseManagedIdentityCreds:acrUseManagedIdentityCreds, acrUserManagedIdentityID:acrUserManagedIdentityID}" --output table` | Shows the effective site configuration so you can inspect the runtime or startup-related properties. |
+| `--name "$APP_NAME"` | Specifies the target web app name for this command. |
+| `--resource-group "$RG"` | Selects the resource group that contains the target web app or related resource. |
+| `--query "{linuxFxVersion:linuxFxVersion, acrUseManagedIdentityCreds:acrUseManagedIdentityCreds, acrUserManagedIdentityID:acrUserManagedIdentityID}"` | Projects only these named top-level properties into a smaller object before formatting the output. |
+| `--output table` | Formats the command output as a readable table for quick triage. |
 
 The `acrUseManagedIdentityCreds: true` setting confirms the Web App expects to authenticate to ACR via its own MI. If `acrUserManagedIdentityID` is set, a user-assigned MI is in use instead — adjust the principal lookup accordingly (`az identity show`).
 
@@ -209,6 +249,18 @@ az role assignment show \
 az webapp identity show --name "$APP_NAME" --resource-group "$RG" --query principalId --output tsv
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az role assignment show --ids "/subscriptions/$SUBSCRIPTION_ID/providers/Microsoft.Authorization/roleAssignments/$ROLE_ASSIGNMENT_ID" --query "{principal:principalId, role:roleDefinitionName, scope:scope, created:createdOn}" --output json` | Shows one specific role assignment so you can inspect its principal, role, and scope. |
+| `--ids "/subscriptions/$SUBSCRIPTION_ID/providers/Microsoft.Authorization/roleAssignments/$ROLE_ASSIGNMENT_ID"` | Targets the exact ARM resource ID of the object to show or delete. |
+| `--query "{principal:principalId, role:roleDefinitionName, scope:scope, created:createdOn}"` | Projects only these named top-level properties into a smaller object before formatting the output. |
+| `--output json` | Formats the command output as JSON for full-fidelity inspection. |
+| `az webapp identity show --name "$APP_NAME" --resource-group "$RG" --query principalId --output tsv` | Shows the web app managed identity so you can verify which principal App Service is using. |
+| `--name "$APP_NAME"` | Specifies the target web app name for this command. |
+| `--resource-group "$RG"` | Selects the resource group that contains the target web app or related resource. |
+| `--query principalId` | Returns only the managed identity `principalId` value from the command output. |
+| `--output tsv` | Formats the command output as tab-separated text so it can be captured cleanly into a shell variable. |
+
 If both `principalId` values match and `roleDefinitionName` is `AcrPull` scoped to the ACR, H1 is confirmed.
 
 ### H2: AcrPull was previously granted by IaC and Deployment Center is now trying to re-grant it
@@ -247,6 +299,16 @@ PRINCIPAL_ID=$(az role assignment show \
 az ad sp show --id "$PRINCIPAL_ID" --output json 2>&1 || echo "principal does not exist"
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `PRINCIPAL_ID=$(az role assignment show --ids "/subscriptions/$SUBSCRIPTION_ID/providers/Microsoft.Authorization/roleAssignments/$ROLE_ASSIGNMENT_ID" --query principalId --output tsv)` | Captures the command output into a local shell variable for reuse in later commands. |
+| `--ids "/subscriptions/$SUBSCRIPTION_ID/providers/Microsoft.Authorization/roleAssignments/$ROLE_ASSIGNMENT_ID"` | Targets the exact ARM resource ID of the object to show or delete. |
+| `--query principalId` | Returns only the role assignment `principalId` value from the command output. |
+| `--output tsv` | Formats the command output as tab-separated text so it can be captured cleanly into a shell variable. |
+| `az ad sp show --id "$PRINCIPAL_ID" --output json 2>&1 \|\| echo "principal does not exist"` | Looks up the service principal so you can see whether the referenced principal still exists. |
+| `--id "$PRINCIPAL_ID"` | Specifies the service principal identifier to look up. |
+| `--output json` | Formats the command output as JSON for full-fidelity inspection. |
+
 ### H4: AcrPull was granted manually for testing
 
 **Signals that support:**
@@ -266,6 +328,13 @@ az role assignment show \
     --output tsv
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az role assignment show --ids "/subscriptions/$SUBSCRIPTION_ID/providers/Microsoft.Authorization/roleAssignments/$ROLE_ASSIGNMENT_ID" --query "principalType" --output tsv` | Shows one specific role assignment so you can inspect its principal, role, and scope. |
+| `--ids "/subscriptions/$SUBSCRIPTION_ID/providers/Microsoft.Authorization/roleAssignments/$ROLE_ASSIGNMENT_ID"` | Targets the exact ARM resource ID of the object to show or delete. |
+| `--query "principalType"` | Returns only the role assignment `principalType` value. |
+| `--output tsv` | Formats the command output as tab-separated text so it can be captured cleanly into a shell variable. |
+
 ### H5: Same registry shared by multiple Web Apps, all granted at once via a script
 
 **Signals that support:**
@@ -284,6 +353,13 @@ az role assignment list --scope "$ACR_ID" \
     --query "[?roleDefinitionName=='AcrPull'].{principalId:principalId, principalName:principalName, createdOn:createdOn}" \
     --output table
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az role assignment list --scope "$ACR_ID" --query "[?roleDefinitionName=='AcrPull'].{principalId:principalId, principalName:principalName, createdOn:createdOn}" --output table` | Lists role assignments at the target scope so you can confirm whether AcrPull already exists there. |
+| `--scope "$ACR_ID"` | Limits the role-assignment lookup to this Azure resource scope. |
+| `--query "[?roleDefinitionName=='AcrPull'].{principalId:principalId, principalName:principalName, createdOn:createdOn}"` | Filters the returned list with JMESPath, then projects only the named fields into a smaller object per item. |
+| `--output table` | Formats the command output as a readable table for quick triage. |
 
 ## 7. Likely Root Cause Patterns
 
@@ -307,11 +383,27 @@ az role assignment list --scope "$ACR_ID" \
         --output json
     ```
 
+    | Command | Purpose |
+    |---------|---------|
+    | `SUBSCRIPTION_ID="<subscription-id>"` | Sets a local shell variable used by the commands in this troubleshooting step. |
+    | `ROLE_ASSIGNMENT_ID="<role-assignment-id>"` | Sets a local shell variable used by the commands in this troubleshooting step. |
+    | `az role assignment show --ids "/subscriptions/$SUBSCRIPTION_ID/providers/Microsoft.Authorization/roleAssignments/$ROLE_ASSIGNMENT_ID" --output json` | Shows one specific role assignment so you can inspect its principal, role, and scope. |
+    | `--ids "/subscriptions/$SUBSCRIPTION_ID/providers/Microsoft.Authorization/roleAssignments/$ROLE_ASSIGNMENT_ID"` | Targets the exact ARM resource ID of the object to show or delete. |
+    | `--output json` | Formats the command output as JSON for full-fidelity inspection. |
+
 2. Confirm the conflicting principal is the current Web App's managed identity.
 
     ```bash
     az webapp identity show --name "$APP_NAME" --resource-group "$RG" --query principalId --output tsv
     ```
+
+    | Command | Purpose |
+    |---------|---------|
+    | `az webapp identity show --name "$APP_NAME" --resource-group "$RG" --query principalId --output tsv` | Shows the web app managed identity so you can verify which principal App Service is using. |
+    | `--name "$APP_NAME"` | Specifies the target web app name for this command. |
+    | `--resource-group "$RG"` | Selects the resource group that contains the target web app or related resource. |
+    | `--query principalId` | Returns only the managed identity `principalId` value from the command output. |
+    | `--output tsv` | Formats the command output as tab-separated text so it can be captured cleanly into a shell variable. |
 
 3. Delete the conflicting role assignment.
 
@@ -321,6 +413,16 @@ az role assignment list --scope "$ACR_ID" \
         --ids "${ACR_ID}/providers/Microsoft.Authorization/roleAssignments/$ROLE_ASSIGNMENT_ID"
     ```
 
+    | Command | Purpose |
+    |---------|---------|
+    | `ACR_ID=$(az acr show --name "$ACR_NAME" --resource-group "$RG" --query id --output tsv)` | Captures the command output into a local shell variable for reuse in later commands. |
+| `--name "$ACR_NAME"` | Specifies the Azure Container Registry name to inspect. |
+    | `--resource-group "$RG"` | Selects the resource group that contains the target web app or related resource. |
+    | `--query id` | Returns only the resource `id` field from the command output. |
+| `--output tsv` | Formats the command output as tab-separated text so it can be captured cleanly into a shell variable. |
+    | `az role assignment delete --ids "${ACR_ID}/providers/Microsoft.Authorization/roleAssignments/$ROLE_ASSIGNMENT_ID"` | Deletes the specified role assignment so the conflicting or stale RBAC entry is removed. |
+    | `--ids "${ACR_ID}/providers/Microsoft.Authorization/roleAssignments/$ROLE_ASSIGNMENT_ID"` | Targets the exact ARM resource ID of the object to show or delete. |
+
 4. List remaining AcrPull assignments on the ACR scope and remove any other CD-related orphans for this Web App.
 
     ```bash
@@ -328,6 +430,13 @@ az role assignment list --scope "$ACR_ID" \
         --query "[?roleDefinitionName=='AcrPull']" \
         --output table
     ```
+
+    | Command | Purpose |
+    |---------|---------|
+    | `az role assignment list --scope "$ACR_ID" --query "[?roleDefinitionName=='AcrPull']" --output table` | Lists role assignments at the target scope so you can confirm whether AcrPull already exists there. |
+    | `--scope "$ACR_ID"` | Limits the role-assignment lookup to this Azure resource scope. |
+    | `--query "[?roleDefinitionName=='AcrPull']"` | Filters the returned list with this JMESPath expression before Azure CLI formats the output. |
+    | `--output table` | Formats the command output as a readable table for quick triage. |
 
 5. Wait 15-30 seconds for RBAC propagation, then retry the Deployment Center connect (Portal) or re-run the failing ARM deployment.
 
@@ -340,6 +449,15 @@ az role assignment list --scope "$ACR_ID" \
         --parameters webAppName="$APP_NAME" registryName="$ACR_NAME"
     ```
 
+    | Command | Purpose |
+    |---------|---------|
+    | `sleep 30` | Pauses locally so Azure control-plane or RBAC changes have time to propagate before the next check. |
+    | `az deployment group create --resource-group "$RG" --name "cd-reconnect-retry" --template-file "<your-cd-template>.bicep" --parameters webAppName="$APP_NAME" registryName="$ACR_NAME"` | Runs a resource-group deployment so you can retry the ARM/Bicep flow that previously failed. |
+    | `--resource-group "$RG"` | Selects the resource group that contains the target web app or related resource. |
+    | `--name "cd-reconnect-retry"` | Names this resource-group deployment operation. |
+    | `--template-file "<your-cd-template>.bicep"` | Points Azure CLI to the local ARM/Bicep template file to deploy. |
+    | `--parameters webAppName="$APP_NAME" registryName="$ACR_NAME"` | Passes the named parameter values into the template deployment. |
+
 6. Verify the new assignment exists and the Web App can pull the image.
 
     ```bash
@@ -349,6 +467,16 @@ az role assignment list --scope "$ACR_ID" \
 
     az webapp log tail --name "$APP_NAME" --resource-group "$RG"
     ```
+
+    | Command | Purpose |
+    |---------|---------|
+    | `az role assignment list --assignee "$(az webapp identity show --name "$APP_NAME" --resource-group "$RG" --query principalId --output tsv)" --scope "$ACR_ID" --output table` | Lists role assignments for the specified principal so you can see what access that identity already has. |
+    | `--assignee "$(az webapp identity show --name "$APP_NAME" --resource-group "$RG" --query principalId --output tsv)"` | Limits the role-assignment lookup to the specified principal or object ID. |
+    | `--scope "$ACR_ID"` | Limits the role-assignment lookup to this Azure resource scope. |
+    | `--output table` | Formats the command output as a readable table for quick triage. |
+    | `az webapp log tail --name "$APP_NAME" --resource-group "$RG"` | Streams live app and platform log output from the target web app while you reproduce the issue. |
+    | `--name "$APP_NAME"` | Specifies the target web app name for this command. |
+    | `--resource-group "$RG"` | Selects the resource group that contains the target web app or related resource. |
 
 ## 9. Prevention
 

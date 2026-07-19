@@ -153,6 +153,26 @@ az webapp log config --resource-group <resource-group> --name <app-name> --web-s
 az webapp log tail --resource-group <resource-group> --name <app-name>
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp show --resource-group <resource-group> --name <app-name> --output json` | Shows the full web app resource so you can review the current site metadata before using Kudu tools. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `--output json` | Formats the command output as JSON for full-fidelity inspection. |
+| `az webapp config show --resource-group <resource-group> --name <app-name> --output json` | Shows the effective site configuration so you can inspect the runtime or startup-related properties. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `--output json` | Formats the command output as JSON for full-fidelity inspection. |
+| `az webapp log config --resource-group <resource-group> --name <app-name> --web-server-logging filesystem --detailed-error-messages true --failed-request-tracing true` | Enables or adjusts filesystem logging and tracing so you can capture more startup evidence. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `--web-server-logging filesystem` | Configures where web server logs are written. |
+| `--detailed-error-messages true` | Turns detailed App Service/IIS error pages on or off for troubleshooting. |
+| `--failed-request-tracing true` | Turns failed-request tracing on so App Service records more detail for failed HTTP requests. |
+| `az webapp log tail --resource-group <resource-group> --name <app-name>` | Streams live app and platform log output from the target web app while you reproduce the issue. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+
 #### Portal view: Overview blade confirming Windows runtime
 
 [[[ shot("troubleshooting--kudu--01-overview") ]]]
@@ -351,6 +371,24 @@ az webapp log tail --resource-group <resource-group> --name <app-name>
 # Enable detailed log settings for temporary diagnostics window
 az webapp log config --resource-group <resource-group> --name <app-name> --application-logging filesystem --detailed-error-messages true --failed-request-tracing true --level information
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az webapp show --resource-group <resource-group> --name <app-name> --query "{kind:kind,reserved:reserved,defaultHostName:defaultHostName}" --output json` | Shows the app kind, reserved flag, and default hostname so you can confirm runtime and hosting context before reproducing the issue. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `--query "{kind:kind,reserved:reserved,defaultHostName:defaultHostName}"` | Projects only these named top-level properties into a smaller object before formatting the output. |
+| `--output json` | Formats the command output as JSON for full-fidelity inspection. |
+| `az webapp log tail --resource-group <resource-group> --name <app-name>` | Streams live app and platform log output from the target web app while you reproduce the issue. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `az webapp log config --resource-group <resource-group> --name <app-name> --application-logging filesystem --detailed-error-messages true --failed-request-tracing true --level information` | Enables or adjusts filesystem logging and tracing so you can capture more startup evidence. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `--application-logging filesystem` | Configures where application logs are written. |
+| `--detailed-error-messages true` | Turns detailed App Service/IIS error pages on or off for troubleshooting. |
+| `--failed-request-tracing true` | Turns failed-request tracing on so App Service records more detail for failed HTTP requests. |
+| `--level information` | Sets the application log verbosity for the temporary diagnostics window. |
 
 ## 6. Validation and Disproof by Hypothesis (tool selection matrix)
 
