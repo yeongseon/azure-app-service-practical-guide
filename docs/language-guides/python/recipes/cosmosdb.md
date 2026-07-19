@@ -44,6 +44,12 @@ az webapp config appsettings set \
     COSMOS_CONTAINER="items"
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group "$RG"` | Targets the resource group that contains the web app. |
+| `--name "$APP_NAME"` | Selects the web app that should receive the Cosmos DB settings. |
+| `--settings COSMOS_ENDPOINT="https://$COSMOS_ACCOUNT.documents.azure.com:443/" COSMOS_DATABASE="appdb" COSMOS_CONTAINER="items"` | Writes the Cosmos account endpoint, database name, and container name into App Service app settings. |
+
 ### Step 2: Use `DefaultAzureCredential` in Flask
 
 ```python

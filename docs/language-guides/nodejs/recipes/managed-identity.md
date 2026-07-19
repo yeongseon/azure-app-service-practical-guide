@@ -72,6 +72,12 @@ az webapp identity assign \
   --output json
 ```
 
+| Flag | Description |
+|---|---|
+| `--name $APP_NAME` | Enables a system-assigned managed identity on the specified web app. |
+| `--resource-group $RG` | Identifies the resource group that contains the web app. |
+| `--output json` | Returns the created identity details, including `principalId`, as JSON. |
+
 ### CLI Output Example
 
 ```json
@@ -99,6 +105,12 @@ az role assignment create \
   --scope /subscriptions/<sub-id>/resourceGroups/<rg-name>/providers/Microsoft.Storage/storageAccounts/<account-name>
 ```
 
+| Flag | Description |
+|---|---|
+| `--assignee $PRINCIPAL_ID` | Grants the role to the managed identity principal represented by `PRINCIPAL_ID`. |
+| `--role "Storage Blob Data Contributor"` | Assigns Blob data-plane read/write permissions. |
+| `--scope /subscriptions/<sub-id>/resourceGroups/<rg-name>/providers/Microsoft.Storage/storageAccounts/<account-name>` | Limits the assignment to the specified storage account resource. |
+
 ### 2. Key Vault
 
 Grant the **Key Vault Secrets User** role to retrieve secrets:
@@ -109,6 +121,12 @@ az role assignment create \
   --role "Key Vault Secrets User" \
   --scope /subscriptions/<sub-id>/resourceGroups/<rg-name>/providers/Microsoft.KeyVault/vaults/<vault-name>
 ```
+
+| Flag | Description |
+|---|---|
+| `--assignee $PRINCIPAL_ID` | Grants the role to the managed identity principal represented by `PRINCIPAL_ID`. |
+| `--role "Key Vault Secrets User"` | Assigns permission to read secrets from Key Vault. |
+| `--scope /subscriptions/<sub-id>/resourceGroups/<rg-name>/providers/Microsoft.KeyVault/vaults/<vault-name>` | Limits the assignment to the specified Key Vault resource. |
 
 ### 3. Azure SQL
 

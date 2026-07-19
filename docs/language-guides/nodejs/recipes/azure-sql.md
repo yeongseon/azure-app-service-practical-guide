@@ -113,6 +113,13 @@ export SQL_DATABASE="your-db"
 node your-app.js
 ```
 
+| Command | Description |
+|---|---|
+| `az login` | Authenticates the local Azure CLI session so local token-based SQL access can use your signed-in identity. |
+| `export SQL_SERVER="your-server.database.windows.net"` | Sets the Azure SQL server hostname that the sample Node.js app will connect to. |
+| `export SQL_DATABASE="your-db"` | Sets the target Azure SQL database name for the sample query. |
+| `node your-app.js` | Runs the local Node.js app with the SQL environment variables you just exported. |
+
 ## Troubleshooting
 
 - **Login failed**: Ensure the Managed Identity is created as a user in the SQL Database:

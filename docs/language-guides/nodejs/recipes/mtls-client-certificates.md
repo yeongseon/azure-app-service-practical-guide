@@ -187,6 +187,13 @@ az webapp config appsettings set \
   --output json
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the web app. |
+| `--name $APP_NAME` | Selects the web app that should receive the mTLS-related app settings. |
+| `--settings ALLOWED_CLIENT_CERT_COMMON_NAMES="api-client.contoso.com,partner-gateway.contoso.com" ALLOWED_CLIENT_CERT_THUMBPRINTS="" OUTBOUND_CLIENT_CERT_PATH="/var/ssl/private/<thumbprint>.p12" OUTBOUND_CLIENT_CERT_PASSWORD="<certificate-password>" REMOTE_API_URL="https://api.contoso.com/health"` | Stores the allowed inbound client identities plus the outbound certificate path, password, and downstream URL used by the sample app. |
+| `--output json` | Returns the updated app-settings payload as JSON. |
+
 ### 3. Test with curl
 
 ```bash

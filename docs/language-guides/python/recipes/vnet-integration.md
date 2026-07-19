@@ -40,6 +40,15 @@ az network vnet subnet create \
   --output json
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group "$RG"` | Creates the subnet inside the specified resource group. |
+| `--vnet-name "vnet-appservice"` | Selects the virtual network that will host the integration subnet. |
+| `--name "snet-appservice-integration"` | Names the subnet dedicated to App Service VNet integration. |
+| `--address-prefixes "10.10.1.0/24"` | Assigns the address space used by the integration subnet. |
+| `--delegations "Microsoft.Web/serverFarms"` | Delegates the subnet so App Service plans can attach to it. |
+| `--output json` | Returns the created subnet definition as JSON. |
+
 ### 2) Connect web app to the integration subnet
 
 ```bash
@@ -51,6 +60,14 @@ az webapp vnet-integration add \
   --output json
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group "$RG"` | Targets the resource group that contains the web app and VNet. |
+| `--name "$APP_NAME"` | Selects the web app that should use VNet integration. |
+| `--vnet "vnet-appservice"` | Chooses the virtual network that will carry outbound traffic. |
+| `--subnet "snet-appservice-integration"` | Attaches the app to the delegated integration subnet. |
+| `--output json` | Returns the integration result as JSON. |
+
 ### 3) Route all outbound traffic through VNet (optional)
 
 ```bash
@@ -60,6 +77,13 @@ az webapp config appsettings set \
   --settings WEBSITE_VNET_ROUTE_ALL=1 \
   --output json
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group "$RG"` | Targets the resource group that contains the web app. |
+| `--name "$APP_NAME"` | Selects the web app whose routing behavior you want to change. |
+| `--settings WEBSITE_VNET_ROUTE_ALL=1` | Forces all outbound traffic from the app through the integrated virtual network. |
+| `--output json` | Returns the updated app-settings payload as JSON. |
 
 ### 4) Apply NSG baseline for least-privilege egress
 
@@ -89,6 +113,13 @@ az webapp config appsettings set \
     KEY_VAULT_URI="https://<kv-name>.vault.azure.net/" \
   --output json
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group "$RG"` | Targets the resource group that contains the web app. |
+| `--name "$APP_NAME"` | Selects the web app that should receive the private-endpoint connection settings. |
+| `--settings SQL_SERVER_FQDN="<sql-private-fqdn>" SQL_DATABASE_NAME="<db-name>" REDIS_HOST="<redis-private-fqdn>" REDIS_PORT="6380" KEY_VAULT_URI="https://<kv-name>.vault.azure.net/"` | Writes the SQL, Redis, and Key Vault hostnames and related settings the app will use over the VNet path. |
+| `--output json` | Returns the updated app-settings payload as JSON. |
 
 ### 7) Use `os.environ` plus managed identity in Flask code
 

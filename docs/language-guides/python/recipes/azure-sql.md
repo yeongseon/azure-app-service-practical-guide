@@ -55,6 +55,12 @@ az webapp config appsettings set \
     SQL_DRIVER="ODBC Driver 18 for SQL Server"
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group "$RG"` | Targets the resource group that contains the web app. |
+| `--name "$APP_NAME"` | Selects the web app that should receive the SQL connection settings. |
+| `--settings SQL_SERVER="<server-name>.database.windows.net" SQL_DATABASE="<database-name>" SQL_DRIVER="ODBC Driver 18 for SQL Server"` | Writes the SQL server hostname, database name, and ODBC driver name into App Service app settings. |
+
 ```python
 import os
 import pyodbc

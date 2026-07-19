@@ -56,6 +56,15 @@ az webapp auth microsoft update \
   --output json
 ```
 
+| Flag | Description |
+|---|---|
+| `--name $APP_NAME` | Targets the web app whose Microsoft identity provider settings you want to configure. |
+| `--resource-group $RG` | Identifies the resource group that contains the web app. |
+| `--client-id "<your-app-id>"` | Sets the Microsoft Entra app registration client ID that Easy Auth should use. |
+| `--client-secret "<your-secret>"` | Supplies the client secret that App Service uses when it talks to Microsoft Entra ID. |
+| `--issuer "https://login.microsoftonline.com/<tenant-id>/v2.0"` | Defines the tenant-specific OpenID issuer URL that App Service will trust. |
+| `--output json` | Returns the updated authentication-provider configuration as JSON. |
+
 ## Enable via Portal
 
 1. Navigate to your App Service in the Azure Portal.

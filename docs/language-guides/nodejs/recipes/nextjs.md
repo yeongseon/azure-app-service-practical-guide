@@ -98,6 +98,11 @@ CMD ["node", "server.js"]
     az webapp log tail --name $APP_NAME --resource-group $RG
    ```
 
+   | Flag | Description |
+   |---|---|
+   | `--name $APP_NAME` | Streams logs from the specified App Service app. |
+   | `--resource-group $RG` | Identifies the resource group that contains the app. |
+
 ## Troubleshooting
 
 - **404 for static assets**: Ensure you copied both the `public` and `.next/static` folders into the runtime image correctly.
