@@ -133,6 +133,14 @@ az webapp vnet-integration add \
   --output json
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the web app. |
+| `--name $APP_NAME` | Selects the App Service app to connect to the VNet. |
+| `--vnet $VNET_NAME` | Chooses the virtual network that provides private outbound reachability. |
+| `--subnet $INTEGRATION_SUBNET_NAME` | Uses the delegated integration subnet that App Service will attach for outbound traffic. |
+| `--output json` | Returns the integration result as JSON so you can confirm the attached subnet details. |
+
 Route all app outbound through VNet path where required:
 
 ```bash
@@ -143,6 +151,13 @@ az webapp config appsettings set \
   --output json
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Selects the web app whose runtime settings will be updated. |
+| `--settings WEBSITE_VNET_ROUTE_ALL=1` | Writes the setting that forces outbound app traffic onto the VNet-integrated path. |
+| `--output json` | Returns the updated app settings payload in JSON format. |
+
 Validate integration state:
 
 ```bash
@@ -151,6 +166,12 @@ az webapp vnet-integration list \
   --name $APP_NAME \
   --output table
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Scopes the query to the resource group that contains the app. |
+| `--name $APP_NAME` | Lists the VNet integration entries attached to this web app. |
+| `--output table` | Shows the integration subnet and VNet details in a quick-readable table. |
 
 !!! info "Outbound only"
     VNet Integration controls outbound connectivity. It does not make inbound access private by itself.
@@ -185,6 +206,11 @@ az network private-endpoint create \
   --output json
 ```
 
+| Command | Description |
+|---|---|
+| `APP_RESOURCE_ID=$(az webapp show --resource-group $RG --name $APP_NAME --query id --output tsv)` | Reads the web app ARM resource ID into a shell variable so the Private Endpoint can target that app resource. |
+| `az network private-endpoint create ...` | Creates a Private Endpoint in the specified subnet and connects it to the App Service `sites` private link group. |
+
 Check connection status:
 
 ```bash
@@ -194,6 +220,13 @@ az network private-endpoint show \
   --query "{state:provisioningState,connection:privateLinkServiceConnections[0].privateLinkServiceConnectionState.status}" \
   --output json
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Looks up the Private Endpoint in the given resource group. |
+| `--name "pe-$APP_NAME"` | Selects the specific Private Endpoint created for the app. |
+| `--query "{state:provisioningState,connection:privateLinkServiceConnections[0].privateLinkServiceConnectionState.status}"` | Returns the endpoint provisioning state plus the first private link connection approval status. |
+| `--output json` | Formats the reduced status payload as JSON. |
 
 ### 3) Design for SNAT port efficiency
 
@@ -246,6 +279,11 @@ az network private-dns link vnet create \
   --registration-enabled false \
   --output json
 ```
+
+| Command | Description |
+|---|---|
+| `az network private-dns zone create ...` | Creates the Private DNS zone that maps App Service private endpoint names under `privatelink.azurewebsites.net`. |
+| `az network private-dns link vnet create ...` | Links that Private DNS zone to the VNet so clients in the VNet can resolve the app hostname to the private IP. |
 
 Validate DNS from private network context:
 
@@ -309,6 +347,16 @@ az webapp config access-restriction add \
   --output json
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Applies the access restriction to this web app. |
+| `--rule-name AllowCorp` | Names the rule so it can be reviewed or removed later. |
+| `--action Allow` | Permits requests that match the specified source range. |
+| `--ip-address 203.0.113.0/24` | Limits the allow rule to that corporate CIDR block. |
+| `--priority 100` | Evaluates this rule before the default catch-all rule because lower numbers run first. |
+| `--output json` | Returns the created rule details in JSON. |
+
 #### Portal view: Access Restrictions blade
 
 ![Access Restrictions blade reached from the Networking page with Save and Refresh actions. The App access section explains that public access applies to both the main site and the advanced (SCM) tool site, and that "Deny public network access will block all incoming traffic except that comes from private endpoints"; the Public network access control offers three radio buttons — Enabled from all networks (with a note that selecting it will clear all current access restrictions), Enabled from select virtual networks and IP addresses, and Disabled — and shows an info banner reading "Enabled (using default behavior)". The Site access and rules section has Main site (active) and Advanced tool site tabs and describes rules being evaluated in priority order with the "Unmatched rule action" controlling un-rule-matched traffic. The Unmatched rule action selector has Allow (selected) and Deny radio buttons. Add and Delete buttons appear above a Filter rules search box and an Action : All filter chip with a removable X, followed by a rules table with columns Priority, Name, Source, Action, and HTTP headers. The table contains a single rule with Priority 2147483647, Name "Allow all", Source "Any", Action "Allow" (green checkmark), and HTTP headers "Not configured".](../assets/best-practices/networking/01-access-restrictions.png)
@@ -336,6 +384,12 @@ az network private-dns record-set a list \
   --output table
 ```
 
+| Command | Description |
+|---|---|
+| `az webapp show ... --query "{defaultHostName:defaultHostName,outboundIpAddresses:outboundIpAddresses}"` | Shows the app hostname and its current outbound IP set for quick incident triage. |
+| `az network private-endpoint list --resource-group $RG --output table` | Lists Private Endpoints in the resource group so you can confirm the app endpoint exists and identify its name. |
+| `az network private-dns record-set a list ...` | Lists A records in the App Service private DNS zone so you can verify hostname-to-private-IP mappings. |
+
 ### 8) Manage IP address changes proactively
 
 App Service IP addresses are not static. Treating them as fixed causes allowlist drift, broken firewall rules, and silent connectivity failures after scale events.
@@ -358,6 +412,13 @@ az webapp show \
     --query "{active:outboundIpAddresses,possible:possibleOutboundIpAddresses}" \
     --output json
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group "$RG"` | Queries the web app from the specified resource group. |
+| `--name "$APP_NAME"` | Selects the app whose outbound IP ranges you need to review. |
+| `--query "{active:outboundIpAddresses,possible:possibleOutboundIpAddresses}"` | Returns the current outbound IPs and the full possible outbound IP set in one object. |
+| `--output json` | Preserves both IP lists as JSON for allowlist review or automation. |
 
 Example output (PII masked):
 
@@ -403,6 +464,11 @@ az webapp config appsettings list \
     --output table
 ```
 
+| Command | Description |
+|---|---|
+| `az webapp vnet-integration list --resource-group "$RG" --name "$APP_NAME" --output table` | Confirms that the app is attached to the expected integration subnet and VNet. |
+| `az webapp config appsettings list --resource-group "$RG" --name "$APP_NAME" --query "[?name=='WEBSITE_VNET_ROUTE_ALL']" --output table` | Filters the app settings list to the `WEBSITE_VNET_ROUTE_ALL` entry so you can verify whether route-all is enabled. |
+
 <!-- Verified: real az CLI output from koreacentral, 2026-05-01 -->
 ```
 Location       Name              ResourceGroup     VnetResourceId
@@ -433,6 +499,13 @@ az webapp show \
     --output tsv
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group "$RG"` | Looks up the app in the specified resource group. |
+| `--name "$APP_NAME"` | Selects the web app whose current public inbound IP you want to inspect. |
+| `--query "inboundIpAddress"` | Returns only the app's inbound IP address field. |
+| `--output tsv` | Prints the IP as plain text so it can be copied into tests or notes. |
+
 Query the Private Endpoint's assigned private IP:
 
 ```bash
@@ -442,6 +515,13 @@ az network private-endpoint show \
     --query "customDnsConfigs[0].ipAddresses" \
     --output json
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group "$RG"` | Reads the Private Endpoint from the given resource group. |
+| `--name "pe-$APP_NAME"` | Selects the app's Private Endpoint resource. |
+| `--query "customDnsConfigs[0].ipAddresses"` | Returns the IP list from the first custom DNS config entry attached to the Private Endpoint. |
+| `--output json` | Keeps the returned private IP list in JSON array form. |
 
 Example output:
 
@@ -478,6 +558,16 @@ When run from a VM inside the VNet with the private DNS zone configured, the res
         --priority 65000 \
         --output json
     ```
+
+    | Flag | Description |
+    |---|---|
+    | `--resource-group "$RG"` | Targets the resource group that contains the app. |
+    | `--name "$APP_NAME"` | Applies the deny rule to this web app. |
+    | `--rule-name "DenyPublic"` | Names the rule that blocks public sources. |
+    | `--action Deny` | Rejects traffic that matches the specified source range. |
+    | `--ip-address 0.0.0.0/0` | Matches all IPv4 public sources, creating a deny-all public inbound rule. |
+    | `--priority 65000` | Places the deny rule late in the list so more specific allow rules can be evaluated first. |
+    | `--output json` | Returns the created restriction rule in JSON. |
 
 ### 9) Choose the right outbound path to Azure Storage
 
