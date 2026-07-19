@@ -51,6 +51,13 @@ az webapp config appsettings list --resource-group $RG --name $APP_NAME --output
 az webapp deployment slot list --resource-group $RG --name $APP_NAME --output table
 ```
 
+| Command | Description |
+|---|---|
+| `az webapp show --resource-group $RG --name $APP_NAME --output table` | Shows a quick summary of the web app resource so you can confirm state, hostname, and plan. |
+| `az webapp log tail --resource-group $RG --name $APP_NAME` | Streams live application logs for the app into the terminal. |
+| `az webapp config appsettings list --resource-group $RG --name $APP_NAME --output table` | Lists the current app settings to verify runtime configuration. |
+| `az webapp deployment slot list --resource-group $RG --name $APP_NAME --output table` | Lists the app's deployment slots to confirm which slots exist during triage. |
+
 > **Note:** `az webapp log tail` may not work reliably for Linux App Service. Use the Azure Portal Log stream or `/home/LogFiles` as alternatives.
 
 !!! warning "Linux custom container SCM caveat"
@@ -78,6 +85,12 @@ az webapp log deployment list \
   --output table
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Looks up deployment records for the app in the specified resource group. |
+| `--name $APP_NAME` | Selects the web app whose deployment history you want to inspect. |
+| `--output table` | Formats the deployment history as a readable summary table. |
+
 ### Check latest deployment details
 
 ```bash
@@ -88,6 +101,13 @@ az webapp log deployment show \
   --output json
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Scopes the deployment lookup to the resource group that contains the app. |
+| `--name $APP_NAME` | Selects the web app whose deployment details you need. |
+| `--deployment-id latest` | Requests the most recent deployment record instead of a specific historical ID. |
+| `--output json` | Returns the full deployment detail payload as JSON. |
+
 ### Validate build-on-deploy setting
 
 ```bash
@@ -96,6 +116,12 @@ az webapp config appsettings list \
   --name $APP_NAME \
   --query "[?name=='SCM_DO_BUILD_DURING_DEPLOYMENT']"
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Reads app settings from the specified resource group. |
+| `--name $APP_NAME` | Selects the app whose deployment-build setting you want to inspect. |
+| `--query "[?name=='SCM_DO_BUILD_DURING_DEPLOYMENT']"` | Filters the app settings list to the `SCM_DO_BUILD_DURING_DEPLOYMENT` entry so you can see whether build-on-deploy is enabled. |
 
 ## Networking Troubleshooting
 
@@ -108,6 +134,12 @@ az webapp vnet-integration list \
   --output table
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Queries VNet integration state in the specified resource group. |
+| `--name $APP_NAME` | Lists the VNet integration entries attached to this web app. |
+| `--output table` | Shows the integration subnet and VNet details in table form. |
+
 ### Route-all check
 
 ```bash
@@ -116,6 +148,12 @@ az webapp config appsettings list \
   --name $APP_NAME \
   --query "[?name=='WEBSITE_VNET_ROUTE_ALL']"
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Reads app settings from the resource group that contains the app. |
+| `--name $APP_NAME` | Selects the web app whose route-all setting you want to inspect. |
+| `--query "[?name=='WEBSITE_VNET_ROUTE_ALL']"` | Filters the result to the `WEBSITE_VNET_ROUTE_ALL` setting entry only. |
 
 Set route-all when required:
 
@@ -126,15 +164,28 @@ az webapp config appsettings set \
   --settings WEBSITE_VNET_ROUTE_ALL=1
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Selects the app whose settings will be updated. |
+| `--settings WEBSITE_VNET_ROUTE_ALL=1` | Writes the setting that forces outbound app traffic through the VNet path. |
+
 ### Outbound IP allowlist checks
 
 ```bash
 az webapp show \
   --resource-group $RG \
   --name $APP_NAME \
-  --query "{outbound: properties.outboundIpAddresses, possible: properties.possibleOutboundIpAddresses}" \
+  --query "{outbound: outboundIpAddresses, possible: possibleOutboundIpAddresses}" \
   --output json
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Looks up the app in the specified resource group. |
+| `--name $APP_NAME` | Selects the web app whose outbound IP ranges you want to review. |
+| `--query "{outbound: outboundIpAddresses, possible: possibleOutboundIpAddresses}"` | Reshapes the `az webapp show` output (both fields are top-level, not under `properties`) into one object holding the currently active outbound IPs and the full possible outbound IP set. |
+| `--output json` | Keeps both IP lists in JSON format for copying into firewall reviews or automation. |
 
 !!! warning "Allowlist all possible outbound IPs"
     The active outbound IP set can change as the app scales or moves.

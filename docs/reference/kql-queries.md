@@ -267,6 +267,12 @@ Run queries in **Application Insights > Logs** or **Log Analytics Workspace > Lo
 az monitor app-insights query --app $APP_NAME --resource-group $RG --analytics-query "AppRequests | where timestamp > ago(1h) | take 10"
 ```
 
+| Flag | Description |
+|---|---|
+| `--app $APP_NAME` | Targets the Application Insights resource identified by `$APP_NAME`. |
+| `--resource-group $RG` | Looks up that Application Insights resource in the specified resource group. |
+| `--analytics-query "AppRequests | where timestamp > ago(1h) | take 10"` | Runs the supplied KQL query and returns up to 10 recent request records from the last hour. |
+
 ## Run It in the Portal
 
 #### Portal view: Logs blade (Log Analytics query editor)

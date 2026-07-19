@@ -167,6 +167,11 @@ az webapp create --resource-group $RG --name $APP_NAME --plan $PLAN_NAME --runti
 az webapp create -g $RG -n $APP_NAME  # ❌ Don't do this
 ```
 
+| Command | Description |
+|---|---|
+| `az webapp create --resource-group $RG --name $APP_NAME --plan $PLAN_NAME --runtime "PYTHON:3.11"` | Creates the web app in the specified App Service plan and pins the runtime stack to Python 3.11 using the readable long-flag form this repository requires. |
+| `az webapp create -g $RG -n $APP_NAME` | Demonstrates the short-flag form contributors should avoid because it hides the meaning of the arguments in docs. |
+
 ### Variables
 
 | Variable | Description | Example |
