@@ -201,6 +201,7 @@ Cold starts occur when an app scales out or starts after being idle.
     | Command/Code | Purpose |
     |--------------|---------|
     | `engines.node` | Tells Oryx and other tooling which Node.js version range the app expects |
+
 *   **`scripts.start`:** The primary way App Service knows how to run your app.
 *   **Dependencies:** Ensure all required modules are listed in `dependencies`.
 

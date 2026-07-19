@@ -307,6 +307,7 @@ $ az webapp deployment list --resource-group <resource-group> --name <app-name>
     | `az webapp config appsettings list --resource-group <resource-group> --name <app-name>` | Lists the app settings currently applied to this web app so you can inspect runtime or deployment configuration. |
     | `--resource-group <resource-group> --name <app-name>` | Looks up the resource in this resource group. |
     | `--name <app-name>` | Targets this web app. |
+
     - Confirm build/run flow: dependencies should be installed at build/deploy stage, not per restart/startup script.
 
 ### H3: Warm-up/startup controls are misconfigured
@@ -336,6 +337,7 @@ $ az webapp deployment list --resource-group <resource-group> --name <app-name>
     | `--resource-group <resource-group> --name <app-name> --query "[?name=='WEBSITE_WARMUP_PATH' \|\| name=='WEBSITES_CONTAINER_START_TIME_LIMIT']"` | Looks up the resource in this resource group. |
     | `--name <app-name> --query "[?name=='WEBSITE_WARMUP_PATH' \|\| name=='WEBSITES_CONTAINER_START_TIME_LIMIT']"` | Targets this web app. |
     | `--query "[?name=='WEBSITE_WARMUP_PATH' \|\| name=='WEBSITES_CONTAINER_START_TIME_LIMIT']"` | Filters the app-settings list to the warm-up path and container-start timeout entries only. |
+
     - KQL (timeout/recycle hints):
     ```kusto
     AppServicePlatformLogs

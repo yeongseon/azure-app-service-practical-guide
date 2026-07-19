@@ -352,6 +352,7 @@ $ az webapp config appsettings list --resource-group <resource-group> --name <ap
     | `az webapp config appsettings list --resource-group <resource-group> --name <app-name>` | Lists the app settings currently applied to this web app so you can inspect runtime or deployment configuration. |
     | `--resource-group <resource-group> --name <app-name>` | Looks up the resource in this resource group. |
     | `--name <app-name>` | Targets this web app. |
+
     - Validate current effective Gunicorn startup parameters (`workers`, `threads`, `timeout`) from startup command / container logs.
 
 ### H3: Memory pressure causing GC pauses or degraded responsiveness
@@ -377,6 +378,7 @@ $ az webapp config appsettings list --resource-group <resource-group> --name <ap
     | `--metric "CpuPercentage,MemoryPercentage"` | Requests exactly these metrics from Azure Monitor for this check. |
     | `--interval PT1M` | Samples the metrics at this time granularity. |
     | `--aggregation Average` | Returns these aggregation(s) for each metric time bucket. |
+
     - KQL (latency vs restart correlation):
     ```kusto
     let slow = AppServiceHTTPLogs
@@ -427,6 +429,7 @@ $ az webapp config appsettings list --resource-group <resource-group> --name <ap
     | `az resource show --ids <webapp-resource-id> --query "properties.siteConfig.linuxFxVersion"` | Shows the raw ARM resource and projects the exact property needed for this comparison. |
     | `--ids <webapp-resource-id> --query "properties.siteConfig.linuxFxVersion"` | Targets this specific resource ID. |
     | `--query "properties.siteConfig.linuxFxVersion"` | Projects only the nested `properties.siteConfig.linuxFxVersion` value from the resource. |
+
     - Confirm whether code path reads/writes on mounted/shared storage for hot request paths.
 
 ## 7. Likely Root Cause Patterns
