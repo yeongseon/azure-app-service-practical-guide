@@ -174,6 +174,15 @@ az webapp deploy \
   --type war \
   --output json
 ```
+| Flag | Description |
+|---|---|
+| `az webapp deploy` | Deploys the WAR artifact to the selected web app using OneDeploy. |
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Selects the web app that will receive the WAR. |
+| `--src-path ./target/myapp.war` | Uploads the WAR file built at `./target/myapp.war`. |
+| `--type war` | Treats the uploaded artifact as a WAR deployment package. |
+| `--output json` | Returns deployment metadata as JSON. |
+
 
 **Deployment path conventions**
 
@@ -192,6 +201,14 @@ az webapp config appsettings set \
   --settings "CATALINA_OPTS=-XX:InitialRAMPercentage=25.0 -XX:MaxRAMPercentage=70.0 -XX:+UseG1GC -XX:+ExitOnOutOfMemoryError" \
   --output json
 ```
+| Flag | Description |
+|---|---|
+| `az webapp config appsettings set` | Creates or updates app settings on the web app. |
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Selects the web app whose JVM settings will change. |
+| `--settings "CATALINA_OPTS=..."` | Stores the Tomcat-specific JVM sizing, GC, and OOM flags in the `CATALINA_OPTS` app setting. |
+| `--output json` | Returns the updated app-settings payload as JSON. |
+
 
 The heap sizing, GC, and OOM behavior guidance in the next section applies to both hosting models — the only difference is which environment variable carries the flags.
 

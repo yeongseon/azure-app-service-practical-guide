@@ -99,6 +99,14 @@ az webapp config appsettings set \
     COSMOS_KEY="<redacted>" \
   --output json
 ```
+| Flag | Description |
+|---|---|
+| `az webapp config appsettings set` | Creates or updates app settings on the web app. |
+| `--resource-group "$RG"` | Targets the resource group that contains the app. |
+| `--name "$APP_NAME"` | Selects the web app whose Cosmos settings will be updated. |
+| `--settings ...` | Stores the Cosmos endpoint, database name, and access key as Spring environment variables for the app. |
+| `--output json` | Returns the updated app-settings payload as JSON. |
+
 
 !!! warning "Secret handling"
     Do not hardcode Cosmos keys in source. Store in Key Vault and reference from App Settings in production.

@@ -238,6 +238,14 @@ az webapp config set \
   --linux-fx-version "DOTNETCORE|8.0" \
   --output json
 ```
+| Flag | Description |
+|---|---|
+| `az webapp config set` | Updates the web app runtime configuration. |
+| `--resource-group $RESOURCE_GROUP_NAME` | Targets the resource group that contains the Linux web app. |
+| `--name $WEB_APP_NAME` | Selects the web app whose stack setting will be changed. |
+| `--linux-fx-version "DOTNETCORE|8.0"` | Sets the Linux runtime stack to .NET 8. |
+| `--output json` | Returns the updated runtime configuration as JSON. |
+
 
 Linux port binding pattern (no `HTTP_PLATFORM_PORT` involvement):
 

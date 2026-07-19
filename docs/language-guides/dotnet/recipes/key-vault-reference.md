@@ -40,6 +40,14 @@ az keyvault secret set \
   --value "Server=tcp:<sql-server>.database.windows.net,1433;Database=<db>;Authentication=Active Directory Managed Identity;Encrypt=True;" \
   --output json
 ```
+| Flag | Description |
+|---|---|
+| `az keyvault secret set` | Creates a new secret or a new secret version in the Key Vault. |
+| `--vault-name "$KEY_VAULT_NAME"` | Targets the Key Vault that will store the secret. |
+| `--name "sql-connection"` | Stores the value under the `sql-connection` secret name. |
+| `--value "..."` | Writes the managed-identity SQL connection string as the secret value. |
+| `--output json` | Returns the created secret metadata as JSON. |
+
 
 ### 2) Set Key Vault reference in App Settings
 
@@ -50,6 +58,14 @@ az webapp config appsettings set \
   --settings ConnectionStrings__MainDb="@Microsoft.KeyVault(SecretUri=https://$KEY_VAULT_NAME.vault.azure.net/secrets/sql-connection/)" \
   --output json
 ```
+| Flag | Description |
+|---|---|
+| `az webapp config appsettings set` | Creates or updates app settings on the web app. |
+| `--resource-group "$RESOURCE_GROUP_NAME"` | Targets the resource group that contains the web app. |
+| `--name "$WEB_APP_NAME"` | Selects the web app that will resolve the Key Vault reference. |
+| `--settings ConnectionStrings__MainDb="@Microsoft.KeyVault(...)"` | Stores a Key Vault reference expression instead of a plaintext connection string. |
+| `--output json` | Returns the updated app-settings payload as JSON. |
+
 
 Reference format:
 
@@ -94,6 +110,13 @@ Key Vault references refresh automatically, but not instantly. For urgent secret
 ```bash
 az webapp restart --resource-group "$RESOURCE_GROUP_NAME" --name "$WEB_APP_NAME" --output none
 ```
+| Flag | Description |
+|---|---|
+| `az webapp restart` | Restarts the web app so it re-reads configuration and refreshes Key Vault references sooner. |
+| `--resource-group "$RESOURCE_GROUP_NAME"` | Targets the resource group that contains the app. |
+| `--name "$WEB_APP_NAME"` | Selects the web app to restart. |
+| `--output none` | Suppresses command output after the restart request is sent. |
+
 
 ### 6) Slot-safe secret references
 
@@ -107,6 +130,15 @@ az webapp config appsettings set \
   --slot-settings PaymentApi__Key="@Microsoft.KeyVault(SecretUri=https://$KEY_VAULT_NAME.vault.azure.net/secrets/payment-api-key/)" \
   --output json
 ```
+| Flag | Description |
+|---|---|
+| `az webapp config appsettings set` | Creates or updates app settings on the selected slot. |
+| `--resource-group "$RESOURCE_GROUP_NAME"` | Targets the resource group that contains the web app. |
+| `--name "$WEB_APP_NAME"` | Selects the web app whose staging slot will be updated. |
+| `--slot "staging"` | Applies the change to the staging slot instead of production. |
+| `--slot-settings PaymentApi__Key="@Microsoft.KeyVault(...)"` | Creates a slot-sticky Key Vault reference so the staging secret does not swap into production. |
+| `--output json` | Returns the updated slot settings as JSON. |
+
 
 ### 7) Azure DevOps snippet with reference values
 
@@ -138,6 +170,13 @@ az webapp config appsettings set \
 ```bash
 az webapp config appsettings list --resource-group "$RESOURCE_GROUP_NAME" --name "$WEB_APP_NAME" --output table
 ```
+| Flag | Description |
+|---|---|
+| `az webapp config appsettings list` | Lists the current app settings configured on the web app. |
+| `--resource-group "$RESOURCE_GROUP_NAME"` | Targets the resource group that contains the app. |
+| `--name "$WEB_APP_NAME"` | Selects the web app whose settings will be listed. |
+| `--output table` | Formats the settings list as a readable table. |
+
 
 ## Troubleshooting
 

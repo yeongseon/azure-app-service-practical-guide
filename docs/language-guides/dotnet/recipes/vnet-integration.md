@@ -40,6 +40,16 @@ az network vnet subnet create \
   --delegations "Microsoft.Web/serverFarms" \
   --output json
 ```
+| Flag | Description |
+|---|---|
+| `az network vnet subnet create` | Creates the subnet that App Service will use for VNet integration. |
+| `--resource-group "$RG"` | Targets the resource group that contains the virtual network. |
+| `--vnet-name "vnet-appservice"` | Selects the virtual network where the subnet will be created. |
+| `--name "snet-appservice-integration"` | Names the delegated integration subnet. |
+| `--address-prefixes "10.10.1.0/24"` | Allocates the subnet address range for integration instances. |
+| `--delegations "Microsoft.Web/serverFarms"` | Delegates the subnet to App Service plans for VNet integration. |
+| `--output json` | Returns the created subnet resource as JSON. |
+
 
 ### 2) Attach App Service to subnet
 
@@ -51,6 +61,15 @@ az webapp vnet-integration add \
   --subnet "snet-appservice-integration" \
   --output json
 ```
+| Flag | Description |
+|---|---|
+| `az webapp vnet-integration add` | Connects the web app to the delegated subnet for outbound private networking. |
+| `--resource-group "$RG"` | Targets the resource group that contains the web app. |
+| `--name "$APP_NAME"` | Selects the web app that will join the subnet. |
+| `--vnet "vnet-appservice"` | Uses the specified virtual network for the integration. |
+| `--subnet "snet-appservice-integration"` | Attaches the app to the delegated integration subnet. |
+| `--output json` | Returns the VNet-integration configuration as JSON. |
+
 
 ### 3) Enable route-all for controlled outbound (optional)
 
@@ -61,6 +80,14 @@ az webapp config appsettings set \
   --settings WEBSITE_VNET_ROUTE_ALL=1 \
   --output json
 ```
+| Flag | Description |
+|---|---|
+| `az webapp config appsettings set` | Creates or updates app settings on the web app. |
+| `--resource-group "$RG"` | Targets the resource group that contains the web app. |
+| `--name "$APP_NAME"` | Selects the web app whose routing behavior will change. |
+| `--settings WEBSITE_VNET_ROUTE_ALL=1` | Forces outbound traffic from the app through the integrated VNet path. |
+| `--output json` | Returns the updated app-settings payload as JSON. |
+
 
 ### 4) Apply NSG policy baseline
 

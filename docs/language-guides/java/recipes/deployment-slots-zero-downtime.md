@@ -41,6 +41,11 @@ az webapp deployment slot create \
   --configuration-source "$APP_NAME" \
   --output json
 ```
+| Command | Description |
+|---|---|
+| `export SLOT_NAME="staging"` | Stores the slot name in a shell variable so later commands target the same slot consistently. |
+| `az webapp deployment slot create --resource-group "$RG" --name "$APP_NAME" --slot "$SLOT_NAME" --configuration-source "$APP_NAME" --output json` | Creates the staging deployment slot and copies the production app configuration into it. |
+
 
 ### Step 2: mark slot-sticky settings
 
@@ -56,6 +61,15 @@ az webapp config appsettings set \
     API_BASE_URL=https://staging-api.example.internal \
   --output json
 ```
+| Flag | Description |
+|---|---|
+| `az webapp config appsettings set` | Writes app settings into the selected slot configuration. |
+| `--resource-group "$RG"` | Targets the resource group that contains the app. |
+| `--name "$APP_NAME"` | Selects the web app whose slot settings will change. |
+| `--slot "$SLOT_NAME"` | Applies the settings to the staging slot. |
+| `--slot-settings SPRING_PROFILES_ACTIVE=staging API_BASE_URL=...` | Creates slot-sticky settings that stay with staging during swaps. |
+| `--output json` | Returns the updated slot settings as JSON. |
+
 
 Examples of often-sticky settings:
 
@@ -78,6 +92,16 @@ az webapp deploy \
   --type jar \
   --output json
 ```
+| Flag | Description |
+|---|---|
+| `az webapp deploy` | Deploys the built JAR artifact to the selected deployment slot. |
+| `--resource-group "$RG"` | Targets the resource group that contains the app. |
+| `--name "$APP_NAME"` | Selects the web app that will receive the deployment. |
+| `--slot "$SLOT_NAME"` | Sends the deployment to the staging slot. |
+| `--src-path "apps/java-springboot/target/<artifact-name>.jar"` | Uploads the JAR produced by the build pipeline. |
+| `--type jar` | Treats the uploaded artifact as a Java JAR deployment package. |
+| `--output json` | Returns deployment metadata as JSON. |
+
 
 ### Step 4: run staging smoke tests
 
@@ -97,6 +121,15 @@ az webapp deployment slot swap \
   --target-slot production \
   --output json
 ```
+| Flag | Description |
+|---|---|
+| `az webapp deployment slot swap` | Swaps the selected source slot into the target slot. |
+| `--resource-group "$RG"` | Targets the resource group that contains the app. |
+| `--name "$APP_NAME"` | Selects the web app whose slots will be swapped. |
+| `--slot "$SLOT_NAME"` | Uses the staging slot as the swap source. |
+| `--target-slot production` | Promotes the staging slot into production. |
+| `--output json` | Returns the swap operation details as JSON. |
+
 
 After swap, former production becomes staging for quick rollback.
 
@@ -111,6 +144,14 @@ az webapp traffic-routing set \
   --distribution "$SLOT_NAME"=10 \
   --output json
 ```
+| Flag | Description |
+|---|---|
+| `az webapp traffic-routing set` | Configures percentage-based traffic routing to a slot. |
+| `--resource-group "$RG"` | Targets the resource group that contains the app. |
+| `--name "$APP_NAME"` | Selects the web app whose routing weights will change. |
+| `--distribution "$SLOT_NAME"=10` | Sends 10 percent of traffic to the staging slot for canary validation. |
+| `--output json` | Returns the updated traffic-routing configuration as JSON. |
+
 
 Gradually increase canary percentage as confidence grows.
 
@@ -126,6 +167,15 @@ az webapp deployment slot swap \
   --target-slot production \
   --output json
 ```
+| Flag | Description |
+|---|---|
+| `az webapp deployment slot swap` | Swaps the selected source slot into the target slot again for rollback. |
+| `--resource-group "$RG"` | Targets the resource group that contains the app. |
+| `--name "$APP_NAME"` | Selects the web app whose slots will be swapped back. |
+| `--slot "$SLOT_NAME"` | Uses the current staging slot as the rollback source. |
+| `--target-slot production` | Moves traffic back to the original production content. |
+| `--output json` | Returns the rollback swap operation details as JSON. |
+
 
 !!! warning "Sticky setting hygiene"
     Misclassified slot settings are a common source of swap incidents. Audit swap behavior before production cutover.

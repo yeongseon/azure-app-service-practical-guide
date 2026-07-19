@@ -48,6 +48,15 @@ az webapp vnet-integration add \
   --subnet "snet-appservice-integration" \
   --output json
 ```
+| Flag | Description |
+|---|---|
+| `az webapp vnet-integration add` | Connects the web app to a delegated subnet for outbound VNet integration. |
+| `--resource-group "$RG"` | Targets the resource group that contains the web app. |
+| `--name "$APP_NAME"` | Selects the web app that will join the VNet. |
+| `--vnet "$VNET_NAME"` | Uses the specified virtual network for the integration. |
+| `--subnet "snet-appservice-integration"` | Attaches the app to the delegated integration subnet. |
+| `--output json` | Returns the VNet-integration configuration as JSON. |
+
 
 ### 3) Create private endpoint for Azure SQL
 
@@ -62,6 +71,18 @@ az network private-endpoint create \
   --connection-name "pe-sql-guide-conn" \
   --output json
 ```
+| Flag | Description |
+|---|---|
+| `az network private-endpoint create` | Creates a private endpoint NIC for the target Azure SQL server. |
+| `--resource-group "$RG"` | Targets the resource group where the private endpoint resource will be created. |
+| `--name "pe-sql-guide"` | Names the private endpoint resource. |
+| `--vnet-name "$VNET_NAME"` | Places the private endpoint inside the specified virtual network. |
+| `--subnet "snet-private-endpoints"` | Uses the subnet reserved for private endpoint NICs. |
+| `--private-connection-resource-id "/subscriptions/.../Microsoft.Sql/servers/<sql-server>"` | Points the private endpoint at the Azure SQL server resource. |
+| `--group-id sqlServer` | Selects the SQL server private-link subresource. |
+| `--connection-name "pe-sql-guide-conn"` | Names the private-link connection object. |
+| `--output json` | Returns the created private endpoint resource as JSON. |
+
 
 ### 4) Create private endpoint for Redis
 
@@ -76,6 +97,18 @@ az network private-endpoint create \
   --connection-name "pe-redis-guide-conn" \
   --output json
 ```
+| Flag | Description |
+|---|---|
+| `az network private-endpoint create` | Creates a private endpoint NIC for the target Azure Cache for Redis instance. |
+| `--resource-group "$RG"` | Targets the resource group where the private endpoint resource will be created. |
+| `--name "pe-redis-guide"` | Names the private endpoint resource. |
+| `--vnet-name "$VNET_NAME"` | Places the private endpoint inside the specified virtual network. |
+| `--subnet "snet-private-endpoints"` | Uses the subnet reserved for private endpoint NICs. |
+| `--private-connection-resource-id "/subscriptions/.../Microsoft.Cache/Redis/<redis-name>"` | Points the private endpoint at the Redis cache resource. |
+| `--group-id redisCache` | Selects the Redis private-link subresource. |
+| `--connection-name "pe-redis-guide-conn"` | Names the private-link connection object. |
+| `--output json` | Returns the created private endpoint resource as JSON. |
+
 
 ### 5) NSG and route guidance
 
@@ -129,6 +162,13 @@ The same code can run with public or private networking if configuration and DNS
 ```bash
 az webapp vnet-integration list --resource-group "$RG" --name "$APP_NAME" --output table
 ```
+| Flag | Description |
+|---|---|
+| `az webapp vnet-integration list` | Lists the current VNet integration attachments for the web app. |
+| `--resource-group "$RG"` | Targets the resource group that contains the web app. |
+| `--name "$APP_NAME"` | Selects the web app whose VNet integration will be listed. |
+| `--output table` | Formats the integration list as a readable table. |
+
 
 Use dependency telemetry and synthetic API checks to verify end-to-end connectivity.
 

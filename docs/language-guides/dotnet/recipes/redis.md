@@ -44,6 +44,14 @@ az webapp config appsettings set \
   --settings Redis__Connection="<redis-name>.redis.cache.windows.net:6380,password=<masked>,ssl=True,abortConnect=False" \
   --output json
 ```
+| Flag | Description |
+|---|---|
+| `az webapp config appsettings set` | Creates or updates Redis connection settings on the web app. |
+| `--resource-group "$RESOURCE_GROUP_NAME"` | Targets the resource group that contains the web app. |
+| `--name "$WEB_APP_NAME"` | Selects the web app whose Redis settings will be updated. |
+| `--settings Redis__Connection="..."` | Stores the Redis hostname, TLS port, password, and client options in a single app setting. |
+| `--output json` | Returns the updated app-settings payload as JSON. |
+
 
 Prefer Key Vault references for the password value.
 

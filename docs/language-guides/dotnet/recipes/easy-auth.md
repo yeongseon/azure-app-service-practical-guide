@@ -44,6 +44,15 @@ az webapp auth update \
   --action LoginWithAzureActiveDirectory \
   --output json
 ```
+| Flag | Description |
+|---|---|
+| `az webapp auth update` | Updates the built-in authentication settings for the web app. |
+| `--resource-group "$RESOURCE_GROUP_NAME"` | Targets the resource group that contains the app. |
+| `--name "$WEB_APP_NAME"` | Selects the web app whose auth settings will change. |
+| `--enabled true` | Turns App Service Authentication on. |
+| `--action LoginWithAzureActiveDirectory` | Sets unauthenticated requests to use the Microsoft Entra login flow. |
+| `--output json` | Returns the updated auth configuration as JSON. |
+
 
 ### 2) Require authentication globally
 
@@ -56,6 +65,14 @@ az webapp auth update \
   --action LoginWithAzureActiveDirectory \
   --output json
 ```
+| Flag | Description |
+|---|---|
+| `az webapp auth update` | Updates the built-in authentication settings for the web app. |
+| `--resource-group "$RESOURCE_GROUP_NAME"` | Targets the resource group that contains the app. |
+| `--name "$WEB_APP_NAME"` | Selects the web app whose auth behavior will change. |
+| `--action LoginWithAzureActiveDirectory` | Requires unauthenticated requests to go through the Microsoft Entra sign-in flow. |
+| `--output json` | Returns the updated auth configuration as JSON. |
+
 
 ### 3) Read `X-MS-CLIENT-PRINCIPAL` header
 

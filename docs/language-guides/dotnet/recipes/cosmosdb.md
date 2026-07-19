@@ -46,6 +46,14 @@ az webapp config appsettings set \
   --settings Cosmos__Endpoint="https://<cosmos-account>.documents.azure.com:443/" Cosmos__Database="GuideDb" Cosmos__Container="Items" \
   --output json
 ```
+| Flag | Description |
+|---|---|
+| `az webapp config appsettings set` | Creates or updates app settings on the web app. |
+| `--resource-group "$RESOURCE_GROUP_NAME"` | Targets the resource group that contains the web app. |
+| `--name "$WEB_APP_NAME"` | Selects the web app whose Cosmos settings are being updated. |
+| `--settings Cosmos__Endpoint=... Cosmos__Database=... Cosmos__Container=...` | Stores the Cosmos endpoint, database name, and container name as app settings for the ASP.NET Core app. |
+| `--output json` | Returns the updated app-settings payload as JSON. |
+
 
 Store keys in Key Vault or use managed identity with RBAC where available.
 

@@ -73,6 +73,14 @@ az webapp config appsettings set \
     REDIS_ACCESS_KEY="<redacted>" \
   --output json
 ```
+| Flag | Description |
+|---|---|
+| `az webapp config appsettings set` | Creates or updates Redis-related app settings on the web app. |
+| `--resource-group "$RG"` | Targets the resource group that contains the web app. |
+| `--name "$APP_NAME"` | Selects the web app whose Redis settings will be updated. |
+| `--settings ...` | Stores the Redis host, TLS port, SSL flag, and access key as Spring environment variables. |
+| `--output json` | Returns the updated app-settings payload as JSON. |
+
 
 !!! warning "Use TLS always"
     Azure Cache for Redis should be accessed over TLS (`6380`) in production. Avoid plaintext port `6379` unless explicitly required in isolated environments.
