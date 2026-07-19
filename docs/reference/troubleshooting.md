@@ -176,7 +176,7 @@ az webapp config appsettings set \
 az webapp show \
   --resource-group $RG \
   --name $APP_NAME \
-  --query "{outbound: properties.outboundIpAddresses, possible: properties.possibleOutboundIpAddresses}" \
+  --query "{outbound: outboundIpAddresses, possible: possibleOutboundIpAddresses}" \
   --output json
 ```
 
@@ -184,7 +184,7 @@ az webapp show \
 |---|---|
 | `--resource-group $RG` | Looks up the app in the specified resource group. |
 | `--name $APP_NAME` | Selects the web app whose outbound IP ranges you want to review. |
-| `--query "{outbound: properties.outboundIpAddresses, possible: properties.possibleOutboundIpAddresses}"` | Returns both the currently active outbound IPs and the full possible outbound IP set in one object. |
+| `--query "{outbound: outboundIpAddresses, possible: possibleOutboundIpAddresses}"` | Reshapes the `az webapp show` output (both fields are top-level, not under `properties`) into one object holding the currently active outbound IPs and the full possible outbound IP set. |
 | `--output json` | Keeps both IP lists in JSON format for copying into firewall reviews or automation. |
 
 !!! warning "Allowlist all possible outbound IPs"
