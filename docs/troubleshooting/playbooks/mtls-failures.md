@@ -91,7 +91,7 @@ flowchart TD
 
     | Command | Purpose |
     |---------|---------|
-    | `az webapp show --resource-group $RG --name $APP_NAME --query "{clientCertEnabled:clientCertEnabled,clientCertMode:clientCertMode,clientCertExclusionPaths:clientCertExclusionPaths,httpsOnly:httpsOnly}" --output json` | Shows the web app resource so you can inspect state, hostnames, identity-related settings, or projected properties. |
+    | `az webapp show --resource-group $RG --name $APP_NAME --query "{clientCertEnabled:clientCertEnabled,clientCertMode:clientCertMode,clientCertExclusionPaths:clientCertExclusionPaths,httpsOnly:httpsOnly}" --output json` | Shows the client-certificate and HTTPS settings so you can verify how App Service handles inbound mTLS for this app. |
     | `--resource-group $RG` | Selects the resource group that contains the target web app or related resource. |
     | `--name $APP_NAME` | Specifies the target web app name for this command. |
     | `--query "{clientCertEnabled:clientCertEnabled,clientCertMode:clientCertMode,clientCertExclusionPaths:clientCertExclusionPaths,httpsOnly:httpsOnly}"` | Projects only these named top-level properties into a smaller object before formatting the output. |
@@ -123,7 +123,7 @@ az webapp show \
 
 | Command | Purpose |
 |---------|---------|
-| `az webapp show --resource-group $RG --name $APP_NAME --query "{clientCertEnabled:clientCertEnabled,clientCertMode:clientCertMode,clientCertExclusionPaths:clientCertExclusionPaths,httpsOnly:httpsOnly}" --output json` | Shows the web app resource so you can inspect state, hostnames, identity-related settings, or projected properties. |
+| `az webapp show --resource-group $RG --name $APP_NAME --query "{clientCertEnabled:clientCertEnabled,clientCertMode:clientCertMode,clientCertExclusionPaths:clientCertExclusionPaths,httpsOnly:httpsOnly}" --output json` | Shows the client-certificate and HTTPS settings so you can verify how App Service handles inbound mTLS for this app. |
 | `--resource-group $RG` | Selects the resource group that contains the target web app or related resource. |
 | `--name $APP_NAME` | Specifies the target web app name for this command. |
 | `--query "{clientCertEnabled:clientCertEnabled,clientCertMode:clientCertMode,clientCertExclusionPaths:clientCertExclusionPaths,httpsOnly:httpsOnly}"` | Projects only these named top-level properties into a smaller object before formatting the output. |

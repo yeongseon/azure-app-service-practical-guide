@@ -174,15 +174,15 @@ az webapp config show --name "$APP_NAME" --resource-group "$RG" \
 | `APP_NAME="<your-web-app-name>"` | Sets a local shell variable used by the commands in this troubleshooting step. |
 | `ACR_NAME="<your-acr-name>"` | Sets a local shell variable used by the commands in this troubleshooting step. |
 | `ACR_ID=$(az acr show --name "$ACR_NAME" --resource-group "$RG" --query id --output tsv)` | Captures the command output into a local shell variable for reuse in later commands. |
-| `--name "$ACR_NAME"` | Specifies the target web app name for this command. |
+| `--name "$ACR_NAME"` | Specifies the Azure Container Registry name to inspect. |
 | `--resource-group "$RG"` | Selects the resource group that contains the target web app or related resource. |
 | `--query id` | Returns only the resource `id` field from the command output. |
-| `--output tsv)` | Formats the command output using the requested Azure CLI output format. |
+| `--output tsv` | Formats the command output as tab-separated text so it can be captured cleanly into a shell variable. |
 | `APP_PRINCIPAL_ID=$(az webapp identity show --name "$APP_NAME" --resource-group "$RG" --query principalId --output tsv)` | Captures the command output into a local shell variable for reuse in later commands. |
 | `--name "$APP_NAME"` | Specifies the target web app name for this command. |
 | `--resource-group "$RG"` | Selects the resource group that contains the target web app or related resource. |
 | `--query principalId` | Returns only the managed identity `principalId` value from the command output. |
-| `--output tsv)` | Formats the command output using the requested Azure CLI output format. |
+| `--output tsv` | Formats the command output as tab-separated text so it can be captured cleanly into a shell variable. |
 | `az role assignment list --scope "$ACR_ID" --output table` | Lists role assignments so you can inspect the existing RBAC entries involved in the incident. |
 | `--scope "$ACR_ID"` | Limits the role-assignment lookup to this Azure resource scope. |
 | `--output table` | Formats the command output as a readable table for quick triage. |
@@ -303,10 +303,10 @@ az ad sp show --id "$PRINCIPAL_ID" --output json 2>&1 || echo "principal does no
 |---------|---------|
 | `PRINCIPAL_ID=$(az role assignment show --ids "/subscriptions/$SUBSCRIPTION_ID/providers/Microsoft.Authorization/roleAssignments/$ROLE_ASSIGNMENT_ID" --query principalId --output tsv)` | Captures the command output into a local shell variable for reuse in later commands. |
 | `--ids "/subscriptions/$SUBSCRIPTION_ID/providers/Microsoft.Authorization/roleAssignments/$ROLE_ASSIGNMENT_ID"` | Targets the exact ARM resource ID of the object to show or delete. |
-| `--query principalId` | Returns only the managed identity `principalId` value from the command output. |
-| `--output tsv)` | Formats the command output using the requested Azure CLI output format. |
+| `--query principalId` | Returns only the role assignment `principalId` value from the command output. |
+| `--output tsv` | Formats the command output as tab-separated text so it can be captured cleanly into a shell variable. |
 | `az ad sp show --id "$PRINCIPAL_ID" --output json 2>&1 \|\| echo "principal does not exist"` | Looks up the service principal so you can see whether the referenced principal still exists. |
-| `--id "$PRINCIPAL_ID"` | Controls the behavior of `--id` for this command. |
+| `--id "$PRINCIPAL_ID"` | Specifies the service principal identifier to look up. |
 | `--output json` | Formats the command output as JSON for full-fidelity inspection. |
 
 ### H4: AcrPull was granted manually for testing
@@ -416,10 +416,10 @@ az role assignment list --scope "$ACR_ID" \
     | Command | Purpose |
     |---------|---------|
     | `ACR_ID=$(az acr show --name "$ACR_NAME" --resource-group "$RG" --query id --output tsv)` | Captures the command output into a local shell variable for reuse in later commands. |
-    | `--name "$ACR_NAME"` | Specifies the target web app name for this command. |
+| `--name "$ACR_NAME"` | Specifies the Azure Container Registry name to inspect. |
     | `--resource-group "$RG"` | Selects the resource group that contains the target web app or related resource. |
     | `--query id` | Returns only the resource `id` field from the command output. |
-    | `--output tsv)` | Formats the command output using the requested Azure CLI output format. |
+| `--output tsv` | Formats the command output as tab-separated text so it can be captured cleanly into a shell variable. |
     | `az role assignment delete --ids "${ACR_ID}/providers/Microsoft.Authorization/roleAssignments/$ROLE_ASSIGNMENT_ID"` | Deletes the specified role assignment so the conflicting or stale RBAC entry is removed. |
     | `--ids "${ACR_ID}/providers/Microsoft.Authorization/roleAssignments/$ROLE_ASSIGNMENT_ID"` | Targets the exact ARM resource ID of the object to show or delete. |
 
@@ -454,7 +454,7 @@ az role assignment list --scope "$ACR_ID" \
     | `sleep 30` | Pauses locally so Azure control-plane or RBAC changes have time to propagate before the next check. |
     | `az deployment group create --resource-group "$RG" --name "cd-reconnect-retry" --template-file "<your-cd-template>.bicep" --parameters webAppName="$APP_NAME" registryName="$ACR_NAME"` | Runs a resource-group deployment so you can retry the ARM/Bicep flow that previously failed. |
     | `--resource-group "$RG"` | Selects the resource group that contains the target web app or related resource. |
-    | `--name "cd-reconnect-retry"` | Specifies the target web app name for this command. |
+    | `--name "cd-reconnect-retry"` | Names this resource-group deployment operation. |
     | `--template-file "<your-cd-template>.bicep"` | Points Azure CLI to the local ARM/Bicep template file to deploy. |
     | `--parameters webAppName="$APP_NAME" registryName="$ACR_NAME"` | Passes the named parameter values into the template deployment. |
 

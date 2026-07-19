@@ -253,7 +253,7 @@ az webapp show --resource-group <resource-group> --name <app-name> --query "{sta
 | `az webapp config appsettings list --resource-group <resource-group> --name <app-name> --slot production --output table` | Lists app settings so you can verify the effective configuration keys involved in this scenario. |
 | `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
 | `--name <app-name>` | Specifies the target web app name for this command. |
-| `--slot production` | Scopes the read or update to this deployment slot instead of the production slot. |
+| `--slot production` | Targets the production slot explicitly. |
 | `--output table` | Formats the command output as a readable table for quick triage. |
 | `az webapp config appsettings list --resource-group <resource-group> --name <app-name> --slot <staging-slot> --output table` | Lists app settings so you can verify the effective configuration keys involved in this scenario. |
 | `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
@@ -263,7 +263,7 @@ az webapp show --resource-group <resource-group> --name <app-name> --query "{sta
 | `az webapp config connection-string list --resource-group <resource-group> --name <app-name> --slot production --output table` | Lists connection strings so you can compare effective dependency configuration across slots. |
 | `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
 | `--name <app-name>` | Specifies the target web app name for this command. |
-| `--slot production` | Scopes the read or update to this deployment slot instead of the production slot. |
+| `--slot production` | Targets the production slot explicitly. |
 | `--output table` | Formats the command output as a readable table for quick triage. |
 | `az webapp config connection-string list --resource-group <resource-group> --name <app-name> --slot <staging-slot> --output table` | Lists connection strings so you can compare effective dependency configuration across slots. |
 | `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
@@ -276,7 +276,7 @@ az webapp show --resource-group <resource-group> --name <app-name> --query "{sta
 | `--slot <staging-slot>` | Scopes the read or update to this deployment slot instead of the production slot. |
 | `--query "[?name=='WEBSITE_SWAP_WARMUP_PING_PATH' \|\| name=='WEBSITE_SWAP_WARMUP_PING_STATUSES' \|\| name=='WEBSITES_CONTAINER_START_TIME_LIMIT'].{name:name,value:value}"` | Filters the returned list with JMESPath, then projects only the named fields into a smaller object per item. |
 | `--output table` | Formats the command output as a readable table for quick triage. |
-| `az webapp show --resource-group <resource-group> --name <app-name> --query "{state:state,enabled:enabled,hostNames:hostNames}" --output table` | Shows the web app resource so you can inspect state, hostnames, identity-related settings, or projected properties. |
+| `az webapp show --resource-group <resource-group> --name <app-name> --query "{state:state,enabled:enabled,hostNames:hostNames}" --output table` | Shows the app state, enabled flag, and hostname bindings so you can confirm the production site object is running before or after swap analysis. |
 | `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
 | `--name <app-name>` | Specifies the target web app name for this command. |
 | `--query "{state:state,enabled:enabled,hostNames:hostNames}"` | Projects only these named top-level properties into a smaller object before formatting the output. |
@@ -329,7 +329,7 @@ az role assignment list --assignee <object-id> --scope /subscriptions/<subscript
 | `az webapp config appsettings list --resource-group <resource-group> --name <app-name> --slot production --query "[?name=='DB_CONNECTION_STRING' \|\| name=='REDIS_CONNECTION_STRING' \|\| name=='KEY_VAULT_URI' \|\| name=='API_BASE_URL' \|\| name=='WEBSITE_SWAP_WARMUP_PING_PATH' \|\| name=='WEBSITE_SWAP_WARMUP_PING_STATUSES'].{name:name,value:value,slotSetting:slotSetting}" --output table` | Lists app settings so you can verify the effective configuration keys involved in this scenario. |
 | `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
 | `--name <app-name>` | Specifies the target web app name for this command. |
-| `--slot production` | Scopes the read or update to this deployment slot instead of the production slot. |
+| `--slot production` | Targets the production slot explicitly. |
 | `--query "[?name=='DB_CONNECTION_STRING' \|\| name=='REDIS_CONNECTION_STRING' \|\| name=='KEY_VAULT_URI' \|\| name=='API_BASE_URL' \|\| name=='WEBSITE_SWAP_WARMUP_PING_PATH' \|\| name=='WEBSITE_SWAP_WARMUP_PING_STATUSES'].{name:name,value:value,slotSetting:slotSetting}"` | Filters the returned list with JMESPath, then projects only the named fields into a smaller object per item. |
 | `--output table` | Formats the command output as a readable table for quick triage. |
 | `az webapp config appsettings list --resource-group <resource-group> --name <app-name> --slot <staging-slot> --query "[?name=='DB_CONNECTION_STRING' \|\| name=='REDIS_CONNECTION_STRING' \|\| name=='KEY_VAULT_URI' \|\| name=='API_BASE_URL' \|\| name=='WEBSITE_SWAP_WARMUP_PING_PATH' \|\| name=='WEBSITE_SWAP_WARMUP_PING_STATUSES'].{name:name,value:value,slotSetting:slotSetting}" --output table` | Lists app settings so you can verify the effective configuration keys involved in this scenario. |
@@ -398,7 +398,7 @@ az webapp deployment slot swap --resource-group <resource-group> --name <app-nam
 | `az webapp config appsettings list --resource-group <resource-group> --name <app-name> --slot production` | Lists app settings so you can verify the effective configuration keys involved in this scenario. |
 | `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
 | `--name <app-name>` | Specifies the target web app name for this command. |
-| `--slot production` | Scopes the read or update to this deployment slot instead of the production slot. |
+| `--slot production` | Targets the production slot explicitly. |
 | `az webapp config appsettings list --resource-group <resource-group> --name <app-name> --slot <staging-slot>` | Lists app settings so you can verify the effective configuration keys involved in this scenario. |
 | `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
 | `--name <app-name>` | Specifies the target web app name for this command. |
@@ -437,7 +437,7 @@ az webapp config connection-string list --resource-group <resource-group> --name
 | `az webapp config appsettings list --resource-group <resource-group> --name <app-name> --slot production` | Lists app settings so you can verify the effective configuration keys involved in this scenario. |
 | `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
 | `--name <app-name>` | Specifies the target web app name for this command. |
-| `--slot production` | Scopes the read or update to this deployment slot instead of the production slot. |
+| `--slot production` | Targets the production slot explicitly. |
 | `az webapp config appsettings list --resource-group <resource-group> --name <app-name> --slot <staging-slot>` | Lists app settings so you can verify the effective configuration keys involved in this scenario. |
 | `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
 | `--name <app-name>` | Specifies the target web app name for this command. |
@@ -445,7 +445,7 @@ az webapp config connection-string list --resource-group <resource-group> --name
 | `az webapp config connection-string list --resource-group <resource-group> --name <app-name> --slot production` | Lists connection strings so you can compare effective dependency configuration across slots. |
 | `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
 | `--name <app-name>` | Specifies the target web app name for this command. |
-| `--slot production` | Scopes the read or update to this deployment slot instead of the production slot. |
+| `--slot production` | Targets the production slot explicitly. |
 | `az webapp config connection-string list --resource-group <resource-group> --name <app-name> --slot <staging-slot>` | Lists connection strings so you can compare effective dependency configuration across slots. |
 | `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
 | `--name <app-name>` | Specifies the target web app name for this command. |
@@ -525,7 +525,7 @@ az webapp config connection-string list --resource-group <resource-group> --name
 | `az webapp config connection-string list --resource-group <resource-group> --name <app-name> --slot production` | Lists connection strings so you can compare effective dependency configuration across slots. |
 | `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
 | `--name <app-name>` | Specifies the target web app name for this command. |
-| `--slot production` | Scopes the read or update to this deployment slot instead of the production slot. |
+| `--slot production` | Targets the production slot explicitly. |
 
 ### Normal vs Abnormal Comparison
 

@@ -99,7 +99,7 @@ flowchart TD
 
     | Command | Purpose |
     |---------|---------|
-    | `az webapp show --resource-group $RG --name $APP_NAME --query "{state:state,serverFarmId:serverFarmId,enabled:enabled}" --output json` | Shows the web app resource so you can inspect state, hostnames, identity-related settings, or projected properties. |
+    | `az webapp show --resource-group $RG --name $APP_NAME --query "{state:state,serverFarmId:serverFarmId,enabled:enabled}" --output json` | Shows the app state, enabled flag, and hosting-plan resource ID so you can confirm the app is attached to the expected plan. |
     | `--resource-group $RG` | Selects the resource group that contains the target web app or related resource. |
     | `--name $APP_NAME` | Specifies the target web app name for this command. |
     | `--query "{state:state,serverFarmId:serverFarmId,enabled:enabled}"` | Projects only these named top-level properties into a smaller object before formatting the output. |
@@ -120,7 +120,7 @@ flowchart TD
     | `az appservice plan show --resource-group $RG --name $PLAN_NAME --query "{sku:sku.name,workerSize:workerSize,numberOfWorkers:numberOfWorkers,maximumElasticWorkerCount:maximumElasticWorkerCount}" --output json` | Shows the App Service plan capacity and worker settings so you can judge scale context. |
     | `--resource-group $RG` | Selects the resource group that contains the App Service plan you are inspecting. |
     | `--name $PLAN_NAME` | Specifies the App Service plan name to inspect. |
-    | `--query "{sku:sku.name,workerSize:workerSize,numberOfWorkers:numberOfWorkers,maximumElasticWorkerCount:maximumElasticWorkerCount}"` | Projects only these named top-level properties into a smaller object before formatting the output. |
+    | `--query "{sku:sku.name,workerSize:workerSize,numberOfWorkers:numberOfWorkers,maximumElasticWorkerCount:maximumElasticWorkerCount}"` | Projects the selected plan fields, including nested `sku.name`, into a smaller object before formatting the output. |
     | `--output json` | Formats the command output as JSON for full-fidelity inspection. |
 
 3. **Review startup and runtime settings that influence performance behavior**
@@ -260,7 +260,7 @@ az appservice plan show \
 | `az appservice plan show --resource-group $RG --name $PLAN_NAME --query "{sku:sku.name,numberOfWorkers:numberOfWorkers,maximumElasticWorkerCount:maximumElasticWorkerCount}" --output json` | Shows the App Service plan capacity and worker settings so you can judge scale context. |
 | `--resource-group $RG` | Selects the resource group that contains the App Service plan you are inspecting. |
 | `--name $PLAN_NAME` | Specifies the App Service plan name to inspect. |
-| `--query "{sku:sku.name,numberOfWorkers:numberOfWorkers,maximumElasticWorkerCount:maximumElasticWorkerCount}"` | Projects only these named top-level properties into a smaller object before formatting the output. |
+| `--query "{sku:sku.name,numberOfWorkers:numberOfWorkers,maximumElasticWorkerCount:maximumElasticWorkerCount}"` | Projects the selected plan fields, including nested `sku.name`, into a smaller object before formatting the output. |
 | `--output json` | Formats the command output as JSON for full-fidelity inspection. |
 
 Sample output:

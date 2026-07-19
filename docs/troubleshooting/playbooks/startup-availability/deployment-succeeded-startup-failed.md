@@ -288,7 +288,7 @@ az webapp log deployment show --resource-group <resource-group> --name <app-name
 
 | Command | Purpose |
 |---------|---------|
-| `az webapp show --resource-group <resource-group> --name <app-name> --query "{state:state,enabled:enabled,hostNames:hostNames}" --output table` | Shows the web app resource so you can inspect state, hostnames, identity-related settings, or projected properties. |
+| `az webapp show --resource-group <resource-group> --name <app-name> --query "{state:state,enabled:enabled,hostNames:hostNames}" --output table` | Shows the app state, enabled flag, and hostname bindings so you can confirm the site object stayed active even though startup failed. |
 | `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
 | `--name <app-name>` | Specifies the target web app name for this command. |
 | `--query "{state:state,enabled:enabled,hostNames:hostNames}"` | Projects only these named top-level properties into a smaller object before formatting the output. |

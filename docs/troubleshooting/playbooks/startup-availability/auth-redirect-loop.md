@@ -169,7 +169,7 @@ az webapp deployment slot list --resource-group <resource-group> --name <app-nam
 
 | Command | Purpose |
 |---------|---------|
-| `az webapp show --resource-group <resource-group> --name <app-name>` | Shows the web app resource so you can inspect state, hostnames, identity-related settings, or projected properties. |
+| `az webapp show --resource-group <resource-group> --name <app-name>` | Shows the web app resource so you can inspect the current site configuration and host bindings before deeper auth checks. |
 | `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
 | `--name <app-name>` | Specifies the target web app name for this command. |
 | `az webapp auth show --resource-group <resource-group> --name <app-name>` | Shows the App Service authentication (Easy Auth) configuration for the app. |
@@ -242,15 +242,15 @@ az webapp config appsettings list --resource-group <resource-group> --name <app-
 | `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
 | `--name <app-name>` | Specifies the target web app name for this command. |
 | `--output json` | Formats the command output as JSON for full-fidelity inspection. |
-| `az webapp show --resource-group <resource-group> --name <app-name> --query "{defaultHostName:defaultHostName,httpsOnly:httpsOnly,hostNames:hostNames}" --output json` | Shows the web app resource so you can inspect state, hostnames, identity-related settings, or projected properties. |
+| `az webapp show --resource-group <resource-group> --name <app-name> --query "{defaultHostName:defaultHostName,httpsOnly:httpsOnly,hostNames:hostNames}" --output json` | Shows the hostname and HTTPS settings that must align with the redirect and callback URLs in use. |
 | `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
 | `--name <app-name>` | Specifies the target web app name for this command. |
-| `--query "{defaultHostName:defaultHostName,httpsOnly:httpsOnly,hostNames:hostNames}"` | Projects only these named top-level properties into a smaller object before formatting the output. |
+| `--query "{defaultHostName:defaultHostName,httpsOnly:httpsOnly,hostNames:hostNames}"` | Projects the selected hostname and HTTPS fields into a smaller object before formatting the output. |
 | `--output json` | Formats the command output as JSON for full-fidelity inspection. |
 | `az webapp config appsettings list --resource-group <resource-group> --name <app-name> --slot production --query "[?name=='WEBSITE_AUTH_ENABLED' \|\| name=='WEBSITE_AUTH_DEFAULT_PROVIDER' \|\| name=='WEBSITE_AUTH_CLIENT_ID' \|\| name=='WEBSITE_AUTH_OPENID_ISSUER'].{name:name,value:value}" --output table` | Lists app settings so you can verify the effective configuration keys involved in this scenario. |
 | `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
 | `--name <app-name>` | Specifies the target web app name for this command. |
-| `--slot production` | Scopes the read or update to this deployment slot instead of the production slot. |
+| `--slot production` | Targets the production slot explicitly. |
 | `--query "[?name=='WEBSITE_AUTH_ENABLED' \|\| name=='WEBSITE_AUTH_DEFAULT_PROVIDER' \|\| name=='WEBSITE_AUTH_CLIENT_ID' \|\| name=='WEBSITE_AUTH_OPENID_ISSUER'].{name:name,value:value}"` | Filters the returned list with JMESPath, then projects only the named fields into a smaller object per item. |
 | `--output table` | Formats the command output as a readable table for quick triage. |
 | `az webapp config appsettings list --resource-group <resource-group> --name <app-name> --slot <staging-slot> --query "[?name=='WEBSITE_AUTH_ENABLED' \|\| name=='WEBSITE_AUTH_DEFAULT_PROVIDER' \|\| name=='WEBSITE_AUTH_CLIENT_ID' \|\| name=='WEBSITE_AUTH_OPENID_ISSUER'].{name:name,value:value}" --output table` | Lists app settings so you can verify the effective configuration keys involved in this scenario. |

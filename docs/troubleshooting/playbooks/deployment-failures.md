@@ -113,7 +113,7 @@ flowchart TD
 
     | Command | Purpose |
     |---------|---------|
-    | `az webapp show --resource-group $RG --name $APP_NAME --query "{state:state,defaultHostName:defaultHostName,slotSwapStatus:slotSwapStatus}" --output json` | Shows the web app resource so you can inspect state, hostnames, identity-related settings, or projected properties. |
+    | `az webapp show --resource-group $RG --name $APP_NAME --query "{state:state,defaultHostName:defaultHostName,slotSwapStatus:slotSwapStatus}" --output json` | Shows the app state, default hostname, and slot-swap status so you can confirm whether deployment reached the expected activation phase. |
     | `--resource-group $RG` | Selects the resource group that contains the target web app or related resource. |
     | `--name $APP_NAME` | Specifies the target web app name for this command. |
     | `--query "{state:state,defaultHostName:defaultHostName,slotSwapStatus:slotSwapStatus}"` | Projects only these named top-level properties into a smaller object before formatting the output. |
@@ -292,7 +292,7 @@ az webapp show \
 
 | Command | Purpose |
 |---------|---------|
-| `az webapp show --resource-group $RG --name $APP_NAME --query "{state:state,slotSwapStatus:slotSwapStatus,host:defaultHostName}" --output json` | Shows the web app resource so you can inspect state, hostnames, identity-related settings, or projected properties. |
+| `az webapp show --resource-group $RG --name $APP_NAME --query "{state:state,slotSwapStatus:slotSwapStatus,host:defaultHostName}" --output json` | Shows the app state, default hostname, and slot-swap status so you can correlate deployment and promotion behavior. |
 | `--resource-group $RG` | Selects the resource group that contains the target web app or related resource. |
 | `--name $APP_NAME` | Specifies the target web app name for this command. |
 | `--query "{state:state,slotSwapStatus:slotSwapStatus,host:defaultHostName}"` | Projects only these named top-level properties into a smaller object before formatting the output. |

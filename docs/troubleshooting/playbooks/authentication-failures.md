@@ -131,7 +131,7 @@ flowchart TD
 
     | Command | Purpose |
     |---------|---------|
-    | `az webapp show --resource-group $RG --name $APP_NAME --query "{defaultHostName:defaultHostName,hostNames:hostNames,httpsOnly:httpsOnly}" --output json` | Shows the web app resource so you can inspect state, hostnames, identity-related settings, or projected properties. |
+    | `az webapp show --resource-group $RG --name $APP_NAME --query "{defaultHostName:defaultHostName,hostNames:hostNames,httpsOnly:httpsOnly}" --output json` | Shows the hostname and HTTPS settings that must align with the callback URLs used for authentication. |
     | `--resource-group $RG` | Selects the resource group that contains the target web app or related resource. |
     | `--name $APP_NAME` | Specifies the target web app name for this command. |
     | `--query "{defaultHostName:defaultHostName,hostNames:hostNames,httpsOnly:httpsOnly}"` | Projects only these named top-level properties into a smaller object before formatting the output. |

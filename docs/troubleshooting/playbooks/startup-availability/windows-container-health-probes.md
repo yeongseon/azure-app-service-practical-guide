@@ -109,7 +109,7 @@ az webapp config appsettings list --resource-group <resource-group> --name <app-
 
 | Command | Purpose |
 |---------|---------|
-| `az webapp show --resource-group <resource-group> --name <app-name> --query "{name:name,state:state,kind:kind}" --output table` | Shows the web app resource so you can inspect state, hostnames, identity-related settings, or projected properties. |
+| `az webapp show --resource-group <resource-group> --name <app-name> --query "{name:name,state:state,kind:kind}" --output table` | Shows the app name, state, and kind so you can confirm you are inspecting the expected Windows container app. |
 | `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
 | `--name <app-name>` | Specifies the target web app name for this command. |
 | `--query "{name:name,state:state,kind:kind}"` | Projects only these named top-level properties into a smaller object before formatting the output. |

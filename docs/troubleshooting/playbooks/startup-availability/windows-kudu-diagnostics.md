@@ -155,7 +155,7 @@ az webapp log tail --resource-group <resource-group> --name <app-name>
 
 | Command | Purpose |
 |---------|---------|
-| `az webapp show --resource-group <resource-group> --name <app-name> --output json` | Shows the web app resource so you can inspect state, hostnames, identity-related settings, or projected properties. |
+| `az webapp show --resource-group <resource-group> --name <app-name> --output json` | Shows the full web app resource so you can review the current site metadata before using Kudu tools. |
 | `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
 | `--name <app-name>` | Specifies the target web app name for this command. |
 | `--output json` | Formats the command output as JSON for full-fidelity inspection. |
@@ -374,7 +374,7 @@ az webapp log config --resource-group <resource-group> --name <app-name> --appli
 
 | Command | Purpose |
 |---------|---------|
-| `az webapp show --resource-group <resource-group> --name <app-name> --query "{kind:kind,reserved:reserved,defaultHostName:defaultHostName}" --output json` | Shows the web app resource so you can inspect state, hostnames, identity-related settings, or projected properties. |
+| `az webapp show --resource-group <resource-group> --name <app-name> --query "{kind:kind,reserved:reserved,defaultHostName:defaultHostName}" --output json` | Shows the app kind, reserved flag, and default hostname so you can confirm runtime and hosting context before reproducing the issue. |
 | `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
 | `--name <app-name>` | Specifies the target web app name for this command. |
 | `--query "{kind:kind,reserved:reserved,defaultHostName:defaultHostName}"` | Projects only these named top-level properties into a smaller object before formatting the output. |

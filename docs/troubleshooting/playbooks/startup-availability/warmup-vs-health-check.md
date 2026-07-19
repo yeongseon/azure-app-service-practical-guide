@@ -387,7 +387,7 @@ az webapp restart --resource-group <resource-group> --name <app-name>
 | Command | Purpose |
 |---------|---------|
 | `az monitor log-analytics query --workspace <workspace-id> --analytics-query "AppServiceHTTPLogs \| where CsUriStem == '/health' \| summarize count() by ScStatus"` | Runs the supplied KQL directly against the Log Analytics workspace for a quick evidence check. |
-| `--workspace <workspace-id>` | Controls the behavior of `--workspace` for this command. |
+| `--workspace <workspace-id>` | Specifies the Log Analytics workspace ID that Azure Monitor queries. |
 | `--analytics-query "AppServiceHTTPLogs \| where CsUriStem == '/health' \| summarize count() by ScStatus"` | Supplies the KQL statement that Azure Monitor should execute against the workspace. |
 | `az webapp config set --resource-group <resource-group> --name <app-name> --generic-configurations "{\"healthCheckPath\":\"/health/light\"}"` | Updates generic site configuration properties so you can change health-check or runtime behavior. |
 | `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
@@ -424,7 +424,7 @@ az webapp restart --resource-group <resource-group> --name <app-name>
 
 | Command | Purpose |
 |---------|---------|
-| `az webapp show --resource-group <resource-group> --name <app-name>` | Shows the web app resource so you can inspect state, hostnames, identity-related settings, or projected properties. |
+| `az webapp show --resource-group <resource-group> --name <app-name>` | Shows the web app resource so you can inspect the current site configuration before changing probe settings. |
 | `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
 | `--name <app-name>` | Specifies the target web app name for this command. |
 | `az webapp config set --resource-group <resource-group> --name <app-name> --generic-configurations "{\"healthCheckPath\":\"/health\"}"` | Updates generic site configuration properties so you can change health-check or runtime behavior. |
