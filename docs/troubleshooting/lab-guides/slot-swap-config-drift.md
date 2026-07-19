@@ -328,6 +328,18 @@ PRODUCTION_URL="https://$PRODUCTION_HOST"
 STAGING_URL="https://$STAGING_HOST"
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp list --resource-group "$RG" --query "[0].name" --output tsv` | Lists web apps in the lab resource group and returns the first app name. |
+| `--resource-group "$RG" --query "[0].name" --output tsv` | Limits the app list to this resource group. |
+| `--query "[0].name" --output tsv` | Selects the `name` field from the first item in the returned web-app array. |
+| `--output tsv` | Returns the app name as plain text for shell variable assignment. |
+| `az webapp show --resource-group "$RG" --name "$APP_NAME" --query "defaultHostName" --output tsv` | Retrieves the production slot's default hostname so the runbook can build the production URL. |
+| `--resource-group "$RG" --name "$APP_NAME" --query "defaultHostName" --output tsv` | Looks up the web app in this resource group. |
+| `--name "$APP_NAME" --query "defaultHostName" --output tsv` | Targets this web app's production slot. |
+| `--query "defaultHostName" --output tsv` | Projects only the production slot `defaultHostName` field. |
+| `--output tsv` | Returns the hostname as plain text for shell variable assignment. |
+
 ### 3.5 Validate slot settings metadata
 
 Inspect production settings:
@@ -338,6 +350,13 @@ az webapp config appsettings list \
   --name "$APP_NAME" \
   --query "[?name=='SCM_DO_BUILD_DURING_DEPLOYMENT' || name=='DB_CONNECTION_STRING' || name=='FEATURE_FLAG'].{name:name,value:value,slotSetting:slotSetting}"
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az webapp config appsettings list --resource-group "$RG" --name "$APP_NAME" --query "[?name=='SCM_DO_BUILD_DURING_DEPLOYMENT' \|\| name=='DB_CONNECTION_STRING' \|\| name=='FEATURE_FLAG'].{name:name,value:value,slotSetting:slotSetting}"` | Lists the production slot app settings and narrows them to the three settings the lab compares before the swap. |
+| `--resource-group "$RG" --name "$APP_NAME" --query "[?name=='SCM_DO_BUILD_DURING_DEPLOYMENT' \|\| name=='DB_CONNECTION_STRING' \|\| name=='FEATURE_FLAG'].{name:name,value:value,slotSetting:slotSetting}"` | Looks up the app settings in this resource group. |
+| `--name "$APP_NAME" --query "[?name=='SCM_DO_BUILD_DURING_DEPLOYMENT' \|\| name=='DB_CONNECTION_STRING' \|\| name=='FEATURE_FLAG'].{name:name,value:value,slotSetting:slotSetting}"` | Targets this web app's production slot settings. |
+| `--query "[?name=='SCM_DO_BUILD_DURING_DEPLOYMENT' \|\| name=='DB_CONNECTION_STRING' \|\| name=='FEATURE_FLAG'].{name:name,value:value,slotSetting:slotSetting}"` | Filters the settings list to `SCM_DO_BUILD_DURING_DEPLOYMENT`, `DB_CONNECTION_STRING`, and `FEATURE_FLAG`, then projects each setting's `name`, `value`, and `slotSetting`. |
 
 Inspect staging settings:
 

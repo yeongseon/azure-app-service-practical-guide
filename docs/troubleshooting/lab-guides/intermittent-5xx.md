@@ -395,6 +395,19 @@ export APP_HOSTNAME=$(az deployment group show \
 export APP_URL="https://${APP_HOSTNAME}"
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az deployment group show --resource-group "$RG" --name "main" --query "properties.outputs.appName.value" --output tsv` | Reads the `appName` deployment output from the `main` resource-group deployment. |
+| `--resource-group "$RG" --name "main" --query "properties.outputs.appName.value" --output tsv` | Looks up the deployment in this resource group. |
+| `--name "main" --query "properties.outputs.appName.value" --output tsv` | Targets the deployment record named `main`. |
+| `--query "properties.outputs.appName.value" --output tsv` | Projects only the `appName` output's `value` field. |
+| `--output tsv` | Returns the selected output value as plain text for shell variable assignment. |
+| `az deployment group show --resource-group "$RG" --name "main" --query "properties.outputs.defaultHostName.value" --output tsv` | Reads the `defaultHostName` deployment output from the `main` resource-group deployment. |
+| `--resource-group "$RG" --name "main" --query "properties.outputs.defaultHostName.value" --output tsv` | Looks up the deployment in this resource group. |
+| `--name "main" --query "properties.outputs.defaultHostName.value" --output tsv` | Targets the deployment record named `main`. |
+| `--query "properties.outputs.defaultHostName.value" --output tsv` | Projects only the `defaultHostName` output's `value` field. |
+| `--output tsv` | Returns the selected output value as plain text for shell variable assignment. |
+
 ### 3.5 Deploy application package
 
 ```bash
@@ -408,11 +421,25 @@ az webapp deploy \
   --type zip
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp deploy --resource-group "$RG" --name "$APP_NAME" --src-path "$APP_PACKAGE_PATH" --type zip` | Deploys the packaged intermittent-5xx sample app to the target web app as a ZIP deployment. |
+| `--resource-group "$RG" --name "$APP_NAME" --src-path "$APP_PACKAGE_PATH" --type zip` | Runs the deployment in this resource group. |
+| `--name "$APP_NAME" --src-path "$APP_PACKAGE_PATH" --type zip` | Targets this web app. |
+| `--src-path "$APP_PACKAGE_PATH" --type zip` | Uses the ZIP package built from the lab app directory as deployment input. |
+| `--type zip` | Tells Azure CLI to perform a ZIP deployment. |
+
 Restart app for clean test state:
 
 ```bash
 az webapp restart --resource-group "$RG" --name "$APP_NAME"
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az webapp restart --resource-group "$RG" --name "$APP_NAME"` | Restarts the web app so the workload begins from a clean post-deploy state. |
+| `--resource-group "$RG" --name "$APP_NAME"` | Restarts the app in this resource group. |
+| `--name "$APP_NAME"` | Targets this web app. |
 
 ### 3.6 Baseline health checks
 
@@ -473,6 +500,19 @@ export LOG_WORKSPACE_ID=$(az monitor log-analytics workspace show \
   --output tsv)
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az deployment group show --resource-group "$RG" --name "main" --query "properties.outputs.logAnalyticsWorkspaceName.value" --output tsv` | Reads the `logAnalyticsWorkspaceName` deployment output from the `main` deployment. |
+| `--resource-group "$RG" --name "main" --query "properties.outputs.logAnalyticsWorkspaceName.value" --output tsv` | Looks up the deployment in this resource group. |
+| `--name "main" --query "properties.outputs.logAnalyticsWorkspaceName.value" --output tsv` | Targets the deployment record named `main`. |
+| `--query "properties.outputs.logAnalyticsWorkspaceName.value" --output tsv` | Projects only the `logAnalyticsWorkspaceName` output's `value` field. |
+| `--output tsv` | Returns the workspace name as plain text for shell variable assignment. |
+| `az monitor log-analytics workspace show --resource-group "$RG" --workspace-name "$LOG_WORKSPACE_NAME" --query "customerId" --output tsv` | Retrieves the Log Analytics workspace resource and emits its workspace customer ID. |
+| `--resource-group "$RG" --workspace-name "$LOG_WORKSPACE_NAME" --query "customerId" --output tsv` | Looks up the workspace in this resource group. |
+| `--workspace-name "$LOG_WORKSPACE_NAME" --query "customerId" --output tsv` | Targets this Log Analytics workspace. |
+| `--query "customerId" --output tsv` | Projects only the workspace `customerId` field. |
+| `--output tsv` | Returns the workspace customer ID as plain text for shell variable assignment. |
+
 #### HTTP detail query
 
 ```bash
@@ -532,6 +572,17 @@ az monitor log-analytics query \
   --analytics-query "AppServicePlatformLogs | where TimeGenerated > ago(2h) | project TimeGenerated, Level, Message | order by TimeGenerated desc" \
   --output json
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az monitor log-analytics query --workspace "$LOG_WORKSPACE_ID" --analytics-query "AppServiceConsoleLogs | where TimeGenerated > ago(2h) | project TimeGenerated, ResultDescription | order by TimeGenerated desc" --output json` | Queries `AppServiceConsoleLogs` for recent console output so you can inspect runtime messages and errors during the failure window. |
+| `--workspace "$LOG_WORKSPACE_ID" --analytics-query "AppServiceConsoleLogs | where TimeGenerated > ago(2h) | project TimeGenerated, ResultDescription | order by TimeGenerated desc" --output json` | Runs the KQL query against this Log Analytics workspace. |
+| `--analytics-query "AppServiceConsoleLogs | where TimeGenerated > ago(2h) | project TimeGenerated, ResultDescription | order by TimeGenerated desc" --output json` | Projects recent `TimeGenerated` and `ResultDescription` columns from `AppServiceConsoleLogs`, ordered newest first. |
+| `--output json` | Returns the query result as JSON. |
+| `az monitor log-analytics query --workspace "$LOG_WORKSPACE_ID" --analytics-query "AppServicePlatformLogs | where TimeGenerated > ago(2h) | project TimeGenerated, Level, Message | order by TimeGenerated desc" --output json` | Queries `AppServicePlatformLogs` for recent platform lifecycle messages during the failure window. |
+| `--workspace "$LOG_WORKSPACE_ID" --analytics-query "AppServicePlatformLogs | where TimeGenerated > ago(2h) | project TimeGenerated, Level, Message | order by TimeGenerated desc" --output json` | Runs the KQL query against this Log Analytics workspace. |
+| `--analytics-query "AppServicePlatformLogs | where TimeGenerated > ago(2h) | project TimeGenerated, Level, Message | order by TimeGenerated desc" --output json` | Projects recent `TimeGenerated`, `Level`, and `Message` columns from `AppServicePlatformLogs`, ordered newest first. |
+| `--output json` | Returns the query result as JSON. |
 
 | Command/Flag | Purpose |
 |---|---|

@@ -182,6 +182,27 @@ export SUBSCRIPTION_ID="$(az account show --query id --output tsv)"
 export ACR_ID="$(az acr show --name "$ACR_NAME" --resource-group "$RG" --query id --output tsv)"
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az deployment group show --resource-group "$RG" --name "lab-cd-rbac-base" --query "properties.outputs.webAppName.value" --output tsv` | Reads the `webAppName` deployment output value from the `lab-cd-rbac-base` resource-group deployment. |
+| `--resource-group "$RG" --name "lab-cd-rbac-base" --query "properties.outputs.webAppName.value" --output tsv` | Looks up the deployment in this resource group. |
+| `--name "lab-cd-rbac-base" --query "properties.outputs.webAppName.value" --output tsv` | Targets the `lab-cd-rbac-base` deployment record. |
+| `--query "properties.outputs.webAppName.value"` | Projects only the `webAppName` output's `value` field from the deployment result. |
+| `--output tsv` | Returns the selected output value as plain text for shell variable assignment. |
+| `az deployment group show --resource-group "$RG" --name "lab-cd-rbac-base" --query "properties.outputs.containerRegistryName.value" --output tsv` | Reads the `containerRegistryName` deployment output value from the `lab-cd-rbac-base` resource-group deployment. |
+| `--resource-group "$RG" --name "lab-cd-rbac-base" --query "properties.outputs.containerRegistryName.value" --output tsv` | Looks up the deployment in this resource group. |
+| `--name "lab-cd-rbac-base" --query "properties.outputs.containerRegistryName.value" --output tsv` | Targets the `lab-cd-rbac-base` deployment record. |
+| `--query "properties.outputs.containerRegistryName.value"` | Projects only the `containerRegistryName` output's `value` field from the deployment result. |
+| `--output tsv` | Returns the selected output value as plain text for shell variable assignment. |
+| `az account show --query id --output tsv` | Retrieves the current Azure account context and emits only the active subscription ID. |
+| `--query id --output tsv` | Projects only the top-level subscription `id` field from the current account context. |
+| `--output tsv` | Returns the subscription ID as plain text for shell variable assignment. |
+| `az acr show --name "$ACR_NAME" --resource-group "$RG" --query id --output tsv` | Retrieves the Azure Container Registry resource and emits only its ARM resource ID. |
+| `--name "$ACR_NAME" --resource-group "$RG" --query id --output tsv` | Targets this container registry. |
+| `--resource-group "$RG" --query id --output tsv` | Looks up the registry in this resource group. |
+| `--query id` | Projects only the registry resource's top-level ARM `id`. |
+| `--output tsv` | Returns the registry ID as plain text for shell variable assignment. |
+
 Expected output: no output; variables are populated.
 
 ### Trigger the conflict
@@ -308,6 +329,26 @@ az deployment group create \
     --parameters principalObjectId="$APP_PRINCIPAL_ID" registryName="$ACR_NAME" \
                  roleAssignmentName="$NEW_NAME"
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az deployment group create --resource-group "$RG" --name "lab-ra-verify-conflict" --template-file "./labs/cd-reconnect-rbac-conflict/infra/role-assignment.bicep" --parameters principalObjectId="$APP_PRINCIPAL_ID" registryName="$ACR_NAME" roleAssignmentName="$NEW_NAME"` | Re-runs the role-assignment deployment with a fresh role-assignment name so the `RoleAssignmentExists` conflict is reproduced before cleanup. |
+| `--resource-group "$RG" --name "lab-ra-verify-conflict" --template-file "./labs/cd-reconnect-rbac-conflict/infra/role-assignment.bicep" --parameters principalObjectId="$APP_PRINCIPAL_ID" registryName="$ACR_NAME" roleAssignmentName="$NEW_NAME"` | Runs the deployment in this resource group. |
+| `--name "lab-ra-verify-conflict" --template-file "./labs/cd-reconnect-rbac-conflict/infra/role-assignment.bicep" --parameters principalObjectId="$APP_PRINCIPAL_ID" registryName="$ACR_NAME" roleAssignmentName="$NEW_NAME"` | Names this verification deployment record `lab-ra-verify-conflict`. |
+| `--template-file "./labs/cd-reconnect-rbac-conflict/infra/role-assignment.bicep" --parameters principalObjectId="$APP_PRINCIPAL_ID" registryName="$ACR_NAME" roleAssignmentName="$NEW_NAME"` | Uses the lab's Bicep template that creates the `Microsoft.Authorization/roleAssignments` resource. |
+| `--parameters principalObjectId="$APP_PRINCIPAL_ID" registryName="$ACR_NAME" roleAssignmentName="$NEW_NAME"` | Passes the managed-identity principal, target registry name, and fresh role-assignment GUID into the template. |
+| `az role assignment list --assignee "$APP_PRINCIPAL_ID" --scope "$ACR_ID" --query "[0].name" --output tsv` | Lists Azure RBAC role assignments for this principal at the registry scope and returns the first assignment name so it can be deleted. |
+| `--assignee "$APP_PRINCIPAL_ID" --scope "$ACR_ID" --query "[0].name" --output tsv` | Filters assignments to the Web App managed identity. |
+| `--scope "$ACR_ID" --query "[0].name" --output tsv` | Narrows the list to assignments on this ACR resource scope. |
+| `--query "[0].name" --output tsv` | Selects the `name` field from the first matching role assignment in the result array. |
+| `--output tsv` | Returns the assignment name as plain text for shell variable assignment. |
+| `az role assignment delete --ids "${ACR_ID}/providers/Microsoft.Authorization/roleAssignments/$ASSIGNMENT_ID"` | Deletes the existing AcrPull role assignment resource by its full ARM resource ID. |
+| `--ids "${ACR_ID}/providers/Microsoft.Authorization/roleAssignments/$ASSIGNMENT_ID"` | Targets the exact role-assignment resource under the registry scope for deletion. |
+| `az deployment group create --resource-group "$RG" --name "lab-ra-verify-recovery" --template-file "./labs/cd-reconnect-rbac-conflict/infra/role-assignment.bicep" --parameters principalObjectId="$APP_PRINCIPAL_ID" registryName="$ACR_NAME" roleAssignmentName="$NEW_NAME"` | Replays the same deployment after deleting the existing assignment to confirm the reconnect path now succeeds. |
+| `--resource-group "$RG" --name "lab-ra-verify-recovery" --template-file "./labs/cd-reconnect-rbac-conflict/infra/role-assignment.bicep" --parameters principalObjectId="$APP_PRINCIPAL_ID" registryName="$ACR_NAME" roleAssignmentName="$NEW_NAME"` | Runs the recovery deployment in this resource group. |
+| `--name "lab-ra-verify-recovery" --template-file "./labs/cd-reconnect-rbac-conflict/infra/role-assignment.bicep" --parameters principalObjectId="$APP_PRINCIPAL_ID" registryName="$ACR_NAME" roleAssignmentName="$NEW_NAME"` | Names this post-cleanup deployment record `lab-ra-verify-recovery`. |
+| `--template-file "./labs/cd-reconnect-rbac-conflict/infra/role-assignment.bicep" --parameters principalObjectId="$APP_PRINCIPAL_ID" registryName="$ACR_NAME" roleAssignmentName="$NEW_NAME"` | Uses the same lab role-assignment template for the recovery verification. |
+| `--parameters principalObjectId="$APP_PRINCIPAL_ID" registryName="$ACR_NAME" roleAssignmentName="$NEW_NAME"` | Passes the managed-identity principal, registry name, and the same fresh GUID back into the template. |
 
 Expected result: the second deployment fails with `RoleAssignmentExists`, the delete removes the existing assignment, and the retry succeeds. The script ends with `PASS: recovery successful - 1 active AcrPull assignment`.
 

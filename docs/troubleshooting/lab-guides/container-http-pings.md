@@ -321,6 +321,12 @@ az group create \
     --location "$LOCATION"
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az group create --name "$RG" --location "$LOCATION"` | Creates the resource group that will hold the lab resources. |
+| `--name "$RG" --location "$LOCATION"` | Sets the resource group name. |
+| `--location "$LOCATION"` | Places the resource group in this Azure region. |
+
 ```bash
 az deployment group create \
     --resource-group "$RG" \
@@ -346,6 +352,13 @@ APP_NAME=$(az webapp list \
     --output tsv)
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp list --resource-group "$RG" --query "[0].name" --output tsv` | Lists web apps in the lab resource group and returns the first app name so later commands can target it. |
+| `--resource-group "$RG" --query "[0].name" --output tsv` | Limits the app list to this resource group. |
+| `--query "[0].name" --output tsv` | Selects the `name` field from the first item in the returned web-app array. |
+| `--output tsv` | Returns the app name as plain text for shell variable assignment. |
+
 ```bash
 APP_URL="https://$(az webapp show \
     --resource-group "$RG" \
@@ -353,6 +366,14 @@ APP_URL="https://$(az webapp show \
     --query "defaultHostName" \
     --output tsv)"
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az webapp show --resource-group "$RG" --name "$APP_NAME" --query "defaultHostName" --output tsv` | Retrieves the Web App's default hostname so the runbook can build the public app URL. |
+| `--resource-group "$RG" --name "$APP_NAME" --query "defaultHostName" --output tsv` | Looks up the app in this resource group. |
+| `--name "$APP_NAME" --query "defaultHostName" --output tsv` | Targets this web app. |
+| `--query "defaultHostName" --output tsv` | Projects only the app's `defaultHostName` field. |
+| `--output tsv` | Returns the hostname as plain text for shell variable assignment. |
 
 ### 3.5 Capture baseline config
 
@@ -362,6 +383,13 @@ az webapp config show \
     --name "$APP_NAME" \
     --output json
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az webapp config show --resource-group "$RG" --name "$APP_NAME" --output json` | Retrieves the full site configuration so the lab can capture the initial runtime and startup settings. |
+| `--resource-group "$RG" --name "$APP_NAME" --output json` | Looks up the app configuration in this resource group. |
+| `--name "$APP_NAME" --output json` | Targets this web app's configuration. |
+| `--output json` | Returns the full configuration as JSON for artifact capture. |
 
 ```bash
 az webapp config appsettings list \
@@ -464,6 +492,13 @@ az webapp config appsettings set \
     --settings "WEBSITES_PORT=8080"
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp config appsettings set --resource-group "$RG" --name "$APP_NAME" --settings "WEBSITES_PORT=8080"` | Sets `WEBSITES_PORT=8080` on the app so you can test the port-mismatch behavior. |
+| `--resource-group "$RG" --name "$APP_NAME" --settings "WEBSITES_PORT=8080"` | Applies the setting change in this resource group. |
+| `--name "$APP_NAME" --settings "WEBSITES_PORT=8080"` | Targets this web app. |
+| `--settings "WEBSITES_PORT=8080"` | Writes the `WEBSITES_PORT` app setting with the value `8080`. |
+
 Example restart:
 
 ```bash
@@ -471,6 +506,12 @@ az webapp restart \
     --resource-group "$RG" \
     --name "$APP_NAME"
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az webapp restart --resource-group "$RG" --name "$APP_NAME"` | Restarts the web app so the changed app setting is picked up by a fresh worker process. |
+| `--resource-group "$RG" --name "$APP_NAME"` | Restarts the app in this resource group. |
+| `--name "$APP_NAME"` | Targets this web app. |
 
 ### 3.13 Runbook quality checklist
 
@@ -799,6 +840,43 @@ az webapp config appsettings set --resource-group "$RG" --name "$APP_NAME" --set
 az webapp restart --resource-group "$RG" --name "$APP_NAME"
 az group delete --name "$RG" --yes --no-wait
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az group create --name "$RG" --location "$LOCATION"` | Creates the resource group for the lab. |
+| `--name "$RG" --location "$LOCATION"` | Sets the resource group name. |
+| `--location "$LOCATION"` | Places the resource group in this Azure region. |
+| `az deployment group create --resource-group "$RG" --template-file "labs/container-http-pings/main.bicep" --parameters "baseName=labping"` | Deploys the lab infrastructure from the Bicep template. |
+| `--resource-group "$RG" --template-file "labs/container-http-pings/main.bicep" --parameters "baseName=labping"` | Runs the deployment in this resource group. |
+| `--template-file "labs/container-http-pings/main.bicep" --parameters "baseName=labping"` | Uses the lab's main Bicep template. |
+| `--parameters "baseName=labping"` | Sets the template's `baseName` parameter to `labping`. |
+| `az webapp list --resource-group "$RG" --query "[0].name" --output tsv` | Lists web apps in the lab resource group and returns the first app name. |
+| `--resource-group "$RG" --query "[0].name" --output tsv` | Limits the app list to this resource group. |
+| `--query "[0].name" --output tsv` | Selects the `name` field from the first web app in the returned array. |
+| `--output tsv` | Returns the value as plain text. |
+| `az webapp show --resource-group "$RG" --name "$APP_NAME" --query "defaultHostName" --output tsv` | Retrieves the app's default hostname for URL construction. |
+| `--resource-group "$RG" --name "$APP_NAME" --query "defaultHostName" --output tsv` | Looks up the app in this resource group. |
+| `--name "$APP_NAME" --query "defaultHostName" --output tsv` | Targets this web app. |
+| `--query "defaultHostName" --output tsv` | Projects only the app's `defaultHostName`. |
+| `--output tsv` | Returns the hostname as plain text. |
+| `az webapp config show --resource-group "$RG" --name "$APP_NAME" --output json` | Retrieves the full site configuration for baseline capture. |
+| `--resource-group "$RG" --name "$APP_NAME" --output json` | Looks up the app configuration in this resource group. |
+| `--name "$APP_NAME" --output json` | Targets this web app's configuration. |
+| `--output json` | Returns the full configuration as JSON. |
+| `az webapp config appsettings list --resource-group "$RG" --name "$APP_NAME" --output json` | Lists all app settings so the lab can confirm the initial `WEBSITES_PORT` configuration. |
+| `--resource-group "$RG" --name "$APP_NAME" --output json` | Looks up the app settings in this resource group. |
+| `--name "$APP_NAME" --output json` | Targets this web app. |
+| `--output json` | Returns the settings array as JSON. |
+| `az webapp config appsettings set --resource-group "$RG" --name "$APP_NAME" --settings "WEBSITES_PORT=8080"` | Updates the app setting to `WEBSITES_PORT=8080` for the perturbation step. |
+| `--resource-group "$RG" --name "$APP_NAME" --settings "WEBSITES_PORT=8080"` | Applies the change in this resource group. |
+| `--name "$APP_NAME" --settings "WEBSITES_PORT=8080"` | Targets this web app. |
+| `--settings "WEBSITES_PORT=8080"` | Writes the `WEBSITES_PORT` app setting with the value `8080`. |
+| `az webapp restart --resource-group "$RG" --name "$APP_NAME"` | Restarts the web app after the app-setting change. |
+| `--resource-group "$RG" --name "$APP_NAME"` | Restarts the app in this resource group. |
+| `--name "$APP_NAME"` | Targets this web app. |
+| `az group delete --name "$RG" --yes --no-wait` | Starts deleting the lab resource group during cleanup. |
+| `--name "$RG" --yes --no-wait` | Targets this resource group for deletion. |
+| `--yes --no-wait` | Skips the confirmation prompt and returns before the delete operation finishes. |
 
 ---
 
