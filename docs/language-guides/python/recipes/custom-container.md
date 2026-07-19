@@ -86,6 +86,11 @@ az webapp config container set \
   --container-registry-url "https://$ACR_NAME.azurecr.io"
 ```
 
+| Command | Description |
+|---|---|
+| `az acr build --registry "$ACR_NAME" --image flask-ref:latest --file "apps/python-flask/Dockerfile" .` | Builds the Docker image in Azure Container Registry and tags it as `flask-ref:latest`. |
+| `az webapp config container set --resource-group "$RG" --name "$APP_NAME" --container-image-name "$ACR_NAME.azurecr.io/flask-ref:latest" --container-registry-url "https://$ACR_NAME.azurecr.io"` | Updates the web app to pull and run the specified container image from ACR. |
+
 ## Complete Example
 
 `sshd_config`:

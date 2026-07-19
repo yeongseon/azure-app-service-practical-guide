@@ -39,6 +39,13 @@ az webapp deployment slot create \
   --output json
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group "$RG"` | Creates the slot under the resource group that contains the production app. |
+| `--name "$APP_NAME"` | Selects the web app that will receive the new deployment slot. |
+| `--slot "staging"` | Names the new slot `staging`. |
+| `--output json` | Returns the created slot configuration as JSON. |
+
 ### 2) Configure slot-sticky settings
 
 Mark environment-specific values so they do not swap:
@@ -52,6 +59,14 @@ az webapp config appsettings set \
   --output json
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group "$RG"` | Targets the resource group that contains the slot. |
+| `--name "$APP_NAME"` | Selects the web app whose staging slot settings will be updated. |
+| `--slot "staging"` | Applies the configuration change to the staging slot instead of production. |
+| `--slot-settings NODE_ENV=staging FEATURE_FLAG_USE_BETA=true` | Writes slot-sticky app settings that stay with the staging slot during swaps. |
+| `--output json` | Returns the updated settings payload as JSON. |
+
 ### 3) Deploy artifact to staging slot
 
 ```bash
@@ -63,6 +78,15 @@ az webapp deploy \
   --type zip \
   --output json
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group "$RG"` | Targets the resource group that contains the staging slot. |
+| `--name "$APP_NAME"` | Selects the web app that should receive the deployment. |
+| `--slot "staging"` | Deploys the package to the staging slot instead of production. |
+| `--src-path "release.zip"` | Uploads the `release.zip` package as the deployment artifact. |
+| `--type zip` | Tells App Service to treat the uploaded artifact as a Zip Deploy package. |
+| `--output json` | Returns deployment details as JSON. |
 
 ### 4) Add explicit health endpoint checks
 
@@ -94,6 +118,14 @@ az webapp deployment slot swap \
   --output json
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group "$RG"` | Targets the resource group that contains the source and target slots. |
+| `--name "$APP_NAME"` | Selects the web app whose slots will be swapped. |
+| `--slot "staging"` | Uses the staging slot as the source of the swap. |
+| `--target-slot "production"` | Promotes the staging slot into the production slot. |
+| `--output json` | Returns swap-operation details as JSON. |
+
 ### 7) Optional auto-swap configuration
 
 ```bash
@@ -104,6 +136,14 @@ az webapp deployment slot auto-swap \
   --auto-swap-slot "production" \
   --output json
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group "$RG"` | Targets the resource group that contains the slot configuration. |
+| `--name "$APP_NAME"` | Selects the web app whose slot should auto-swap. |
+| `--slot "staging"` | Enables auto-swap on the staging slot. |
+| `--auto-swap-slot "production"` | Configures production as the automatic swap target. |
+| `--output json` | Returns the updated auto-swap configuration as JSON. |
 
 !!! warning "Linux Limitation"
     Auto-swap is not supported for web apps on Linux and Web App for Containers. Use manual swap or CI/CD-triggered swap instead. See [Deployment Slots](../../../operations/deployment/slots-and-swap.md) for details.
@@ -156,6 +196,10 @@ jobs:
             --target-slot production \
             --output none
 ```
+
+| Command | Description |
+|---|---|
+| `az webapp deployment slot swap --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --name ${{ secrets.AZURE_WEBAPP_NAME }} --slot staging --target-slot production --output none` | Swaps the validated staging deployment into production from the GitHub Actions job without printing a JSON payload. |
 
 !!! warning "Validate before swap, always"
     A successful deployment is not the same as a healthy runtime.

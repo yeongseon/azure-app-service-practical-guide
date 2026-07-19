@@ -133,6 +133,12 @@ az webapp config container set --name $APP_NAME --resource-group $RG \
   --output json
 ```
 
+| Command | Description |
+|---|---|
+| `docker build -t yourregistry.azurecr.io/node-app:v1 .` | Builds the local Docker image for the Node.js app and tags it for your registry. |
+| `docker push yourregistry.azurecr.io/node-app:v1` | Pushes the built image to the container registry so App Service can pull it. |
+| `az webapp config container set --name $APP_NAME --resource-group $RG --docker-custom-image-name yourregistry.azurecr.io/node-app:v1 --docker-registry-server-url https://yourregistry.azurecr.io --docker-registry-server-user <acr-username> --docker-registry-server-password <acr-password> --output json` | Updates the App Service container configuration so the app pulls and runs the specified image from your registry. |
+
 ## Verification
 
 1. **Check Website**: Browse to `https://${APP_NAME}.azurewebsites.net`.

@@ -93,6 +93,13 @@ Deploy to App Service and verify access by calling your database integration:
 az webapp config appsettings set --name $APP_NAME --resource-group $RG --settings COSMOS_ENDPOINT="https://your-db.documents.azure.com:443/" COSMOS_DATABASE="tasks" COSMOS_CONTAINER="items" --output json
 ```
 
+| Flag | Description |
+|---|---|
+| `--name $APP_NAME` | Targets the web app that needs the Cosmos DB connection settings. |
+| `--resource-group $RG` | Identifies the resource group that contains the web app. |
+| `--settings COSMOS_ENDPOINT="https://your-db.documents.azure.com:443/" COSMOS_DATABASE="tasks" COSMOS_CONTAINER="items"` | Writes the Cosmos account endpoint, database name, and container name into App Service app settings. |
+| `--output json` | Returns the updated app-settings payload as JSON. |
+
 ## Troubleshooting
 
 - **Forbidden (403)**: This often means the role assignment is missing or hasn't propagated. Check the Access Control (IAM) settings on the Cosmos DB account.

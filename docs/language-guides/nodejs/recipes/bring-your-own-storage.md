@@ -84,6 +84,11 @@ az storage container create \
   --account-name "${BASE_NAME}storage"
 ```
 
+| Command | Description |
+|---|---|
+| `az storage account create --name "${BASE_NAME}storage" --resource-group "$RG" --sku Standard_LRS --kind StorageV2` | Creates the storage account that will host the Blob container or Azure Files share used for the mount. |
+| `az storage container create --name uploads --account-name "${BASE_NAME}storage"` | Creates the Blob container named `uploads` inside that storage account for the read-only Blob mount. |
+
 ### Azure Files
 
 ```bash
@@ -94,6 +99,12 @@ az storage share create \
   --quota 100
 ```
 
+| Flag | Description |
+|---|---|
+| `--name appdata` | Names the Azure Files share that App Service will mount. |
+| `--account-name "${BASE_NAME}storage"` | Chooses the storage account that owns the Azure Files share. |
+| `--quota 100` | Sets the Azure Files share quota to 100 GiB. |
+
 ## Step 2 — Get the Storage Access Key
 
 ```bash
@@ -102,6 +113,13 @@ STORAGE_KEY=$(az storage account keys list \
   --account-name "${BASE_NAME}storage" \
   --query "[0].value" --output tsv)
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group "$RG"` | Looks up keys on the storage account in the specified resource group. |
+| `--account-name "${BASE_NAME}storage"` | Selects the storage account whose access keys will be returned. |
+| `--query "[0].value"` | Extracts the value of the first key in the returned key list. |
+| `--output tsv` | Returns the key as plain text so the shell can store it in `STORAGE_KEY`. |
 
 ## Step 3 — Mount the Storage
 
@@ -130,6 +148,11 @@ az webapp config storage-account add \
   --share-name appdata \
   --mount-path /mnt/appdata
 ```
+
+| Command | Description |
+|---|---|
+| `az webapp config storage-account add --name "$APP_NAME" --resource-group "$RG" --custom-id uploads-mount --storage-type AzureBlob --account-name "${BASE_NAME}storage" --access-key "$STORAGE_KEY" --share-name uploads --mount-path /mnt/assets` | Adds a Blob-backed mount named `uploads-mount` so the app can read the `uploads` container at `/mnt/assets`. |
+| `az webapp config storage-account add --name "$APP_NAME" --resource-group "$RG" --custom-id appdata-mount --storage-type AzureFiles --account-name "${BASE_NAME}storage" --access-key "$STORAGE_KEY" --share-name appdata --mount-path /mnt/appdata` | Adds an Azure Files-backed mount named `appdata-mount` so the app can read and write the `appdata` share at `/mnt/appdata`. |
 
 ### Using Bicep
 
@@ -209,6 +232,12 @@ az webapp config appsettings set \
   --settings ASSETS_PATH=/mnt/assets DATA_PATH=/mnt/appdata
 ```
 
+| Flag | Description |
+|---|---|
+| `--name "$APP_NAME"` | Targets the App Service app that should receive the mount-path settings. |
+| `--resource-group "$RG"` | Identifies the resource group that contains the app. |
+| `--settings ASSETS_PATH=/mnt/assets DATA_PATH=/mnt/appdata` | Writes app settings that point the application code to the Blob and Azure Files mount paths. |
+
 ## Step 5 — Verify the Mount
 
 Check that the storage is mounted and accessible:
@@ -225,6 +254,12 @@ az webapp ssh --name "$APP_NAME" --resource-group "$RG"
 # Inside the SSH session:
 ls /mnt/assets
 ```
+
+| Command | Description |
+|---|---|
+| `az webapp config storage-account list --name "$APP_NAME" --resource-group "$RG" --output table` | Lists the current BYOS mount definitions configured on the web app. |
+| `az webapp ssh --name "$APP_NAME" --resource-group "$RG"` | Opens an interactive SSH session into the running app container. |
+| `ls /mnt/assets` | Verifies inside the container that the Blob mount path exists and exposes files. |
 
 In the **Azure Portal**: navigate to your App Service → **Settings → Configuration → Path mappings** to see all active mounts and their status.
 
@@ -295,6 +330,12 @@ az webapp config appsettings set \
   --settings WEBSITES_ENABLE_APP_SERVICE_STORAGE=false
 ```
 
+| Flag | Description |
+|---|---|
+| `--name "$APP_NAME"` | Targets the custom-container web app whose built-in `/home` mount behavior you want to change. |
+| `--resource-group "$RG"` | Identifies the resource group that contains the app. |
+| `--settings WEBSITES_ENABLE_APP_SERVICE_STORAGE=false` | Disables the built-in App Service `/home` storage mount for supported custom-container apps. |
+
 !!! warning
     With `WEBSITES_ENABLE_APP_SERVICE_STORAGE=false`, logs and any files written to `/home` will not persist across restarts. Only set this if your container manages its own storage externally.
 
@@ -329,6 +370,11 @@ az role assignment create \
   --role "Storage Blob Data Contributor" \
   --scope "$(az storage account show --name ${BASE_NAME}storage --resource-group $RG --query id --output tsv)"
 ```
+
+| Command | Description |
+|---|---|
+| `az webapp identity assign --name "$APP_NAME" --resource-group "$RG"` | Enables a system-assigned managed identity on the web app for keyless SDK access to storage. |
+| `az role assignment create --assignee "$(az webapp identity show --name $APP_NAME --resource-group $RG --query principalId --output tsv)" --role "Storage Blob Data Contributor" --scope "$(az storage account show --name ${BASE_NAME}storage --resource-group $RG --query id --output tsv)"` | Grants that web app identity Blob data-plane read/write permission on the storage account. |
 
 Then use `DefaultAzureCredential` in your Node.js code to access Blob Storage directly via SDK — no mount configuration needed, and full read/write support:
 

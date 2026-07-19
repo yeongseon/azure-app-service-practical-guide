@@ -44,6 +44,12 @@ az webapp config appsettings set \
     REDIS_ACCESS_KEY="@Microsoft.KeyVault(VaultName=<vault-name>;SecretName=redis-access-key)"
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group "$RG"` | Targets the resource group that contains the web app. |
+| `--name "$APP_NAME"` | Selects the web app that should receive the Redis settings. |
+| `--settings REDIS_HOST="<redis-name>.redis.cache.windows.net" REDIS_PORT="6380" REDIS_SSL="true" REDIS_ACCESS_KEY="@Microsoft.KeyVault(VaultName=<vault-name>;SecretName=redis-access-key)"` | Writes the Redis hostname, TLS port, SSL mode, and secret-backed access key into App Service app settings. |
+
 ### Step 2: Add cache helpers in Flask
 
 ```python

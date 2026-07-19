@@ -48,6 +48,14 @@ az webapp vnet-integration add \
   --output json
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group "$RG"` | Targets the resource group that contains the web app and VNet. |
+| `--name "$APP_NAME"` | Selects the web app that should use VNet integration. |
+| `--vnet "$VNET_NAME"` | Chooses the virtual network that provides the outbound private path. |
+| `--subnet "snet-appservice-integration"` | Attaches the app to the delegated subnet reserved for App Service integration. |
+| `--output json` | Returns the VNet integration result as JSON. |
+
 ### 3) Create private endpoint for Azure SQL
 
 ```bash
@@ -61,6 +69,17 @@ az network private-endpoint create \
   --connection-name "pe-sql-python-conn" \
   --output json
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group "$RG"` | Creates the private endpoint resource in the specified resource group. |
+| `--name "pe-sql-python"` | Names the private endpoint resource and its NIC-related artifacts. |
+| `--vnet-name "$VNET_NAME"` | Places the private endpoint inside the specified virtual network. |
+| `--subnet "snet-private-endpoints"` | Uses the subnet reserved for private endpoint NICs. |
+| `--private-connection-resource-id "/subscriptions/<subscription-id>/resourceGroups/<sql-rg>/providers/Microsoft.Sql/servers/<sql-server>"` | Points the private endpoint at the Azure SQL server resource that should be reached privately. |
+| `--group-id sqlServer` | Selects the Azure SQL private-link subresource for the connection. |
+| `--connection-name "pe-sql-python-conn"` | Names the private-link connection object created for the SQL endpoint. |
+| `--output json` | Returns the created private endpoint details as JSON. |
 
 ### 4) Create private endpoint for Redis and Key Vault
 
@@ -86,6 +105,11 @@ az network private-endpoint create \
   --output json
 ```
 
+| Command | Description |
+|---|---|
+| `az network private-endpoint create --resource-group "$RG" --name "pe-redis-python" --vnet-name "$VNET_NAME" --subnet "snet-private-endpoints" --private-connection-resource-id "/subscriptions/<subscription-id>/resourceGroups/<redis-rg>/providers/Microsoft.Cache/Redis/<redis-name>" --group-id redisCache --connection-name "pe-redis-python-conn" --output json` | Creates a private endpoint and private-link connection for the Azure Cache for Redis instance. |
+| `az network private-endpoint create --resource-group "$RG" --name "pe-kv-python" --vnet-name "$VNET_NAME" --subnet "snet-private-endpoints" --private-connection-resource-id "/subscriptions/<subscription-id>/resourceGroups/<kv-rg>/providers/Microsoft.KeyVault/vaults/<kv-name>" --group-id vault --connection-name "pe-kv-python-conn" --output json` | Creates a private endpoint and private-link connection for the Key Vault. |
+
 ### 5) Configure app settings as Flask environment variables
 
 ```bash
@@ -100,6 +124,13 @@ az webapp config appsettings set \
     KEY_VAULT_URI="https://<kv-name>.vault.azure.net/" \
   --output json
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group "$RG"` | Targets the resource group that contains the web app. |
+| `--name "$APP_NAME"` | Selects the web app that should receive the backend connection settings. |
+| `--settings SQL_SERVER_FQDN="<sql-server>.database.windows.net" SQL_DATABASE_NAME="<db-name>" REDIS_HOST="<redis-name>.redis.cache.windows.net" REDIS_PORT="6380" KEY_VAULT_URI="https://<kv-name>.vault.azure.net/"` | Writes the SQL, Redis, and Key Vault hostnames and related settings that the app will use over private networking. |
+| `--output json` | Returns the updated app-settings payload as JSON. |
 
 ### 6) Use managed identity and `DefaultAzureCredential` in Flask code
 
@@ -164,6 +195,12 @@ az webapp vnet-integration list \
   --name "$APP_NAME" \
   --output table
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group "$RG"` | Looks up VNet integration on the web app in the specified resource group. |
+| `--name "$APP_NAME"` | Selects the web app whose integration mapping should be listed. |
+| `--output table` | Formats the integration list as a readable table for verification. |
 
 ## Troubleshooting
 

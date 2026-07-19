@@ -54,6 +54,12 @@ az webapp config appsettings set \
     REDIS_ACCESS_KEY="@Microsoft.KeyVault(SecretUri=https://<vault-name>.vault.azure.net/secrets/redis-access-key)"
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group "$RG"` | Targets the resource group that contains the web app. |
+| `--name "$APP_NAME"` | Selects the web app that should receive the Key Vault reference settings. |
+| `--settings DB_PASSWORD="@Microsoft.KeyVault(VaultName=<vault-name>;SecretName=db-password)" REDIS_ACCESS_KEY="@Microsoft.KeyVault(SecretUri=https://<vault-name>.vault.azure.net/secrets/redis-access-key)"` | Writes app settings whose values are resolved from the specified Key Vault secrets. |
+
 ### Step 2: Read secrets from `os.environ` in Python
 
 ```python

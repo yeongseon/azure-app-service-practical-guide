@@ -40,6 +40,12 @@ az webapp config set \
   --linux-fx-version "PYTHON|3.12"
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the web app. |
+| `--name $APP_NAME` | Selects the web app whose runtime stack should be updated. |
+| `--linux-fx-version "PYTHON|3.12"` | Sets the Linux runtime stack for the app to Python 3.12. |
+
 Verify runtime:
 
 ```bash
@@ -49,6 +55,13 @@ az webapp config show \
   --query "linuxFxVersion" \
   --output tsv
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Looks up configuration for the web app in the specified resource group. |
+| `--name $APP_NAME` | Selects the web app whose runtime configuration should be displayed. |
+| `--query "linuxFxVersion"` | Extracts only the runtime-stack value from the configuration response. |
+| `--output tsv` | Returns the runtime-stack value as plain text for quick verification. |
 
 ## Oryx Build Process
 
@@ -78,6 +91,12 @@ az webapp config appsettings set \
   --settings SCM_DO_BUILD_DURING_DEPLOYMENT=true
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the web app. |
+| `--name $APP_NAME` | Selects the web app whose build behavior you want to change. |
+| `--settings SCM_DO_BUILD_DURING_DEPLOYMENT=true` | Enables App Service remote build so Oryx installs Python dependencies during deployment. |
+
 Use Oryx build logs in deployment center/Kudu to validate install failures.
 
 ## Startup Command Patterns
@@ -104,6 +123,12 @@ az webapp config set \
   --name $APP_NAME \
   --startup-file "gunicorn --bind=0.0.0.0:$PORT src.app:app"
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the web app. |
+| `--name $APP_NAME` | Selects the web app whose startup command should be updated. |
+| `--startup-file "gunicorn --bind=0.0.0.0:$PORT src.app:app"` | Sets Gunicorn as the startup command and binds it to the App Service port using the `src.app:app` entry point. |
 
 ### Using gunicorn.conf.py
 
@@ -144,6 +169,12 @@ az webapp config set \
   --startup-file "uvicorn main:app --host 0.0.0.0 --port \$PORT"
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the web app. |
+| `--name $APP_NAME` | Selects the web app whose startup command should be updated. |
+| `--startup-file "uvicorn main:app --host 0.0.0.0 --port \$PORT"` | Configures App Service to start the ASGI app with uvicorn bound to the injected `PORT`. |
+
 Gunicorn with the uvicorn worker (recommended for production ASGI workloads that benefit from process-level worker management):
 
 ```bash
@@ -158,6 +189,12 @@ az webapp config set \
   --name $APP_NAME \
   --startup-file "gunicorn main:app --bind=0.0.0.0:\$PORT --worker-class uvicorn.workers.UvicornWorker"
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the web app. |
+| `--name $APP_NAME` | Selects the web app whose startup command should be updated. |
+| `--startup-file "gunicorn main:app --bind=0.0.0.0:\$PORT --worker-class uvicorn.workers.UvicornWorker"` | Configures App Service to run the ASGI app with Gunicorn managing uvicorn workers on the App Service port. |
 
 Pin both `uvicorn` and (when used) `gunicorn` in `requirements.txt` so Oryx installs them during build:
 
@@ -197,6 +234,12 @@ az webapp config appsettings set \
     WEB_CONCURRENCY=3 \
     PYTHON_ENABLE_GUNICORN_MULTIWORKERS=true
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the web app. |
+| `--name $APP_NAME` | Selects the web app whose Gunicorn-related app settings should be updated. |
+| `--settings WEB_CONCURRENCY=3 PYTHON_ENABLE_GUNICORN_MULTIWORKERS=true` | Sets the Gunicorn worker count and enables App Service multiworker handling for Gunicorn. |
 
 Practical tuning guidance:
 
@@ -261,9 +304,19 @@ Avoid storing durable application state on non-persistent paths.
 az webapp log tail --resource-group $RG --name $APP_NAME
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Streams logs from the web app in the specified resource group. |
+| `--name $APP_NAME` | Selects the web app whose live logs should be tailed. |
+
 ```bash
 az webapp ssh --resource-group $RG --name $APP_NAME
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Opens the SSH session against the web app in the specified resource group. |
+| `--name $APP_NAME` | Selects the running web app container to connect to over SSH. |
 
 Check installed packages and startup process from SSH/Kudu when diagnosing import issues.
 

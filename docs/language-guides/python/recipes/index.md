@@ -68,6 +68,11 @@ az webapp config appsettings set \
     LOG_LEVEL=INFO
 ```
 
+| Command | Description |
+|---|---|
+| `az webapp identity assign --resource-group "$RG" --name "$APP_NAME"` | Enables a system-assigned managed identity on the web app as the baseline for secretless Azure access. |
+| `az webapp config appsettings set --resource-group "$RG" --name "$APP_NAME" --settings APP_ENV=production LOG_LEVEL=INFO` | Writes baseline production app settings for environment selection and application logging level. |
+
 ## Troubleshooting
 
 - If identity-based connections fail, verify role assignments and wait a few minutes for token/RBAC propagation.
@@ -76,6 +81,11 @@ az webapp config appsettings set \
 ```bash
 az webapp restart --resource-group "$RG" --name "$APP_NAME"
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group "$RG"` | Restarts the web app in the specified resource group. |
+| `--name "$APP_NAME"` | Selects the web app that should be restarted so configuration changes take effect. |
 
 ## Advanced Topics
 

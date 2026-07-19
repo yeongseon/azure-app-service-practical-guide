@@ -74,6 +74,11 @@ az role assignment create \
   --scope "/subscriptions/<subscription-id>/resourceGroups/$RG/providers/Microsoft.KeyVault/vaults/<vault-name>"
 ```
 
+| Command | Description |
+|---|---|
+| `az webapp identity assign --resource-group "$RG" --name "$APP_NAME"` | Enables a system-assigned managed identity on the web app. |
+| `az role assignment create --assignee-object-id "<principal-object-id>" --assignee-principal-type ServicePrincipal --role "Key Vault Secrets User" --scope "/subscriptions/<subscription-id>/resourceGroups/$RG/providers/Microsoft.KeyVault/vaults/<vault-name>"` | Grants that managed identity Key Vault secret-read access on the specified vault. |
+
 Use least privilege and scope assignments to the smallest required resource.
 
 ### Step 2: Use `DefaultAzureCredential` in Flask
@@ -123,6 +128,12 @@ az webapp config appsettings set \
     KEYVAULT_URL="https://<vault-name>.vault.azure.net/" \
     STORAGE_ACCOUNT_URL="https://<storage-account>.blob.core.windows.net/"
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group "$RG"` | Targets the resource group that contains the web app. |
+| `--name "$APP_NAME"` | Selects the web app that should receive the resource endpoint settings. |
+| `--settings KEYVAULT_URL="https://<vault-name>.vault.azure.net/" STORAGE_ACCOUNT_URL="https://<storage-account>.blob.core.windows.net/"` | Writes the Key Vault and Storage account endpoints that the sample code reads with `DefaultAzureCredential`. |
 
 ## Troubleshooting
 

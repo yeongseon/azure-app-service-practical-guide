@@ -109,6 +109,13 @@ Test the integration by logging session data or reading/writing to Redis:
 az webapp config appsettings set --name $APP_NAME --resource-group $RG --settings REDIS_CONNECTION_STRING="rediss://:<key>@<host>:6380" SESSION_SECRET="super-secret" --output json
 ```
 
+| Flag | Description |
+|---|---|
+| `--name $APP_NAME` | Targets the web app that should receive the Redis configuration. |
+| `--resource-group $RG` | Identifies the resource group that contains the web app. |
+| `--settings REDIS_CONNECTION_STRING="rediss://:<key>@<host>:6380" SESSION_SECRET="super-secret"` | Writes the TLS Redis connection string and the session-signing secret into App Service app settings. |
+| `--output json` | Returns the updated app-settings payload as JSON. |
+
 ## Troubleshooting
 
 - **Connection Refused (6380)**: Ensure you are using `rediss://` (with an extra 's') to specify SSL/TLS connection.

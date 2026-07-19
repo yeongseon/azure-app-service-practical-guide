@@ -85,6 +85,14 @@ If you are not using containers and instead using Zip Deploy, ensure you use **R
 az webapp deploy --resource-group $RG --name $APP_NAME --src-path <zip-file> --type zip --output json
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the web app. |
+| `--name $APP_NAME` | Selects the web app that should receive the zip deployment. |
+| `--src-path <zip-file>` | Uploads the zip package that contains the built application. |
+| `--type zip` | Tells App Service to process the artifact as a Zip Deploy package. |
+| `--output json` | Returns deployment details as JSON. |
+
 ## Verification
 
 After deployment, test functionality by triggering an image resize with `sharp` or a password hash with `bcrypt`.

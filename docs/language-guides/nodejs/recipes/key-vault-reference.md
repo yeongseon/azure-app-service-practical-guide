@@ -47,6 +47,11 @@ az webapp identity assign \
   --resource-group <resource-group-name>
 ```
 
+| Flag | Description |
+|---|---|
+| `--name <app-name>` | Enables a managed identity on the specified App Service app. |
+| `--resource-group <resource-group-name>` | Identifies the resource group that contains the app. |
+
 ### 2. Grant Access to Key Vault
 
 Assign the **Key Vault Secrets User** role to your app's service principal:
@@ -62,6 +67,11 @@ az role assignment create \
   --scope /subscriptions/<subscription-id>/resourceGroups/<resource-group-name>/providers/Microsoft.KeyVault/vaults/<vault-name>
 ```
 
+| Command | Description |
+|---|---|
+| `PRINCIPAL_ID=$(az webapp identity show --name <app-name> --resource-group <resource-group-name> --query principalId --output tsv)` | Reads the managed identity principal ID from the web app and stores it in `PRINCIPAL_ID` for the RBAC assignment. |
+| `az role assignment create --assignee $PRINCIPAL_ID --role "Key Vault Secrets User" --scope /subscriptions/<subscription-id>/resourceGroups/<resource-group-name>/providers/Microsoft.KeyVault/vaults/<vault-name>` | Grants that managed identity permission to read secrets from the specific Key Vault. |
+
 ### 3. Add Secrets to Key Vault
 
 If you don't have secrets yet, add one:
@@ -73,6 +83,12 @@ az keyvault secret set \
   --value "super-secret-value"
 ```
 
+| Flag | Description |
+|---|---|
+| `--vault-name <vault-name>` | Chooses the Key Vault that will store the secret. |
+| `--name "MySecret"` | Names the secret entry that App Service will later reference. |
+| `--value "super-secret-value"` | Stores the secret value in Key Vault. |
+
 ### 4. Configure App Setting
 
 Add a new application setting using the Key Vault reference syntax:
@@ -83,6 +99,12 @@ az webapp config appsettings set \
   --resource-group <resource-group-name> \
   --settings DB_PASSWORD="@Microsoft.KeyVault(SecretUri=https://<vault-name>.vault.azure.net/secrets/MySecret/)"
 ```
+
+| Flag | Description |
+|---|---|
+| `--name <app-name>` | Targets the web app that should receive the Key Vault reference setting. |
+| `--resource-group <resource-group-name>` | Identifies the resource group that contains the app. |
+| `--settings DB_PASSWORD="@Microsoft.KeyVault(SecretUri=https://<vault-name>.vault.azure.net/secrets/MySecret/)"` | Writes an app setting whose value is resolved from the specified Key Vault secret URI. |
 
 ## Key Vault Reference Formats
 

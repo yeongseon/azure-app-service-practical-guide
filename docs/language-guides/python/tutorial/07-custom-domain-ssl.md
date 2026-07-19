@@ -137,9 +137,6 @@ THUMBPRINT=$(az webapp config ssl list --resource-group $RG --query "[?hostNames
 az webapp config ssl bind --resource-group $RG --name $APP_NAME --certificate-thumbprint $THUMBPRINT --ssl-type SNI
 ```
 
-!!! note "Preview Command"
-    `az webapp config ssl create` is currently in Preview. Not all hostname configurations are eligible for managed certificates. See [App Service TLS overview](https://learn.microsoft.com/en-us/azure/app-service/overview-tls) for eligibility requirements. The Azure Portal provides an alternative path for managed certificate creation.
-
 | Command | Purpose |
 |---------|---------|
 | `az webapp config ssl create --resource-group $RG --name $APP_NAME --hostname $CUSTOM_HOSTNAME` | Requests an App Service managed certificate for the custom hostname. |
@@ -150,6 +147,9 @@ az webapp config ssl bind --resource-group $RG --name $APP_NAME --certificate-th
 | `az webapp config ssl bind --resource-group $RG --name $APP_NAME --certificate-thumbprint $THUMBPRINT --ssl-type SNI` | Binds the selected certificate to the web app hostname. |
 | `--certificate-thumbprint $THUMBPRINT` | Identifies which certificate to bind. |
 | `--ssl-type SNI` | Uses SNI-based TLS binding for the hostname. |
+
+!!! note "Preview Command"
+    `az webapp config ssl create` is currently in Preview. Not all hostname configurations are eligible for managed certificates. See [App Service TLS overview](https://learn.microsoft.com/en-us/azure/app-service/overview-tls) for eligibility requirements. The Azure Portal provides an alternative path for managed certificate creation.
 
 ### Enforce HTTPS-only traffic
 
