@@ -73,7 +73,7 @@ az webapp update \
 |---|---|
 | `--resource-group $RG` | Targets the resource group that contains the web app. |
 | `--name $APP_NAME` | Selects the App Service app that should reject plain HTTP. |
-| `--https-only true` | Forces the app to serve requests over HTTPS only, which is required before enforcing inbound client certificates. |
+| `--https-only true` | Redirects HTTP traffic to HTTPS so client-certificate enforcement applies to the TLS endpoint (client certificates are only negotiated over TLS). |
 | `--output json` | Returns the updated app resource as JSON. |
 
 Verify:
