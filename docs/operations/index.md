@@ -50,6 +50,13 @@ az appservice plan show --resource-group $RG --name $PLAN_NAME --output json
 az monitor autoscale show --resource-group $RG --name "autoscale-$PLAN_NAME" --output json
 ```
 
+| Command | Description |
+|---|---|
+| `az webapp show --resource-group $RG --name $APP_NAME --output json` | Retrieves the current control-plane state of the web app so you can inspect its configuration and status. |
+| `az webapp restart --resource-group $RG --name $APP_NAME --output json` | Restarts the web app process on App Service when you need a manual recovery action. |
+| `az appservice plan show --resource-group $RG --name $PLAN_NAME --output json` | Retrieves the App Service plan definition, including the current SKU and capacity settings. |
+| `az monitor autoscale show --resource-group $RG --name "autoscale-$PLAN_NAME" --output json` | Retrieves the autoscale setting that governs how the App Service plan scales. |
+
 ## Advanced Topics
 
 - Build an SLO-based operating model that maps each control (scale, slots, recovery, security) to measurable service outcomes.

@@ -71,6 +71,14 @@ az webapp config ssl upload \
   --output json
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the web app. |
+| `--name $APP_NAME` | Selects the app that should store the private client certificate. |
+| `--certificate-file ./client-cert.pfx` | Uploads the local PFX/PKCS#12 file that contains the client certificate and private key. |
+| `--certificate-password "<certificate-password>"` | Supplies the password needed to decrypt the uploaded PFX file. |
+| `--output json` | Returns the uploaded certificate metadata as JSON, including the thumbprint. |
+
 Capture the thumbprint from the command output or inspect uploaded certificates:
 
 ```bash
@@ -78,6 +86,11 @@ az webapp config ssl list \
   --resource-group $RG \
   --output json
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Lists uploaded certificates that belong to apps in this resource group. |
+| `--output json` | Returns the certificate inventory as JSON so you can capture thumbprints and expiration dates. |
 
 #### Portal view: Certificates blade (.pfx tab)
 
@@ -97,6 +110,13 @@ az webapp config appsettings set \
   --output json
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Selects the app that should expose the uploaded certificate to application code. |
+| `--settings WEBSITE_LOAD_CERTIFICATES="<thumbprint>"` | Tells App Service to load only the certificate whose thumbprint matches the provided value. |
+| `--output json` | Returns the updated app settings payload as JSON. |
+
 Expose all uploaded certificates:
 
 ```bash
@@ -106,6 +126,13 @@ az webapp config appsettings set \
   --settings WEBSITE_LOAD_CERTIFICATES="*" \
   --output json
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Selects the app whose certificate-loading behavior you want to change. |
+| `--settings WEBSITE_LOAD_CERTIFICATES="*"` | Tells App Service to load every uploaded certificate into the runtime environment, not just one thumbprint. |
+| `--output json` | Returns the updated app settings payload as JSON. |
 
 !!! warning "Prefer explicit thumbprints over wildcard loading"
     `WEBSITE_LOAD_CERTIFICATES="*"` is convenient for testing, but explicit thumbprints reduce ambiguity and make certificate rotation easier to audit.
@@ -137,6 +164,11 @@ az webapp restart \
   --name $APP_NAME
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Restarts the selected web app so newly exposed certificates are loaded consistently for application code. |
+
 ### 5) Plan rotation deliberately
 
 Recommended rotation shape:
@@ -164,6 +196,13 @@ az webapp config appsettings list \
   --output json
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Selects the app whose certificate-loading app setting you want to verify. |
+| `--query "[?name=='WEBSITE_LOAD_CERTIFICATES']"` | Filters the app settings list down to the single `WEBSITE_LOAD_CERTIFICATES` entry if it exists. |
+| `--output json` | Formats the filtered app-setting record as JSON. |
+
 Check uploaded certificates:
 
 ```bash
@@ -172,6 +211,12 @@ az webapp config ssl list \
   --query "[?hostNames==null].{thumbprint:thumbprint,subjectName:subjectName,expirationDate:expirationDate}" \
   --output json
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Lists uploaded certificates in the resource group. |
+| `--query "[?hostNames==null].{thumbprint:thumbprint,...}"` | Filters to certificates that are not bound to hostnames and projects each result to thumbprint, subject name, and expiration date. |
+| `--output json` | Formats the filtered certificate inventory as JSON. |
 
 Application-level verification:
 
@@ -209,6 +254,11 @@ az webapp restart \
   --resource-group $RG \
   --name $APP_NAME
 ```
+
+| Command | Description |
+|---|---|
+| `az webapp config appsettings set ...` | Restores `WEBSITE_LOAD_CERTIFICATES` to the previous certificate thumbprint so app code uses the earlier client certificate again. |
+| `az webapp restart ...` | Restarts the app so the reverted thumbprint is loaded into the runtime environment. |
 
 ## See Also
 

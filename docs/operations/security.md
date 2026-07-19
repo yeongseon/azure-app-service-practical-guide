@@ -93,6 +93,11 @@ az webapp config set \
   --output json
 ```
 
+| Command | Description |
+|---|---|
+| `az webapp update ...` | Enforces HTTPS-only access on the web app so App Service redirects plain HTTP requests. |
+| `az webapp config set ...` | Sets the site's minimum accepted TLS version to 1.2. |
+
 Verify settings:
 
 ```bash
@@ -109,6 +114,11 @@ az webapp config show \
   --output json
 ```
 
+| Command | Description |
+|---|---|
+| `az webapp show ...` | Retrieves the app resource so you can confirm HTTPS-only is enabled and the site is running. |
+| `az webapp config show ...` | Retrieves the site configuration so you can confirm the enforced minimum TLS version and current FTPS state. |
+
 ### Enable System-Assigned Managed Identity
 
 ```bash
@@ -117,6 +127,12 @@ az webapp identity assign \
   --name $APP_NAME \
   --output json
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the web app. |
+| `--name $APP_NAME` | Enables a system-assigned managed identity on the selected app. |
+| `--output json` | Returns the identity assignment result as JSON. |
 
 Retrieve principal ID:
 
@@ -127,6 +143,13 @@ az webapp identity show \
   --query "{principalId:principalId,tenantId:tenantId,type:type}" \
   --output json
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Selects the app whose managed-identity details you want to inspect. |
+| `--query "{principalId:principalId,tenantId:tenantId,type:type}"` | Returns the managed identity object fields you typically need for RBAC work: principal ID, tenant ID, and identity type. |
+| `--output json` | Formats the filtered identity object as JSON. |
 
 Sample output (PII-masked):
 
@@ -151,6 +174,14 @@ az webapp auth update \
   --output json
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Selects the app where platform authentication should be enabled. |
+| `--enabled true` | Turns on App Service Authentication for the web app. |
+| `--action LoginWithAzureActiveDirectory` | Configures unauthenticated requests to use Microsoft Entra ID sign-in flow. |
+| `--output json` | Returns the updated authentication configuration as JSON. |
+
 Alternatively configure provider-specific details:
 
 ```bash
@@ -162,6 +193,15 @@ az webapp auth microsoft update \
   --allowed-audiences "api://<app-registration-client-id>" \
   --output json
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Selects the app whose Microsoft identity-provider settings you want to configure. |
+| `--client-id "<app-registration-client-id>"` | Tells App Service which Entra app registration represents this application. |
+| `--client-secret "<client-secret>"` | Supplies the secret App Service uses when it talks to the Entra identity provider on behalf of the app. |
+| `--allowed-audiences "api://<app-registration-client-id>"` | Limits accepted tokens to the specified application audience. |
+| `--output json` | Returns the updated provider-specific authentication settings as JSON. |
 
 !!! warning "Protect client secrets"
     Never store client secrets in source control or plain-text operational notes. Prefer managed identity and secure secret stores whenever possible.
@@ -194,6 +234,11 @@ az webapp config access-restriction add \
   --output json
 ```
 
+| Command | Description |
+|---|---|
+| `az webapp config access-restriction add ... --rule-name AllowCorp ...` | Adds an allow rule that permits traffic from the `203.0.113.0/24` corporate CIDR before lower-priority rules are evaluated. |
+| `az webapp config access-restriction add ... --rule-name DenyAll ...` | Adds a lowest-priority catch-all deny rule so any source not matched by earlier allow rules is blocked. |
+
 ### Secure Secrets and Configuration
 
 Recommended controls:
@@ -213,6 +258,13 @@ az webapp config appsettings set \
   --output json
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Selects the app that should read the database password from Key Vault. |
+| `--settings "DB_PASSWORD=@Microsoft.KeyVault(...)"` | Sets the `DB_PASSWORD` app setting to a Key Vault reference so App Service resolves the secret value at runtime instead of storing the literal secret in the site config. |
+| `--output json` | Returns the updated app settings payload as JSON. |
+
 ### Harden Publishing and Administrative Surfaces
 
 Disable insecure FTP where policy requires:
@@ -224,6 +276,13 @@ az webapp config set \
   --ftps-state Disabled \
   --output json
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Selects the app whose publishing surface you want to harden. |
+| `--ftps-state Disabled` | Disables FTP/FTPS publishing access for the site. |
+| `--output json` | Returns the updated site configuration as JSON. |
 
 Prefer deployment through secure CI/CD identities and least privilege RBAC.
 
@@ -239,6 +298,13 @@ az webapp cors add \
   --output json
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Selects the app whose platform CORS policy you want to update. |
+| `--allowed-origins "https://frontend.example.com" "https://admin.example.com"` | Adds exactly these two origins to the platform-managed CORS allowlist. |
+| `--output json` | Returns the updated CORS configuration as JSON. |
+
 View current CORS configuration:
 
 ```bash
@@ -247,6 +313,12 @@ az webapp cors show \
   --name $APP_NAME \
   --output json
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Selects the app whose current platform CORS configuration you want to inspect. |
+| `--output json` | Returns the current CORS settings as JSON. |
 
 Remove a specific origin:
 
@@ -257,6 +329,13 @@ az webapp cors remove \
   --allowed-origins "https://old-frontend.example.com" \
   --output json
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Selects the app whose platform CORS allowlist you want to prune. |
+| `--allowed-origins "https://old-frontend.example.com"` | Removes this specific origin from the allowed-origin list. |
+| `--output json` | Returns the updated CORS configuration as JSON. |
 
 !!! warning "Avoid wildcard origins with credentials"
     Setting `--allowed-origins "*"` allows any origin. When combined with App Service Authentication, this can expose tokens to unauthorized frontends. Always specify explicit origins in production.
@@ -304,6 +383,11 @@ az webapp identity show \
   --output json
 ```
 
+| Command | Description |
+|---|---|
+| `az webapp auth show ...` | Retrieves the effective App Service Authentication configuration so you can verify the platform auth policy that is currently active. |
+| `az webapp identity show ...` | Retrieves the current managed identity configuration so you can verify the app still has the expected identity assignment. |
+
 Access restrictions:
 
 ```bash
@@ -312,6 +396,12 @@ az webapp config access-restriction show \
   --name $APP_NAME \
   --output json
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Selects the app whose inbound access rules you want to inspect. |
+| `--output json` | Returns the current access-restriction configuration as JSON. |
 
 Transport checks:
 

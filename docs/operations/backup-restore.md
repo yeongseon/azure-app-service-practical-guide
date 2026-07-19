@@ -89,6 +89,11 @@ az storage container create \
   --output json
 ```
 
+| Command | Description |
+|---|---|
+| `az storage account create ...` | Creates the StorageV2 account that will store App Service backup artifacts in the target resource group and region. |
+| `az storage container create ...` | Creates the `appservice-backups` blob container in that storage account by using the signed-in Azure identity. |
+
 ### Generate Time-Bound SAS and Build Backup URL
 
 ```bash
@@ -102,6 +107,11 @@ SAS_TOKEN=$(az storage container generate-sas \
 
 BACKUP_URL="https://${STORAGE_ACCOUNT_NAME}.blob.core.windows.net/appservice-backups?${SAS_TOKEN}"
 ```
+
+| Command | Description |
+|---|---|
+| `SAS_TOKEN=$(az storage container generate-sas ...)` | Generates a read/write/list SAS token for the `appservice-backups` container and stores the token string in `SAS_TOKEN` for later backup and restore commands. |
+| `BACKUP_URL="https://${STORAGE_ACCOUNT_NAME}..."` | Builds the full container SAS URL that App Service uses as the backup target and restore source. |
 
 !!! warning "Protect backup URLs"
     Container SAS URLs grant access to backup artifacts. Do not commit them to source control or chat logs. Rotate regularly.
@@ -119,6 +129,16 @@ az webapp config backup update \
   --output json
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the web app whose backup schedule you are changing. |
+| `--webapp-name $APP_NAME` | Selects the App Service app that will run the scheduled backups. |
+| `--container-url "$BACKUP_URL"` | Points App Service to the SAS-protected blob container where backup ZIP files will be written. |
+| `--frequency 1d` | Schedules an automatic backup every day. |
+| `--retention 30` | Keeps backup history for 30 days before App Service ages out older backups. |
+| `--retain-one true` | Preserves at least one retained backup even when the retention window would otherwise remove all items. |
+| `--output json` | Returns the applied backup schedule as JSON for inspection or automation. |
+
 Check schedule configuration:
 
 ```bash
@@ -128,6 +148,13 @@ az webapp config backup show \
   --query "{enabled:enabled,schedule:backupSchedule,lastExecutionTime:lastExecutionTime,retentionPeriodInDays:retentionPeriodInDays}" \
   --output json
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the web app. |
+| `--webapp-name $APP_NAME` | Selects the app whose backup schedule you want to inspect. |
+| `--query "{enabled:enabled,...}"` | Returns only the enabled state, backup schedule object, last execution time, and retention period from the backup configuration response. |
+| `--output json` | Formats the filtered schedule details as JSON. |
 
 #### Portal view: Backups blade
 
@@ -145,6 +172,13 @@ az webapp config backup create \
   --output json
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--webapp-name $APP_NAME` | Selects the app that should create an immediate backup. |
+| `--container-url "$BACKUP_URL"` | Sends the on-demand backup to the same SAS-protected blob container used for scheduled backups. |
+| `--output json` | Returns the backup operation details as JSON. |
+
 ### List and Inspect Backups
 
 ```bash
@@ -154,6 +188,13 @@ az webapp config backup list \
   --query "[].{id:backupId,name:blobName,created:created,status:status,sizeInBytes:sizeInBytes}" \
   --output table
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--webapp-name $APP_NAME` | Selects the app whose backup history you want to list. |
+| `--query "[].{id:backupId,...}"` | Projects each backup record into a shorter table with the backup ID, blob name, creation time, status, and size. |
+| `--output table` | Prints the filtered backup inventory in a human-readable table. |
 
 Example output:
 
@@ -181,6 +222,15 @@ az webapp config backup restore \
   --overwrite true \
   --output json
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the app you are restoring. |
+| `--webapp-name $APP_NAME` | Selects the App Service app that should receive the restored content and configuration. |
+| `--backup-id 116` | Chooses the specific backup record to restore from the app's backup history. |
+| `--container-url "$BACKUP_URL"` | Supplies the SAS URL for the blob container that holds the backup artifact. |
+| `--overwrite true` | Allows the restore to replace the current app content and configuration with the selected backup. |
+| `--output json` | Returns the restore operation status payload as JSON. |
 
 Sample response:
 
@@ -216,6 +266,11 @@ az webapp show \
 curl --silent --show-error --fail \
   "https://$APP_NAME.azurewebsites.net/health"
 ```
+
+| Command | Description |
+|---|---|
+| `az webapp show ...` | Retrieves the app's current runtime state and default hostname so you can confirm the restored app is running on the expected endpoint. |
+| `curl --silent --show-error --fail "https://$APP_NAME.azurewebsites.net/health"` | Sends a local HTTPS health probe to the restored app and exits non-zero if the endpoint does not return a success status. |
 
 ### Recovery Runbook Pattern
 

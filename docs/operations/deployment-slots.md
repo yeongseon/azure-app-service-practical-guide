@@ -78,6 +78,13 @@ az appservice plan show \
   --output json
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the App Service plan. |
+| `--name $PLAN_NAME` | Selects the plan whose tier support for deployment slots you want to verify. |
+| `--query "{sku:sku.name,tier:sku.tier}"` | Returns only the current SKU name and pricing tier from the plan response. |
+| `--output json` | Formats the filtered tier details as JSON. |
+
 If needed, upgrade plan tier:
 
 ```bash
@@ -87,6 +94,13 @@ az appservice plan update \
   --sku S1 \
   --output json
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the plan. |
+| `--name $PLAN_NAME` | Selects the plan to upgrade for slot support. |
+| `--sku S1` | Moves the plan to the `S1` tier so deployment slots become available. |
+| `--output json` | Returns the updated plan definition as JSON. |
 
 ### Create a Staging Slot
 
@@ -101,6 +115,14 @@ az webapp deployment slot create \
   --output json
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the web app. |
+| `--name $APP_NAME` | Selects the parent web app that will own the new slot. |
+| `--slot staging` | Creates a slot named `staging`. |
+| `--configuration-source $APP_NAME` | Clones configuration from the production slot of the same app to reduce drift at creation time. |
+| `--output json` | Returns the created slot resource as JSON. |
+
 List slots:
 
 ```bash
@@ -110,6 +132,13 @@ az webapp deployment slot list \
   --query "[].{name:name,state:state,host:defaultHostName}" \
   --output table
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Selects the app whose slot inventory you want to inspect. |
+| `--query "[].{name:name,state:state,host:defaultHostName}"` | Projects each slot to its name, runtime state, and default hostname. |
+| `--output table` | Prints the filtered slot list in a readable table. |
 
 #### Portal view: Deployment slots blade
 
@@ -135,6 +164,14 @@ az webapp config appsettings set \
     FEATURE_FLAG_NEW_CHECKOUT=true \
   --output json
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Selects the app whose slot-specific settings you want to update. |
+| `--slot staging` | Applies the change to the `staging` slot instead of production. |
+| `--slot-settings APP_ENVIRONMENT=staging FEATURE_FLAG_NEW_CHECKOUT=true` | Creates slot-sticky app settings that stay with the staging slot during swaps. |
+| `--output json` | Returns the updated app settings payload as JSON. |
 
 Commonly slot-pinned categories:
 
@@ -183,6 +220,14 @@ az webapp config appsettings set \
   --output json
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Selects the app whose Linux slot warm-up behavior you want to configure. |
+| `--slot staging` | Applies the warm-up settings to the staging slot that will be swapped. |
+| `--settings WEBSITE_SWAP_WARMUP_PING_PATH=/health WEBSITE_SWAP_WARMUP_PING_STATUSES=200,202` | Sets `/health` as the warm-up path and only treats HTTP 200 or 202 responses as successful swap warm-up results. |
+| `--output json` | Returns the updated app settings payload as JSON. |
+
 - `WEBSITE_SWAP_WARMUP_PING_PATH` — path the platform pings on the target slot before completing the swap. Without it, the platform falls back to probing the site root (`/`), which may not exercise the code paths you want primed.
 - `WEBSITE_SWAP_WARMUP_PING_STATUSES` — comma-separated list of HTTP status codes that count as a successful warm-up. **By default, every response code (including 5xx) is treated as valid**, so if you want a failing endpoint to actually block the swap, set this explicitly to the codes you accept.
 
@@ -206,6 +251,16 @@ az webapp deploy \
   --output json
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Selects the app that should receive the package deployment. |
+| `--slot staging` | Deploys the package to the staging slot instead of production. |
+| `--src-path ./artifacts/release.zip` | Uploads the local ZIP package as the deployment artifact. |
+| `--type zip` | Tells App Service to process the artifact as a ZIP deployment. |
+| `--restart true` | Restarts the slot after deployment so the new package is active. |
+| `--output json` | Returns the deployment operation response as JSON. |
+
 Run health check and smoke test:
 
 ```bash
@@ -224,6 +279,14 @@ az webapp deployment slot swap \
   --output json
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the app and its slots. |
+| `--name $APP_NAME` | Selects the app whose slots should be swapped. |
+| `--slot staging` | Uses the `staging` slot as the source slot for the swap. |
+| `--target-slot production` | Swaps the source slot into the production slot. |
+| `--output json` | Returns the slot-swap operation result as JSON. |
+
 ### Perform Swap with Preview
 
 Use preview when additional verification is required before final cutover.
@@ -241,6 +304,15 @@ az webapp deployment slot swap \
   --output json
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the app and its slots. |
+| `--name $APP_NAME` | Selects the app whose slots should enter swap preview. |
+| `--slot staging` | Uses the `staging` slot as the source slot. |
+| `--target-slot production` | Previews how the staging slot will be applied to production. |
+| `--action preview` | Starts swap preview so target-slot settings are applied before final cutover. |
+| `--output json` | Returns the preview operation response as JSON. |
+
 If validation succeeds:
 
 ```bash
@@ -253,6 +325,15 @@ az webapp deployment slot swap \
   --output json
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the app and its slots. |
+| `--name $APP_NAME` | Selects the app whose previewed swap should be completed. |
+| `--slot staging` | Uses the `staging` slot as the source slot. |
+| `--target-slot production` | Finishes promotion into the production slot. |
+| `--action swap` | Completes the previewed swap and moves traffic to the new production content. |
+| `--output json` | Returns the completed swap operation response as JSON. |
+
 If validation fails:
 
 ```bash
@@ -264,6 +345,15 @@ az webapp deployment slot swap \
   --action reset \
   --output json
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the app and its slots. |
+| `--name $APP_NAME` | Selects the app whose previewed swap should be abandoned. |
+| `--slot staging` | Uses the `staging` slot as the source slot. |
+| `--target-slot production` | Resets the preview state for the production target slot. |
+| `--action reset` | Cancels the preview swap so the slot settings return to their pre-preview state. |
+| `--output json` | Returns the reset operation response as JSON. |
 
 ### Roll Back Quickly
 
@@ -278,6 +368,14 @@ az webapp deployment slot swap \
   --output json
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the app and its slots. |
+| `--name $APP_NAME` | Selects the app whose slots you are swapping back for rollback. |
+| `--slot staging` | Uses the current staging slot as the source for the reverse swap. |
+| `--target-slot production` | Restores the staging content into the production slot. |
+| `--output json` | Returns the rollback swap operation response as JSON. |
+
 ### Use Traffic Routing for Canary Testing
 
 Route a small percentage of production traffic to staging.
@@ -290,6 +388,13 @@ az webapp traffic-routing set \
   --output json
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Selects the app whose live traffic split you want to change. |
+| `--distribution staging=10` | Routes 10 percent of production traffic to the `staging` slot for canary validation. |
+| `--output json` | Returns the updated traffic-routing configuration as JSON. |
+
 Disable route split:
 
 ```bash
@@ -299,6 +404,13 @@ az webapp traffic-routing set \
   --distribution staging=0 \
   --output json
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Selects the app whose live traffic split you want to reset. |
+| `--distribution staging=0` | Removes canary routing by sending zero percent of production traffic to the `staging` slot. |
+| `--output json` | Returns the updated traffic-routing configuration as JSON. |
 
 ### Automate Slot Creation with Bicep
 
@@ -336,6 +448,13 @@ az webapp show \
   --query "{host:defaultHostName,rampUpRules:experiments.rampUpRules,slotSwapStatus:slotSwapStatus}" \
   --output json
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Selects the app whose post-release slot state you want to inspect. |
+| `--query "{host:defaultHostName,rampUpRules:experiments.rampUpRules,slotSwapStatus:slotSwapStatus}"` | Returns the default hostname, any traffic-routing ramp-up rules, and the current slot-swap status from the app resource. |
+| `--output json` | Formats the filtered release-state data as JSON. |
 
 Sample output (PII-masked):
 
