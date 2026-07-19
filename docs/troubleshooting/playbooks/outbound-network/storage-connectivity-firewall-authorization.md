@@ -131,6 +131,29 @@ az network private-endpoint show --resource-group <resource-group> --name <priva
 az role assignment list --assignee <app-managed-identity-object-id> --scope <storage-account-resource-id> --query "[].{role:roleDefinitionName,scope:scope}" --output table
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp show --resource-group <resource-group> --name <app-name> --query "{virtualNetworkSubnetId:virtualNetworkSubnetId,vnetRouteAllEnabled:siteConfig.vnetRouteAllEnabled}" --output table` | Shows the integration subnet resource ID and the nested `siteConfig.vnetRouteAllEnabled` flag for this app. |
+| `--resource-group <resource-group> --name <app-name> --query "{virtualNetworkSubnetId:virtualNetworkSubnetId,vnetRouteAllEnabled:siteConfig.vnetRouteAllEnabled}" --output table` | Looks up the resource in this resource group. |
+| `--name <app-name> --query "{virtualNetworkSubnetId:virtualNetworkSubnetId,vnetRouteAllEnabled:siteConfig.vnetRouteAllEnabled}" --output table` | Targets this web app. |
+| `--query "{virtualNetworkSubnetId:virtualNetworkSubnetId,vnetRouteAllEnabled:siteConfig.vnetRouteAllEnabled}"` | Projects only the fields needed here: the top-level integration subnet ID and the nested `siteConfig.vnetRouteAllEnabled` value. |
+| `--output table` | Formats the projected web app fields as a table for quick reading. |
+| `az storage account show --resource-group <resource-group> --name <storage-account-name> --query "{publicNetworkAccess:publicNetworkAccess,defaultAction:networkRuleSet.defaultAction,ipRules:networkRuleSet.ipRules,vnetRules:networkRuleSet.virtualNetworkRules}" --output json` | Shows the storage account's network settings so you can distinguish firewall behavior from authorization failures. |
+| `--resource-group <resource-group> --name <storage-account-name> --query "{publicNetworkAccess:publicNetworkAccess,defaultAction:networkRuleSet.defaultAction,ipRules:networkRuleSet.ipRules,vnetRules:networkRuleSet.virtualNetworkRules}" --output json` | Scopes the lookup to the resource group containing the storage account. |
+| `--name <storage-account-name> --query "{publicNetworkAccess:publicNetworkAccess,defaultAction:networkRuleSet.defaultAction,ipRules:networkRuleSet.ipRules,vnetRules:networkRuleSet.virtualNetworkRules}" --output json` | Targets this storage account. |
+| `--query "{publicNetworkAccess:publicNetworkAccess,defaultAction:networkRuleSet.defaultAction,ipRules:networkRuleSet.ipRules,vnetRules:networkRuleSet.virtualNetworkRules}"` | Projects the storage account's `publicNetworkAccess` value and nested network-rule fields (`networkRuleSet.defaultAction`, `ipRules`, and `virtualNetworkRules`). |
+| `--output json` | Formats the storage-account data in the requested output format. |
+| `az network private-endpoint show --resource-group <resource-group> --name <private-endpoint-name> --query "{name:name,provisioningState:provisioningState}" --output table` | Shows the private endpoint name and provisioning state so you can confirm whether the object itself is healthy. |
+| `--resource-group <resource-group> --name <private-endpoint-name> --query "{name:name,provisioningState:provisioningState}" --output table` | Scopes the lookup to the resource group containing the private endpoint. |
+| `--name <private-endpoint-name> --query "{name:name,provisioningState:provisioningState}" --output table` | Targets this private endpoint. |
+| `--query "{name:name,provisioningState:provisioningState}"` | Projects only the requested private-endpoint field(s). |
+| `--output table` | Formats the projected private-endpoint fields as a table. |
+| `az role assignment list --assignee <app-managed-identity-object-id> --scope <storage-account-resource-id> --query "[].{role:roleDefinitionName,scope:scope}" --output table` | Lists Azure RBAC role assignments for this principal at the storage account scope so you can determine whether any assignment grants the required storage data-plane access. |
+| `--assignee <app-managed-identity-object-id> --scope <storage-account-resource-id> --query "[].{role:roleDefinitionName,scope:scope}" --output table` | Looks up role assignments for this principal object ID. |
+| `--scope <storage-account-resource-id> --query "[].{role:roleDefinitionName,scope:scope}" --output table` | Limits the role-assignment search to this resource scope. |
+| `--query "[].{role:roleDefinitionName,scope:scope}"` | Projects each role assignment to only its role name and scope. |
+| `--output table` | Formats the role-assignment results as a table for quick inspection. |
+
 !!! tip "How to Read This"
     If `defaultAction` is `Deny` and there is no `virtualNetworkRules` entry for the integration subnet (and no private endpoint), the firewall is blocking the app — an H2/H3 problem. If the network config is correct but `az role assignment list` returns no data-plane role (for example `Storage Blob Data Reader`), the failure is H4, and no network change will fix it.
 
@@ -152,6 +175,19 @@ az network private-dns link vnet list --resource-group <resource-group> --zone-n
 az network private-dns record-set a list --resource-group <resource-group> --zone-name privatelink.blob.core.windows.net --output table
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `nslookup <storage-account-name>.blob.core.windows.net` | Resolves the hostname using the current resolver path from the local shell or app container context. |
+| `getent hosts <storage-account-name>.blob.core.windows.net` | Queries libc host resolution so you can compare the OS resolver answer that application code typically uses. |
+| `az network private-dns link vnet list --resource-group <resource-group> --zone-name privatelink.blob.core.windows.net --output table` | Lists the virtual-network links for this Private DNS zone so you can confirm whether the expected VNet is linked. |
+| `--resource-group <resource-group> --zone-name privatelink.blob.core.windows.net --output table` | Scopes the lookup to the resource group that owns the Private DNS zone. |
+| `--zone-name privatelink.blob.core.windows.net --output table` | Targets this Private DNS zone. |
+| `--output table` | Formats the VNet-link results as a table for quick verification. |
+| `az network private-dns record-set a list --resource-group <resource-group> --zone-name privatelink.blob.core.windows.net --output table` | Lists the A records in this Private DNS zone so you can confirm whether the dependency name points to the expected private IP. |
+| `--resource-group <resource-group> --zone-name privatelink.blob.core.windows.net --output table` | Scopes the lookup to the resource group that owns the Private DNS zone. |
+| `--zone-name privatelink.blob.core.windows.net --output table` | Targets this Private DNS zone. |
+| `--output table` | Formats the record list as a table for quick comparison. |
+
 ### H2: Routing / egress path blocked
 **Signals that support**
 - DNS resolves correctly, but TCP to port 443 times out.
@@ -167,6 +203,20 @@ az network vnet subnet show --resource-group <resource-group> --vnet-name <vnet-
 nc -vz <storage-account-name>.blob.core.windows.net 443
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp show --resource-group <resource-group> --name <app-name> --query "siteConfig.vnetRouteAllEnabled"` | Shows the web app resource so you can inspect the current control-plane configuration and state. |
+| `--resource-group <resource-group> --name <app-name> --query "siteConfig.vnetRouteAllEnabled"` | Looks up the resource in this resource group. |
+| `--name <app-name> --query "siteConfig.vnetRouteAllEnabled"` | Targets this web app. |
+| `--query "siteConfig.vnetRouteAllEnabled"` | Projects only the requested field(s) from the web app resource. |
+| `az network vnet subnet show --resource-group <resource-group> --vnet-name <vnet-name> --name <integration-subnet-name> --query "{serviceEndpoints:serviceEndpoints,routeTable:routeTable.id}"` | Shows the integration subnet resource so you can inspect route-table, service-endpoint, NAT, or NSG attachments that affect this path. |
+| `--resource-group <resource-group> --vnet-name <vnet-name> --name <integration-subnet-name> --query "{serviceEndpoints:serviceEndpoints,routeTable:routeTable.id}"` | Scopes the lookup to the resource group that owns the VNet. |
+| `--vnet-name <vnet-name> --name <integration-subnet-name> --query "{serviceEndpoints:serviceEndpoints,routeTable:routeTable.id}"` | Targets this virtual network. |
+| `--name <integration-subnet-name> --query "{serviceEndpoints:serviceEndpoints,routeTable:routeTable.id}"` | Targets this specific subnet. |
+| `--query "{serviceEndpoints:serviceEndpoints,routeTable:routeTable.id}"` | Projects the subnet's service-endpoint list and nested route-table resource ID only. |
+| `nc -vz <storage-account-name>.blob.core.windows.net 443` | Attempts a TCP connection to the target host and port and reports whether the socket opens successfully. |
+| `nc -vz` | Runs `netcat` in verbose mode and checks only whether the TCP connection can be established. |
+
 ### H3: Storage firewall rule mismatch
 **Signals that support**
 - `defaultAction` is `Deny` and the integration subnet is not in `virtualNetworkRules`.
@@ -180,6 +230,18 @@ nc -vz <storage-account-name>.blob.core.windows.net 443
 az storage account network-rule list --resource-group <resource-group> --account-name <storage-account-name> --output json
 az network vnet subnet show --resource-group <resource-group> --vnet-name <vnet-name> --name <integration-subnet-name> --query "serviceEndpoints"
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az storage account network-rule list --resource-group <resource-group> --account-name <storage-account-name> --output json` | Lists the storage account's firewall rules so you can see exactly which IP and VNet rules are in effect. |
+| `--resource-group <resource-group> --account-name <storage-account-name> --output json` | Scopes the lookup to the resource group containing the storage account. |
+| `--account-name <storage-account-name> --output json` | Targets this storage account's network-rule set. |
+| `--output json` | Formats the full firewall rule set as JSON for detailed inspection. |
+| `az network vnet subnet show --resource-group <resource-group> --vnet-name <vnet-name> --name <integration-subnet-name> --query "serviceEndpoints"` | Shows the integration subnet resource so you can inspect route-table, service-endpoint, NAT, or NSG attachments that affect this path. |
+| `--resource-group <resource-group> --vnet-name <vnet-name> --name <integration-subnet-name> --query "serviceEndpoints"` | Scopes the lookup to the resource group that owns the VNet. |
+| `--vnet-name <vnet-name> --name <integration-subnet-name> --query "serviceEndpoints"` | Targets this virtual network. |
+| `--name <integration-subnet-name> --query "serviceEndpoints"` | Targets this specific subnet. |
+| `--query "serviceEndpoints"` | Projects only the subnet's `serviceEndpoints` array. |
 
 !!! warning "Same-region IP allowlists are ignored"
     Adding App Service outbound IPs to the storage firewall does not work when the app and storage account are in the same region — those IP rules are not honored. Use a `Microsoft.Storage` service endpoint with a virtual network rule, or a private endpoint.
@@ -198,6 +260,17 @@ az network vnet subnet show --resource-group <resource-group> --vnet-name <vnet-
 az role assignment list --assignee <app-managed-identity-object-id> --scope <storage-account-resource-id> --output table
 az storage account show --resource-group <resource-group> --name <storage-account-name> --query "allowSharedKeyAccess"
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az role assignment list --assignee <app-managed-identity-object-id> --scope <storage-account-resource-id> --output table` | Lists the role assignments for this principal at the target scope so you can verify what access is actually granted. |
+| `--assignee <app-managed-identity-object-id> --scope <storage-account-resource-id> --output table` | Looks up role assignments for this principal object ID. |
+| `--scope <storage-account-resource-id> --output table` | Limits the role-assignment search to this resource scope. |
+| `--output table` | Formats the role-assignment results as a table for quick inspection. |
+| `az storage account show --resource-group <resource-group> --name <storage-account-name> --query "allowSharedKeyAccess"` | Reads the storage account's `allowSharedKeyAccess` setting so you can tell whether shared-key authentication is permitted. |
+| `--resource-group <resource-group> --name <storage-account-name> --query "allowSharedKeyAccess"` | Scopes the lookup to the resource group containing the storage account. |
+| `--name <storage-account-name> --query "allowSharedKeyAccess"` | Targets this storage account. |
+| `--query "allowSharedKeyAccess"` | Projects only the storage account's `allowSharedKeyAccess` property. |
 
 !!! tip "How to Read This"
     Control-plane roles like **Contributor** or **Owner** do NOT grant data-plane access to blobs, files, queues, or tables. For code that calls the storage data plane with a managed identity, assign a data-plane role such as **Storage Blob Data Reader/Contributor**, **Storage Queue Data Contributor**, or **Storage Table Data Contributor** to the app's identity. The **Storage File Data SMB Share Reader/Contributor** roles apply only to identity-based SMB access to Azure Files — they do **not** apply to an App Service *Bring Your Own Storage* (BYOS) path mount, which authenticates with the storage account key, not with the app's managed identity or RBAC. A BYOS mount therefore fails on the account key or storage firewall path, not on a missing SMB share role.

@@ -246,6 +246,23 @@ az webapp log tail --resource-group <resource-group> --name <app-name>
 az monitor metrics list --resource <app-service-plan-resource-id> --metric "CpuPercentage,MemoryPercentage" --interval PT1M --aggregation Average
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp config show --resource-group <resource-group> --name <app-name>` | Shows the web app's site configuration so you can inspect runtime, startup, logging, or auth settings. |
+| `--resource-group <resource-group> --name <app-name>` | Looks up the resource in this resource group. |
+| `--name <app-name>` | Targets this web app. |
+| `az webapp config appsettings list --resource-group <resource-group> --name <app-name>` | Lists the app settings currently applied to this web app so you can inspect runtime or deployment configuration. |
+| `--resource-group <resource-group> --name <app-name>` | Looks up the resource in this resource group. |
+| `--name <app-name>` | Targets this web app. |
+| `az webapp log tail --resource-group <resource-group> --name <app-name>` | Streams live web app logs so you can watch startup, runtime, or dependency errors as they happen. |
+| `--resource-group <resource-group> --name <app-name>` | Looks up the web app in this resource group. |
+| `--name <app-name>` | Targets this web app. |
+| `az monitor metrics list --resource <app-service-plan-resource-id> --metric "CpuPercentage,MemoryPercentage" --interval PT1M --aggregation Average` | Fetches plan CPU and memory percentages so you can test whether compute saturation explains the slowdown. |
+| `--resource <app-service-plan-resource-id>` | Scopes the metric query to this App Service Plan resource. |
+| `--metric "CpuPercentage,MemoryPercentage"` | Requests exactly these metrics from Azure Monitor for this check. |
+| `--interval PT1M` | Samples the metrics at this time granularity. |
+| `--aggregation Average` | Returns these aggregation(s) for each metric time bucket. |
+
 **Example Output (sanitized)**
 
 ```text
@@ -317,6 +334,17 @@ timestamp                  CpuPercentage_Average   MemoryPercentage_Average
     az webapp log tail --resource-group <resource-group> --name <app-name>
     ```
 
+    | Command | Purpose |
+    |---------|---------|
+    | `az monitor metrics list --resource <app-service-plan-resource-id> --metric "MemoryPercentage,CpuPercentage" --interval PT1M --aggregation Average` | Fetches Azure Monitor metrics for the selected resource and incident window. |
+    | `--resource <app-service-plan-resource-id>` | Scopes the metric query to this App Service Plan resource. |
+    | `--metric "MemoryPercentage,CpuPercentage"` | Requests exactly these metrics from Azure Monitor for this check. |
+    | `--interval PT1M` | Samples the metrics at this time granularity. |
+    | `--aggregation Average` | Returns these aggregation(s) for each metric time bucket. |
+    | `az webapp log tail --resource-group <resource-group> --name <app-name>` | Streams live web app logs so you can watch startup, runtime, or dependency errors as they happen. |
+    | `--resource-group <resource-group> --name <app-name>` | Looks up the web app in this resource group. |
+    | `--name <app-name>` | Targets this web app. |
+
 ### H2: Plan-level memory contention across multiple apps
 - **Signals that support**
     - Multiple apps on the same App Service Plan degrade in overlapping windows.
@@ -342,6 +370,21 @@ timestamp                  CpuPercentage_Average   MemoryPercentage_Average
     az webapp list --resource-group <resource-group> --query "[?serverFarmId!=null].{name:name,serverFarmId:serverFarmId,state:state}" --output table
     az monitor metrics list --resource <app-service-plan-resource-id> --metric "MemoryPercentage" --interval PT5M --aggregation Maximum
     ```
+
+    | Command | Purpose |
+    |---------|---------|
+    | `az appservice plan show --resource-group <resource-group> --name <plan-name>` | Shows the App Service Plan resource so you can confirm the SKU and hosting context for the affected app. |
+    | `--resource-group <resource-group> --name <plan-name>` | Scopes the lookup to the resource group containing the App Service Plan. |
+    | `--name <plan-name>` | Targets this App Service Plan. |
+    | `az webapp list --resource-group <resource-group> --query "[?serverFarmId!=null].{name:name,serverFarmId:serverFarmId,state:state}" --output table` | Lists web apps in the resource group so you can see which apps share the same App Service Plan. |
+    | `--resource-group <resource-group> --query "[?serverFarmId!=null].{name:name,serverFarmId:serverFarmId,state:state}" --output table` | Scopes the list to this resource group. |
+    | `--query "[?serverFarmId!=null].{name:name,serverFarmId:serverFarmId,state:state}"` | Filters the app list to apps with a `serverFarmId` and projects each app's name, plan ID, and state. |
+    | `--output table` | Formats the app list as a table for quick plan-sharing review. |
+    | `az monitor metrics list --resource <app-service-plan-resource-id> --metric "MemoryPercentage" --interval PT5M --aggregation Maximum` | Fetches Azure Monitor metrics for the selected resource and incident window. |
+    | `--resource <app-service-plan-resource-id>` | Scopes the metric query to this App Service Plan resource. |
+    | `--metric "MemoryPercentage"` | Requests exactly these metrics from Azure Monitor for this check. |
+    | `--interval PT5M` | Samples the metrics at this time granularity. |
+    | `--aggregation Maximum` | Returns these aggregation(s) for each metric time bucket. |
     - Verify whether affected and sibling apps share incident timestamps and memory pressure windows.
 
 ### H3: Worker/process model is overcommitted for memory budget
@@ -368,6 +411,15 @@ timestamp                  CpuPercentage_Average   MemoryPercentage_Average
     az webapp config show --resource-group <resource-group> --name <app-name>
     az webapp config appsettings list --resource-group <resource-group> --name <app-name>
     ```
+
+    | Command | Purpose |
+    |---------|---------|
+    | `az webapp config show --resource-group <resource-group> --name <app-name>` | Shows the web app's site configuration so you can inspect runtime, startup, logging, or auth settings. |
+    | `--resource-group <resource-group> --name <app-name>` | Looks up the resource in this resource group. |
+    | `--name <app-name>` | Targets this web app. |
+    | `az webapp config appsettings list --resource-group <resource-group> --name <app-name>` | Lists the app settings currently applied to this web app so you can inspect runtime or deployment configuration. |
+    | `--resource-group <resource-group> --name <app-name>` | Looks up the resource in this resource group. |
+    | `--name <app-name>` | Targets this web app. |
     - Validate effective process settings (`workers`, `threads`, `timeout`) against measured memory per worker and plan limits.
 
 ### H4: Dependency/runtime behavior amplifies memory pressure
@@ -401,6 +453,17 @@ timestamp                  CpuPercentage_Average   MemoryPercentage_Average
     az webapp restart --resource-group <resource-group> --name <app-name>
     az monitor metrics list --resource <app-service-plan-resource-id> --metric "MemoryPercentage" --interval PT1M --aggregation Average
     ```
+
+    | Command | Purpose |
+    |---------|---------|
+    | `az webapp restart --resource-group <resource-group> --name <app-name>` | Restarts the web app so you can test whether the symptom temporarily clears after a fresh worker/container start. |
+    | `--resource-group <resource-group> --name <app-name>` | Looks up the resource in this resource group. |
+    | `--name <app-name>` | Targets this web app. |
+    | `az monitor metrics list --resource <app-service-plan-resource-id> --metric "MemoryPercentage" --interval PT1M --aggregation Average` | Fetches Azure Monitor metrics for the selected resource and incident window. |
+    | `--resource <app-service-plan-resource-id>` | Scopes the metric query to this App Service Plan resource. |
+    | `--metric "MemoryPercentage"` | Requests exactly these metrics from Azure Monitor for this check. |
+    | `--interval PT1M` | Samples the metrics at this time granularity. |
+    | `--aggregation Average` | Returns these aggregation(s) for each metric time bucket. |
 
 ## 7. Likely Root Cause Patterns
 

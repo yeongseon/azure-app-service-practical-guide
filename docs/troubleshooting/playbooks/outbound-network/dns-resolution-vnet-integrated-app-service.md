@@ -249,6 +249,27 @@ az network private-dns link vnet list --resource-group <dns-resource-group> --zo
 az network private-dns record-set a list --resource-group <dns-resource-group> --zone-name privatelink.blob.core.windows.net --output table
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp show --resource-group <resource-group> --name <app-name> --query "{virtualNetworkSubnetId:virtualNetworkSubnetId,vnetRouteAllEnabled:siteConfig.vnetRouteAllEnabled}" --output table` | Shows the integration subnet resource ID and the nested `siteConfig.vnetRouteAllEnabled` flag for this app. |
+| `--resource-group <resource-group> --name <app-name> --query "{virtualNetworkSubnetId:virtualNetworkSubnetId,vnetRouteAllEnabled:siteConfig.vnetRouteAllEnabled}" --output table` | Looks up the resource in this resource group. |
+| `--name <app-name> --query "{virtualNetworkSubnetId:virtualNetworkSubnetId,vnetRouteAllEnabled:siteConfig.vnetRouteAllEnabled}" --output table` | Targets this web app. |
+| `--query "{virtualNetworkSubnetId:virtualNetworkSubnetId,vnetRouteAllEnabled:siteConfig.vnetRouteAllEnabled}"` | Projects only the fields needed here: the top-level integration subnet ID and the nested `siteConfig.vnetRouteAllEnabled` value. |
+| `--output table` | Formats the projected web app fields as a table for quick reading. |
+| `az webapp config appsettings list --resource-group <resource-group> --name <app-name> --query "[?name=='WEBSITE_DNS_SERVER' \|\| name=='WEBSITE_DNS_ALT_SERVER'].{name:name,value:value}" --output table` | Lists only the DNS override app settings so you can see whether this app is forcing a non-default resolver path. |
+| `--resource-group <resource-group> --name <app-name> --query "[?name=='WEBSITE_DNS_SERVER' \|\| name=='WEBSITE_DNS_ALT_SERVER'].{name:name,value:value}" --output table` | Looks up the resource in this resource group. |
+| `--name <app-name> --query "[?name=='WEBSITE_DNS_SERVER' \|\| name=='WEBSITE_DNS_ALT_SERVER'].{name:name,value:value}" --output table` | Targets this web app. |
+| `--query "[?name=='WEBSITE_DNS_SERVER' \|\| name=='WEBSITE_DNS_ALT_SERVER'].{name:name,value:value}"` | Filters the app-settings list to the two DNS override entries and projects only their `name` and `value` fields. |
+| `--output table` | Formats the app-settings result for quick reading in this investigation. |
+| `az network private-dns link vnet list --resource-group <dns-resource-group> --zone-name privatelink.blob.core.windows.net --output table` | Lists the virtual-network links for this Private DNS zone so you can confirm whether the expected VNet is linked. |
+| `--resource-group <dns-resource-group> --zone-name privatelink.blob.core.windows.net --output table` | Scopes the lookup to the resource group that owns the Private DNS zone. |
+| `--zone-name privatelink.blob.core.windows.net --output table` | Targets this Private DNS zone. |
+| `--output table` | Formats the VNet-link results as a table for quick verification. |
+| `az network private-dns record-set a list --resource-group <dns-resource-group> --zone-name privatelink.blob.core.windows.net --output table` | Lists the A records in this Private DNS zone so you can confirm whether the dependency name points to the expected private IP. |
+| `--resource-group <dns-resource-group> --zone-name privatelink.blob.core.windows.net --output table` | Scopes the lookup to the resource group that owns the Private DNS zone. |
+| `--zone-name privatelink.blob.core.windows.net --output table` | Targets this Private DNS zone. |
+| `--output table` | Formats the record list as a table for quick comparison. |
+
 **Example Output:**
 
 ```text
@@ -310,11 +331,24 @@ dependencies
 az webapp config appsettings list --resource-group "$RG" --name "$APP_NAME" --query "[?name=='WEBSITE_DNS_SERVER' || name=='WEBSITE_DNS_ALT_SERVER']"
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp config appsettings list --resource-group "$RG" --name "$APP_NAME" --query "[?name=='WEBSITE_DNS_SERVER' \|\| name=='WEBSITE_DNS_ALT_SERVER']"` | Lists only the DNS override app settings so you can see whether this app is forcing a non-default resolver path. |
+| `--resource-group "$RG" --name "$APP_NAME" --query "[?name=='WEBSITE_DNS_SERVER' \|\| name=='WEBSITE_DNS_ALT_SERVER']"` | Looks up the resource in this resource group. |
+| `--name "$APP_NAME" --query "[?name=='WEBSITE_DNS_SERVER' \|\| name=='WEBSITE_DNS_ALT_SERVER']"` | Targets this web app. |
+| `--query "[?name=='WEBSITE_DNS_SERVER' \|\| name=='WEBSITE_DNS_ALT_SERVER']"` | Filters the app-settings list to just the DNS override entries. |
+
 2. Validate VNet integration details:
 
 ```bash
 az webapp vnet-integration list --resource-group "$RG" --name "$APP_NAME"
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az webapp vnet-integration list --resource-group "$RG" --name "$APP_NAME"` | Lists the web app's VNet integration bindings so you can confirm whether the expected subnet integration exists. |
+| `--resource-group "$RG" --name "$APP_NAME"` | Looks up the resource in this resource group. |
+| `--name "$APP_NAME"` | Targets this web app. |
 
 3. Check resolver error signatures in platform logs:
 
@@ -345,11 +379,23 @@ AppServiceConsoleLogs
 az network private-dns link vnet list --resource-group "$DNS_RG" --zone-name "$PRIVATE_ZONE"
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az network private-dns link vnet list --resource-group "$DNS_RG" --zone-name "$PRIVATE_ZONE"` | Lists the virtual-network links for this Private DNS zone so you can confirm whether the expected VNet is linked. |
+| `--resource-group "$DNS_RG" --zone-name "$PRIVATE_ZONE"` | Scopes the lookup to the resource group that owns the Private DNS zone. |
+| `--zone-name "$PRIVATE_ZONE"` | Targets this Private DNS zone. |
+
 2. Inspect relevant record sets:
 
 ```bash
 az network private-dns record-set a list --resource-group "$DNS_RG" --zone-name "$PRIVATE_ZONE"
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az network private-dns record-set a list --resource-group "$DNS_RG" --zone-name "$PRIVATE_ZONE"` | Lists the A records in this Private DNS zone so you can confirm whether the dependency name points to the expected private IP. |
+| `--resource-group "$DNS_RG" --zone-name "$PRIVATE_ZONE"` | Scopes the lookup to the resource group that owns the Private DNS zone. |
+| `--zone-name "$PRIVATE_ZONE"` | Targets this Private DNS zone. |
 
 3. Correlate DNS incident windows with HTTP failures:
 
@@ -379,6 +425,13 @@ AppServiceHTTPLogs
 ```bash
 az webapp config appsettings list --resource-group "$RG" --name "$APP_NAME" --query "[?contains(name, 'DNS')]"
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az webapp config appsettings list --resource-group "$RG" --name "$APP_NAME" --query "[?contains(name, 'DNS')]"` | Lists only app settings whose names contain `DNS` so you can compare resolver-related overrides between apps. |
+| `--resource-group "$RG" --name "$APP_NAME" --query "[?contains(name, 'DNS')]"` | Looks up the resource in this resource group. |
+| `--name "$APP_NAME" --query "[?contains(name, 'DNS')]"` | Targets this web app. |
+| `--query "[?contains(name, 'DNS')]"` | Filters the app-settings list to keys whose names contain `DNS`. |
 
 2. Capture runtime lookup output from the app container (SSH/Kudu) repeatedly for affected names.
 3. Validate whether fallback resolver behavior is expected in your architecture (for example when primary custom DNS is unavailable).
@@ -411,6 +464,14 @@ AppServiceConsoleLogs
 ```bash
 az monitor metrics list --resource "/subscriptions/<subscription-id>/resourceGroups/$RG/providers/Microsoft.Web/sites/$APP_NAME" --metric "Http5xx" --interval PT5M --aggregation Total
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az monitor metrics list --resource "/subscriptions/<subscription-id>/resourceGroups/$RG/providers/Microsoft.Web/sites/$APP_NAME" --metric "Http5xx" --interval PT5M --aggregation Total` | Fetches Azure Monitor metrics for the selected resource and incident window. |
+| `--resource "/subscriptions/<subscription-id>/resourceGroups/$RG/providers/Microsoft.Web/sites/$APP_NAME"` | Scopes the metric query to this specific Azure resource. |
+| `--metric "Http5xx"` | Requests exactly these metrics from Azure Monitor for this check. |
+| `--interval PT5M` | Samples the metrics at this time granularity. |
+| `--aggregation Total` | Returns these aggregation(s) for each metric time bucket. |
 
 ### Normal vs Abnormal Comparison
 

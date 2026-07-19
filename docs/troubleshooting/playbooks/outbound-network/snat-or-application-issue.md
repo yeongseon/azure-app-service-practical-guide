@@ -257,6 +257,29 @@ az webapp show --resource-group <resource-group> --name <app-name> --query "{vir
 az webapp show --resource-group <resource-group> --name <app-name> --query "{state:state,lastModifiedTimeUtc:lastModifiedTimeUtc}" --output table
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp config show --resource-group <resource-group> --name <app-name> --query "{linuxFxVersion:linuxFxVersion,appCommandLine:appCommandLine,alwaysOn:alwaysOn}" --output table` | Shows the runtime stack, startup command line, and Always On flag that shape worker behavior and startup timing. |
+| `--resource-group <resource-group> --name <app-name> --query "{linuxFxVersion:linuxFxVersion,appCommandLine:appCommandLine,alwaysOn:alwaysOn}" --output table` | Looks up the resource in this resource group. |
+| `--name <app-name> --query "{linuxFxVersion:linuxFxVersion,appCommandLine:appCommandLine,alwaysOn:alwaysOn}" --output table` | Targets this web app. |
+| `--query "{linuxFxVersion:linuxFxVersion,appCommandLine:appCommandLine,alwaysOn:alwaysOn}"` | Projects only the runtime stack, startup command line, and Always On fields from the site configuration. |
+| `--output table` | Formats the selected site-configuration fields as a table. |
+| `az webapp config appsettings list --resource-group <resource-group> --name <app-name> --query "[?name=='WEBSITES_PORT' \|\| name=='WEBSITE_VNET_ROUTE_ALL' \|\| name=='PYTHON_GUNICORN_CUSTOM_THREAD_NUM' \|\| name=='PYTHON_VERSION'].{name:name,value:value}" --output table` | Lists the app settings currently applied to this web app so you can inspect runtime or deployment configuration. |
+| `--resource-group <resource-group> --name <app-name> --query "[?name=='WEBSITES_PORT' \|\| name=='WEBSITE_VNET_ROUTE_ALL' \|\| name=='PYTHON_GUNICORN_CUSTOM_THREAD_NUM' \|\| name=='PYTHON_VERSION'].{name:name,value:value}" --output table` | Looks up the resource in this resource group. |
+| `--name <app-name> --query "[?name=='WEBSITES_PORT' \|\| name=='WEBSITE_VNET_ROUTE_ALL' \|\| name=='PYTHON_GUNICORN_CUSTOM_THREAD_NUM' \|\| name=='PYTHON_VERSION'].{name:name,value:value}" --output table` | Targets this web app. |
+| `--query "[?name=='WEBSITES_PORT' \|\| name=='WEBSITE_VNET_ROUTE_ALL' \|\| name=='PYTHON_GUNICORN_CUSTOM_THREAD_NUM' \|\| name=='PYTHON_VERSION'].{name:name,value:value}"` | Filters the app-settings list to selected port, route-all, worker/concurrency, and Python runtime settings that influence this failure mode. |
+| `--output table` | Formats the app-settings result for quick reading in this investigation. |
+| `az webapp show --resource-group <resource-group> --name <app-name> --query "{virtualNetworkSubnetId:virtualNetworkSubnetId,vnetRouteAllEnabled:siteConfig.vnetRouteAllEnabled}" --output table` | Shows the integration subnet resource ID and the nested `siteConfig.vnetRouteAllEnabled` flag for this app. |
+| `--resource-group <resource-group> --name <app-name> --query "{virtualNetworkSubnetId:virtualNetworkSubnetId,vnetRouteAllEnabled:siteConfig.vnetRouteAllEnabled}" --output table` | Looks up the resource in this resource group. |
+| `--name <app-name> --query "{virtualNetworkSubnetId:virtualNetworkSubnetId,vnetRouteAllEnabled:siteConfig.vnetRouteAllEnabled}" --output table` | Targets this web app. |
+| `--query "{virtualNetworkSubnetId:virtualNetworkSubnetId,vnetRouteAllEnabled:siteConfig.vnetRouteAllEnabled}"` | Projects only the fields needed here: the top-level integration subnet ID and the nested `siteConfig.vnetRouteAllEnabled` value. |
+| `--output table` | Formats the projected web app fields as a table for quick reading. |
+| `az webapp show --resource-group <resource-group> --name <app-name> --query "{state:state,lastModifiedTimeUtc:lastModifiedTimeUtc}" --output table` | Shows the current app state and last control-plane modification time for restart-timeline checks. |
+| `--resource-group <resource-group> --name <app-name> --query "{state:state,lastModifiedTimeUtc:lastModifiedTimeUtc}" --output table` | Looks up the resource in this resource group. |
+| `--name <app-name> --query "{state:state,lastModifiedTimeUtc:lastModifiedTimeUtc}" --output table` | Targets this web app. |
+| `--query "{state:state,lastModifiedTimeUtc:lastModifiedTimeUtc}"` | Projects only the app state and last-modified timestamp from the web app resource. |
+| `--output table` | Formats the projected web app fields as a table for quick reading. |
+
 **Example Output:**
 
 ```text

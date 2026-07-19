@@ -134,6 +134,15 @@ az webapp deployment list-publishing-profiles --resource-group <resource-group> 
 az webapp show --resource-group <resource-group> --name <app-name>
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp deployment list-publishing-profiles --resource-group <resource-group> --name <app-name>` | Lists publishing profiles for this web app so you can inspect deployment endpoints and publishing configuration. |
+| `--resource-group <resource-group> --name <app-name>` | Looks up the resource in this resource group. |
+| `--name <app-name>` | Targets this web app. |
+| `az webapp show --resource-group <resource-group> --name <app-name>` | Shows the web app resource so you can inspect the current control-plane configuration and state. |
+| `--resource-group <resource-group> --name <app-name>` | Looks up the resource in this resource group. |
+| `--name <app-name>` | Targets this web app. |
+
 ```bash
 curl --request POST \
   --url "https://<app-name>.scm.azurewebsites.net/api/command" \
@@ -271,10 +280,39 @@ az webapp log config --resource-group <resource-group> --name <app-name> --appli
 az webapp log tail --resource-group <resource-group> --name <app-name>
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp config show --resource-group <resource-group> --name <app-name>` | Shows the web app's site configuration so you can inspect runtime, startup, logging, or auth settings. |
+| `--resource-group <resource-group> --name <app-name>` | Looks up the resource in this resource group. |
+| `--name <app-name>` | Targets this web app. |
+| `az webapp log config --resource-group <resource-group> --name <app-name> --application-logging filesystem --detailed-error-messages true --failed-request-tracing true --web-server-logging filesystem` | Updates the web app logging configuration so you can enable or reduce filesystem logs, detailed errors, and failed-request tracing. |
+| `--resource-group <resource-group> --name <app-name> --application-logging filesystem --detailed-error-messages true --failed-request-tracing true --web-server-logging filesystem` | Looks up the resource in this resource group. |
+| `--name <app-name> --application-logging filesystem --detailed-error-messages true --failed-request-tracing true --web-server-logging filesystem` | Targets this web app. |
+| `--application-logging filesystem` | Stores application logs on the App Service filesystem. |
+| `--web-server-logging filesystem` | Stores web-server logs on the App Service filesystem. |
+| `--detailed-error-messages true` | Enables detailed error pages to capture richer failure evidence. |
+| `--failed-request-tracing true` | Enables failed-request tracing so IIS/FREB traces are captured. |
+| `az webapp log tail --resource-group <resource-group> --name <app-name>` | Streams live web app logs so you can watch startup, runtime, or dependency errors as they happen. |
+| `--resource-group <resource-group> --name <app-name>` | Looks up the web app in this resource group. |
+| `--name <app-name>` | Targets this web app. |
+
 ```bash
 az monitor metrics list --resource <app-resource-id> --metric "Http5xx" --interval PT5M --aggregation Total
 az monitor metrics list --resource <app-resource-id> --metric "Requests" --interval PT5M --aggregation Total
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az monitor metrics list --resource <app-resource-id> --metric "Http5xx" --interval PT5M --aggregation Total` | Fetches Azure Monitor metrics for the selected resource and incident window. |
+| `--resource <app-resource-id>` | Scopes the metric query to this specific Azure resource. |
+| `--metric "Http5xx"` | Requests exactly these metrics from Azure Monitor for this check. |
+| `--interval PT5M` | Samples the metrics at this time granularity. |
+| `--aggregation Total` | Returns these aggregation(s) for each metric time bucket. |
+| `az monitor metrics list --resource <app-resource-id> --metric "Requests" --interval PT5M --aggregation Total` | Fetches request-count metrics for the selected resource and interval. |
+| `--resource <app-resource-id>` | Scopes the metric query to this specific Azure resource. |
+| `--metric "Requests"` | Requests exactly these metrics from Azure Monitor for this check. |
+| `--interval PT5M` | Samples the metrics at this time granularity. |
+| `--aggregation Total` | Returns these aggregation(s) for each metric time bucket. |
 
 ### Normal vs abnormal comparison
 
@@ -385,6 +423,19 @@ az monitor metrics list --resource <app-resource-id> --metric "Requests" --inter
 az webapp log config --resource-group <resource-group> --name <app-name> --application-logging filesystem --web-server-logging filesystem --detailed-error-messages false --failed-request-tracing false
 az webapp restart --resource-group <resource-group> --name <app-name>
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az webapp log config --resource-group <resource-group> --name <app-name> --application-logging filesystem --web-server-logging filesystem --detailed-error-messages false --failed-request-tracing false` | Updates the web app logging configuration so you can enable or reduce filesystem logs, detailed errors, and failed-request tracing. |
+| `--resource-group <resource-group> --name <app-name> --application-logging filesystem --web-server-logging filesystem --detailed-error-messages false --failed-request-tracing false` | Looks up the resource in this resource group. |
+| `--name <app-name> --application-logging filesystem --web-server-logging filesystem --detailed-error-messages false --failed-request-tracing false` | Targets this web app. |
+| `--application-logging filesystem` | Stores application logs on the App Service filesystem. |
+| `--web-server-logging filesystem` | Stores web-server logs on the App Service filesystem. |
+| `--detailed-error-messages false` | Disables detailed error pages to reduce extra disk usage after the incident. |
+| `--failed-request-tracing false` | Disables failed-request tracing to stop additional trace-file growth. |
+| `az webapp restart --resource-group <resource-group> --name <app-name>` | Restarts the web app so you can test whether the symptom temporarily clears after a fresh worker/container start. |
+| `--resource-group <resource-group> --name <app-name>` | Looks up the resource in this resource group. |
+| `--name <app-name>` | Targets this web app. |
 
 !!! warning "Deletion safety"
     Validate active file handles and retention requirements before deleting diagnostics artifacts in production.

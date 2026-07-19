@@ -64,6 +64,14 @@ High connection churn with poor reuse often precedes SNAT incidents.
 az monitor metrics list --resource "$APP_ID" --metric "TcpConnections" --interval PT1M --aggregation Average Maximum
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az monitor metrics list --resource "$APP_ID" --metric "TcpConnections" --interval PT1M --aggregation Average Maximum` | Fetches TCP connection counts so you can correlate connection churn with outbound failures. |
+| `--resource "$APP_ID"` | Scopes the metric query to this specific Azure resource. |
+| `--metric "TcpConnections"` | Requests exactly these metrics from Azure Monitor for this check. |
+| `--interval PT1M` | Samples the metrics at this time granularity. |
+| `--aggregation Average Maximum` | Returns these aggregation(s) for each metric time bucket. |
+
 #### Portal view: Metrics blade (TCP Connections starting point)
 
 ![Azure portal Metrics blade for app-test-20251107 with Scope set to app-test-20251107, Metric Namespace App Service standard metr... (truncated), and empty Metric and Aggregation dropdowns with placeholder Select metric and Avg. The chart canvas is empty, and three Sample data cards below describe Filter and Split, Plot multiple metrics, and Build custom dashboards with Learn more links.](../../assets/troubleshooting/metrics/01-metrics-empty.png)
@@ -81,6 +89,12 @@ Misconfigured or unhealthy integration causes asymmetric dependency failures.
 ```bash
 az webapp vnet-integration list --resource-group "$RG" --name "$APP_NAME"
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az webapp vnet-integration list --resource-group "$RG" --name "$APP_NAME"` | Lists the web app's VNet integration bindings so you can confirm whether the expected subnet integration exists. |
+| `--resource-group "$RG" --name "$APP_NAME"` | Looks up the resource in this resource group. |
+| `--name "$APP_NAME"` | Targets this web app. |
 
 #### Portal view: Networking hub (inbound + outbound at a glance)
 
@@ -118,6 +132,13 @@ If NAT Gateway is expected but not applied, outbound behavior may differ from de
 ```bash
 az network vnet subnet show --resource-group "$RG" --vnet-name "$VNET_NAME" --name "$SUBNET_NAME"
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az network vnet subnet show --resource-group "$RG" --vnet-name "$VNET_NAME" --name "$SUBNET_NAME"` | Shows the integration subnet resource so you can inspect route-table, service-endpoint, NAT, or NSG attachments that affect this path. |
+| `--resource-group "$RG" --vnet-name "$VNET_NAME" --name "$SUBNET_NAME"` | Scopes the lookup to the resource group that owns the VNet. |
+| `--vnet-name "$VNET_NAME" --name "$SUBNET_NAME"` | Targets this virtual network. |
+| `--name "$SUBNET_NAME"` | Targets this specific subnet. |
 
 - Good signal: correct NAT Gateway association and healthy outbound path.
 - Bad signal: no NAT association when expected, or wrong subnet association.

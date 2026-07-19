@@ -244,6 +244,24 @@ az webapp config appsettings list --resource-group <resource-group> --name <app-
 az webapp show --resource-group <resource-group> --name <app-name> --query "{state:state,serverFarmId:serverFarmId,hostNames:hostNames}" --output table
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp config show --resource-group <resource-group> --name <app-name> --query "{linuxFxVersion:linuxFxVersion,appCommandLine:appCommandLine,alwaysOn:alwaysOn}" --output table` | Shows the runtime stack, startup command line, and Always On flag that shape worker behavior and startup timing. |
+| `--resource-group <resource-group> --name <app-name> --query "{linuxFxVersion:linuxFxVersion,appCommandLine:appCommandLine,alwaysOn:alwaysOn}" --output table` | Looks up the resource in this resource group. |
+| `--name <app-name> --query "{linuxFxVersion:linuxFxVersion,appCommandLine:appCommandLine,alwaysOn:alwaysOn}" --output table` | Targets this web app. |
+| `--query "{linuxFxVersion:linuxFxVersion,appCommandLine:appCommandLine,alwaysOn:alwaysOn}"` | Projects only the runtime stack, startup command line, and Always On fields from the site configuration. |
+| `--output table` | Formats the selected site-configuration fields as a table. |
+| `az webapp config appsettings list --resource-group <resource-group> --name <app-name> --query "[?name=='PYTHON_GUNICORN_CUSTOM_THREAD_NUM' \|\| name=='GUNICORN_CMD_ARGS' \|\| name=='WEBSITES_PORT' \|\| name=='WEBSITES_CONTAINER_START_TIME_LIMIT'].{name:name,value:value}" --output table` | Lists selected worker/concurrency, port, and startup-timeout app settings so you can inspect settings that affect load behavior. |
+| `--resource-group <resource-group> --name <app-name> --query "[?name=='PYTHON_GUNICORN_CUSTOM_THREAD_NUM' \|\| name=='GUNICORN_CMD_ARGS' \|\| name=='WEBSITES_PORT' \|\| name=='WEBSITES_CONTAINER_START_TIME_LIMIT'].{name:name,value:value}" --output table` | Looks up the resource in this resource group. |
+| `--name <app-name> --query "[?name=='PYTHON_GUNICORN_CUSTOM_THREAD_NUM' \|\| name=='GUNICORN_CMD_ARGS' \|\| name=='WEBSITES_PORT' \|\| name=='WEBSITES_CONTAINER_START_TIME_LIMIT'].{name:name,value:value}" --output table` | Targets this web app. |
+| `--query "[?name=='PYTHON_GUNICORN_CUSTOM_THREAD_NUM' \|\| name=='GUNICORN_CMD_ARGS' \|\| name=='WEBSITES_PORT' \|\| name=='WEBSITES_CONTAINER_START_TIME_LIMIT'].{name:name,value:value}"` | Filters the app-settings list to `PYTHON_GUNICORN_CUSTOM_THREAD_NUM`, `GUNICORN_CMD_ARGS`, `WEBSITES_PORT`, and `WEBSITES_CONTAINER_START_TIME_LIMIT`, then projects each setting's name and value. |
+| `--output table` | Formats the app-settings result for quick reading in this investigation. |
+| `az webapp show --resource-group <resource-group> --name <app-name> --query "{state:state,serverFarmId:serverFarmId,hostNames:hostNames}" --output table` | Shows the running state, parent App Service Plan, and hostnames so you can place burst failures in plan context. |
+| `--resource-group <resource-group> --name <app-name> --query "{state:state,serverFarmId:serverFarmId,hostNames:hostNames}" --output table` | Looks up the resource in this resource group. |
+| `--name <app-name> --query "{state:state,serverFarmId:serverFarmId,hostNames:hostNames}" --output table` | Targets this web app. |
+| `--query "{state:state,serverFarmId:serverFarmId,hostNames:hostNames}"` | Projects only the app state, plan resource ID, and configured hostnames. |
+| `--output table` | Formats the projected web app fields as a table for quick reading. |
+
 **Example Output:**
 
 ```text
@@ -310,6 +328,15 @@ Running  /subscriptions/<subscription-id>/resourceGroups/<resource-group>/provid
     az webapp config appsettings list --resource-group <resource-group> --name <app-name>
     ```
 
+    | Command | Purpose |
+    |---------|---------|
+    | `az webapp config show --resource-group <resource-group> --name <app-name>` | Shows the web app's site configuration so you can inspect runtime, startup, logging, or auth settings. |
+    | `--resource-group <resource-group> --name <app-name>` | Looks up the resource in this resource group. |
+    | `--name <app-name>` | Targets this web app. |
+    | `az webapp config appsettings list --resource-group <resource-group> --name <app-name>` | Lists the app settings currently applied to this web app so you can inspect runtime or deployment configuration. |
+    | `--resource-group <resource-group> --name <app-name>` | Looks up the resource in this resource group. |
+    | `--name <app-name>` | Targets this web app. |
+
 ### H2: Dependency latency cascade
 - **Signals that support**
     - 502/500 bursts align with timeout/refused/reset messages in console logs.
@@ -342,6 +369,15 @@ Running  /subscriptions/<subscription-id>/resourceGroups/<resource-group>/provid
     az webapp config appsettings list --resource-group <resource-group> --name <app-name>
     az webapp show --resource-group <resource-group> --name <app-name>
     ```
+
+    | Command | Purpose |
+    |---------|---------|
+    | `az webapp config appsettings list --resource-group <resource-group> --name <app-name>` | Lists the app settings currently applied to this web app so you can inspect runtime or deployment configuration. |
+    | `--resource-group <resource-group> --name <app-name>` | Looks up the resource in this resource group. |
+    | `--name <app-name>` | Targets this web app. |
+    | `az webapp show --resource-group <resource-group> --name <app-name>` | Shows the web app resource so you can inspect the current control-plane configuration and state. |
+    | `--resource-group <resource-group> --name <app-name>` | Looks up the resource in this resource group. |
+    | `--name <app-name>` | Targets this web app. |
 
 ### H3: Platform health probe and restart overlap
 - **Signals that support**
@@ -376,6 +412,15 @@ Running  /subscriptions/<subscription-id>/resourceGroups/<resource-group>/provid
     az webapp config show --resource-group <resource-group> --name <app-name>
     ```
 
+    | Command | Purpose |
+    |---------|---------|
+    | `az webapp show --resource-group <resource-group> --name <app-name>` | Shows the web app resource so you can inspect the current control-plane configuration and state. |
+    | `--resource-group <resource-group> --name <app-name>` | Looks up the resource in this resource group. |
+    | `--name <app-name>` | Targets this web app. |
+    | `az webapp config show --resource-group <resource-group> --name <app-name>` | Shows the web app's site configuration so you can inspect runtime, startup, logging, or auth settings. |
+    | `--resource-group <resource-group> --name <app-name>` | Looks up the resource in this resource group. |
+    | `--name <app-name>` | Targets this web app. |
+
 ### H4: Outbound connection pressure (including SNAT-like behavior)
 - **Signals that support**
     - Bursts of 502/500 correlate with outbound-heavy endpoints.
@@ -408,6 +453,15 @@ Running  /subscriptions/<subscription-id>/resourceGroups/<resource-group>/provid
     az webapp config appsettings list --resource-group <resource-group> --name <app-name>
     az webapp restart --resource-group <resource-group> --name <app-name>
     ```
+
+    | Command | Purpose |
+    |---------|---------|
+    | `az webapp config appsettings list --resource-group <resource-group> --name <app-name>` | Lists the app settings currently applied to this web app so you can inspect runtime or deployment configuration. |
+    | `--resource-group <resource-group> --name <app-name>` | Looks up the resource in this resource group. |
+    | `--name <app-name>` | Targets this web app. |
+    | `az webapp restart --resource-group <resource-group> --name <app-name>` | Restarts the web app so you can test whether the symptom temporarily clears after a fresh worker/container start. |
+    | `--resource-group <resource-group> --name <app-name>` | Looks up the resource in this resource group. |
+    | `--name <app-name>` | Targets this web app. |
 
 ## 7. Likely Root Cause Patterns
 
