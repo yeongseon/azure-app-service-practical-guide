@@ -286,6 +286,28 @@ az webapp config appsettings list --resource-group <resource-group> --name <app-
 az webapp log deployment show --resource-group <resource-group> --name <app-name> --output table
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp show --resource-group <resource-group> --name <app-name> --query "{state:state,enabled:enabled,hostNames:hostNames}" --output table` | Shows the web app resource so you can inspect state, hostnames, identity-related settings, or projected properties. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `--query "{state:state,enabled:enabled,hostNames:hostNames}"` | Projects only these named top-level properties into a smaller object before formatting the output. |
+| `--output table` | Formats the command output as a readable table for quick triage. |
+| `az webapp config show --resource-group <resource-group> --name <app-name> --query "{linuxFxVersion:linuxFxVersion,appCommandLine:appCommandLine,alwaysOn:alwaysOn}" --output table` | Shows the effective site configuration so you can inspect the runtime or startup-related properties. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `--query "{linuxFxVersion:linuxFxVersion,appCommandLine:appCommandLine,alwaysOn:alwaysOn}"` | Projects only these named top-level properties into a smaller object before formatting the output. |
+| `--output table` | Formats the command output as a readable table for quick triage. |
+| `az webapp config appsettings list --resource-group <resource-group> --name <app-name> --query "[?name=='SCM_DO_BUILD_DURING_DEPLOYMENT' \|\| name=='WEBSITES_PORT' \|\| name=='WEBSITES_CONTAINER_START_TIME_LIMIT' \|\| name=='PYTHON_VERSION'].{name:name,value:value}" --output table` | Lists app settings so you can verify the effective configuration keys involved in this scenario. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `--query "[?name=='SCM_DO_BUILD_DURING_DEPLOYMENT' \|\| name=='WEBSITES_PORT' \|\| name=='WEBSITES_CONTAINER_START_TIME_LIMIT' \|\| name=='PYTHON_VERSION'].{name:name,value:value}"` | Filters the returned list with JMESPath, then projects only the named fields into a smaller object per item. |
+| `--output table` | Formats the command output as a readable table for quick triage. |
+| `az webapp log deployment show --resource-group <resource-group> --name <app-name> --output table` | Shows deployment history details so you can correlate successful deploy records with startup failures. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `--output table` | Formats the command output as a readable table for quick triage. |
+
 **Example Output:**
 
 ```text
@@ -350,6 +372,18 @@ az webapp config appsettings list --resource-group <resource-group> --name <app-
 az webapp log tail --resource-group <resource-group> --name <app-name>
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp config show --resource-group <resource-group> --name <app-name>` | Shows the effective site configuration so you can inspect the runtime or startup-related properties. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `az webapp config appsettings list --resource-group <resource-group> --name <app-name>` | Lists app settings so you can verify the effective configuration keys involved in this scenario. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `az webapp log tail --resource-group <resource-group> --name <app-name>` | Streams live app and platform log output from the target web app while you reproduce the issue. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+
 What to verify:
 
 1. Compare configured startup command to actual deployed paths/modules.
@@ -394,6 +428,19 @@ az webapp config appsettings list --resource-group <resource-group> --name <app-
 az webapp deployment source config-zip --resource-group <resource-group> --name <app-name> --src <path-to-package.zip>
 az webapp log deployment show --resource-group <resource-group> --name <app-name>
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az webapp config appsettings list --resource-group <resource-group> --name <app-name>` | Lists app settings so you can verify the effective configuration keys involved in this scenario. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `az webapp deployment source config-zip --resource-group <resource-group> --name <app-name> --src <path-to-package.zip>` | Pushes the ZIP package through the legacy ZipDeploy path so you can redeploy with the expected build mode. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `--src <path-to-package.zip>` | Points to the local ZIP package that ZipDeploy should upload. |
+| `az webapp log deployment show --resource-group <resource-group> --name <app-name>` | Shows deployment history details so you can correlate successful deploy records with startup failures. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
 
 What to verify:
 
@@ -442,6 +489,19 @@ az webapp config appsettings set --resource-group <resource-group> --name <app-n
 az webapp restart --resource-group <resource-group> --name <app-name>
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp config appsettings list --resource-group <resource-group> --name <app-name>` | Lists app settings so you can verify the effective configuration keys involved in this scenario. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `az webapp config appsettings set --resource-group <resource-group> --name <app-name> --settings WEBSITES_PORT=<port>` | Updates app settings so you can change the startup, warm-up, or health configuration under test. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `--settings WEBSITES_PORT=<port>` | Writes the listed app-setting key/value pairs onto the target app or slot. |
+| `az webapp restart --resource-group <resource-group> --name <app-name>` | Restarts the web app so the updated configuration or image is exercised again. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+
 What to verify:
 
 1. Set a single source of truth for port (`WEBSITES_PORT`) and ensure app binds to that value.
@@ -486,6 +546,19 @@ az webapp config show --resource-group <resource-group> --name <app-name>
 az webapp config set --resource-group <resource-group> --name <app-name> --linux-fx-version "PYTHON|3.12"
 az webapp restart --resource-group <resource-group> --name <app-name>
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az webapp config show --resource-group <resource-group> --name <app-name>` | Shows the effective site configuration so you can inspect the runtime or startup-related properties. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `az webapp config set --resource-group <resource-group> --name <app-name> --linux-fx-version "PYTHON\|3.12"` | Updates generic site configuration properties so you can change health-check or runtime behavior. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `--linux-fx-version "PYTHON\|3.12"` | Sets the Linux runtime stack string that App Service should run for the app. |
+| `az webapp restart --resource-group <resource-group> --name <app-name>` | Restarts the web app so the updated configuration or image is exercised again. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
 
 What to verify:
 

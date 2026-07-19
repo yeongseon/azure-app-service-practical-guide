@@ -170,6 +170,27 @@ az webapp config show --resource-group <resource-group> --name <app-name> --quer
 az webapp log tail --resource-group <resource-group> --name <app-name>
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp show --resource-group <resource-group> --name <app-name> --query "{state:state,enabled:enabled,defaultHostName:defaultHostName}" --output table` | Shows the web app resource so you can inspect state, hostnames, identity-related settings, or projected properties. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `--query "{state:state,enabled:enabled,defaultHostName:defaultHostName}"` | Projects only these named top-level properties into a smaller object before formatting the output. |
+| `--output table` | Formats the command output as a readable table for quick triage. |
+| `az webapp config appsettings list --resource-group <resource-group> --name <app-name> --query "[?name=='WEBSITES_PORT' \|\| name=='WEBSITES_CONTAINER_START_TIME_LIMIT' \|\| name=='WEBSITE_WARMUP_PATH' \|\| name=='WEBSITE_WARMUP_STATUSES'].{name:name,value:value}" --output table` | Lists app settings so you can verify the effective configuration keys involved in this scenario. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `--query "[?name=='WEBSITES_PORT' \|\| name=='WEBSITES_CONTAINER_START_TIME_LIMIT' \|\| name=='WEBSITE_WARMUP_PATH' \|\| name=='WEBSITE_WARMUP_STATUSES'].{name:name,value:value}"` | Filters the returned list with JMESPath, then projects only the named fields into a smaller object per item. |
+| `--output table` | Formats the command output as a readable table for quick triage. |
+| `az webapp config show --resource-group <resource-group> --name <app-name> --query "{linuxFxVersion:linuxFxVersion,appCommandLine:appCommandLine,http20Enabled:http20Enabled}" --output table` | Shows the effective site configuration so you can inspect the runtime or startup-related properties. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `--query "{linuxFxVersion:linuxFxVersion,appCommandLine:appCommandLine,http20Enabled:http20Enabled}"` | Projects only these named top-level properties into a smaller object before formatting the output. |
+| `--output table` | Formats the command output as a readable table for quick triage. |
+| `az webapp log tail --resource-group <resource-group> --name <app-name>` | Streams live app and platform log output from the target web app while you reproduce the issue. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+
 **Example Output:**
 
 ```text

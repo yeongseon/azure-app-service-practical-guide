@@ -95,6 +95,14 @@ flowchart TD
         --output json
     ```
 
+    | Command | Purpose |
+    |---------|---------|
+    | `az webapp config show --resource-group $RG --name $APP_NAME --query "{linuxFxVersion:linuxFxVersion,appCommandLine:appCommandLine,alwaysOn:alwaysOn}" --output json` | Shows the effective site configuration so you can inspect the runtime or startup-related properties. |
+    | `--resource-group $RG` | Selects the resource group that contains the target web app or related resource. |
+    | `--name $APP_NAME` | Specifies the target web app name for this command. |
+    | `--query "{linuxFxVersion:linuxFxVersion,appCommandLine:appCommandLine,alwaysOn:alwaysOn}"` | Projects only these named top-level properties into a smaller object before formatting the output. |
+    | `--output json` | Formats the command output as JSON for full-fidelity inspection. |
+
 2. **Inspect startup-related app settings**
 
     ```bash
@@ -104,6 +112,14 @@ flowchart TD
         --query "[?name=='WEBSITES_PORT' || name=='PORT' || name=='WEBSITES_CONTAINER_START_TIME_LIMIT' || name=='SCM_DO_BUILD_DURING_DEPLOYMENT'].{name:name,value:value}" \
         --output table
     ```
+
+    | Command | Purpose |
+    |---------|---------|
+    | `az webapp config appsettings list --resource-group $RG --name $APP_NAME --query "[?name=='WEBSITES_PORT' \|\| name=='PORT' \|\| name=='WEBSITES_CONTAINER_START_TIME_LIMIT' \|\| name=='SCM_DO_BUILD_DURING_DEPLOYMENT'].{name:name,value:value}" --output table` | Lists app settings so you can verify the effective configuration keys involved in this scenario. |
+    | `--resource-group $RG` | Selects the resource group that contains the target web app or related resource. |
+    | `--name $APP_NAME` | Specifies the target web app name for this command. |
+    | `--query "[?name=='WEBSITES_PORT' \|\| name=='PORT' \|\| name=='WEBSITES_CONTAINER_START_TIME_LIMIT' \|\| name=='SCM_DO_BUILD_DURING_DEPLOYMENT'].{name:name,value:value}"` | Filters the returned list with JMESPath, then projects only the named fields into a smaller object per item. |
+    | `--output table` | Formats the command output as a readable table for quick triage. |
 
 3. **Confirm site state and host inventory**
 
@@ -115,6 +131,14 @@ flowchart TD
         --output json
     ```
 
+    | Command | Purpose |
+    |---------|---------|
+    | `az webapp show --resource-group $RG --name $APP_NAME --query "{state:state,enabled:enabled,defaultHostName:defaultHostName}" --output json` | Shows the web app resource so you can inspect state, hostnames, identity-related settings, or projected properties. |
+    | `--resource-group $RG` | Selects the resource group that contains the target web app or related resource. |
+    | `--name $APP_NAME` | Specifies the target web app name for this command. |
+    | `--query "{state:state,enabled:enabled,defaultHostName:defaultHostName}"` | Projects only these named top-level properties into a smaller object before formatting the output. |
+    | `--output json` | Formats the command output as JSON for full-fidelity inspection. |
+
 4. **If using containers, inspect container settings**
 
     ```bash
@@ -123,6 +147,13 @@ flowchart TD
         --name $APP_NAME \
         --output json
     ```
+
+    | Command | Purpose |
+    |---------|---------|
+    | `az webapp config container show --resource-group $RG --name $APP_NAME --output json` | Shows the current container image and registry configuration for the web app. |
+    | `--resource-group $RG` | Selects the resource group that contains the target web app or related resource. |
+    | `--name $APP_NAME` | Specifies the target web app name for this command. |
+    | `--output json` | Formats the command output as JSON for full-fidelity inspection. |
 
 #### Portal view: Web App Down detector for startup-failure triage
 
@@ -204,6 +235,14 @@ az webapp config show \
     --output json
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp config show --resource-group $RG --name $APP_NAME --query "{linuxFxVersion:linuxFxVersion,appCommandLine:appCommandLine}" --output json` | Shows the effective site configuration so you can inspect the runtime or startup-related properties. |
+| `--resource-group $RG` | Selects the resource group that contains the target web app or related resource. |
+| `--name $APP_NAME` | Specifies the target web app name for this command. |
+| `--query "{linuxFxVersion:linuxFxVersion,appCommandLine:appCommandLine}"` | Projects only these named top-level properties into a smaller object before formatting the output. |
+| `--output json` | Formats the command output as JSON for full-fidelity inspection. |
+
 Sample output:
 
 ```json
@@ -226,6 +265,14 @@ az webapp config appsettings list \
     --query "[?name=='WEBSITES_PORT' || name=='PORT' || name=='WEBSITES_CONTAINER_START_TIME_LIMIT'].{name:name,value:value}" \
     --output table
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az webapp config appsettings list --resource-group $RG --name $APP_NAME --query "[?name=='WEBSITES_PORT' \|\| name=='PORT' \|\| name=='WEBSITES_CONTAINER_START_TIME_LIMIT'].{name:name,value:value}" --output table` | Lists app settings so you can verify the effective configuration keys involved in this scenario. |
+| `--resource-group $RG` | Selects the resource group that contains the target web app or related resource. |
+| `--name $APP_NAME` | Specifies the target web app name for this command. |
+| `--query "[?name=='WEBSITES_PORT' \|\| name=='PORT' \|\| name=='WEBSITES_CONTAINER_START_TIME_LIMIT'].{name:name,value:value}"` | Filters the returned list with JMESPath, then projects only the named fields into a smaller object per item. |
+| `--output table` | Formats the command output as a readable table for quick triage. |
 
 Sample output:
 

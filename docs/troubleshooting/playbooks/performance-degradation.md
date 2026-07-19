@@ -97,6 +97,14 @@ flowchart TD
         --output json
     ```
 
+    | Command | Purpose |
+    |---------|---------|
+    | `az webapp show --resource-group $RG --name $APP_NAME --query "{state:state,serverFarmId:serverFarmId,enabled:enabled}" --output json` | Shows the web app resource so you can inspect state, hostnames, identity-related settings, or projected properties. |
+    | `--resource-group $RG` | Selects the resource group that contains the target web app or related resource. |
+    | `--name $APP_NAME` | Specifies the target web app name for this command. |
+    | `--query "{state:state,serverFarmId:serverFarmId,enabled:enabled}"` | Projects only these named top-level properties into a smaller object before formatting the output. |
+    | `--output json` | Formats the command output as JSON for full-fidelity inspection. |
+
 2. **Inspect autoscale or instance count context if applicable**
 
     ```bash
@@ -106,6 +114,14 @@ flowchart TD
         --query "{sku:sku.name,workerSize:workerSize,numberOfWorkers:numberOfWorkers,maximumElasticWorkerCount:maximumElasticWorkerCount}" \
         --output json
     ```
+
+    | Command | Purpose |
+    |---------|---------|
+    | `az appservice plan show --resource-group $RG --name $PLAN_NAME --query "{sku:sku.name,workerSize:workerSize,numberOfWorkers:numberOfWorkers,maximumElasticWorkerCount:maximumElasticWorkerCount}" --output json` | Shows the App Service plan capacity and worker settings so you can judge scale context. |
+    | `--resource-group $RG` | Selects the resource group that contains the App Service plan you are inspecting. |
+    | `--name $PLAN_NAME` | Specifies the App Service plan name to inspect. |
+    | `--query "{sku:sku.name,workerSize:workerSize,numberOfWorkers:numberOfWorkers,maximumElasticWorkerCount:maximumElasticWorkerCount}"` | Projects only these named top-level properties into a smaller object before formatting the output. |
+    | `--output json` | Formats the command output as JSON for full-fidelity inspection. |
 
 3. **Review startup and runtime settings that influence performance behavior**
 
@@ -117,6 +133,14 @@ flowchart TD
         --output json
     ```
 
+    | Command | Purpose |
+    |---------|---------|
+    | `az webapp config show --resource-group $RG --name $APP_NAME --query "{alwaysOn:alwaysOn,http20Enabled:http20Enabled,minimumTlsVersion:minTlsVersion,appCommandLine:appCommandLine}" --output json` | Shows the effective site configuration so you can inspect the runtime or startup-related properties. |
+    | `--resource-group $RG` | Selects the resource group that contains the target web app or related resource. |
+    | `--name $APP_NAME` | Specifies the target web app name for this command. |
+    | `--query "{alwaysOn:alwaysOn,http20Enabled:http20Enabled,minimumTlsVersion:minTlsVersion,appCommandLine:appCommandLine}"` | Projects only these named top-level properties into a smaller object before formatting the output. |
+    | `--output json` | Formats the command output as JSON for full-fidelity inspection. |
+
 4. **If a release just occurred, inspect recent deployment history**
 
     ```bash
@@ -125,6 +149,13 @@ flowchart TD
         --name $APP_NAME \
         --output table
     ```
+
+    | Command | Purpose |
+    |---------|---------|
+    | `az webapp log deployment list --resource-group $RG --name $APP_NAME --output table` | Lists deployment history records so you can verify whether the latest deployment completed. |
+    | `--resource-group $RG` | Selects the resource group that contains the target web app or related resource. |
+    | `--name $APP_NAME` | Specifies the target web app name for this command. |
+    | `--output table` | Formats the command output as a readable table for quick triage. |
 
 ## 5. Evidence to Collect
 
@@ -224,6 +255,14 @@ az appservice plan show \
     --output json
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az appservice plan show --resource-group $RG --name $PLAN_NAME --query "{sku:sku.name,numberOfWorkers:numberOfWorkers,maximumElasticWorkerCount:maximumElasticWorkerCount}" --output json` | Shows the App Service plan capacity and worker settings so you can judge scale context. |
+| `--resource-group $RG` | Selects the resource group that contains the App Service plan you are inspecting. |
+| `--name $PLAN_NAME` | Specifies the App Service plan name to inspect. |
+| `--query "{sku:sku.name,numberOfWorkers:numberOfWorkers,maximumElasticWorkerCount:maximumElasticWorkerCount}"` | Projects only these named top-level properties into a smaller object before formatting the output. |
+| `--output json` | Formats the command output as JSON for full-fidelity inspection. |
+
 Sample output:
 
 ```json
@@ -247,6 +286,14 @@ az webapp config show \
     --query "{alwaysOn:alwaysOn,http20Enabled:http20Enabled,appCommandLine:appCommandLine}" \
     --output json
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az webapp config show --resource-group $RG --name $APP_NAME --query "{alwaysOn:alwaysOn,http20Enabled:http20Enabled,appCommandLine:appCommandLine}" --output json` | Shows the effective site configuration so you can inspect the runtime or startup-related properties. |
+| `--resource-group $RG` | Selects the resource group that contains the target web app or related resource. |
+| `--name $APP_NAME` | Specifies the target web app name for this command. |
+| `--query "{alwaysOn:alwaysOn,http20Enabled:http20Enabled,appCommandLine:appCommandLine}"` | Projects only these named top-level properties into a smaller object before formatting the output. |
+| `--output json` | Formats the command output as JSON for full-fidelity inspection. |
 
 Sample output:
 

@@ -171,6 +171,33 @@ az webapp log tail --resource-group <resource-group> --name <app-name>
 az webapp log deployment show --resource-group <resource-group> --name <app-name> --output table
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp show --resource-group <resource-group> --name <app-name> --query "{state:state,enabled:enabled,defaultHostName:defaultHostName}" --output table` | Shows the web app resource so you can inspect state, hostnames, identity-related settings, or projected properties. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `--query "{state:state,enabled:enabled,defaultHostName:defaultHostName}"` | Projects only these named top-level properties into a smaller object before formatting the output. |
+| `--output table` | Formats the command output as a readable table for quick triage. |
+| `az webapp config show --resource-group <resource-group> --name <app-name> --query "{windowsFxVersion:windowsFxVersion,netFrameworkVersion:netFrameworkVersion,use32BitWorkerProcess:use32BitWorkerProcess,alwaysOn:alwaysOn}" --output table` | Shows the effective site configuration so you can inspect the runtime or startup-related properties. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `--query "{windowsFxVersion:windowsFxVersion,netFrameworkVersion:netFrameworkVersion,use32BitWorkerProcess:use32BitWorkerProcess,alwaysOn:alwaysOn}"` | Projects only these named top-level properties into a smaller object before formatting the output. |
+| `--output table` | Formats the command output as a readable table for quick triage. |
+| `az webapp log config --resource-group <resource-group> --name <app-name> --web-server-logging filesystem --detailed-error-messages true --failed-request-tracing true --application-logging filesystem` | Enables or adjusts filesystem logging and tracing so you can capture more startup evidence. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `--web-server-logging filesystem` | Configures where web server logs are written. |
+| `--detailed-error-messages true` | Turns detailed App Service/IIS error pages on or off for troubleshooting. |
+| `--failed-request-tracing true` | Turns failed-request tracing on so App Service records more detail for failed HTTP requests. |
+| `--application-logging filesystem` | Configures where application logs are written. |
+| `az webapp log tail --resource-group <resource-group> --name <app-name>` | Streams live app and platform log output from the target web app while you reproduce the issue. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `az webapp log deployment show --resource-group <resource-group> --name <app-name> --output table` | Shows deployment history details so you can correlate successful deploy records with startup failures. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `--output table` | Formats the command output as a readable table for quick triage. |
+
 **Example Output:**
 
 ```text
@@ -299,6 +326,15 @@ az webapp deployment list-publishing-profiles --resource-group <resource-group> 
 az webapp log tail --resource-group <resource-group> --name <app-name>
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp deployment list-publishing-profiles --resource-group <resource-group> --name <app-name>` | Fetches publishing profiles so you can authenticate to Kudu or inspect deployment endpoints. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `az webapp log tail --resource-group <resource-group> --name <app-name>` | Streams live app and platform log output from the target web app while you reproduce the issue. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+
 ```kusto
 AppServiceHTTPLogs
 | where TimeGenerated > ago(2h)
@@ -338,6 +374,20 @@ az webapp restart --resource-group <resource-group> --name <app-name>
 az webapp log tail --resource-group <resource-group> --name <app-name>
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp config show --resource-group <resource-group> --name <app-name> --query "{windowsFxVersion:windowsFxVersion,netFrameworkVersion:netFrameworkVersion}" --output table` | Shows the effective site configuration so you can inspect the runtime or startup-related properties. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `--query "{windowsFxVersion:windowsFxVersion,netFrameworkVersion:netFrameworkVersion}"` | Projects only these named top-level properties into a smaller object before formatting the output. |
+| `--output table` | Formats the command output as a readable table for quick triage. |
+| `az webapp restart --resource-group <resource-group> --name <app-name>` | Restarts the web app so the updated configuration or image is exercised again. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `az webapp log tail --resource-group <resource-group> --name <app-name>` | Streams live app and platform log output from the target web app while you reproduce the issue. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+
 ```kusto
 AppServiceHTTPLogs
 | where TimeGenerated > ago(2h)
@@ -375,6 +425,23 @@ az webapp log config --resource-group <resource-group> --name <app-name> --web-s
 az webapp log tail --resource-group <resource-group> --name <app-name>
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp config show --resource-group <resource-group> --name <app-name> --output json` | Shows the effective site configuration so you can inspect the runtime or startup-related properties. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `--output json` | Formats the command output as JSON for full-fidelity inspection. |
+| `az webapp log config --resource-group <resource-group> --name <app-name> --web-server-logging filesystem --failed-request-tracing true --detailed-error-messages true --application-logging filesystem` | Enables or adjusts filesystem logging and tracing so you can capture more startup evidence. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `--web-server-logging filesystem` | Configures where web server logs are written. |
+| `--failed-request-tracing true` | Turns failed-request tracing on so App Service records more detail for failed HTTP requests. |
+| `--detailed-error-messages true` | Turns detailed App Service/IIS error pages on or off for troubleshooting. |
+| `--application-logging filesystem` | Configures where application logs are written. |
+| `az webapp log tail --resource-group <resource-group> --name <app-name>` | Streams live app and platform log output from the target web app while you reproduce the issue. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+
 ```kusto
 AppServiceHTTPLogs
 | where TimeGenerated > ago(2h)
@@ -410,6 +477,15 @@ AppServiceHTTPLogs
 az webapp restart --resource-group <resource-group> --name <app-name>
 az webapp log tail --resource-group <resource-group> --name <app-name>
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az webapp restart --resource-group <resource-group> --name <app-name>` | Restarts the web app so the updated configuration or image is exercised again. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `az webapp log tail --resource-group <resource-group> --name <app-name>` | Streams live app and platform log output from the target web app while you reproduce the issue. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
 
 ```kusto
 AppServiceHTTPLogs
@@ -447,6 +523,19 @@ az webapp config show --resource-group <resource-group> --name <app-name> --outp
 az webapp restart --resource-group <resource-group> --name <app-name>
 az webapp log tail --resource-group <resource-group> --name <app-name>
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az webapp config show --resource-group <resource-group> --name <app-name> --output table` | Shows the effective site configuration so you can inspect the runtime or startup-related properties. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `--output table` | Formats the command output as a readable table for quick triage. |
+| `az webapp restart --resource-group <resource-group> --name <app-name>` | Restarts the web app so the updated configuration or image is exercised again. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `az webapp log tail --resource-group <resource-group> --name <app-name>` | Streams live app and platform log output from the target web app while you reproduce the issue. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
 
 ```kusto
 AppServiceHTTPLogs

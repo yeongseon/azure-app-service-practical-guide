@@ -94,6 +94,13 @@ flowchart TD
         --output table
     ```
 
+    | Command | Purpose |
+    |---------|---------|
+    | `az webapp log deployment list --resource-group $RG --name $APP_NAME --output table` | Lists deployment history records so you can verify whether the latest deployment completed. |
+    | `--resource-group $RG` | Selects the resource group that contains the target web app or related resource. |
+    | `--name $APP_NAME` | Specifies the target web app name for this command. |
+    | `--output table` | Formats the command output as a readable table for quick triage. |
+
 2. **Check app state, host name, and current slot swap status**
 
     ```bash
@@ -103,6 +110,14 @@ flowchart TD
         --query "{state:state,defaultHostName:defaultHostName,slotSwapStatus:slotSwapStatus}" \
         --output json
     ```
+
+    | Command | Purpose |
+    |---------|---------|
+    | `az webapp show --resource-group $RG --name $APP_NAME --query "{state:state,defaultHostName:defaultHostName,slotSwapStatus:slotSwapStatus}" --output json` | Shows the web app resource so you can inspect state, hostnames, identity-related settings, or projected properties. |
+    | `--resource-group $RG` | Selects the resource group that contains the target web app or related resource. |
+    | `--name $APP_NAME` | Specifies the target web app name for this command. |
+    | `--query "{state:state,defaultHostName:defaultHostName,slotSwapStatus:slotSwapStatus}"` | Projects only these named top-level properties into a smaller object before formatting the output. |
+    | `--output json` | Formats the command output as JSON for full-fidelity inspection. |
 
 3. **If slots are involved, list slot inventory and state**
 
@@ -114,6 +129,14 @@ flowchart TD
         --output table
     ```
 
+    | Command | Purpose |
+    |---------|---------|
+    | `az webapp deployment slot list --resource-group $RG --name $APP_NAME --query "[].{name:name,state:state,host:defaultHostName}" --output table` | Lists deployment slots so you can compare slot names, state, and hostnames. |
+    | `--resource-group $RG` | Selects the resource group that contains the target web app or related resource. |
+    | `--name $APP_NAME` | Specifies the target web app name for this command. |
+    | `--query "[].{name:name,state:state,host:defaultHostName}"` | Projects each returned array element into the listed fields before formatting the output. |
+    | `--output table` | Formats the command output as a readable table for quick triage. |
+
 4. **Inspect runtime configuration that affects activation after deployment**
 
     ```bash
@@ -124,6 +147,14 @@ flowchart TD
         --output json
     ```
 
+    | Command | Purpose |
+    |---------|---------|
+    | `az webapp config show --resource-group $RG --name $APP_NAME --query "{linuxFxVersion:linuxFxVersion,appCommandLine:appCommandLine,alwaysOn:alwaysOn}" --output json` | Shows the effective site configuration so you can inspect the runtime or startup-related properties. |
+    | `--resource-group $RG` | Selects the resource group that contains the target web app or related resource. |
+    | `--name $APP_NAME` | Specifies the target web app name for this command. |
+    | `--query "{linuxFxVersion:linuxFxVersion,appCommandLine:appCommandLine,alwaysOn:alwaysOn}"` | Projects only these named top-level properties into a smaller object before formatting the output. |
+    | `--output json` | Formats the command output as JSON for full-fidelity inspection. |
+
 5. **Review deployment-critical app settings**
 
     ```bash
@@ -133,6 +164,14 @@ flowchart TD
         --query "[?name=='SCM_DO_BUILD_DURING_DEPLOYMENT' || name=='WEBSITE_RUN_FROM_PACKAGE' || name=='WEBSITES_PORT' || name=='WEBSITE_SWAP_WARMUP_PING_PATH'].{name:name,value:value}" \
         --output table
     ```
+
+    | Command | Purpose |
+    |---------|---------|
+    | `az webapp config appsettings list --resource-group $RG --name $APP_NAME --query "[?name=='SCM_DO_BUILD_DURING_DEPLOYMENT' \|\| name=='WEBSITE_RUN_FROM_PACKAGE' \|\| name=='WEBSITES_PORT' \|\| name=='WEBSITE_SWAP_WARMUP_PING_PATH'].{name:name,value:value}" --output table` | Lists app settings so you can verify the effective configuration keys involved in this scenario. |
+    | `--resource-group $RG` | Selects the resource group that contains the target web app or related resource. |
+    | `--name $APP_NAME` | Specifies the target web app name for this command. |
+    | `--query "[?name=='SCM_DO_BUILD_DURING_DEPLOYMENT' \|\| name=='WEBSITE_RUN_FROM_PACKAGE' \|\| name=='WEBSITES_PORT' \|\| name=='WEBSITE_SWAP_WARMUP_PING_PATH'].{name:name,value:value}"` | Filters the returned list with JMESPath, then projects only the named fields into a smaller object per item. |
+    | `--output table` | Formats the command output as a readable table for quick triage. |
 
 #### Portal view: Activity log (deployment + swap operation history)
 
@@ -213,6 +252,13 @@ az webapp log deployment list \
     --output json
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp log deployment list --resource-group $RG --name $APP_NAME --output json` | Lists deployment history records so you can verify whether the latest deployment completed. |
+| `--resource-group $RG` | Selects the resource group that contains the target web app or related resource. |
+| `--name $APP_NAME` | Specifies the target web app name for this command. |
+| `--output json` | Formats the command output as JSON for full-fidelity inspection. |
+
 Sample output:
 
 ```json
@@ -243,6 +289,14 @@ az webapp show \
     --query "{state:state,slotSwapStatus:slotSwapStatus,host:defaultHostName}" \
     --output json
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az webapp show --resource-group $RG --name $APP_NAME --query "{state:state,slotSwapStatus:slotSwapStatus,host:defaultHostName}" --output json` | Shows the web app resource so you can inspect state, hostnames, identity-related settings, or projected properties. |
+| `--resource-group $RG` | Selects the resource group that contains the target web app or related resource. |
+| `--name $APP_NAME` | Specifies the target web app name for this command. |
+| `--query "{state:state,slotSwapStatus:slotSwapStatus,host:defaultHostName}"` | Projects only these named top-level properties into a smaller object before formatting the output. |
+| `--output json` | Formats the command output as JSON for full-fidelity inspection. |
 
 Sample output:
 

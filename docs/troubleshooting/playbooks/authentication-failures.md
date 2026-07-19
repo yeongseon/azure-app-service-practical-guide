@@ -96,6 +96,13 @@ flowchart TD
         --output json
     ```
 
+    | Command | Purpose |
+    |---------|---------|
+    | `az webapp auth show --resource-group $RG --name $APP_NAME --output json` | Shows the App Service authentication (Easy Auth) configuration for the app. |
+    | `--resource-group $RG` | Selects the resource group that contains the target web app or related resource. |
+    | `--name $APP_NAME` | Specifies the target web app name for this command. |
+    | `--output json` | Formats the command output as JSON for full-fidelity inspection. |
+
 2. **Inspect Microsoft provider settings**
 
     ```bash
@@ -104,6 +111,13 @@ flowchart TD
         --name $APP_NAME \
         --output json
     ```
+
+    | Command | Purpose |
+    |---------|---------|
+    | `az webapp auth microsoft show --resource-group $RG --name $APP_NAME --output json` | Shows the Microsoft identity provider configuration used by App Service authentication. |
+    | `--resource-group $RG` | Selects the resource group that contains the target web app or related resource. |
+    | `--name $APP_NAME` | Specifies the target web app name for this command. |
+    | `--output json` | Formats the command output as JSON for full-fidelity inspection. |
 
 3. **Confirm app state and hostnames used in callback URLs**
 
@@ -115,6 +129,14 @@ flowchart TD
         --output json
     ```
 
+    | Command | Purpose |
+    |---------|---------|
+    | `az webapp show --resource-group $RG --name $APP_NAME --query "{defaultHostName:defaultHostName,hostNames:hostNames,httpsOnly:httpsOnly}" --output json` | Shows the web app resource so you can inspect state, hostnames, identity-related settings, or projected properties. |
+    | `--resource-group $RG` | Selects the resource group that contains the target web app or related resource. |
+    | `--name $APP_NAME` | Specifies the target web app name for this command. |
+    | `--query "{defaultHostName:defaultHostName,hostNames:hostNames,httpsOnly:httpsOnly}"` | Projects only these named top-level properties into a smaller object before formatting the output. |
+    | `--output json` | Formats the command output as JSON for full-fidelity inspection. |
+
 4. **Review related app settings**
 
     ```bash
@@ -124,6 +146,14 @@ flowchart TD
         --query "[?contains(name, 'WEBSITE_AUTH') || contains(name, 'MICROSOFT_PROVIDER')].{name:name,value:value}" \
         --output table
     ```
+
+    | Command | Purpose |
+    |---------|---------|
+    | `az webapp config appsettings list --resource-group $RG --name $APP_NAME --query "[?contains(name, 'WEBSITE_AUTH') \|\| contains(name, 'MICROSOFT_PROVIDER')].{name:name,value:value}" --output table` | Lists app settings so you can verify the effective configuration keys involved in this scenario. |
+    | `--resource-group $RG` | Selects the resource group that contains the target web app or related resource. |
+    | `--name $APP_NAME` | Specifies the target web app name for this command. |
+    | `--query "[?contains(name, 'WEBSITE_AUTH') \|\| contains(name, 'MICROSOFT_PROVIDER')].{name:name,value:value}"` | Filters the returned list with JMESPath, then projects only the named fields into a smaller object per item. |
+    | `--output table` | Formats the command output as a readable table for quick triage. |
 
 #### Portal view: Diagnose and solve hub - entry point for EasyAuth investigation
 
@@ -205,6 +235,13 @@ az webapp auth show \
     --output json
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp auth show --resource-group $RG --name $APP_NAME --output json` | Shows the App Service authentication (Easy Auth) configuration for the app. |
+| `--resource-group $RG` | Selects the resource group that contains the target web app or related resource. |
+| `--name $APP_NAME` | Specifies the target web app name for this command. |
+| `--output json` | Formats the command output as JSON for full-fidelity inspection. |
+
 Sample output:
 
 ```json
@@ -227,6 +264,13 @@ az webapp auth microsoft show \
     --name $APP_NAME \
     --output json
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az webapp auth microsoft show --resource-group $RG --name $APP_NAME --output json` | Shows the Microsoft identity provider configuration used by App Service authentication. |
+| `--resource-group $RG` | Selects the resource group that contains the target web app or related resource. |
+| `--name $APP_NAME` | Specifies the target web app name for this command. |
+| `--output json` | Formats the command output as JSON for full-fidelity inspection. |
 
 Sample output:
 

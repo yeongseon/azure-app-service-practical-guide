@@ -126,6 +126,18 @@ az webapp config show --resource-group <resource-group> --name <app-name>
 az webapp restart --resource-group <resource-group> --name <app-name>
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp config appsettings list --resource-group <resource-group> --name <app-name>` | Lists app settings so you can verify the effective configuration keys involved in this scenario. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `az webapp config show --resource-group <resource-group> --name <app-name>` | Shows the effective site configuration so you can inspect the runtime or startup-related properties. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `az webapp restart --resource-group <resource-group> --name <app-name>` | Restarts the web app so the updated configuration or image is exercised again. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+
 ### 11. Related Queries
 
 - [`../../kql/console/startup-errors.md`](../../kql/console/startup-errors.md)
@@ -323,6 +335,28 @@ az webapp config appsettings list --resource-group <resource-group> --name <app-
 # Confirm deployment succeeded while runtime failed
 az webapp log deployment show --resource-group <resource-group> --name <app-name> --output table
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az webapp show --resource-group <resource-group> --name <app-name> --query "{state:state,enabled:enabled,defaultHostName:defaultHostName}" --output table` | Shows the web app resource so you can inspect state, hostnames, identity-related settings, or projected properties. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `--query "{state:state,enabled:enabled,defaultHostName:defaultHostName}"` | Projects only these named top-level properties into a smaller object before formatting the output. |
+| `--output table` | Formats the command output as a readable table for quick triage. |
+| `az webapp config show --resource-group <resource-group> --name <app-name> --query "{linuxFxVersion:linuxFxVersion,appCommandLine:appCommandLine,alwaysOn:alwaysOn}" --output table` | Shows the effective site configuration so you can inspect the runtime or startup-related properties. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `--query "{linuxFxVersion:linuxFxVersion,appCommandLine:appCommandLine,alwaysOn:alwaysOn}"` | Projects only these named top-level properties into a smaller object before formatting the output. |
+| `--output table` | Formats the command output as a readable table for quick triage. |
+| `az webapp config appsettings list --resource-group <resource-group> --name <app-name> --query "[?name=='WEBSITES_PORT' \|\| name=='WEBSITES_CONTAINER_START_TIME_LIMIT' \|\| name=='WEBSITE_WARMUP_PATH'].{name:name,value:value}" --output table` | Lists app settings so you can verify the effective configuration keys involved in this scenario. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `--query "[?name=='WEBSITES_PORT' \|\| name=='WEBSITES_CONTAINER_START_TIME_LIMIT' \|\| name=='WEBSITE_WARMUP_PATH'].{name:name,value:value}"` | Filters the returned list with JMESPath, then projects only the named fields into a smaller object per item. |
+| `--output table` | Formats the command output as a readable table for quick triage. |
+| `az webapp log deployment show --resource-group <resource-group> --name <app-name> --output table` | Shows deployment history details so you can correlate successful deploy records with startup failures. |
+| `--resource-group <resource-group>` | Selects the resource group that contains the target web app or related resource. |
+| `--name <app-name>` | Specifies the target web app name for this command. |
+| `--output table` | Formats the command output as a readable table for quick triage. |
 
 **Example Output:**
 
