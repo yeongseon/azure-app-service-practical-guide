@@ -97,6 +97,23 @@ az monitor metrics list --resource $RESOURCE_ID --metric "MemoryPercentage" --in
 az webapp log tail --name $APP_NAME --resource-group $RG
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp log show --resource-group $RG --name $APP_NAME` | Shows the current App Service logging configuration and enabled log outputs for this web app. |
+| `--resource-group $RG --name $APP_NAME` | Looks up the resource in this resource group. |
+| `--name $APP_NAME` | Targets this web app. |
+| `az monitor metrics list --resource $RESOURCE_ID --metric "CpuPercentage" --interval PT5M` | Fetches Azure Monitor metrics for the selected resource and incident window. |
+| `--resource $RESOURCE_ID` | Scopes the metric query to this specific Azure resource. |
+| `--metric "CpuPercentage"` | Requests exactly these metrics from Azure Monitor for this check. |
+| `--interval PT5M` | Samples the metrics at this time granularity. |
+| `az monitor metrics list --resource $RESOURCE_ID --metric "MemoryPercentage" --interval PT5M` | Fetches Azure Monitor metrics for the selected resource and incident window. |
+| `--resource $RESOURCE_ID` | Scopes the metric query to this specific Azure resource. |
+| `--metric "MemoryPercentage"` | Requests exactly these metrics from Azure Monitor for this check. |
+| `--interval PT5M` | Samples the metrics at this time granularity. |
+| `az webapp log tail --name $APP_NAME --resource-group $RG` | Streams live web app logs so you can watch startup, runtime, or dependency errors as they happen. |
+| `--resource-group $RG` | Looks up the web app in this resource group. |
+| `--name $APP_NAME --resource-group $RG` | Targets this web app. |
+
 ## See Also
 
 - [Troubleshooting Method](troubleshooting-method.md)

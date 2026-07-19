@@ -50,6 +50,14 @@ Start with platform resource pressure because it can invalidate all app-level co
 az monitor metrics list --resource "$APP_SERVICE_PLAN_ID" --metric "CpuPercentage" "MemoryPercentage" --interval PT1M --aggregation Average
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az monitor metrics list --resource "$APP_SERVICE_PLAN_ID" --metric "CpuPercentage" "MemoryPercentage" --interval PT1M --aggregation Average` | Fetches Azure Monitor metrics for the selected resource and incident window. |
+| `--resource "$APP_SERVICE_PLAN_ID"` | Scopes the metric query to this App Service Plan resource. |
+| `--metric "CpuPercentage" "MemoryPercentage"` | Requests exactly these metrics from Azure Monitor for this check. |
+| `--interval PT1M` | Samples the metrics at this time granularity. |
+| `--aggregation Average` | Returns these aggregation(s) for each metric time bucket. |
+
 #### Portal view: Metrics blade (initial empty state)
 
 ![Azure portal Metrics blade for app-test-20251107 with top toolbar New chart, Refresh, Share and a Local Time: Last 24 hours (Automatic) selector. A Chart Title heading sits above a chart-level command bar with Add metric, disabled Add filter, disabled Apply splitting, Line chart, Drill into Logs, New alert rule, and Save to dashboard. The chart configuration row shows Scope app-test-20251107, Metric Namespace App Service standard... (truncated), Metric Select metric placeholder, and Aggregation Select aggregation placeholder. The empty chart canvas (Y-axis 0-100, X-axis Jun 07 / 6 AM / 12 PM / 6 PM, UTC+09:00) is overlaid with three Sample data help cards titled Filter + Split, Plot multiple metrics, and Build custom dashboards with descriptions and Learn more links.](../../assets/troubleshooting/metrics/01-metrics-empty.png)
@@ -111,6 +119,15 @@ Many regressions begin right after image/config updates.
 az webapp deployment list-publishing-profiles --resource-group "$RG" --name "$APP_NAME"
 az webapp config appsettings list --resource-group "$RG" --name "$APP_NAME"
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az webapp deployment list-publishing-profiles --resource-group "$RG" --name "$APP_NAME"` | Lists publishing profiles for this web app so you can inspect deployment endpoints and publishing configuration. |
+| `--resource-group "$RG" --name "$APP_NAME"` | Looks up the resource in this resource group. |
+| `--name "$APP_NAME"` | Targets this web app. |
+| `az webapp config appsettings list --resource-group "$RG" --name "$APP_NAME"` | Lists the app settings currently applied to this web app so you can inspect runtime or deployment configuration. |
+| `--resource-group "$RG" --name "$APP_NAME"` | Looks up the resource in this resource group. |
+| `--name "$APP_NAME"` | Targets this web app. |
 
 - Good signal: no impactful change near incident start.
 - Bad signal: incident starts immediately after deployment or critical setting change.

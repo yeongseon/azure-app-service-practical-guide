@@ -183,6 +183,21 @@ az webapp config appsettings list --resource-group <resource-group> --name <app-
 az webapp show --resource-group <resource-group> --name <app-name>
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp cors show --resource-group <resource-group> --name <app-name>` | Shows the platform CORS allowed-origins configuration for this web app. |
+| `--resource-group <resource-group> --name <app-name>` | Looks up the resource in this resource group. |
+| `--name <app-name>` | Targets this web app. |
+| `az webapp auth show --resource-group <resource-group> --name <app-name>` | Shows the App Service authentication and authorization configuration for this web app. |
+| `--resource-group <resource-group> --name <app-name>` | Looks up the resource in this resource group. |
+| `--name <app-name>` | Targets this web app. |
+| `az webapp config appsettings list --resource-group <resource-group> --name <app-name>` | Lists the app settings currently applied to this web app so you can inspect runtime or deployment configuration. |
+| `--resource-group <resource-group> --name <app-name>` | Looks up the resource in this resource group. |
+| `--name <app-name>` | Targets this web app. |
+| `az webapp show --resource-group <resource-group> --name <app-name>` | Shows the web app resource so you can inspect the current control-plane configuration and state. |
+| `--resource-group <resource-group> --name <app-name>` | Looks up the resource in this resource group. |
+| `--name <app-name>` | Targets this web app. |
+
 ### KQL: 401/403 with OPTIONS method
 
 ```kusto
@@ -335,6 +350,22 @@ az webapp auth show --resource-group <resource-group> --name <app-name> --output
 # Inspect app settings that commonly impact auth flows
 az webapp config appsettings list --resource-group <resource-group> --name <app-name> --query "[?name=='WEBSITE_AUTH_ENABLED' || name=='WEBSITE_AUTH_DEFAULT_PROVIDER' || contains(name, 'AUTH_')].{name:name,value:value}" --output table
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az webapp cors show --resource-group <resource-group> --name <app-name> --output json` | Shows the platform CORS allowed-origins configuration for this web app. |
+| `--resource-group <resource-group> --name <app-name> --output json` | Looks up the resource in this resource group. |
+| `--name <app-name> --output json` | Targets this web app. |
+| `--output json` | Formats the CORS configuration as JSON so you can inspect exact origin strings. |
+| `az webapp auth show --resource-group <resource-group> --name <app-name> --output json` | Shows the App Service authentication and authorization configuration for this web app. |
+| `--resource-group <resource-group> --name <app-name> --output json` | Looks up the resource in this resource group. |
+| `--name <app-name> --output json` | Targets this web app. |
+| `--output json` | Formats the auth configuration as JSON so you can inspect the effective policy in detail. |
+| `az webapp config appsettings list --resource-group <resource-group> --name <app-name> --query "[?name=='WEBSITE_AUTH_ENABLED' \|\| name=='WEBSITE_AUTH_DEFAULT_PROVIDER' \|\| contains(name, 'AUTH_')].{name:name,value:value}" --output table` | Lists only auth-related app settings so you can confirm the platform auth provider and allowed audiences in use. |
+| `--resource-group <resource-group> --name <app-name> --query "[?name=='WEBSITE_AUTH_ENABLED' \|\| name=='WEBSITE_AUTH_DEFAULT_PROVIDER' \|\| contains(name, 'AUTH_')].{name:name,value:value}" --output table` | Looks up the resource in this resource group. |
+| `--name <app-name> --query "[?name=='WEBSITE_AUTH_ENABLED' \|\| name=='WEBSITE_AUTH_DEFAULT_PROVIDER' \|\| contains(name, 'AUTH_')].{name:name,value:value}" --output table` | Targets this web app. |
+| `--query "[?name=='WEBSITE_AUTH_ENABLED' \|\| name=='WEBSITE_AUTH_DEFAULT_PROVIDER' \|\| contains(name, 'AUTH_')].{name:name,value:value}"` | Filters the app-settings list to auth-related keys and projects only their names and values. |
+| `--output table` | Formats the app-settings result for quick reading in this investigation. |
 
 **Example Output:**
 

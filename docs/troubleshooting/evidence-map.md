@@ -107,6 +107,12 @@ The Logs blade is the canonical entry point for every KQL snippet in this eviden
 az monitor activity-log list --resource-group <resource-group> --offset 24h
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az monitor activity-log list --resource-group <resource-group> --offset 24h` | Lists recent control-plane operations in the resource group so you can correlate symptoms with restarts, deployments, or configuration changes. |
+| `--resource-group <resource-group> --offset 24h` | Scopes the activity-log search to this resource group. |
+| `--offset 24h` | Limits the activity-log query to this recent time window. |
+
 ### KQL
 
 ```kusto
@@ -124,6 +130,13 @@ AppServicePlatformLogs
 ```bash
 az monitor metrics list --resource <app-resource-id> --metric "Http5xx,Requests" --interval PT1M
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az monitor metrics list --resource <app-resource-id> --metric "Http5xx,Requests" --interval PT1M` | Fetches 5xx and request-count metrics together so you can compare failure rate with incoming traffic. |
+| `--resource <app-resource-id>` | Scopes the metric query to this specific Azure resource. |
+| `--metric "Http5xx,Requests"` | Requests exactly these metrics from Azure Monitor for this check. |
+| `--interval PT1M` | Samples the metrics at this time granularity. |
 
 ### KQL
 
@@ -149,6 +162,12 @@ The Log stream blade is the fastest way to confirm whether startup is **silent**
 az webapp log tail --resource-group <resource-group> --name <app-name>
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp log tail --resource-group <resource-group> --name <app-name>` | Streams live web app logs so you can watch startup, runtime, or dependency errors as they happen. |
+| `--resource-group <resource-group> --name <app-name>` | Looks up the web app in this resource group. |
+| `--name <app-name>` | Targets this web app. |
+
 ### KQL
 
 ```kusto
@@ -173,6 +192,13 @@ The Application Insights Overview is the right starting point when the question 
 az monitor metrics list --resource <app-resource-id> --metric "AverageResponseTime" --interval PT1M
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az monitor metrics list --resource <app-resource-id> --metric "AverageResponseTime" --interval PT1M` | Fetches average response-time metrics so you can see whether latency is rising even when requests still succeed. |
+| `--resource <app-resource-id>` | Scopes the metric query to this specific Azure resource. |
+| `--metric "AverageResponseTime"` | Requests exactly these metrics from Azure Monitor for this check. |
+| `--interval PT1M` | Samples the metrics at this time granularity. |
+
 ### KQL
 
 ```kusto
@@ -190,6 +216,12 @@ AppServiceAppLogs
 ```bash
 az webapp ssh --resource-group <resource-group> --name <app-name>
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az webapp ssh --resource-group <resource-group> --name <app-name>` | Opens an SSH session into the running app container so you can test DNS, routes, and process state from app context. |
+| `--resource-group <resource-group> --name <app-name>` | Looks up the resource in this resource group. |
+| `--name <app-name>` | Targets this web app. |
 
 Inside the session, run:
 
@@ -221,6 +253,13 @@ The Metrics blade is the visual companion to the `az monitor metrics list` CLI c
 az monitor metrics list --resource <app-resource-id> --metric "CpuPercentage,MemoryWorkingSet,Http5xx,AverageResponseTime" --interval PT1M
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az monitor metrics list --resource <app-resource-id> --metric "CpuPercentage,MemoryWorkingSet,Http5xx,AverageResponseTime" --interval PT1M` | Fetches CPU, memory working set, 5xx, and latency together to test whether scaling or worker churn drove the incident. |
+| `--resource <app-resource-id>` | Scopes the metric query to this specific Azure resource. |
+| `--metric "CpuPercentage,MemoryWorkingSet,Http5xx,AverageResponseTime"` | Requests exactly these metrics from Azure Monitor for this check. |
+| `--interval PT1M` | Samples the metrics at this time granularity. |
+
 ### KQL
 
 ```kusto
@@ -238,6 +277,12 @@ AppServicePlatformLogs
 ```bash
 az webapp log tail --resource-group <resource-group> --name <app-name>
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az webapp log tail --resource-group <resource-group> --name <app-name>` | Streams live web app logs so you can watch startup, runtime, or dependency errors as they happen. |
+| `--resource-group <resource-group> --name <app-name>` | Looks up the web app in this resource group. |
+| `--name <app-name>` | Targets this web app. |
 
 Use SSH to confirm with:
 
@@ -263,6 +308,13 @@ AppServiceConsoleLogs
 az monitor metrics list --resource <app-resource-id> --metric "MemoryWorkingSet" --interval PT1M
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az monitor metrics list --resource <app-resource-id> --metric "MemoryWorkingSet" --interval PT1M` | Fetches memory working set so you can see whether memory pressure is building during the incident. |
+| `--resource <app-resource-id>` | Scopes the metric query to this specific Azure resource. |
+| `--metric "MemoryWorkingSet"` | Requests exactly these metrics from Azure Monitor for this check. |
+| `--interval PT1M` | Samples the metrics at this time granularity. |
+
 ### KQL
 
 ```kusto
@@ -280,6 +332,13 @@ AppServicePlatformLogs
 ```bash
 az monitor metrics list --resource <app-resource-id> --metric "Http5xx,Requests,AverageResponseTime" --interval PT1M
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az monitor metrics list --resource <app-resource-id> --metric "Http5xx,Requests,AverageResponseTime" --interval PT1M` | Fetches 5xx, request volume, and latency together so you can judge whether outbound failures line up with request demand. |
+| `--resource <app-resource-id>` | Scopes the metric query to this specific Azure resource. |
+| `--metric "Http5xx,Requests,AverageResponseTime"` | Requests exactly these metrics from Azure Monitor for this check. |
+| `--interval PT1M` | Samples the metrics at this time granularity. |
 
 ### KQL
 
@@ -305,6 +364,13 @@ The Activity log is the authoritative record of every control-plane operation ag
 az monitor activity-log list --resource-group <resource-group> --offset 24h --status Succeeded
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az monitor activity-log list --resource-group <resource-group> --offset 24h --status Succeeded` | Lists recent succeeded control-plane operations in the resource group so you can confirm deployments or config changes in the incident window. |
+| `--resource-group <resource-group> --offset 24h --status Succeeded` | Scopes the activity-log search to this resource group. |
+| `--offset 24h --status Succeeded` | Limits the activity-log query to this recent time window. |
+| `--status Succeeded` | Keeps only activity-log entries with this operation status. |
+
 ### KQL
 
 ```kusto
@@ -323,6 +389,12 @@ AppServicePlatformLogs
 az webapp show --resource-group <resource-group> --name <app-name>
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp show --resource-group <resource-group> --name <app-name>` | Shows the web app resource so you can inspect the current control-plane configuration and state. |
+| `--resource-group <resource-group> --name <app-name>` | Looks up the resource in this resource group. |
+| `--name <app-name>` | Targets this web app. |
+
 ### KQL
 
 ```kusto
@@ -340,6 +412,12 @@ AppServicePlatformLogs
 ```bash
 az webapp deployment slot list --resource-group <resource-group> --name <app-name>
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az webapp deployment slot list --resource-group <resource-group> --name <app-name>` | Lists the app's deployment slots so you can confirm whether slot topology or swap context is involved. |
+| `--resource-group <resource-group> --name <app-name>` | Looks up the resource in this resource group. |
+| `--name <app-name>` | Targets this web app. |
 
 ### KQL
 
@@ -360,6 +438,15 @@ az webapp config appsettings list --resource-group <resource-group> --name <app-
 az monitor activity-log list --resource-group <resource-group> --offset 24h
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp config appsettings list --resource-group <resource-group> --name <app-name>` | Lists the app settings currently applied to this web app so you can inspect runtime or deployment configuration. |
+| `--resource-group <resource-group> --name <app-name>` | Looks up the resource in this resource group. |
+| `--name <app-name>` | Targets this web app. |
+| `az monitor activity-log list --resource-group <resource-group> --offset 24h` | Lists recent control-plane operations in the resource group so you can correlate symptoms with restarts, deployments, or configuration changes. |
+| `--resource-group <resource-group> --offset 24h` | Scopes the activity-log search to this resource group. |
+| `--offset 24h` | Limits the activity-log query to this recent time window. |
+
 ### KQL
 
 ```kusto
@@ -377,6 +464,12 @@ AppServicePlatformLogs
 ```bash
 az webapp log tail --resource-group <resource-group> --name <app-name>
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az webapp log tail --resource-group <resource-group> --name <app-name>` | Streams live web app logs so you can watch startup, runtime, or dependency errors as they happen. |
+| `--resource-group <resource-group> --name <app-name>` | Looks up the web app in this resource group. |
+| `--name <app-name>` | Targets this web app. |
 
 ### KQL
 
@@ -396,6 +489,12 @@ AppServicePlatformLogs
 az webapp log tail --resource-group <resource-group> --name <app-name>
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp log tail --resource-group <resource-group> --name <app-name>` | Streams live web app logs so you can watch startup, runtime, or dependency errors as they happen. |
+| `--resource-group <resource-group> --name <app-name>` | Looks up the web app in this resource group. |
+| `--name <app-name>` | Targets this web app. |
+
 ### KQL
 
 ```kusto
@@ -413,6 +512,12 @@ AppServiceConsoleLogs
 ```bash
 az monitor activity-log list --resource-group <resource-group> --offset 6h
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az monitor activity-log list --resource-group <resource-group> --offset 6h` | Lists recent control-plane operations from the last 6 hours so you can correlate swap warm-up failures with change activity. |
+| `--resource-group <resource-group> --offset 6h` | Scopes the activity-log search to this resource group. |
+| `--offset 6h` | Limits the activity-log query to this recent time window. |
 
 ### KQL
 

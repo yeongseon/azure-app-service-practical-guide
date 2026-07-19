@@ -254,6 +254,18 @@ az webapp config appsettings list --resource-group <resource-group> --name <app-
 az webapp config show --resource-group <resource-group> --name <app-name>
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az monitor activity-log list --resource-group <resource-group> --offset 24h` | Lists recent control-plane operations in the resource group so you can correlate symptoms with restarts, deployments, or configuration changes. |
+| `--resource-group <resource-group> --offset 24h` | Scopes the activity-log search to this resource group. |
+| `--offset 24h` | Limits the activity-log query to this recent time window. |
+| `az webapp config appsettings list --resource-group <resource-group> --name <app-name>` | Lists the app settings currently applied to this web app so you can inspect runtime or deployment configuration. |
+| `--resource-group <resource-group> --name <app-name>` | Looks up the resource in this resource group. |
+| `--name <app-name>` | Targets this web app. |
+| `az webapp config show --resource-group <resource-group> --name <app-name>` | Shows the web app's site configuration so you can inspect runtime, startup, logging, or auth settings. |
+| `--resource-group <resource-group> --name <app-name>` | Looks up the resource in this resource group. |
+| `--name <app-name>` | Targets this web app. |
+
 ```kusto
 AppServicePlatformLogs
 | where TimeGenerated > ago(24h)

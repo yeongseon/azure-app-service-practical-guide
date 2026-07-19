@@ -235,6 +235,18 @@ az webapp log tail --resource-group <resource-group> --name <app-name>
 az webapp ssh --resource-group <resource-group> --name <app-name>
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp config appsettings list --resource-group <resource-group> --name <app-name>` | Lists the app settings currently applied to this web app so you can inspect runtime or deployment configuration. |
+| `--resource-group <resource-group> --name <app-name>` | Looks up the resource in this resource group. |
+| `--name <app-name>` | Targets this web app. |
+| `az webapp log tail --resource-group <resource-group> --name <app-name>` | Streams live web app logs so you can watch startup, runtime, or dependency errors as they happen. |
+| `--resource-group <resource-group> --name <app-name>` | Looks up the web app in this resource group. |
+| `--name <app-name>` | Targets this web app. |
+| `az webapp ssh --resource-group <resource-group> --name <app-name>` | Opens an SSH session into the running app container so you can test DNS, routes, and process state from app context. |
+| `--resource-group <resource-group> --name <app-name>` | Looks up the resource in this resource group. |
+| `--name <app-name>` | Targets this web app. |
+
 ```bash
 df -h /home /tmp
 du -sh /home/site/wwwroot/* | sort -h
@@ -303,6 +315,15 @@ $ du -sh /home/site/wwwroot/*
     az webapp log tail --resource-group &lt;resource-group&gt; --name &lt;app-name&gt;
     ```
 
+    | Command | Purpose |
+    |---------|---------|
+    | `az webapp config appsettings list --resource-group &lt;resource-group&gt; --name &lt;app-name&gt;` | Lists the app settings currently applied to this web app so you can inspect runtime or deployment configuration. |
+    | `--resource-group &lt;resource-group&gt; --name &lt;app-name&gt;` | Looks up the resource in this resource group. |
+    | `--name &lt;app-name&gt;` | Targets this web app. |
+    | `az webapp log tail --resource-group &lt;resource-group&gt; --name &lt;app-name&gt;` | Streams live web app logs so you can watch startup, runtime, or dependency errors as they happen. |
+    | `--resource-group &lt;resource-group&gt; --name &lt;app-name&gt;` | Looks up the web app in this resource group. |
+    | `--name &lt;app-name&gt;` | Targets this web app. |
+
 ### H2: Ephemeral `/tmp` or writable layer exhaustion at runtime
 - **Signals that support**
     - Errors spike during traffic peaks, uploads, report generation, or cache warmups.
@@ -333,6 +354,15 @@ $ du -sh /home/site/wwwroot/*
     az webapp restart --resource-group &lt;resource-group&gt; --name &lt;app-name&gt;
     az webapp log tail --resource-group &lt;resource-group&gt; --name &lt;app-name&gt;
     ```
+
+    | Command | Purpose |
+    |---------|---------|
+    | `az webapp restart --resource-group &lt;resource-group&gt; --name &lt;app-name&gt;` | Restarts the web app so you can test whether the symptom temporarily clears after a fresh worker/container start. |
+    | `--resource-group &lt;resource-group&gt; --name &lt;app-name&gt;` | Looks up the resource in this resource group. |
+    | `--name &lt;app-name&gt;` | Targets this web app. |
+    | `az webapp log tail --resource-group &lt;resource-group&gt; --name &lt;app-name&gt;` | Streams live web app logs so you can watch startup, runtime, or dependency errors as they happen. |
+    | `--resource-group &lt;resource-group&gt; --name &lt;app-name&gt;` | Looks up the web app in this resource group. |
+    | `--name &lt;app-name&gt;` | Targets this web app. |
 
 ### H3: Image extraction or container layer pressure
 - **Signals that support**
@@ -366,6 +396,15 @@ $ du -sh /home/site/wwwroot/*
     az webapp config container show --resource-group &lt;resource-group&gt; --name &lt;app-name&gt;
     ```
 
+    | Command | Purpose |
+    |---------|---------|
+    | `az webapp show --resource-group &lt;resource-group&gt; --name &lt;app-name&gt;` | Shows the web app resource so you can inspect the current control-plane configuration and state. |
+    | `--resource-group &lt;resource-group&gt; --name &lt;app-name&gt;` | Looks up the resource in this resource group. |
+    | `--name &lt;app-name&gt;` | Targets this web app. |
+    | `az webapp config container show --resource-group &lt;resource-group&gt; --name &lt;app-name&gt;` | Shows the current container image configuration so you can verify image/tag/source details involved in startup behavior. |
+    | `--resource-group &lt;resource-group&gt; --name &lt;app-name&gt;` | Looks up the resource in this resource group. |
+    | `--name &lt;app-name&gt;` | Targets this web app. |
+
 ### H4: Storage signal is secondary to another churn pattern
 - **Signals that support**
     - Repeated startup failures/restarts produce large log and temp churn.
@@ -396,6 +435,15 @@ $ du -sh /home/site/wwwroot/*
     az webapp deployment list-publishing-profiles --resource-group &lt;resource-group&gt; --name &lt;app-name&gt;
     az webapp config show --resource-group &lt;resource-group&gt; --name &lt;app-name&gt;
     ```
+
+    | Command | Purpose |
+    |---------|---------|
+    | `az webapp deployment list-publishing-profiles --resource-group &lt;resource-group&gt; --name &lt;app-name&gt;` | Lists publishing profiles for this web app so you can inspect deployment endpoints and publishing configuration. |
+    | `--resource-group &lt;resource-group&gt; --name &lt;app-name&gt;` | Looks up the resource in this resource group. |
+    | `--name &lt;app-name&gt;` | Targets this web app. |
+    | `az webapp config show --resource-group &lt;resource-group&gt; --name &lt;app-name&gt;` | Shows the web app's site configuration so you can inspect runtime, startup, logging, or auth settings. |
+    | `--resource-group &lt;resource-group&gt; --name &lt;app-name&gt;` | Looks up the resource in this resource group. |
+    | `--name &lt;app-name&gt;` | Targets this web app. |
 
 ## 7. Likely Root Cause Patterns
 

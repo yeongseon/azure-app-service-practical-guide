@@ -222,6 +222,27 @@ az network private-dns record-set a list --resource-group <dns-resource-group> -
 az webapp show --resource-group <resource-group> --name <app-name> --query "{virtualNetworkSubnetId:virtualNetworkSubnetId,vnetRouteAllEnabled:siteConfig.vnetRouteAllEnabled}" --output table
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az network private-endpoint show --resource-group <resource-group> --name <private-endpoint-name> --query "{name:name,ip:networkInterfaces[0].id,provisioningState:provisioningState}" --output table` | Shows the private endpoint name, the attached NIC resource ID (projected into the `ip` field here), and the provisioning state. |
+| `--resource-group <resource-group> --name <private-endpoint-name> --query "{name:name,ip:networkInterfaces[0].id,provisioningState:provisioningState}" --output table` | Scopes the lookup to the resource group containing the private endpoint. |
+| `--name <private-endpoint-name> --query "{name:name,ip:networkInterfaces[0].id,provisioningState:provisioningState}" --output table` | Targets this private endpoint. |
+| `--query "{name:name,ip:networkInterfaces[0].id,provisioningState:provisioningState}"` | Projects the endpoint name, the first attached NIC resource ID, and the provisioning state from the private endpoint resource. |
+| `--output table` | Formats the projected private-endpoint fields as a table. |
+| `az network private-dns link vnet list --resource-group <dns-resource-group> --zone-name privatelink.blob.core.windows.net --output table` | Lists the virtual-network links for this Private DNS zone so you can confirm whether the expected VNet is linked. |
+| `--resource-group <dns-resource-group> --zone-name privatelink.blob.core.windows.net --output table` | Scopes the lookup to the resource group that owns the Private DNS zone. |
+| `--zone-name privatelink.blob.core.windows.net --output table` | Targets this Private DNS zone. |
+| `--output table` | Formats the VNet-link results as a table for quick verification. |
+| `az network private-dns record-set a list --resource-group <dns-resource-group> --zone-name privatelink.blob.core.windows.net --output table` | Lists the A records in this Private DNS zone so you can confirm whether the dependency name points to the expected private IP. |
+| `--resource-group <dns-resource-group> --zone-name privatelink.blob.core.windows.net --output table` | Scopes the lookup to the resource group that owns the Private DNS zone. |
+| `--zone-name privatelink.blob.core.windows.net --output table` | Targets this Private DNS zone. |
+| `--output table` | Formats the record list as a table for quick comparison. |
+| `az webapp show --resource-group <resource-group> --name <app-name> --query "{virtualNetworkSubnetId:virtualNetworkSubnetId,vnetRouteAllEnabled:siteConfig.vnetRouteAllEnabled}" --output table` | Shows the integration subnet resource ID and the nested `siteConfig.vnetRouteAllEnabled` flag for this app. |
+| `--resource-group <resource-group> --name <app-name> --query "{virtualNetworkSubnetId:virtualNetworkSubnetId,vnetRouteAllEnabled:siteConfig.vnetRouteAllEnabled}" --output table` | Looks up the resource in this resource group. |
+| `--name <app-name> --query "{virtualNetworkSubnetId:virtualNetworkSubnetId,vnetRouteAllEnabled:siteConfig.vnetRouteAllEnabled}" --output table` | Targets this web app. |
+| `--query "{virtualNetworkSubnetId:virtualNetworkSubnetId,vnetRouteAllEnabled:siteConfig.vnetRouteAllEnabled}"` | Projects only the fields needed here: the top-level integration subnet ID and the nested `siteConfig.vnetRouteAllEnabled` value. |
+| `--output table` | Formats the projected web app fields as a table for quick reading. |
+
 **Example Output:**
 
 ```text
@@ -282,6 +303,22 @@ az network private-dns link vnet list --resource-group <resource-group> --zone-n
 az network private-dns record-set a show --resource-group <resource-group> --zone-name <private-dns-zone> --name <record-name>
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `nslookup <dependency-fqdn>` | Resolves the hostname using the current resolver path from the local shell or app container context. |
+| `getent hosts <dependency-fqdn>` | Queries libc host resolution so you can compare the OS resolver answer that application code typically uses. |
+| `az network private-dns zone show --resource-group <resource-group> --name <private-dns-zone>` | Shows the Private DNS zone resource so you can confirm the zone exists and inspect its properties. |
+| `--resource-group <resource-group> --name <private-dns-zone>` | Scopes the lookup to the resource group that owns the Private DNS zone. |
+| `--name <private-dns-zone>` | Targets this Private DNS zone. |
+| `az network private-dns link vnet list --resource-group <resource-group> --zone-name <private-dns-zone> --output table` | Lists the virtual-network links for this Private DNS zone so you can confirm whether the expected VNet is linked. |
+| `--resource-group <resource-group> --zone-name <private-dns-zone> --output table` | Scopes the lookup to the resource group that owns the Private DNS zone. |
+| `--zone-name <private-dns-zone> --output table` | Targets this Private DNS zone. |
+| `--output table` | Formats the VNet-link results as a table for quick verification. |
+| `az network private-dns record-set a show --resource-group <resource-group> --zone-name <private-dns-zone> --name <record-name>` | Shows one specific A record set so you can verify the exact private IP mapping for this record name. |
+| `--resource-group <resource-group> --zone-name <private-dns-zone> --name <record-name>` | Scopes the lookup to the resource group that owns the Private DNS zone. |
+| `--zone-name <private-dns-zone> --name <record-name>` | Targets this Private DNS zone. |
+| `--name <record-name>` | Targets this specific A-record set within the zone. |
+
 ```kusto
 AppServiceConsoleLogs
 | where TimeGenerated > ago(6h)
@@ -306,6 +343,19 @@ nslookup <dependency-fqdn> <custom-dns-ip>
 nslookup <dependency-fqdn> <ip-redacted>
 az webapp show --resource-group <resource-group> --name <app-name> --query "siteConfig.vnetRouteAllEnabled"
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az network vnet show --resource-group <resource-group> --name <vnet-name> --query "dhcpOptions.dnsServers"` | Shows the VNet resource so you can inspect the configured custom DNS server list for this network. |
+| `--resource-group <resource-group> --name <vnet-name> --query "dhcpOptions.dnsServers"` | Scopes the lookup to the resource group that owns the VNet. |
+| `--name <vnet-name> --query "dhcpOptions.dnsServers"` | Targets this virtual network. |
+| `--query "dhcpOptions.dnsServers"` | Projects only the VNet's `dhcpOptions.dnsServers` list. |
+| `nslookup <dependency-fqdn> <custom-dns-ip>` | Resolves the hostname by querying this specific DNS server directly so you can compare resolver behavior. |
+| `nslookup <dependency-fqdn> <ip-redacted>` | Resolves the hostname by querying this specific DNS server directly so you can compare resolver behavior. |
+| `az webapp show --resource-group <resource-group> --name <app-name> --query "siteConfig.vnetRouteAllEnabled"` | Shows the web app resource so you can inspect the current control-plane configuration and state. |
+| `--resource-group <resource-group> --name <app-name> --query "siteConfig.vnetRouteAllEnabled"` | Looks up the resource in this resource group. |
+| `--name <app-name> --query "siteConfig.vnetRouteAllEnabled"` | Targets this web app. |
+| `--query "siteConfig.vnetRouteAllEnabled"` | Projects only the requested field(s) from the web app resource. |
 
 ```kusto
 AppServiceConsoleLogs
@@ -335,6 +385,29 @@ nc -vz <private-endpoint-ip> <port>
 curl --verbose --connect-timeout 5 https://<dependency-fqdn>
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp show --resource-group <resource-group> --name <app-name> --query "{vnetRouteAllEnabled:siteConfig.vnetRouteAllEnabled, virtualNetworkSubnetId:virtualNetworkSubnetId}"` | Shows the nested route-all flag and the integration subnet resource ID so you can validate the outbound routing posture. |
+| `--resource-group <resource-group> --name <app-name> --query "{vnetRouteAllEnabled:siteConfig.vnetRouteAllEnabled, virtualNetworkSubnetId:virtualNetworkSubnetId}"` | Looks up the resource in this resource group. |
+| `--name <app-name> --query "{vnetRouteAllEnabled:siteConfig.vnetRouteAllEnabled, virtualNetworkSubnetId:virtualNetworkSubnetId}"` | Targets this web app. |
+| `--query "{vnetRouteAllEnabled:siteConfig.vnetRouteAllEnabled, virtualNetworkSubnetId:virtualNetworkSubnetId}"` | Projects only the fields needed here: the top-level integration subnet ID and the nested `siteConfig.vnetRouteAllEnabled` value. |
+| `az webapp vnet-integration list --resource-group <resource-group> --name <app-name>` | Lists the web app's VNet integration bindings so you can confirm whether the expected subnet integration exists. |
+| `--resource-group <resource-group> --name <app-name>` | Looks up the resource in this resource group. |
+| `--name <app-name>` | Targets this web app. |
+| `az network vnet subnet show --resource-group <resource-group> --vnet-name <vnet-name> --name <integration-subnet-name>` | Shows the integration subnet resource so you can inspect route-table, service-endpoint, NAT, or NSG attachments that affect this path. |
+| `--resource-group <resource-group> --vnet-name <vnet-name> --name <integration-subnet-name>` | Scopes the lookup to the resource group that owns the VNet. |
+| `--vnet-name <vnet-name> --name <integration-subnet-name>` | Targets this virtual network. |
+| `--name <integration-subnet-name>` | Targets this specific subnet. |
+| `az network route-table route list --resource-group <resource-group> --route-table-name <route-table-name> --output table` | Lists the user-defined routes in this route table so you can see whether they steer traffic away from the intended private path. |
+| `--resource-group <resource-group> --route-table-name <route-table-name> --output table` | Scopes the lookup to the resource group containing the route table. |
+| `--route-table-name <route-table-name> --output table` | Targets this route table. |
+| `--output table` | Formats the route list as a table for quick route review. |
+| `nc -vz <private-endpoint-ip> <port>` | Attempts a TCP connection to the target host and port and reports whether the socket opens successfully. |
+| `nc -vz` | Runs `netcat` in verbose mode and checks only whether the TCP connection can be established. |
+| `curl --verbose --connect-timeout 5 https://<dependency-fqdn>` | Makes an HTTPS request with verbose output and a short connect timeout so you can see TLS/HTTP behavior on the private path. |
+| `--verbose` | Prints detailed request, TLS, and response information for troubleshooting. |
+| `--connect-timeout 5` | Fails the connection attempt after 5 seconds so route problems surface quickly. |
+
 ```kusto
 AppServiceConsoleLogs
 | where TimeGenerated > ago(6h)
@@ -360,6 +433,25 @@ az network private-endpoint-connection list --resource-group <resource-group> --
 az network vnet subnet show --resource-group <resource-group> --vnet-name <vnet-name> --name <integration-subnet-name> --query "networkSecurityGroup.id"
 az network nsg rule list --resource-group <resource-group> --nsg-name <nsg-name> --output table
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az network private-endpoint show --resource-group <resource-group> --name <private-endpoint-name>` | Shows the full private endpoint resource so you can inspect connection, NIC, and policy details. |
+| `--resource-group <resource-group> --name <private-endpoint-name>` | Scopes the lookup to the resource group containing the private endpoint. |
+| `--name <private-endpoint-name>` | Targets this private endpoint. |
+| `az network private-endpoint-connection list --resource-group <resource-group> --name <resource-name> --type <resource-provider-type>` | Lists private-endpoint connection objects on the target resource so you can see whether approval state blocks the private path. |
+| `--resource-group <resource-group> --name <resource-name> --type <resource-provider-type>` | Scopes the lookup to the resource group containing the target resource. |
+| `--name <resource-name> --type <resource-provider-type>` | Targets this resource when listing its private-endpoint connections. |
+| `--type <resource-provider-type>` | Specifies the target resource provider/type whose private-endpoint connections you want to list. |
+| `az network vnet subnet show --resource-group <resource-group> --vnet-name <vnet-name> --name <integration-subnet-name> --query "networkSecurityGroup.id"` | Shows the integration subnet resource so you can inspect route-table, service-endpoint, NAT, or NSG attachments that affect this path. |
+| `--resource-group <resource-group> --vnet-name <vnet-name> --name <integration-subnet-name> --query "networkSecurityGroup.id"` | Scopes the lookup to the resource group that owns the VNet. |
+| `--vnet-name <vnet-name> --name <integration-subnet-name> --query "networkSecurityGroup.id"` | Targets this virtual network. |
+| `--name <integration-subnet-name> --query "networkSecurityGroup.id"` | Targets this specific subnet. |
+| `--query "networkSecurityGroup.id"` | Projects only the subnet's nested `networkSecurityGroup.id` value. |
+| `az network nsg rule list --resource-group <resource-group> --nsg-name <nsg-name> --output table` | Lists the NSG rules so you can confirm whether any rule blocks the dependency IP or port. |
+| `--resource-group <resource-group> --nsg-name <nsg-name> --output table` | Scopes the lookup to the resource group containing the NSG. |
+| `--nsg-name <nsg-name> --output table` | Targets this network security group. |
+| `--output table` | Formats the NSG rules as a table for quick inspection. |
 
 ```kusto
 AppServiceConsoleLogs

@@ -214,6 +214,23 @@ az webapp config appsettings list --resource-group <resource-group> --name <app-
 az webapp log tail --resource-group <resource-group> --name <app-name>
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az monitor metrics list --resource <app-service-plan-resource-id> --metric "CpuPercentage,MemoryPercentage" --interval PT1M --aggregation Average` | Fetches plan CPU and memory percentages so you can test whether compute saturation explains the slowdown. |
+| `--resource <app-service-plan-resource-id>` | Scopes the metric query to this App Service Plan resource. |
+| `--metric "CpuPercentage,MemoryPercentage"` | Requests exactly these metrics from Azure Monitor for this check. |
+| `--interval PT1M` | Samples the metrics at this time granularity. |
+| `--aggregation Average` | Returns these aggregation(s) for each metric time bucket. |
+| `az webapp config show --resource-group <resource-group> --name <app-name>` | Shows the web app's site configuration so you can inspect runtime, startup, logging, or auth settings. |
+| `--resource-group <resource-group> --name <app-name>` | Looks up the resource in this resource group. |
+| `--name <app-name>` | Targets this web app. |
+| `az webapp config appsettings list --resource-group <resource-group> --name <app-name>` | Lists the app settings currently applied to this web app so you can inspect runtime or deployment configuration. |
+| `--resource-group <resource-group> --name <app-name>` | Looks up the resource in this resource group. |
+| `--name <app-name>` | Targets this web app. |
+| `az webapp log tail --resource-group <resource-group> --name <app-name>` | Streams live web app logs so you can watch startup, runtime, or dependency errors as they happen. |
+| `--resource-group <resource-group> --name <app-name>` | Looks up the web app in this resource group. |
+| `--name <app-name>` | Targets this web app. |
+
 **Example Output (sanitized)**
 
 ```text
@@ -289,6 +306,19 @@ $ az webapp config appsettings list --resource-group <resource-group> --name <ap
     az monitor metrics list --resource <storage-account-resource-id> --metric SuccessE2ELatency --interval PT5M --aggregation Average
     ```
 
+    | Command | Purpose |
+    |---------|---------|
+    | `az monitor metrics list --resource <sql-resource-id> --metric cpu_percent --interval PT5M --aggregation Average` | Fetches Azure SQL CPU percentage to test whether database pressure explains the app latency. |
+    | `--resource <sql-resource-id>` | Scopes the metric query to this specific Azure resource. |
+    | `--metric cpu_percent` | Requests exactly these metrics from Azure Monitor for this check. |
+    | `--interval PT5M` | Samples the metrics at this time granularity. |
+    | `--aggregation Average` | Returns these aggregation(s) for each metric time bucket. |
+    | `az monitor metrics list --resource <storage-account-resource-id> --metric SuccessE2ELatency --interval PT5M --aggregation Average` | Fetches Storage end-to-end latency so you can test whether Azure Storage is the slow dependency. |
+    | `--resource <storage-account-resource-id>` | Scopes the metric query to this specific Azure resource. |
+    | `--metric SuccessE2ELatency` | Requests exactly these metrics from Azure Monitor for this check. |
+    | `--interval PT5M` | Samples the metrics at this time granularity. |
+    | `--aggregation Average` | Returns these aggregation(s) for each metric time bucket. |
+
 ### H2: Thread/worker starvation
 - **Signals that support**
     - `AppServiceConsoleLogs` includes Gunicorn messages such as `WORKER TIMEOUT`, worker restart loops, backlog behavior.
@@ -313,6 +343,15 @@ $ az webapp config appsettings list --resource-group <resource-group> --name <ap
     az webapp config show --resource-group <resource-group> --name <app-name>
     az webapp config appsettings list --resource-group <resource-group> --name <app-name>
     ```
+
+    | Command | Purpose |
+    |---------|---------|
+    | `az webapp config show --resource-group <resource-group> --name <app-name>` | Shows the web app's site configuration so you can inspect runtime, startup, logging, or auth settings. |
+    | `--resource-group <resource-group> --name <app-name>` | Looks up the resource in this resource group. |
+    | `--name <app-name>` | Targets this web app. |
+    | `az webapp config appsettings list --resource-group <resource-group> --name <app-name>` | Lists the app settings currently applied to this web app so you can inspect runtime or deployment configuration. |
+    | `--resource-group <resource-group> --name <app-name>` | Looks up the resource in this resource group. |
+    | `--name <app-name>` | Targets this web app. |
     - Validate current effective Gunicorn startup parameters (`workers`, `threads`, `timeout`) from startup command / container logs.
 
 ### H3: Memory pressure causing GC pauses or degraded responsiveness
@@ -330,6 +369,14 @@ $ az webapp config appsettings list --resource-group <resource-group> --name <ap
     ```bash
     az monitor metrics list --resource <app-service-plan-resource-id> --metric "CpuPercentage,MemoryPercentage" --interval PT1M --aggregation Average
     ```
+
+    | Command | Purpose |
+    |---------|---------|
+    | `az monitor metrics list --resource <app-service-plan-resource-id> --metric "CpuPercentage,MemoryPercentage" --interval PT1M --aggregation Average` | Fetches plan CPU and memory percentages so you can test whether compute saturation explains the slowdown. |
+    | `--resource <app-service-plan-resource-id>` | Scopes the metric query to this App Service Plan resource. |
+    | `--metric "CpuPercentage,MemoryPercentage"` | Requests exactly these metrics from Azure Monitor for this check. |
+    | `--interval PT1M` | Samples the metrics at this time granularity. |
+    | `--aggregation Average` | Returns these aggregation(s) for each metric time bucket. |
     - KQL (latency vs restart correlation):
     ```kusto
     let slow = AppServiceHTTPLogs
@@ -370,6 +417,16 @@ $ az webapp config appsettings list --resource-group <resource-group> --name <ap
     az webapp deployment list --resource-group <resource-group> --name <app-name> --output table
     az resource show --ids <webapp-resource-id> --query "properties.siteConfig.linuxFxVersion"
     ```
+
+    | Command | Purpose |
+    |---------|---------|
+    | `az webapp deployment list --resource-group <resource-group> --name <app-name> --output table` | Lists recent deployment records so you can correlate changes with the start of the incident. |
+    | `--resource-group <resource-group> --name <app-name> --output table` | Looks up the resource in this resource group. |
+    | `--name <app-name> --output table` | Targets this web app. |
+    | `--output table` | Formats the deployment history as a table for quick timeline review. |
+    | `az resource show --ids <webapp-resource-id> --query "properties.siteConfig.linuxFxVersion"` | Shows the raw ARM resource and projects the exact property needed for this comparison. |
+    | `--ids <webapp-resource-id> --query "properties.siteConfig.linuxFxVersion"` | Targets this specific resource ID. |
+    | `--query "properties.siteConfig.linuxFxVersion"` | Projects only the nested `properties.siteConfig.linuxFxVersion` value from the resource. |
     - Confirm whether code path reads/writes on mounted/shared storage for hot request paths.
 
 ## 7. Likely Root Cause Patterns

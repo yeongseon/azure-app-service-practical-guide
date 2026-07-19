@@ -92,6 +92,12 @@ For Linux custom containers, startup reachability is more nuanced than a simple 
 az webapp config appsettings list --resource-group "$RG" --name "$APP_NAME"
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp config appsettings list --resource-group "$RG" --name "$APP_NAME"` | Lists the app settings currently applied to this web app so you can inspect runtime or deployment configuration. |
+| `--resource-group "$RG" --name "$APP_NAME"` | Looks up the resource in this resource group. |
+| `--name "$APP_NAME"` | Targets this web app. |
+
 - Good signal: the app binds to `0.0.0.0` on the port App Service exposes through `PORT`, and any configured `WEBSITES_PORT` does not contradict that listener.
 - Bad signal: logs show a different port or localhost-only binding than the effective Linux startup path can reach.
 
@@ -111,6 +117,13 @@ Large images, migrations, or cold startup overhead can exceed default timeout.
 az webapp config appsettings list --resource-group "$RG" --name "$APP_NAME" --query "[?name=='WEBSITES_CONTAINER_START_TIME_LIMIT']"
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp config appsettings list --resource-group "$RG" --name "$APP_NAME" --query "[?name=='WEBSITES_CONTAINER_START_TIME_LIMIT']"` | Lists only the `WEBSITES_CONTAINER_START_TIME_LIMIT` app setting so you can compare startup tolerance with observed startup time. |
+| `--resource-group "$RG" --name "$APP_NAME" --query "[?name=='WEBSITES_CONTAINER_START_TIME_LIMIT']"` | Looks up the resource in this resource group. |
+| `--name "$APP_NAME" --query "[?name=='WEBSITES_CONTAINER_START_TIME_LIMIT']"` | Targets this web app. |
+| `--query "[?name=='WEBSITES_CONTAINER_START_TIME_LIMIT']"` | Filters the app-settings list to the `WEBSITES_CONTAINER_START_TIME_LIMIT` entry only. |
+
 - Good signal: timeout value fits startup profile.
 - Bad signal: container initialization consistently exceeds limit.
 
@@ -123,6 +136,15 @@ Confirm if failure started after deployment, base image update, or setting chang
 az webapp config container show --resource-group "$RG" --name "$APP_NAME"
 az webapp deployment source show --resource-group "$RG" --name "$APP_NAME"
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az webapp config container show --resource-group "$RG" --name "$APP_NAME"` | Shows the current container image configuration so you can verify image/tag/source details involved in startup behavior. |
+| `--resource-group "$RG" --name "$APP_NAME"` | Looks up the resource in this resource group. |
+| `--name "$APP_NAME"` | Targets this web app. |
+| `az webapp deployment source show --resource-group "$RG" --name "$APP_NAME"` | Shows the configured deployment source so you can confirm how this app is being deployed. |
+| `--resource-group "$RG" --name "$APP_NAME"` | Looks up the resource in this resource group. |
+| `--name "$APP_NAME"` | Targets this web app. |
 
 - Good signal: no risky change near first failure timestamp.
 - Bad signal: issue starts immediately after image tag/config update.

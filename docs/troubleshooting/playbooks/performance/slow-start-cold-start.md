@@ -189,6 +189,22 @@ az webapp deployment list --resource-group <resource-group> --name <app-name>
 az webapp log tail --resource-group <resource-group> --name <app-name>
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp show --resource-group <resource-group> --name <app-name> --query "siteConfig.alwaysOn"` | Reads the nested `siteConfig.alwaysOn` value so you can confirm whether Always On is enabled for this app. |
+| `--resource-group <resource-group> --name <app-name> --query "siteConfig.alwaysOn"` | Looks up the resource in this resource group. |
+| `--name <app-name> --query "siteConfig.alwaysOn"` | Targets this web app. |
+| `--query "siteConfig.alwaysOn"` | Projects only the nested `siteConfig.alwaysOn` field from the web app resource. |
+| `az webapp config appsettings list --resource-group <resource-group> --name <app-name>` | Lists the app settings currently applied to this web app so you can inspect runtime or deployment configuration. |
+| `--resource-group <resource-group> --name <app-name>` | Looks up the resource in this resource group. |
+| `--name <app-name>` | Targets this web app. |
+| `az webapp deployment list --resource-group <resource-group> --name <app-name>` | Lists recent deployment records so you can correlate changes with the start of the incident. |
+| `--resource-group <resource-group> --name <app-name>` | Looks up the resource in this resource group. |
+| `--name <app-name>` | Targets this web app. |
+| `az webapp log tail --resource-group <resource-group> --name <app-name>` | Streams live web app logs so you can watch startup, runtime, or dependency errors as they happen. |
+| `--resource-group <resource-group> --name <app-name>` | Looks up the web app in this resource group. |
+| `--name <app-name>` | Targets this web app. |
+
 **Example Output (sanitized)**
 
 ```text
@@ -282,6 +298,15 @@ $ az webapp deployment list --resource-group <resource-group> --name <app-name>
     az webapp config show --resource-group <resource-group> --name <app-name>
     az webapp config appsettings list --resource-group <resource-group> --name <app-name>
     ```
+
+    | Command | Purpose |
+    |---------|---------|
+    | `az webapp config show --resource-group <resource-group> --name <app-name>` | Shows the web app's site configuration so you can inspect runtime, startup, logging, or auth settings. |
+    | `--resource-group <resource-group> --name <app-name>` | Looks up the resource in this resource group. |
+    | `--name <app-name>` | Targets this web app. |
+    | `az webapp config appsettings list --resource-group <resource-group> --name <app-name>` | Lists the app settings currently applied to this web app so you can inspect runtime or deployment configuration. |
+    | `--resource-group <resource-group> --name <app-name>` | Looks up the resource in this resource group. |
+    | `--name <app-name>` | Targets this web app. |
     - Confirm build/run flow: dependencies should be installed at build/deploy stage, not per restart/startup script.
 
 ### H3: Warm-up/startup controls are misconfigured
@@ -300,6 +325,17 @@ $ az webapp deployment list --resource-group <resource-group> --name <app-name>
     az webapp show --resource-group <resource-group> --name <app-name> --query "siteConfig.alwaysOn"
     az webapp config appsettings list --resource-group <resource-group> --name <app-name> --query "[?name=='WEBSITE_WARMUP_PATH' || name=='WEBSITES_CONTAINER_START_TIME_LIMIT']"
     ```
+
+    | Command | Purpose |
+    |---------|---------|
+    | `az webapp show --resource-group <resource-group> --name <app-name> --query "siteConfig.alwaysOn"` | Reads the nested `siteConfig.alwaysOn` value so you can confirm whether Always On is enabled for this app. |
+    | `--resource-group <resource-group> --name <app-name> --query "siteConfig.alwaysOn"` | Looks up the resource in this resource group. |
+    | `--name <app-name> --query "siteConfig.alwaysOn"` | Targets this web app. |
+    | `--query "siteConfig.alwaysOn"` | Projects only the nested `siteConfig.alwaysOn` field from the web app resource. |
+    | `az webapp config appsettings list --resource-group <resource-group> --name <app-name> --query "[?name=='WEBSITE_WARMUP_PATH' \|\| name=='WEBSITES_CONTAINER_START_TIME_LIMIT']"` | Lists only the `WEBSITES_CONTAINER_START_TIME_LIMIT` app setting so you can compare startup tolerance with observed startup time. |
+    | `--resource-group <resource-group> --name <app-name> --query "[?name=='WEBSITE_WARMUP_PATH' \|\| name=='WEBSITES_CONTAINER_START_TIME_LIMIT']"` | Looks up the resource in this resource group. |
+    | `--name <app-name> --query "[?name=='WEBSITE_WARMUP_PATH' \|\| name=='WEBSITES_CONTAINER_START_TIME_LIMIT']"` | Targets this web app. |
+    | `--query "[?name=='WEBSITE_WARMUP_PATH' \|\| name=='WEBSITES_CONTAINER_START_TIME_LIMIT']"` | Filters the app-settings list to the warm-up path and container-start timeout entries only. |
     - KQL (timeout/recycle hints):
     ```kusto
     AppServicePlatformLogs

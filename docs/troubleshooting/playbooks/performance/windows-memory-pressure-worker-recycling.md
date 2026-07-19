@@ -289,6 +289,29 @@ az monitor metrics list --resource <app-service-plan-resource-id> --metric "Memo
 az monitor app-insights query --app <application-insights-name> --analytics-query "AppServiceHTTPLogs | where TimeGenerated > ago(1h) | summarize requests=count() by bin(TimeGenerated, 5m)"
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp show --resource-group <resource-group> --name <app-name>` | Shows the web app resource so you can inspect the current control-plane configuration and state. |
+| `--resource-group <resource-group> --name <app-name>` | Looks up the resource in this resource group. |
+| `--name <app-name>` | Targets this web app. |
+| `az webapp config show --resource-group <resource-group> --name <app-name>` | Shows the web app's site configuration so you can inspect runtime, startup, logging, or auth settings. |
+| `--resource-group <resource-group> --name <app-name>` | Looks up the resource in this resource group. |
+| `--name <app-name>` | Targets this web app. |
+| `az webapp config appsettings list --resource-group <resource-group> --name <app-name>` | Lists the app settings currently applied to this web app so you can inspect runtime or deployment configuration. |
+| `--resource-group <resource-group> --name <app-name>` | Looks up the resource in this resource group. |
+| `--name <app-name>` | Targets this web app. |
+| `az webapp restart --resource-group <resource-group> --name <app-name>` | Restarts the web app so you can test whether the symptom temporarily clears after a fresh worker/container start. |
+| `--resource-group <resource-group> --name <app-name>` | Looks up the resource in this resource group. |
+| `--name <app-name>` | Targets this web app. |
+| `az monitor metrics list --resource <app-service-plan-resource-id> --metric "MemoryPercentage,CpuPercentage,Http5xx" --interval PT1M --aggregation Average` | Fetches Azure Monitor metrics for the selected resource and incident window. |
+| `--resource <app-service-plan-resource-id>` | Scopes the metric query to this App Service Plan resource. |
+| `--metric "MemoryPercentage,CpuPercentage,Http5xx"` | Requests exactly these metrics from Azure Monitor for this check. |
+| `--interval PT1M` | Samples the metrics at this time granularity. |
+| `--aggregation Average` | Returns these aggregation(s) for each metric time bucket. |
+| `az monitor app-insights query --app <application-insights-name> --analytics-query "AppServiceHTTPLogs \| where TimeGenerated > ago(1h) \| summarize requests=count() by bin(TimeGenerated, 5m)"` | Runs an Application Insights analytics query that summarizes App Service HTTP request counts into 5-minute buckets over the last hour. |
+| `--app <application-insights-name> --analytics-query "AppServiceHTTPLogs \| where TimeGenerated > ago(1h) \| summarize requests=count() by bin(TimeGenerated, 5m)"` | Targets this Application Insights resource. |
+| `--analytics-query "AppServiceHTTPLogs \| where TimeGenerated > ago(1h) \| summarize requests=count() by bin(TimeGenerated, 5m)"` | Executes this KQL query against Application Insights analytics data. |
+
 **Example Output (sanitized)**
 
 ```text

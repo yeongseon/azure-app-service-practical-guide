@@ -69,6 +69,12 @@ graph TD
 az webapp log tail --resource-group <resource-group> --name <app-name>
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp log tail --resource-group <resource-group> --name <app-name>` | Streams live web app logs so you can watch startup, runtime, or dependency errors as they happen. |
+| `--resource-group <resource-group> --name <app-name>` | Looks up the web app in this resource group. |
+| `--name <app-name>` | Targets this web app. |
+
 ---
 
 ## Card 2: Intermittent 5xx Under Load
@@ -86,6 +92,13 @@ az webapp log tail --resource-group <resource-group> --name <app-name>
 ```bash
 az monitor metrics list --resource <app-resource-id> --metric "Http5xx,Requests,CpuPercentage" --interval PT1M
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az monitor metrics list --resource <app-resource-id> --metric "Http5xx,Requests,CpuPercentage" --interval PT1M` | Fetches 5xx, request volume, and CPU together to see whether burst traffic coincides with failures and saturation. |
+| `--resource <app-resource-id>` | Scopes the metric query to this specific Azure resource. |
+| `--metric "Http5xx,Requests,CpuPercentage"` | Requests exactly these metrics from Azure Monitor for this check. |
+| `--interval PT1M` | Samples the metrics at this time granularity. |
 
 ---
 
@@ -105,6 +118,13 @@ az monitor metrics list --resource <app-resource-id> --metric "Http5xx,Requests,
 # Check for connection patterns in logs
 az webapp log tail --resource-group <resource-group> --name <app-name> | grep -i "timeout\|reset\|refused"
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az webapp log tail --resource-group <resource-group> --name <app-name> \| grep -i "timeout\\|reset\\|refused"` | Streams live web app logs and filters them locally for timeout, reset, or refusal signatures. |
+| `--resource-group <resource-group> --name <app-name> \| grep -i "timeout\\|reset\\|refused"` | Looks up the web app in this resource group. |
+| `--name <app-name> \| grep -i "timeout\\|reset\\|refused"` | Targets this web app. |
+| `grep -i "timeout\\|reset\\|refused"` | Filters the streamed log lines locally, case-insensitively, to show only timeout/reset/refused patterns. |
 
 ---
 
@@ -126,6 +146,12 @@ az webapp ssh --resource-group <resource-group> --name <app-name>
 # Then run: nslookup <private-endpoint-fqdn>
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp ssh --resource-group <resource-group> --name <app-name>` | Opens an SSH session into the running app container so you can test DNS, routes, and process state from app context. |
+| `--resource-group <resource-group> --name <app-name>` | Looks up the resource in this resource group. |
+| `--name <app-name>` | Targets this web app. |
+
 ---
 
 ## Card 5: Slow First Request (Cold Start)
@@ -145,6 +171,12 @@ az webapp ssh --resource-group <resource-group> --name <app-name>
 az webapp log tail --resource-group <resource-group> --name <app-name>
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp log tail --resource-group <resource-group> --name <app-name>` | Streams live web app logs so you can watch startup, runtime, or dependency errors as they happen. |
+| `--resource-group <resource-group> --name <app-name>` | Looks up the web app in this resource group. |
+| `--name <app-name>` | Targets this web app. |
+
 ---
 
 ## Card 6: Memory Pressure / Worker Restarts
@@ -162,6 +194,13 @@ az webapp log tail --resource-group <resource-group> --name <app-name>
 ```bash
 az monitor metrics list --resource <app-resource-id> --metric "MemoryWorkingSet" --interval PT5M
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az monitor metrics list --resource <app-resource-id> --metric "MemoryWorkingSet" --interval PT5M` | Fetches memory working set so you can see whether memory pressure is building during the incident. |
+| `--resource <app-resource-id>` | Scopes the metric query to this specific Azure resource. |
+| `--metric "MemoryWorkingSet"` | Requests exactly these metrics from Azure Monitor for this check. |
+| `--interval PT5M` | Samples the metrics at this time granularity. |
 
 ---
 
@@ -182,6 +221,16 @@ az monitor metrics list --resource <app-resource-id> --metric "MemoryWorkingSet"
 az webapp config appsettings list --resource-group <resource-group> --name <app-name> --slot staging
 az webapp config appsettings list --resource-group <resource-group> --name <app-name>
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az webapp config appsettings list --resource-group <resource-group> --name <app-name> --slot staging` | Lists the app settings currently applied to this web app so you can inspect runtime or deployment configuration. |
+| `--resource-group <resource-group> --name <app-name> --slot staging` | Looks up the resource in this resource group. |
+| `--name <app-name> --slot staging` | Targets this web app. |
+| `--slot staging` | Scopes the read or update to this deployment slot instead of the production slot. |
+| `az webapp config appsettings list --resource-group <resource-group> --name <app-name>` | Lists the app settings currently applied to this web app so you can inspect runtime or deployment configuration. |
+| `--resource-group <resource-group> --name <app-name>` | Looks up the resource in this resource group. |
+| `--name <app-name>` | Targets this web app. |
 
 ---
 
@@ -204,6 +253,14 @@ az webapp ssh --resource-group <resource-group> --name <app-name>
 df -h
 du -sh /tmp/* | sort -h | tail -20
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az webapp ssh --resource-group <resource-group> --name <app-name>` | Opens an SSH session into the running app container so you can test DNS, routes, and process state from app context. |
+| `--resource-group <resource-group> --name <app-name>` | Looks up the resource in this resource group. |
+| `--name <app-name>` | Targets this web app. |
+| `du -sh /tmp/* \| sort -h \| tail -20` | Shows human-readable total sizes for each matching path so you can identify the biggest directories or files quickly. |
+| `-sh` | Summarizes each path once and formats sizes in human-readable units. |
 
 ---
 
