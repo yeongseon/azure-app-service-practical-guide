@@ -316,6 +316,18 @@ export APP_HOST=$(az webapp show \
 export APP_URL="https://$APP_HOST"
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp list --resource-group "$RG" --query "[0].name" --output tsv` | Lists web apps in the lab resource group and returns the first app name. |
+| `--resource-group "$RG" --query "[0].name" --output tsv` | Limits the app list to this resource group. |
+| `--query "[0].name" --output tsv` | Selects the `name` field from the first item in the returned web-app array. |
+| `--output tsv` | Returns the app name as plain text for shell variable assignment. |
+| `az webapp show --resource-group "$RG" --name "$APP_NAME" --query "defaultHostName" --output tsv` | Retrieves the app's default hostname so the runbook can build the public URL. |
+| `--resource-group "$RG" --name "$APP_NAME" --query "defaultHostName" --output tsv` | Looks up the app in this resource group. |
+| `--name "$APP_NAME" --query "defaultHostName" --output tsv` | Targets this web app. |
+| `--query "defaultHostName" --output tsv` | Projects only the app's `defaultHostName` field. |
+| `--output tsv` | Returns the hostname as plain text for shell variable assignment. |
+
 ### 3.5 Confirm baseline startup command
 
 ```bash

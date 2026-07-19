@@ -409,6 +409,13 @@ APP_NAME=$(az webapp list \
 echo "$APP_NAME"
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp list --resource-group "$RG" --query "[0].name" --output tsv` | Lists web apps in the lab resource group and returns the first app name so the trigger can target it. |
+| `--resource-group "$RG" --query "[0].name" --output tsv` | Limits the app list to this resource group. |
+| `--query "[0].name" --output tsv` | Selects the `name` field from the first item in the returned web-app array. |
+| `--output tsv` | Returns the app name as plain text for shell variable assignment. |
+
 ### 3.4 Trigger the incident
 
 ```bash
@@ -447,6 +454,14 @@ az webapp config show \
   --output tsv
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp config show --resource-group "$RG" --name "$APP_NAME" --query "appCommandLine" --output tsv` | Retrieves the configured startup command so you can compare the broken and fixed module references. |
+| `--resource-group "$RG" --name "$APP_NAME" --query "appCommandLine" --output tsv` | Looks up the app configuration in this resource group. |
+| `--name "$APP_NAME" --query "appCommandLine" --output tsv` | Targets this web app's configuration. |
+| `--query "appCommandLine" --output tsv` | Projects only the `appCommandLine` field from the site configuration. |
+| `--output tsv` | Returns the startup command as plain text for direct comparison. |
+
 | Command/Flag | Purpose |
 |---|---|
 | `az webapp config show` | Retrieve the Web App site configuration |
@@ -476,6 +491,14 @@ for attempt in 1 2 3 4; do
   sleep 8
 done
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az webapp show --resource-group "$RG" --name "$APP_NAME" --query "defaultHostName" --output tsv` | Retrieves the app hostname so the recovery probe loop can target the correct public URL. |
+| `--resource-group "$RG" --name "$APP_NAME" --query "defaultHostName" --output tsv` | Looks up the app in this resource group. |
+| `--name "$APP_NAME" --query "defaultHostName" --output tsv` | Targets this web app. |
+| `--query "defaultHostName" --output tsv` | Projects only the app's `defaultHostName` field. |
+| `--output tsv` | Returns the hostname as plain text for shell variable assignment. |
 
 Observed sequence from artifact `recovery-probes-20260404T054537Z.csv`:
 
@@ -584,6 +607,13 @@ az webapp config set \
   --name "$APP_NAME" \
   --startup-file "gunicorn --bind=0.0.0.0:8000 --timeout=120 app:app"
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az webapp config set --resource-group "$RG" --name "$APP_NAME" --startup-file "gunicorn --bind=0.0.0.0:8000 --timeout=120 app:app"` | Replaces the broken startup command with the known-good Gunicorn command that imports `app:app`. |
+| `--resource-group "$RG" --name "$APP_NAME" --startup-file "gunicorn --bind=0.0.0.0:8000 --timeout=120 app:app"` | Applies the configuration change in this resource group. |
+| `--name "$APP_NAME" --startup-file "gunicorn --bind=0.0.0.0:8000 --timeout=120 app:app"` | Targets this web app. |
+| `--startup-file "gunicorn --bind=0.0.0.0:8000 --timeout=120 app:app"` | Sets the app startup command to the corrected Gunicorn entrypoint. |
 
 Then verify:
 

@@ -437,6 +437,19 @@ export APP_HOSTNAME=$(az deployment group show \
 export APP_URL="https://${APP_HOSTNAME}"
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az deployment group show --resource-group "$RG" --name "main" --query "properties.outputs.webAppName.value" --output tsv` | Reads the `webAppName` deployment output from the `main` resource-group deployment. |
+| `--resource-group "$RG" --name "main" --query "properties.outputs.webAppName.value" --output tsv` | Looks up the deployment in this resource group. |
+| `--name "main" --query "properties.outputs.webAppName.value" --output tsv` | Targets the deployment record named `main`. |
+| `--query "properties.outputs.webAppName.value" --output tsv` | Projects only the `webAppName` output's `value` field. |
+| `--output tsv` | Returns the selected output value as plain text for shell variable assignment. |
+| `az deployment group show --resource-group "$RG" --name "main" --query "properties.outputs.webAppDefaultHostName.value" --output tsv` | Reads the `webAppDefaultHostName` deployment output from the `main` resource-group deployment. |
+| `--resource-group "$RG" --name "main" --query "properties.outputs.webAppDefaultHostName.value" --output tsv` | Looks up the deployment in this resource group. |
+| `--name "main" --query "properties.outputs.webAppDefaultHostName.value" --output tsv` | Targets the deployment record named `main`. |
+| `--query "properties.outputs.webAppDefaultHostName.value" --output tsv` | Projects only the `webAppDefaultHostName` output's `value` field. |
+| `--output tsv` | Returns the selected output value as plain text for shell variable assignment. |
+
 ### 3.5 Package and deploy the lab app code
 
 ```bash
@@ -450,11 +463,25 @@ az webapp deploy \
   --type zip
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp deploy --resource-group "$RG" --name "$APP_NAME" --src-path "$APP_PACKAGE_PATH" --type zip` | Deploys the packaged memory-pressure sample app to the target web app as a ZIP deployment. |
+| `--resource-group "$RG" --name "$APP_NAME" --src-path "$APP_PACKAGE_PATH" --type zip` | Runs the deployment in this resource group. |
+| `--name "$APP_NAME" --src-path "$APP_PACKAGE_PATH" --type zip` | Targets this web app. |
+| `--src-path "$APP_PACKAGE_PATH" --type zip` | Uses the ZIP package built from the lab app directory as deployment input. |
+| `--type zip` | Tells Azure CLI to perform a ZIP deployment. |
+
 Restart app after deployment:
 
 ```bash
 az webapp restart --resource-group "$RG" --name "$APP_NAME"
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az webapp restart --resource-group "$RG" --name "$APP_NAME"` | Restarts the web app so the memory-pressure test begins from a clean post-deploy state. |
+| `--resource-group "$RG" --name "$APP_NAME"` | Restarts the app in this resource group. |
+| `--name "$APP_NAME"` | Targets this web app. |
 
 ### 3.6 Verify baseline endpoints
 
@@ -481,6 +508,13 @@ az webapp config show \
   --name "$APP_NAME" \
   --output json
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az webapp config show --resource-group "$RG" --name "$APP_NAME" --output json` | Retrieves the full site configuration so you can inspect runtime and worker settings before inducing memory pressure. |
+| `--resource-group "$RG" --name "$APP_NAME" --output json` | Looks up the app configuration in this resource group. |
+| `--name "$APP_NAME" --output json` | Targets this web app's configuration. |
+| `--output json` | Returns the full configuration as JSON for inspection and artifact capture. |
 
 Look specifically for:
 
@@ -534,6 +568,19 @@ export LOG_WORKSPACE_ID=$(az monitor log-analytics workspace show \
   --query "customerId" \
   --output tsv)
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az deployment group show --resource-group "$RG" --name "main" --query "properties.outputs.logAnalyticsWorkspaceName.value" --output tsv` | Reads the `logAnalyticsWorkspaceName` deployment output from the `main` deployment. |
+| `--resource-group "$RG" --name "main" --query "properties.outputs.logAnalyticsWorkspaceName.value" --output tsv` | Looks up the deployment in this resource group. |
+| `--name "main" --query "properties.outputs.logAnalyticsWorkspaceName.value" --output tsv` | Targets the deployment record named `main`. |
+| `--query "properties.outputs.logAnalyticsWorkspaceName.value" --output tsv` | Projects only the `logAnalyticsWorkspaceName` output's `value` field. |
+| `--output tsv` | Returns the workspace name as plain text for shell variable assignment. |
+| `az monitor log-analytics workspace show --resource-group "$RG" --workspace-name "$LOG_WORKSPACE_NAME" --query "customerId" --output tsv` | Retrieves the Log Analytics workspace resource and emits its workspace customer ID. |
+| `--resource-group "$RG" --workspace-name "$LOG_WORKSPACE_NAME" --query "customerId" --output tsv` | Looks up the workspace in this resource group. |
+| `--workspace-name "$LOG_WORKSPACE_NAME" --query "customerId" --output tsv` | Targets this Log Analytics workspace. |
+| `--query "customerId" --output tsv` | Projects only the workspace `customerId` field. |
+| `--output tsv` | Returns the workspace customer ID as plain text for shell variable assignment. |
 
 #### HTTP logs query
 

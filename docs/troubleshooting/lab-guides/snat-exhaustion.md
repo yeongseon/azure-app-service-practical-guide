@@ -360,6 +360,18 @@ export APP_HOST=$(az webapp show \
 export APP_URL="https://$APP_HOST"
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp list --resource-group "$RG" --query "[0].name" --output tsv` | Lists web apps in the lab resource group and returns the first app name. |
+| `--resource-group "$RG" --query "[0].name" --output tsv` | Limits the app list to this resource group. |
+| `--query "[0].name" --output tsv` | Selects the `name` field from the first item in the returned web-app array. |
+| `--output tsv` | Returns the app name as plain text for shell variable assignment. |
+| `az webapp show --resource-group "$RG" --name "$APP_NAME" --query "defaultHostName" --output tsv` | Retrieves the app's default hostname so the runbook can build the public URL. |
+| `--resource-group "$RG" --name "$APP_NAME" --query "defaultHostName" --output tsv` | Looks up the app in this resource group. |
+| `--name "$APP_NAME" --query "defaultHostName" --output tsv` | Targets this web app. |
+| `--query "defaultHostName" --output tsv` | Projects only the app's `defaultHostName` field. |
+| `--output tsv` | Returns the hostname as plain text for shell variable assignment. |
+
 ### 3.4 Deploy lab app
 
 ```bash
@@ -489,6 +501,13 @@ az monitor log-analytics query \
   --analytics-query "AppServiceHTTPLogs | where TimeGenerated > ago(2h) | where CsUriStem in ('/outbound','/outbound-fixed','/diag/net') | project TimeGenerated, CsUriStem, ScStatus, TimeTaken | order by TimeGenerated desc" \
   --output json
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az monitor log-analytics query --workspace "$WORKSPACE_ID" --analytics-query "AppServiceHTTPLogs | where TimeGenerated > ago(2h) | where CsUriStem in ('/outbound','/outbound-fixed','/diag/net') | project TimeGenerated, CsUriStem, ScStatus, TimeTaken | order by TimeGenerated desc" --output json` | Queries `AppServiceHTTPLogs` for recent `/outbound`, `/outbound-fixed`, and `/diag/net` requests so you can inspect status and latency during SNAT pressure. |
+| `--workspace "$WORKSPACE_ID" --analytics-query "AppServiceHTTPLogs | where TimeGenerated > ago(2h) | where CsUriStem in ('/outbound','/outbound-fixed','/diag/net') | project TimeGenerated, CsUriStem, ScStatus, TimeTaken | order by TimeGenerated desc" --output json` | Runs the KQL query against this Log Analytics workspace. |
+| `--analytics-query "AppServiceHTTPLogs | where TimeGenerated > ago(2h) | where CsUriStem in ('/outbound','/outbound-fixed','/diag/net') | project TimeGenerated, CsUriStem, ScStatus, TimeTaken | order by TimeGenerated desc" --output json` | Filters `AppServiceHTTPLogs` to `/outbound`, `/outbound-fixed`, and `/diag/net`, then projects `TimeGenerated`, `CsUriStem`, `ScStatus`, and `TimeTaken` ordered newest first. |
+| `--output json` | Returns the query result as JSON. |
 
 ### 3.10 Validate recovery state
 

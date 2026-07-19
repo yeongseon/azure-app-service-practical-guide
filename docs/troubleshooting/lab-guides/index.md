@@ -111,6 +111,19 @@ az deployment group create \
 az group delete --name rg-lab-<name> --yes --no-wait
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az group create --name rg-lab-<name> --location koreacentral` | Creates the resource group that will contain the lab deployment. |
+| `--name rg-lab-<name> --location koreacentral` | Sets the resource group name for the lab run. |
+| `--location koreacentral` | Places the resource group in Korea Central. |
+| `az deployment group create --resource-group rg-lab-<name> --template-file labs/<name>/main.bicep --parameters baseName=lab<short>` | Deploys the selected lab's infrastructure from its resource-group Bicep template. |
+| `--resource-group rg-lab-<name> --template-file labs/<name>/main.bicep --parameters baseName=lab<short>` | Runs the deployment in the lab resource group. |
+| `--template-file labs/<name>/main.bicep --parameters baseName=lab<short>` | Uses the selected lab's `main.bicep` template. |
+| `--parameters baseName=lab<short>` | Sets the template's `baseName` parameter for resource naming. |
+| `az group delete --name rg-lab-<name> --yes --no-wait` | Starts deleting the lab resource group during cleanup. |
+| `--name rg-lab-<name> --yes --no-wait` | Targets the lab resource group for deletion. |
+| `--yes --no-wait` | Skips the confirmation prompt and returns immediately. |
+
 !!! warning "Cost"
     Each lab deploys a B1 App Service Plan. Delete the resource group after completing the lab to avoid ongoing charges.
 

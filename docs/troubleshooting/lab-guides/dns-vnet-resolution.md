@@ -364,6 +364,12 @@ az group create \
     --location "$LOCATION"
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az group create --name "$RG" --location "$LOCATION"` | Creates the resource group that will hold the DNS lab resources. |
+| `--name "$RG" --location "$LOCATION"` | Sets the resource group name. |
+| `--location "$LOCATION"` | Places the resource group in this Azure region. |
+
 ```bash
 az deployment group create \
     --resource-group "$RG" \
@@ -390,6 +396,13 @@ APP_NAME=$(az webapp list \
     --output tsv)
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az webapp list --resource-group "$RG" --query "[0].name" --output tsv` | Lists web apps in the lab resource group and returns the first app name for later DNS checks. |
+| `--resource-group "$RG" --query "[0].name" --output tsv` | Limits the app list to this resource group. |
+| `--query "[0].name" --output tsv` | Selects the `name` field from the first item in the returned web-app array. |
+| `--output tsv` | Returns the app name as plain text for shell variable assignment. |
+
 ```bash
 APP_URL="https://$(az webapp show \
     --resource-group "$RG" \
@@ -397,6 +410,14 @@ APP_URL="https://$(az webapp show \
     --query "defaultHostName" \
     --output tsv)"
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az webapp show --resource-group "$RG" --name "$APP_NAME" --query "defaultHostName" --output tsv` | Retrieves the app's default hostname so the runbook can build the public URL used for DNS checks. |
+| `--resource-group "$RG" --name "$APP_NAME" --query "defaultHostName" --output tsv` | Looks up the app in this resource group. |
+| `--name "$APP_NAME" --query "defaultHostName" --output tsv` | Targets this web app. |
+| `--query "defaultHostName" --output tsv` | Projects only the `defaultHostName` field. |
+| `--output tsv` | Returns the hostname as plain text for shell variable assignment. |
 
 ```bash
 az webapp show \
@@ -560,6 +581,13 @@ az network private-dns record-set a list \
     --output table
 ```
 
+| Command | Purpose |
+|---------|---------|
+| `az network private-dns record-set a list --resource-group "$RG" --zone-name "privatelink.blob.core.windows.net" --output table` | Lists A records in the private DNS zone so you can confirm the expected private-endpoint records exist. |
+| `--resource-group "$RG" --zone-name "privatelink.blob.core.windows.net" --output table` | Looks up the private DNS zone in this resource group. |
+| `--zone-name "privatelink.blob.core.windows.net" --output table` | Targets the Blob Storage private-link DNS zone. |
+| `--output table` | Formats the record list as a readable table. |
+
 ### 3.12 Apply remediation
 
 ```bash
@@ -570,6 +598,15 @@ az network private-dns link vnet create \
     --virtual-network "<vnet-name>" \
     --registration-enabled false
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az network private-dns link vnet create --resource-group "$RG" --zone-name "privatelink.blob.core.windows.net" --name "link-to-app-vnet" --virtual-network "<vnet-name>" --registration-enabled false` | Creates the private DNS zone link that connects the Blob private-link zone to the app VNet. |
+| `--resource-group "$RG" --zone-name "privatelink.blob.core.windows.net" --name "link-to-app-vnet" --virtual-network "<vnet-name>" --registration-enabled false` | Creates the link in the resource group that contains the private DNS zone. |
+| `--zone-name "privatelink.blob.core.windows.net" --name "link-to-app-vnet" --virtual-network "<vnet-name>" --registration-enabled false` | Targets the Blob Storage private-link DNS zone. |
+| `--name "link-to-app-vnet" --virtual-network "<vnet-name>" --registration-enabled false` | Names the VNet link `link-to-app-vnet`. |
+| `--virtual-network "<vnet-name>" --registration-enabled false` | Connects this virtual network to the private DNS zone. |
+| `--registration-enabled false` | Disables automatic DNS record registration on the VNet link. |
 
 Then rerun:
 
@@ -911,6 +948,50 @@ az network private-dns record-set a list --resource-group "$RG" --zone-name "pri
 az network private-dns link vnet create --resource-group "$RG" --zone-name "privatelink.blob.core.windows.net" --name "link-to-app-vnet" --virtual-network "<vnet-name>" --registration-enabled false
 az group delete --name "$RG" --yes --no-wait
 ```
+
+| Command | Purpose |
+|---------|---------|
+| `az group create --name "$RG" --location "$LOCATION"` | Creates the resource group for the lab. |
+| `--name "$RG" --location "$LOCATION"` | Sets the resource group name. |
+| `--location "$LOCATION"` | Places the resource group in this Azure region. |
+| `az deployment group create --resource-group "$RG" --template-file "labs/dns-vnet-resolution/main.bicep" --parameters "baseName=labdns"` | Deploys the DNS lab infrastructure from the Bicep template. |
+| `--resource-group "$RG" --template-file "labs/dns-vnet-resolution/main.bicep" --parameters "baseName=labdns"` | Runs the deployment in this resource group. |
+| `--template-file "labs/dns-vnet-resolution/main.bicep" --parameters "baseName=labdns"` | Uses the lab's main Bicep template. |
+| `--parameters "baseName=labdns"` | Sets the template's `baseName` parameter to `labdns`. |
+| `az webapp list --resource-group "$RG" --query "[0].name" --output tsv` | Lists web apps in the lab resource group and returns the first app name. |
+| `--resource-group "$RG" --query "[0].name" --output tsv` | Limits the app list to this resource group. |
+| `--query "[0].name" --output tsv` | Selects the `name` field from the first returned web app. |
+| `--output tsv` | Returns the app name as plain text. |
+| `az webapp show --resource-group "$RG" --name "$APP_NAME" --query "defaultHostName" --output tsv` | Retrieves the app's default hostname. |
+| `--resource-group "$RG" --name "$APP_NAME" --query "defaultHostName" --output tsv` | Looks up the app in this resource group. |
+| `--name "$APP_NAME" --query "defaultHostName" --output tsv` | Targets this web app. |
+| `--query "defaultHostName" --output tsv` | Projects only the `defaultHostName` field. |
+| `--output tsv` | Returns the hostname as plain text. |
+| `az webapp config show --resource-group "$RG" --name "$APP_NAME" --output json` | Retrieves the full app configuration for DNS and networking inspection. |
+| `--resource-group "$RG" --name "$APP_NAME" --output json` | Looks up the app configuration in this resource group. |
+| `--name "$APP_NAME" --output json` | Targets this web app's configuration. |
+| `--output json` | Returns the configuration as JSON. |
+| `az webapp vnet-integration list --resource-group "$RG" --name "$APP_NAME" --output json` | Lists the app's current VNet integration bindings. |
+| `--resource-group "$RG" --name "$APP_NAME" --output json` | Looks up VNet integrations in this resource group. |
+| `--name "$APP_NAME" --output json` | Targets this web app. |
+| `--output json` | Returns the integration list as JSON. |
+| `az network private-dns link vnet list --resource-group "$RG" --zone-name "privatelink.blob.core.windows.net" --output table` | Lists VNet links on the Blob private-link DNS zone so you can verify whether the app VNet is linked. |
+| `--resource-group "$RG" --zone-name "privatelink.blob.core.windows.net" --output table` | Looks up the private DNS zone in this resource group. |
+| `--zone-name "privatelink.blob.core.windows.net" --output table` | Targets the Blob Storage private-link DNS zone. |
+| `--output table` | Formats the link list as a readable table. |
+| `az network private-dns record-set a list --resource-group "$RG" --zone-name "privatelink.blob.core.windows.net" --output table` | Lists A records in the Blob private-link DNS zone. |
+| `--resource-group "$RG" --zone-name "privatelink.blob.core.windows.net" --output table` | Looks up the private DNS zone in this resource group. |
+| `--zone-name "privatelink.blob.core.windows.net" --output table` | Targets the Blob Storage private-link DNS zone. |
+| `--output table` | Formats the record list as a readable table. |
+| `az network private-dns link vnet create --resource-group "$RG" --zone-name "privatelink.blob.core.windows.net" --name "link-to-app-vnet" --virtual-network "<vnet-name>" --registration-enabled false` | Creates the VNet link that restores private DNS resolution for the Blob private-link zone. |
+| `--resource-group "$RG" --zone-name "privatelink.blob.core.windows.net" --name "link-to-app-vnet" --virtual-network "<vnet-name>" --registration-enabled false` | Creates the link in the resource group that contains the private DNS zone. |
+| `--zone-name "privatelink.blob.core.windows.net" --name "link-to-app-vnet" --virtual-network "<vnet-name>" --registration-enabled false` | Targets the Blob Storage private-link DNS zone. |
+| `--name "link-to-app-vnet" --virtual-network "<vnet-name>" --registration-enabled false` | Names the VNet link `link-to-app-vnet`. |
+| `--virtual-network "<vnet-name>" --registration-enabled false` | Connects the specified VNet to the private DNS zone. |
+| `--registration-enabled false` | Disables automatic record registration on the link. |
+| `az group delete --name "$RG" --yes --no-wait` | Starts deleting the lab resource group during cleanup. |
+| `--name "$RG" --yes --no-wait` | Targets this resource group for deletion. |
+| `--yes --no-wait` | Skips confirmation and returns before the delete operation finishes. |
 
 ---
 
