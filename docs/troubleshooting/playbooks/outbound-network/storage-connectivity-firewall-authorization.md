@@ -148,7 +148,7 @@ az role assignment list --assignee <app-managed-identity-object-id> --scope <sto
 | `--name <private-endpoint-name> --query "{name:name,provisioningState:provisioningState}" --output table` | Targets this private endpoint. |
 | `--query "{name:name,provisioningState:provisioningState}"` | Projects only the requested private-endpoint field(s). |
 | `--output table` | Formats the projected private-endpoint fields as a table. |
-| `az role assignment list --assignee <app-managed-identity-object-id> --scope <storage-account-resource-id> --query "[].{role:roleDefinitionName,scope:scope}" --output table` | Lists the data-plane role assignments for this principal at the storage scope so you can confirm whether the app identity has the required access. |
+| `az role assignment list --assignee <app-managed-identity-object-id> --scope <storage-account-resource-id> --query "[].{role:roleDefinitionName,scope:scope}" --output table` | Lists Azure RBAC role assignments for this principal at the storage account scope so you can determine whether any assignment grants the required storage data-plane access. |
 | `--assignee <app-managed-identity-object-id> --scope <storage-account-resource-id> --query "[].{role:roleDefinitionName,scope:scope}" --output table` | Looks up role assignments for this principal object ID. |
 | `--scope <storage-account-resource-id> --query "[].{role:roleDefinitionName,scope:scope}" --output table` | Limits the role-assignment search to this resource scope. |
 | `--query "[].{role:roleDefinitionName,scope:scope}"` | Projects each role assignment to only its role name and scope. |

@@ -332,7 +332,7 @@ $ az webapp deployment list --resource-group <resource-group> --name <app-name>
     | `--resource-group <resource-group> --name <app-name> --query "siteConfig.alwaysOn"` | Looks up the resource in this resource group. |
     | `--name <app-name> --query "siteConfig.alwaysOn"` | Targets this web app. |
     | `--query "siteConfig.alwaysOn"` | Projects only the nested `siteConfig.alwaysOn` field from the web app resource. |
-    | `az webapp config appsettings list --resource-group <resource-group> --name <app-name> --query "[?name=='WEBSITE_WARMUP_PATH' \|\| name=='WEBSITES_CONTAINER_START_TIME_LIMIT']"` | Lists only the `WEBSITES_CONTAINER_START_TIME_LIMIT` app setting so you can compare startup tolerance with observed startup time. |
+    | `az webapp config appsettings list --resource-group <resource-group> --name <app-name> --query "[?name=='WEBSITE_WARMUP_PATH' \|\| name=='WEBSITES_CONTAINER_START_TIME_LIMIT']"` | Lists the warm-up path and container-start timeout app settings so you can compare startup controls with observed cold-start behavior. |
     | `--resource-group <resource-group> --name <app-name> --query "[?name=='WEBSITE_WARMUP_PATH' \|\| name=='WEBSITES_CONTAINER_START_TIME_LIMIT']"` | Looks up the resource in this resource group. |
     | `--name <app-name> --query "[?name=='WEBSITE_WARMUP_PATH' \|\| name=='WEBSITES_CONTAINER_START_TIME_LIMIT']"` | Targets this web app. |
     | `--query "[?name=='WEBSITE_WARMUP_PATH' \|\| name=='WEBSITES_CONTAINER_START_TIME_LIMIT']"` | Filters the app-settings list to the warm-up path and container-start timeout entries only. |

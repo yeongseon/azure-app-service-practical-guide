@@ -122,8 +122,8 @@ az webapp log tail --resource-group <resource-group> --name <app-name> | grep -i
 | Command | Purpose |
 |---------|---------|
 | `az webapp log tail --resource-group <resource-group> --name <app-name> \| grep -i "timeout\\|reset\\|refused"` | Streams live web app logs and filters them locally for timeout, reset, or refusal signatures. |
-| `--resource-group <resource-group> --name <app-name> \| grep -i "timeout\\|reset\\|refused"` | Looks up the web app in this resource group. |
-| `--name <app-name> \| grep -i "timeout\\|reset\\|refused"` | Targets this web app. |
+| `--resource-group <resource-group>` | Looks up the web app in this resource group. |
+| `--name <app-name>` | Targets this web app. |
 | `grep -i "timeout\\|reset\\|refused"` | Filters the streamed log lines locally, case-insensitively, to show only timeout/reset/refused patterns. |
 
 ---
