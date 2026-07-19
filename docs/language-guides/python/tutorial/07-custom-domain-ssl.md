@@ -140,8 +140,13 @@ az webapp config ssl bind --resource-group $RG --name $APP_NAME --certificate-th
 | Command | Purpose |
 |---------|---------|
 | `az webapp config ssl create --resource-group $RG --name $APP_NAME --hostname $CUSTOM_HOSTNAME` | Requests an App Service managed certificate for the custom hostname. |
-| `THUMBPRINT=$(az webapp config ssl list --resource-group $RG --query "[?hostNames && contains(join(',', hostNames), '$CUSTOM_HOSTNAME')].thumbprint | [0]" --output tsv)` | Captures the first certificate thumbprint whose `hostNames` list contains the custom hostname. |
-| `az webapp config ssl bind --resource-group $RG --name $APP_NAME --certificate-thumbprint $THUMBPRINT --ssl-type SNI` | Binds the selected certificate to the custom hostname by using SNI-based TLS. |
+| `--hostname $CUSTOM_HOSTNAME` | Tells Azure which hostname the certificate should cover. |
+| `THUMBPRINT=$(az webapp config ssl list --resource-group $RG --query "[?hostNames && contains(join(',', hostNames), '$CUSTOM_HOSTNAME')].thumbprint | [0]" --output tsv)` | Captures the certificate thumbprint for the hostname that was just created. |
+| `az webapp config ssl list` | Lists SSL certificates available to the web app. |
+| `--query "[?hostNames && contains(join(',', hostNames), '$CUSTOM_HOSTNAME')].thumbprint | [0]"` | Filters the certificate list to the first thumbprint matching the custom hostname. |
+| `az webapp config ssl bind --resource-group $RG --name $APP_NAME --certificate-thumbprint $THUMBPRINT --ssl-type SNI` | Binds the selected certificate to the web app hostname. |
+| `--certificate-thumbprint $THUMBPRINT` | Identifies which certificate to bind. |
+| `--ssl-type SNI` | Uses SNI-based TLS binding for the hostname. |
 
 !!! note "Preview Command"
     `az webapp config ssl create` is currently in Preview. Not all hostname configurations are eligible for managed certificates. See [App Service TLS overview](https://learn.microsoft.com/en-us/azure/app-service/overview-tls) for eligibility requirements. The Azure Portal provides an alternative path for managed certificate creation.
