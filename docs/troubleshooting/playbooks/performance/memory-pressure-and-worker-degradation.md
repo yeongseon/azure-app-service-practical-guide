@@ -385,6 +385,7 @@ timestamp                  CpuPercentage_Average   MemoryPercentage_Average
     | `--metric "MemoryPercentage"` | Requests exactly these metrics from Azure Monitor for this check. |
     | `--interval PT5M` | Samples the metrics at this time granularity. |
     | `--aggregation Maximum` | Returns these aggregation(s) for each metric time bucket. |
+
     - Verify whether affected and sibling apps share incident timestamps and memory pressure windows.
 
 ### H3: Worker/process model is overcommitted for memory budget
@@ -420,6 +421,7 @@ timestamp                  CpuPercentage_Average   MemoryPercentage_Average
     | `az webapp config appsettings list --resource-group <resource-group> --name <app-name>` | Lists the app settings currently applied to this web app so you can inspect runtime or deployment configuration. |
     | `--resource-group <resource-group> --name <app-name>` | Looks up the resource in this resource group. |
     | `--name <app-name>` | Targets this web app. |
+
     - Validate effective process settings (`workers`, `threads`, `timeout`) against measured memory per worker and plan limits.
 
 ### H4: Dependency/runtime behavior amplifies memory pressure
