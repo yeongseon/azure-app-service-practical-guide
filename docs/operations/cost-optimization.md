@@ -66,6 +66,13 @@ az appservice plan show \
   --output json
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the App Service plan. |
+| `--name $PLAN_NAME` | Selects the App Service plan whose current size and worker count you want to baseline. |
+| `--query "{sku:sku.name,...}"` | Returns only the SKU name, pricing tier, active worker count, and configured capacity from the plan response. |
+| `--output json` | Formats the filtered plan baseline as JSON. |
+
 Capture platform metrics:
 
 ```bash
@@ -81,6 +88,11 @@ az monitor metrics list \
   --interval PT1H \
   --output table
 ```
+
+| Command | Description |
+|---|---|
+| `PLAN_ID=$(az appservice plan show ...)` | Reads the App Service plan's Azure resource ID and stores it in `PLAN_ID` so metric queries target the plan resource directly. |
+| `az monitor metrics list ...` | Lists hourly CPU and memory metrics for that App Service plan so you can compare current utilization against its cost. |
 
 #### Portal view: Cost analysis blade
 
@@ -106,6 +118,13 @@ az appservice plan update \
   --output json
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the plan. |
+| `--name $PLAN_NAME` | Selects the App Service plan to resize. |
+| `--sku S1` | Changes the plan to the `S1` SKU so compute and billing move to that tier. |
+| `--output json` | Returns the updated plan definition as JSON. |
+
 Adjust worker count:
 
 ```bash
@@ -115,6 +134,13 @@ az appservice plan update \
   --number-of-workers 2 \
   --output json
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the plan. |
+| `--name $PLAN_NAME` | Selects the App Service plan whose instance count you want to change. |
+| `--number-of-workers 2` | Sets the plan to run on two worker instances, increasing or reducing recurring compute cost accordingly. |
+| `--output json` | Returns the updated worker-count configuration as JSON. |
 
 ### Implement Autoscale to Match Demand
 
@@ -132,6 +158,17 @@ az monitor autoscale create \
   --output json
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Places the autoscale setting in the same resource group as the plan. |
+| `--resource $PLAN_ID` | Attaches the autoscale setting to the specific App Service plan resource ID stored in `PLAN_ID`. |
+| `--resource-type Microsoft.Web/serverfarms` | Declares that the autoscale target is an App Service plan resource. |
+| `--name "autoscale-$PLAN_NAME"` | Names the autoscale setting so later rules and lookups can reference it. |
+| `--min-count 1` | Prevents autoscale from shrinking below one worker instance. |
+| `--max-count 5` | Caps autoscale at five workers to contain spend. |
+| `--count 2` | Sets the default worker count that autoscale uses when no rule is actively changing capacity. |
+| `--output json` | Returns the created autoscale setting as JSON. |
+
 Add scale-out rule:
 
 ```bash
@@ -144,6 +181,15 @@ az monitor autoscale rule create \
   --output json
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the autoscale setting. |
+| `--autoscale-name "autoscale-$PLAN_NAME"` | Adds the rule to the named autoscale profile for this App Service plan. |
+| `--condition "Percentage CPU > 70 avg 10m"` | Triggers the rule when average CPU stays above 70 percent over a 10-minute window. |
+| `--scale out 1` | Increases the worker count by one instance when the condition is met. |
+| `--cooldown 10` | Waits 10 minutes after the scale-out action before evaluating another change from this rule. |
+| `--output json` | Returns the created rule definition as JSON. |
+
 Add scale-in rule:
 
 ```bash
@@ -155,6 +201,15 @@ az monitor autoscale rule create \
   --cooldown 20 \
   --output json
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the autoscale setting. |
+| `--autoscale-name "autoscale-$PLAN_NAME"` | Adds the rule to the named autoscale configuration for the plan. |
+| `--condition "Percentage CPU < 30 avg 20m"` | Triggers the rule when average CPU stays below 30 percent for 20 minutes, indicating excess capacity. |
+| `--scale in 1` | Reduces the worker count by one instance when the condition is met. |
+| `--cooldown 20` | Waits 20 minutes after a scale-in action before this rule can change capacity again. |
+| `--output json` | Returns the created scale-in rule as JSON. |
 
 !!! warning "Avoid under-scaling for savings"
     Cost reductions that cause repeated incidents are not true savings. Align autoscale policies with SLOs before lowering baseline capacity.
@@ -172,6 +227,17 @@ az monitor autoscale profile create \
   --recurrence "timezone=UTC days=Monday Tuesday Wednesday Thursday Friday hours=20 minutes=00" \
   --output json
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the autoscale setting. |
+| `--autoscale-name "autoscale-$PLAN_NAME"` | Adds a new scheduled profile to the existing autoscale setting for this plan. |
+| `--name "off-hours"` | Names the schedule profile that will govern predictable low-traffic periods. |
+| `--min-count 1` | Keeps at least one worker online during off-hours. |
+| `--max-count 2` | Limits off-hours scale-out to two workers to constrain overnight spend. |
+| `--count 1` | Uses one worker as the default capacity when the off-hours profile is active. |
+| `--recurrence "timezone=UTC ..."` | Activates the profile at 20:00 UTC on weekdays, creating a scheduled low-capacity window. |
+| `--output json` | Returns the created autoscale profile as JSON. |
 
 ### Control Environment Sprawl
 
@@ -193,6 +259,11 @@ az appservice plan list \
   --query "[].{name:name,resourceGroup:resourceGroup,sku:sku.name,workers:numberOfWorkers}" \
   --output table
 ```
+
+| Command | Description |
+|---|---|
+| `az webapp list ...` | Lists every web app with its resource group, runtime state, and backing App Service plan so you can find abandoned or duplicated apps. |
+| `az appservice plan list ...` | Lists every App Service plan with its SKU and worker count so you can spot oversized or unused plans. |
 
 ### Apply Reservations for Steady Production Capacity
 
@@ -226,6 +297,13 @@ az monitor autoscale show \
   --output json
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the autoscale setting. |
+| `--name "autoscale-$PLAN_NAME"` | Selects the autoscale configuration you want to verify. |
+| `--query "{enabled:enabled,profiles:profiles[].name}"` | Returns only whether autoscale is enabled and the names of the configured profiles. |
+| `--output json` | Formats the filtered autoscale summary as JSON. |
+
 Check recent usage values:
 
 ```bash
@@ -235,6 +313,13 @@ az consumption usage list \
   --query "[].{instanceName:instanceName,cost:pretaxCost,currency:currency}" \
   --output table
 ```
+
+| Flag | Description |
+|---|---|
+| `--start-date 2026-04-01` | Starts the usage query at the beginning of the reporting window. |
+| `--end-date 2026-04-30` | Ends the usage query at the close of the reporting window. |
+| `--query "[].{instanceName:instanceName,...}"` | Projects each usage line item into the billed instance name, pretax cost, and currency. |
+| `--output table` | Prints the filtered cost records in a table for quick review. |
 
 Sample output (PII-masked):
 

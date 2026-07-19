@@ -73,6 +73,13 @@ az appservice plan show \
   --output json
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the App Service plan. |
+| `--name $PLAN_NAME` | Selects the plan whose current scale settings you want to inspect. |
+| `--query "{sku:sku.name,...}"` | Returns only the current SKU, configured capacity, worker count, and hosting kind from the plan response. |
+| `--output json` | Formats the filtered capacity snapshot as JSON. |
+
 Sample output (PII-masked):
 
 ```json
@@ -96,6 +103,13 @@ az appservice plan update \
   --output json
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the plan. |
+| `--name $PLAN_NAME` | Selects the App Service plan to resize vertically. |
+| `--sku P1V3` | Changes the plan to the `P1V3` SKU so each worker gets the compute and memory profile of that tier. |
+| `--output json` | Returns the updated plan definition as JSON. |
+
 After scaling up, verify effective SKU:
 
 ```bash
@@ -105,6 +119,13 @@ az appservice plan show \
   --query "sku.name" \
   --output tsv
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the plan. |
+| `--name $PLAN_NAME` | Selects the plan whose active SKU you want to confirm after scaling up. |
+| `--query "sku.name"` | Returns only the plan SKU name from the control-plane response. |
+| `--output tsv` | Prints the SKU name as plain text for quick shell verification. |
 
 ### Scale Out (Horizontal Scaling)
 
@@ -118,6 +139,13 @@ az appservice plan update \
   --output json
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the plan. |
+| `--name $PLAN_NAME` | Selects the App Service plan to scale horizontally. |
+| `--number-of-workers 3` | Sets the plan to run on three worker instances. |
+| `--output json` | Returns the updated worker-count configuration as JSON. |
+
 Check current worker count:
 
 ```bash
@@ -127,6 +155,13 @@ az appservice plan show \
   --query "numberOfWorkers" \
   --output tsv
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the plan. |
+| `--name $PLAN_NAME` | Selects the plan whose worker count you want to confirm. |
+| `--query "numberOfWorkers"` | Returns only the active worker-instance count from the plan response. |
+| `--output tsv` | Prints the worker count as plain text for quick verification. |
 
 ### Create Autoscale Baseline
 
@@ -150,6 +185,11 @@ az monitor autoscale create \
   --output json
 ```
 
+| Command | Description |
+|---|---|
+| `PLAN_ID=$(az appservice plan show ...)` | Reads the App Service plan's Azure resource ID and stores it in `PLAN_ID` so the autoscale setting can target the correct server farm resource. |
+| `az monitor autoscale create ...` | Creates the baseline autoscale setting on that App Service plan with minimum, maximum, and default worker counts. |
+
 Add CPU-based scale-out rule:
 
 ```bash
@@ -162,6 +202,15 @@ az monitor autoscale rule create \
   --output json
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the autoscale setting. |
+| `--autoscale-name "autoscale-$PLAN_NAME"` | Adds the rule to the named autoscale configuration for this plan. |
+| `--condition "Percentage CPU > 70 avg 10m"` | Triggers scale-out when average CPU stays above 70 percent for 10 minutes. |
+| `--scale out 1` | Increases the worker count by one instance when the rule fires. |
+| `--cooldown 10` | Waits 10 minutes after the scale-out action before the rule can adjust capacity again. |
+| `--output json` | Returns the created scale-out rule as JSON. |
+
 Add CPU-based scale-in rule:
 
 ```bash
@@ -173,6 +222,15 @@ az monitor autoscale rule create \
   --cooldown 15 \
   --output json
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the autoscale setting. |
+| `--autoscale-name "autoscale-$PLAN_NAME"` | Adds the rule to the named autoscale configuration for this plan. |
+| `--condition "Percentage CPU < 35 avg 20m"` | Triggers scale-in when average CPU stays below 35 percent for 20 minutes. |
+| `--scale in 1` | Reduces the worker count by one instance when the rule fires. |
+| `--cooldown 15` | Waits 15 minutes after the scale-in action before this rule can act again. |
+| `--output json` | Returns the created scale-in rule as JSON. |
 
 #### Portal view: Autoscale setting blade
 
@@ -196,6 +254,17 @@ az monitor autoscale profile create \
   --output json
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the autoscale setting. |
+| `--autoscale-name "autoscale-$PLAN_NAME"` | Adds a scheduled profile to the existing autoscale configuration for this plan. |
+| `--name "business-hours"` | Names the schedule profile that should apply during predictable traffic periods. |
+| `--min-count 2` | Keeps at least two workers online while this profile is active. |
+| `--max-count 8` | Allows the schedule profile to scale out to as many as eight workers. |
+| `--count 3` | Sets three workers as the default capacity when the profile becomes active. |
+| `--recurrence "timezone=UTC ..."` | Activates the profile at 08:00 UTC on weekdays. |
+| `--output json` | Returns the created autoscale profile as JSON. |
+
 !!! warning "Avoid aggressive scale-in"
     Keep scale-in thresholds conservative and cooldown periods longer than scale-out. Fast scale-in can cause oscillation and cold-instance penalties.
 
@@ -213,6 +282,13 @@ az webapp config appsettings set \
   --output json
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Selects the web app whose runtime settings should support scale events. |
+| `--settings WEBSITE_HEALTHCHECK_MAXPINGFAILURES=10 WEBSITES_CONTAINER_START_TIME_LIMIT=1800` | Raises the health-check failure threshold to 10 probes and gives containers up to 1800 seconds to finish starting before App Service treats startup as failed. |
+| `--output json` | Returns the updated app settings payload as JSON. |
+
 These settings help absorb startup variance during scale-out and reduce false unhealthy detection.
 
 ### Observe Autoscale Execution
@@ -225,6 +301,13 @@ az monitor autoscale show \
   --output json
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the autoscale setting. |
+| `--name "autoscale-$PLAN_NAME"` | Selects the autoscale configuration to inspect. |
+| `--query "{enabled:enabled,profiles:profiles[].name,notifications:notifications}"` | Returns whether autoscale is enabled, the names of the configured profiles, and any notification settings. |
+| `--output json` | Formats the filtered autoscale configuration as JSON. |
+
 Recent autoscale activity:
 
 ```bash
@@ -235,6 +318,14 @@ az monitor activity-log list \
   --query "[?contains(operationName.value, 'Autoscale')].{time:eventTimestamp,status:status.value,operation:operationName.localizedValue}" \
   --output table
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Limits the activity-log search to events for resources in this resource group. |
+| `--max-events 20` | Returns at most 20 recent activity-log records. |
+| `--offset 1d` | Searches the last one day of activity-log history. |
+| `--query "[?contains(operationName.value, 'Autoscale')].{time:eventTimestamp,...}"` | Filters the activity log to autoscale-related operations and projects each event to time, status, and localized operation name. |
+| `--output table` | Prints the filtered activity events in a compact table. |
 
 ## Verification
 

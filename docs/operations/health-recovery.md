@@ -84,6 +84,13 @@ az webapp config set \
   --output json
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the web app. |
+| `--name $APP_NAME` | Selects the app whose Health Check configuration you want to enable. |
+| `--health-check-path "/health"` | Configures App Service to probe the `/health` endpoint on each instance. |
+| `--output json` | Returns the updated site configuration as JSON. |
+
 Verify setting:
 
 ```bash
@@ -93,6 +100,13 @@ az webapp config show \
   --query "{healthCheckPath:healthCheckPath,minimumTls:minTlsVersion,alwaysOn:alwaysOn}" \
   --output json
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Selects the app whose Health Check configuration you want to inspect. |
+| `--query "{healthCheckPath:healthCheckPath,...}"` | Returns only the configured health-check path, minimum TLS version, and Always On state from the site configuration. |
+| `--output json` | Formats the filtered configuration as JSON. |
 
 ### Understand Platform Default Probe Behavior
 
@@ -114,6 +128,13 @@ az webapp config appsettings set \
   --output json
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Selects the app whose health-check failure threshold you want to tune. |
+| `--settings WEBSITE_HEALTHCHECK_MAXPINGFAILURES=5` | Sets the app setting that tells App Service to remove an instance after 5 consecutive failed probes instead of the default 10. |
+| `--output json` | Returns the updated app settings payload as JSON. |
+
 !!! info "Plan for at least 2 instances in production"
     Health check will not remove the only running instance, even if it is failing probes — this prevents total outage when no other instance is available to take traffic. To get the benefit of platform-side instance rotation, run at least 2 instances so an unhealthy instance can be replaced while a healthy one continues serving requests.
 
@@ -130,6 +151,16 @@ az webapp config auto-heal update \
   --output json
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Selects the app whose Auto-Heal policy you want to change. |
+| `--auto-heal-enabled true` | Turns on Auto-Heal for the app. |
+| `--auto-heal-action Restart` | Restarts the app when the Auto-Heal condition is met. |
+| `--auto-heal-memory-private-set-kb 1500000` | Triggers Auto-Heal when private memory usage reaches 1,500,000 KB. |
+| `--auto-heal-memory-private-set-duration "00:05:00"` | Requires the memory threshold to persist for five minutes before App Service restarts the app. |
+| `--output json` | Returns the updated Auto-Heal configuration as JSON. |
+
 ### Configure Auto-Heal for Slow Requests
 
 ```bash
@@ -144,6 +175,17 @@ az webapp config auto-heal update \
   --output json
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Selects the app whose slow-request Auto-Heal policy you want to change. |
+| `--auto-heal-enabled true` | Turns on Auto-Heal for the app. |
+| `--auto-heal-action Restart` | Restarts the app when the slow-request threshold is met. |
+| `--auto-heal-slow-requests-count 50` | Triggers Auto-Heal when at least 50 slow requests are observed in the evaluation window. |
+| `--auto-heal-slow-requests-interval "00:05:00"` | Evaluates the slow-request count across a five-minute window. |
+| `--auto-heal-slow-requests-time "00:00:10"` | Counts a request as slow when it runs longer than 10 seconds. |
+| `--output json` | Returns the updated Auto-Heal configuration as JSON. |
+
 Inspect effective rules:
 
 ```bash
@@ -152,6 +194,12 @@ az webapp config auto-heal show \
   --name $APP_NAME \
   --output json
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Selects the app whose effective Auto-Heal rules you want to inspect. |
+| `--output json` | Returns the current Auto-Heal configuration as JSON. |
 
 ### Capture Recovery Signals
 
@@ -163,6 +211,11 @@ az webapp log tail \
   --name $APP_NAME
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Streams live application and platform log output for the selected web app. |
+
 List relevant activity events:
 
 ```bash
@@ -173,6 +226,14 @@ az monitor activity-log list \
   --query "[?contains(operationName.value, 'Microsoft.Web/sites/restart') || contains(operationName.value, 'AutoHeal')].{time:eventTimestamp,status:status.value,operation:operationName.localizedValue}" \
   --output table
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Limits the activity-log search to resources in this resource group. |
+| `--offset 1d` | Searches activity-log events from the last day. |
+| `--max-events 50` | Returns up to 50 matching activity events. |
+| `--query "[?contains(operationName.value, 'Microsoft.Web/sites/restart') || contains(operationName.value, 'AutoHeal')].{time:eventTimestamp,...}"` | Filters the activity log to restart and Auto-Heal operations and projects each event to its timestamp, status, and localized operation name. |
+| `--output table` | Prints the filtered events in a compact table. |
 
 #### Portal view: Availability and Performance diagnostic
 
@@ -200,6 +261,12 @@ az webapp restart \
   --output json
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Restarts the selected web app as a manual recovery action. |
+| `--output json` | Returns the restart operation result as JSON. |
+
 ## Verification
 
 Control plane validation:
@@ -217,6 +284,11 @@ az webapp config auto-heal show \
   --query "{enabled:autoHealEnabled,action:autoHealRules.actions.actionType}" \
   --output json
 ```
+
+| Command | Description |
+|---|---|
+| `az webapp config show ...` | Retrieves the site's configured health-check path so you can confirm the control-plane setting matches the intended probe endpoint. |
+| `az webapp config auto-heal show ...` | Retrieves whether Auto-Heal is enabled and which recovery action the current rules will execute. |
 
 Data plane validation:
 

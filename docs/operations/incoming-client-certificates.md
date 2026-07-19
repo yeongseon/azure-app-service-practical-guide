@@ -69,6 +69,13 @@ az webapp update \
   --output json
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the web app. |
+| `--name $APP_NAME` | Selects the App Service app that should reject plain HTTP. |
+| `--https-only true` | Redirects HTTP traffic to HTTPS so client-certificate enforcement applies to the TLS endpoint (client certificates are only negotiated over TLS). |
+| `--output json` | Returns the updated app resource as JSON. |
+
 Verify:
 
 ```bash
@@ -78,6 +85,13 @@ az webapp show \
   --query "{httpsOnly:httpsOnly,hostNames:hostNames}" \
   --output json
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the web app. |
+| `--name $APP_NAME` | Selects the app whose HTTPS-only state you want to verify. |
+| `--query "{httpsOnly:httpsOnly,hostNames:hostNames}"` | Returns only the HTTPS-only toggle and the hostnames bound to the app. |
+| `--output json` | Formats the filtered verification data as JSON. |
 
 #### Portal view: Custom domains blade (HTTPS bindings)
 
@@ -96,6 +110,13 @@ az webapp update \
   --set clientCertEnabled=true clientCertMode=Required \
   --output json
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Selects the app where inbound client certificates should be enforced. |
+| `--set clientCertEnabled=true clientCertMode=Required` | Enables client-certificate processing on the app and requires callers to present a certificate on non-excluded paths. |
+| `--output json` | Returns the updated app resource as JSON. |
 
 Common values:
 
@@ -121,6 +142,13 @@ az webapp update \
   --set clientCertExclusionPaths="/health;/webhooks/github" \
   --output json
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Selects the app whose inbound mTLS exclusions you want to change. |
+| `--set clientCertExclusionPaths="/health;/webhooks/github"` | Configures only `/health` and `/webhooks/github` to bypass client-certificate enforcement while the rest of the app still honors the configured mode. |
+| `--output json` | Returns the updated app resource as JSON. |
 
 !!! warning "Exclusions weaken your trust boundary"
     Keep excluded paths narrow and explicit. Do not exclude broad prefixes such as `/api` unless you are intentionally disabling certificate enforcement for that whole surface.
@@ -179,6 +207,13 @@ az webapp show \
   --output json
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Selects the app whose client-certificate settings you want to inspect. |
+| `--query "{clientCertEnabled:clientCertEnabled,...}"` | Returns only whether inbound client certificates are enabled, which mode is active, and the configured exclusion paths. |
+| `--output json` | Formats the filtered settings as JSON. |
+
 ### Test with curl
 
 ```bash
@@ -213,6 +248,13 @@ az webapp update \
   --set clientCertEnabled=false clientCertExclusionPaths= \
   --output json
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Selects the app where inbound client-certificate enforcement should be rolled back. |
+| `--set clientCertEnabled=false clientCertExclusionPaths=` | Disables inbound client-certificate enforcement and clears any configured exclusion-path list. |
+| `--output json` | Returns the updated app resource as JSON. |
 
 Common issues:
 
