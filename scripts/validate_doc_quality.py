@@ -50,11 +50,15 @@ OPERATIONS_SECTIONS = [
     "Rollback / Troubleshooting",
 ]
 
-TROUBLESHOOTING_SECTIONS = [
-    "Symptom",
-    "Possible Causes",
-    "Diagnosis Steps",
-    "Resolution",
+TROUBLESHOOTING_PLAYBOOK_SECTIONS = [
+    "Summary",
+    "Common Misreadings",
+    "Competing Hypotheses",
+    "What to Check First",
+    "Evidence to Collect",
+    "Validation and Disproof by Hypothesis",
+    "Likely Root Cause Patterns",
+    "Immediate Mitigations",
     "Prevention",
 ]
 
@@ -309,15 +313,13 @@ def validate_templates(findings: list[Finding], path: Path, text: str) -> None:
         )
     elif section == "operations":
         require_sections(findings, path, text, OPERATIONS_SECTIONS, "Operations")
-    elif (
-        section == "troubleshooting"
-        and "lab-guides" not in parts
-        and "kql" not in parts
-        and "playbooks" not in parts
-        and "first-10-minutes" not in parts
-    ):
+    elif section == "troubleshooting" and "playbooks" in parts:
         require_sections(
-            findings, path, text, TROUBLESHOOTING_SECTIONS, "Troubleshooting"
+            findings,
+            path,
+            text,
+            TROUBLESHOOTING_PLAYBOOK_SECTIONS,
+            "Troubleshooting playbook",
         )
 
 

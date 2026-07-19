@@ -769,7 +769,7 @@ Every document ends with these tail sections (in this order):
 
 Every document follows one of 9 templates based on its section. Do not invent new structures.
 
-Troubleshooting content specifically supports three template variants: **Troubleshooting docs** (symptom → resolution) for symptom-oriented pages under `docs/troubleshooting/` (excluding `playbooks/`, `first-10-minutes/`, `lab-guides/`, `kql/`), **Numbered Playbook** for hypothesis-driven investigation guides under `docs/troubleshooting/playbooks/`, and **First 10 Minutes Runbook** for rapid-triage decision guides under `docs/troubleshooting/first-10-minutes/`. The document quality validator (`scripts/validate_doc_quality.py`) applies the section-template check only to symptom-oriented pages, and exempts playbooks and first-10-minutes runbooks from the nearby CLI explanation table requirement because those variants embed CLI in investigation contexts (KQL follow-ups, hypothesis validation) rather than as reader-executable setup steps.
+Troubleshooting content specifically supports three template variants: **Troubleshooting docs** (symptom → resolution) for symptom-oriented pages under `docs/troubleshooting/` (excluding `playbooks/`, `first-10-minutes/`, `lab-guides/`, `kql/`), **Numbered Playbook** for hypothesis-driven investigation guides under `docs/troubleshooting/playbooks/`, and **First 10 Minutes Runbook** for rapid-triage decision guides under `docs/troubleshooting/first-10-minutes/`. The document quality validator (`scripts/validate_doc_quality.py`) enforces the section-template check only on the **Numbered Playbook** structure for pages under `docs/troubleshooting/playbooks/` (constant `TROUBLESHOOTING_PLAYBOOK_SECTIONS`). The base symptom-oriented template is documented as guidance but is not machine-enforced, because this repository's actual troubleshooting content is authored as hypothesis-driven playbooks plus conceptual/navigation pages (architecture overview, mental model, decision tree, evidence map, quick-diagnosis cards) — no page currently uses the `## Symptom` template, so enforcing it would flag legitimate conceptual pages. Root-level troubleshooting pages, methodology pages, evidence maps, decision trees, quick-diagnosis cards, `first-10-minutes/` runbooks, `kql/` packs, and `lab-guides/` are distinct content types and are not required to use any symptom or playbook section template unless they are authored under `docs/troubleshooting/playbooks/`. The validator also exempts playbooks and first-10-minutes runbooks from the nearby CLI explanation table requirement because those variants embed CLI in investigation contexts (KQL follow-ups, hypothesis validation) rather than as reader-executable setup steps.
 
 #### Platform docs
 
@@ -879,6 +879,7 @@ Scope: symptom-oriented pages under `docs/troubleshooting/` that are not playboo
 ## 6. Validation and Disproof by Hypothesis
 ## 7. Likely Root Cause Patterns
 ## 8. Immediate Mitigations
+## 9. Prevention
 ## See Also
 ## Sources
 ```
