@@ -357,6 +357,13 @@ az webapp show \
     --output json
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group "$RG"` | Targets the resource group that contains the web app you want to inspect. |
+| `--name "$APP_NAME"` | Selects the specific App Service app whose current state will be returned. |
+| `--query "{state:state, hostNames:hostNames, httpsOnly:httpsOnly, appServicePlanId:appServicePlanId}"` | Reduces the response to the app runtime state, bound host names, HTTPS-only setting, and attached App Service Plan resource ID. |
+| `--output json` | Keeps the filtered fields in structured JSON so you can inspect or pipe them safely. |
+
 Example output (PII masked):
 
 <!-- Verified: real az CLI output from koreacentral, 2026-05-01 -->
@@ -379,6 +386,12 @@ az webapp config appsettings list \
     --name "$APP_NAME" \
     --query "[?name=='WEBSITES_PORT' || name=='PORT' || name=='WEBSITES_ENABLE_APP_SERVICE_STORAGE' || name=='SCM_DO_BUILD_DURING_DEPLOYMENT']"
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group "$RG"` | Looks up the app settings on the web app's resource group. |
+| `--name "$APP_NAME"` | Chooses the app whose effective application settings will be listed. |
+| `--query "[?name=='WEBSITES_PORT' || name=='PORT' || name=='WEBSITES_ENABLE_APP_SERVICE_STORAGE' || name=='SCM_DO_BUILD_DURING_DEPLOYMENT']"` | Filters the full settings list down to the port, storage-mount, and deployment-build settings that commonly affect Linux runtime and deployment behavior. |
 
 Learn references:
 
@@ -492,6 +505,12 @@ az webapp config access-restriction show \
     --output json
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group "$RG"` | Reads access restriction settings from the resource group that owns the app. |
+| `--name "$APP_NAME"` | Selects the app whose main-site and SCM-site restriction rules you want to review. |
+| `--output json` | Returns the full restriction document, including rule lists and SCM-specific settings, in machine-readable form. |
+
 Learn references:
 
 - [Kudu service overview](https://learn.microsoft.com/en-us/azure/app-service/resources-kudu)
@@ -548,6 +567,11 @@ az webapp deploy \
     --src-path "./build-output.zip" \
     --type zip
 ```
+
+| Command | Description |
+|---|---|
+| `az webapp config appsettings set --resource-group "$RG" --name "$APP_NAME" --settings SCM_DO_BUILD_DURING_DEPLOYMENT=true` | Turns on server-side build during deployment for this app by setting `SCM_DO_BUILD_DURING_DEPLOYMENT=true` in the app settings. |
+| `az webapp deploy --resource-group "$RG" --name "$APP_NAME" --src-path "./build-output.zip" --type zip` | Uploads the ZIP artifact to the target app so App Service can deploy that package using the selected ZIP deployment path. |
 
 #### GitHub Actions pattern (high-level)
 
@@ -770,6 +794,13 @@ az webapp show \
     --query "{planId:serverFarmId, state:state}" \
     --output json
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group "$RG"` | Queries the resource group that contains the application. |
+| `--name "$APP_NAME"` | Chooses the specific web app whose plan linkage you want to confirm. |
+| `--query "{planId:serverFarmId, state:state}"` | Returns only the attached App Service Plan resource ID and current app state so you can correlate the app to shared-plan metrics. |
+| `--output json` | Formats the filtered result as JSON for incident notes or follow-on scripts. |
 
 Use the `planId` to correlate app incidents with plan-level metrics in Azure Monitor.
 

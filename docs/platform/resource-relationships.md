@@ -248,6 +248,12 @@ az webapp identity show \
     --output json
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group "$RG"` | Reads the identity configuration from the resource group that owns the app. |
+| `--name "$APP_NAME"` | Selects the web app whose managed identity state you want to inspect. |
+| `--output json` | Returns the identity object, including `principalId`, `tenantId`, and identity type, in JSON. |
+
 Example output (PII masked):
 
 <!-- Verified: real az CLI output from koreacentral, 2026-05-01 -->
@@ -269,6 +275,12 @@ az role assignment list \
     --output table
 ```
 
+| Flag | Description |
+|---|---|
+| `--assignee-object-id "$APP_PRINCIPAL_ID"` | Filters role assignments down to the service principal object ID used by the web app's managed identity. |
+| `--all` | Includes all matching role assignments for that principal in the current listing scope instead of returning a limited subset. |
+| `--output table` | Shows the resulting scopes and role names in a concise table for entitlement review. |
+
 Inspect app-to-plan linkage:
 
 ```bash
@@ -278,6 +290,13 @@ az webapp show \
     --query "{serverFarmId:serverFarmId, id:id, state:state}" \
     --output json
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group "$RG"` | Queries the app from the specified resource group. |
+| `--name "$APP_NAME"` | Selects the app whose resource relationships you want to confirm. |
+| `--query "{serverFarmId:serverFarmId, id:id, state:state}"` | Returns the app's own resource ID, the attached App Service Plan resource ID, and the current app state. |
+| `--output json` | Keeps those relationship fields in structured JSON for validation or automation. |
 
 ### Bicep snippet for identity + app relationship
 

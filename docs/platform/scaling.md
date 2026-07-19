@@ -220,6 +220,12 @@ az appservice plan update \
     --number-of-workers 3
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group "$RG"` | Targets the resource group that contains the App Service Plan. |
+| `--name "$PLAN_NAME"` | Chooses the plan whose instance count will change. |
+| `--number-of-workers 3` | Sets the plan to run three worker instances, which is a manual scale-out operation. |
+
 Scale up SKU to Premium:
 
 ```bash
@@ -228,6 +234,12 @@ az appservice plan update \
     --name "$PLAN_NAME" \
     --sku "P1v3"
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group "$RG"` | Locates the plan inside the specified resource group. |
+| `--name "$PLAN_NAME"` | Selects the App Service Plan to resize. |
+| `--sku "P1v3"` | Changes the hosting plan SKU to Premium v3 P1, which is a vertical scale-up operation. |
 
 Create autoscale profile:
 
@@ -242,6 +254,16 @@ az monitor autoscale create \
     --count 2
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group "$RG"` | Creates the autoscale setting in the same resource group as the plan. |
+| `--resource "$PLAN_NAME"` | Points the autoscale setting at the specific App Service Plan resource to manage. |
+| `--resource-type "Microsoft.Web/serverfarms"` | Declares that the autoscale target is an App Service Plan resource type. |
+| `--name "$AUTOSCALE_NAME"` | Names the autoscale setting object that will hold profiles and rules. |
+| `--min-count 2` | Prevents autoscale from going below two plan instances. |
+| `--max-count 10` | Caps autoscale growth at ten plan instances. |
+| `--count 2` | Sets the default instance count used when the profile is first created. |
+
 Add CPU-based scale-out rule:
 
 ```bash
@@ -252,6 +274,13 @@ az monitor autoscale rule create \
     --scale out 1
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group "$RG"` | Adds the rule to the autoscale setting stored in that resource group. |
+| `--autoscale-name "$AUTOSCALE_NAME"` | Chooses the autoscale profile that will receive the new rule. |
+| `--condition "Percentage CPU > 70 avg 10m"` | Triggers the rule when average CPU stays above 70 percent for 10 minutes. |
+| `--scale out 1` | Increases the instance count by one when the condition is met. |
+
 Add CPU-based scale-in rule:
 
 ```bash
@@ -261,6 +290,13 @@ az monitor autoscale rule create \
     --condition "Percentage CPU < 35 avg 20m" \
     --scale in 1
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group "$RG"` | Adds the rule within the resource group that stores the autoscale setting. |
+| `--autoscale-name "$AUTOSCALE_NAME"` | Selects the autoscale configuration to update. |
+| `--condition "Percentage CPU < 35 avg 20m"` | Triggers the rule when average CPU stays below 35 percent for 20 minutes. |
+| `--scale in 1` | Decreases the instance count by one when the low-utilization condition is met. |
 
 Example autoscale output snippet (PII masked):
 
