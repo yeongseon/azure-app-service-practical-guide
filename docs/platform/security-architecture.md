@@ -389,6 +389,11 @@ az policy assignment list \
     --output table
 ```
 
+| Flag | Description |
+|---|---|
+| `--scope "/subscriptions/<subscription-id>/resourceGroups/$RG"` | Lists policy assignments at the specified resource-group scope where the app resources are deployed. |
+| `--output table` | Renders the matching assignments in a concise table for governance review. |
+
 #### Microsoft Defender for App Service
 
 Defender for App Service extends detection and posture capabilities:

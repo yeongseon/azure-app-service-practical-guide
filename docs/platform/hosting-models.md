@@ -184,6 +184,14 @@ az appservice plan create \
     --is-linux
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group "$RG"` | Creates the App Service Plan in the target resource group. |
+| `--name "$PLAN_NAME"` | Sets the plan name that apps will attach to later. |
+| `--location "$LOCATION"` | Places the plan in the chosen Azure region. |
+| `--sku "S1"` | Provisions the Standard S1 pricing tier so the plan has production-capable features such as slots and autoscale support. |
+| `--is-linux` | Makes the plan a Linux plan instead of a Windows plan. |
+
 Create an app attached to that plan:
 
 ```bash
@@ -193,6 +201,13 @@ az webapp create \
     --name "$APP_NAME" \
     --runtime "$RUNTIME_STACK"
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group "$RG"` | Creates the app in the same resource group as the shared hosting plan. |
+| `--plan "$PLAN_NAME"` | Attaches the new web app to the existing App Service Plan. |
+| `--name "$APP_NAME"` | Assigns the globally unique site name used for the Azure resource and default hostname. |
+| `--runtime "$RUNTIME_STACK"` | Selects the built-in runtime stack that App Service should provision for the code-based app. |
 
 > Set `$RUNTIME_STACK` to the stack that matches your application platform.
 
@@ -205,6 +220,13 @@ az appservice plan show \
     --query "{sku:sku, numberOfWorkers:numberOfWorkers, reserved:reserved, status:status}" \
     --output json
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group "$RG"` | Reads plan properties from the resource group where the App Service Plan lives. |
+| `--name "$PLAN_NAME"` | Selects the plan whose hosting characteristics you want to verify. |
+| `--query "{sku:sku, numberOfWorkers:numberOfWorkers, reserved:reserved, status:status}"` | Restricts the response to the plan SKU, current worker count, Linux/Windows indicator, and provisioning status. |
+| `--output json` | Emits those selected properties as JSON for review or automation. |
 
 Example output (PII masked):
 

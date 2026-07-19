@@ -272,6 +272,13 @@ az webapp show \
     --output json
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group "$RG"` | Reads the web app from the specified resource group. |
+| `--name "$APP_NAME"` | Selects the app whose current hostname and HTTPS settings you want to inspect. |
+| `--query "{defaultHostName:defaultHostName, httpsOnly:httpsOnly, hostNames:hostNames}"` | Returns the default Azure hostname, the HTTPS-only toggle, and the full hostname bindings list. |
+| `--output json` | Formats the selected networking-related properties as JSON. |
+
 Add access restriction rule:
 
 ```bash
@@ -284,6 +291,15 @@ az webapp config access-restriction add \
     --priority 100
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group "$RG"` | Applies the new rule to the app in the target resource group. |
+| `--name "$APP_NAME"` | Chooses the web app whose inbound access policy will change. |
+| `--rule-name "allow-corp"` | Assigns a readable name to the access restriction entry. |
+| `--action Allow` | Makes the rule permit matching traffic instead of denying it. |
+| `--ip-address "203.0.113.0/24"` | Matches requests originating from that public CIDR range. |
+| `--priority 100` | Evaluates this rule before any lower-precedence rules with larger priority numbers. |
+
 List access restriction rules:
 
 ```bash
@@ -292,6 +308,12 @@ az webapp config access-restriction show \
     --name "$APP_NAME" \
     --output table
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group "$RG"` | Reads the app's access restriction document from the target resource group. |
+| `--name "$APP_NAME"` | Selects the app whose allow and deny rules you want to review. |
+| `--output table` | Renders the restriction settings in a compact human-readable table for quick checks. |
 
 Create private endpoint (conceptual example):
 
@@ -305,6 +327,16 @@ az network private-endpoint create \
     --group-id "sites" \
     --connection-name "$PE_CONNECTION_NAME"
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group "$RG"` | Creates the private endpoint resource in the specified resource group. |
+| `--name "$PE_NAME"` | Names the private endpoint ARM resource being created. |
+| `--vnet-name "$VNET_NAME"` | Places the endpoint inside the chosen virtual network. |
+| `--subnet "$SUBNET_NAME"` | Uses the specific subnet that will supply the endpoint's private IP. |
+| `--private-connection-resource-id "$APP_RESOURCE_ID"` | Connects the endpoint to the target App Service resource by its ARM resource ID. |
+| `--group-id "sites"` | Targets the App Service `sites` subresource so the private endpoint fronts the app site. |
+| `--connection-name "$PE_CONNECTION_NAME"` | Sets the name of the private link connection object shown on both sides of the approval flow. |
 
 Example output snippet (PII masked):
 
@@ -404,6 +436,12 @@ az webapp vnet-integration list \
     --output json
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group "$RG"` | Reads VNet integration bindings for apps in the specified resource group. |
+| `--name "$APP_NAME"` | Selects the app whose current integration subnet attachments you want to inspect. |
+| `--output json` | Returns the full integration objects, including subnet resource IDs, in JSON. |
+
 Example output:
 
 <!-- Verified: real az CLI output from koreacentral, 2026-05-01 -->
@@ -436,6 +474,13 @@ az webapp show \
     --output tsv
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group "$RG"` | Queries the web app from the specified resource group. |
+| `--name "$APP_NAME"` | Selects the app whose currently assigned public inbound IP you want to print. |
+| `--query "inboundIpAddress"` | Extracts only the top-level `inboundIpAddress` property from the web app resource. |
+| `--output tsv` | Prints just the IP value with no JSON wrapper so it is easy to paste into diagnostics or scripts. |
+
 Query Private Endpoint assigned IP:
 
 ```bash
@@ -445,6 +490,13 @@ az network private-endpoint show \
     --query "customDnsConfigs[0].ipAddresses" \
     --output json
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group "$RG"` | Reads the private endpoint resource from the selected resource group. |
+| `--name "pe-$APP_NAME"` | Targets the named private endpoint associated with the app. |
+| `--query "customDnsConfigs[0].ipAddresses"` | Returns the `ipAddresses` array from the first `customDnsConfigs` entry so you can see the private IPs exposed by that DNS config block. |
+| `--output json` | Keeps the returned IP list in JSON array form. |
 
 Example output:
 

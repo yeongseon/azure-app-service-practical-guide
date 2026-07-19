@@ -211,6 +211,15 @@ az webapp log config \
     --web-server-logging filesystem
 ```
 
+| Flag | Description |
+|---|---|
+| `--resource-group "$RG"` | Applies the logging configuration to the app in the target resource group. |
+| `--name "$APP_NAME"` | Selects the web app whose diagnostic log settings will change. |
+| `--application-logging filesystem` | Writes application logs to the App Service filesystem log location. |
+| `--detailed-error-messages true` | Enables detailed server-side error pages for failed requests. |
+| `--failed-request-tracing true` | Turns on failed request tracing so IIS/App Service can record deeper request diagnostics. |
+| `--web-server-logging filesystem` | Stores web server access logs on the filesystem for request-level review. |
+
 Stream logs in real time:
 
 ```bash
@@ -218,6 +227,11 @@ az webapp log tail \
     --resource-group "$RG" \
     --name "$APP_NAME"
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group "$RG"` | Connects to the app in the specified resource group. |
+| `--name "$APP_NAME"` | Streams the live log output for that specific web app. |
 
 Inspect access restriction settings that affect frontend admission:
 
@@ -227,6 +241,12 @@ az webapp config access-restriction show \
     --name "$APP_NAME" \
     --output json
 ```
+
+| Flag | Description |
+|---|---|
+| `--resource-group "$RG"` | Reads restriction rules from the selected resource group. |
+| `--name "$APP_NAME"` | Chooses the app whose frontend admission rules you want to inspect. |
+| `--output json` | Returns the full rule set in JSON so you can review priorities, sources, and SCM settings. |
 
 Example output snippet (PII masked):
 
