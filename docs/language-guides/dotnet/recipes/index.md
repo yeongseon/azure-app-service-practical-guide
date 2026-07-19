@@ -74,6 +74,11 @@ app.Run();
 az webapp show --resource-group "$RESOURCE_GROUP_NAME" --name "$WEB_APP_NAME" --output table
 az webapp identity show --resource-group "$RESOURCE_GROUP_NAME" --name "$WEB_APP_NAME" --output json
 ```
+| Command | Description |
+|---|---|
+| `az webapp show --resource-group "$RESOURCE_GROUP_NAME" --name "$WEB_APP_NAME" --output table` | Displays the current web app resource details in table form. |
+| `az webapp identity show --resource-group "$RESOURCE_GROUP_NAME" --name "$WEB_APP_NAME" --output json` | Returns the web app managed-identity object, including fields such as `principalId`, `clientId`, and `type`. |
+
 
 ### Shared Azure DevOps rollout shape
 

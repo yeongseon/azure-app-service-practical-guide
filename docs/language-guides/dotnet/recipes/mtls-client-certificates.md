@@ -180,6 +180,14 @@ az webapp config appsettings set \
     REMOTE_API_URL="https://api.contoso.com/health" \
   --output json
 ```
+| Flag | Description |
+|---|---|
+| `az webapp config appsettings set` | Creates or updates the app settings that the Linux app uses for inbound and outbound mTLS behavior. |
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Selects the web app whose settings will be updated. |
+| `--settings ...` | Stores the allowed client certificate names, optional thumbprints, outbound PKCS#12 path, password, and remote API URL as app settings. |
+| `--output json` | Returns the updated app-settings payload as JSON. |
+
 
 Windows example:
 
@@ -194,6 +202,14 @@ az webapp config appsettings set \
     REMOTE_API_URL="https://api.contoso.com/health" \
   --output json
 ```
+| Flag | Description |
+|---|---|
+| `az webapp config appsettings set` | Creates or updates the app settings that the Windows-hosted app uses for inbound and outbound mTLS behavior. |
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Selects the web app whose settings will be updated. |
+| `--settings ...` | Stores the allowed client certificate names, optional thumbprints, outbound certificate thumbprint, and remote API URL as app settings. |
+| `--output json` | Returns the updated app-settings payload as JSON. |
+
 
 !!! note "Windows hosting model matters"
     `CurrentUser\My` is the documented lookup location for Windows-hosted App Service code. Windows containers can use different filesystem paths or certificate stores, so validate the exact hosting model before copying the Windows lookup logic unchanged.

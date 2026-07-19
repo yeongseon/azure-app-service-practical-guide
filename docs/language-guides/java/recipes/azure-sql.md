@@ -96,6 +96,14 @@ az webapp identity show \
   --query principalId \
   --output tsv
 ```
+| Flag | Description |
+|---|---|
+| `az webapp identity show` | Returns the web app managed-identity object. |
+| `--resource-group "$RG"` | Targets the resource group that contains the app. |
+| `--name "$APP_NAME"` | Selects the web app whose identity will be queried. |
+| `--query principalId` | Selects the `principalId` field from the identity object. |
+| `--output tsv` | Prints only the selected value as plain text for shell reuse. |
+
 
 2. In SQL database (connected as Entra admin), create contained user:
 
@@ -117,6 +125,14 @@ az webapp config appsettings set \
     SPRING_DATASOURCE_URL="jdbc:sqlserver://<sql-server>.database.windows.net:1433;database=<db-name>;encrypt=true;hostNameInCertificate=*.database.windows.net;loginTimeout=30;authentication=ActiveDirectoryManagedIdentity" \
   --output json
 ```
+| Flag | Description |
+|---|---|
+| `az webapp config appsettings set` | Creates or updates app settings on the web app. |
+| `--resource-group "$RG"` | Targets the resource group that contains the app. |
+| `--name "$APP_NAME"` | Selects the web app whose datasource URL will be updated. |
+| `--settings SPRING_DATASOURCE_URL="..."` | Stores the environment-specific JDBC URL with managed-identity authentication in an app setting. |
+| `--output json` | Returns the updated app-settings payload as JSON. |
+
 
 ### Minimal health query endpoint pattern
 

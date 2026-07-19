@@ -62,6 +62,14 @@ az webapp config appsettings set \
     REDIS_ACCESS_KEY="@Microsoft.KeyVault(SecretUri=https://<vault-name>.vault.azure.net/secrets/redis-key/)" \
   --output json
 ```
+| Flag | Description |
+|---|---|
+| `az webapp config appsettings set` | Creates or updates app settings on the web app. |
+| `--resource-group "$RG"` | Targets the resource group that contains the app. |
+| `--name "$APP_NAME"` | Selects the web app that will resolve the Key Vault references. |
+| `--settings DB_PASSWORD="@Microsoft.KeyVault(...)" REDIS_ACCESS_KEY="@Microsoft.KeyVault(...)"` | Stores Key Vault reference expressions for the database password and Redis key instead of plaintext values. |
+| `--output json` | Returns the updated app-settings payload as JSON. |
+
 
 ### Grant Key Vault access to app identity
 
@@ -74,6 +82,10 @@ export APP_PRINCIPAL_ID=$(az webapp identity show \
   --query principalId \
   --output tsv)
 ```
+| Command | Description |
+|---|---|
+| `export APP_PRINCIPAL_ID=$(az webapp identity show --resource-group "$RG" --name "$APP_NAME" --query principalId --output tsv)` | Queries the web app identity object, selects the `principalId` field, and stores that object ID in `APP_PRINCIPAL_ID` for later RBAC commands. |
+
 
 2. Assign role on vault scope:
 
@@ -87,6 +99,11 @@ az role assignment create \
   --scope "$KV_ID" \
   --output json
 ```
+| Command | Description |
+|---|---|
+| `export KV_ID="/subscriptions/<subscription-id>/resourceGroups/$RG/providers/Microsoft.KeyVault/vaults/<vault-name>"` | Builds the full Key Vault resource ID used as the RBAC scope. |
+| `az role assignment create --assignee-object-id "$APP_PRINCIPAL_ID" --assignee-principal-type ServicePrincipal --role "Key Vault Secrets User" --scope "$KV_ID" --output json` | Grants the web app managed identity permission to read secrets from that Key Vault. |
+
 
 ### Spring Boot usage (unchanged)
 

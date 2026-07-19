@@ -44,6 +44,15 @@ az webapp auth update \
   --action LoginWithAzureActiveDirectory \
   --output json
 ```
+| Flag | Description |
+|---|---|
+| `az webapp auth update` | Updates the built-in authentication settings for the web app. |
+| `--resource-group "$RG"` | Targets the resource group that contains the app. |
+| `--name "$APP_NAME"` | Selects the web app whose auth settings will change. |
+| `--enabled true` | Turns App Service Authentication on. |
+| `--action LoginWithAzureActiveDirectory` | Configures Microsoft Entra sign-in as the authentication flow. |
+| `--output json` | Returns the updated auth configuration as JSON. |
+
 
 Set unauthenticated behavior to require login:
 
@@ -54,6 +63,14 @@ az webapp auth update \
   --unauthenticated-client-action RedirectToLoginPage \
   --output json
 ```
+| Flag | Description |
+|---|---|
+| `az webapp auth update` | Updates the built-in authentication settings for the web app. |
+| `--resource-group "$RG"` | Targets the resource group that contains the app. |
+| `--name "$APP_NAME"` | Selects the web app whose unauthenticated behavior will change. |
+| `--unauthenticated-client-action RedirectToLoginPage` | Challenges unauthenticated requests by redirecting them to the login page. |
+| `--output json` | Returns the updated auth configuration as JSON. |
+
 
 ### Configure Entra identity provider
 

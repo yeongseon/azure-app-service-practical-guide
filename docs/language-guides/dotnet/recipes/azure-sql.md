@@ -56,6 +56,15 @@ az webapp config connection-string set \
   --settings MainDb="Server=tcp:<sql-server>.database.windows.net,1433;Database=<database-name>;Authentication=Active Directory Managed Identity;Encrypt=True;TrustServerCertificate=False;" \
   --output json
 ```
+| Flag | Description |
+|---|---|
+| `az webapp config connection-string set` | Writes a named connection string into the App Service configuration. |
+| `--resource-group "$RESOURCE_GROUP_NAME"` | Targets the resource group that contains the web app. |
+| `--name "$WEB_APP_NAME"` | Selects the web app that will receive the connection string. |
+| `--connection-string-type SQLAzure` | Marks the value as an Azure SQL connection string so App Service stores it in the SQLAzure slot. |
+| `--settings MainDb="..."` | Creates or updates the `MainDb` connection string with managed-identity authentication parameters. |
+| `--output json` | Returns the updated connection-string payload as JSON. |
+
 
 ### 3) Register DbContext
 

@@ -189,6 +189,14 @@ az webapp config appsettings set \
     OUTBOUND_CLIENT_CERT_PASSWORD="<certificate-password>" \
   --output json
 ```
+| Flag | Description |
+|---|---|
+| `az webapp config appsettings set` | Creates or updates the app settings that the Spring Boot app uses for inbound and outbound mTLS behavior. |
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Selects the web app whose settings will be updated. |
+| `--settings ...` | Stores the allowed client certificate names, optional thumbprints, outbound PKCS#12 path, and password as app settings. |
+| `--output json` | Returns the updated app-settings payload as JSON. |
+
 
 ### 3. Test with curl
 

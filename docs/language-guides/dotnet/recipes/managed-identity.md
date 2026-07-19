@@ -64,6 +64,13 @@ az webapp identity assign \
   --name "$WEB_APP_NAME" \
   --output json
 ```
+| Flag | Description |
+|---|---|
+| `az webapp identity assign` | Enables a system-assigned managed identity on the web app. |
+| `--resource-group "$RESOURCE_GROUP_NAME"` | Targets the resource group that contains the app. |
+| `--name "$WEB_APP_NAME"` | Selects the web app that will receive the managed identity. |
+| `--output json` | Returns the identity object, including `principalId`, `clientId`, and `type`, as JSON. |
+
 
 Capture principal ID:
 
@@ -74,6 +81,10 @@ export WEB_APP_PRINCIPAL_ID=$(az webapp identity show \
   --query "principalId" \
   --output tsv)
 ```
+| Command | Description |
+|---|---|
+| `export WEB_APP_PRINCIPAL_ID=$(az webapp identity show --resource-group "$RESOURCE_GROUP_NAME" --name "$WEB_APP_NAME" --query "principalId" --output tsv)` | Queries the web app identity object, selects the `principalId` field, and stores that object ID in `WEB_APP_PRINCIPAL_ID` for later RBAC commands. |
+
 
 ### 2) Grant RBAC on target resource
 
@@ -87,6 +98,15 @@ az role assignment create \
   --scope "/subscriptions/<subscription-id>/resourceGroups/<rg-name>/providers/Microsoft.KeyVault/vaults/<vault-name>" \
   --output json
 ```
+| Flag | Description |
+|---|---|
+| `az role assignment create` | Creates an Azure RBAC role assignment for the managed identity. |
+| `--assignee-object-id "$WEB_APP_PRINCIPAL_ID"` | Uses the web app managed identity principal object ID as the assignee. |
+| `--assignee-principal-type ServicePrincipal` | Declares that the assignee object is a service principal-backed managed identity. |
+| `--role "Key Vault Secrets User"` | Grants permission to read secret values from the target Key Vault. |
+| `--scope "/subscriptions/.../vaults/<vault-name>"` | Limits the role assignment to the specified Key Vault resource scope. |
+| `--output json` | Returns the created role-assignment record as JSON. |
+
 
 ### 3) Add Azure SDK packages
 

@@ -83,6 +83,13 @@ az webapp identity assign \
   --name "$APP_NAME" \
   --output json
 ```
+| Flag | Description |
+|---|---|
+| `az webapp identity assign` | Enables a system-assigned managed identity on the web app. |
+| `--resource-group "$RG"` | Targets the resource group that contains the app. |
+| `--name "$APP_NAME"` | Selects the web app that will receive the managed identity. |
+| `--output json` | Returns the identity object, including `principalId`, `clientId`, and `type`, as JSON. |
+
 
 Masked output example:
 
@@ -103,6 +110,10 @@ export APP_PRINCIPAL_ID=$(az webapp identity show \
   --query principalId \
   --output tsv)
 ```
+| Command | Description |
+|---|---|
+| `export APP_PRINCIPAL_ID=$(az webapp identity show --resource-group "$RG" --name "$APP_NAME" --query principalId --output tsv)` | Queries the web app identity object, selects the `principalId` field, and stores that object ID in `APP_PRINCIPAL_ID` for later RBAC commands. |
+
 
 ### Assign least-privilege RBAC role
 
@@ -118,6 +129,11 @@ az role assignment create \
   --scope "$KV_ID" \
   --output json
 ```
+| Command | Description |
+|---|---|
+| `export KV_ID="/subscriptions/<subscription-id>/resourceGroups/$RG/providers/Microsoft.KeyVault/vaults/<vault-name>"` | Builds the full Key Vault resource ID used as the RBAC scope. |
+| `az role assignment create --assignee-object-id "$APP_PRINCIPAL_ID" --assignee-principal-type ServicePrincipal --role "Key Vault Secrets User" --scope "$KV_ID" --output json` | Grants the web app managed identity permission to read secrets from that Key Vault. |
+
 
 For Azure SQL/Cosmos/Storage, change role and scope accordingly.
 
@@ -152,6 +168,11 @@ Use the same code locally after:
 az login
 az account set --subscription "<subscription-id>"
 ```
+| Command | Description |
+|---|---|
+| `az login` | Authenticates the local Azure CLI session so `DefaultAzureCredential` can reuse your developer identity. |
+| `az account set --subscription "<subscription-id>"` | Makes the chosen subscription the default target for later local Azure CLI commands. |
+
 
 No branching logic is needed between local and cloud identity paths.
 
