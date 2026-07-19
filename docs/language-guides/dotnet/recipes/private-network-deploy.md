@@ -75,6 +75,7 @@ INTEGRATION_SUBNET_NAME="snet-appsvc-integration"
 PRIVATE_ENDPOINT_SUBNET_NAME="snet-private-endpoints"
 SQL_SERVER_NAME="sql-dotnet-guide"
 KEY_VAULT_NAME="kv-dotnet-guide"
+STORAGE_NAME="stdotnetguideabc123"
 ```
 
 | Command/Parameter | Purpose |
@@ -87,6 +88,7 @@ KEY_VAULT_NAME="kv-dotnet-guide"
 | `PRIVATE_ENDPOINT_SUBNET_NAME="snet-private-endpoints"` | Names the subnet that hosts private endpoint NICs. |
 | `SQL_SERVER_NAME="sql-dotnet-guide"` | Identifies the Azure SQL server used in the example. |
 | `KEY_VAULT_NAME="kv-dotnet-guide"` | Identifies the Key Vault used with managed identity. |
+| `STORAGE_NAME="stdotnetguideabc123"` | Identifies the Azure Storage account reached over a private endpoint. |
 
 ### Step 2: Create the VNet and required subnets
 
@@ -179,7 +181,59 @@ az network private-dns link vnet create --resource-group "$RG" --zone-name "priv
 !!! warning "DNS is part of the deployment"
     Private endpoints without private DNS links usually fail at runtime even when the endpoint itself shows as created.
 
-### Step 5: Grant access and configure the app
+### Step 5: Reach a firewalled Storage account over a private endpoint
+
+If the app also uses Azure Storage (Blob, Queue, Table, or Files), wire it over a private endpoint with its own Private DNS zone and DNS zone group, then close the account's public network access. This mirrors the SQL and Key Vault pattern above.
+
+```bash
+STORAGE_ID="$(az storage account show --resource-group "$RG" --name "$STORAGE_NAME" --query id --output tsv)"
+
+az network private-endpoint create --resource-group "$RG" --name "pe-storage-dotnet-guide" --vnet-name "$VNET_NAME" --subnet "$PRIVATE_ENDPOINT_SUBNET_NAME" --private-connection-resource-id "$STORAGE_ID" --group-id blob --connection-name "pe-storage-dotnet-guide-connection"
+
+az network private-dns zone create --resource-group "$RG" --name "privatelink.blob.core.windows.net"
+az network private-dns link vnet create --resource-group "$RG" --zone-name "privatelink.blob.core.windows.net" --name "storage-link" --virtual-network "$VNET_NAME" --registration-enabled false
+az network private-endpoint dns-zone-group create --resource-group "$RG" --endpoint-name "pe-storage-dotnet-guide" --name "pe-storage-dotnet-guide-zonegroup" --private-dns-zone "privatelink.blob.core.windows.net" --zone-name blob
+
+az storage account update --resource-group "$RG" --name "$STORAGE_NAME" --public-network-access Disabled --default-action Deny
+```
+
+| Command/Parameter | Purpose |
+|-------------------|---------|
+| `STORAGE_ID="$(...)"` | Stores the storage account resource ID in a shell variable. |
+| `az storage account show` | Reads the storage account metadata. |
+| `--resource-group "$RG"` | Selects the resource group containing the storage account. |
+| `--name "$STORAGE_NAME"` | Targets the storage account. |
+| `--query id` | Returns only the storage account resource ID. |
+| `--output tsv` | Formats the ID as plain text for shell assignment. |
+| `az network private-endpoint create` | Creates a private endpoint for the storage account. |
+| `--name "pe-storage-dotnet-guide"` | Names the storage private endpoint. |
+| `--vnet-name "$VNET_NAME"` | Places the endpoint in the selected VNet. |
+| `--subnet "$PRIVATE_ENDPOINT_SUBNET_NAME"` | Uses the subnet reserved for private endpoints. |
+| `--private-connection-resource-id "$STORAGE_ID"` | Connects the endpoint to the storage account resource. |
+| `--group-id blob` | Targets the Blob service private link subresource. |
+| `--connection-name "pe-storage-dotnet-guide-connection"` | Names the storage private link connection object. |
+| `az network private-dns zone create` | Creates the private DNS zone for Blob storage. |
+| `--name "privatelink.blob.core.windows.net"` | Uses the required privatelink zone name for Blob storage. |
+| `az network private-dns link vnet create` | Links the storage private DNS zone to the VNet. |
+| `--zone-name "privatelink.blob.core.windows.net"` | Selects the storage private DNS zone. |
+| `--name "storage-link"` | Names the storage VNet DNS link. |
+| `--registration-enabled false` | The zone is for resolution only, not auto-registration. |
+| `az network private-endpoint dns-zone-group create` | Binds the private endpoint's A record into the zone automatically. |
+| `--endpoint-name "pe-storage-dotnet-guide"` | Targets the storage private endpoint. |
+| `--name "pe-storage-dotnet-guide-zonegroup"` | Names the DNS zone group on the endpoint. |
+| `--private-dns-zone "privatelink.blob.core.windows.net"` | Selects the private DNS zone to bind. |
+| `--zone-name blob` | Matches the Blob subresource group used on the private endpoint. |
+| `az storage account update` | Updates the storage account network configuration. |
+| `--public-network-access Disabled` | Turns off the public endpoint; only private endpoints can reach the account. |
+| `--default-action Deny` | Denies any traffic not matched by an explicit network rule. |
+
+!!! warning "Always resolve the standard FQDN"
+    Point app settings and code at `https://${STORAGE_NAME}.blob.core.windows.net`. The Private DNS zone resolves that standard name to the private endpoint IP. Never hardcode the `privatelink.` hostname in app settings — it masks real resolution failures and breaks when the zone or endpoint changes.
+
+!!! note "Public access vs. authorization are separate"
+    Disabling public network access controls the **network path** only. The app's managed identity still needs a data-plane role such as **Storage Blob Data Contributor** to read or write data. See [App Service to Azure Storage connectivity](../../../platform/storage-connectivity.md).
+
+### Step 6: Grant access and configure the app
 
 ```bash
 WEB_APP_PRINCIPAL_ID="$(az webapp identity show --resource-group "$RG" --name "$APP_NAME" --query principalId --output tsv)"
@@ -237,7 +291,7 @@ var sqlConnection = new SqlConnection(builder.Configuration.GetConnectionString(
 | `new SqlConnection(builder.Configuration.GetConnectionString("SqlServer"))` | Opens the SQL connection using the configured server and database settings. |
 | `AccessToken = sqlToken` | Authenticates SQL connections without embedding passwords in configuration. |
 
-### Step 6: Validate the private deployment
+### Step 7: Validate the private deployment
 
 ```bash
 az webapp vnet-integration list --resource-group "$RG" --name "$APP_NAME" --output table
