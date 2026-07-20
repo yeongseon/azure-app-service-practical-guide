@@ -652,3 +652,31 @@ screenshots:
   diff_threshold: 0.02
   captured: '2026-07-18'
   verified: '2026-07-18'
+- id: best-practices--common-anti-patterns--01-diagnose-and-solve
+  file: best-practices/common-anti-patterns/best-practices--common-anti-patterns--01-diagnose-and-solve.webp
+  alt: 'Diagnose and solve problems blade for a Web App with a search box reading "Search for common problems or tools", a Refresh action, and a Feedback action. Two tabs are visible — Common Solutions (active) and AI-powered Diagnostics (preview). A Risk alerts section shows a single Availability card with a red X icon, the text "2 Critical", and a "View more details" link. The Troubleshooting categories section contains seven cards: Availability and Performance (links Application Logs, App Down Workflow, Web App Down), Configuration and Management (links Investigate EasyAuth errors, IP Address Configuration, All Scaling Operations), Risk Assessments (links Availability risks, Configuration risks), Deployment (link Troubleshoot), Networking (link Troubleshoot), Diagnostic Tools (links Auto-Heal, Network Troubleshooter, Advanced Application Restart), and Load Test your App (link Create Load Test). A Popular troubleshooting tools section at the bottom lists Application Logs, App Down Workflow, Web App Down, and Web App Slow as direct links.'
+  page: best-practices/common-anti-patterns
+  diff_threshold: 0.02
+  captured: '2026-07-20'
+  verified: '2026-07-20'
+- id: best-practices--deployment--01-deployment-center
+  file: best-practices/deployment/best-practices--deployment--01-deployment-center.webp
+  alt: Deployment Center blade for a Web App with four tabs — Settings (active), Containers (new), Logs, and FTPS Credentials. The command bar shows Save, Discard, Refresh, Browse, Sync, and Send us your feedback actions. A prominent blue info banner reads "You are now in the production slot, which is not recommended for setting up CI/CD" with a "Learn more" link. The body explains "Deploy and build code from your preferred source and build provider" with another Learn more link, followed by a required Source field whose dropdown shows the placeholder text "Select a code source" and is currently empty. The left navigation shows the Deployment group expanded with Deployment slots and Deployment Center (active) entries.
+  page: best-practices/deployment
+  diff_threshold: 0.02
+  captured: '2026-07-20'
+  verified: '2026-07-20'
+- id: best-practices--reliability--01-health-check
+  file: best-practices/reliability/best-practices--reliability--01-health-check.webp
+  alt: Health check blade for a Web App with two tabs — Health check (active) and Instances — and a command bar showing Save, Discard, Refresh, Troubleshoot, Metrics, and Send us your feedback actions. The first blue info banner reads "Your site has a single instance which will not be removed if it becomes unhealthy. However, after one hour of continuous unhealthy pings, the instance will be replaced. You can still set up Azure Monitor Alerts based on the health status." The second blue info banner reads "Health check is being moved to Configuration. Click here to go to the new experience." A descriptive line explains "Health check increases your application's availability by removing unhealthy instances from the load balancer. If your instance remains unhealthy, it will be replaced" with a Learn more link. The Health check enablement checkbox below is unchecked, so no path or threshold fields are visible. The left navigation shows Monitoring expanded with Alerts, Metrics, Logs, Health check (active), and Application Insights entries.
+  page: best-practices/reliability
+  diff_threshold: 0.02
+  captured: '2026-07-20'
+  verified: '2026-07-20'
+- id: best-practices--scaling--01-scale-out
+  file: best-practices/scaling/best-practices--scaling--01-scale-out.webp
+  alt: Scale out (App Service plan) blade for a Linux plan with a Refresh button and a Send us your feedback action. The Pricing plan section lists Current plan (Premium v3 P0V3 with a Change link), Price (instance) 0.091 USD/hour (66.065 USD/month), Memory (GB) 4, Maximum scale (instance) 30, Active instance count 1, Maximum available zones 3 with a Get more info link, and a Zone Redundancy checkbox that is unchecked alongside an info banner reading "Minimum of two instances required." The Scaling section explains manual versus autoscale behavior and presents three Scale out method radio buttons — Manual (selected) with the subtitle "Maintain a constant instance count for your application", Automatic with "Platform managed scale out and in based on traffic", and Rules Based with "User defined rules to scale on a schedule or based on any app metric". An Instance count slider is set to 1, an Async scaling checkbox below it is unchecked, and Save and Discard buttons are at the bottom of the blade.
+  page: best-practices/scaling
+  diff_threshold: 0.02
+  captured: '2026-07-20'
+  verified: '2026-07-20'
