@@ -719,3 +719,11 @@ screenshots:
   diff_threshold: 0.02
   captured: '2026-07-20'
   verified: '2026-07-20'
+
+- id: best-practices--mtls--01-client-cert-config
+  file: best-practices/mtls/best-practices--mtls--01-client-cert-config.webp
+  alt: 'Configuration General settings blade for a Web App scrolled down to the Incoming client certificates section, with General settings (active), Stack settings, Health check, Path mappings, and Error pages tabs visible at the top and a Refresh command bar action beneath the tabs. Above the section the remaining transport controls are visible: Session affinity proxy (unchecked), HTTPS only (unchecked), Minimum Inbound TLS Version (1.2), SCM Minimum Inbound TLS Version (1.2), Minimum Inbound TLS Cipher Suite (TLS_RSA_WITH_AES_128_CBC_SHA, Default) with a Change link, and End-to-end TLS encryption (unchecked). A Debugging section shows Remote debugging (unchecked). The Incoming client certificates section presents Client certificate mode as four radio options — Required (with description "All requests must be authenticated through a client certificate."), Optional (with description "Clients will be prompted for a certificate, if no certificate is provided fallback to SSO or other means of authentication. Unauthenticated requests will be blocked."), Optional Interactive User (with description "Clients will not be prompted for a certificate by default. Unless the request can be authenticated through other means (like SSO), it will be blocked."), and Ignore (selected, with description "No client authentication is required. Unauthenticated requests will not be blocked."). Apply and Discard buttons are at the bottom.'
+  page: best-practices/mtls
+  diff_threshold: 0.02
+  captured: '2026-07-20'
+  verified: '2026-07-20'
