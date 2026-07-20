@@ -638,6 +638,265 @@ The `Diagnose and solve problems` blade is the Portal entry point that surfaces 
 
 #### Portal view: Metrics blade (memory pressure anchor)
 
+![Azure portal Metrics blade for app-test-20251107 with top toolbar New chart, Refresh, Share and a Local Time: Last 24 hours (Automatic) selector. A Chart Title heading sits above a chart-level command bar with Add metric, disabled Add filter, disabled Apply splitting, Line chart, Drill into Logs, New alert rule, and Save to dashboard. The chart configuration row shows Scope app-test-20251107, Metric Namespace App Service standard... (truncated), Metric Select metric placeholder, and Aggregation Select aggregation placeholder. The empty chart canvas (Y-axis 0-100, X-axis Jun 07 / 6 AM / 12 PM / 6 PM, UTC+09:00) is overlaid with three Sample data help cards titled Filter + Split, Plot multiple metrics, and Build custom dashboards with descriptions and Learn more links.](../../assets/troubleshooting/metrics/01-metrics-empty.png)
+
+The `Metrics` blade is the Portal entry point for the memory-pressure KQL queries below. Click `Add metric` in the chart command bar and choose a memory or response-time signal from the `App Service standard` metric namespace shown in the configuration row - this surfaces the same dimensions the KQL snippets aggregate from `AppServiceHTTPLogs`. The `Drill into Logs` button on the same toolbar pivots from a metric spike directly into a Log Analytics query, which is faster than typing the queries below from scratch. The chart in this capture is empty (no metric selected yet), and the `Sample data` help cards `Filter + Split`, `Plot multiple metrics`, and `Build custom dashboards` walk you through the standard setup for ongoing memory-pressure monitoring.
+
+```kusto
+AppServiceHTTPLogs
+| where TimeGenerated > ago(2h)
+| summarize total=count(), errors5xx=countif(ScStatus >= 500) by CsUriStem
+| order by total desc
+```
+
+```kusto
+AppServiceHTTPLogs
+| where TimeGenerated > ago(2h)
+| summarize avgMs=avg(TimeTaken), p95Ms=percentile(TimeTaken, 95), maxMs=max(TimeTaken) by CsUriStem, ScStatus
+| order by p95Ms desc
+```
+
+```kusto
+AppServiceConsoleLogs
+| where TimeGenerated > ago(2h)
+| where ResultDescription has_any ("WORKER TIMEOUT", "OutOfMemory", "OOM", "Killed")
+| project TimeGenerated, ResultDescription
+| order by TimeGenerated desc
+```
+
+```kusto
+AppServicePlatformLogs
+| where TimeGenerated > ago(2h)
+| project TimeGenerated, Level, Message
+| order by TimeGenerated desc
+```
+
+### 3.12 Verification checklist
+
+Use this checklist to determine whether the lab produced useful memory-pressure evidence:
+
+- [ ] Leak endpoint count increased significantly.
+- [ ] `MemAvailable` dropped materially from baseline.
+- [ ] `pgscan_kswapd` and/or `pgscan_direct` increased.
+- [ ] Swap counters changed (`SwapFree`, `pswp*`).
+- [ ] KQL HTTP data shows endpoint timing under pressure.
+- [ ] Console/platform logs captured (even if no errors).
+
+### 3.13 Common execution pitfalls
+
+| Pitfall | Symptom | Fix |
+|---|---|---|
+| Wrong template path | Deployment fails | Use `labs/memory-pressure/main.bicep` |
+| App not deployed | `/leak` returns 404 | Re-run `az webapp deploy` and restart |
+| Workspace query empty | No logs returned | Confirm diagnostic settings attached to web app |
+| Trigger URL includes trailing slash mismatch | malformed URL | Script already normalizes trailing slash |
+
+### 3.14 Runbook decision tree
+
+<!-- diagram-id: troubleshooting-lab-guides-memory-pressure-diagram-6 -->
+```mermaid
+flowchart TD
+    A[Run trigger.sh] --> B{Did /leak and /heavy return 200 mostly?}
+    B -->|No| C[Investigate immediate app/runtime issue]
+    B -->|Yes| D[Collect /diag/proc snapshots]
+    D --> E{Did MemAvailable drop and vmstat rise?}
+    E -->|No| F[Pressure not reproduced, increase trigger or validate deploy]
+    E -->|Yes| G[Query HTTP/Console/Platform logs]
+    G --> H[Record experiment log and verdict]
+```
+
+---
+
+## 4) Experiment Log
+
+### 4.1 Artifact inventory used
+
+All values below are taken directly from sanitized artifacts:
+
+`labs/memory-pressure/artifacts-sanitized/`
+
+| Category | Files used |
+|---|---|
+| Baseline | `baseline/diag-stats.json`, `baseline/diag-proc.json`, `baseline/app-config.json` |
+| Trigger responses | `trigger/leak-responses-20260404T053438Z.csv`, `trigger/heavy-responses-20260404T053438Z.csv` |
+| Mid/Post diagnostics | `trigger/diag-stats-midleak-20260404T053438Z.json`, `trigger/diag-proc-midleak-20260404T053438Z.json`, `trigger/diag-stats-postheavy-20260404T053438Z.json`, `trigger/diag-proc-postheavy-20260404T053438Z.json` |
+| KQL exports | `trigger/kql-http-20260404T060610Z.json`, `trigger/kql-console-20260404T060610Z.json`, `trigger/kql-platform-20260404T060610Z.json` |
+
+### 4.2 Baseline measurements
+
+From `baseline/diag-proc.json` and `baseline/diag-stats.json`:
+
+| Metric | Baseline value |
+|---|---|
+| `MemTotal` | `1955532 kB` |
+| `MemFree` | `102240 kB` |
+| `MemAvailable` | `523896 kB` |
+| `Cached` | `486820 kB` |
+| `SwapTotal` | `4194300 kB` |
+| `SwapFree` | `3809772 kB` |
+| `pgscan_kswapd` | `6114788` |
+| `pgscan_direct` | `214825` |
+| `pgsteal_kswapd` | `2839945` |
+| `pswpin` | `163021` |
+| `pswpout` | `223248` |
+| `allocstall_normal` | `1122` |
+| `allocstall_movable` | `867` |
+| PSI some | `avg10=0.02 avg60=0.72 avg300=0.69` |
+| PSI full | `avg10=0.01 avg60=0.58 avg300=0.56` |
+| Load average | `0.10 0.20 0.35 3/751 1941` |
+| App `request_count` | `4` |
+| App `leak_block_count` | `0` |
+
+### 4.3 Mid-leak snapshot
+
+From `trigger/diag-proc-midleak-20260404T053438Z.json` and `trigger/diag-stats-midleak-20260404T053438Z.json`:
+
+| Metric | Mid-leak value |
+|---|---|
+| `MemFree` | `35660 kB` |
+| `MemAvailable` | `44760 kB` |
+| `Cached` | `160384 kB` |
+| `SwapFree` | `2459256 kB` |
+| `pgscan_kswapd` | `7789786` |
+| `pgscan_direct` | `544771` |
+| `pgsteal_kswapd` | `3466908` |
+| `pswpin` | `248242` |
+| `pswpout` | `615703` |
+| `allocstall_normal` | `1214` |
+| `allocstall_movable` | `2195` |
+| PSI some | `avg10=72.06 avg60=38.69 avg300=11.36` |
+| PSI full | `avg10=60.77 avg60=33.35 avg300=9.79` |
+| Load average | `5.33 1.48 0.75 2/756 1945` |
+| `request_count` | `32` |
+| `leak_block_count` | `30` |
+
+### 4.4 Post-heavy snapshot
+
+From `trigger/diag-proc-postheavy-20260404T053438Z.json` and `trigger/diag-stats-postheavy-20260404T053438Z.json`:
+
+| Metric | Post-heavy value |
+|---|---|
+| `MemFree` | `36576 kB` |
+| `MemAvailable` | `63376 kB` |
+| `Cached` | `187956 kB` |
+| `SwapFree` | `2376396 kB` |
+| `pgscan_kswapd` | `7890915` |
+| `pgscan_direct` | `613993` |
+| `pgsteal_kswapd` | `3508482` |
+| `pswpin` | `274069` |
+| `pswpout` | `651775` |
+| `allocstall_normal` | `1234` |
+| `allocstall_movable` | `2461` |
+| PSI some | `avg10=59.70 avg60=41.37 avg300=13.06` |
+| PSI full | `avg10=48.58 avg60=35.00 avg300=11.11` |
+| Load average | `6.35 1.83 0.87 1/762 1945` |
+| `request_count` | `47` |
+| `leak_block_count` | `30` |
+| `heavy` endpoint count (single worker) | `14` |
+
+### 4.5 Delta analysis: baseline → mid-leak
+
+| Metric | Baseline | Mid-leak | Delta | Interpretation |
+|---|---:|---:|---:|---|
+| `MemAvailable` (kB) | 523,896 | 44,760 | -479,136 | Major headroom collapse |
+| `SwapFree` (kB) | 3,809,772 | 2,459,256 | -1,350,516 | Active swap consumption |
+| `pgscan_kswapd` | 6,114,788 | 7,789,786 | +1,674,998 | Background reclaim intensified |
+| `pgscan_direct` | 214,825 | 544,771 | +329,946 | Direct reclaim pressure rose |
+| `pswpout` | 223,248 | 615,703 | +392,455 | Swap-out acceleration |
+| `allocstall_movable` | 867 | 2,195 | +1,328 | Allocation stalls increased |
+
+### 4.6 Delta analysis: baseline → post-heavy
+
+| Metric | Baseline | Post-heavy | Delta | Interpretation |
+|---|---:|---:|---:|---|
+| `MemAvailable` (kB) | 523,896 | 63,376 | -460,520 | Sustained low headroom |
+| `SwapFree` (kB) | 3,809,772 | 2,376,396 | -1,433,376 | Continued swap usage |
+| `pgscan_kswapd` | 6,114,788 | 7,890,915 | +1,776,127 | Reclaim still elevated |
+| `pgscan_direct` | 214,825 | 613,993 | +399,168 | Direct reclaim remained high |
+| `pswpin` | 163,021 | 274,069 | +111,048 | Swap-in activity increased |
+| `pswpout` | 223,248 | 651,775 | +428,527 | Swap-out sustained high |
+| `allocstall_movable` | 867 | 2,461 | +1,594 | Ongoing allocation pressure |
+
+#### 4.6.1 Portal Metrics: Max memory working set chart (portal verification)
+
+To cross-verify the peak memory pressure evidence captured tabularly in §4.3 (mid-leak `MemAvailable = 44760 kB`, `MemFree = 35660 kB`) and §4.4 (post-heavy `SwapFree` dropped by ~1.4 GB from baseline), the Metrics blade was opened against the same Web App from a fresh live reproduction and the App Service standard "Memory working set" metric was plotted with `Max` aggregation over a 1-minute grain in UTC:
+
+[[[ shot("troubleshooting--metrics--08-mempressure-memory-working-set") ]]]
+
+**Purpose**: Provide an independent Portal-side visualization of the same memory pressure period whose kernel-counter snapshots are stored in `trigger/diag-proc-midleak-*.json` and `trigger/diag-proc-postheavy-*.json`, so a reviewer can confirm the two sharp memory spikes captured by App Service's own platform metric agent align with the trigger phases documented in §4.3 (mid-leak, spike 1) and §4.4 (post-heavy, spike 2). The `Max` aggregation is chosen over the default `Avg` because worker memory pressure is transient and 1-minute averages smooth the peak down to under 200 MB; only the per-sample Max exposes the true worker RSS during allocation surges.
+
+**Look for**:
+
+- Blade heading reads "app-labmem-hch2g6gq7u63u | Metrics" and the sub-heading reads "Web App" — this confirms the chart was rendered from the same Web App resource used for this lab's exported `diag-proc` snapshots.
+- The metric pill row shows a single pill "app-labmem-hch2g6gq7u6... Memory working set, Max" — Metric Namespace is `App Service standard metrics`, Metric is `Memory working set`, Aggregation is `Max`. The App Service `Memory working set` metric reports the resident set size (RSS) of the worker container as observed by the platform metric agent.
+- The chart title reads "Max Memory working set for app-labmem-hch2g6gq7u63u" — the `Max` prefix confirms the aggregation dropdown was set to Max and not the default Avg. If the title instead reads `Avg Memory working set...`, the aggregation was left on default and the transient peak is being averaged away.
+- The time selector reads "UTC Time: Last hour (1 minute)" — the default Local Time was switched to UTC so the visual peaks align byte-for-byte with the UTC timestamps in `kql-http-*.json` and the `TimeGenerated` column of the KQL result in §4.8.1. The 1-minute grain is the finest granularity supported for the last-hour window.
+- Two distinct memory spikes are visible: the first peak between 200MB and 300MB shortly after 4:15 UTC corresponds to the `/leak` trigger phase (baseline `MemAvailable = 523896 kB` in §4.2 fell to `44760 kB` mid-leak in §4.3), and the second peak at ~1.1GB just before 4:30 UTC corresponds to the `/heavy` trigger phase which allocates large transient buffers per request.
+- The 1.1GB peak is well below the B1 SKU's 1.75GB memory ceiling — this is why the hypothesis verdict in §4.11 is `Supported (pre-failure stage)` rather than a full outage confirmation: the pressure was demonstrably active (see PSI `avg10=72.06` in §4.3) but the memory ceiling was not crossed, and §4.9 confirms zero `WORKER TIMEOUT` / OOM records for this window.
+- The legend value `1.1GB` on the right side matches the visible peak amplitude on the chart canvas — sanity check that the Max aggregation is producing sane values and not a stale cached reading.
+
+**Expected result**: The two memory spikes visible in the Portal chart (a smaller spike between 200MB and 300MB shortly after 4:15 UTC and a larger spike near 1.1GB just before 4:30 UTC) fall within the same trigger window as the two `diag-proc` snapshot points captured in §4.3 (mid-leak) and §4.4 (post-heavy). Because the Portal `Max` metric reports platform-side RSS observed from the container and the app-side `/diag/proc` endpoint reports kernel `MemAvailable` from inside the container, the two signals should agree in shape (both show a rise-then-plateau pattern) even though their units differ (`Memory working set` in bytes vs `MemAvailable` in kB). This cross-view agreement rules out the alternative hypothesis that the app's own diagnostic endpoint is misreporting memory state due to a Python-side `/proc/meminfo` parse bug. If instead the Portal chart showed a flat sub-100MB line while `/diag/proc` reported `MemAvailable = 44760 kB`, the two views would disagree and the `diag-proc` export would need to be treated as untrusted before drawing pressure conclusions from §4.5's delta table.
+
+**Next step**: If a future reproduction shows a peak beyond ~1.6GB on the B1 SKU (approaching the 1.75GB ceiling) accompanied by ScStatus 5xx entries in the §4.8.1 KQL results, the hypothesis verdict should be re-graded to `Confirmed with outage` because the pre-failure stage would have progressed to worker recycle or OOM kill. Conversely, if the peak barely exceeds ~300MB even after a full `/heavy` trigger, the app's `heavy` handler may not be allocating the intended per-request buffer — inspect `apps/python-flask/app.py` for a memory-allocation regression before re-running `trigger.sh`.
+
+### 4.7 Trigger response evidence
+
+#### Leak phase CSV (`100` rows)
+
+From `leak-responses-20260404T053438Z.csv`:
+
+| Metric | Value |
+|---|---:|
+| Requests | 100 |
+| HTTP 5xx | 0 |
+| Avg latency (s) | 1.010 |
+| p95 latency (s) | 1.784 |
+| Max latency (s) | 3.317 |
+
+Sample rows:
+
+| Request | Status | Time (s) |
+|---:|---:|---:|
+| 1 | 200 | 0.783594 |
+| 48 | 200 | 1.366292 |
+| 71 | 200 | 1.999072 |
+| 94 | 200 | 3.010348 |
+| 96 | 200 | 3.317367 |
+
+#### Heavy phase evidence
+
+The artifact `heavy-responses-20260404T053438Z.csv` is captured as a concatenated one-line stream. Status entries remain 200 in parsed segments, and KQL HTTP export is used as primary timing source.
+
+From KQL HTTP export (`/heavy` endpoint rows):
+
+| Metric | Value |
+|---|---:|
+| `/heavy` rows in export window | 100 |
+| HTTP status | all 200 |
+| Avg `TimeTaken` (ms) | 4,983.5 |
+| p95 `TimeTaken` (ms) | 14,815 |
+| Max `TimeTaken` (ms) | 15,630 |
+
+### 4.8 KQL HTTP summary (real export)
+
+From `kql-http-20260404T060610Z.json`:
+
+| Endpoint | Status distribution |
+|---|---|
+| `/leak` | 200: 200 |
+| `/heavy` | 200: 100 |
+| `/diag/stats` | 200: 6 |
+| `/diag/proc` | 200: 4 |
+| `/health` | 200: 2 |
+| `/diag/env` | 200: 1 |
+| `/` | 200: 1 |
+
+Total rows: **314**, all status 200.
+
+#### 4.8.1 Log Analytics KQL query for `/heavy` latency (portal verification)
+
+To cross-verify the `/heavy` endpoint latency evidence summarized in §4.7 (heavy phase: avg `TimeTaken` 4,983 ms, p95 14,815 ms, max 15,630 ms across a 100-row sanitized window) and §4.8 (aggregate 314 rows, all status 200), the Log Analytics workspace Logs blade was opened against the same workspace from a fresh live reproduction and a top-10 latency query was executed interactively against the current live data:
+
 [[[ shot("troubleshooting--log-analytics--08-mempressure-heavy-latency-kql") ]]]
 
 **Purpose**: Provide an independent Portal-side execution of a top-10 `/heavy` latency query so a reviewer can confirm that the tabular latency summary in §4.7 (max `TimeTaken` 15,630 ms across the 100-row sanitized window) is a faithful reduction of the raw `AppServiceHTTPLogs` rows the Log Analytics service holds — and can also see that the live reproduction accumulated significantly higher tail latencies (max 58,613 ms in this capture) once the trigger was re-run and the worker was allowed to stay under memory pressure for longer than the original 100-row sample.

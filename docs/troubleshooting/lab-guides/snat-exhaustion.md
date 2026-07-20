@@ -438,6 +438,261 @@ done
 
 #### Portal view: Diagnose and solve (network and SNAT detector hub)
 
+![Azure portal Diagnose and solve problems blade for app-test-20251107 with a Search box, Common Solutions tab selected, and a Risk alerts panel showing Availability 2 Critical with View more details link. The Troubleshooting categories grid shows seven cards: Availability and Performance (links Application Logs, App Down Workflow, Web App Down), Configuration and Management (links Investigate EasyAuth errors, IP Address Configuration, All Scaling Operations), Risk Assessments (links Availability risks, Configuration risks), Deployment (Troubleshoot link), Networking (Troubleshoot link), Diagnostic Tools (links Auto-Heal, Network Troubleshooter, Advanced Application Restart), and Load Test your App (Create Load Test link). A Popular troubleshooting tools list at the bottom shows Application Logs, App Down Workflow, Web App Down, Web App Slow, and Process Full List.](../../assets/troubleshooting/diagnose-and-solve/01-overview.png)
+
+The `Diagnose and solve problems` hub is the Portal first-stop for SNAT investigations - the `Networking` troubleshoot card and the `Network Troubleshooter` link under `Diagnostic Tools` both pivot directly to detectors that surface SNAT port pressure and outbound IP saturation. The `Availability and Performance` card's `Web App Slow` detector also frequently lights up first under SNAT exhaustion because the worker queue fills with TCP-blocked requests. Click into `Networking` here to land on the same blade shown below, then verify the outbound IP list against the per-instance SNAT port budget referenced in section 1.3. After this top-down triage, the queries in section 3.9 quantify the `499`/`503` error rate the detector tiles only summarize.
+
+#### Portal view: Networking blade (outbound IP context)
+
+![Azure portal Networking blade for app-test-20251107 (Web App) with toolbar Refresh, Troubleshoot, Send us your feedback and a "Check your network configuration..." description with a Learn more link. Two-column layout: Inbound traffic configuration shows Public network access "Enabled with no access restrictions (Using default behavior)", App assigned address "Not configured", Private endpoints "0 private endpoints", Inbound IPv4 addresses <ip-redacted>, and Inbound IPv6 addresses <ipv6-redacted>. Outbound traffic configuration shows Virtual network integration "Not configured", Hybrid connections "Not configured", Outbound DNS "Default (Azure-provided)", and a long Outbound IPv4 addresses list (<ip-redacted>, <ip-redacted>, <ip-redacted>, ... ~30 platform-pool addresses) plus an Outbound IPv6 addresses list. Integration subnet configuration shows NAT gateway, Network security group, and User defined route all N/A. Left nav highlights Networking (under Favorites).](../../assets/troubleshooting/networking/01-networking-hub.png)
+
+The `Networking` blade is the Portal counterpart to the SNAT KQL queries below. The `Outbound traffic configuration` column confirms `Virtual network integration` is `Not configured` and shows the ~30 shared platform-pool `Outbound IPv4 addresses` (`<ip-redacted>`, `<ip-redacted>`, ...) that this app is multiplexing with other tenants - the exact root cause of SNAT port exhaustion under load. `NAT gateway`, `Network security group`, and `User defined route` all show `N/A` under `Integration subnet configuration`, which is the documented anti-pattern: a stateless outbound burst app has no dedicated SNAT pool and inherits the shared one. After confirming this state, run the queries below to quantify the resulting `499`/`503` errors.
+
+#### HTTP signal query
+
+```kusto
+AppServiceHTTPLogs
+| where TimeGenerated > ago(2h)
+| where CsHost has "azurewebsites"
+| where CsUriStem in ("/outbound", "/outbound-fixed", "/diag/net", "/health")
+| project TimeGenerated, CsUriStem, ScStatus, TimeTaken, CsHost
+| order by TimeGenerated desc
+```
+
+#### Console signal query
+
+```kusto
+AppServiceConsoleLogs
+| where TimeGenerated > ago(2h)
+| where ResultDescription has_any (
+    "WORKER TIMEOUT",
+    "SIGKILL",
+    "timed out",
+    "connection refused",
+    "Cannot assign requested address",
+    "EADDRNOTAVAIL"
+)
+| project TimeGenerated, ResultDescription
+| order by TimeGenerated desc
+```
+
+#### Platform signal query
+
+```kusto
+AppServicePlatformLogs
+| where TimeGenerated > ago(2h)
+| where Message has_any (
+    "warmup",
+    "Container",
+    "startup",
+    "timeout"
+)
+| project TimeGenerated, Level, Message
+| order by TimeGenerated desc
+```
+
+### 3.9 Azure CLI-based KQL execution (optional automation)
+
+```bash
+export WORKSPACE_ID="<log-analytics-workspace-id>"
+
+az monitor log-analytics query \
+  --workspace "$WORKSPACE_ID" \
+  --analytics-query "AppServiceHTTPLogs | where TimeGenerated > ago(2h) | where CsUriStem in ('/outbound','/outbound-fixed','/diag/net') | project TimeGenerated, CsUriStem, ScStatus, TimeTaken | order by TimeGenerated desc" \
+  --output json
+```
+
+| Command | Purpose |
+|---------|---------|
+| `az monitor log-analytics query --workspace "$WORKSPACE_ID" --analytics-query "AppServiceHTTPLogs | where TimeGenerated > ago(2h) | where CsUriStem in ('/outbound','/outbound-fixed','/diag/net') | project TimeGenerated, CsUriStem, ScStatus, TimeTaken | order by TimeGenerated desc" --output json` | Queries `AppServiceHTTPLogs` for recent `/outbound`, `/outbound-fixed`, and `/diag/net` requests so you can inspect status and latency during SNAT pressure. |
+| `--workspace "$WORKSPACE_ID" --analytics-query "AppServiceHTTPLogs | where TimeGenerated > ago(2h) | where CsUriStem in ('/outbound','/outbound-fixed','/diag/net') | project TimeGenerated, CsUriStem, ScStatus, TimeTaken | order by TimeGenerated desc" --output json` | Runs the KQL query against this Log Analytics workspace. |
+| `--analytics-query "AppServiceHTTPLogs | where TimeGenerated > ago(2h) | where CsUriStem in ('/outbound','/outbound-fixed','/diag/net') | project TimeGenerated, CsUriStem, ScStatus, TimeTaken | order by TimeGenerated desc" --output json` | Filters `AppServiceHTTPLogs` to `/outbound`, `/outbound-fixed`, and `/diag/net`, then projects `TimeGenerated`, `CsUriStem`, `ScStatus`, and `TimeTaken` ordered newest first. |
+| `--output json` | Returns the query result as JSON. |
+
+### 3.10 Validate recovery state
+
+```bash
+curl --silent --show-error "$APP_URL/diag/net"
+curl --silent --show-error "$APP_URL/diag/stats"
+curl --silent --show-error "$APP_URL/health"
+```
+
+If reachable and stable after pressure window, recovery evidence is present.
+
+## 4) Experiment Log
+
+This section is derived from actual sanitized lab artifacts:
+
+`labs/snat-exhaustion/artifacts-sanitized/`
+
+### 4.1 Artifact inventory used
+
+| Category | File |
+|---|---|
+| Baseline | `baseline/diag-stats.json` |
+| Baseline | `baseline/diag-net.json` |
+| Baseline | `baseline/diag-env.json` |
+| Baseline | `baseline/app-config.json` |
+| Baseline | `baseline/health.json` |
+| Trigger | `trigger/outbound-targeted-20260404T055433Z.csv` |
+| Trigger | `trigger/error-body-*_body-20260404T055433Z.txt` |
+| Trigger | `trigger/diag-net-before-20260404T053447Z.json` |
+| Trigger | `trigger/diag-net-posttrigger-20260404T054508Z.json` |
+| Trigger | `trigger/diag-net-recovered-20260404T055433Z.json` |
+| Trigger | `trigger/kql-http-20260404T060610Z.json` |
+| Trigger | `trigger/kql-console-20260404T060610Z.json` |
+| Trigger | `trigger/kql-platform-20260404T060610Z.json` |
+
+### 4.2 Baseline snapshot
+
+#### 4.2.1 `/diag/stats` baseline
+
+Raw signal:
+
+```json
+{"endpoint_counters":{"diag_stats":1},"outbound_call_counters":{"with-pooling":{"failures":0,"successes":0},"without-pooling":{"failures":0,"successes":0}},"pid":1907,"process_start_time":"2026-04-04T05:05:40.566103+00:00","request_count":1,"uptime_seconds":1642.522}
+```
+
+Interpretation:
+
+- Process was long-lived before trigger.
+- No outbound failures accumulated yet.
+
+#### 4.2.2 `/diag/net` baseline
+
+Raw signal:
+
+```json
+{"connection_count":10,"ip_local_port_range":{"end":"60999","start":"32768"},"sockstat":{"sockets":{"used":"10"},"tcp":{"alloc":"196","inuse":"5","mem":"18","orphan":"1","tw":"4"},"udp":{"inuse":"1","mem":"0"}}}
+```
+
+Interpretation:
+
+- Low active pressure.
+- Existing `tw=4` confirms normal TCP post-close behavior.
+
+### 4.3 Trigger output summary (targeted CSV)
+
+Source: `trigger/outbound-targeted-20260404T055433Z.csv`
+
+Derived summary:
+
+| Metric | Value |
+|---|---|
+| Total requests | 30 |
+| Transport failures (`000`) | 22 |
+| HTTP 200 | 8 |
+| Requests at ~60s | 22 |
+| Fastest successful request | `31.967409s` |
+| Slowest successful request | `57.227848s` |
+| Avg successful request time | `44.16s` |
+
+Selected rows:
+
+| Row | Status | Elapsed (s) |
+|---:|---:|---:|
+| 1 | 000 | 60.0002131 |
+| 2 | 200 | 36.500380 |
+| 3 | 200 | 53.071651 |
+| 5 | 000 | 60.0000175 |
+| 9 | 000 | 59.9991789 |
+| 14 | 200 | 32.898595 |
+| 20 | 000 | 60.0002442 |
+| 30 | 000 | 60.0002993 |
+
+### 4.4 Error-body sample evidence
+
+Sources:
+
+- `error-body-2_body-20260404T055433Z.txt`
+- `error-body-3_body-20260404T055433Z.txt`
+- `error-body-10_body-20260404T055433Z.txt`
+- `error-body-11_body-20260404T055433Z.txt`
+- `error-body-14_body-20260404T055433Z.txt`
+
+Aggregated findings:
+
+| Metric | Value |
+|---|---|
+| Sample files analyzed | 5 |
+| Files containing failures | 1 |
+| Aggregate failures | 1 |
+| Timeout text observed | `The read operation timed out` |
+
+Representative payload with failure:
+
+```json
+{"calls":20,"elapsedMs":35774,"failures":1,"mode":"without-pooling","sampleErrors":["The read operation timed out"],"successes":19,"target":"https://httpbin.org/get"}
+```
+
+### 4.5 Diag endpoint reachability during pressure
+
+| Checkpoint | Artifact | Observed |
+|---|---|---|
+| Pre-trigger | `diag-net-before-20260404T053447Z.json` | normal JSON (`connection_count=6`, `tw=0`) |
+| During/after pressure | `diag-net-posttrigger-20260404T054508Z.json` | `504.0 GatewayTimeout` |
+| Recovered | `diag-net-recovered-20260404T055433Z.json` | normal JSON (`connection_count=7`, `tw=1`) |
+
+This confirms transient unreachability during the failure window.
+
+### 4.6 HTTP KQL analysis
+
+Source: `kql-http-20260404T060610Z.json`
+
+Dataset size:
+
+- Total rows: **195**
+
+Status distribution:
+
+| Status | Count |
+|---:|---:|
+| 200 | 47 |
+| 202 | 2 |
+| 499 | 129 |
+| 503 | 17 |
+
+Endpoint-focused findings:
+
+| Metric | Value |
+|---|---|
+| `/outbound` total rows | 138 |
+| `/outbound` with 499 | 122 |
+| `/outbound` with 200 | 16 |
+| Rows with `TimeTaken >= 59000ms` | 123 |
+| `/outbound` rows with `499` and `TimeTaken >= 59000ms` | 118 |
+
+Interpretation:
+
+- HTTP telemetry matches timeout-dominated failure shape.
+- The near-60s cluster strongly aligns with outbound wait/timeout behavior.
+
+#### 4.6.1 Log Analytics KQL query for /outbound status distribution (portal verification)
+
+To cross-verify the `/outbound` status mix summarized in §4.6 (138 rows on `/outbound` from `kql-http-20260404T060610Z.json`, split 122 × 499 / 16 × 200) is a real property of the raw `AppServiceHTTPLogs` rows the Log Analytics service holds and not a JSON-parse artifact of the sanitized export, the Log Analytics workspace Logs blade was opened against the same workspace from a fresh live reproduction and a status-distribution query scoped to `/outbound` was executed interactively against the current live data:
+
+[[[ shot("troubleshooting--log-analytics--10-snat-outbound-status-distribution-kql") ]]]
+
+**Purpose**: Provide an independent Portal-side execution of a `/outbound`-scoped status distribution query so a reviewer can confirm that the dominant-499 signature in §4.6 (122 × 499 vs 16 × 200 = ~7.6:1 fail-to-success ratio) is a real property of the raw `AppServiceHTTPLogs` rows the Log Analytics service holds — and can also see that the failure mode reproduces with the same shape (majority 499, minority 200) when the trigger is re-run against a freshly deployed lab instance, with a slightly more aggressive fail-to-success ratio (152:12 = ~12.7:1) that reflects the fresh reproduction saturating SNAT ports for a longer sustained window than the original sanitized artifact captured.
+
+**Look for**:
+
+- Blade heading reads "log-labsnat-6kr7mkxulwioo | Logs" and the sub-heading reads "Log Analytics workspace" — this confirms the query ran against the same workspace attached to this lab's Web App via the `Microsoft.Insights/diagnosticSettings` resource declared in `labs/snat-exhaustion/main.bicep`, matching the workspace referenced by the sanitized JSON exports in §4.1.
+- The KQL editor shows exactly the query `AppServiceHTTPLogs | where TimeGenerated > ago(2h) | where CsUriStem == '/outbound' | summarize Count = count() by ScStatus | order by ScStatus asc` — the `CsUriStem == '/outbound'` filter is an exact string match so rows for `/health`, `/diag/stats`, or `/outbound-fixed` are excluded even though they may share the same trigger window. The 2-hour lookback covers both the trigger execution and the log-ingestion delay (typically ~2-5 minutes for `AppServiceHTTPLogs`).
+- The Results grid shows exactly 3 rows (pagination "1 - 3 of 3") — no other status class appeared on `/outbound` in this window. The absence of `202` is expected because this query is scoped to `CsUriStem == '/outbound'`. In the original sanitized export, the two `202` rows are SCM deployment traffic on the `.scm` host (`/api/deployments/latest` and `/api/zipdeploy`), not responses from `/outbound-fixed` in `labs/snat-exhaustion/app/app.py`.
+- The `499` row shows `Count 152` — this dominates the distribution at ~90% of all `/outbound` requests, matching the original §4.6's `122 × 499 / 138 total = ~88%` ratio and confirming the primary failure signature is a proxy-level abort (SNAT-blocked outbound calls that never returned a response before a downstream timeout closed the connection), not an application-side 5xx error.
+- The `200` row shows `Count 12` — these are the small number of `/outbound` requests that completed successfully, most likely the earliest requests in the trigger burst that ran before SNAT ports were exhausted. The App Service SNAT-per-instance default is 128 ports, and the trigger issues 200 concurrent `/outbound?calls=40` requests (each making 40 outbound `urllib.request.urlopen` calls with `Connection: close`, so each request needs up to 40 fresh SNAT ports), so the first ~3 requests can drain the port pool.
+- The `502` row shows `Count 4` — a low-volume tail absent from the sanitized §4.6 export. This capture proves only that a small minority of `/outbound` requests failed as platform gateway errors during the same saturation window; because `AppServiceConsoleLogs` were empty in this reproduction, do not attribute those four rows specifically to gunicorn's `--timeout=120` worker recycle.
+- Query duration in bottom left reads a small millisecond value (here `1s 531ms`) — confirming the workspace is not throttled and the query hit indexed data, so the returned row count and status distribution are authoritative and not a partial-scan timeout.
+
+**Expected result**: The 3 rows returned by the Portal show a dominant `499` count (>85% of `/outbound` requests) with minority `200` and a small `502` tail, matching §4.6's overall verdict that the failure mode is SNAT-port exhaustion causing proxy-level connection aborts, not application-side 5xx errors: the app is healthy at code level but cannot open fresh outbound TCP connections to `httpbin.org` because all 128 SNAT ports are consumed and the connections hang until a downstream timeout closes them. If instead the Portal query returned a `Count` on `200` that exceeded `499` (i.e., majority success), the SNAT exhaustion trigger did not effectively saturate the port pool — the trigger's concurrency (`for request_number in $(seq 1 200)` with 20 parallel jobs in `labs/snat-exhaustion/trigger.sh`) may have been reduced below the threshold that drains 128 SNAT ports.
+
+**Next step**: If a future reproduction shows the `502` count growing above ~20% of the total, confirm the path with `AppServiceConsoleLogs` and inspect `labs/snat-exhaustion/main.bicep` for changes to `appCommandLine` (specifically `--timeout=120`); if the lab genuinely needs more outbound headroom, prefer connection reuse / pooling, scale-out, or NAT gateway rather than scaling up SKU. Conversely, if the `200` count grows above ~30% of the total, the SNAT port pool may have been enlarged (for example by enabling VNet integration with a NAT gateway giving 64K SNAT ports per outbound IP) — check for a `Microsoft.Network/natGateways` resource attached to the Web App's outbound subnet, because that would fundamentally change the reproducibility of this lab's SNAT-exhaustion hypothesis.
+
+#### 4.6.2 Log Analytics KQL query for top-10 slowest /outbound requests (portal verification)
+
+To cross-verify the tail-latency evidence embedded in §4.6 (`Rows with TimeTaken >= 59000ms: 123` and `/outbound rows with 499 and TimeTaken >= 59000ms: 118` from the sanitized export) is not a JSON-parse rounding artifact and to characterize the extreme tail more precisely than the 59-second threshold that §4.6 uses, the same Log Analytics workspace Logs blade was reopened and a top-10 `TimeTaken` query scoped to `/outbound` was executed interactively against the current live data:
+
 [[[ shot("troubleshooting--log-analytics--10-snat-outbound-tail-latency-kql") ]]]
 
 **Purpose**: Provide an independent Portal-side execution of a top-10 `TimeTaken` query on `/outbound` so a reviewer can identify the exact ceiling that clamps the tail rather than just the ~60-second lower bound recorded in §4.6. Where §4.6 tells you 118 `/outbound` requests exceeded 59 s, this query tells you the ceiling is extremely tight at ~240 s — a diagnostic signature of a hard proxy-level timeout, not variable-latency degradation.

@@ -439,6 +439,285 @@ curl --silent --show-error --output /dev/null --write-out "%{time_total}\n" "$AP
 
 #### Portal view: Log stream (live startup tail)
 
+![Azure portal Log stream blade for app-test-20251107 with toolbar Log Level filter, Stop, Copy, Clear; a Logs section showing Runtime and Platform radio buttons (Runtime selected); an Instances dropdown showing a single instance hash b58cc693426fe8c6d1b45abb7e0487ceeee9eeb41200672d7683b5ebc05e075f next to a refresh icon; and a Lookback period set to Last 30 minutes. The streaming pane shows red INFO-level log entries with 2026-06-07 timestamps, x-ms-client-request-id 00000000-0000-0000-0000-000000000000 (PII masked), HTTP method POST, request headers (Content-Type application/json), and OpenTelemetry exporter transmissions to https://koreacentral-0.in.applicationinsights.azure.com/v2.1/track with Response status 200 and Items received 3, Items accepted 3.](../../assets/troubleshooting/log-stream/01-log-stream.png)
+
+The `Log stream` blade gives you a live view of startup progress without ingestion delay, which is critical when measuring cold-start phases that are over in seconds. This capture shows the `Runtime` radio selected and the `Instances` dropdown pinned to a single worker hash (`b58cc693...`) - the correct posture for measuring one instance's cold-start timeline cleanly. Toggle to the `Platform` radio when you want container lifecycle events from the platform instead of application STDOUT; the `Lookback period: Last 30 minutes` setting is short enough to scope a single restart cycle and avoid noise from the previous instance. After capturing the live trace here, run the KQL queries below to aggregate the same signals across multiple restarts for trending.
+
+#### Portal view: Metrics (Response Time, Avg, last 24 hours)
+
+[[[ shot("troubleshooting--metrics--02-response-time") ]]]
+
+The `Metrics` blade is the second view to open during cold-start triage because it shows the platform-side measurement (`Response Time`) that is independent of any Application Insights instrumentation the app team may or may not have wired up. Set `Metric Namespace` to `App Service standard metrics`, pick `Response Time` for the `Metric`, and leave `Aggregation` at `Avg` for the first read; switch to `Max` later to expose worst-case cold-start hits that an average smooths away. The early spike approaching 120ms followed by a flat near-zero baseline in this capture is the visual signature of a single restart cycle paying the cold-start cost once at the top of the window, then handling warm traffic for the remainder of the day - the exact shape this lab is designed to reproduce. Save this chart to a dashboard once you have a known-good configuration so the next operator can open the same view without re-selecting metric, namespace, and aggregation.
+
+Retrieve HTTP log evidence:
+
+```kusto
+AppServiceHTTPLogs
+| where TimeGenerated > ago(2h)
+| where CsHost has "app-labcold"
+| project TimeGenerated, CsUriStem, ScStatus, TimeTaken, CsHost
+| order by TimeGenerated desc
+```
+
+Retrieve platform lifecycle evidence:
+
+```kusto
+AppServicePlatformLogs
+| where TimeGenerated > ago(2h)
+| where Message has_any ("WarmUpProbeSucceeded", "Site startup probe succeeded", "CreatingContainer", "PullingImage", "Site started", "stopped")
+| project TimeGenerated, Level, Message
+| order by TimeGenerated desc
+```
+
+Retrieve console evidence:
+
+```kusto
+AppServiceConsoleLogs
+| where TimeGenerated > ago(2h)
+| where ResultDescription has_any ("gunicorn", "Starting", "Booting worker", "ERROR")
+| project TimeGenerated, ResultDescription
+| order by TimeGenerated desc
+```
+
+### 3.8 Real output snippets (captured)
+
+HTTP logs include sub-second request service times (TimeTaken is milliseconds):
+
+```text
+2026-04-04T05:45:18.910231Z  /fast   200  332
+2026-04-04T05:45:19.792462Z  /fast   200   67
+2026-04-04T05:45:22.347736Z  /fast   200   17
+2026-04-04T05:45:42.509783Z  /timing 200    8
+2026-04-04T05:45:53.949776Z  /timing 200   21
+```
+
+Platform logs capture warm-up lifecycle transitions:
+
+```text
+State: Starting, Action: WarmUpProbeSucceeded ... Site startup probe succeeded after 68.0508489 seconds.
+Site startup probe succeeded after 68.0508489 seconds.
+Site started.
+```
+
+App-level timing endpoint captures startup duration:
+
+```json
+{"startup_duration":31.305,"uptime_seconds":1864.177,"request_count":12}
+```
+
+### 3.9 Interpretation checklist during execution
+
+Use this table while running the lab:
+
+| Check | Evidence source | Pass condition |
+|---|---|---|
+| Startup duration present | `/timing`, `/diag/stats` | ~31 seconds reported |
+| First-hit latency measured | `cold-latency-*.csv` | Values captured for restart cycles |
+| Warm baseline measured | `warm-latencies-*.csv` | 10 values captured |
+| Post-restart warm measured | `warm-post-latencies-*.csv` | Additional warm values captured |
+| Platform startup lifecycle present | `kql-platform-*.json` | Warm-up/probe/start events visible |
+
+### 3.10 Decision logic during triage
+
+<!-- diagram-id: troubleshooting-lab-guides-slow-start-cold-start-diagram-4 -->
+```mermaid
+flowchart TD
+    A[Slow first-hit complaint] --> B{Startup lifecycle events near issue window?}
+    B -->|Yes| C{Warm path also slow?}
+    B -->|No| D[Investigate non-startup causes first]
+    C -->|No| E[Classify as startup transient]
+    C -->|Yes| F[Investigate sustained regression]
+    E --> G[Consider warm-up mitigations]
+    F --> H[Open app/dependency performance investigation]
+```
+
+## 4) Experiment Log
+
+This section uses only captured data under:
+
+`labs/slow-start-cold-start/artifacts-sanitized/`
+
+### 4.1 Artifact inventory
+
+| Category | Files |
+|---|---|
+| Baseline | `diag-stats.json`, `app-config.json`, `health.json`, `timing.json`, `diag-env.json` |
+| Trigger latency | `warm-latencies-20260404T054518Z.csv`, `cold-latency-20260404T054518Z.csv`, `warm-post-latencies-20260404T054518Z.csv` |
+| Trigger app telemetry | `timing-response-20260404T054518Z.json`, `diag-stats-postcold-20260404T054518Z.json`, `diag-stats-final-20260404T054518Z.json` |
+| KQL exports | `kql-http-20260404T060610Z.json`, `kql-console-20260404T060610Z.json`, `kql-platform-20260404T060610Z.json` |
+
+### 4.2 Baseline evidence snapshot
+
+#### 4.2.1 Baseline `/diag/stats`
+
+```json
+{"endpoint_counters":{"<unknown>":1,"diag_stats":2,"index":1},"initialization_completed_at":"2026-04-04T05:14:38.440202+00:00","initialization_started_at":"2026-04-04T05:14:07.173440+00:00","pid":1896,"process_start_time":"2026-04-04T05:14:38.440202+00:00","request_count":4,"startup_duration_seconds":31.267,"uptime_seconds":1114.875}
+```
+
+#### 4.2.2 Baseline `/timing`
+
+```json
+{"current_time":"2026-04-04T05:33:14.856715+00:00","request_count":5,"startup_duration":31.267,"uptime_seconds":1116.417}
+```
+
+#### 4.2.3 Baseline app config highlights
+
+From `baseline/app-config.json`:
+
+| Setting | Value |
+|---|---|
+| `alwaysOn` | `false` |
+| `linuxFxVersion` | `PYTHON|3.11` |
+| `appCommandLine` | `gunicorn --bind=0.0.0.0 --timeout=180 --workers=2 app:app` |
+| `healthCheckPath` | `null` |
+| `ftpsState` | `Disabled` |
+
+#### 4.2.4 Always On configuration (portal verification)
+
+To confirm the CLI-reported `alwaysOn: false` value against a fresh live reproduction, the App Service General settings blade was captured during the failing configuration:
+
+[[[ shot("troubleshooting--configuration--05-slowstart-always-on-off") ]]]
+
+**Purpose**: Prove visually that the Always On platform toggle is disabled on the failing instance, and that this matches the CLI-reported `alwaysOn: false` value in section 4.2.3. Always On disabled is the necessary platform precondition that allows the worker process to be unloaded after an idle window and makes a later request eligible to hit the container-restart path.
+
+**Look for**:
+
+- Blade heading reads "app-labcold-xgsfl2fo6kylo | General settings" with the General settings tab active.
+- "Always on" row shows an UNCHECKED checkbox.
+- Apply and Discard buttons at the bottom are both disabled (no pending edits, so the displayed state equals the persisted state).
+- The complementary reference values still hold: FTP state Disabled, HTTPS only checked, Minimum Inbound TLS Version 1.2 — these confirm the blade is showing the same app that produced the CLI capture.
+
+**Expected result**: The Always On checkbox is unchecked, matching `alwaysOn: false` from the CLI capture. If Always On were enabled on a Basic-or-higher plan, the worker would not be unloaded on idle and this lab's cold-start signature would not reproduce.
+
+**Next step**: Cross-check the runtime impact by opening the Metrics blade and plotting Response Time (Avg) over the trigger window (section 4.4.1) to see the same idle→cold transition expressed as an aggregate latency spike.
+
+### 4.3 Latency dataset (raw values)
+
+#### 4.3.1 Warm pre-restart (10 requests)
+
+| Label | Request index | Seconds |
+|---|---:|---:|
+| warm | 1 | 1.074682 |
+| warm | 2 | 0.885271 |
+| warm | 3 | 0.907336 |
+| warm | 4 | 0.781947 |
+| warm | 5 | 0.897924 |
+| warm | 6 | 0.912066 |
+| warm | 7 | 0.955691 |
+| warm | 8 | 0.828223 |
+| warm | 9 | 0.962603 |
+| warm | 10 | 0.750138 |
+
+#### 4.3.2 Cold-labeled measurements (restart cycles)
+
+| Label | Restart cycle | Seconds |
+|---|---:|---:|
+| cold | 1 | 0.938001 |
+| cold | 2 | 0.798990 |
+
+#### 4.3.3 Warm post-restart (5 requests)
+
+| Label | Request index | Seconds |
+|---|---:|---:|
+| warm_post | 1 | 0.888190 |
+| warm_post | 2 | 0.869994 |
+| warm_post | 3 | 0.817254 |
+| warm_post | 4 | 0.773853 |
+| warm_post | 5 | 0.698639 |
+
+### 4.4 Latency summary statistics
+
+Computed from the CSV artifacts:
+
+| Metric | Value |
+|---|---:|
+| Warm average (10) | 0.895588 s |
+| Warm minimum | 0.750138 s |
+| Warm maximum | 1.074682 s |
+| Cold average (2) | 0.868495 s |
+| Cold minimum | 0.798990 s |
+| Cold maximum | 0.938001 s |
+| Warm-post average (5) | 0.809586 s |
+| Warm-post minimum | 0.698639 s |
+| Warm-post maximum | 0.888190 s |
+
+Derived deltas:
+
+| Comparison | Delta |
+|---|---:|
+| Cold average - Warm average | -27.09 ms |
+| Cold average - Warm-post average | +58.91 ms |
+
+#### 4.4.1 Portal Metrics cross-verification
+
+To confirm the CLI-measured per-request latencies against the platform-side aggregate view from a fresh live reproduction, the Web App Metrics blade was plotted with Response Time (Avg) over the trigger window:
+
+[[[ shot("troubleshooting--metrics--06-slowstart-first-vs-warm-response") ]]]
+
+**Purpose**: Prove that the same idle→cold transition captured in the CLI CSV artifacts is also visible in the platform-side aggregate metric that operators would observe from the Azure portal. Response Time (Avg) and curl `time_total` measure different layers (server-side processing vs. client-observed round trip), so this chart is cross-verified for shape and timing — not for numeric equality with section 4.3. The aggregate window reports 777.90 ms because a single ~7-second cold request skews the 1-minute average, not because sustained multi-second latency has been introduced.
+
+**Look for**:
+
+- Chart title reads "Avg Response Time for app-labcold-xgsfl2fo6kylo".
+- Metric chip reads "app-labcold-xgsfl2fo6kylo, Response Time, Avg".
+- Time range picker reads "Local Time: Last 30 minutes (Automatic - 1 min...)" so the aggregation granularity is one point per minute.
+- The line stays near 0 seconds for the first several minutes (warm baseline) then a single sharp vertical spike to ~7 seconds appears at the moment the cold restart is triggered.
+- The line remains elevated (plateau near ~7 seconds) after the spike — this is the 1-minute bucket that contains the cold request, not evidence of sustained slowness.
+- Bottom legend shows "777.90ms" as the aggregate summary, which is dominated by the single cold request.
+
+**Expected result**: A visible baseline-then-spike-then-plateau shape aligned with the trigger time, with the plateau value near ~7 seconds matching the observed cold-request latency in a Response Time (Avg) 1-minute aggregation. The chart should not show sustained multi-second latency across every bucket — only the bucket that contains the cold request.
+
+**Next step**: Confirm the platform-side aggregate corresponds to real per-request evidence by running a Log Analytics KQL query against `AppServiceHTTPLogs` (section 4.7.1) to see the individual pre-restart warm rows and post-restart elevated rows that combine to produce this aggregate spike.
+
+### 4.5 App startup telemetry consistency
+
+#### 4.5.1 Trigger timing response
+
+```json
+{"current_time":"2026-04-04T05:45:42.507800+00:00","request_count":12,"startup_duration":31.305,"uptime_seconds":1864.177}
+```
+
+#### 4.5.2 Trigger diag stats (post-cold capture)
+
+```json
+{"startup_duration_seconds":31.305,"request_count":13,"pid":1895}
+```
+
+#### 4.5.3 Trigger diag stats (final capture)
+
+```json
+{"startup_duration_seconds":31.267,"request_count":14,"pid":1896}
+```
+
+Across captures, startup duration remains consistently near **31.3 seconds**.
+
+### 4.6 KQL export quantitative summary
+
+| File | Row count |
+|---|---:|
+| `kql-http-20260404T060610Z.json` | 28 |
+| `kql-console-20260404T060610Z.json` | 0 |
+| `kql-platform-20260404T060610Z.json` | 127 |
+
+### 4.7 HTTP log observations from export
+
+Representative entries from `kql-http-20260404T060610Z.json`:
+
+| TimeGenerated (UTC) | Path | Status | TimeTaken (ms) |
+|---|---|---:|---:|
+| 2026-04-04T05:45:18.910231Z | `/fast` | 200 | 332 |
+| 2026-04-04T05:45:19.792462Z | `/fast` | 200 | 67 |
+| 2026-04-04T05:45:20.730507Z | `/fast` | 200 | 17 |
+| 2026-04-04T05:45:21.497297Z | `/fast` | 200 | 21 |
+| 2026-04-04T05:45:42.509783Z | `/timing` | 200 | 8 |
+| 2026-04-04T05:45:53.949776Z | `/timing` | 200 | 21 |
+
+Observation: request execution times remain short while startup telemetry still indicates long initialization history.
+
+#### 4.7.1 Live KQL confirmation from a fresh reproduction
+
+To confirm the archived pattern against a fresh live reproduction, the following Log Analytics query was executed against `AppServiceHTTPLogs` for the trigger window on a newly-deployed instance:
+
 [[[ shot("troubleshooting--log-analytics--11-slowstart-first-request-slow") ]]]
 
 **Purpose**: Prove programmatically that the pre-restart warm requests and post-restart elevated-latency requests observable in the archived export (section 4.7) are reproducible against a freshly-deployed instance, and that the platform-side aggregate spike shown in section 4.4.1 is composed of real per-request rows with a clear before/after boundary consistent with the restart window that is confirmed independently by the platform events in section 4.8.
