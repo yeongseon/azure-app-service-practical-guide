@@ -1,0 +1,22 @@
+# PII allowlist for scripts/validate_pii.py
+#
+# One confirmed-safe value per line. Lines starting with '#' and blank lines
+# are ignored. Allowlisted values are skipped for every PII check (UUIDs,
+# email addresses, and private IPs).
+#
+# Only add a value here after confirming it is a synthetic example and NOT a
+# real Azure subscription/tenant/object ID, real email address, or real host.
+#
+# Examples:
+#   00000000-0000-0000-0000-000000000000
+#   svc-account@acme.example
+
+# Kudu deployment ID shown in a portal-capture evidence note
+# (docs/platform/kudu-overview.md). A per-deployment build identifier, not an
+# account/tenant/subscription identifier.
+0f7d0782-774d-4379-8b15-1200563e0b61
+
+# Flask error-handler decorator token inside a mermaid diagram
+# (docs/language-guides/python/tutorial/04-logging-monitoring.md). Matches the
+# email heuristic as "n@app.errorhandler" but is Python code, not an address.
+n@app.errorhandler
