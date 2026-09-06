@@ -63,7 +63,7 @@ SAFE_EMAIL_DOMAIN_SUFFIXES = (".azurecomm.net",)  # ACS system sender addresses
 
 # Documented, public Azure built-in role definition IDs. These UUIDs are global
 # constants (identical in every tenant), so citing one leaks no account data.
-# Source: learn.microsoft.com/azure/role-based-access-control/built-in-roles
+# Source: learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles
 PUBLIC_AZURE_ROLE_IDS = frozenset(
     {
         "7f951dda-4ed3-4680-a7ca-43fe172d538d",
