@@ -119,28 +119,33 @@ nav:
       - Resource Relationships: platform/resource-relationships.md
       - Authentication Architecture: platform/authentication-architecture.md
       - Security Architecture: platform/security-architecture.md
-    - Hosting Models: platform/hosting-models.md
-    - Scaling: platform/scaling.md
-    - Networking: platform/networking.md
-    - App Service to Azure Storage: platform/storage-connectivity.md
+    - Hosting and Scale:
+      - Hosting Models: platform/hosting-models.md
+      - Web App for Containers: platform/containers/index.md
+      - Scaling: platform/scaling.md
+    - Networking:
+      - Networking: platform/networking.md
+      - App Service to Azure Storage: platform/storage-connectivity.md
     - mTLS: platform/mtls.md
-    - Web App for Containers: platform/containers/index.md
-    - Deployment Options: platform/deployment-options.md
-    - Deployment Scenarios: platform/deployment-scenarios.md
+    - Deployment:
+      - Deployment Options: platform/deployment-options.md
+      - Deployment Scenarios: platform/deployment-scenarios.md
     - Kudu:
       - Overview: platform/kudu-overview.md
       - Kudu on Windows: platform/kudu-windows.md
       - Kudu on Linux: platform/kudu-linux.md
   - Best Practices:
     - best-practices/index.md
-    - best-practices/production-baseline.md
-    - best-practices/networking.md
-    - best-practices/mtls.md
-    - best-practices/security.md
-    - best-practices/deployment.md
-    - best-practices/scaling.md
-    - best-practices/reliability.md
-    - best-practices/common-anti-patterns.md
+    - Production Baseline: best-practices/production-baseline.md
+    - Security:
+      - mTLS: best-practices/mtls.md
+      - Security: best-practices/security.md
+    - Runtime Qualities:
+      - Scaling: best-practices/scaling.md
+      - Reliability: best-practices/reliability.md
+      - Networking: best-practices/networking.md
+    - Deployment: best-practices/deployment.md
+    - Common Anti-Patterns: best-practices/common-anti-patterns.md
   - Language Guides:
     - language-guides/index.md
     - Python:
@@ -252,28 +257,34 @@ nav:
         - VNet Integration: language-guides/dotnet/recipes/vnet-integration.md
   - Operations:
     - operations/index.md
-    - operations/scaling.md
-    - Deployment Methods:
-      - operations/deployment/index.md
-      - operations/deployment/zip-deploy.md
-      - operations/deployment/github-actions.md
-      - operations/deployment/slots-and-swap.md
-      - operations/deployment/container-deploy.md
-    - operations/deployment-slots.md
-    - operations/health-recovery.md
-    - operations/backup-restore.md
-    - operations/networking.md
-    - operations/incoming-client-certificates.md
-    - operations/outbound-client-certificates.md
-    - operations/security.md
-    - operations/cost-optimization.md
+    - Deploy:
+      - Deployment Methods:
+        - operations/deployment/index.md
+        - operations/deployment/zip-deploy.md
+        - operations/deployment/github-actions.md
+        - operations/deployment/slots-and-swap.md
+        - operations/deployment/container-deploy.md
+      - Deployment Slots: operations/deployment-slots.md
+    - Reliability:
+      - Health and Recovery: operations/health-recovery.md
+      - Backup and Restore: operations/backup-restore.md
+      - Scaling: operations/scaling.md
+    - Networking:
+      - Networking: operations/networking.md
+      - Incoming Client Certificates: operations/incoming-client-certificates.md
+      - Outgoing Client Certificates: operations/outbound-client-certificates.md
+    - Guardrails:
+      - Security: operations/security.md
+      - Cost Optimization: operations/cost-optimization.md
   - Troubleshooting:
     - troubleshooting/index.md
-    - troubleshooting/quick-diagnosis-cards.md
-    - troubleshooting/architecture-overview.md
-    - troubleshooting/decision-tree.md
-    - troubleshooting/mental-model.md
-    - troubleshooting/evidence-map.md
+    - Orientation:
+      - Architecture Overview: troubleshooting/architecture-overview.md
+      - Mental Model: troubleshooting/mental-model.md
+    - Diagnosis:
+      - Quick Diagnosis Cards: troubleshooting/quick-diagnosis-cards.md
+      - Decision Tree: troubleshooting/decision-tree.md
+      - Evidence Map: troubleshooting/evidence-map.md
     - First 10 Minutes:
       - troubleshooting/first-10-minutes/index.md
       - troubleshooting/first-10-minutes/startup-availability.md
@@ -357,13 +368,15 @@ nav:
       - troubleshooting/lab-guides/windows-java-httpplatformhandler-timeout.md
   - Reference:
     - reference/index.md
-    - Validation Status: reference/validation-status.md
-    - Content Validation: reference/content-validation-status.md
-    - reference/cli-cheatsheet.md
-    - reference/kql-queries.md
-    - reference/platform-limits.md
-    - reference/troubleshooting.md
-    - reference/kudu-queries.md
+    - Validation Dashboards:
+      - Content Validation: reference/content-validation-status.md
+      - Validation Status: reference/validation-status.md
+    - CLI Cheatsheet: reference/cli-cheatsheet.md
+    - Queries:
+      - KQL Queries: reference/kql-queries.md
+      - Kudu Queries: reference/kudu-queries.md
+    - Platform Limits: reference/platform-limits.md
+    - Troubleshooting: reference/troubleshooting.md
     - Visualization:
       - visualization/index.md
       - visualization/core-knowledge-graph.md
