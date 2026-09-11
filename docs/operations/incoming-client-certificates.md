@@ -7,7 +7,7 @@ content_sources:
       mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/app-service-web-configure-tls-mutual-auth
 content_validation:
   status: verified
-  last_reviewed: "2026-04-25"
+  last_reviewed: 2026-09-11
   reviewer: agent
   core_claims:
     - claim: "App Service mutual TLS for inbound requests requires the App Service plan to be Basic, Standard, Premium, or Isolated."

@@ -43,7 +43,7 @@ content_sources:
         - https://learn.microsoft.com/en-us/azure/app-service/environment/overview
 content_validation:
   status: verified
-  last_reviewed: "2026-04-12"
+  last_reviewed: 2026-09-11
   reviewer: agent
   core_claims:
     - claim: "By default, apps hosted in App Service are accessible directly through the internet."

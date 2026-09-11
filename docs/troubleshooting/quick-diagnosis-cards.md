@@ -15,10 +15,10 @@ related:
   - mental-model
 summary: Rapid symptom-to-action cards for common App Service issues.
 status: stable
-last_reviewed: 2026-04-08
+last_reviewed: 2026-09-11
 content_validation:
   status: verified
-  last_reviewed: "2026-04-12"
+  last_reviewed: 2026-09-11
   reviewer: agent
   core_claims:
     - claim: "App Service can stream logs written to console output or files stored under /home/LogFiles for troubleshooting."

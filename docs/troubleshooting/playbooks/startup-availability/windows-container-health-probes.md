@@ -11,7 +11,7 @@ topics:
 products:
   - azure-app-service
 status: stable
-last_reviewed: 2026-04-09
+last_reviewed: 2026-09-11
 summary: Diagnose Windows container startup failures and health probe differences from Linux containers on App Service.
 content_sources:
   diagrams:
@@ -25,7 +25,7 @@ content_sources:
         - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
 content_validation:
   status: verified
-  last_reviewed: "2026-04-12"
+  last_reviewed: 2026-09-11
   reviewer: agent
   core_claims:
     - claim: "App Service considers a Windows container successfully started when the container starts and responds to an HTTP ping."

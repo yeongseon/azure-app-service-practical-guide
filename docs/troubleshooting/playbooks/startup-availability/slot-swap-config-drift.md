@@ -10,7 +10,7 @@ content_sources:
         - https://learn.microsoft.com/en-us/azure/app-service/reference-app-settings
 content_validation:
   status: verified
-  last_reviewed: "2026-04-12"
+  last_reviewed: 2026-09-11
   reviewer: agent
   core_claims:
     - claim: "App settings and connection strings can be marked as slot-specific so they stay with the slot during swap."

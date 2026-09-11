@@ -12,7 +12,7 @@ topics:
 products:
   - azure-app-service
 status: stable
-last_reviewed: 2026-04-09
+last_reviewed: 2026-09-11
 summary: Diagnose memory pressure and unexpected w3wp.exe worker process recycling on Windows App Service.
 content_sources:
   diagrams:
@@ -26,7 +26,7 @@ content_sources:
         - https://learn.microsoft.com/en-us/azure/app-service/resources-kudu
 content_validation:
   status: verified
-  last_reviewed: "2026-04-12"
+  last_reviewed: 2026-09-11
   reviewer: agent
   core_claims:
     - claim: "Memory pressure on App Service Windows often appears as periodic worker recycling rather than one obvious crash."

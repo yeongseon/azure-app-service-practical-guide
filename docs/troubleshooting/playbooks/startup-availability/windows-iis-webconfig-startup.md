@@ -11,7 +11,7 @@ topics:
 products:
   - azure-app-service
 status: stable
-last_reviewed: 2026-04-09
+last_reviewed: 2026-09-11
 summary: Diagnose IIS web.config misconfigurations causing App Service Windows startup failures.
 content_sources:
   diagrams:
@@ -24,7 +24,7 @@ content_sources:
         - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
 content_validation:
   status: verified
-  last_reviewed: "2026-04-12"
+  last_reviewed: 2026-09-11
   reviewer: agent
   core_claims:
     - claim: "ASP.NET apps must be deployed to Azure App Service as compiled binaries."

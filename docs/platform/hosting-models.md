@@ -8,7 +8,7 @@ content_sources:
       description: "Shows the Learn-backed decision path from operating system and deployment model to plan tier selection."
 content_validation:
   status: verified
-  last_reviewed: "2026-04-12"
+  last_reviewed: 2026-09-11
   reviewer: agent
   core_claims:
     - claim: "A single plan can host multiple apps, which share the same compute pool."

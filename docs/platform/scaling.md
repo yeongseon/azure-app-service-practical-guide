@@ -16,13 +16,13 @@ related:
   - scaling-best-practices
 summary: Scale up vs scale out, autoscale rules, and capacity planning for App Service.
 status: stable
-last_reviewed: 2026-04-08
+last_reviewed: 2026-09-11
 content_sources:
   diagrams:
     - id: scaling-dimensions
       type: flowchart
       source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview-hosting-plans
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/networking-features
       description: "Shows the Learn-backed choice between scaling up plan capacity and scaling out worker instance count."
     - id: autoscale-evaluation-loop
       type: flowchart
@@ -36,7 +36,7 @@ content_sources:
       description: "Shows traffic distributed across plan instances and how client affinity can bias traffic to one instance."
 content_validation:
   status: verified
-  last_reviewed: "2026-04-12"
+  last_reviewed: 2026-09-11
   reviewer: agent
   core_claims:
     - claim: "Scale up changes the size/SKU of compute instances in your plan."
@@ -46,10 +46,10 @@ content_validation:
       source: "https://learn.microsoft.com/en-us/azure/app-service/manage-scale-up"
       verified: true
     - claim: "Autoscale affects plan capacity used by all co-hosted apps."
-      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-hosting-plans"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/networking-features"
       verified: true
     - claim: "One noisy app can impact others."
-      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-hosting-plans"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/networking-features"
       verified: true
 ---
 # Scaling

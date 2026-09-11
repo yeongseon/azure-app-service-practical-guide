@@ -24,7 +24,7 @@ evidence:
   - lab
 summary: Diagnose when deployment completes but application fails to start.
 status: stable
-last_reviewed: 2026-04-08
+last_reviewed: 2026-09-11
 content_sources:
   diagrams:
     - id: deployment-succeeded-startup-failed-flow
@@ -38,7 +38,7 @@ content_sources:
         - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
 content_validation:
   status: verified
-  last_reviewed: "2026-04-12"
+  last_reviewed: 2026-09-11
   reviewer: agent
   core_claims:
     - claim: "App Service continues to serve requests from the old container while the new container is pulled and started."

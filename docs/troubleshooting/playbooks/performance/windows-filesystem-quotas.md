@@ -12,7 +12,7 @@ topics:
 products:
   - azure-app-service
 status: stable
-last_reviewed: 2026-04-09
+last_reviewed: 2026-09-11
 summary: Diagnose disk space issues caused by filesystem quotas, temp files, and IIS log accumulation on Windows App Service.
 content_sources:
   diagrams:
@@ -23,17 +23,17 @@ content_sources:
       based_on:
         - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
         - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
-        - https://learn.microsoft.com/en-us/azure/app-service/resources-kudu
+        - https://learn.microsoft.com/en-us/azure/app-service/operating-system-functionality
 content_validation:
   status: verified
-  last_reviewed: "2026-04-12"
+  last_reviewed: 2026-09-11
   reviewer: agent
   core_claims:
     - claim: "`D:\\home` is persistent and Azure Storage-backed for the app, so growth survives worker restarts and scale operations."
-      source: "https://learn.microsoft.com/en-us/azure/app-service/resources-kudu"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/operating-system-functionality"
       verified: true
     - claim: "`D:\\local` is worker-local ephemeral disk, so files can disappear when the instance is recycled, moved, or replaced."
-      source: "https://learn.microsoft.com/en-us/azure/app-service/resources-kudu"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/operating-system-functionality"
       verified: true
 ---
 # Windows Filesystem Quotas and IIS Log Behaviors (Azure App Service Windows)

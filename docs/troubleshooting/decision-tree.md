@@ -17,10 +17,10 @@ related:
   - troubleshooting-architecture-overview
 summary: Step-by-step decision flow to route symptoms to the correct playbook.
 status: stable
-last_reviewed: 2026-04-08
+last_reviewed: 2026-09-11
 content_validation:
   status: verified
-  last_reviewed: "2026-04-12"
+  last_reviewed: 2026-09-11
   reviewer: agent
   core_claims:
     - claim: "Azure App Service diagnostics groups troubleshooting into categories such as Availability and Performance, Deployment, and Networking."

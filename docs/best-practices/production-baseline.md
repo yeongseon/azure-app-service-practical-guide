@@ -17,10 +17,10 @@ related:
   - security-best-practices
 summary: Minimum production baseline settings for App Service - tier, health checks, observability, configuration.
 status: stable
-last_reviewed: 2026-04-08
+last_reviewed: 2026-09-11
 content_validation:
   status: verified
-  last_reviewed: "2026-04-12"
+  last_reviewed: 2026-09-11
   reviewer: agent
   core_claims:
     - claim: "App Service supports HTTPS Only setting to redirect all HTTP traffic to HTTPS."
