@@ -18,10 +18,10 @@ related:
   - decision-tree
 summary: Request path, runtime, deployment, and network failure points for troubleshooting classification.
 status: stable
-last_reviewed: 2026-04-08
+last_reviewed: 2026-09-11
 content_validation:
   status: verified
-  last_reviewed: "2026-04-12"
+  last_reviewed: 2026-09-11"
   reviewer: agent
   core_claims:
     - claim: "Azure App Service diagnostics is an interactive troubleshooting experience that helps troubleshoot apps with no configuration required."

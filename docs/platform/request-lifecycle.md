@@ -16,13 +16,13 @@ related:
   - troubleshooting-architecture-overview
 summary: End-to-end request path from client through Azure frontends to application process.
 status: stable
-last_reviewed: 2026-04-08
+last_reviewed: 2026-09-11
 content_sources:
   diagrams:
     - id: request-path-sequence
       type: sequenceDiagram
       source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/networking-features
       description: "Shows the request handoff from App Service front ends to the worker reverse proxy and application process."
     - id: instance-selection-affinity
       type: flowchart
@@ -31,23 +31,23 @@ content_sources:
       description: "Illustrates frontend distribution across healthy instances and optional client affinity to a single worker."
 content_validation:
   status: verified
-  last_reviewed: "2026-04-12"
+  last_reviewed: 2026-09-11"
   reviewer: agent
   core_claims:
     - claim: "App Service supports platform hostnames and custom domains."
-      source: "https://learn.microsoft.com/en-us/azure/app-service/overview"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/networking-features"
       verified: true
     - claim: "Frontend components perform TLS termination"
-      source: "https://learn.microsoft.com/en-us/azure/app-service/overview"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/networking-features"
       verified: true
     - claim: "Frontend components perform hostname validation"
-      source: "https://learn.microsoft.com/en-us/azure/app-service/overview"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/networking-features"
       verified: true
     - claim: "Frontend components perform route selection to a healthy worker instance"
-      source: "https://learn.microsoft.com/en-us/azure/app-service/overview"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/networking-features"
       verified: true
     - claim: "By default, frontend routing distributes traffic across healthy instances."
-      source: "https://learn.microsoft.com/en-us/azure/app-service/overview"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/networking-features"
       verified: true
 ---
 # Request Lifecycle
@@ -316,9 +316,9 @@ For language-specific implementation details, see:
 - [Scaling](./scaling.md)
 - [Networking](./networking.md)
 - [Deployment Slots in App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots)
-- [Inbound and outbound IPs (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/overview-inbound-outbound-ips)
+- [Inbound and outbound IPs (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/networking-features-inbound-outbound-ips)
 
 ## Sources
 
 - [Deployment Slots in App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots)
-- [Inbound and outbound IPs (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/overview-inbound-outbound-ips)
+- [Inbound and outbound IPs (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/networking-features-inbound-outbound-ips)

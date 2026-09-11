@@ -28,7 +28,7 @@ content_sources:
         - https://learn.microsoft.com/en-us/azure/app-service/tutorial-custom-container-sidecar
 content_validation:
   status: verified
-  last_reviewed: "2026-05-01"
+  last_reviewed: 2026-09-11"
   reviewer: agent
   core_claims:
     - claim: "Web App for Containers lets you run a custom Docker container on App Service instead of a built-in runtime stack."

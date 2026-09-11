@@ -15,33 +15,33 @@ related:
   - scaling
 summary: Internal architecture of Azure App Service - control plane, data plane, frontends, workers, and storage.
 status: stable
-last_reviewed: 2026-04-27
+last_reviewed: 2026-09-11
 content_sources:
   diagrams:
     - id: core-request-path
       type: flowchart
       source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/networking-features
       description: "Shows the baseline App Service request path from client to frontend, worker, and app process."
     - id: app-service-architecture-overview
       type: flowchart
       source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/networking-features
       description: "Shows the big-picture App Service architecture across the control plane, regional stamp, runtime plane, and deployment plane."
     - id: control-data-plane
       type: flowchart
       source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview-hosting-plans
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/networking-features-hosting-plans
       description: "Shows the relationship between control-plane configuration actions and the runtime data plane in App Service."
     - id: plane-interactions
       type: flowchart
       source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/networking-features
       description: "Shows the relationship between management, runtime, and SCM planes in Azure App Service."
     - id: runtime-request-sequence
       type: sequenceDiagram
       source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/overview
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/networking-features
       description: "Shows an HTTPS request traversing the frontend, selected worker instance, and app listener."
     - id: scm-access-rules
       type: flowchart
@@ -70,20 +70,20 @@ content_sources:
       description: "Shows regional front ends distributing traffic to workers across multiple availability zones."
 content_validation:
   status: verified
-  last_reviewed: "2026-04-27"
+  last_reviewed: 2026-09-11"
   reviewer: agent
   core_claims:
     - claim: "A single management-plane change (for example, changing an app setting) can trigger runtime recycle."
-      source: "https://learn.microsoft.com/en-us/azure/app-service/overview"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/networking-features"
       verified: true
     - claim: "At runtime, App Service frontends terminate inbound connections and route traffic to healthy worker instances."
-      source: "https://learn.microsoft.com/en-us/azure/app-service/overview"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/networking-features"
       verified: true
     - claim: "Scale-out adds new instances that must warm up."
-      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-hosting-plans"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/networking-features-hosting-plans"
       verified: true
     - claim: "The SCM site (`<app-name>.scm.azurewebsites.net`) is a companion management surface."
-      source: "https://learn.microsoft.com/en-us/azure/app-service/overview"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/networking-features"
       verified: true
 ---
 # How App Service Works
@@ -204,8 +204,8 @@ flowchart TD
 
 Learn references:
 
-- [App Service overview](https://learn.microsoft.com/en-us/azure/app-service/overview)
-- [App Service plan overview](https://learn.microsoft.com/en-us/azure/app-service/overview-hosting-plans)
+- [App Service overview](https://learn.microsoft.com/en-us/azure/app-service/networking-features)
+- [App Service plan overview](https://learn.microsoft.com/en-us/azure/app-service/networking-features-hosting-plans)
 - [Reliability in App Service](https://learn.microsoft.com/en-us/azure/reliability/reliability-app-service)
 
 ### [Beginner] Platform architecture at a glance
@@ -270,7 +270,7 @@ flowchart TD
 
 Microsoft Learn references:
 
-- [App Service overview](https://learn.microsoft.com/en-us/azure/app-service/overview)
+- [App Service overview](https://learn.microsoft.com/en-us/azure/app-service/networking-features)
 - [Kudu service overview](https://learn.microsoft.com/en-us/azure/app-service/resources-kudu)
 - [App Service Environment overview](https://learn.microsoft.com/en-us/azure/app-service/environment/overview)
 
@@ -908,8 +908,8 @@ For language-specific implementation details, see:
 
 ## Sources
 
-- [Azure App Service overview](https://learn.microsoft.com/en-us/azure/app-service/overview)
-- [App Service plan overview](https://learn.microsoft.com/en-us/azure/app-service/overview-hosting-plans)
+- [Azure App Service overview](https://learn.microsoft.com/en-us/azure/app-service/networking-features)
+- [App Service plan overview](https://learn.microsoft.com/en-us/azure/app-service/networking-features-hosting-plans)
 - [App Service Environment overview](https://learn.microsoft.com/en-us/azure/app-service/environment/overview)
 - [Kudu service overview](https://learn.microsoft.com/en-us/azure/app-service/resources-kudu)
 - [Configure a custom container for App Service](https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container)

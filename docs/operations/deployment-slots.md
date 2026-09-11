@@ -9,7 +9,7 @@ content_sources:
         - https://learn.microsoft.com/en-us/azure/app-service/deploy-best-practices
 content_validation:
   status: verified
-  last_reviewed: "2026-06-08"
+  last_reviewed: 2026-09-11"
   reviewer: agent
   core_claims:
     - claim: "Deployment slots require an App Service Plan tier Standard or higher."

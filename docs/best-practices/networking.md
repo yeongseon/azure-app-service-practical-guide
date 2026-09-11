@@ -1,7 +1,7 @@
 ---
 content_validation:
   status: verified
-  last_reviewed: "2026-04-12"
+  last_reviewed: 2026-09-11"
   reviewer: agent
   core_claims:
     - claim: "VNet Integration is the primary App Service feature for private outbound connectivity."

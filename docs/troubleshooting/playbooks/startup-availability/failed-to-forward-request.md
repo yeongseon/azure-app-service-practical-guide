@@ -24,7 +24,7 @@ evidence:
   - lab
 summary: Diagnose request forwarding failures between frontend and worker.
 status: stable
-last_reviewed: 2026-04-08
+last_reviewed: 2026-09-11
 content_sources:
   diagrams:
     - id: failed-to-forward-request-flow
@@ -37,7 +37,7 @@ content_sources:
         - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
 content_validation:
   status: verified
-  last_reviewed: "2026-04-12"
+  last_reviewed: 2026-09-11"
   reviewer: agent
   core_claims:
     - claim: "By default, App Service assumes your custom container listens on port 80."

@@ -17,10 +17,10 @@ related:
   - quick-diagnosis-cards
 summary: Maps investigation questions to evidence sources, CLI commands, and KQL queries.
 status: stable
-last_reviewed: 2026-04-08
+last_reviewed: 2026-09-11
 content_validation:
   status: verified
-  last_reviewed: "2026-04-12"
+  last_reviewed: 2026-09-11"
   reviewer: agent
   core_claims:
     - claim: "Azure App Service diagnostics is an interactive troubleshooting experience in the Azure portal that requires no configuration."

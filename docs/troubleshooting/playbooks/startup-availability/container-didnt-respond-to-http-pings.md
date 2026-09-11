@@ -25,7 +25,7 @@ evidence:
   - lab
 summary: Diagnose container startup failures when HTTP ping health check fails.
 status: stable
-last_reviewed: 2026-04-08
+last_reviewed: 2026-09-11
 content_sources:
   diagrams:
     - id: container-http-pings-flow
@@ -38,7 +38,7 @@ content_sources:
         - https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/faqs-app-service-linux-new
 content_validation:
   status: verified
-  last_reviewed: "2026-04-12"
+  last_reviewed: 2026-09-11"
   reviewer: agent
   core_claims:
     - claim: "For Linux custom containers, port configuration involves both App Service settings and the app's actual listener behavior."
