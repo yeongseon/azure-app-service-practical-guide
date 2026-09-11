@@ -1,7 +1,7 @@
 ---
 content_validation:
   status: verified
-  last_reviewed: 2026-09-11"
+  last_reviewed: 2026-09-11
   reviewer: agent
   core_claims:
     - claim: "Scale up increases CPU/RAM resources per instance by changing App Service plan SKU."

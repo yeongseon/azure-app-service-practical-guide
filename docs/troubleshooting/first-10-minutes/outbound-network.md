@@ -1,7 +1,7 @@
 ---
 content_validation:
   status: verified
-  last_reviewed: 2026-09-11"
+  last_reviewed: 2026-09-11
   reviewer: agent
   core_claims:
     - claim: "Azure App Service diagnostics includes networking diagnostics such as SNAT Port Exhaustion and TCP Connections."

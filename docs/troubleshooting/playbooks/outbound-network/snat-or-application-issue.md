@@ -34,7 +34,7 @@ content_sources:
         - https://learn.microsoft.com/en-us/azure/app-service/networking-features
 content_validation:
   status: verified
-  last_reviewed: 2026-09-11"
+  last_reviewed: 2026-09-11
   reviewer: agent
   core_claims:
     - claim: "SNAT applies only to outbound connections to PUBLIC IP addresses. Private Endpoint and Service Endpoint traffic does NOT consume SNAT ports."

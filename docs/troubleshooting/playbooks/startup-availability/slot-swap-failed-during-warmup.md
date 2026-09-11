@@ -11,7 +11,7 @@ content_sources:
         - https://learn.microsoft.com/en-us/azure/app-service/monitor-instances-health-check
 content_validation:
   status: verified
-  last_reviewed: 2026-09-11"
+  last_reviewed: 2026-09-11
   reviewer: agent
   core_claims:
     - claim: "An Azure App Service slot swap warms up the source slot before completing the traffic switch."

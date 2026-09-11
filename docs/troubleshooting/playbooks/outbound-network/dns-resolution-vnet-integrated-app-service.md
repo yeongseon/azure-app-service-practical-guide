@@ -35,7 +35,7 @@ content_sources:
         - https://learn.microsoft.com/en-us/azure/app-service/overview-private-endpoint
 content_validation:
   status: verified
-  last_reviewed: 2026-09-11"
+  last_reviewed: 2026-09-11
   reviewer: agent
   core_claims:
     - claim: "Regional VNet integration provides a network path, but does not automatically enable route-all or make all outbound traffic private."

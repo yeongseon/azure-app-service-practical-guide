@@ -21,7 +21,7 @@ status: stable
 last_reviewed: 2026-09-11
 content_validation:
   status: verified
-  last_reviewed: 2026-09-11"
+  last_reviewed: 2026-09-11
   reviewer: agent
   core_claims:
     - claim: "Azure App Service diagnostics groups troubleshooting into categories such as Availability and Performance, Deployment, and Networking."

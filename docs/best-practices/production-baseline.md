@@ -20,7 +20,7 @@ status: stable
 last_reviewed: 2026-09-11
 content_validation:
   status: verified
-  last_reviewed: 2026-09-11"
+  last_reviewed: 2026-09-11
   reviewer: agent
   core_claims:
     - claim: "App Service supports HTTPS Only setting to redirect all HTTP traffic to HTTPS."

@@ -17,7 +17,7 @@ content_sources:
         - https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization
 content_validation:
   status: verified
-  last_reviewed: 2026-09-11"
+  last_reviewed: 2026-09-11
   reviewer: agent
   core_claims:
     - claim: "Azure App Service provides built-in authentication and authorization support."

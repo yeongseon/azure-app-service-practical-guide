@@ -36,7 +36,7 @@ content_sources:
       description: "Shows traffic distributed across plan instances and how client affinity can bias traffic to one instance."
 content_validation:
   status: verified
-  last_reviewed: 2026-09-11"
+  last_reviewed: 2026-09-11
   reviewer: agent
   core_claims:
     - claim: "Scale up changes the size/SKU of compute instances in your plan."

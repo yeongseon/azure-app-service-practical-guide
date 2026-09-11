@@ -1,7 +1,7 @@
 ---
 content_validation:
   status: verified
-  last_reviewed: 2026-09-11"
+  last_reviewed: 2026-09-11
   reviewer: agent
   core_claims:
     - claim: "Health check pings a path that you choose on all instances of an App Service app at 1-minute intervals."

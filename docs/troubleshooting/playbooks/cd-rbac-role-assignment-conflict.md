@@ -16,7 +16,7 @@ evidence:
   - arm-deployment
 summary: Symptom-oriented playbook for the AcrPull RoleAssignmentExists conflict that surfaces when reconnecting App Service Deployment Center container CD with a managed identity.
 status: stable
-last_reviewed: 2026-09-11"
+last_reviewed: 2026-09-11
 content_sources:
   diagrams:
     - id: troubleshooting-decision-flow
@@ -29,7 +29,7 @@ content_sources:
         - https://learn.microsoft.com/en-us/azure/role-based-access-control/troubleshooting
 content_validation:
   status: verified
-  last_reviewed: 2026-09-11"
+  last_reviewed: 2026-09-11
   reviewer: agent
   core_claims:
     - claim: "Azure RBAC enforces a unique constraint on the combination of scope, principal, and role definition for role assignments."

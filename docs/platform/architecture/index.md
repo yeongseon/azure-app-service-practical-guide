@@ -31,7 +31,7 @@ content_sources:
     - id: control-data-plane
       type: flowchart
       source: mslearn-adapted
-      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/networking-features-hosting-plans
+      mslearn_url: https://learn.microsoft.com/en-us/azure/app-service/networking-features
       description: "Shows the relationship between control-plane configuration actions and the runtime data plane in App Service."
     - id: plane-interactions
       type: flowchart
@@ -70,7 +70,7 @@ content_sources:
       description: "Shows regional front ends distributing traffic to workers across multiple availability zones."
 content_validation:
   status: verified
-  last_reviewed: 2026-09-11"
+  last_reviewed: 2026-09-11
   reviewer: agent
   core_claims:
     - claim: "A single management-plane change (for example, changing an app setting) can trigger runtime recycle."
@@ -80,7 +80,7 @@ content_validation:
       source: "https://learn.microsoft.com/en-us/azure/app-service/networking-features"
       verified: true
     - claim: "Scale-out adds new instances that must warm up."
-      source: "https://learn.microsoft.com/en-us/azure/app-service/networking-features-hosting-plans"
+      source: "https://learn.microsoft.com/en-us/azure/app-service/networking-features"
       verified: true
     - claim: "The SCM site (`<app-name>.scm.azurewebsites.net`) is a companion management surface."
       source: "https://learn.microsoft.com/en-us/azure/app-service/networking-features"
@@ -205,7 +205,7 @@ flowchart TD
 Learn references:
 
 - [App Service overview](https://learn.microsoft.com/en-us/azure/app-service/networking-features)
-- [App Service plan overview](https://learn.microsoft.com/en-us/azure/app-service/networking-features-hosting-plans)
+- [App Service plan overview](https://learn.microsoft.com/en-us/azure/app-service/networking-features)
 - [Reliability in App Service](https://learn.microsoft.com/en-us/azure/reliability/reliability-app-service)
 
 ### [Beginner] Platform architecture at a glance
@@ -909,7 +909,7 @@ For language-specific implementation details, see:
 ## Sources
 
 - [Azure App Service overview](https://learn.microsoft.com/en-us/azure/app-service/networking-features)
-- [App Service plan overview](https://learn.microsoft.com/en-us/azure/app-service/networking-features-hosting-plans)
+- [App Service plan overview](https://learn.microsoft.com/en-us/azure/app-service/networking-features)
 - [App Service Environment overview](https://learn.microsoft.com/en-us/azure/app-service/environment/overview)
 - [Kudu service overview](https://learn.microsoft.com/en-us/azure/app-service/resources-kudu)
 - [Configure a custom container for App Service](https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container)

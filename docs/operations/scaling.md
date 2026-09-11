@@ -7,7 +7,7 @@ content_sources:
       mslearn_url: https://learn.microsoft.com/en-us/azure/azure-monitor/autoscale/autoscale-get-started
 content_validation:
   status: verified
-  last_reviewed: 2026-09-11"
+  last_reviewed: 2026-09-11
   reviewer: agent
   core_claims:
     - claim: "Scale up changes the App Service Plan SKU for more CPU and memory per instance."

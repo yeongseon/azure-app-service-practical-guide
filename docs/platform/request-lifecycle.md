@@ -31,7 +31,7 @@ content_sources:
       description: "Illustrates frontend distribution across healthy instances and optional client affinity to a single worker."
 content_validation:
   status: verified
-  last_reviewed: 2026-09-11"
+  last_reviewed: 2026-09-11
   reviewer: agent
   core_claims:
     - claim: "App Service supports platform hostnames and custom domains."
@@ -316,9 +316,9 @@ For language-specific implementation details, see:
 - [Scaling](./scaling.md)
 - [Networking](./networking.md)
 - [Deployment Slots in App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots)
-- [Inbound and outbound IPs (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/networking-features-inbound-outbound-ips)
+- [Inbound and outbound IPs (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/app-service-ip-addresses)
 
 ## Sources
 
 - [Deployment Slots in App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots)
-- [Inbound and outbound IPs (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/networking-features-inbound-outbound-ips)
+- [Inbound and outbound IPs (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/app-service-ip-addresses)

@@ -9,7 +9,7 @@ content_sources:
         - https://learn.microsoft.com/en-us/azure/app-service/overview-diagnostics
 content_validation:
   status: verified
-  last_reviewed: 2026-09-11"
+  last_reviewed: 2026-09-11
   reviewer: agent
   core_claims:
     - claim: "App Service Health Check sends HTTP requests to a configured path such as /health."

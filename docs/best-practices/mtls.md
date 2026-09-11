@@ -10,7 +10,7 @@ content_sources:
         - https://learn.microsoft.com/en-us/azure/app-service/app-service-key-vault-references
 content_validation:
   status: verified
-  last_reviewed: 2026-09-11"
+  last_reviewed: 2026-09-11
   reviewer: agent
   core_claims:
     - claim: "App Service forwards the inbound client certificate to app code in the X-ARR-ClientCert header."

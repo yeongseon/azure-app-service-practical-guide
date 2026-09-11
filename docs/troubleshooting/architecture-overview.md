@@ -21,7 +21,7 @@ status: stable
 last_reviewed: 2026-09-11
 content_validation:
   status: verified
-  last_reviewed: 2026-09-11"
+  last_reviewed: 2026-09-11
   reviewer: agent
   core_claims:
     - claim: "Azure App Service diagnostics is an interactive troubleshooting experience that helps troubleshoot apps with no configuration required."
