@@ -1135,7 +1135,7 @@ AI agents MAY merge their own pull requests **autonomously**, but ONLY after ALL
 
 | # | Gate | How it is verified |
 |---|---|---|
-| 1 | **Oracle review ≥ 90/100** | Submit the final diff to Oracle per the Mandatory Oracle Review protocol. Score must be **90 or higher with no merge-blocking issues**. Any must-fix item is a blocker even at ≥ 90. |
+| 1 | **Oracle review ≥ 90/100** | Submit the final diff to Oracle for quality review. Score must be **90 or higher with no merge-blocking issues**. Any must-fix item is a blocker even at ≥ 90. |
 | 2 | **CI fully green** | Every required GitHub Actions check on the PR head SHA passes. Verify with `gh pr checks <pr> --watch`; do not merge on `pending` or `failure`. |
 | 3 | **Caption ↔ image match** | For every added/changed image referenced from markdown, the caption/alt text MUST accurately describe the actual rendered image (as with the 02 storage-networking alt correction). |
 | 4 | **Final-image PII verification** | Every added/changed `.png`/`.webp` referenced from markdown MUST be visually verified (Read/`look_at`) for PII on the **final committed bytes** — zeroed subscription/tenant IDs, no employee identifiers, no black-box masks. WebP re-encodes are re-verified, not assumed from the raw PNG. |
