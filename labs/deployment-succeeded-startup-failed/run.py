@@ -74,7 +74,17 @@ def evaluate(run, phases, logs):
                 # activation evidence a healthy app is ambiguous between "the
                 # entrypoint does not matter" and "the change had not taken
                 # effect yet". Only the first is a refutation.
-                activated = phase.get('intervention_activated') is True
+                # Recomputed from raw, never read from the phase's own
+                # summary flag: a phase that can assert its own activation
+                # would be the same summary-over-raw inversion this evaluator
+                # exists to reject.
+                activated = (
+                    phase.get('config_readback') == BAD
+                    and phase.get('probe_budget_exhausted') is True
+                    and len(probes) >= 24
+                    and all(probe.get('exit_code') == 0 for probe in probes)
+                    and not any(500 <= probe.get('status', 0) <= 599 for probe in probes)
+                )
                 if final['exit_code'] != 0 or final['status'] == 0:
                     gaps.append('Fault only produced a transport error, not an HTTP failure')
                 elif 500 <= final['status'] <= 599:
@@ -127,7 +137,7 @@ def evaluate(run, phases, logs):
             'errors': errors, 'refutations': refutations, 'limitations': gaps + [
                 'Hashes detect content changes; they do not attest that Azure execution occurred.',
                 'HTTP and import errors support this scoped intervention; other concurrent changes remain a limitation.',
-                'A configuration readback plus an exhausted probe budget is the activation evidence used here; '
+                'Activation is recomputed from the configuration readback and the full probe series; '
                 'it does not positively prove the serving worker was recycled.']}
 
 

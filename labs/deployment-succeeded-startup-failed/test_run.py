@@ -42,6 +42,44 @@ class EvaluationTests(unittest.TestCase):
     def test_valid_run_supports_the_hypothesis(self):
         self.assertEqual(self.hypothesis(), 'SUPPORTED')
 
+    def test_forged_activation_flag_is_not_trusted(self):
+        """The derived flag must be recomputed, never believed.
+
+        `intervention_activated` is written by the runner. If the evaluator
+        trusts it, a phase can assert its own activation without the
+        readback or probe evidence that defines it - the same summary-over-raw
+        inversion these gates exist to prevent.
+        """
+        for probe in self.phases['fault']['probes']:
+            probe['status'] = 200
+        self.phases['fault']['status'] = 200
+        self.phases['fault']['intervention_activated'] = True
+        self.phases['fault'].pop('config_readback', None)
+        self.phases['fault'].pop('probe_budget_exhausted', None)
+        self.logs = []
+
+        outcome = pilot.evaluate(self.run, self.phases, self.logs)
+        self.assertNotEqual(
+            outcome['hypothesis_evaluation'],
+            'REFUTED',
+            msg='a self-asserted activation flag must not license a refutation',
+        )
+
+    def test_activation_requires_the_configuration_to_read_back_unchanged(self):
+        for probe in self.phases['fault']['probes']:
+            probe['status'] = 200
+        self.phases['fault']['status'] = 200
+        self.phases['fault']['probes'] = [{'status': 200, 'exit_code': 0} for _ in range(24)]
+        self.phases['fault'].update(
+            intervention_activated=True,
+            config_readback=pilot.GOOD,
+            probe_budget_exhausted=True,
+        )
+        self.logs = []
+
+        outcome = pilot.evaluate(self.run, self.phases, self.logs)
+        self.assertNotEqual(outcome['hypothesis_evaluation'], 'REFUTED')
+
     def test_healthy_fault_without_activation_proof_is_inconclusive(self):
         """A control-plane write is not proof the workload picked it up.
 
@@ -79,7 +117,8 @@ class EvaluationTests(unittest.TestCase):
         for probe in self.phases['fault']['probes']:
             probe['status'] = 200
         self.phases['fault']['status'] = 200
-        self.phases['fault']['intervention_activated'] = True
+        self.phases['fault'].update(intervention_activated=True, config_readback=pilot.BAD, probe_budget_exhausted=True)
+        self.phases['fault']['probes'] = [{'status': self.phases['fault']['status'], 'exit_code': 0} for _ in range(24)]
         self.logs = []
 
         outcome = pilot.evaluate(self.run, self.phases, self.logs)
@@ -90,7 +129,8 @@ class EvaluationTests(unittest.TestCase):
         for probe in self.phases['fault']['probes']:
             probe['status'] = 200
         self.phases['fault']['status'] = 200
-        self.phases['fault']['intervention_activated'] = True
+        self.phases['fault'].update(intervention_activated=True, config_readback=pilot.BAD, probe_budget_exhausted=True)
+        self.phases['fault']['probes'] = [{'status': self.phases['fault']['status'], 'exit_code': 0} for _ in range(24)]
         self.logs = []
         outcome = pilot.evaluate(self.run, self.phases, self.logs)
         self.assertNotEqual(
@@ -103,7 +143,8 @@ class EvaluationTests(unittest.TestCase):
         for probe in self.phases['fault']['probes']:
             probe['status'] = 404
         self.phases['fault']['status'] = 404
-        self.phases['fault']['intervention_activated'] = True
+        self.phases['fault'].update(intervention_activated=True, config_readback=pilot.BAD, probe_budget_exhausted=True)
+        self.phases['fault']['probes'] = [{'status': self.phases['fault']['status'], 'exit_code': 0} for _ in range(24)]
         self.logs = []
 
         outcome = pilot.evaluate(self.run, self.phases, self.logs)
@@ -115,7 +156,8 @@ class EvaluationTests(unittest.TestCase):
         for probe in self.phases['fault']['probes']:
             probe['status'] = 200
         self.phases['fault']['status'] = 200
-        self.phases['fault']['intervention_activated'] = True
+        self.phases['fault'].update(intervention_activated=True, config_readback=pilot.BAD, probe_budget_exhausted=True)
+        self.phases['fault']['probes'] = [{'status': self.phases['fault']['status'], 'exit_code': 0} for _ in range(24)]
         self.phases['fault']['run_id'] = 'other'
         self.logs = []
 
@@ -139,7 +181,8 @@ class EvaluationTests(unittest.TestCase):
         for probe in self.phases['fault']['probes']:
             probe['status'] = 200
         self.phases['fault']['status'] = 200
-        self.phases['fault']['intervention_activated'] = True
+        self.phases['fault'].update(intervention_activated=True, config_readback=pilot.BAD, probe_budget_exhausted=True)
+        self.phases['fault']['probes'] = [{'status': self.phases['fault']['status'], 'exit_code': 0} for _ in range(24)]
         refuted = pilot.evaluate(self.run, self.phases, self.logs)
         self.assertEqual(refuted['hypothesis_evaluation'], 'REFUTED')
         self.assertEqual(pilot.exit_code_for(refuted), 3)
