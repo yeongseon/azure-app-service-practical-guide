@@ -44,6 +44,13 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Detect absorbed strong/fallback gate predicates
+        run: |
+          python3 -m doctest scripts/detect_absorbed_predicates.py
+          python3 scripts/detect_absorbed_predicates.py labs \
+            --allowlist scripts/absorbed-predicate-allowlist.txt \
+            --repo-root .
+
       - name: Run startup-failure evaluator regression suite
         run: python3 labs/deployment-succeeded-startup-failed/test_run.py
 
