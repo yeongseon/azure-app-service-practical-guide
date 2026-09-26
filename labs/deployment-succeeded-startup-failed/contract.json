@@ -1,0 +1,15 @@
+{
+  "scenario": "deployment-succeeded-startup-failed",
+  "version": 1,
+  "question": "Does changing only the Gunicorn module entrypoint on the same deployed app produce HTTP 5xx and a matching import error, then recover when reverted?",
+  "scope": "Dedicated Linux B1 App Service, Python 3.11, public HTTPS endpoint, one app and one Log Analytics workspace",
+  "controlled": ["application ZIP", "resource", "runtime", "Gunicorn timeout=120", "port=8000"],
+  "intervention": "app:app -> wrong_module:app -> app:app",
+  "required": ["run.json", "baseline/phase.json", "fault/phase.json", "recovery/phase.json", "console.json"],
+  "criteria": "Ordered healthy HTTP 200 baseline, fault HTTP 5xx and same-resource fault-window ModuleNotFoundError containing wrong_module, recovered HTTP 200; transport failure alone is INCONCLUSIVE",
+  "sampling": "Up to 24 health probes per phase, 20 second request timeout, 10 second interval; six log queries with 60 second timeout and 30 second interval",
+  "exclusions": "No rows excluded by the evaluator; any wrong-resource or out-of-window row fails integrity",
+  "competing_hypotheses": ["dependency/import failure unrelated to module", "network reachability", "platform restart", "concurrent configuration change"],
+  "cleanup": "Explicit cleanup command for the dedicated resource group; poll until group exists is false",
+  "status": {"execution": "NOT_RUN", "evidence_validation": "NOT_EVALUATED", "hypothesis": "NOT_EVALUATED", "independent_reproduction": "NOT_RUN", "cleanup": "NOT_NEEDED"}
+}
