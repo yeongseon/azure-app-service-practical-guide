@@ -43,7 +43,8 @@ def write_json(path, value):
 
 def evaluate(run, phases, logs):
     """Recompute from phase probes and resource/time-scoped raw console rows."""
-    errors, gaps = [], []
+    errors, gaps, refutations = [], [], []
+    fault_showed_predicted_symptom = False
     try:
         if run['fingerprints'] != fingerprints():
             errors.append('Experiment files changed: old evidence requires review of its original source.')
@@ -65,12 +66,19 @@ def evaluate(run, phases, logs):
                 continue
             final = probes[-1]
             if name == 'fault':
-                if final['status'] == 200:
-                    errors.append('Fault did not produce unavailability')
-                elif final['exit_code'] != 0 or final['status'] == 0:
+                # The fault configuration applied cleanly, so whatever the app
+                # answered is a real observation about the intervention rather
+                # than a broken capture. A response that contradicts the
+                # contract's predicted 5xx therefore refutes the hypothesis; it
+                # does not invalidate the evidence.
+                if final['exit_code'] != 0 or final['status'] == 0:
                     gaps.append('Fault only produced a transport error, not an HTTP failure')
-                elif final['status'] < 500 or final['status'] > 599:
-                    errors.append('Fault did not produce an HTTP 5xx')
+                elif final['status'] == 200:
+                    refutations.append('Fault configuration applied but the app stayed healthy at HTTP 200')
+                elif not 500 <= final['status'] <= 599:
+                    refutations.append(f'Fault produced HTTP {final["status"]}, not the predicted 5xx')
+                else:
+                    fault_showed_predicted_symptom = True
             elif final['status'] != 200 or final['exit_code'] != 0:
                 errors.append(f'{name}: health not verified')
         if not isinstance(logs, list):
@@ -85,19 +93,43 @@ def evaluate(run, phases, logs):
             message = row['ResultDescription']
             if 'ModuleNotFoundError' in message and 'wrong_module' in message:
                 hits += 1
-        if not hits:
+        # Absence of an import error is only a data gap when the app actually
+        # failed. If the intervention never produced the predicted symptom,
+        # having no import error is consistent with the refutation.
+        if not hits and fault_showed_predicted_symptom:
             gaps.append('No matching runtime import error arrived within the collection deadline')
     except (KeyError, TypeError, ValueError, AttributeError) as exc:
         errors.append(f'Missing or invalid required evidence: {exc}')
         hits = 0
     verdict = 'FAIL' if errors else ('INCONCLUSIVE' if gaps else 'PASS')
+    if errors:
+        hypothesis = 'INCONCLUSIVE'
+    elif refutations:
+        hypothesis = 'REFUTED'
+    elif gaps:
+        hypothesis = 'INCONCLUSIVE'
+    else:
+        hypothesis = 'SUPPORTED'
     return {'run_id': run.get('run_id'), 'evaluated_at': now(),
             'evidence_validation': verdict,
-            'hypothesis_evaluation': 'SUPPORTED' if verdict == 'PASS' else 'INCONCLUSIVE',
+            'hypothesis_evaluation': hypothesis,
             'independent_reproduction': 'NOT_RUN', 'matching_import_errors': hits,
-            'errors': errors, 'limitations': gaps + [
+            'errors': errors, 'refutations': refutations, 'limitations': gaps + [
                 'Hashes detect content changes; they do not attest that Azure execution occurred.',
                 'HTTP and import errors support this scoped intervention; other concurrent changes remain a limitation.']}
+
+
+def exit_code_for(result):
+    """Map a result onto a shell exit code.
+
+    A refuted hypothesis must not share exit 0 with a supported one. Both are
+    valid evidence, but exit 0 reads as "the reproduction worked", and the
+    contract forbids presenting a refutation as a successful reproduction.
+    """
+    validation = result['evidence_validation']
+    if validation == 'PASS' and result.get('hypothesis_evaluation') == 'REFUTED':
+        return 3
+    return {'PASS': 0, 'FAIL': 1, 'INCONCLUSIVE': 2}[validation]
 
 
 def command(folder, label, argv, timeout=900):
@@ -245,7 +277,7 @@ def evaluate_folder(folder):
     # Every evaluation is separate; no prior collection/phase is overwritten.
     write_json(folder / f'evaluation-{uuid.uuid4().hex}.json', result)
     print(json.dumps(result, indent=2))
-    return {'PASS': 0, 'FAIL': 1, 'INCONCLUSIVE': 2}[result['evidence_validation']]
+    return exit_code_for(result)
 
 
 def cleanup(args):

@@ -33,8 +33,92 @@ class EvaluationTests(unittest.TestCase):
     def result(self):
         return pilot.evaluate(self.run, self.phases, self.logs)['evidence_validation']
 
+    def hypothesis(self):
+        return pilot.evaluate(self.run, self.phases, self.logs)['hypothesis_evaluation']
+
     def test_valid(self):
         self.assertEqual(self.result(), 'PASS')
+
+    def test_valid_run_supports_the_hypothesis(self):
+        self.assertEqual(self.hypothesis(), 'SUPPORTED')
+
+    def test_clean_fault_that_stays_healthy_refutes_the_hypothesis(self):
+        """A correctly applied fault that never breaks the app is a refutation.
+
+        The contract predicts HTTP 5xx plus a matching import error. If the
+        bad entrypoint is genuinely configured, every probe still answers
+        200, and nothing about the capture is malformed, the prediction is
+        contradicted. That is a valid experimental result, so the evidence
+        axis stays PASS and only the hypothesis axis records REFUTED.
+        Collapsing it into FAIL/INCONCLUSIVE would report a real refutation
+        as a broken experiment.
+        """
+        for probe in self.phases['fault']['probes']:
+            probe['status'] = 200
+        self.phases['fault']['status'] = 200
+        self.logs = []
+
+        outcome = pilot.evaluate(self.run, self.phases, self.logs)
+        self.assertEqual(outcome['evidence_validation'], 'PASS')
+        self.assertEqual(outcome['hypothesis_evaluation'], 'REFUTED')
+
+    def test_refutation_is_not_reported_as_success(self):
+        for probe in self.phases['fault']['probes']:
+            probe['status'] = 200
+        self.phases['fault']['status'] = 200
+        self.logs = []
+        outcome = pilot.evaluate(self.run, self.phases, self.logs)
+        self.assertNotEqual(
+            pilot.exit_code_for(outcome),
+            0,
+            msg='a refuted hypothesis must not exit 0 and look like a confirmed reproduction',
+        )
+
+    def test_non_5xx_fault_response_refutes_rather_than_breaks_the_run(self):
+        for probe in self.phases['fault']['probes']:
+            probe['status'] = 404
+        self.phases['fault']['status'] = 404
+        self.logs = []
+
+        outcome = pilot.evaluate(self.run, self.phases, self.logs)
+        self.assertEqual(outcome['evidence_validation'], 'PASS')
+        self.assertEqual(outcome['hypothesis_evaluation'], 'REFUTED')
+        self.assertTrue(any('404' in item for item in outcome['refutations']))
+
+    def test_integrity_failure_outranks_refutation(self):
+        for probe in self.phases['fault']['probes']:
+            probe['status'] = 200
+        self.phases['fault']['status'] = 200
+        self.phases['fault']['run_id'] = 'other'
+        self.logs = []
+
+        outcome = pilot.evaluate(self.run, self.phases, self.logs)
+        self.assertEqual(outcome['evidence_validation'], 'FAIL')
+        self.assertEqual(
+            outcome['hypothesis_evaluation'],
+            'INCONCLUSIVE',
+            msg='a broken capture cannot refute anything; it can only fail to judge',
+        )
+
+    def test_exit_codes_separate_every_outcome(self):
+        supported = pilot.evaluate(self.run, self.phases, self.logs)
+        self.assertEqual(pilot.exit_code_for(supported), 0)
+
+        self.logs = []
+        inconclusive = pilot.evaluate(self.run, self.phases, self.logs)
+        self.assertEqual(inconclusive['evidence_validation'], 'INCONCLUSIVE')
+        self.assertEqual(pilot.exit_code_for(inconclusive), 2)
+
+        for probe in self.phases['fault']['probes']:
+            probe['status'] = 200
+        self.phases['fault']['status'] = 200
+        refuted = pilot.evaluate(self.run, self.phases, self.logs)
+        self.assertEqual(refuted['hypothesis_evaluation'], 'REFUTED')
+        self.assertEqual(pilot.exit_code_for(refuted), 3)
+
+        self.phases['fault']['run_id'] = 'other'
+        failed = pilot.evaluate(self.run, self.phases, self.logs)
+        self.assertEqual(pilot.exit_code_for(failed), 1)
 
     def test_raw_contradiction_cannot_be_overridden(self):
         self.phases['fault']['status'] = 200
