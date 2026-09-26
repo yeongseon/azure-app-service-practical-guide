@@ -66,19 +66,29 @@ def evaluate(run, phases, logs):
                 continue
             final = probes[-1]
             if name == 'fault':
-                # The fault configuration applied cleanly, so whatever the app
-                # answered is a real observation about the intervention rather
-                # than a broken capture. A response that contradicts the
-                # contract's predicted 5xx therefore refutes the hypothesis; it
-                # does not invalidate the evidence.
+                # A response other than the predicted 5xx only refutes the
+                # hypothesis if the intervention actually reached the running
+                # worker. `az webapp config set` returning the requested
+                # command proves the control plane accepted it, not that the
+                # worker was recycled inside the probe window, so without
+                # activation evidence a healthy app is ambiguous between "the
+                # entrypoint does not matter" and "the change had not taken
+                # effect yet". Only the first is a refutation.
+                activated = phase.get('intervention_activated') is True
                 if final['exit_code'] != 0 or final['status'] == 0:
                     gaps.append('Fault only produced a transport error, not an HTTP failure')
-                elif final['status'] == 200:
-                    refutations.append('Fault configuration applied but the app stayed healthy at HTTP 200')
-                elif not 500 <= final['status'] <= 599:
-                    refutations.append(f'Fault produced HTTP {final["status"]}, not the predicted 5xx')
-                else:
+                elif 500 <= final['status'] <= 599:
                     fault_showed_predicted_symptom = True
+                elif not activated:
+                    gaps.append(
+                        f'Fault returned HTTP {final["status"]} but the configuration was not '
+                        'shown to take effect on the running worker, so this cannot be read '
+                        'as a refutation'
+                    )
+                elif final['status'] == 200:
+                    refutations.append('Fault configuration took effect but the app stayed healthy at HTTP 200')
+                else:
+                    refutations.append(f'Fault produced HTTP {final["status"]}, not the predicted 5xx')
             elif final['status'] != 200 or final['exit_code'] != 0:
                 errors.append(f'{name}: health not verified')
         if not isinstance(logs, list):
@@ -116,7 +126,9 @@ def evaluate(run, phases, logs):
             'independent_reproduction': 'NOT_RUN', 'matching_import_errors': hits,
             'errors': errors, 'refutations': refutations, 'limitations': gaps + [
                 'Hashes detect content changes; they do not attest that Azure execution occurred.',
-                'HTTP and import errors support this scoped intervention; other concurrent changes remain a limitation.']}
+                'HTTP and import errors support this scoped intervention; other concurrent changes remain a limitation.',
+                'A configuration readback plus an exhausted probe budget is the activation evidence used here; '
+                'it does not positively prove the serving worker was recycled.']}
 
 
 def exit_code_for(result):
@@ -172,6 +184,19 @@ def phase(folder, run, name, startup, hostname):
             if attempt < 23:
                 time.sleep(10)
         record['status'] = record['probes'][-1]['status']
+        # Read the configuration back after probing. Combined with an
+        # exhausted probe budget this is the strongest activation evidence
+        # available without a worker-identity signal: the intended command is
+        # still in place and the app was observed for the full window rather
+        # than only across the first seconds of a rollout. It still does not
+        # positively prove a worker recycle, which stays a stated limitation.
+        readback = json.loads(azure(target, 'config-readback',
+                                    ['webapp', 'config', 'show', '--ids', run['resource_id']]))
+        record['config_readback'] = readback.get('appCommandLine')
+        record['probe_budget_exhausted'] = len(record['probes']) >= 24
+        record['intervention_activated'] = (
+            record['config_readback'] == startup and record['probe_budget_exhausted']
+        )
     except Exception:
         record['command_exit'] = 1
         raise

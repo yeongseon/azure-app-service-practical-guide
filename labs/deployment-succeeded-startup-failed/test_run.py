@@ -42,6 +42,29 @@ class EvaluationTests(unittest.TestCase):
     def test_valid_run_supports_the_hypothesis(self):
         self.assertEqual(self.hypothesis(), 'SUPPORTED')
 
+    def test_healthy_fault_without_activation_proof_is_inconclusive(self):
+        """A control-plane write is not proof the workload picked it up.
+
+        ``az webapp config set`` returning the requested appCommandLine only
+        shows the configuration was accepted. The worker may not have been
+        recycled inside the bounded probe window, so a still-healthy app is
+        ambiguous between "the entrypoint does not matter" and "the change
+        had not taken effect yet". Only the first of those is a refutation.
+        """
+        for probe in self.phases['fault']['probes']:
+            probe['status'] = 200
+        self.phases['fault']['status'] = 200
+        self.phases['fault'].pop('intervention_activated', None)
+        self.logs = []
+
+        outcome = pilot.evaluate(self.run, self.phases, self.logs)
+        self.assertEqual(outcome['hypothesis_evaluation'], 'INCONCLUSIVE')
+        self.assertEqual(outcome['evidence_validation'], 'INCONCLUSIVE')
+        self.assertTrue(
+            any('take effect' in item or 'activation' in item for item in outcome['limitations']),
+            msg='the run must say why a healthy fault was not treated as a refutation',
+        )
+
     def test_clean_fault_that_stays_healthy_refutes_the_hypothesis(self):
         """A correctly applied fault that never breaks the app is a refutation.
 
@@ -56,6 +79,7 @@ class EvaluationTests(unittest.TestCase):
         for probe in self.phases['fault']['probes']:
             probe['status'] = 200
         self.phases['fault']['status'] = 200
+        self.phases['fault']['intervention_activated'] = True
         self.logs = []
 
         outcome = pilot.evaluate(self.run, self.phases, self.logs)
@@ -66,6 +90,7 @@ class EvaluationTests(unittest.TestCase):
         for probe in self.phases['fault']['probes']:
             probe['status'] = 200
         self.phases['fault']['status'] = 200
+        self.phases['fault']['intervention_activated'] = True
         self.logs = []
         outcome = pilot.evaluate(self.run, self.phases, self.logs)
         self.assertNotEqual(
@@ -78,6 +103,7 @@ class EvaluationTests(unittest.TestCase):
         for probe in self.phases['fault']['probes']:
             probe['status'] = 404
         self.phases['fault']['status'] = 404
+        self.phases['fault']['intervention_activated'] = True
         self.logs = []
 
         outcome = pilot.evaluate(self.run, self.phases, self.logs)
@@ -89,6 +115,7 @@ class EvaluationTests(unittest.TestCase):
         for probe in self.phases['fault']['probes']:
             probe['status'] = 200
         self.phases['fault']['status'] = 200
+        self.phases['fault']['intervention_activated'] = True
         self.phases['fault']['run_id'] = 'other'
         self.logs = []
 
@@ -112,6 +139,7 @@ class EvaluationTests(unittest.TestCase):
         for probe in self.phases['fault']['probes']:
             probe['status'] = 200
         self.phases['fault']['status'] = 200
+        self.phases['fault']['intervention_activated'] = True
         refuted = pilot.evaluate(self.run, self.phases, self.logs)
         self.assertEqual(refuted['hypothesis_evaluation'], 'REFUTED')
         self.assertEqual(pilot.exit_code_for(refuted), 3)

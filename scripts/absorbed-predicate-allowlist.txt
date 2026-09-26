@@ -1,14 +1,15 @@
 # Declared exceptions for scripts/detect_absorbed_predicates.py
 #
-# Format: <repo-relative-path>::<result-variable>  # reason
+# Format: <repo-relative-path>::<result>::<wide>::<narrow>  # reason
 #
-# An entry here asserts that the absorption is DELIBERATE: the fallback is a
-# substantive check in its own right and the strong path is only a stricter
-# variant of it, so no contradiction can pass. It does NOT excuse a fallback
-# that discards the strong path's evidence. If the strong path is the only
-# thing verifying the claim the sub-gate's name makes, fix the predicate
-# instead of listing it here.
+# The key names both predicate variables, not just the result, so an
+# exception cannot leak onto an unrelated predicate that reuses a common
+# result name such as b_pass. A reason is mandatory and stale entries fail
+# the gate, so a waiver cannot outlive the code it describes.
 #
-# Every entry must state why the weaker path is still sound.
+# An entry asserts the absorption is DELIBERATE: the narrow predicate is a
+# substantive check on its own and the wide one is only a stricter variant,
+# so no contradiction can pass. It does NOT excuse a fallback that discards
+# the evidence the sub-gate is named for.
 #
 # No declared exceptions in this repository.
