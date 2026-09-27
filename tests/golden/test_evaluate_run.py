@@ -1,4 +1,13 @@
 """Tests for the Golden v1 reference evaluator (#183)."""
+import sys
+
+# Bytecode caching silently defeats these tests. `importlib` will reuse a
+# cached .pyc when a restored file's mtime and size collide with the
+# version that produced it, so a reverted evaluator can keep executing
+# sabotaged logic while the source on disk reads correctly. During
+# mutation testing that presents as a passing suite over broken code.
+sys.dont_write_bytecode = True
+
 import importlib.util
 import json
 import pathlib
