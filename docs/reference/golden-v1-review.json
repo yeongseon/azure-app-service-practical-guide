@@ -29,8 +29,8 @@
       "id": 3,
       "requirement": "AGENTS.md rewritten around agent judgment; machine-enforceable rules moved to validators/CI where possible",
       "status": "PARTIAL",
-      "evidence": "An Evidence-Driven Agent Behavior section was added and one documented-but-unenforced rule became a CI step, which surfaced two real violations. The file was extended, not rewritten; most of its prose rules remain unenforced by any validator.",
-      "gap": "No systematic pass over the remaining prose rules to determine which are machine-checkable.",
+      "evidence": "Two rules moved from prose to enforcement: the frontmatter scope rule now runs in a pull-request-scoped job, and the Golden suites, doctests and JSON contract parse run alongside it. An Evidence-Driven Agent Behavior section states the principle that a rule a validator can check belongs in a validator.",
+      "gap": "No systematic pass has been made over the remaining AGENTS.md prose to decide which rules are machine-checkable. Two were wired because review surfaced them, not because the file was audited end to end. Running validate_doc_quality.py --all also reports 29 pre-existing errors across 233 files that change-scoped CI never sees, so the enforced set is narrower than the documented set.",
       "verify": "python3 tools/validate_frontmatter.py"
     },
     {
@@ -140,7 +140,9 @@
         "Mutation verification is asserted in prose with no retained artifact."
       ],
       "findings_disputed": [
-        "The reproduction gate was called vacuously satisfiable on a fabricated record. The specific invocation shown passed a dict where check() takes a path, and the cited output keys do not exist. The underlying NOT_TESTED equality defect was real and is fixed."
+        "The reproduction gate was called vacuously satisfiable on a fabricated record. The specific invocation shown passed a dict where check() takes a path, and the cited output keys do not exist. The underlying NOT_TESTED equality defect was real and is fixed.",
+        "The tail-section rule was reported as violated by docs/reference/validation-status.md. validate_doc_quality.py:286 exempts that file explicitly as a generated dashboard, matching this repository's stated policy for generated output, and the validator already runs ungated on pull requests. Acting on the finding would have broken correct behaviour to satisfy it.",
+        "A separate tail-section validator was implied to be missing. validate_doc_quality.py has checked tail order and ordering since before this branch; building another would have duplicated an existing gate rather than closing a gap."
       ]
     }
   ]
