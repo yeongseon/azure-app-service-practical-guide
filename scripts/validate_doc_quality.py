@@ -42,6 +42,18 @@ BEST_PRACTICES_SECTIONS = [
     "Validation Checklist",
 ]
 
+#: Files under docs/operations/deployment/ describe how a deployment
+#: mechanism works rather than walking a reader through a procedure, so the
+#: Prerequisites/Procedure/Rollback shape does not fit them. AGENTS.md has
+#: documented this sub-template and noted that no carve-out existed, which
+#: left four files reported as debt on every --all run. Enforcing the real
+#: shape is better than exempting the path: the sub-template is still a
+#: contract, it was simply an unchecked one.
+DEPLOYMENT_METHOD_SECTIONS = [
+    "Main Content",
+    "Advanced Topics",
+]
+
 OPERATIONS_SECTIONS = [
     "Prerequisites",
     "When to Use",
@@ -269,7 +281,16 @@ def require_sections(
 ) -> None:
     found = headings(text)
     for name in names:
-        if name not in found:
+        # AGENTS.md permits a section to carry a trailing qualifier, so
+        # "Competing Hypotheses (which tool is the right one)" satisfies
+        # "Competing Hypotheses". Exact matching rejected two sections of a
+        # playbook that had all nine and merely named two of them more
+        # precisely. The canonical name is still required as the prefix, so
+        # renaming a section outright is still caught.
+        if not any(
+            heading == name or heading.startswith(f"{name} (")
+            for heading in found
+        ):
             add(
                 findings,
                 path,
@@ -312,7 +333,12 @@ def validate_templates(findings: list[Finding], path: Path, text: str) -> None:
             findings, path, text, BEST_PRACTICES_SECTIONS, "Best Practices"
         )
     elif section == "operations":
-        require_sections(findings, path, text, OPERATIONS_SECTIONS, "Operations")
+        if len(parts) > 2 and parts[2] == "deployment":
+            require_sections(
+                findings, path, text, DEPLOYMENT_METHOD_SECTIONS,
+                "Deployment method reference")
+        else:
+            require_sections(findings, path, text, OPERATIONS_SECTIONS, "Operations")
     elif section == "troubleshooting" and "playbooks" in parts:
         require_sections(
             findings,
@@ -415,6 +441,10 @@ def validate_mermaid_metadata(
             )
 
 
+#: Fence languages whose contents a reader is expected to run directly.
+SHELL_FENCE_LANGUAGES = {"bash", "sh", "shell", "console"}
+
+
 def validate_cli_blocks(
     findings: list[Finding],
     path: Path,
@@ -427,10 +457,17 @@ def validate_cli_blocks(
     require_explanation_table = not (
         "playbooks" in parts or "first-10-minutes" in parts
     )
-    for start, end, _lang, body, lines in iter_code_fences(text):
+    for start, end, lang, body, lines in iter_code_fences(text):
         if not re.search(r"(^|\s)az\s+", body):
             continue
-        if require_explanation_table and not has_table_near(lines, start, end):
+        # AGENTS.md scopes the explanation-table rule to bash fences: "Every
+        # bash code fence that contains an az ... command". A yaml fence
+        # holding a GitHub Actions step is workflow configuration, not a
+        # reader-executable CLI step, and demanding a Command/Purpose table
+        # under a workflow snippet would describe the wrong thing. The
+        # long-flag check below still applies to every language.
+        table_applies = require_explanation_table and lang in SHELL_FENCE_LANGUAGES
+        if table_applies and not has_table_near(lines, start, end):
             if overlaps_changed(start, end, changed_ranges):
                 add(
                     findings,

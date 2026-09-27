@@ -788,7 +788,7 @@ Scope: files under `docs/operations/deployment/**/*.md` that describe a deployme
 
 These files intentionally omit the Prerequisites / When to Use / Procedure / Verification / Rollback structure because their content shape is "how the deployment method works," not "step-by-step procedure to run." Operational runbooks that actually walk a reader through a procedure (for example `docs/operations/deployment-slots.md` at the top level of `operations/`) MUST use the full Operations template.
 
-**Validator status (current)**: `scripts/validate_doc_quality.py` does NOT currently have a path-based carve-out for `docs/operations/deployment/**/*.md`. Running the validator with `--all` flags these 4 files with missing-section errors as historical debt. Change-scoped CI (the default) does NOT fail on unchanged files, so this documented exception does not break normal commit flow.
+**Validator status (current)**: `scripts/validate_doc_quality.py` enforces this sub-template for `docs/operations/deployment/**/*.md` via `DEPLOYMENT_METHOD_SECTIONS`, requiring `## Main Content` and `## Advanced Topics` instead of the full Operations shape. These files were previously reported as historical debt on every `--all` run because the rule existed only here. Enforcing the real shape was preferred over exempting the path: the sub-template is still a contract, it was simply an unchecked one.
 
 **When editing these files**: preserve the sub-template shape. Do NOT force-fit into the full Operations template. If the validator's `--all` output is used for cleanup work, treat these 4 files as documented exceptions unless a separate scope adds a formal validator carve-out.
 

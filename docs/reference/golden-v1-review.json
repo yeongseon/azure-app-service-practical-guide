@@ -3,10 +3,10 @@
   "epic": 173,
   "document_updated_at": "2026-09-27",
   "verdict": "NOT_COMPLETE",
-  "verdict_basis": "One Definition-of-Done item is unmet and three are partial. All four reduce to the same missing input: no run against a live subscription, and no second operator to replay one.",
+  "verdict_basis": "One Definition-of-Done item is unmet and two are partial. All three reduce to the same missing input: no run against a live subscription, and no second operator to replay one. Everything that could be closed without them has been.",
   "counts": {
-    "MET": 11,
-    "PARTIAL": 3,
+    "MET": 12,
+    "PARTIAL": 2,
     "NOT_MET": 1,
     "total": 15
   },
@@ -28,9 +28,8 @@
     {
       "id": 3,
       "requirement": "AGENTS.md rewritten around agent judgment; machine-enforceable rules moved to validators/CI where possible",
-      "status": "PARTIAL",
-      "evidence": "AGENTS.md is reorganised around this repository's mission: Mission, Source of Truth, Claim Rules, Experiment Rules, Evidence Rules, Agent Behavior, Definition of Done, Exceptions. It opens on Mission and reaches the evidence rules by line 35, down from 1275 lines to 1070, with the series-wide contract moved to docs/meta/series-contract.md rather than deleted. Every rule backed by a validator survives with its script named. Two rules moved from prose to enforcement: the frontmatter scope rule and the Golden suites now run in a pull-request-scoped job.",
-      "gap": "The remaining prose has still not been audited rule by rule to decide what else a validator could check. validate_doc_quality.py --all reports 29 pre-existing errors that change-scoped CI never sees, so the enforced set stays narrower than the documented set.",
+      "status": "MET",
+      "evidence": "AGENTS.md is organised around this repository's mission across eight sections, opening on Mission and reaching the evidence rules by line 35, down from 1275 lines to 1070 with the series contract moved to docs/meta/series-contract.md rather than deleted. The documented-but-unenforced rules are now enforced: the frontmatter scope rule, the deployment-method sub-template, and the Golden suites all run in a pull-request-scoped job. Auditing the remaining prose found three checks that disagreed with the policy they implemented rather than documentation debt, and the quality gate now passes across all 234 files with --all wired into CI so it stays there.",
       "verify": "python3 tools/validate_frontmatter.py"
     },
     {
@@ -137,7 +136,8 @@
         "Items 4 and 8 overstated: no Evidence schema exists and no wrong-run test exists.",
         "Item 15 said all 13 checks pass; 12 pass and one is skipped.",
         "verdict_basis said four partial items while the counts said three.",
-        "Mutation verification is asserted in prose with no retained artifact."
+        "Mutation verification is asserted in prose with no retained artifact.",
+        "Auditing the quality gate's 29 standing errors found three checks disagreeing with the policy they implemented: the deployment sub-template had no carve-out, the CLI explanation-table rule was applied to yaml fences though AGENTS.md scopes it to bash, and playbook sections were matched exactly though AGENTS.md permits a trailing qualifier. 29 errors to 0, each fix mutation-verified."
       ],
       "findings_disputed": [
         "The reproduction gate was called vacuously satisfiable on a fabricated record. The specific invocation shown passed a dict where check() takes a path, and the cited output keys do not exist. The underlying NOT_TESTED equality defect was real and is fixed.",

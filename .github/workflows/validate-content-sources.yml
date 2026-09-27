@@ -262,6 +262,13 @@ jobs:
             echo "::endgroup::"
           done
 
+      - name: Validate documentation quality across every file
+        # The change-scoped run in validate-content-sources cannot see debt
+        # in files a pull request does not touch. That let 29 errors sit
+        # unreported indefinitely. They are now zero, and this keeps them
+        # there rather than trusting that nobody reintroduces one.
+        run: python3 scripts/validate_doc_quality.py --all
+
       - name: Validate JSON contracts parse
         run: |
           python3 - <<'PY'
