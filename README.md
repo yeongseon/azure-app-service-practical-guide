@@ -19,10 +19,10 @@ Comprehensive guide for running web applications on Azure App Service — from f
 | [Best Practices](https://yeongseon.github.io/azure-app-service-practical-guide/best-practices/) | Production baseline, security, networking, deployment, scaling, reliability | Comprehensive |
 | [Language Guides](https://yeongseon.github.io/azure-app-service-practical-guide/language-guides/) | Step-by-step tutorials for Python, Node.js, Java, and .NET | Comprehensive |
 | [Operations](https://yeongseon.github.io/azure-app-service-practical-guide/operations/) | Deployment slots, health checks, security, cost optimization | Comprehensive |
-| [Troubleshooting](https://yeongseon.github.io/azure-app-service-practical-guide/troubleshooting/) | Playbooks, hands-on labs, KQL query packs, decision tree, evidence map | Lab-validated |
+| [Troubleshooting](https://yeongseon.github.io/azure-app-service-practical-guide/troubleshooting/) | Playbooks, hands-on labs, KQL query packs, decision tree, evidence map | Evidence-retained |
 | [Reference](https://yeongseon.github.io/azure-app-service-practical-guide/reference/) | CLI cheatsheet, KQL queries, platform limits, diagnostics reference | Comprehensive |
 
-**Status legend**: **Lab-validated** = Comprehensive + reproducible labs prove the guidance · **Comprehensive** = Full section, MSLearn-verified, production-ready · **Published** = Core content in place, still expanding · **In progress** = Partial content, active development · **Planned** = Placeholder, content not yet started
+**Status legend**: **Evidence-retained** = Comprehensive + labs ship runnable assets and retained capture evidence, but no lab has yet been re-verified under the [Golden evidence model](docs/reference/golden-evidence-model.md) and none has been independently reproduced, so the labs do not currently *prove* the guidance · **Comprehensive** = Full section, MSLearn-verified, production-ready · **Published** = Core content in place, still expanding · **In progress** = Partial content, active development · **Planned** = Placeholder, content not yet started
 
 ## Language Guides
 
@@ -59,7 +59,7 @@ Minimal reference applications demonstrating Azure App Service patterns:
 
 ## Troubleshooting Labs
 
-10 hands-on labs in `labs/` with Bicep templates that reproduce real-world App Service issues. Each lab includes:
+12 hands-on labs in `labs/` with Bicep templates that reproduce real-world App Service issues. Each lab includes:
 
 - Falsifiable hypothesis and step-by-step runbook
 - Real Azure deployment data (KQL logs, CLI output, diagnostic endpoints)
