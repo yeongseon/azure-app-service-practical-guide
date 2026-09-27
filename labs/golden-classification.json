@@ -1,0 +1,71 @@
+{
+  "schema_note": "Classification only. Nothing here deletes or moves a lab; archive-candidate marks a lab whose migration shape needs an explicit decision.",
+  "evaluated_at": "2026-09-27T00:00:00Z",
+  "criteria": {
+    "golden": "Declares assertions before execution in golden/manifest.template.json, separates execution status from hypothesis status, and classifies any pre-Golden artifacts.",
+    "migration-needed": "Has runnable assets but no declared contract, so its verify step decides its own outcome instead of emitting evidence an evaluator can re-derive.",
+    "archive-candidate": "Structure does not map onto the Golden run layout without a deliberate decision about how it should be split."
+  },
+  "labs": [
+    {
+      "lab": "cd-reconnect-rbac-conflict",
+      "classification": "migration-needed",
+      "reason": "Has trigger.sh, verify.sh and cleanup.sh but no declared assertions. verify.sh decides its own outcome rather than emitting evidence for an evaluator."
+    },
+    {
+      "lab": "container-http-pings",
+      "classification": "migration-needed",
+      "reason": "Has trigger.sh and fix.sh but no verify.sh at all, so there is currently nothing to evaluate. Needs a collector plus a declared contract."
+    },
+    {
+      "lab": "deployment-succeeded-startup-failed",
+      "classification": "golden",
+      "reason": "Scenario A. Declares assertions with all four evidence roles in golden/manifest.template.json and classifies its pre-Golden artifacts. execution_status is NOT_RUN until a real Azure run produces evidence."
+    },
+    {
+      "lab": "dns-vnet-resolution",
+      "classification": "migration-needed",
+      "reason": "Runnable trigger/verify pair with sanitized artifacts, no declared assertions and no run identity."
+    },
+    {
+      "lab": "failed-to-forward-request",
+      "classification": "migration-needed",
+      "reason": "Runnable trigger/verify pair with sanitized artifacts, no declared assertions and no run identity."
+    },
+    {
+      "lab": "intermittent-5xx",
+      "classification": "migration-needed",
+      "reason": "Runnable trigger/verify pair. Intermittent symptoms make a declared sampling plan and an explicit INCONCLUSIVE outcome mandatory before this can be evaluated."
+    },
+    {
+      "lab": "memory-pressure",
+      "classification": "migration-needed",
+      "reason": "Runnable trigger/verify pair with sanitized artifacts, no declared assertions and no run identity."
+    },
+    {
+      "lab": "no-space-left-on-device",
+      "classification": "migration-needed",
+      "reason": "Runnable trigger/verify pair with sanitized artifacts, no declared assertions and no run identity."
+    },
+    {
+      "lab": "slot-swap-config-drift",
+      "classification": "golden",
+      "reason": "Scenario C. Declares the stickiness mechanism as discriminating, a deployment-error control for the competing hypothesis, and an activation precondition on the production restart."
+    },
+    {
+      "lab": "slow-start-cold-start",
+      "classification": "migration-needed",
+      "reason": "Runnable trigger/verify pair. A latency claim needs a declared measurement and threshold before a verdict is meaningful."
+    },
+    {
+      "lab": "snat-exhaustion",
+      "classification": "migration-needed",
+      "reason": "Scenario B's classification confounder is fixed: both transports share one classifier and verify.sh no longer declares its own reproduction. Still needs a golden/ manifest declaring assertions before it can be evaluated, so it is not yet Golden."
+    },
+    {
+      "lab": "windows-java-httpplatformhandler-timeout",
+      "classification": "archive-candidate",
+      "reason": "Structurally unlike every other lab: no top-level trigger/verify pair, instead three staged sub-labs (stage-0-config-discovery, lab-1-baseline-signature, lab-2-loopback-saturation). Migrating it means deciding whether each stage is its own Golden scenario. Archive-candidate is a decision to make that call deliberately, not a decision to delete."
+    }
+  ]
+}
