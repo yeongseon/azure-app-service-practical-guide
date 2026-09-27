@@ -374,7 +374,39 @@ The scenario-local [contract](https://github.com/yeongseon/azure-app-service-pra
 
 Use only a dedicated disposable resource group with permission to create App Service and Log Analytics, configure diagnostics, query logs, and delete the group. B1 compute and Log Analytics ingestion incur charges until cleaned up. Run one experiment at a time with no concurrent configuration changes. Read [Clean Up](#clean-up) before deployment; it also applies to failed or interrupted runs. Raw captures contain real resource IDs and configuration: keep them private outside Git, review and sanitize before publication, and retain public transformation records separately.
 
-### 3.0 Cleanup
+### 3.0 Canonical sequence
+
+Run these four commands. Two independent reproductions reported that the page
+showed more than one procedure without saying which to follow, and that the
+subcommand name appeared nowhere in prose: `run` is not valid, `execute` is.
+
+```bash
+export RG="rg-lab-startup"
+export APP_NAME="$(az webapp list --resource-group "$RG" --query '[0].name' --output tsv | tr -d '\r\n')"
+
+python3 labs/deployment-succeeded-startup-failed/run.py execute "$RG" "$APP_NAME" --output /tmp/startup-lab-private
+python3 labs/deployment-succeeded-startup-failed/run.py evaluate "$RUN_DIR"
+RG="$RG" bash labs/deployment-succeeded-startup-failed/cleanup.sh
+```
+
+| Command | Purpose |
+| --- | --- |
+| `az webapp list` | Read the deployed app's name. The CLI emits CRLF, so strip it or the name is silently malformed. |
+| `--query '[0].name'` | The lab deploys one app into a dedicated group. |
+| `--output tsv` | Bare value, suitable for a shell variable. |
+| `run.py execute` | Run the three phases against Azure and write a run directory. Prints `RUN_DIR=`. |
+| `--output` | Private evidence directory, outside the repository. |
+| `run.py evaluate` | Recompute the verdict from the saved run. Touches no Azure state. |
+| `cleanup.sh` | Delete the resource group and everything in it. |
+
+Exit codes are listed in section 3. `run.py execute` already evaluates, so
+`evaluate` is for re-checking a saved run later.
+
+`trigger.sh` and `verify.sh` are the earlier shell equivalents, kept because
+the archived artifacts were produced with them. Prefer the sequence above:
+it is what produces the structured verdict this lab is judged by.
+
+### 3.0.1 Cleanup
 
 Delete everything the lab created when you are finished, whatever the outcome:
 
@@ -390,9 +422,9 @@ az group exists --name "$RG"
 | `az group exists` | Confirm the deletion finished. Deletion is asynchronous, so this prints `true` for a short while after the script returns. |
 
 The script deletes the whole group rather than enumerating resources, so it
-stays complete as the template changes. `run.py cleanup` exists as well and
-additionally records the cleanup status into a run directory; use it when you
-have a run to annotate, and this when you simply want the resources gone.
+stays complete as the template changes. Use `cleanup.sh` for independent reproduction: it needs nothing but the group
+name. `run.py cleanup` additionally records the outcome into a run directory,
+which matters when you are annotating a run you intend to retain.
 
 ### 3.1 Prerequisites
 
