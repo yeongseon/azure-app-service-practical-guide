@@ -1,6 +1,6 @@
 # Azure Practical Guide Series Contract
 
-This file preserves the series-wide structure and navigation contract shared by the Azure Practical Guide repositories. Repository-specific evidence, claim, experiment, and agent rules remain in [`AGENTS.md`](../../AGENTS.md).
+This file preserves the series-wide structure and navigation contract shared by the Azure Practical Guide repositories. Repository-specific evidence, claim, experiment, and agent rules remain in `AGENTS.md` at the repository root.
 
 ## Series-Wide Documentation Contract
 
@@ -174,3 +174,13 @@ The documentation is organized by intent and lifecycle stage:
 | **Operations** | Day-2 execution — HOW to run in production |
 | **Troubleshooting** | Diagnosis and resolution — hypothesis-driven playbooks and labs |
 | **Reference** | Quick lookup — CLI cheatsheet, KQL queries, platform limits |
+
+## See Also
+
+- [Repository Taxonomy](taxonomy.md)
+- [Golden Evidence Model](../reference/golden-evidence-model.md)
+- [Golden Migration Specification](../reference/golden-migration-spec.md)
+
+## Sources
+
+- [Azure Practical Guide series repositories](https://github.com/yeongseon)
