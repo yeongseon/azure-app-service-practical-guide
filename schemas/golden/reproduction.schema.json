@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yeongseon.github.io/azure-app-service-practical-guide/schemas/golden/reproduction.schema.json",
+  "title": "Golden v1 independent reproduction record",
+  "type": "object",
+  "additionalProperties": false,
+  "description": "One attempt by a second operator to reach the same verdict from the documentation alone. Verdict agreement and documentation quality are recorded separately: a reviewer who read source to fill a gap proved the code works, not the docs.",
+  "required": [
+    "reviewer",
+    "original_operator",
+    "commit",
+    "attempted_at",
+    "scenario",
+    "original_run_id",
+    "original_hypothesis_status",
+    "replay_hypothesis_status",
+    "consulted_source_to_fill_doc_gap",
+    "deviations"
+  ],
+  "properties": {
+    "reviewer": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Must differ from original_operator."
+    },
+    "original_operator": {
+      "type": "string",
+      "minLength": 1
+    },
+    "commit": {
+      "type": "string",
+      "minLength": 7
+    },
+    "attempted_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "scenario": {
+      "type": "string",
+      "minLength": 1
+    },
+    "original_run_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "replay_run_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "null when the attempt did not happen. Must differ from original_run_id: a replay carrying the same id is the same evidence."
+    },
+    "original_hypothesis_status": {
+      "enum": [
+        "SUPPORTED",
+        "CONTRADICTED",
+        "INCONCLUSIVE",
+        "NOT_TESTED"
+      ]
+    },
+    "replay_hypothesis_status": {
+      "enum": [
+        "SUPPORTED",
+        "CONTRADICTED",
+        "INCONCLUSIVE",
+        "NOT_TESTED"
+      ]
+    },
+    "consulted_source_to_fill_doc_gap": {
+      "type": "boolean",
+      "description": "True fails the DOCUMENTATION result even when the verdict matches."
+    },
+    "deviations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "kind"
+        ],
+        "properties": {
+          "step": {
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "undocumented-step",
+              "incorrect-step",
+              "missing-prerequisite",
+              "environment-difference"
+            ]
+          },
+          "detail": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "blocked_reason": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "policy": "Historical evidence is classified, never deleted.",
+  "evaluated_at": "2026-09-27T00:00:00Z",
+  "artifacts": [
+    {
+      "path": "labs/deployment-succeeded-startup-failed/artifacts-sanitized/baseline/",
+      "trust": "trusted-historical",
+      "reason": "Captured 2026-04-04 by an earlier procedure. Useful as an example of healthy-state output; not evidence for the Golden runner."
+    },
+    {
+      "path": "labs/deployment-succeeded-startup-failed/artifacts-sanitized/trigger/",
+      "trust": "unverified",
+      "reason": "Retained recovery probes are timestamped 05:47 UTC while the retained wrong-module console rows are 05:54-05:55 UTC, so the set does not establish that the shown fault preceded the shown recovery within one isolated run. Causal ordering is INCONCLUSIVE."
+    },
+    {
+      "path": "labs/deployment-succeeded-startup-failed/artifacts-sanitized/postfix/",
+      "trust": "trusted-historical",
+      "reason": "Post-fix diagnostics from the same 2026-04-04 window. Illustrative of a recovered app; not tied to a Golden run_id."
+    }
+  ]
+}

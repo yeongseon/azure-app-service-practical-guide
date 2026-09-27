@@ -1,0 +1,11 @@
+{
+  "policy": "Historical evidence is classified, never deleted.",
+  "evaluated_at": "2026-09-27T00:00:00Z",
+  "artifacts": [
+    {
+      "path": "labs/slot-swap-config-drift/artifacts-sanitized/trigger/",
+      "trust": "trusted-historical",
+      "reason": "Captured 2026-04-04 by the pre-Golden procedure. Contains post-swap diag output and KQL exports that illustrate the swap mechanism, but carries no run_id and no declared assertions, so it cannot be evaluated against this contract."
+    }
+  ]
+}

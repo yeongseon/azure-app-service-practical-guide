@@ -1,0 +1,14 @@
+{
+  "reviewer": "NOT_ASSIGNED",
+  "original_operator": "golden-v1-authoring-agent",
+  "commit": "a5d8ed9e0cc276788ee82c6755b0a6ad9b0c89a8",
+  "attempted_at": "2026-09-27T03:30:00Z",
+  "scenario": "deployment-succeeded-startup-failed",
+  "original_run_id": "NONE-no-azure-run-has-produced-one",
+  "replay_run_id": null,
+  "original_hypothesis_status": "NOT_TESTED",
+  "replay_hypothesis_status": "NOT_TESTED",
+  "consulted_source_to_fill_doc_gap": false,
+  "deviations": [],
+  "blocked_reason": "No independent reproduction has been attempted. It requires a second operator and a live Azure subscription, neither of which was available to the authoring agent. Recording this as NOT_ATTEMPTED rather than omitting the file, so the gap is visible in the repository instead of being inferred from absence."
+}

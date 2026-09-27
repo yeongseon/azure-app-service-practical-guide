@@ -1,0 +1,67 @@
+{
+  "run_id": "TEMPLATE-replace-with-YYYYMMDDTHHMMSSZ-<hex6>",
+  "resource_id": "TEMPLATE-replace-with-/subscriptions/.../sites/<app>",
+  "captured_at": null,
+  "evaluated_at": null,
+  "document_updated_at": "2026-09-27T00:00:00Z",
+  "execution_status": "NOT_RUN",
+  "evidence_trust": "unverified",
+  "hypothesis": "A slot swap relocates configuration by stickiness rather than by value: a non-sticky app setting travels with the code while a slot setting stays with the slot. The resulting production configuration is therefore a predictable consequence of the swap, not evidence of a failed deployment.",
+  "assertions": [
+    {
+      "id": "swap-succeeded",
+      "role": "control",
+      "field": "swap_exit_code",
+      "equals": 0,
+      "claim_level": "Observed"
+    },
+    {
+      "id": "swap-activated",
+      "role": "control",
+      "field": "production_restart_observed",
+      "equals": true,
+      "claim_level": "Observed"
+    },
+    {
+      "id": "non-sticky-travelled-with-code",
+      "role": "discriminating",
+      "field": "non_sticky_feature_flag_swapped",
+      "equals": true,
+      "claim_level": "Observed"
+    },
+    {
+      "id": "sticky-remained-with-slot",
+      "role": "discriminating",
+      "field": "sticky_db_connection_remained",
+      "equals": true,
+      "claim_level": "Observed"
+    },
+    {
+      "id": "symptom-production-config-changed",
+      "role": "symptom",
+      "field": "production_config_changed",
+      "equals": true,
+      "claim_level": "Observed"
+    },
+    {
+      "id": "deployment-itself-did-not-fail",
+      "role": "control",
+      "field": "deployment_error_count",
+      "equals": 0,
+      "claim_level": "Observed"
+    },
+    {
+      "id": "recovery-swap-back-restores",
+      "role": "recovery",
+      "field": "post_rollback_matches_pre_swap",
+      "equals": true,
+      "claim_level": "Observed"
+    }
+  ],
+  "notes": [
+    "swap-activated is the Scenario C counterpart of Scenario A's fault-config-activated. `az webapp deployment slot swap` returning 0 shows the control plane accepted the swap, not that the production worker restarted onto the swapped configuration. Without a change in PROCESS_START_UTC, an observation of 'no drift' is ambiguous between 'the swap did not relocate this setting' and 'the swap had not taken effect yet', and only the first bears on the hypothesis.",
+    "Both stickiness outcomes are discriminating rather than symptom. The symptom is only that production configuration changed; what separates configuration drift from a broken deployment is WHICH settings moved and which did not.",
+    "deployment-error-count is a control that rules out the competing hypothesis that the app is simply failing to deploy. A swap that drifts configuration and a deployment that errors produce overlapping user-visible symptoms.",
+    "execution_status is NOT_RUN until a real Azure run produces this file; the evaluator reports NOT_TESTED in that state."
+  ]
+}

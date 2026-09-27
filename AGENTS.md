@@ -1,159 +1,103 @@
 # AGENTS.md
 
-Guidance for AI agents working in this repository.
+Guidance for AI agents working on the Azure App Service Practical Guide.
 
-## Project Overview
+## Mission
 
-**Azure App Service Practical Guide** — a comprehensive, hands-on guide for running web applications on Azure App Service, covering everything from initial deployment to advanced production troubleshooting.
+Microsoft Learn documents how App Service behaves; this guide answers how an engineer reproduces that behaviour, observes it, and knows what the observation does and does not prove.
 
-- **Live site**: <https://yeongseon.github.io/azure-app-service-practical-guide/>
-- **Repository**: <https://github.com/yeongseon/azure-app-service-practical-guide>
+The guide covers initial deployment through production troubleshooting. Its live site is <https://yeongseon.github.io/azure-app-service-practical-guide/> and its repository is <https://github.com/yeongseon/azure-app-service-practical-guide>.
 
-## Series-Wide Documentation Contract
+## Source of Truth
 
-This repository is part of the Azure Practical Guide series. All repositories in the series must preserve a consistent reader experience while allowing repository-specific extensions.
+- Official Microsoft Learn documentation is the primary authority for Azure behavior.
+- Raw evidence outranks generated summaries and verdicts.
+- [`docs/reference/golden-evidence-model.md`](docs/reference/golden-evidence-model.md) defines the evidence vocabulary, run layout, and evaluator contract.
+- [`docs/meta/series-contract.md`](docs/meta/series-contract.md) contains the moved series-wide documentation contract, repository structure, Start Here rules, navigation budget, related projects, and content categories.
+- A rule stated only in prose is advisory. A rule described as enforced must be backed by a validator invoked in CI.
 
-### Core Sections
+## Claim Rules
 
-Every service-focused repository SHOULD use these core sections unless the repository-specific addendum explains an exception.
+- Never claim validation that the repository does not have. Report `NOT RUN`, `NOT_TESTED`, or `INCONCLUSIVE` rather than converting missing evidence into success or refutation.
+- Platform claims and architecture diagrams require Microsoft Learn sources. Self-generated synthesis requires a justification and source basis.
+- Use `content_validation` only where `scripts/lib/content_scope.py` says it is in scope. `tools/validate_frontmatter.py` will fail for missing required blocks and forbidden blocks.
+- Core claims must be factual Azure assertions, not source-process tautologies. Use the validator and cleanup contracts under Exceptions rather than treating source-process prose as evidence.
 
-| Section | Required | Purpose |
-|---|---:|---|
-| `Start Here` | Yes | Entry points, overview, learning paths, repository map |
-| `Platform` | Yes | Service concepts, architecture, core behavior |
-| `Best Practices` | Yes | Production patterns, anti-patterns, design guidance |
-| `Operations` | Yes | Day-2 operational procedures and verification |
-| `Troubleshooting` | Yes | Symptom-based diagnosis, playbooks, evidence collection |
-| `Reference` | Yes | CLI, KQL, limits, glossary, decision tables |
+## Experiment Rules
 
-### Approved Extension Sections
+- Declare hypotheses and assertions before execution. Collectors gather facts; they do not decide causes.
+- Keep execution status separate from hypothesis status. A run that did not complete has not tested the hypothesis.
+- A negative test must be shown to discriminate by failing when its protected invariant is broken.
+- Pin durable invariants, not transient incidents.
+- Keep `captured_at`, `evaluated_at`, and `document_updated_at` distinct. Re-evaluation must not make historical evidence appear newly captured.
+- Run directories are immutable; a new collection creates a new run identity.
 
-| Section | Use When |
-|---|---|
-| `Tutorials` | The repository provides hands-on learning or lab sequences |
-| `Lab Guides` | Reproducible experiments or validation exercises are first-class content |
-| `Language Guides` | The service has language/runtime-specific implementation tutorials |
-| `SDK Guides` | The service is primarily consumed through SDKs |
-| `Service Guides` | The repository configures or monitors multiple Azure services |
-| `Workload Guides` | The repository is architecture/workload oriented |
-| `Architecture Reviews` | The repository includes architecture review methodology and playbooks |
-| `Design Labs` | The repository includes architecture design exercises |
-| `Visualization` | Visual maps are a deliberate learning surface, not generated leftovers |
-| `Meta` | Repository taxonomy, content model, or generated metadata |
+## Evidence Rules
 
-Do not create a new top-level section if the content can fit under one of the core or approved extension sections.
+- Absence of evidence is `INCONCLUSIVE`, never refutation. Missing fields, truncated captures, and delayed logs are states of not knowing.
+- Derived files are recomputed and compared, never consumed as raw input. When raw records and a summary disagree, raw records decide and the disagreement is recorded.
+- Use evidence annotations only where they aid diagnosis; do not turn `[Observed]` into an OCR dump or `[Inferred]` into a substitute for sourcing.
+- Every referenced image needs descriptive alt text, a nearby verification explanation, PII-safe content, and visual verification before merge.
+- Portal captures must follow the PII replacement and final-image verification contract under Exceptions.
 
-### App Service-Specific Addendum
+## Agent Behavior
 
-This repository is an advanced App Service runtime guide. It uses these approved App Service extension sections in addition to the series core sections.
+### Rules that a validator can enforce belong in a validator
 
-#### App Service-Specific Extension Sections
+A rule stated only in this file is advisory. Before adding a rule here, ask whether a script could check it; if so, write the script and wire it into a workflow, and let this file describe intent rather than restate the check.
 
-| Section | Purpose |
-|---|---|
-| `Language Guides` | Python, Node.js, Java, and .NET implementation paths |
-| `Visualization` | Knowledge graphs and troubleshooting maps |
-| `Meta` | Taxonomy and repository content model |
-| `Troubleshooting Lab Guides` | Reproducible failure experiments |
-| `KQL Query Packs` | Diagnostic queries for App Service scenarios |
+A documented rule that nothing executes is worse than no rule, because it reads as coverage. `tools/validate_frontmatter.py` was once described here as handling forbidden `content_validation` blocks while no pull-request workflow invoked it. Running it surfaced two violations: an out-of-scope block emitted by the validation-status generator and an invented `doc_type`. Both existed because the only thing enforcing the rule was prose.
 
-## Repository Structure
+### Report what was run, not what was intended
 
-```text
-.
-├── .github/
-│   └── workflows/              # GitHub Pages deployment
-├── apps/
-│   ├── python-flask/            # Flask + Gunicorn implementation
-│   ├── nodejs/                  # Express.js implementation
-│   ├── java-springboot/         # Spring Boot implementation
-│   └── dotnet-aspnetcore/       # ASP.NET Core implementation
-├── docs/
-│   ├── assets/                  # Images, icons
-│   ├── best-practices/          # Production patterns
-│   ├── language-guides/         # Per-language tutorials
-│   ├── operations/              # Day-2 operational tasks
-│   ├── platform/                # Architecture and concepts
-│   ├── reference/               # CLI cheatsheet, platform limits
-│   ├── start-here/              # Entry points
-│   └── troubleshooting/         # Playbooks, lab guides, KQL
-│       ├── playbooks/           # Detailed failure scenario guides
-│       ├── lab-guides/          # Step-by-step issue reproduction
-│       └── kql/                 # KQL snippets for diagnostics
-├── infra/                       # Bicep/Terraform templates
-├── labs/                        # Lab infrastructure and scripts
-└── mkdocs.yml                   # MkDocs Material configuration
-```
+State the command, exit code, and observed output. A check that was not executed is reported as NOT RUN. "Should pass", "types check out", and "the tests I wrote cover it" are not results.
 
-## Start Here Rules
+### A suite that passes on first write is suspect
 
-`Start Here` is orientation content. It must not become a language tutorial, SDK tutorial, operations runbook, troubleshooting playbook, or lab guide.
+Negative tests exist to refuse things. If a new guard passes immediately, prove it discriminates: break the code it protects and confirm the guard fails. An assertion that cannot fail is indistinguishable from one that is absent.
 
-Required pages:
+Pin the invariant, not the incident. A test that encodes "this specific defect is present" expires when it is fixed; a test that encodes "this property must hold" keeps working.
 
-| Page | Purpose |
-|---|---|
-| `overview.md` | Who this guide is for, what is in scope, and what is out of scope |
-| `learning-paths.md` | Role-based and experience-based reading paths |
-| `repository-map.md` | Map of major sections and when to use them |
+### Mandatory Oracle Review
 
-Optional pages:
+**ALL work performed by AI agents MUST undergo Oracle quality review before completion.**
 
-| Page Pattern | Purpose |
-|---|---|
-| `when-to-use-*.md` | Service selection guidance |
-| `prerequisites.md` | Required tools, permissions, and accounts |
-| `common-scenarios.md` | Common use cases |
-| `*-vs-other-compute.md` | Positioning against neighboring Azure services |
-| `how-to-use-this-guide.md` | Reader navigation guidance |
+1. Complete the work.
+2. Run `mkdocs build --strict`; it must pass.
+3. Submit all changes to Oracle for review of Microsoft Learn sourcing, CLI explanation tables and long flags, Mermaid diagram IDs, PII, and frontmatter `content_sources`.
+4. Fix findings, rebuild, and resubmit.
+5. Complete only when Oracle approves at 100% quality.
 
-`learning-paths.md` MUST:
+### Merge Policy
 
-- Start with role-based or goal-based paths.
-- Link to tutorials instead of embedding a full tutorial sequence.
-- Avoid service-specific code walkthroughs except short examples.
-- Avoid `content_validation` unless this repository explicitly includes Start Here pages in content validation scope.
+AI agents MAY merge their own pull requests autonomously only after every gate passes. There is no separate human approval step; if a gate cannot be satisfied, stop and hand the PR to the user.
 
-Preferred title:
+| # | Gate | How it is verified |
+|---|---|---|
+| 1 | **Oracle review ≥ 90/100** | Final diff scores at least 90 with no merge-blocking or must-fix issue. |
+| 2 | **CI fully green** | `gh pr checks <pr> --watch` shows every required check passing, not pending or failed. |
+| 3 | **Caption ↔ image match** | Every added or changed referenced image accurately matches its caption and alt text. |
+| 4 | **Final-image PII verification** | Every added or changed referenced PNG/WebP is visually checked on final committed bytes; WebP output is rechecked rather than inferred from its source. |
 
-```markdown
-# Learning Paths
-```
+Confirm gates in order and record the Oracle score and visual result in the PR thread or final summary. Merge only with `gh pr merge <pr> --squash --delete-branch`; never use merge-commit, rebase-merge, `--admin`, or bypass a pending/failing check. Stop if Oracle scores below 90, a must-fix remains, CI is not green, an image cannot be verified, or the PR exceeds stated scope.
 
-Avoid:
+### Git Commit Style
 
-```markdown
-# Tutorial: {Service} for {Language}
-```
+Use `type: short description`. Allowed types: `feat`, `fix`, `docs`, `chore`, `refactor`.
 
-## Navigation Budget
+## Definition of Done
 
-The left navigation should help orientation, not expose every file.
+Golden entry requires every applicable Golden v1 review item to be `MET`: the mission and evidence model are documented; repository audit and common schemas exist; execution, hypothesis, raw evidence, generated verdicts, run identity, and timestamps remain separate; negative cases pass; scenarios are completed against live Azure; at least one scenario is independently reproduced from the documentation alone; cleanup is verified; historical evidence and legacy labs are classified; maturity claims match evidence; and existing quality gates do not regress.
 
-Recommended:
+The normative model is [`docs/reference/golden-evidence-model.md`](docs/reference/golden-evidence-model.md). The current scored entry review, including unmet and partial criteria, is [`docs/reference/golden-v1-review.json`](docs/reference/golden-v1-review.json). Do not call the repository Golden v1 while that review says `NOT_COMPLETE`.
 
-- Top-level sections SHOULD stay between 6 and 9 items.
-- Direct children under a top-level section SHOULD stay between 5 and 8 items.
-- Large collections such as tutorials, recipes, KQL packs, lab guides, and playbooks SHOULD be listed on index pages rather than fully expanded in `mkdocs.yml`.
-- Use hub pages, tables, tags, and search for deep inventory.
-- Keep `mkdocs.yml` readable enough that a contributor can understand the site structure without scrolling through hundreds of deep links.
+For any change, done also means the relevant validators and tests ran successfully, their commands and exit codes are reported, `mkdocs build --strict` passes, and Oracle approved the work.
 
-Preferred troubleshooting structure:
+## Exceptions
 
-```text
-Troubleshooting
-├─ Overview
-├─ Quick Diagnosis
-├─ Decision Tree
-├─ First 10 Minutes
-├─ Playbooks
-├─ KQL Query Packs
-└─ Labs
-```
+The detailed contracts below are retained because they are validator inputs, capture safety controls, document-type exceptions, or operational instructions that cannot be safely inferred from the mission alone.
 
-Avoid exposing every individual playbook, KQL query, and lab guide in `mkdocs.yml` unless the repository is intentionally small.
-
-## Content Validation Scope
+### Content Validation Scope
 
 `content_validation` is required for factual-claim pages, not for every Markdown file.
 
@@ -184,7 +128,8 @@ Content-type-specific rules:
 - KQL packs do not need `content_validation` unless they make factual platform claims outside the query explanation.
 - Never fabricate validation dates or test results.
 
-## Mermaid Diagrams
+
+### Mermaid Diagrams
 
 Use Mermaid diagrams when they clarify architecture, flow, dependency, decision logic, or troubleshooting paths.
 
@@ -228,7 +173,8 @@ flowchart LR
     A[Commit] --> B[Build and test] --> C[Package] --> D[Deploy] --> E[Validate] --> F[Swap]
 ```
 
-## Image and Screenshot Rules
+
+### Image and Screenshot Rules
 
 Images must support the reader's task. Do not add screenshots only for decoration.
 
@@ -256,7 +202,8 @@ Portal screenshots:
 - Use black-box masking only for unavoidable avatar/profile pixels and only with the repository-approved mask color.
 - If a screenshot cannot be visually verified, remove the Markdown reference or disclose the debt explicitly in the PR.
 
-## Microsoft Learn URL Locale
+
+### Microsoft Learn URL Locale
 
 All `learn.microsoft.com` URLs SHOULD use the `en-us` locale prefix.
 
@@ -287,36 +234,8 @@ Reason:
 - Run `python3 scripts/normalize_mslearn_locale.py --apply` locally to fix drift before pushing.
 - The check is a pure text transformation; HTTP reachability of URLs is validated separately by `scripts/validate_mslearn_urls.py`, which runs on push to `main`.
 
-## Related Projects
 
-| Repository | Description |
-|---|---|
-| [azure-virtual-machine-practical-guide](https://github.com/yeongseon/azure-virtual-machine-practical-guide) | Azure Virtual Machines practical guide |
-| [azure-networking-practical-guide](https://github.com/yeongseon/azure-networking-practical-guide) | Azure Networking practical guide |
-| [azure-storage-practical-guide](https://github.com/yeongseon/azure-storage-practical-guide) | Azure Storage practical guide |
-| [azure-app-service-practical-guide](https://github.com/yeongseon/azure-app-service-practical-guide) | Azure App Service practical guide |
-| [azure-functions-practical-guide](https://github.com/yeongseon/azure-functions-practical-guide) | Azure Functions practical guide |
-| [azure-communication-services-practical-guide](https://github.com/yeongseon/azure-communication-services-practical-guide) | Azure Communication Services practical guide |
-| [azure-container-apps-practical-guide](https://github.com/yeongseon/azure-container-apps-practical-guide) | Azure Container Apps practical guide |
-| [azure-kubernetes-service-practical-guide](https://github.com/yeongseon/azure-kubernetes-service-practical-guide) | Azure Kubernetes Service (AKS) practical guide |
-| [azure-architecture-practical-guide](https://github.com/yeongseon/azure-architecture-practical-guide) | Azure Architecture practical guide |
-| [azure-monitoring-practical-guide](https://github.com/yeongseon/azure-monitoring-practical-guide) | Azure Monitoring practical guide |
-
-## Content Categories
-
-The documentation is organized by intent and lifecycle stage:
-
-| Section | Purpose |
-|---|---|
-| **Start Here** | Entry points, learning paths, repository map |
-| **Platform** | Architecture, hosting models, networking, scaling — WHAT and HOW it works |
-| **Best Practices** | Production patterns — HOW to use the platform well |
-| **Language Guides** | Per-language step-by-step tutorials (Python, Node.js, Java, .NET) |
-| **Operations** | Day-2 execution — HOW to run in production |
-| **Troubleshooting** | Diagnosis and resolution — hypothesis-driven playbooks and labs |
-| **Reference** | Quick lookup — CLI cheatsheet, KQL queries, platform limits |
-
-## Content Types & Methodology
+### Content Types & Methodology
 
 ### Troubleshooting Experiments (Labs)
 
@@ -438,7 +357,8 @@ Rules:
 - Long raw observations move into the collapsible block.
 - Never include real public IPs, subscription names, tenant IDs, object IDs, emails, secrets, or connection strings in alt text or evidence notes.
 
-## Documentation Conventions
+
+### Documentation Conventions
 
 ### File Naming
 
@@ -812,10 +732,10 @@ Troubleshooting content specifically supports three template variants: **Trouble
 ```text
 # Title
 Brief introduction (1-2 sentences)
-## Main Content
+### Main Content
 ### Subsections
-## See Also
-## Sources
+### See Also
+### Sources
 ```
 
 #### Best Practices docs
@@ -823,12 +743,12 @@ Brief introduction (1-2 sentences)
 ```text
 # Title
 Brief introduction
-## Why This Matters
-## Recommended Practices
-## Common Mistakes / Anti-Patterns
-## Validation Checklist
-## See Also
-## Sources
+### Why This Matters
+### Recommended Practices
+### Common Mistakes / Anti-Patterns
+### Validation Checklist
+### See Also
+### Sources
 ```
 
 #### Operations docs
@@ -836,13 +756,13 @@ Brief introduction
 ```text
 # Title
 Brief introduction
-## Prerequisites
-## When to Use
-## Procedure
-## Verification
-## Rollback / Troubleshooting
-## See Also
-## Sources
+### Prerequisites
+### When to Use
+### Procedure
+### Verification
+### Rollback / Troubleshooting
+### See Also
+### Sources
 ```
 
 Files under `docs/operations/deployment/**/*.md` that describe a deployment mechanism use a separate sub-template — see [Deployment Method Reference (Operations variant)](#deployment-method-reference-operations-variant) below.
@@ -852,11 +772,11 @@ Files under `docs/operations/deployment/**/*.md` that describe a deployment mech
 ```text
 # Title
 Brief introduction
-## Main Content
+### Main Content
 ### <method-specific subsections>
-## Advanced Topics
-## See Also
-## Sources
+### Advanced Topics
+### See Also
+### Sources
 ```
 
 Scope: files under `docs/operations/deployment/**/*.md` that describe a deployment mechanism (ZIP deploy, slot swap mechanics, GitHub Actions workflow, container deploy) rather than a step-by-step operational procedure. Currently applies to:
@@ -868,7 +788,7 @@ Scope: files under `docs/operations/deployment/**/*.md` that describe a deployme
 
 These files intentionally omit the Prerequisites / When to Use / Procedure / Verification / Rollback structure because their content shape is "how the deployment method works," not "step-by-step procedure to run." Operational runbooks that actually walk a reader through a procedure (for example `docs/operations/deployment-slots.md` at the top level of `operations/`) MUST use the full Operations template.
 
-**Validator status (current)**: `scripts/validate_doc_quality.py` does NOT currently have a path-based carve-out for `docs/operations/deployment/**/*.md`. Running the validator with `--all` flags these 4 files with missing-section errors as historical debt. Change-scoped CI (the default) does NOT fail on unchanged files, so this documented exception does not break normal commit flow.
+**Validator status (current)**: `scripts/validate_doc_quality.py` enforces this sub-template for `docs/operations/deployment/**/*.md` via `DEPLOYMENT_METHOD_SECTIONS`, requiring `## Main Content` and `## Advanced Topics` instead of the full Operations shape. These files were previously reported as historical debt on every `--all` run because the rule existed only here. Enforcing the real shape was preferred over exempting the path: the sub-template is still a contract, it was simply an unchecked one.
 
 **When editing these files**: preserve the sub-template shape. Do NOT force-fit into the full Operations template. If the validator's `--all` output is used for cleanup work, treat these 4 files as documented exceptions unless a separate scope adds a formal validator carve-out.
 
@@ -879,26 +799,26 @@ These files intentionally omit the Prerequisites / When to Use / Procedure / Ver
 ```text
 # Title
 Brief introduction
-## Prerequisites
-## What You'll Build
-## Steps
-## Verification
-## Next Steps / Clean Up (optional)
-## See Also
-## Sources (optional)
+### Prerequisites
+### What You'll Build
+### Steps
+### Verification
+### Next Steps / Clean Up (optional)
+### See Also
+### Sources (optional)
 ```
 
 #### Troubleshooting docs
 
 ```text
 # Title
-## Symptom
-## Possible Causes
-## Diagnosis Steps
-## Resolution
-## Prevention
-## See Also
-## Sources
+### Symptom
+### Possible Causes
+### Diagnosis Steps
+### Resolution
+### Prevention
+### See Also
+### Sources
 ```
 
 Scope: symptom-oriented pages under `docs/troubleshooting/` that are not playbooks, first-10-minutes runbooks, lab guides, or KQL packs.
@@ -907,17 +827,17 @@ Scope: symptom-oriented pages under `docs/troubleshooting/` that are not playboo
 
 ```text
 # Title
-## 1. Summary
-## 2. Common Misreadings
-## 3. Competing Hypotheses
-## 4. What to Check First
-## 5. Evidence to Collect
-## 6. Validation and Disproof by Hypothesis
-## 7. Likely Root Cause Patterns
-## 8. Immediate Mitigations
-## 9. Prevention
-## See Also
-## Sources
+### 1. Summary
+### 2. Common Misreadings
+### 3. Competing Hypotheses
+### 4. What to Check First
+### 5. Evidence to Collect
+### 6. Validation and Disproof by Hypothesis
+### 7. Likely Root Cause Patterns
+### 8. Immediate Mitigations
+### 9. Prevention
+### See Also
+### Sources
 ```
 
 Scope: hypothesis-driven investigation guides under `docs/troubleshooting/playbooks/`. Playbooks explicitly enumerate competing hypotheses and disproof steps, so the symptom → resolution flow of the base Troubleshooting template does not fit. Section numbering may be adjusted to match the specific investigation but the numbered-section pattern must be preserved. Section names may vary in wording (for example "Summary" vs "Overview", "Immediate Mitigations" vs "Short-Term Fixes") as long as the investigation-hypothesis-evidence-mitigation flow is preserved.
@@ -928,14 +848,14 @@ CLI blocks inside playbooks do NOT require a nearby command explanation table be
 
 ```text
 # Title
-## Quick Context
-## Step 1: <first triage action>
-## Step 2: <second triage action>
-## Step N: <additional triage steps>
-## Decision Points
-## Next Steps
-## See Also
-## Sources
+### Quick Context
+### Step 1: <first triage action>
+### Step 2: <second triage action>
+### Step N: <additional triage steps>
+### Decision Points
+### Next Steps
+### See Also
+### Sources
 ```
 
 Scope: rapid-triage decision guides under `docs/troubleshooting/first-10-minutes/`. Runbooks give an on-call engineer a numbered sequence of actions to take in the first ten minutes of an incident, followed by a decision point that routes to a playbook or lab. The symptom → resolution flow of the base Troubleshooting template does not fit because runbooks are pre-diagnosis triage, not post-diagnosis remediation.
@@ -947,16 +867,16 @@ CLI blocks inside first-10-minutes runbooks do NOT require a nearby command expl
 ```text
 # Title
 Brief introduction
-## Lab Metadata (table: difficulty, duration, tier, etc.)
-## 1) Background
-## 2) Hypothesis
-## 3) Runbook
-## 4) Experiment Log
-## Expected Evidence
-## Clean Up
-## Related Playbook
-## See Also
-## Sources
+### Lab Metadata (table: difficulty, duration, tier, etc.)
+### 1) Background
+### 2) Hypothesis
+### 3) Runbook
+### 4) Experiment Log
+### Expected Evidence
+### Clean Up
+### Related Playbook
+### See Also
+### Sources
 ```
 
 #### Reference docs
@@ -964,13 +884,14 @@ Brief introduction
 ```text
 # Title
 Brief introduction
-## Topic/Command Groups
-## Usage Notes
-## See Also
-## Sources
+### Topic/Command Groups
+### Usage Notes
+### See Also
+### Sources
 ```
 
-## Content Source Requirements
+
+### Content Source Requirements
 
 ### MSLearn-First Policy
 
@@ -1087,7 +1008,8 @@ content_validation:
 5. Set `status: verified` only when ALL core claims have verified sources.
 6. Run `python3 scripts/generate_content_validation_status.py` after updates to regenerate `docs/reference/content-validation-status.md`.
 
-## Quality Gates & Verification
+
+### Quality Gates & Verification
 
 1. **PII Check**: Manually verify no subscription IDs, tenant IDs, or private IP addresses are in the documentation.
 2. **Link Validation**: Use `mkdocs build --strict` to ensure no broken internal or external links.
@@ -1097,72 +1019,8 @@ content_validation:
 6. **PII Detection Gate**: Run `python scripts/validate_pii.py` to scan `docs/` for leaked identifiers before they reach the public site. The gate flags UUID-shaped subscription/tenant/object IDs and real email addresses (outside documentation-safe domains) as **blocking**, and RFC 1918 private IPv4 addresses as **advisory** (non-blocking) — private ranges are non-routable and used throughout the series as teaching examples. Synthetic UUIDs (all-same-character, uniform hyphen groups, sequential-hex runs such as `a1b2c3d4-e5f6-7890-abcd-ef1234567890`), documented public Azure built-in role definition IDs, and safe email domains (`example.com`, `contoso.com`, reserved TLDs like `.example`/`.test`, and `*.azurecomm.net`) are recognized automatically. A per-repo `scripts/pii-allowlist.txt` holds any additional confirmed-safe example values. In CI the `Validate PII` job runs the detector's doctests, blocks on **changed Markdown files only** (`--files`, so historical debt never becomes a permanent failure), and runs a full-repo advisory scan for visibility. This gate is a Prevention item of the cross-repo quality-gate audit ([azure-container-apps-practical-guide#384](https://github.com/yeongseon/azure-container-apps-practical-guide/issues/384)); it is vendored per repository so each guide carries its own script, workflow, and allowlist.
 7. **Visual Content Gate (advisory)**: Run `python scripts/validate_visual_content.py --all` to report factual-claim pages carrying **no visual aid** (no Mermaid fence, no `shot()` capture reference, no Markdown image). Scope reuses `scripts/lib/content_scope.is_in_scope` - the same factual-claim page set as the `content_validation` policy. The gate is **WARN-only**: it prints per-page warnings plus a coverage summary and always exits 0, making visual coverage a tracked CI metric without blocking on historical debt (verified series baseline: diagrams on 79-99% of pages, portal screenshots on App Service 95 / AKS 8 / elsewhere 0). In CI the `Validate Visual Content (advisory)` job runs the gate doctests and the full-repo report. Escalation to a blocking gate is a per-repo decision tracked in [azure-container-apps-practical-guide#391](https://github.com/yeongseon/azure-container-apps-practical-guide/issues/391); vendored per repository like the other shared-core gates.
 
-## Mandatory Oracle Review (AI Agent Rule)
 
-**ALL work performed by AI agents MUST undergo Oracle quality review before completion.**
-
-### Review Protocol
-
-1. **Work Completion**: Agent completes assigned task
-2. **Build Verification**: Run `mkdocs build --strict` (must pass)
-3. **Oracle Review Request**: Submit all changes to Oracle for quality review
-4. **Quality Criteria**:
-   - MSLearn-first policy compliance
-   - Code explanation tables present for all CLI commands
-   - Mermaid diagrams with proper `<!-- diagram-id: -->` comments
-   - Long CLI flags only (no `-g`, `-n` shortcuts)
-   - No PII in examples
-   - Proper frontmatter with `content_sources`
-5. **Iteration**: If Oracle identifies issues → fix and re-submit
-6. **Completion**: Only mark done when Oracle approves (100% quality)
-
-### Review Loop
-
-```
-while not oracle_approved:
-    fix_identified_issues()
-    run_build_verification()
-    submit_to_oracle()
-```
-
-**NO WORK IS CONSIDERED COMPLETE WITHOUT ORACLE APPROVAL.**
-
-## Merge Policy (AI Agent Rule)
-
-AI agents MAY merge their own pull requests **autonomously**, but ONLY after ALL of the mandatory gates below pass. There is no separate human approval step — passing every gate IS the approval. If any gate cannot be satisfied, the agent MUST stop and hand the PR to the user instead of merging.
-
-### Mandatory merge gates (ALL required)
-
-| # | Gate | How it is verified |
-|---|---|---|
-| 1 | **Oracle review ≥ 90/100** | Submit the final diff to Oracle for quality review. Score must be **90 or higher with no merge-blocking issues**. Any must-fix item is a blocker even at ≥ 90. |
-| 2 | **CI fully green** | Every required GitHub Actions check on the PR head SHA passes. Verify with `gh pr checks <pr> --watch`; do not merge on `pending` or `failure`. |
-| 3 | **Caption ↔ image match** | For every added/changed image referenced from markdown, the caption/alt text MUST accurately describe the actual rendered image (as with the 02 storage-networking alt correction). |
-| 4 | **Final-image PII verification** | Every added/changed `.png`/`.webp` referenced from markdown MUST be visually verified (Read/`look_at`) for PII on the **final committed bytes** — zeroed subscription/tenant IDs, no employee identifiers, no black-box masks. WebP re-encodes are re-verified, not assumed from the raw PNG. |
-
-### Merge procedure
-
-1. Confirm gates 1-4 above, in order. Record the Oracle score and the visual-verification result in the PR thread or the final summary.
-2. Merge with **squash-and-merge** only:
-
-    ```bash
-    gh pr merge <pr> --squash --delete-branch
-    ```
-
-3. Never use merge-commit or rebase-merge; squash keeps `main` history linear and collapses fixup commits.
-4. Never bypass a failing or pending gate. Never merge with `--admin` to skip checks.
-
-### When to stop instead of merging
-
-- Oracle score < 90, or any unresolved must-fix.
-- Any CI check failing or still pending.
-- Any referenced image that cannot be visually verified (see the text-only review disclosure rules under Image and Screenshot Rules).
-- The PR touches something outside the agent's stated scope.
-
-In these cases, report the blocking gate and hand off to the user.
-
-
-## Tutorial Validation Tracking
+### Tutorial Validation Tracking
 
 Every tutorial document supports **validation frontmatter** that records when and how it was last tested against a real Azure deployment.
 
@@ -1197,7 +1055,8 @@ validation:
 5. **Include the regenerated dashboard** (`docs/reference/validation-status.md`) in the same commit as the frontmatter change.
 6. **Do not manually edit** `docs/reference/validation-status.md` — it is auto-generated.
 
-## Build & Preview
+
+### Build & Preview
 
 ```bash
 # Install MkDocs dependencies
@@ -1209,11 +1068,3 @@ mkdocs build --strict
 # Local preview
 mkdocs serve
 ```
-
-## Git Commit Style
-
-```text
-type: short description
-```
-
-Allowed types: `feat`, `fix`, `docs`, `chore`, `refactor`

@@ -1,0 +1,45 @@
+{
+  "policy": "Every artifact states what it can support and what it cannot. An artifact that cannot discriminate between two competing explanations is recorded as unable to, so a reader does not mistake volume of evidence for strength of evidence.",
+  "evaluated_at": "2026-09-27",
+  "artifacts": [
+    {
+      "path": "labs/snat-exhaustion/artifacts-sanitized/",
+      "trust": "trusted-historical",
+      "reason": "Captured by an earlier procedure before this contract existed. Useful as an illustration of the failure's shape, not as evidence for the assertions above, because the earlier procedure did not record the destination's own health and so cannot separate exhaustion from destination failure.",
+      "supports": [],
+      "cannot_support": [
+        "symptom-transport-failures-appear",
+        "discriminating-destination-stays-healthy",
+        "discriminating-http-errors-absent"
+      ]
+    },
+    {
+      "path": "labs/snat-exhaustion/app/classification.py",
+      "trust": "primary",
+      "reason": "The shared classifier both transports call. It is the mechanism that makes the comparative claim checkable: if urllib and requests classified independently, a disagreement between them would look like evidence about Azure rather than a defect in the lab.",
+      "supports": [
+        "discriminating-http-errors-absent"
+      ],
+      "cannot_support": [
+        "discriminating-destination-stays-healthy"
+      ]
+    },
+    {
+      "path": "labs/snat-exhaustion/verify.sh",
+      "trust": "primary",
+      "reason": "Writes raw counts to the evidence path and no longer prints a verdict. An earlier version announced that reproduction appeared successful, which let the collector grade its own run.",
+      "supports": [
+        "baseline-outbound-succeeds",
+        "symptom-transport-failures-appear",
+        "recovery-outbound-succeeds-again"
+      ],
+      "cannot_support": [
+        "discriminating-destination-stays-healthy"
+      ]
+    }
+  ],
+  "known_gaps": [
+    "No run has produced evidence under this contract, so every assertion is currently NOT_TESTED rather than unproven.",
+    "destination_health_status has no collector yet. Until one exists the discriminating assertion that separates SNAT exhaustion from destination failure cannot be evaluated, and a run would return INCONCLUSIVE rather than SUPPORTED."
+  ]
+}

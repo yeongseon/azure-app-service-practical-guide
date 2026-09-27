@@ -151,16 +151,11 @@ def generate_dashboard(tutorials: list[dict[str, Any]], today: date) -> str:
     lines.append(
         "      justification: Auto-generated from tutorial validation frontmatter in this repository."
     )
-    lines.append("content_validation:")
-    lines.append("  status: verified")
-    lines.append(f'  last_reviewed: "{today.isoformat()}"')
-    lines.append("  reviewer: ai-agent")
-    lines.append("  core_claims:")
-    lines.append(
-        '    - claim: "The dashboard is generated from validation frontmatter in repository Markdown files."'
-    )
-    lines.append("      source: scripts/generate_validation_status.py")
-    lines.append("      verified: true")
+    # No content_validation block: scripts/lib/content_scope.is_in_scope
+    # returns False for reference/validation-status.md, so the block is
+    # forbidden here and tools/validate_frontmatter.py rejects it. Emitting
+    # it also made the only claim in the block tautological - that the
+    # generated dashboard is generated - which AGENTS.md forbids.
     lines.append("---")
     lines.append("")
     lines.append("# Tutorial Validation Status")

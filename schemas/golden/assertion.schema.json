@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yeongseon.github.io/azure-app-service-practical-guide/schemas/golden/assertion.schema.json",
+  "title": "Golden v1 assertion",
+  "type": "object",
+  "additionalProperties": false,
+  "description": "One declared, machine-evaluable claim about a named evidence field. An assertion never names a cause; it states what the evidence must show.",
+  "required": [
+    "id",
+    "role",
+    "field"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "role": {
+      "enum": [
+        "symptom",
+        "supporting",
+        "discriminating",
+        "control",
+        "recovery"
+      ]
+    },
+    "field": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Key in the run's raw evidence."
+    },
+    "equals": {
+      "description": "Exact expected value."
+    },
+    "in": {
+      "type": "array",
+      "description": "Accepted values.",
+      "minItems": 1
+    },
+    "claim_level": {
+      "enum": [
+        "Documented",
+        "Observed",
+        "Inferred",
+        "Not Proven"
+      ],
+      "default": "Observed"
+    }
+  },
+  "oneOf": [
+    {
+      "required": [
+        "equals"
+      ]
+    },
+    {
+      "required": [
+        "in"
+      ]
+    }
+  ]
+}

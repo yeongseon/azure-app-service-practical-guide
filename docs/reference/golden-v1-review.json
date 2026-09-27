@@ -1,0 +1,149 @@
+{
+  "review": "Golden Repository v1",
+  "epic": 173,
+  "document_updated_at": "2026-09-27",
+  "verdict": "NOT_COMPLETE",
+  "verdict_basis": "One Definition-of-Done item is unmet and two are partial. All three reduce to the same missing input: no run against a live subscription, and no second operator to replay one. Everything that could be closed without them has been.",
+  "counts": {
+    "MET": 12,
+    "PARTIAL": 2,
+    "NOT_MET": 1,
+    "total": 15
+  },
+  "items": [
+    {
+      "id": 1,
+      "requirement": "README states the evidence-driven reproduction mission and the difference from Microsoft Learn",
+      "status": "MET",
+      "evidence": "README.md opens by distinguishing this guide from Microsoft Learn and links the evidence model.",
+      "verify": "grep -ci 'microsoft learn' README.md"
+    },
+    {
+      "id": 2,
+      "requirement": "Repository-wide KEEP / REWRITE / MOVE / DELETE / ARCHIVE audit completed",
+      "status": "MET",
+      "evidence": "19 paths decided in docs/reference/golden-repository-audit.json: 16 KEEP, 3 ARCHIVE, 0 DELETE. The single REWRITE was resolved during the epic and became KEEP.",
+      "verify": "python3 tests/golden/test_repository_audit.py"
+    },
+    {
+      "id": 3,
+      "requirement": "AGENTS.md rewritten around agent judgment; machine-enforceable rules moved to validators/CI where possible",
+      "status": "MET",
+      "evidence": "AGENTS.md is organised around this repository's mission across eight sections, opening on Mission and reaching the evidence rules by line 35, down from 1275 lines to 1070 with the series contract moved to docs/meta/series-contract.md rather than deleted. The documented-but-unenforced rules are now enforced: the frontmatter scope rule, the deployment-method sub-template, and the Golden suites all run in a pull-request-scoped job. Auditing the remaining prose found three checks that disagreed with the policy they implemented rather than documentation debt, and the quality gate now passes across all 234 files with --all wired into CI so it stays there.",
+      "verify": "python3 tools/validate_frontmatter.py"
+    },
+    {
+      "id": 4,
+      "requirement": "Common Evidence / Assertion / Hypothesis representations exist",
+      "status": "MET",
+      "evidence": "Five schemas under schemas/golden/ cover evidence, assertion, manifest, result and reproduction. evidence.schema.json declares the identity and capture time of raw observations, which is what lets the evaluator reject evidence from another run.",
+      "verify": "python3 tests/golden/test_evaluate_run.py"
+    },
+    {
+      "id": 5,
+      "requirement": "Execution status separated from hypothesis status",
+      "status": "MET",
+      "evidence": "EXECUTION_STATUS and HYPOTHESIS_STATUS are separate frozen vocabularies in scripts/golden/evaluate_run.py. A run that did not execute cannot report a hypothesis verdict.",
+      "verify": "python3 tests/golden/test_negative_evidence.py"
+    },
+    {
+      "id": 6,
+      "requirement": "Raw evidence separated from generated verdict; run identity exists",
+      "status": "MET",
+      "evidence": "The result contract carries run identity and the evaluator derives the verdict from assertion outcomes rather than accepting an asserted one.",
+      "verify": "python3 tests/golden/test_evaluate_run.py"
+    },
+    {
+      "id": 7,
+      "requirement": "captured_at separated from evaluation/document timestamps",
+      "status": "MET",
+      "evidence": "captured_at, evaluated_at and document_updated_at are distinct fields. This is the ACA defect where re-evaluation time was stamped into a field named for capture.",
+      "verify": "python3 tests/golden/test_negative_evidence.py"
+    },
+    {
+      "id": 8,
+      "requirement": "Negative tests: missing, empty, malformed, contradictory, wrong-run, recovery-missing, comparison-semantics mismatch",
+      "status": "MET",
+      "evidence": "tests/golden/test_negative_evidence.py covers missing, empty, malformed, contradictory, wrong-run, recovery-missing and comparison-semantics cases across 24 tests. The wrong-run case compares evidence identity against the manifest run_id and was confirmed to fail when the identity check is removed.",
+      "verify": "python3 tests/golden/test_negative_evidence.py"
+    },
+    {
+      "id": 9,
+      "requirement": "Golden scenarios A (deterministic), B (comparative), C (configuration/state) completed",
+      "status": "PARTIAL",
+      "evidence": "All three scenarios now ship a manifest template, an evidence-classification file and a suite. Scenario B's contract declares the discriminating assertion that separates SNAT exhaustion from destination failure, and its suite proves an unhealthy destination refuses the hypothesis rather than supporting it.",
+      "gap": "No scenario has been executed against Azure. All three manifests ship execution_status NOT_RUN, so the contracts are complete while the runs are not. Scenario B additionally has no collector for destination_health_status, so a run today would return INCONCLUSIVE rather than SUPPORTED.",
+      "verify": "python3 tests/golden/test_scenario_a.py && python3 tests/golden/test_scenario_b.py && python3 tests/golden/test_scenario_c.py"
+    },
+    {
+      "id": 10,
+      "requirement": "Independent reproduction completed for at least one scenario",
+      "status": "NOT_MET",
+      "evidence": "evidence/reproductions/scenario-a.json records NOT_ATTEMPTED on both the reproduction and documentation axes.",
+      "gap": "Requires a second operator and a live subscription. The gate that would evaluate a replay exists and is tested; nothing has been replayed through it.",
+      "verify": "python3 tests/golden/test_reproduction.py"
+    },
+    {
+      "id": 11,
+      "requirement": "Cleanup procedure exists and is verified",
+      "status": "PARTIAL",
+      "evidence": "All three scenario labs ship cleanup.sh. Each deletes the lab's resource group rather than enumerating resources, so cleanup stays complete as the Bicep template changes, and each refuses to run without an explicit RG.",
+      "gap": "Not verified. No script has been executed against a subscription, so 'exists' is satisfied and 'is verified' is not. Verification requires a real deployment to delete.",
+      "verify": "ls labs/*/cleanup.sh && bash -n labs/*/cleanup.sh"
+    },
+    {
+      "id": 12,
+      "requirement": "Historical evidence policy applied",
+      "status": "MET",
+      "evidence": "docs/reference/golden-evidence-model.md states the historical evidence policy: how long a capture stays authoritative, what re-verification requires, and that a capture predating the contract it is cited under is trusted-historical rather than primary. Both Golden scenarios classify their retained captures accordingly.",
+      "verify": "python3 tests/golden/test_lab_classification.py"
+    },
+    {
+      "id": 13,
+      "requirement": "Legacy labs classified Golden / migration-needed / archive-candidate",
+      "status": "MET",
+      "evidence": "All 12 labs classified in labs/golden-classification.json: 2 golden, 9 migration-needed, 1 archive-candidate. Coverage is asserted in both directions so neither an unclassified lab nor an orphan entry passes.",
+      "verify": "python3 tests/golden/test_lab_classification.py"
+    },
+    {
+      "id": 14,
+      "requirement": "README validation/maturity wording matches actual evidence",
+      "status": "MET",
+      "evidence": "Lab-validated became Evidence-retained, the legend names both missing conditions, and the lab count was corrected from 10 to 12. The guard fails once a reproduction or completed run exists, forcing the claim to be re-decided rather than staying forbidden after it becomes true.",
+      "verify": "python3 tests/golden/test_readme_claims.py"
+    },
+    {
+      "id": 15,
+      "requirement": "Existing documentation quality gates do not regress",
+      "status": "MET",
+      "evidence": "12 required checks pass on PR 186 and one is skipped, including Build Documentation, which runs mkdocs build --strict and confirms the nav entries this branch adds. PII reports 0 blocking, repetition 0 errors across 233 files, and frontmatter validation exits 0.",
+      "verify": "gh pr checks 186 --repo yeongseon/azure-app-service-practical-guide"
+    }
+  ],
+  "blocking_for_v1": [
+    "Item 10: no scenario has been independently reproduced."
+  ],
+  "notes": "Items 9, 10 and 11 reduce to two missing inputs: a Golden contract for Scenario B, and an execution against a live subscription by a second operator. Review found two false-positive paths in the evaluator and the reproduction gate while every suite was green, which is the same vacuity this model exists to reject; both are now fixed and pinned by regression tests that were confirmed to fail when each fix is reverted.",
+  "review_history": [
+    {
+      "reviewer": "oracle",
+      "score": "43/100",
+      "findings_accepted": [
+        "evaluate_run.py keyed assertion outcomes by caller-supplied id, so a duplicate id dropped a CONTRADICTED outcome and reported SUPPORTED. Reproduced, fixed, pinned.",
+        "check_reproduction.py treated equal NOT_TESTED statuses as REPRODUCED, so two runs that never happened reproduced each other. Reproduced, fixed, pinned.",
+        "No workflow ran tests/golden, so 134 tests protected nothing in CI.",
+        "validate_frontmatter.py was wired into a job gated on push to main, so it never ran on a pull request.",
+        "Items 4 and 8 overstated: no Evidence schema exists and no wrong-run test exists.",
+        "Item 15 said all 13 checks pass; 12 pass and one is skipped.",
+        "verdict_basis said four partial items while the counts said three.",
+        "Mutation verification is asserted in prose with no retained artifact.",
+        "Auditing the quality gate's 29 standing errors found three checks disagreeing with the policy they implemented: the deployment sub-template had no carve-out, the CLI explanation-table rule was applied to yaml fences though AGENTS.md scopes it to bash, and playbook sections were matched exactly though AGENTS.md permits a trailing qualifier. 29 errors to 0, each fix mutation-verified."
+      ],
+      "findings_disputed": [
+        "The reproduction gate was called vacuously satisfiable on a fabricated record. The specific invocation shown passed a dict where check() takes a path, and the cited output keys do not exist. The underlying NOT_TESTED equality defect was real and is fixed.",
+        "The tail-section rule was reported as violated by docs/reference/validation-status.md. validate_doc_quality.py:286 exempts that file explicitly as a generated dashboard, matching this repository's stated policy for generated output, and the validator already runs ungated on pull requests. Acting on the finding would have broken correct behaviour to satisfy it.",
+        "A separate tail-section validator was implied to be missing. validate_doc_quality.py has checked tail order and ordering since before this branch; building another would have duplicated an existing gate rather than closing a gap."
+      ]
+    }
+  ]
+}
