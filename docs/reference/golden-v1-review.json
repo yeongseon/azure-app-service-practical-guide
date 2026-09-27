@@ -5,8 +5,8 @@
   "verdict": "NOT_COMPLETE",
   "verdict_basis": "Two Definition-of-Done items are unmet and four are partial. The EPIC forbids claiming validation without evidence, so the review reports the gaps rather than rounding them up.",
   "counts": {
-    "MET": 9,
-    "PARTIAL": 4,
+    "MET": 10,
+    "PARTIAL": 3,
     "NOT_MET": 2,
     "total": 15
   },
@@ -117,16 +117,14 @@
     {
       "id": 15,
       "requirement": "Existing documentation quality gates do not regress",
-      "status": "PARTIAL",
-      "evidence": "PII reports 0 blocking on every changed file, repetition reports 0 errors across 233 files, and frontmatter validation now exits 0 where it previously exited 1.",
-      "gap": "mkdocs build --strict was NOT RUN. mkdocs is not installed in this environment and no package manager was available to install it. Two mkdocs.yml nav entries were added and verified only by YAML parse, not by a strict build.",
-      "verify": "python3 scripts/validate_pii.py && python3 scripts/detect_repetition.py docs"
+      "status": "MET",
+      "evidence": "All 13 required checks pass on PR 186, including Build Documentation, which runs mkdocs build --strict and confirms the two nav entries this branch adds. PII reports 0 blocking, repetition 0 errors across 233 files, CLI explanation tables pass, and frontmatter validation now exits 0 where it previously exited 1.",
+      "verify": "gh pr checks 186 --repo yeongseon/azure-app-service-practical-guide"
     }
   ],
   "blocking_for_v1": [
     "Item 10: no scenario has been independently reproduced.",
-    "Item 11: the Golden scenarios have no cleanup procedure.",
-    "Item 15: mkdocs build --strict has not been run against the nav changes."
+    "Item 11: the Golden scenarios have no cleanup procedure."
   ],
-  "notes": "Items 9, 10 and 11 reduce to two missing inputs: a Golden contract for Scenario B, and an execution against a live subscription by a second operator. The gates and suites that would consume such a run exist and are mutation-verified; what is absent is the run. The Scenario B gap was found by mutation-testing this review's own suite, not by reading it."
+  "notes": "Items 9, 10 and 11 reduce to two missing inputs: a Golden contract for Scenario B, and an execution against a live subscription by a second operator. The gates and suites that would consume such a run exist and are mutation-verified; what is absent is the run. Item 15 was PARTIAL while mkdocs build --strict had not been executed locally, and was re-decided to MET once CI ran it. The Scenario B gap was found by mutation-testing this review's own suite, not by reading it."
 }

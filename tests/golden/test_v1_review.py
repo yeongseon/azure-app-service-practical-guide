@@ -163,12 +163,30 @@ class GroundedVerdictTests(unittest.TestCase):
         }
         self.assertEqual(classified, on_disk)
 
-    def test_the_unrun_gate_is_disclosed_rather_than_claimed(self):
-        """mkdocs build --strict was not executed; item 15 must say so."""
+    def test_a_gate_is_either_shown_to_have_run_or_disclosed_as_unrun(self):
+        """Item 15 is about gates, so it may not be vague about them.
+
+        This replaced a test that pinned the gate as unrun. That was true
+        while mkdocs was unavailable locally, and it stopped being true when
+        CI executed the strict build, at which point the test failed and the
+        item was re-decided rather than left stale. The durable property is
+        that the item either points at an execution or names what was skipped.
+        """
         item = by_id(15)
-        self.assertEqual(item["status"], "PARTIAL")
-        self.assertIn("NOT RUN", item["gap"])
-        self.assertIn("mkdocs", item["gap"].lower())
+        if item["status"] == "MET":
+            self.assertNotIn(
+                "NOT RUN", item.get("gap", "") + item["evidence"],
+                msg="item 15 claims MET while still disclosing an unrun gate")
+            self.assertRegex(
+                item["evidence"].lower(), r"mkdocs|ci|checks? pass",
+                msg="item 15 claims MET without naming the execution that proves it")
+        else:
+            self.assertTrue(item["gap"].strip())
+
+    def test_the_strict_build_is_accounted_for_somewhere(self):
+        """The gate most likely to catch a nav defect must not go unmentioned."""
+        item = by_id(15)
+        self.assertIn("mkdocs", (item["evidence"] + item.get("gap", "")).lower())
 
 
 if __name__ == "__main__":
