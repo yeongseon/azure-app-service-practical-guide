@@ -7,5 +7,9 @@
       "trust": "trusted-historical",
       "reason": "Captured 2026-04-04 by the pre-Golden procedure. Contains post-swap diag output and KQL exports that illustrate the swap mechanism, but carries no run_id and no declared assertions, so it cannot be evaluated against this contract."
     }
+  ],
+  "known_gaps": [
+    "No collector emits any field this contract declares. The lab ships trigger.sh and verify.sh, neither of which writes an evidence document, while the manifest asserts on swap_exit_code, production_restart_observed, non_sticky_feature_flag_swapped, sticky_db_connection_remained, production_config_changed, deployment_error_count and post_rollback_matches_pre_swap. A run today would return INCONCLUSIVE on every assertion.",
+    "The contract is a declaration of what a future collector must produce, not a description of what this lab currently measures. Only Scenario A ships a runner that emits evidence in this shape."
   ]
 }

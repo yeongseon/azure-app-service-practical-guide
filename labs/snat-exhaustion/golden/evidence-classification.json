@@ -27,19 +27,19 @@
     {
       "path": "labs/snat-exhaustion/verify.sh",
       "trust": "primary",
-      "reason": "Writes raw counts to the evidence path and no longer prints a verdict. An earlier version announced that reproduction appeared successful, which let the collector grade its own run.",
-      "supports": [
+      "reason": "Writes raw symptom counts to the evidence path and no longer prints a verdict. Those counts are not the fields this contract asserts on, so it cannot currently support any assertion here.",
+      "supports": [],
+      "cannot_support": [
         "baseline-outbound-succeeds",
         "symptom-transport-failures-appear",
+        "discriminating-destination-stays-healthy",
+        "discriminating-http-errors-absent",
         "recovery-outbound-succeeds-again"
-      ],
-      "cannot_support": [
-        "discriminating-destination-stays-healthy"
       ]
     }
   ],
   "known_gaps": [
-    "No run has produced evidence under this contract, so every assertion is currently NOT_TESTED rather than unproven.",
-    "destination_health_status has no collector yet. Until one exists the discriminating assertion that separates SNAT exhaustion from destination failure cannot be evaluated, and a run would return INCONCLUSIVE rather than SUPPORTED."
+    "No collector emits any field this contract declares. verify.sh writes symptom counts (console_snat_timeout_refused_hits, platform_outbound_timeout_hits, http_high_latency_or_5xx_hits, http_total_sampled) and the manifest asserts on baseline_success_count, load_transport_failure_count, destination_health_status, load_http_error_count and recovery_success_count. The two sets do not intersect, so a run today returns INCONCLUSIVE on every assertion. An earlier version of this file named only destination_health_status, which understated the gap.",
+    "The contract is therefore a declaration of what a future collector must produce, not a description of what this lab currently measures. It is correct as a target and must not be read as runnable."
   ]
 }

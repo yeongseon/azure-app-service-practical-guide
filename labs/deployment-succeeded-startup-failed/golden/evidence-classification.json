@@ -17,5 +17,9 @@
       "trust": "trusted-historical",
       "reason": "Post-fix diagnostics from the same 2026-04-04 window. Illustrative of a recovered app; not tied to a Golden run_id."
     }
+  ],
+  "known_gaps": [
+    "No collector emits any field this contract declares. This lab carries two contract systems: contract.json, which run.py fixes before execution and which the 20260927T104304Z run actually satisfied, and this Golden manifest, which asserts on baseline_status, deploy_exit_code, fault_config_readback, fault_import_error_hits, fault_startup_command, fault_status_class and recovery_status. run.py emits none of those names, so the Golden manifest has never been executed even though the scenario has.",
+    "Reconciling the two is outstanding work. The real run is evidence about the scenario and about run.py's contract; it is not evidence that this manifest's assertions hold."
   ]
 }

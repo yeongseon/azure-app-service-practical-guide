@@ -3,7 +3,7 @@
   "epic": 173,
   "document_updated_at": "2026-09-27",
   "verdict": "NOT_COMPLETE",
-  "verdict_basis": "One Definition-of-Done item is unmet and one is partial. Scenario A now has a real run behind it and cleanup is verified by actual deletion. What remains needs a second person, not more code.",
+  "verdict_basis": "One Definition-of-Done item is unmet and one is partial. A scenario has genuinely run against Azure and cleanup is verified by real deletion, but the Golden manifests remain unexecuted because no collector emits the fields they declare.",
   "counts": {
     "MET": 13,
     "PARTIAL": 1,
@@ -71,8 +71,8 @@
       "id": 9,
       "requirement": "Golden scenarios A (deterministic), B (comparative), C (configuration/state) completed",
       "status": "PARTIAL",
-      "evidence": "Scenario A has been executed against a live subscription. Run 20260927T104304Z-aba0d3a9daa7 reports evidence_validation PASS and hypothesis_evaluation SUPPORTED with no errors and no refutations, and states three limitations rather than claiming more than it showed. Re-evaluating the same run offline reproduced the identical verdict while advancing evaluated_at and leaving the capture untouched, demonstrating the separation the model requires. Scenarios B and C ship complete contracts and suites.",
-      "gap": "Scenarios B and C have not been executed; their manifests still ship NOT_RUN. Scenario B also has no collector for destination_health_status, so a run today would return INCONCLUSIVE rather than SUPPORTED.",
+      "evidence": "Scenario A has been executed against a live subscription. Run 20260927T104304Z-aba0d3a9daa7 reports evidence_validation PASS and hypothesis_evaluation SUPPORTED with no errors and no refutations, and states three limitations rather than claiming more than it showed. Re-evaluating it offline reproduced the identical verdict while advancing evaluated_at and leaving the capture untouched, demonstrating the separation the model requires.",
+      "gap": "That run satisfied run.py's contract.json, not the Golden manifest. The lab carries two contract systems and no collector emits the fields any Golden manifest declares: all three scenarios assert on names nothing writes, so a Golden-model run of any of them returns INCONCLUSIVE on every assertion today. The contracts are correct as targets and must not be read as runnable. Scenarios B and C have not been executed at all.",
       "verify": "python3 labs/deployment-succeeded-startup-failed/run.py evaluate <run_dir>"
     },
     {
@@ -136,7 +136,8 @@
         "Item 15 said all 13 checks pass; 12 pass and one is skipped.",
         "verdict_basis said four partial items while the counts said three.",
         "Mutation verification is asserted in prose with no retained artifact.",
-        "Auditing the quality gate's 29 standing errors found three checks disagreeing with the policy they implemented: the deployment sub-template had no carve-out, the CLI explanation-table rule was applied to yaml fences though AGENTS.md scopes it to bash, and playbook sections were matched exactly though AGENTS.md permits a trailing qualifier. 29 errors to 0, each fix mutation-verified."
+        "Auditing the quality gate's 29 standing errors found three checks disagreeing with the policy they implemented: the deployment sub-template had no carve-out, the CLI explanation-table rule was applied to yaml fences though AGENTS.md scopes it to bash, and playbook sections were matched exactly though AGENTS.md permits a trailing qualifier. 29 errors to 0, each fix mutation-verified.",
+        "Building a contract-to-collector alignment check found that no Golden manifest in the repository is satisfiable: all three declare fields no collector emits, and two disclosed nothing while the third understated the gap as one missing field when all five were missing. Scenario A additionally carries two parallel contract systems, so its real Azure run satisfied run.py's contract rather than its Golden manifest."
       ],
       "findings_disputed": [
         "The reproduction gate was called vacuously satisfiable on a fabricated record. The specific invocation shown passed a dict where check() takes a path, and the cited output keys do not exist. The underlying NOT_TESTED equality defect was real and is fixed.",
