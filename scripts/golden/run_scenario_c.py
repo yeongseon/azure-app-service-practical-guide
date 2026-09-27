@@ -36,10 +36,13 @@ sys.dont_write_bytecode = True
 
 LAB = "slot-swap-config-drift"
 SLOT = "staging"
-#: Seconds to let a swap settle before reading /config. A swap returns as
-#: soon as the routing change is accepted; the worker may answer briefly
-#: from the previous process.
-SETTLE_SECONDS = 25
+#: How long to wait for a destination worker to restart after a swap.
+#: A fixed sleep was tried first and produced a confident CONTRADICTED: at
+#: 25 seconds the staging slot was still answering from the pre-swap
+#: production process, whose environment describes the slot it came from.
+#: Polling for the restart replaces guessing at the settle time.
+RESTART_TIMEOUT_SECONDS = 240
+RESTART_POLL_SECONDS = 10
 
 
 class RunError(Exception):
@@ -85,6 +88,64 @@ def fetch_config(url: str) -> dict:
         return {"unreachable": str(exc)}
 
 
+def await_restart(url: str, boundary: str, directory: pathlib.Path, name: str) -> dict:
+    """Poll /config until the worker reports starting after `boundary`.
+
+    Returns the last snapshot read, and a record of the wait, so a run
+    that timed out is visible in the evidence rather than silently
+    producing a stale observation. A timeout is not an error: the
+    collector treats an unrestarted worker as unable to support the
+    stickiness assertion, which is the honest outcome.
+    """
+    deadline = time.monotonic() + RESTART_TIMEOUT_SECONDS
+    attempts = []
+    snapshot = {}
+    restarted = False
+    while time.monotonic() < deadline:
+        snapshot = fetch_config(url)
+        start = snapshot.get("PROCESS_START_UTC")
+        attempts.append({"at": now(), "process_start_utc": start})
+        if start and boundary:
+            try:
+                if (datetime.datetime.fromisoformat(start)
+                        > datetime.datetime.fromisoformat(boundary)):
+                    restarted = True
+                    break
+            except ValueError:
+                pass
+        time.sleep(RESTART_POLL_SECONDS)
+    (directory / f"{name}.json").write_text(json.dumps({
+        "url": url,
+        "boundary": boundary,
+        "restarted": restarted,
+        "attempts": attempts,
+        "timeout_seconds": RESTART_TIMEOUT_SECONDS,
+    }, indent=2))
+    return snapshot
+
+
+def collect_deployment_errors(resource_group: str, app: str, workspace: str,
+                              directory: pathlib.Path) -> dict:
+    """Query deployment error rows so the contract's last field is observable.
+
+    Nothing queried these before, so deployment_error_count was absent on
+    every run and the evaluation could never be better than INCONCLUSIVE.
+    """
+    query = (
+        "AppServicePlatformLogs "
+        "| where TimeGenerated > ago(1h) "
+        "| where Level == 'Error' "
+        "| project TimeGenerated, Level, Message "
+        "| limit 100"
+    )
+    return command(directory, "console-query-0", [
+        "az", "monitor", "log-analytics", "query",
+        "--workspace", workspace,
+        "--analytics-query", query,
+        "--output", "json",
+    ])
+
+
 def swap(resource_group: str, app: str, directory: pathlib.Path, name: str,
          source: str, target: str) -> dict:
     return command(directory, name, [
@@ -97,7 +158,8 @@ def swap(resource_group: str, app: str, directory: pathlib.Path, name: str,
     ])
 
 
-def execute(resource_group: str, app: str, output: pathlib.Path) -> pathlib.Path:
+def execute(resource_group: str, app: str, output: pathlib.Path,
+            workspace: str | None = None) -> pathlib.Path:
     """Run the swap, the rollback, and capture both."""
     identifier = run_id()
     directory = output / identifier
@@ -119,18 +181,31 @@ def execute(resource_group: str, app: str, output: pathlib.Path) -> pathlib.Path
     (directory / "staging-before.json").write_text(json.dumps(fetch_config(staging_url), indent=2))
 
     swapped = swap(resource_group, app, directory, "swap", SLOT, "production")
-    time.sleep(SETTLE_SECONDS)
+    # The swap CLI returns after the platform has already recycled the
+    # workers, so a worker that restarted as part of the swap started
+    # BEFORE the command returned. Comparing against ended_at therefore
+    # never matches and polls until timeout on a healthy run. The question
+    # is whether the worker started after the swap began.
+    boundary = swapped["started_at"]
 
-    (directory / "prod-after.json").write_text(json.dumps(fetch_config(production_url), indent=2))
-    (directory / "staging-after.json").write_text(json.dumps(fetch_config(staging_url), indent=2))
+    # Both sides must be read after their workers have restarted, or the
+    # snapshot describes the slot the process came from.
+    production_after = await_restart(production_url, boundary, directory, "prod-restart-wait")
+    staging_after = await_restart(staging_url, boundary, directory, "staging-restart-wait")
+    (directory / "prod-after.json").write_text(json.dumps(production_after, indent=2))
+    (directory / "staging-after.json").write_text(json.dumps(staging_after, indent=2))
 
     # The step trigger.sh never performed. Without it the rollback
     # assertion cannot be satisfied by any run, only left absent.
     if swapped["exit_code"] == 0:
-        swap(resource_group, app, directory, "swap-back", SLOT, "production")
-        time.sleep(SETTLE_SECONDS)
+        rolled = swap(resource_group, app, directory, "swap-back", SLOT, "production")
+        rollback_snapshot = await_restart(
+            production_url, rolled["started_at"], directory, "rollback-restart-wait")
         (directory / "prod-after-rollback.json").write_text(
-            json.dumps(fetch_config(production_url), indent=2))
+            json.dumps(rollback_snapshot, indent=2))
+
+    if workspace:
+        collect_deployment_errors(resource_group, app, workspace, directory)
 
     (directory / "run-complete.json").write_text(json.dumps({"ended_at": now()}, indent=2))
     return directory
@@ -140,11 +215,13 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("resource_group")
     parser.add_argument("app")
+    parser.add_argument("--workspace", help="Log Analytics workspace GUID for the error query")
     parser.add_argument("--output", required=True,
                         help="Private evidence directory outside the repository")
     args = parser.parse_args()
     try:
-        directory = execute(args.resource_group, args.app, pathlib.Path(args.output))
+        directory = execute(args.resource_group, args.app, pathlib.Path(args.output),
+                            workspace=args.workspace)
     except (RunError, OSError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2

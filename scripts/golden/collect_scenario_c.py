@@ -155,6 +155,26 @@ def started_after(process_start, boundary) -> bool:
         return None
 
 
+def is_usable(snapshot) -> bool:
+    """True when a snapshot actually holds a configuration reading.
+
+    `fetch_config` records an unreachable slot as {"unreachable": ...}
+    rather than raising, so the run keeps its evidence. Comparing against
+    that dict silently yields False for every setting, which reads as the
+    platform misbehaving when the truth is that nothing was observed. A
+    cold-starting slot produced exactly that: two confident False values
+    while the swap had in fact behaved correctly.
+
+    >>> is_usable({"FEATURE_FLAG": "v1"})
+    True
+    >>> is_usable({"unreachable": "timed out"})
+    False
+    >>> is_usable({})
+    False
+    """
+    return bool(snapshot) and "unreachable" not in snapshot
+
+
 def collect(run_dir) -> dict:
     """Build a Golden evidence document from one captured swap."""
     run_dir = pathlib.Path(run_dir)
@@ -187,18 +207,26 @@ def collect(run_dir) -> dict:
     # it started with. The worker must have started AFTER the swap to be
     # carrying this slot's settings.
     staging_restarted = started_after(
-        staging_after.get("PROCESS_START_UTC"), swap.get("ended_at"))
+        staging_after.get("PROCESS_START_UTC"), swap.get("started_at"))
+
+    # Every cross-slot comparison needs all four snapshots. One missing
+    # makes the comparison meaningless, not false.
+    comparable = all(is_usable(s) for s in
+                     (prod_before, staging_before, prod_after, staging_after))
 
     observations = {
         "swap_exit_code": swap.get("exit_code"),
         "production_restart_observed": restart_observed,
-        "non_sticky_feature_flag_swapped": swapped_with_code(
-            prod_before, staging_before, prod_after, staging_after, NON_STICKY),
+        "non_sticky_feature_flag_swapped": (
+            swapped_with_code(prod_before, staging_before, prod_after, staging_after,
+                              NON_STICKY) if comparable else None),
         "sticky_db_connection_remained": (
-            None if not staging_restarted
+            None if not (staging_restarted and comparable)
             else remained_with_slot(
                 prod_before, staging_before, prod_after, staging_after, STICKY)),
-        "production_config_changed": config_of(prod_after) != config_of(prod_before),
+        "production_config_changed": (
+            config_of(prod_after) != config_of(prod_before)
+            if is_usable(prod_before) and is_usable(prod_after) else None),
         "deployment_error_count": error_row_count(console),
         # A rollback that never happened cannot match anything. Claiming
         # otherwise would turn an unperformed step into supporting evidence.

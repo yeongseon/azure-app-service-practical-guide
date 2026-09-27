@@ -43,7 +43,11 @@ PROD_AFTER = {"FEATURE_FLAG": "on", "DB_CONNECTION_STRING": "prod-db",
 # The staging worker must have started AFTER the swap to be carrying this
 # slot's settings. A real run showed the destination answering from the
 # pre-swap process, which holds the other slot's environment in memory.
-SWAP_ENDED = "2026-09-27T10:02:00+00:00"
+# A swap has a window. The platform recycles workers inside it, so the
+# CLI returns after the restart has already happened; the boundary for
+# "did this worker restart as part of the swap" is when the swap BEGAN.
+SWAP_STARTED = "2026-09-27T10:01:00+00:00"
+SWAP_ENDED = "2026-09-27T10:06:00+00:00"
 STAGING_AFTER = {"FEATURE_FLAG": "off", "DB_CONNECTION_STRING": "staging-db",
                  "PROCESS_START_UTC": "2026-09-27T10:05:00+00:00"}
 
@@ -60,6 +64,7 @@ def build_run(**overrides):
         "prod-after.json": overrides.get("prod_after", PROD_AFTER),
         "staging-after.json": overrides.get("staging_after", STAGING_AFTER),
         "swap.json": {"exit_code": overrides.get("swap_exit", 0),
+                      "started_at": overrides.get("swap_started", SWAP_STARTED),
                       "ended_at": overrides.get("swap_ended", SWAP_ENDED)},
         "console-query-0.json": {"stdout": overrides.get("console", "[]")},
     }
@@ -149,13 +154,13 @@ class ActivationPreconditionTests(unittest.TestCase):
     """
 
     def test_a_worker_predating_the_swap_cannot_show_stickiness(self):
-        stale = dict(STAGING_AFTER, PROCESS_START_UTC="2026-09-27T10:01:00+00:00")
+        stale = dict(STAGING_AFTER, PROCESS_START_UTC="2026-09-27T10:00:30+00:00")
         evidence = collect_c.collect(build_run(staging_after=stale))
         self.assertNotIn("sticky_db_connection_remained", evidence["observations"])
         self.assertIn("sticky_db_connection_remained", evidence["incomplete_fields"])
 
     def test_that_run_is_inconclusive_not_contradicted(self):
-        stale = dict(STAGING_AFTER, PROCESS_START_UTC="2026-09-27T10:01:00+00:00")
+        stale = dict(STAGING_AFTER, PROCESS_START_UTC="2026-09-27T10:00:30+00:00")
         self.assertEqual(
             evaluate_with(collect_c.collect(build_run(staging_after=stale)))["hypothesis_status"],
             "INCONCLUSIVE")
@@ -170,6 +175,58 @@ class ActivationPreconditionTests(unittest.TestCase):
         restarted = dict(PROD_BEFORE, PROCESS_START_UTC="2026-09-27T10:09:00+00:00")
         evidence = collect_c.collect(build_run(rollback=restarted))
         self.assertIs(evidence["observations"]["post_rollback_matches_pre_swap"], True)
+
+
+class UnreachableSnapshotTests(unittest.TestCase):
+    """A slot that answered nothing cannot refute anything.
+
+    fetch_config records an unreachable slot rather than raising, so the
+    run keeps its evidence. Comparing against that record silently yields
+    False for every setting, which reads as the platform misbehaving when
+    the truth is that nothing was observed. A real run hit exactly this:
+    the staging slot was still cold-starting when its pre-swap snapshot
+    was taken, and two confident False values appeared while the swap had
+    in fact behaved correctly.
+    """
+
+    UNREACHABLE = {"unreachable": "timed out"}
+
+    def test_an_unreachable_snapshot_is_not_a_configuration(self):
+        self.assertFalse(collect_c.is_usable(self.UNREACHABLE))
+        self.assertFalse(collect_c.is_usable({}))
+        self.assertTrue(collect_c.is_usable(PROD_BEFORE))
+
+    def test_a_missing_pre_swap_snapshot_absents_the_comparisons(self):
+        evidence = collect_c.collect(build_run(staging_before=self.UNREACHABLE))
+        for field in ("non_sticky_feature_flag_swapped", "sticky_db_connection_remained"):
+            with self.subTest(field=field):
+                self.assertNotIn(field, evidence["observations"])
+                self.assertIn(field, evidence["incomplete_fields"])
+
+    def test_that_run_is_inconclusive_not_contradicted(self):
+        """The defect produced CONTRADICTED; the fix must produce INCONCLUSIVE."""
+        self.assertEqual(
+            evaluate_with(collect_c.collect(
+                build_run(staging_before=self.UNREACHABLE)))["hypothesis_status"],
+            "INCONCLUSIVE")
+
+    def test_an_unreachable_production_absents_the_config_change(self):
+        evidence = collect_c.collect(build_run(prod_after=self.UNREACHABLE))
+        self.assertIn("production_config_changed", evidence["incomplete_fields"])
+
+
+class SwapWindowTests(unittest.TestCase):
+    """The restart boundary is the swap's start, not its return."""
+
+    def test_a_worker_recycled_during_the_swap_counts_as_restarted(self):
+        during = dict(STAGING_AFTER, PROCESS_START_UTC="2026-09-27T10:03:00+00:00")
+        evidence = collect_c.collect(build_run(staging_after=during))
+        self.assertIn("sticky_db_connection_remained", evidence["observations"])
+
+    def test_a_worker_predating_the_swap_does_not(self):
+        before = dict(STAGING_AFTER, PROCESS_START_UTC="2026-09-27T10:00:30+00:00")
+        evidence = collect_c.collect(build_run(staging_after=before))
+        self.assertIn("sticky_db_connection_remained", evidence["incomplete_fields"])
 
 
 class DiscriminationTests(unittest.TestCase):
