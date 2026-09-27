@@ -272,7 +272,7 @@ def execute(args):
             # Attempt recovery even when fault probing or configuration fails.
             phase(folder, run, 'recovery', GOOD, app['defaultHostName'])
         collect(folder, run, fault)
-        run['execution_status'] = 'COMPLETED'
+        run['execution_status'] = 'COMPLETE'
     except Exception as exc:
         run['execution_status'] = 'FAILED'
         run['error'] = str(exc)
@@ -302,7 +302,7 @@ def evaluate_folder(folder):
         phases = {name: json.loads((folder / name / 'phase.json').read_text()) for name in ('baseline', 'fault', 'recovery')}
         logs = json.loads((folder / 'console.json').read_text())
         result = evaluate(run, phases, logs)
-        if run.get('execution_status') != 'COMPLETED':
+        if run.get('execution_status') != 'COMPLETE':
             result['evidence_validation'] = 'FAIL'
             result['hypothesis_evaluation'] = 'INCONCLUSIVE'
             result['errors'].append('Execution did not complete')

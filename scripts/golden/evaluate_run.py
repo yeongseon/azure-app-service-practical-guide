@@ -34,7 +34,12 @@ import sys
 
 CLAIM_LEVELS = ("Documented", "Observed", "Inferred", "Not Proven")
 HYPOTHESIS_STATUS = ("SUPPORTED", "CONTRADICTED", "INCONCLUSIVE", "NOT_TESTED")
-EXECUTION_STATUS = ("COMPLETE", "PARTIAL", "BLOCKED", "FAILED", "NOT_RUN")
+#: RUNNING was added after the pilot runner was found emitting it. A run
+#: in flight is not PARTIAL, which means finished but incomplete, and the
+#: model simply had no word for it. It can never produce a verdict:
+#: evaluate() gates the hypothesis axis on COMPLETE, so RUNNING yields
+#: NOT_TESTED like every other non-final state.
+EXECUTION_STATUS = ("COMPLETE", "PARTIAL", "BLOCKED", "FAILED", "NOT_RUN", "RUNNING")
 EVIDENCE_ROLES = ("symptom", "supporting", "discriminating", "control", "recovery")
 EVIDENCE_TRUST = ("trusted-current", "trusted-historical", "unverified", "invalid")
 

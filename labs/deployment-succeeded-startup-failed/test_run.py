@@ -239,7 +239,7 @@ class EvaluationTests(unittest.TestCase):
             (folder / name).mkdir()
             pilot.write_json(folder / name / 'phase.json', value)
         pilot.write_json(folder / 'console.json', self.logs)
-        self.run['execution_status'] = 'COMPLETED'
+        self.run['execution_status'] = 'COMPLETE'
         self.run['artifacts'] = {str(path.relative_to(folder)): {
             'size': path.stat().st_size, 'sha256': hashlib.sha256(path.read_bytes()).hexdigest()}
             for path in folder.rglob('*.json')}
