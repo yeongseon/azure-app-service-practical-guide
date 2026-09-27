@@ -3,10 +3,10 @@
   "epic": 173,
   "document_updated_at": "2026-09-27",
   "verdict": "NOT_COMPLETE",
-  "verdict_basis": "One Definition-of-Done item is unmet and two are partial. All three reduce to the same missing input: no run against a live subscription, and no second operator to replay one. Everything that could be closed without them has been.",
+  "verdict_basis": "One Definition-of-Done item is unmet and one is partial. Scenario A now has a real run behind it and cleanup is verified by actual deletion. What remains needs a second person, not more code.",
   "counts": {
-    "MET": 12,
-    "PARTIAL": 2,
+    "MET": 13,
+    "PARTIAL": 1,
     "NOT_MET": 1,
     "total": 15
   },
@@ -71,25 +71,24 @@
       "id": 9,
       "requirement": "Golden scenarios A (deterministic), B (comparative), C (configuration/state) completed",
       "status": "PARTIAL",
-      "evidence": "All three scenarios now ship a manifest template, an evidence-classification file and a suite. Scenario B's contract declares the discriminating assertion that separates SNAT exhaustion from destination failure, and its suite proves an unhealthy destination refuses the hypothesis rather than supporting it.",
-      "gap": "No scenario has been executed against Azure. All three manifests ship execution_status NOT_RUN, so the contracts are complete while the runs are not. Scenario B additionally has no collector for destination_health_status, so a run today would return INCONCLUSIVE rather than SUPPORTED.",
-      "verify": "python3 tests/golden/test_scenario_a.py && python3 tests/golden/test_scenario_b.py && python3 tests/golden/test_scenario_c.py"
+      "evidence": "Scenario A has been executed against a live subscription. Run 20260927T104304Z-aba0d3a9daa7 reports evidence_validation PASS and hypothesis_evaluation SUPPORTED with no errors and no refutations, and states three limitations rather than claiming more than it showed. Re-evaluating the same run offline reproduced the identical verdict while advancing evaluated_at and leaving the capture untouched, demonstrating the separation the model requires. Scenarios B and C ship complete contracts and suites.",
+      "gap": "Scenarios B and C have not been executed; their manifests still ship NOT_RUN. Scenario B also has no collector for destination_health_status, so a run today would return INCONCLUSIVE rather than SUPPORTED.",
+      "verify": "python3 labs/deployment-succeeded-startup-failed/run.py evaluate <run_dir>"
     },
     {
       "id": 10,
       "requirement": "Independent reproduction completed for at least one scenario",
       "status": "NOT_MET",
       "evidence": "evidence/reproductions/scenario-a.json records NOT_ATTEMPTED on both the reproduction and documentation axes.",
-      "gap": "Requires a second operator and a live subscription. The gate that would evaluate a replay exists and is tested; nothing has been replayed through it.",
+      "gap": "Requires a second operator. Scenario A has now been executed and its verdict replays offline, so the run this gate would consume exists; what is missing is someone other than its operator replaying it, since reviewer must differ from original_operator.",
       "verify": "python3 tests/golden/test_reproduction.py"
     },
     {
       "id": 11,
       "requirement": "Cleanup procedure exists and is verified",
-      "status": "PARTIAL",
-      "evidence": "All three scenario labs ship cleanup.sh. Each deletes the lab's resource group rather than enumerating resources, so cleanup stays complete as the Bicep template changes, and each refuses to run without an explicit RG.",
-      "gap": "Not verified. No script has been executed against a subscription, so 'exists' is satisfied and 'is verified' is not. Verification requires a real deployment to delete.",
-      "verify": "ls labs/*/cleanup.sh && bash -n labs/*/cleanup.sh"
+      "status": "MET",
+      "evidence": "cleanup.sh was executed against the live deployment. It refused to run without an explicit target, exiting 2, then deleted the resource group; az group exists reported false 90 seconds later. Deleting the group rather than enumerating resources is what keeps the procedure complete as the template changes.",
+      "verify": "RG=<group> bash labs/deployment-succeeded-startup-failed/cleanup.sh"
     },
     {
       "id": 12,
@@ -121,7 +120,7 @@
     }
   ],
   "blocking_for_v1": [
-    "Item 10: no scenario has been independently reproduced."
+    "Item 10: no scenario has been independently reproduced by a second operator."
   ],
   "notes": "Items 9, 10 and 11 reduce to two missing inputs: a Golden contract for Scenario B, and an execution against a live subscription by a second operator. Review found two false-positive paths in the evaluator and the reproduction gate while every suite was green, which is the same vacuity this model exists to reject; both are now fixed and pinned by regression tests that were confirmed to fail when each fix is reverted.",
   "review_history": [
