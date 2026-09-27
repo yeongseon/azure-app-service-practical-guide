@@ -30,5 +30,8 @@
   "known_gaps": [
     "The two contract systems are bridged rather than merged. run.py still fixes and evaluates contract.json, and scripts/golden/collect_scenario_a.py re-expresses the same run directory under the names this manifest declares, so both can be evaluated from one execution without a second deployment. Merging them remains outstanding.",
     "Two trust vocabularies coexist. This file uses trusted-current, trusted-historical, unverified and invalid, describing custody of an artifact, while evidence.schema.json uses primary, derived and reported, describing how an observation was obtained. They answer different questions and are not yet reconciled."
+  ],
+  "executed_runs": [
+    "20260927T104304Z-aba0d3a9daa7"
   ]
 }

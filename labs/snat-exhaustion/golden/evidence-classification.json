@@ -36,10 +36,20 @@
         "discriminating-http-errors-absent",
         "recovery-outbound-succeeds-again"
       ]
+    },
+    {
+      "path": "scripts/golden/collect_scenario_b.py",
+      "trust": "trusted-current",
+      "reason": "Counts outcomes per phase under this contract's names. It imports app/classification.py rather than re-deriving the status bands, because a third copy of the predicate would reintroduce the confounder that module was written to remove: the same response counted a success on one transport and a failure on the other. A probe reporting neither a status nor a transport error is refused rather than bucketed.",
+      "supports": [],
+      "cannot_support": [
+        "discriminating-destination-stays-healthy"
+      ]
     }
   ],
   "known_gaps": [
-    "No collector emits any field this contract declares. verify.sh writes symptom counts (console_snat_timeout_refused_hits, platform_outbound_timeout_hits, http_high_latency_or_5xx_hits, http_total_sampled) and the manifest asserts on baseline_success_count, load_transport_failure_count, destination_health_status, load_http_error_count and recovery_success_count. The two sets do not intersect, so a run today returns INCONCLUSIVE on every assertion. An earlier version of this file named only destination_health_status, which understated the gap.",
-    "The contract is therefore a declaration of what a future collector must produce, not a description of what this lab currently measures. It is correct as a target and must not be read as runnable."
-  ]
+    "No run has produced evidence under this contract, so every assertion is NOT_TESTED rather than unproven. The collector exists and is tested offline against captured probe records, but the lab has not been deployed and no load has been generated.",
+    "Nothing yet writes the probe captures the collector reads. The workload classifies through app/classification.py but does not persist per-phase probe records, and no step probes the destination's own health. Until both exist, a real run leaves destination_health_status absent and the evaluation returns INCONCLUSIVE, which is correct: without it, transport failures are equally consistent with the destination being down."
+  ],
+  "executed_runs": []
 }

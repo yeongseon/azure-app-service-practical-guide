@@ -18,5 +18,6 @@
   "known_gaps": [
     "No run has produced evidence under this contract, so every assertion is NOT_TESTED rather than unproven. The collector exists and is tested offline against captured configs, but the lab has not been deployed and swapped.",
     "trigger.sh does not swap back, so a run using it as-is leaves post_rollback_matches_pre_swap absent and the evaluation returns INCONCLUSIVE. Claiming the rollback matched without performing one would turn an unperformed step into supporting evidence."
-  ]
+  ],
+  "executed_runs": []
 }

@@ -104,15 +104,51 @@ class ContractCollectorAlignmentTests(unittest.TestCase):
         self.assertIn("http_total_sampled", fields)
         self.assertGreaterEqual(len(fields), 4)
 
-    def test_scenario_b_is_disclosed_as_not_currently_runnable(self):
-        _, manifest, classification = next(
-            s for s in scenarios() if s[0] == "snat-exhaustion")
-        declared = {a["field"] for a in manifest["assertions"]}
-        self.assertEqual(
-            declared & emitted_fields("snat-exhaustion"), set(),
-            msg="a collector now emits a declared field; re-decide the disclosure")
-        self.assertRegex(
-            " ".join(classification["known_gaps"]).lower(), r"no collector emits")
+    def test_a_collectable_contract_still_says_it_has_not_run(self):
+        """Collectable is not the same as executed, and must not read as it.
+
+        This replaced a test asserting Scenario B had no collectable field
+        at all. That was true until a collector was written, at which point
+        it failed and forced this re-decision rather than letting a stale
+        claim survive. The durable property is that a contract which can
+        now be collected still discloses that nothing has been collected.
+        """
+        for lab, manifest, classification in scenarios():
+            declared = {a["field"] for a in manifest["assertions"]}
+            if declared - emitted_fields(lab):
+                continue  # not collectable yet; the earlier tests cover it
+            # A manifest template always ships NOT_RUN because it is a
+            # template, so it cannot say whether the scenario ever ran.
+            # The classification declares that instead.
+            if classification.get("executed_runs"):
+                continue  # genuinely executed; nothing to disclose
+            gaps = " ".join(classification.get("known_gaps") or []).lower()
+            with self.subTest(lab=lab):
+                self.assertRegex(
+                    gaps, r"no run|has not been (deployed|executed)|not been run",
+                    msg=f"{lab} is collectable and unrun, but says neither")
+
+    def test_a_declared_run_is_a_real_run_identifier(self):
+        """Guards executed_runs from being set to silence the check."""
+        for lab, _, classification in scenarios():
+            for run_id in classification.get("executed_runs") or []:
+                with self.subTest(lab=lab, run=run_id):
+                    self.assertRegex(
+                        run_id, r"^\d{8}T\d{6}Z-[0-9a-f]{12}$",
+                        msg="executed_runs must name a run the runner produced")
+
+    def test_every_scenario_is_now_collectable(self):
+        """Records the state this suite was built to change.
+
+        If a contract ever stops being collectable, the disclosure tests
+        above take over; this one states plainly that today none needs to.
+        """
+        for lab, manifest, _ in scenarios():
+            declared = {a["field"] for a in manifest["assertions"]}
+            with self.subTest(lab=lab):
+                self.assertEqual(
+                    declared - emitted_fields(lab), set(),
+                    msg=f"{lab} declares fields no collector emits")
 
 
 if __name__ == "__main__":
