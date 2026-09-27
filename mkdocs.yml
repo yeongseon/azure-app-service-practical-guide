@@ -370,6 +370,7 @@ nav:
     - reference/index.md
     - Validation Dashboards:
       - Content Validation: reference/content-validation-status.md
+    - Golden Evidence Model: reference/golden-evidence-model.md
       - Validation Status: reference/validation-status.md
     - CLI Cheatsheet: reference/cli-cheatsheet.md
     - Queries:

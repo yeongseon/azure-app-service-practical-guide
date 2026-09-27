@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yeongseon.github.io/azure-app-service-practical-guide/schemas/golden/result.schema.json",
+  "title": "Golden v1 result",
+  "type": "object",
+  "additionalProperties": false,
+  "description": "Derived output. NEVER an input: the evaluator recomputes this from raw evidence and reports disagreement rather than trusting a stored verdict.",
+  "required": [
+    "run_id",
+    "execution_status",
+    "hypothesis_status",
+    "assertion_outcomes"
+  ],
+  "properties": {
+    "run_id": {
+      "type": "string"
+    },
+    "captured_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "evaluated_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "execution_status": {
+      "enum": [
+        "COMPLETE",
+        "PARTIAL",
+        "BLOCKED",
+        "FAILED",
+        "NOT_RUN"
+      ]
+    },
+    "hypothesis_status": {
+      "enum": [
+        "SUPPORTED",
+        "CONTRADICTED",
+        "INCONCLUSIVE",
+        "NOT_TESTED"
+      ],
+      "description": "Separate axis from execution_status. A run that did not finish is NOT_TESTED regardless of partial evidence."
+    },
+    "assertion_outcomes": {
+      "type": "object",
+      "additionalProperties": {
+        "enum": [
+          "SUPPORTED",
+          "CONTRADICTED",
+          "INCONCLUSIVE"
+        ]
+      }
+    },
+    "generated_verdict_claimed": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "generated_verdict_rejected": {
+      "type": "boolean"
+    }
+  }
+}
