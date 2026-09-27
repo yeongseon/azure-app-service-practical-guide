@@ -1,0 +1,109 @@
+{
+  "policy": "Decision record only. Nothing here deletes or moves anything; ARCHIVE marks a path retained for provenance rather than routine use, and no evidence is deleted without a separate review.",
+  "evaluated_at": "2026-09-27T00:00:00Z",
+  "decisions": [
+    "KEEP",
+    "REWRITE",
+    "MOVE",
+    "DELETE",
+    "ARCHIVE"
+  ],
+  "delete_count_note": "No path is marked DELETE. Nothing measured in this audit justified destruction over archival.",
+  "paths": [
+    {
+      "path": "apps/",
+      "decision": "KEEP",
+      "reason": "Four reference applications exercised by the app-infra-ci workflow. Unrelated to the Golden model and independently useful."
+    },
+    {
+      "path": "docs/",
+      "decision": "KEEP",
+      "reason": "The published guide. Individual pages are governed by the existing content gates, not by this audit."
+    },
+    {
+      "path": "docs/reference/content-validation-status.md",
+      "decision": "KEEP",
+      "reason": "Generated dashboard. Its generator is not invoked by CI, so it can silently go stale; that is recorded against the generator rather than the output."
+    },
+    {
+      "path": "docs/reference/validation-status.md",
+      "decision": "KEEP",
+      "reason": "Generated dashboard, same staleness exposure as above."
+    },
+    {
+      "path": "labs/",
+      "decision": "KEEP",
+      "reason": "Per-lab decisions live in labs/golden-classification.json rather than being duplicated here."
+    },
+    {
+      "path": "labs/_shared/",
+      "decision": "KEEP",
+      "reason": "Collector harness shared by several labs. Not a lab and not classified as one."
+    },
+    {
+      "path": "evidence/",
+      "decision": "KEEP",
+      "reason": "Run-scoped evidence and reproduction records. Evidence is never deleted without a separate review."
+    },
+    {
+      "path": "schemas/golden/",
+      "decision": "KEEP",
+      "reason": "The Golden v1 contract surface: run manifest, assertion and result schemas. Deleting or moving these breaks every scenario that declares assertions against them."
+    },
+    {
+      "path": "scripts/golden/",
+      "decision": "KEEP",
+      "reason": "The Golden v1 reference evaluator and independent-reproduction gate. Both are stdlib-only and are the only code permitted to derive a verdict from raw evidence."
+    },
+    {
+      "path": "tests/golden/",
+      "decision": "KEEP",
+      "reason": "The Golden v1 suites, including the negative cases that prove each gate discriminates. Removing them would leave the evaluator unverified while it still looked tested."
+    },
+    {
+      "path": "scripts/lib/content_scope.py",
+      "decision": "KEEP",
+      "reason": "Single source of truth for content_validation scope. Its doctests run in CI."
+    },
+    {
+      "path": "tools/validate_frontmatter.py",
+      "decision": "REWRITE",
+      "reason": "AGENTS.md states this validator fails on a forbidden-but-present content_validation block, but no workflow invokes it. CI runs only the doctests of the scope helper it imports, so the policy is documented as enforced while nothing applies it to real pages. The script works when run by hand. Wire it into CI rather than deleting it; the defect is the missing invocation, not the validator."
+    },
+    {
+      "path": "tools/build_doc_graph.py",
+      "decision": "KEEP",
+      "reason": "Not invoked by CI, but referenced by three visualization pages it generates. A manual generator, not dead code."
+    },
+    {
+      "path": "scripts/generate_validation_status.py",
+      "decision": "KEEP",
+      "reason": "Manual generator for a committed dashboard. AGENTS.md forbids editing the output by hand, so the generator must stay."
+    },
+    {
+      "path": "scripts/generate_content_validation_status.py",
+      "decision": "KEEP",
+      "reason": "Manual generator for a committed dashboard, same reasoning."
+    },
+    {
+      "path": "scripts/normalize_content_sources_schema.py",
+      "decision": "ARCHIVE",
+      "reason": "One-off schema migration. Superseded by the normalized frontmatter now in the tree; retained for provenance rather than routine use."
+    },
+    {
+      "path": "scripts/remove_out_of_scope_validation.py",
+      "decision": "ARCHIVE",
+      "reason": "One-off cleanup that stripped content_validation from out-of-scope pages. Its effect is already in the tree."
+    },
+    {
+      "path": "scripts/remove_tautological_validation.py",
+      "decision": "ARCHIVE",
+      "reason": "One-off cleanup for tautological validation blocks. Its effect is already in the tree."
+    },
+    {
+      "path": ".github/workflows/",
+      "decision": "KEEP",
+      "reason": "Existing documentation and application gates. Golden v1 adds to them and must not regress them."
+    }
+  ]
+}
