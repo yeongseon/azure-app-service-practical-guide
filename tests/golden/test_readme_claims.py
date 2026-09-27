@@ -119,6 +119,20 @@ class ProofClaimTests(unittest.TestCase):
                 msg=f"the legend asserts {word!r} while nothing has been "
                     "reproduced or run to completion")
 
+    def test_no_status_claims_production_readiness(self):
+        """Coverage of a topic is not evidence a reader can ship on it.
+
+        The legend called Comprehensive sections production-ready. Being
+        thorough and source-reviewed is a claim about the document; being
+        production-ready is a claim about someone else's system, which this
+        repository has no way to establish.
+        """
+        legend = status_legend().lower()
+        for phrase in ("production-ready", "production ready"):
+            self.assertNotIn(
+                phrase, legend,
+                msg="a status legend asserts production readiness the repository cannot evidence")
+
     def test_legend_states_what_is_missing(self):
         legend = status_legend().lower()
         self.assertIn("independently reproduced", legend)
