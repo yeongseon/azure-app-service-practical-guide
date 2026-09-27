@@ -237,7 +237,10 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: pip install pyyaml
+        # requests is required: the Scenario B suite proves both transports
+        # classify an identical response the same way, so it imports urllib
+        # and requests side by side and cannot run on urllib alone.
+        run: pip install pyyaml requests
 
       - name: Validate frontmatter scope and doc types
         run: python3 tools/validate_frontmatter.py
