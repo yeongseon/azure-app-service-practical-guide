@@ -3,7 +3,7 @@
   "epic": 173,
   "document_updated_at": "2026-09-27",
   "verdict": "NOT_COMPLETE",
-  "verdict_basis": "One Definition-of-Done item is unmet and one is partial. A scenario has genuinely run against Azure and cleanup is verified by real deletion, but the Golden manifests remain unexecuted because no collector emits the fields they declare.",
+  "verdict_basis": "One Definition-of-Done item is unmet and one is partial. Two of three scenarios have run against a live subscription, one returning SUPPORTED and one INCONCLUSIVE, and cleanup is verified by real deletion. What remains is a second operator, and a Scenario B run that needs instrumentation the workload does not yet carry.",
   "counts": {
     "MET": 13,
     "PARTIAL": 1,
@@ -122,7 +122,7 @@
   "blocking_for_v1": [
     "Item 10: no scenario has been independently reproduced by a second operator."
   ],
-  "notes": "Items 9, 10 and 11 reduce to two missing inputs: a Golden contract for Scenario B, and an execution against a live subscription by a second operator. Review found two false-positive paths in the evaluator and the reproduction gate while every suite was green, which is the same vacuity this model exists to reject; both are now fixed and pinned by regression tests that were confirmed to fail when each fix is reverted.",
+  "notes": "Item 10 needs a person other than the operator who produced the runs; no amount of further code satisfies it. Item 9 needs Scenario B instrumented to persist per-phase probe records and probe the destination's own health, after which it can run. Scenario C's run left two observations absent and returned INCONCLUSIVE, which is the model working rather than failing.",
   "review_history": [
     {
       "reviewer": "oracle",
@@ -148,5 +148,28 @@
         "A separate tail-section validator was implied to be missing. validate_doc_quality.py has checked tail order and ordering since before this branch; building another would have duplicated an existing gate rather than closing a gap."
       ]
     }
-  ]
+  ],
+  "derived_state": {
+    "note": "Computed from the tree by tests/golden/test_v1_review.py, not written by hand. Earlier revisions of this file carried prose that contradicted its own items: a verdict basis saying the manifests were unexecuted while the items recorded two executions, and a note citing a missing Scenario B contract that existed.",
+    "scenarios_with_contract": [
+      "deployment-succeeded-startup-failed",
+      "slot-swap-config-drift",
+      "snat-exhaustion"
+    ],
+    "scenarios_executed": [
+      "deployment-succeeded-startup-failed",
+      "slot-swap-config-drift"
+    ],
+    "scenarios_not_executed": [
+      "snat-exhaustion"
+    ],
+    "executed_runs": {
+      "deployment-succeeded-startup-failed": [
+        "20260927T104304Z-aba0d3a9daa7"
+      ],
+      "slot-swap-config-drift": [
+        "20260927T114621Z-04c6c02c9ae1"
+      ]
+    }
+  }
 }

@@ -240,7 +240,7 @@ jobs:
         # requests is required: the Scenario B suite proves both transports
         # classify an identical response the same way, so it imports urllib
         # and requests side by side and cannot run on urllib alone.
-        run: pip install pyyaml requests
+        run: pip install pyyaml requests jsonschema referencing
 
       - name: Validate frontmatter scope and doc types
         run: python3 tools/validate_frontmatter.py
@@ -269,16 +269,14 @@ jobs:
         # there rather than trusting that nobody reintroduces one.
         run: python3 scripts/validate_doc_quality.py --all
 
-      - name: Validate JSON contracts parse
-        run: |
-          python3 - <<'PY'
-          import glob, json
-          paths = (glob.glob("schemas/golden/*.json") + glob.glob("labs/*/golden/*.json")
-                   + glob.glob("evidence/reproductions/*.json") + ["labs/golden-classification.json"])
-          for path in paths:
-              json.load(open(path))
-          print(f"{len(paths)} JSON contracts parse")
-          PY
+      - name: Validate Golden documents against their schemas
+        # This replaced a json.load smoke check that proved only that the
+        # files were JSON. The gap was not theoretical: the manifest
+        # templates carried undeclared properties under
+        # additionalProperties false, used a trust vocabulary the schema
+        # did not list, and the evaluator accepted an execution status no
+        # schema knew. Sixteen violations existed while the job was green.
+        run: python3 scripts/golden/validate_schemas.py --verbose
 
   validate-mslearn-urls:
     name: Validate MSLearn URLs

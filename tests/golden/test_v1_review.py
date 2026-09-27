@@ -219,5 +219,58 @@ class GroundedVerdictTests(unittest.TestCase):
         self.assertIn("mkdocs", (item["evidence"] + item.get("gap", "")).lower())
 
 
+class DerivedStateTests(unittest.TestCase):
+    """The review's machine-derivable claims must match the tree.
+
+    An earlier revision contradicted itself: its verdict basis said the
+    Golden manifests were unexecuted while its own items recorded two
+    executions, and a note cited a missing Scenario B contract that
+    existed. Prose drifts; these fields are recomputed instead.
+    """
+
+    def _executed(self):
+        found = {}
+        for path in sorted((ROOT / "labs").glob("*/golden/evidence-classification.json")):
+            runs = json.loads(path.read_text()).get("executed_runs") or []
+            found[path.parent.parent.name] = runs
+        return found
+
+    def test_derived_state_is_present(self):
+        self.assertIn("derived_state", REVIEW)
+
+    def test_contracts_listed_match_the_tree(self):
+        on_disk = sorted(
+            p.parent.parent.name for p in (ROOT / "labs").glob("*/golden/manifest.template.json"))
+        self.assertEqual(REVIEW["derived_state"]["scenarios_with_contract"], on_disk)
+
+    def test_executed_scenarios_match_the_registry(self):
+        executed = self._executed()
+        self.assertEqual(
+            REVIEW["derived_state"]["scenarios_executed"],
+            sorted(k for k, v in executed.items() if v))
+        self.assertEqual(
+            REVIEW["derived_state"]["scenarios_not_executed"],
+            sorted(k for k, v in executed.items() if not v))
+
+    def test_executed_run_ids_match_the_registry(self):
+        executed = {k: v for k, v in self._executed().items() if v}
+        self.assertEqual(REVIEW["derived_state"]["executed_runs"], executed)
+
+    def test_no_prose_claims_the_scenarios_are_unexecuted(self):
+        """The exact contradiction that prompted this class."""
+        if not REVIEW["derived_state"]["scenarios_executed"]:
+            return
+        prose = (REVIEW["verdict_basis"] + " " + REVIEW["notes"]).lower()
+        for phrase in ("manifests remain unexecuted", "never been executed",
+                       "no scenario has been executed"):
+            self.assertNotIn(phrase, prose)
+
+    def test_no_prose_claims_a_missing_contract_that_exists(self):
+        prose = (REVIEW["verdict_basis"] + " " + REVIEW["notes"]).lower()
+        for scenario in REVIEW["derived_state"]["scenarios_with_contract"]:
+            short = scenario.split("-")[0]
+            self.assertNotIn(f"a golden contract for {short}", prose)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

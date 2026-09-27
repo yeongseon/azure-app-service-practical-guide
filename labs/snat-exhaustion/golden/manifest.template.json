@@ -5,7 +5,7 @@
   "evaluated_at": null,
   "document_updated_at": "2026-09-27",
   "execution_status": "NOT_RUN",
-  "evidence_trust": "primary",
+  "evidence_trust": "trusted-current",
   "hypothesis": "Outbound connections from the app exhaust the SNAT port allocation of its App Service plan, so new outbound connections to the same destination begin failing at the transport layer while the destination itself stays healthy.",
   "assertions": [
     {

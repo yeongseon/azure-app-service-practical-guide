@@ -45,6 +45,10 @@
         "Not Proven"
       ],
       "default": "Observed"
+    },
+    "note": {
+      "type": "string",
+      "description": "Why this assertion discriminates. Explanatory only; never evaluated."
     }
   },
   "oneOf": [

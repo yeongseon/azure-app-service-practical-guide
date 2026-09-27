@@ -57,11 +57,19 @@ def attempted_reproductions():
 
 
 def completed_runs():
-    """Golden manifests reporting a finished execution."""
-    return [
-        path for path in sorted((ROOT / "labs").glob("*/golden/manifest.template.json"))
-        if json.loads(path.read_text()).get("execution_status") == "COMPLETE"
-    ]
+    """Runs each scenario declares it has actually executed.
+
+    This previously read execution_status from the manifest templates,
+    which are required to ship NOT_RUN because they are templates. The
+    check therefore reported "nothing has run" no matter what had run,
+    and let a stale README pass CI after two scenarios had executed
+    against Azure. The classifications declare the runs instead.
+    """
+    runs = []
+    for path in sorted((ROOT / "labs").glob("*/golden/evidence-classification.json")):
+        for run_id in json.loads(path.read_text()).get("executed_runs") or []:
+            runs.append((path.parent.parent.name, run_id))
+    return runs
 
 
 def status_legend():
@@ -105,14 +113,19 @@ class ProofClaimTests(unittest.TestCase):
             attempted_reproductions(), [],
             msg="a reproduction now exists; re-decide what the README may claim")
 
-    def test_no_golden_run_has_completed_yet(self):
-        self.assertEqual(
-            completed_runs(), [],
-            msg="a Golden run now reports COMPLETE; re-decide the README status")
+    def test_the_legend_matches_whether_anything_has_run(self):
+        """The claim must track the executed-run registry, both ways."""
+        legend = status_legend().lower()
+        if completed_runs():
+            self.assertNotIn(
+                "no lab has yet been re-verified", legend,
+                msg="scenarios have run under the Golden model; the legend denies it")
+        else:
+            self.assertIn("no lab has yet been re-verified", legend)
 
     def test_legend_does_not_claim_the_labs_prove_the_guidance(self):
         legend = status_legend().lower()
-        head = legend.split("but no lab")[0]
+        head = re.split(r"but (no lab|only)", legend)[0]
         for word in PROOF_WORDS:
             self.assertNotRegex(
                 head, rf"\b{word}\b",
