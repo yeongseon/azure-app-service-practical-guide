@@ -3,11 +3,11 @@
   "epic": 173,
   "document_updated_at": "2026-09-27",
   "verdict": "NOT_COMPLETE",
-  "verdict_basis": "One Definition-of-Done item is unmet and one is partial. Two of three scenarios have run against a live subscription, one returning SUPPORTED and one INCONCLUSIVE, and cleanup is verified by real deletion. What remains is a second operator, and a Scenario B run that needs instrumentation the workload does not yet carry.",
+  "verdict_basis": "No Definition-of-Done item is unmet outright, and two are partial. Scenario A has been reproduced by an operator other than its author, which was the last thing no amount of code could supply. What remains is documentation a stranger can follow without deviation, and a Scenario B run.",
   "counts": {
     "MET": 13,
-    "PARTIAL": 1,
-    "NOT_MET": 1,
+    "PARTIAL": 2,
+    "NOT_MET": 0,
     "total": 15
   },
   "items": [
@@ -78,10 +78,10 @@
     {
       "id": 10,
       "requirement": "Independent reproduction completed for at least one scenario",
-      "status": "NOT_MET",
-      "evidence": "evidence/reproductions/scenario-a.json records NOT_ATTEMPTED on both the reproduction and documentation axes.",
-      "gap": "Requires a second operator. Scenario A has now been executed and its verdict replays offline, so the run this gate would consume exists; what is missing is someone other than its operator replaying it, since reviewer must differ from original_operator.",
-      "verify": "python3 tests/golden/test_reproduction.py"
+      "status": "PARTIAL",
+      "evidence": "An independent operator reproduced Scenario A. Given only the published documentation and the target commit, without the authoring session's reasoning or root-cause analysis, it deployed fresh infrastructure and obtained SUPPORTED, matching run 20260927T104304Z without being told the expected answer. Its replay run is 20260927T223558Z-e391956951c1 and it confirmed its own cleanup. check_reproduction reports reproduction_result REPRODUCED.",
+      "gap": "documentation_result is FAILED, so the gate does not pass. The reproducer recorded five deviations: the lab guide and the evidence model state contradictory exit-code meanings, cleanup.sh is absent from the published runbook, the model describes a run directory of manifest.json and evidence.json while this scenario writes run.json and phase directories, run.py --help omits positional arguments, and the runbook interleaves historical observed values with current procedure. The hypothesis reproduced; the documentation did not.",
+      "verify": "python3 scripts/golden/check_reproduction.py evidence/reproductions/scenario-a.json"
     },
     {
       "id": 11,
@@ -120,7 +120,8 @@
     }
   ],
   "blocking_for_v1": [
-    "Item 10: no scenario has been independently reproduced by a second operator."
+    "Item 10: the hypothesis reproduced independently but the documentation did not; five deviations are recorded.",
+    "Item 9: Scenario B has not completed a live run."
   ],
   "notes": "Item 10 needs a person other than the operator who produced the runs; no amount of further code satisfies it. Item 9 needs Scenario B instrumented to persist per-phase probe records and probe the destination's own health, after which it can run. Scenario C's run left two observations absent and returned INCONCLUSIVE, which is the model working rather than failing.",
   "review_history": [
@@ -141,7 +142,8 @@
         "Scenario A's Golden manifest is now satisfiable and satisfied: a collector bridges the runner's contract to it, and the real Azure run evaluates to SUPPORTED under the Golden model rather than only under run.py's own criteria.",
         "All three contracts are now collectable, closing the finding that none was satisfiable. The check that found it was itself corrected twice: it associated collectors by filename convention and missed one, and it inferred whether a scenario had run from a manifest template that always ships NOT_RUN. Both now rest on declared facts, a LAB constant and an executed_runs list, rather than inference.",
         "Executing Scenario C found two defects in its own collector that only a real run could surface. It read stickiness from a slot still serving the pre-swap worker, and it compared rollback snapshots whole, so a restart timestamp that must change made every rollback look like a mismatch. Both produced a confident CONTRADICTED that the evidence did not support; corrected, the same run is INCONCLUSIVE.",
-        "Splitting the trust field into retention_status and capture_provenance closed the two-vocabulary finding; a classification had been holding values from both axes in one field. A second Scenario C run aimed at the remaining observations failed to close them and instead exposed two more places where absence was being read as refutation: a restart boundary set at the swap's return rather than its start, and an unreachable slot compared as though it held a configuration."
+        "Splitting the trust field into retention_status and capture_provenance closed the two-vocabulary finding; a classification had been holding values from both axes in one field. A second Scenario C run aimed at the remaining observations failed to close them and instead exposed two more places where absence was being read as refutation: a restart boundary set at the swap's return rather than its start, and an unreachable slot compared as though it held a configuration.",
+        "Independent reproduction was obtained. A separate agent, given only published docs and the commit, reproduced Scenario A's SUPPORTED verdict against fresh infrastructure. It also demonstrated the value of separating the two axes: the hypothesis reproduced while the documentation failed, five concrete defects being the reason."
       ],
       "findings_disputed": [
         "The reproduction gate was called vacuously satisfiable on a fabricated record. The specific invocation shown passed a dict where check() takes a path, and the cited output keys do not exist. The underlying NOT_TESTED equality defect was real and is fixed.",

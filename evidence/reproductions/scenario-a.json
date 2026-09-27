@@ -1,14 +1,35 @@
 {
-  "reviewer": "NOT_ASSIGNED",
-  "original_operator": "golden-v1-authoring-agent",
-  "commit": "a5d8ed9e0cc276788ee82c6755b0a6ad9b0c89a8",
-  "attempted_at": "2026-09-27T03:30:00Z",
   "scenario": "deployment-succeeded-startup-failed",
-  "original_run_id": "NONE-no-azure-run-has-produced-one",
-  "replay_run_id": null,
-  "original_hypothesis_status": "NOT_TESTED",
-  "replay_hypothesis_status": "NOT_TESTED",
+  "commit": "eb731a1d8e9d3b7ebcd9ec73a7f8c341e8a00aea",
+  "attempted_at": "2026-09-27",
+  "original_operator": "sisyphus-authoring-session",
+  "original_run_id": "20260927T104304Z-aba0d3a9daa7",
+  "original_hypothesis_status": "SUPPORTED",
+  "reviewer": "independent-reproduction-agent",
+  "replay_run_id": "20260927T223558Z-e391956951c1",
+  "replay_hypothesis_status": "SUPPORTED",
+  "blocked_reason": null,
   "consulted_source_to_fill_doc_gap": false,
-  "deviations": [],
-  "blocked_reason": "No independent reproduction has been attempted. It requires a second operator and a live Azure subscription, neither of which was available to the authoring agent. Recording this as NOT_ATTEMPTED rather than omitting the file, so the gap is visible in the repository instead of being inferred from absence."
+  "deviations": [
+    {
+      "kind": "incorrect-step",
+      "detail": "The lab guide and the evidence model state different exit-code meanings. The guide maps 1 to FAIL and 3 to CONTRADICTED; the model maps 1 to CONTRADICTED and 3 to NOT_TESTED. The run exited 0 so the result was unaffected, but a failing or contradicted run would be ambiguous."
+    },
+    {
+      "kind": "undocumented-step",
+      "detail": "cleanup.sh is not mentioned in the published runbook, which documents run.py cleanup instead. The reproducer executed it only because the reproduction instructions required it."
+    },
+    {
+      "kind": "incorrect-step",
+      "detail": "The evidence model describes a run directory of manifest.json and evidence.json and says the evaluator reads exactly two files. This scenario writes run.json and phase directories and no result.json, and nothing explains the relationship between the scenario format and the generic model."
+    },
+    {
+      "kind": "undocumented-step",
+      "detail": "run.py --help lists subcommands without their positional arguments, so the CLI alone is insufficient to construct an invocation."
+    },
+    {
+      "kind": "incorrect-step",
+      "detail": "The runbook interleaves historical observed values with the current procedure, so an operator must work to separate retained examples from acceptance criteria for a fresh run."
+    }
+  ]
 }

@@ -124,11 +124,30 @@ class VerdictTests(unittest.TestCase):
 class GroundedVerdictTests(unittest.TestCase):
     """The two NOT_MET verdicts must match the tree, in both directions."""
 
-    def test_reproduction_is_not_met_because_none_was_attempted(self):
-        self.assertEqual(by_id(10)["status"], "NOT_MET")
-        self.assertEqual(
-            attempted_reproductions(), [],
-            msg="a reproduction now exists, so item 10 must be re-decided")
+    def test_reproduction_status_tracks_the_gate(self):
+        """Item 10 must reflect what check_reproduction actually reports.
+
+        This replaced a test asserting no reproduction had been attempted.
+        One has, so pinning its absence expired. The durable property is
+        that the item cannot claim more than the gate does: a reproduction
+        whose documentation axis failed is not a passing reproduction.
+        """
+        import importlib.util
+        spec = importlib.util.spec_from_file_location(
+            "cr_v", ROOT / "scripts/golden/check_reproduction.py")
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+
+        item = by_id(10)
+        records = sorted((ROOT / "evidence" / "reproductions").glob("*.json"))
+        self.assertTrue(records)
+        passing = [r for r in records if module.check(r)["passed"]]
+        if passing:
+            self.assertEqual(item["status"], "MET")
+        else:
+            self.assertNotEqual(
+                item["status"], "MET",
+                msg="no reproduction passes the gate, so item 10 may not claim MET")
 
     def test_the_scenario_set_is_wider_than_the_classification(self):
         """Guards golden_labs() against silently shrinking to the manifests."""

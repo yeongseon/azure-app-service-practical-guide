@@ -102,16 +102,32 @@ class LabCountTests(unittest.TestCase):
 
 class ProofClaimTests(unittest.TestCase):
 
-    def test_no_reproduction_has_been_attempted_yet(self):
-        """Guards the tests below from passing for the wrong reason.
+    def test_the_legend_tracks_the_reproduction_gate(self):
+        """The claim must match what check_reproduction actually reports.
 
-        Once a replay lands this fails, and the proof-claim tests must be
-        re-decided against the evidence that then exists rather than
-        silently continuing to forbid a claim that has become true.
+        This replaced a test asserting no reproduction had been attempted.
+        One has, so pinning its absence expired. The durable property is
+        that the legend cannot imply the labs are proven while the gate
+        says otherwise, and cannot deny a reproduction that happened.
         """
-        self.assertEqual(
-            attempted_reproductions(), [],
-            msg="a reproduction now exists; re-decide what the README may claim")
+        import importlib.util
+        spec = importlib.util.spec_from_file_location(
+            "cr_rm", ROOT / "scripts/golden/check_reproduction.py")
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+
+        records = attempted_reproductions()
+        legend = status_legend().lower()
+        if not records:
+            self.assertIn("none has been independently reproduced", legend)
+            return
+        self.assertNotIn(
+            "none has been independently reproduced", legend,
+            msg="a reproduction exists; the legend denies it")
+        if not any(module.check(r)["passed"] for r in records):
+            self.assertNotRegex(
+                legend, r"\bproven\b|\bproves\b",
+                msg="no reproduction passes the gate, so the labs are not proven")
 
     def test_the_legend_matches_whether_anything_has_run(self):
         """The claim must track the executed-run registry, both ways."""
@@ -147,9 +163,12 @@ class ProofClaimTests(unittest.TestCase):
                 msg="a status legend asserts production readiness the repository cannot evidence")
 
     def test_legend_states_what_is_missing(self):
+        """The legend must still name the shortfall, in current terms."""
         legend = status_legend().lower()
-        self.assertIn("independently reproduced", legend)
         self.assertIn("golden evidence model", legend)
+        self.assertRegex(
+            legend, r"independent(ly)? reproduc",
+            msg="the legend no longer mentions reproduction at all")
 
     def test_troubleshooting_row_carries_the_hedged_status(self):
         row = next(
