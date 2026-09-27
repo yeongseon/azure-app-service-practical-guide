@@ -23,19 +23,31 @@ VALID = {"KEEP", "REWRITE", "MOVE", "DELETE", "ARCHIVE"}
 
 
 def invoked_by_ci(basename):
-    """True when a workflow actually RUNS the script.
+    """True when a workflow runs the script on a pull request.
 
-    Presence in a `paths:` trigger filter is not invocation. A path filter
-    makes edits trigger a workflow while nothing in it executes the file,
-    which is how an unenforced validator can look covered.
+    Presence in a `paths:` trigger filter is not invocation: a path filter
+    makes edits trigger a workflow while nothing in it executes the file.
+
+    Job gating is not invocation either. Review found this function
+    reporting a validator as CI-enforced while it sat in a job gated on
+    `push` to `main`, so it never ran on a pull request -- enforced
+    everywhere except where a change is actually reviewed. A job whose
+    condition restricts it to pushes or to a branch ref does not count.
     """
+    gate = re.compile(r"github\.event_name\s*==\s*'push'|github\.ref\s*==")
     for workflow in WORKFLOWS.glob("*.yml"):
+        current_gated = False
         for line in workflow.read_text().splitlines():
             stripped = line.strip()
+            if re.match(r"^[a-z0-9_-]+:$", stripped) and line.startswith("  ") and not line.startswith("    "):
+                current_gated = False  # a new job begins
+            if stripped.startswith("if:") and gate.search(stripped):
+                current_gated = True
             if stripped.startswith("- '") or stripped.startswith('- "'):
                 continue  # a path filter entry, not a command
             if basename in stripped and re.search(r"python3?\s|bash\s|run:", stripped):
-                return True
+                if not current_gated:
+                    return True
     return False
 
 

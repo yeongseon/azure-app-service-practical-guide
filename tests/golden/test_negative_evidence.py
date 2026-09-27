@@ -167,5 +167,51 @@ class EvaluatorScopeTests(unittest.TestCase):
             self.assertNotIn(forbidden, payload)
 
 
+class VacuityRegressionTests(unittest.TestCase):
+    """Two false-positive paths found by review, not by these suites.
+
+    Both were vacuity of exactly the kind this model exists to reject: a
+    predicate that appears to consult evidence while structurally ignoring
+    it. They are pinned here because both suites were green while the
+    defects were live.
+    """
+
+    def _run(self, manifest, evidence):
+        directory = pathlib.Path(tempfile.mkdtemp())
+        (directory / "manifest.json").write_text(json.dumps(manifest))
+        (directory / "evidence.json").write_text(json.dumps(evidence))
+        return directory
+
+    def test_duplicate_assertion_ids_are_rejected(self):
+        """A repeated id silently overwrote the earlier outcome.
+
+        A manifest declaring the same id twice could drop a CONTRADICTED
+        result and report SUPPORTED, losing the refutation entirely.
+        """
+        directory = self._run(
+            {"run_id": "r1", "execution_status": "COMPLETE",
+             "captured_at": "2026-09-27T00:00:00Z",
+             "assertions": [{"id": "same", "field": "a", "equals": 1},
+                            {"id": "same", "field": "b", "equals": 2}]},
+            {"a": 999, "b": 2})
+        with self.assertRaises(ev.ModelError) as caught:
+            ev.evaluate(directory)
+        self.assertIn("duplicate assertion id", str(caught.exception))
+
+    def test_a_dropped_contradiction_cannot_be_reported_as_supported(self):
+        """The concrete false positive, stated as its own case."""
+        directory = self._run(
+            {"run_id": "r1", "execution_status": "COMPLETE",
+             "captured_at": "2026-09-27T00:00:00Z",
+             "assertions": [{"id": "dup", "field": "a", "equals": 1},
+                            {"id": "dup", "field": "b", "equals": 2}]},
+            {"a": 999, "b": 2})
+        try:
+            result = ev.evaluate(directory)
+        except ev.ModelError:
+            return
+        self.fail(f"a contradiction was dropped and reported {result['hypothesis_status']!r}")
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=1)

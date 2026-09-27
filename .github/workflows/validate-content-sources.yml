@@ -219,6 +219,57 @@ jobs:
         run: |
           python scripts/validate_pii.py
 
+  validate-golden-contracts:
+    name: Validate Golden Contracts
+    runs-on: ubuntu-latest
+    # Deliberately not gated on push-to-main. An earlier version of this
+    # wired the frontmatter validator into the MSLearn job, which only runs
+    # on push to main, so it never executed on a pull request and the rule
+    # stayed unenforced exactly where enforcement matters.
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install pyyaml
+
+      - name: Validate frontmatter scope and doc types
+        run: python3 tools/validate_frontmatter.py
+
+      - name: Run Golden evaluator doctests
+        run: |
+          python3 -m doctest scripts/golden/evaluate_run.py
+          python3 -m doctest scripts/golden/check_reproduction.py
+
+      - name: Run Golden test suites
+        # These suites encode the evidence model's negative cases. Review
+        # found two false-positive paths while every suite was green and
+        # nothing in CI ran them, so a regression could not be detected.
+        run: |
+          set -e
+          for suite in tests/golden/test_*.py; do
+            echo "::group::$suite"
+            python3 "$suite"
+            echo "::endgroup::"
+          done
+
+      - name: Validate JSON contracts parse
+        run: |
+          python3 - <<'PY'
+          import glob, json
+          paths = (glob.glob("schemas/golden/*.json") + glob.glob("labs/*/golden/*.json")
+                   + glob.glob("evidence/reproductions/*.json") + ["labs/golden-classification.json"])
+          for path in paths:
+              json.load(open(path))
+          print(f"{len(paths)} JSON contracts parse")
+          PY
+
   validate-mslearn-urls:
     name: Validate MSLearn URLs
     runs-on: ubuntu-latest
@@ -238,13 +289,6 @@ jobs:
         run: |
           pip install pyyaml requests
       
-      - name: Validate frontmatter scope and doc types
-        # AGENTS.md states this validator rejects a forbidden-but-present
-        # content_validation block. Until now no workflow invoked it, so the
-        # rule was documented but never applied and two violations accumulated
-        # in the tree unnoticed.
-        run: python3 tools/validate_frontmatter.py
-
       - name: Validate MSLearn URLs
         run: |
           python scripts/validate_mslearn_urls.py --verbose

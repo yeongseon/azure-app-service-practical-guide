@@ -77,6 +77,10 @@ def _validate(record: dict) -> None:
                 f"expected one of {', '.join(DEVIATION_KINDS)}")
 
 
+#: Statuses that mean the hypothesis was never put at risk.
+UNTESTED_STATUS = ("NOT_TESTED", "NOT_RUN", "NOT_EVALUATED")
+
+
 def classify_reproduction(record: dict) -> str:
     """Classify the replay attempt itself.
 
@@ -108,6 +112,11 @@ def classify_reproduction(record: dict) -> str:
         return "NOT_INDEPENDENT"
     if record["replay_hypothesis_status"] != record["original_hypothesis_status"]:
         return "FAILED"
+    # Equality alone is not reproduction. Two runs that never tested the
+    # hypothesis hold equal statuses trivially, so NOT_TESTED on either side
+    # would otherwise let a pair of non-runs reproduce each other.
+    if record["replay_hypothesis_status"] in UNTESTED_STATUS:
+        return "INCONCLUSIVE"
     return "REPRODUCED"
 
 

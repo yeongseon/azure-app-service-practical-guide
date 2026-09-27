@@ -3,10 +3,10 @@
   "epic": 173,
   "document_updated_at": "2026-09-27",
   "verdict": "NOT_COMPLETE",
-  "verdict_basis": "Two Definition-of-Done items are unmet and four are partial. The EPIC forbids claiming validation without evidence, so the review reports the gaps rather than rounding them up.",
+  "verdict_basis": "Two Definition-of-Done items are unmet and three are partial. The EPIC forbids claiming validation without evidence, so the review reports the gaps rather than rounding them up.",
   "counts": {
-    "MET": 10,
-    "PARTIAL": 3,
+    "MET": 8,
+    "PARTIAL": 5,
     "NOT_MET": 2,
     "total": 15
   },
@@ -36,9 +36,10 @@
     {
       "id": 4,
       "requirement": "Common Evidence / Assertion / Hypothesis representations exist",
-      "status": "MET",
-      "evidence": "Four schemas under schemas/golden/ define manifest, assertion, result and reproduction.",
-      "verify": "python3 tests/golden/test_evaluate_run.py"
+      "status": "PARTIAL",
+      "evidence": "Assertion, manifest, result and reproduction schemas exist under schemas/golden/ and the evaluator derives a hypothesis verdict from assertion outcomes.",
+      "verify": "python3 tests/golden/test_evaluate_run.py",
+      "gap": "There is no Evidence schema. evidence.json has no declared contract, so the shipped schemas cover assertion and hypothesis but not evidence itself."
     },
     {
       "id": 5,
@@ -64,15 +65,16 @@
     {
       "id": 8,
       "requirement": "Negative tests: missing, empty, malformed, contradictory, wrong-run, recovery-missing, comparison-semantics mismatch",
-      "status": "MET",
-      "evidence": "tests/golden/test_negative_evidence.py covers all seven named classes across 18 tests, each mutation-verified against the evaluator.",
-      "verify": "python3 tests/golden/test_negative_evidence.py"
+      "status": "PARTIAL",
+      "evidence": "tests/golden/test_negative_evidence.py covers all seven named classes across 18 tests.",
+      "verify": "python3 tests/golden/test_negative_evidence.py",
+      "gap": "No wrong-run test exists. Nothing compares evidence identity against the manifest's run_id, so evidence from a different run is not rejected. The comparison-semantics case is also limited to equality and membership."
     },
     {
       "id": 9,
       "requirement": "Golden scenarios A (deterministic), B (comparative), C (configuration/state) completed",
       "status": "PARTIAL",
-      "evidence": "Scenarios A and C ship a manifest template, an evidence-classification file and a mutation-verified suite. Scenario B gained a shared classifier, so its two probes can no longer disagree about the same response, and its own suite.",
+      "evidence": "Scenarios A and C ship a manifest template, an evidence-classification file and a suite. Scenario B gained a shared classifier, so its two probes can no longer disagree about the same response, and its own suite.",
       "gap": "Scenario B has no manifest template and no evidence-classification file, so only two of the three scenarios carry a Golden contract. Separately, nothing has been executed against Azure: both manifests ship execution_status NOT_RUN, so the contracts that exist are complete while the runs are not.",
       "verify": "python3 tests/golden/test_scenario_a.py && python3 tests/golden/test_scenario_b.py && python3 tests/golden/test_scenario_c.py"
     },
@@ -118,7 +120,7 @@
       "id": 15,
       "requirement": "Existing documentation quality gates do not regress",
       "status": "MET",
-      "evidence": "All 13 required checks pass on PR 186, including Build Documentation, which runs mkdocs build --strict and confirms the two nav entries this branch adds. PII reports 0 blocking, repetition 0 errors across 233 files, CLI explanation tables pass, and frontmatter validation now exits 0 where it previously exited 1.",
+      "evidence": "12 required checks pass on PR 186 and one is skipped, including Build Documentation, which runs mkdocs build --strict and confirms the nav entries this branch adds. PII reports 0 blocking, repetition 0 errors across 233 files, and frontmatter validation exits 0.",
       "verify": "gh pr checks 186 --repo yeongseon/azure-app-service-practical-guide"
     }
   ],
@@ -126,5 +128,24 @@
     "Item 10: no scenario has been independently reproduced.",
     "Item 11: the Golden scenarios have no cleanup procedure."
   ],
-  "notes": "Items 9, 10 and 11 reduce to two missing inputs: a Golden contract for Scenario B, and an execution against a live subscription by a second operator. The gates and suites that would consume such a run exist and are mutation-verified; what is absent is the run. Item 15 was PARTIAL while mkdocs build --strict had not been executed locally, and was re-decided to MET once CI ran it. The Scenario B gap was found by mutation-testing this review's own suite, not by reading it."
+  "notes": "Items 9, 10 and 11 reduce to two missing inputs: a Golden contract for Scenario B, and an execution against a live subscription by a second operator. Review found two false-positive paths in the evaluator and the reproduction gate while every suite was green, which is the same vacuity this model exists to reject; both are now fixed and pinned by regression tests that were confirmed to fail when each fix is reverted.",
+  "review_history": [
+    {
+      "reviewer": "oracle",
+      "score": "43/100",
+      "findings_accepted": [
+        "evaluate_run.py keyed assertion outcomes by caller-supplied id, so a duplicate id dropped a CONTRADICTED outcome and reported SUPPORTED. Reproduced, fixed, pinned.",
+        "check_reproduction.py treated equal NOT_TESTED statuses as REPRODUCED, so two runs that never happened reproduced each other. Reproduced, fixed, pinned.",
+        "No workflow ran tests/golden, so 134 tests protected nothing in CI.",
+        "validate_frontmatter.py was wired into a job gated on push to main, so it never ran on a pull request.",
+        "Items 4 and 8 overstated: no Evidence schema exists and no wrong-run test exists.",
+        "Item 15 said all 13 checks pass; 12 pass and one is skipped.",
+        "verdict_basis said four partial items while the counts said three.",
+        "Mutation verification is asserted in prose with no retained artifact."
+      ],
+      "findings_disputed": [
+        "The reproduction gate was called vacuously satisfiable on a fabricated record. The specific invocation shown passed a dict where check() takes a path, and the cited output keys do not exist. The underlying NOT_TESTED equality defect was real and is fixed."
+      ]
+    }
+  ]
 }

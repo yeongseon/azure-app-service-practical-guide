@@ -145,9 +145,15 @@ def evaluate(run_dir) -> dict:
     assertions = manifest.get("assertions") or []
     evidence = _read_json(run_dir / "evidence.json") if (run_dir / "evidence.json").is_file() else {}
 
+    # Keying outcomes by a caller-supplied id let a later assertion overwrite
+    # an earlier one, so a manifest declaring the same id twice could drop a
+    # CONTRADICTED outcome and report SUPPORTED. Ids must be unique.
     per_assertion = {}
     for assertion in assertions:
-        per_assertion[assertion.get("id")] = evaluate_assertion(assertion, evidence)
+        assertion_id = assertion.get("id")
+        if assertion_id in per_assertion:
+            raise ModelError(f"duplicate assertion id: {assertion_id!r}")
+        per_assertion[assertion_id] = evaluate_assertion(assertion, evidence)
 
     # Execution status gates the hypothesis axis: a run that did not finish
     # has not tested anything, whatever its partial evidence happens to show.

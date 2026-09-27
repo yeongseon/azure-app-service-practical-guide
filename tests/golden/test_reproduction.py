@@ -140,5 +140,43 @@ class NotRunHonestyTests(unittest.TestCase):
         self.assertEqual(repro.check(write(rec))["documentation_result"], "NOT_ATTEMPTED")
 
 
+class UntestedPairRegressionTests(unittest.TestCase):
+    """Equal statuses are not reproduction when neither side was tested.
+
+    A fabricated record naming runs that do not exist, with NOT_TESTED on
+    both sides, previously returned passed: True. Two runs that never
+    happened cannot reproduce each other.
+    """
+
+    def _record(self, **overrides):
+        record = json.loads(
+            (ROOT / "evidence" / "reproductions" / "scenario-a.json").read_text())
+        record.update(overrides)
+        directory = pathlib.Path(tempfile.mkdtemp())
+        path = directory / "rep.json"
+        path.write_text(json.dumps(record))
+        return path
+
+    def test_two_untested_runs_do_not_reproduce_each_other(self):
+        path = self._record(
+            replay_run_id="fabricated",
+            original_hypothesis_status="NOT_TESTED",
+            replay_hypothesis_status="NOT_TESTED")
+        result = repro.check(path)
+        self.assertFalse(result["passed"])
+        self.assertEqual(result["reproduction_result"], "INCONCLUSIVE")
+
+    def test_a_genuine_matching_verdict_still_reproduces(self):
+        """Guards the fix from rejecting every reproduction."""
+        path = self._record(
+            replay_run_id="fabricated",
+            original_hypothesis_status="SUPPORTED",
+            replay_hypothesis_status="SUPPORTED",
+            consulted_source_to_fill_doc_gap=False,
+            deviations=[])
+        self.assertEqual(
+            repro.check(path)["reproduction_result"], "REPRODUCED")
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=1)
