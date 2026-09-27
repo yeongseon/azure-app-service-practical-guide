@@ -134,7 +134,7 @@ class HistoricalEvidenceTests(unittest.TestCase):
         data = json.loads((LAB / "evidence-classification.json").read_text())
         self.assertTrue(data["artifacts"])
         for item in data["artifacts"]:
-            self.assertIn(item["trust"], ev.EVIDENCE_TRUST)
+            self.assertIn(item["retention_status"], ev.EVIDENCE_TRUST)
             self.assertTrue(item["reason"].strip())
             self.assertTrue((ROOT / item["path"]).exists(), item["path"])
 
@@ -153,7 +153,7 @@ class HistoricalEvidenceTests(unittest.TestCase):
         self.assertTrue(captures, "no retained captures left to check")
         for item in captures:
             with self.subTest(path=item["path"]):
-                self.assertNotEqual(item["trust"], "trusted-current")
+                self.assertNotEqual(item["retention_status"], "trusted-current")
 
     def test_a_retained_capture_still_cannot_claim_currency(self):
         """Guards the narrowed check from being satisfied vacuously."""

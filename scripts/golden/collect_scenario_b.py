@@ -155,7 +155,7 @@ def collect(run_dir) -> dict:
         "captured_at": run["started_at"],
         "observations": observations,
         "collector": "scripts/golden/collect_scenario_b.py",
-        "trust": "derived",
+        "capture_provenance": "derived",
         "incomplete_fields": incomplete,
     }
 

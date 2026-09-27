@@ -11,6 +11,6 @@
     "recovery_status": 200
   },
   "collector": "scripts/golden/collect_scenario_a.py",
-  "trust": "derived",
-  "incomplete_fields": []
+  "incomplete_fields": [],
+  "capture_provenance": "derived"
 }

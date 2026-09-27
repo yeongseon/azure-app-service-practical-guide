@@ -148,13 +148,33 @@ result = (strong or fallback) and invariant
 A capture is evidence about the moment it was taken, not a standing fact.
 This policy says how long one stays usable and what it takes to renew it.
 
-### Trust levels for retained captures
+### Two axes, deliberately separate
+
+Freshness and provenance answer different questions, and a single field
+answering both answers neither. One field named `trust` once carried both
+vocabularies, and a classification was found holding values from each in
+the same place.
+
+`retention_status` says how fresh an artifact is and whether it may still
+be relied on:
 
 | Level | Meaning |
 |---|---|
-| `primary` | Captured by the procedure declared in the contract it is cited under. |
+| `trusted-current` | Captured by the procedure declared in the contract it is cited under. |
 | `trusted-historical` | Captured by an earlier procedure, before the contract existed. Usable as illustration; not usable to satisfy an assertion the earlier procedure did not collect for. |
+| `unverified` | Retained but never checked against the contract. |
+| `invalid` | Known not to support what it was cited for. |
+
+`capture_provenance` says how an observation was obtained:
+
+| Level | Meaning |
+|---|---|
+| `primary` | Captured directly from the platform. |
+| `derived` | Computed from primary captures. |
 | `reported` | Taken from a summary rather than raw records. Weakest, because a summary can disagree with what it claims to describe. |
+
+Where a value came from does not say how stale it is, and how fresh an
+artifact is does not say whether anyone observed it directly.
 
 A capture predating the contract it is cited under is `trusted-historical`,
 never `primary`. Reclassifying it upward requires re-capture, not re-reading.

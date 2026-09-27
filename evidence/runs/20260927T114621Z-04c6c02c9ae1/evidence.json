@@ -9,9 +9,9 @@
     "post_rollback_matches_pre_swap": true
   },
   "collector": "scripts/golden/collect_scenario_c.py",
-  "trust": "derived",
   "incomplete_fields": [
     "deployment_error_count",
     "sticky_db_connection_remained"
-  ]
+  ],
+  "capture_provenance": "derived"
 }

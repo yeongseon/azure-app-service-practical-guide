@@ -122,14 +122,14 @@ class HistoricalEvidenceTests(unittest.TestCase):
         data = json.loads((LAB / "evidence-classification.json").read_text())
         self.assertTrue(data["artifacts"])
         for item in data["artifacts"]:
-            self.assertIn(item["trust"], ev.EVIDENCE_TRUST)
+            self.assertIn(item["retention_status"], ev.EVIDENCE_TRUST)
             self.assertTrue(item["reason"].strip())
             self.assertTrue((ROOT / item["path"]).exists(), item["path"])
 
     def test_the_unordered_trigger_set_is_not_marked_trusted_current(self):
         data = json.loads((LAB / "evidence-classification.json").read_text())
         trigger = [a for a in data["artifacts"] if a["path"].endswith("trigger/")][0]
-        self.assertNotEqual(trigger["trust"], "trusted-current")
+        self.assertNotEqual(trigger["retention_status"], "trusted-current")
 
 
 if __name__ == "__main__":

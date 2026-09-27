@@ -4,32 +4,31 @@
   "artifacts": [
     {
       "path": "labs/deployment-succeeded-startup-failed/artifacts-sanitized/baseline/",
-      "trust": "trusted-historical",
-      "reason": "Captured 2026-04-04 by an earlier procedure. Useful as an example of healthy-state output; not evidence for the Golden runner."
+      "reason": "Captured 2026-04-04 by an earlier procedure. Useful as an example of healthy-state output; not evidence for the Golden runner.",
+      "retention_status": "trusted-historical"
     },
     {
       "path": "labs/deployment-succeeded-startup-failed/artifacts-sanitized/trigger/",
-      "trust": "unverified",
-      "reason": "Retained recovery probes are timestamped 05:47 UTC while the retained wrong-module console rows are 05:54-05:55 UTC, so the set does not establish that the shown fault preceded the shown recovery within one isolated run. Causal ordering is INCONCLUSIVE."
+      "reason": "Retained recovery probes are timestamped 05:47 UTC while the retained wrong-module console rows are 05:54-05:55 UTC, so the set does not establish that the shown fault preceded the shown recovery within one isolated run. Causal ordering is INCONCLUSIVE.",
+      "retention_status": "unverified"
     },
     {
       "path": "labs/deployment-succeeded-startup-failed/artifacts-sanitized/postfix/",
-      "trust": "trusted-historical",
-      "reason": "Post-fix diagnostics from the same 2026-04-04 window. Illustrative of a recovered app; not tied to a Golden run_id."
+      "reason": "Post-fix diagnostics from the same 2026-04-04 window. Illustrative of a recovered app; not tied to a Golden run_id.",
+      "retention_status": "trusted-historical"
     },
     {
       "path": "scripts/golden/collect_scenario_a.py",
-      "trust": "trusted-current",
       "reason": "Reads a completed run directory and re-expresses its captures under this contract's field names. It decides nothing: the only computed value buckets an observed status code into its class, and a field the run failed to capture is omitted and listed in incomplete_fields so the evaluator answers INCONCLUSIVE rather than reading a fabricated zero as a refutation.",
       "supports": [
         "baseline-healthy"
       ],
-      "cannot_support": []
+      "cannot_support": [],
+      "retention_status": "trusted-current"
     }
   ],
   "known_gaps": [
-    "The two contract systems are bridged rather than merged. run.py still fixes and evaluates contract.json, and scripts/golden/collect_scenario_a.py re-expresses the same run directory under the names this manifest declares, so both can be evaluated from one execution without a second deployment. Merging them remains outstanding.",
-    "Two trust vocabularies coexist. This file uses trusted-current, trusted-historical, unverified and invalid, describing custody of an artifact, while evidence.schema.json uses primary, derived and reported, describing how an observation was obtained. They answer different questions and are not yet reconciled."
+    "The two contract systems are bridged rather than merged. run.py still fixes and evaluates contract.json, and scripts/golden/collect_scenario_a.py re-expresses the same run directory under the names this manifest declares, so both can be evaluated from one execution without a second deployment. Merging them remains outstanding."
   ],
   "executed_runs": [
     "20260927T104304Z-aba0d3a9daa7"

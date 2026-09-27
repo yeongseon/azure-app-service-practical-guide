@@ -4,15 +4,15 @@
   "artifacts": [
     {
       "path": "labs/slot-swap-config-drift/artifacts-sanitized/trigger/",
-      "trust": "trusted-historical",
-      "reason": "Captured 2026-04-04 by the pre-Golden procedure. Contains post-swap diag output and KQL exports that illustrate the swap mechanism, but carries no run_id and no declared assertions, so it cannot be evaluated against this contract."
+      "reason": "Captured 2026-04-04 by the pre-Golden procedure. Contains post-swap diag output and KQL exports that illustrate the swap mechanism, but carries no run_id and no declared assertions, so it cannot be evaluated against this contract.",
+      "retention_status": "trusted-historical"
     },
     {
       "path": "scripts/golden/collect_scenario_c.py",
-      "trust": "trusted-current",
       "reason": "Reads the four config snapshots the trigger captures and emits them as named observations. trigger.sh already computed these facts and printed them as prose, which no assertion could be checked against; the computation was never the problem, the destination was. It decides nothing, and a capture that is absent leaves its field absent and named in incomplete_fields.",
       "supports": [],
-      "cannot_support": []
+      "cannot_support": [],
+      "retention_status": "trusted-current"
     }
   ],
   "known_gaps": [

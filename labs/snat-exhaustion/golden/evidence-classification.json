@@ -4,29 +4,29 @@
   "artifacts": [
     {
       "path": "labs/snat-exhaustion/artifacts-sanitized/",
-      "trust": "trusted-historical",
       "reason": "Captured by an earlier procedure before this contract existed. Useful as an illustration of the failure's shape, not as evidence for the assertions above, because the earlier procedure did not record the destination's own health and so cannot separate exhaustion from destination failure.",
       "supports": [],
       "cannot_support": [
         "symptom-transport-failures-appear",
         "discriminating-destination-stays-healthy",
         "discriminating-http-errors-absent"
-      ]
+      ],
+      "retention_status": "trusted-historical"
     },
     {
       "path": "labs/snat-exhaustion/app/classification.py",
-      "trust": "primary",
       "reason": "The shared classifier both transports call. It is the mechanism that makes the comparative claim checkable: if urllib and requests classified independently, a disagreement between them would look like evidence about Azure rather than a defect in the lab.",
       "supports": [
         "discriminating-http-errors-absent"
       ],
       "cannot_support": [
         "discriminating-destination-stays-healthy"
-      ]
+      ],
+      "retention_status": "trusted-current",
+      "capture_provenance": "primary"
     },
     {
       "path": "labs/snat-exhaustion/verify.sh",
-      "trust": "primary",
       "reason": "Writes raw symptom counts to the evidence path and no longer prints a verdict. Those counts are not the fields this contract asserts on, so it cannot currently support any assertion here.",
       "supports": [],
       "cannot_support": [
@@ -35,16 +35,18 @@
         "discriminating-destination-stays-healthy",
         "discriminating-http-errors-absent",
         "recovery-outbound-succeeds-again"
-      ]
+      ],
+      "retention_status": "trusted-current",
+      "capture_provenance": "primary"
     },
     {
       "path": "scripts/golden/collect_scenario_b.py",
-      "trust": "trusted-current",
       "reason": "Counts outcomes per phase under this contract's names. It imports app/classification.py rather than re-deriving the status bands, because a third copy of the predicate would reintroduce the confounder that module was written to remove: the same response counted a success on one transport and a failure on the other. A probe reporting neither a status nor a transport error is refused rather than bucketed.",
       "supports": [],
       "cannot_support": [
         "discriminating-destination-stays-healthy"
-      ]
+      ],
+      "retention_status": "trusted-current"
     }
   ],
   "known_gaps": [

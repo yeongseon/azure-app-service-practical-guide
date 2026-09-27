@@ -30,20 +30,20 @@
       "type": "string",
       "description": "What produced these observations, for provenance."
     },
-    "trust": {
-      "enum": [
-        "primary",
-        "derived",
-        "reported"
-      ],
-      "description": "primary is captured directly from the platform. derived is computed from primary. reported is taken from a summary and is the weakest, because a summary can disagree with the raw records it claims to describe."
-    },
     "incomplete_fields": {
       "type": "array",
       "items": {
         "type": "string"
       },
       "description": "Fields the collector attempted and failed to capture. Naming them keeps an absent field distinguishable from a field that was never attempted, so absence stays INCONCLUSIVE rather than being read as a refutation."
+    },
+    "capture_provenance": {
+      "enum": [
+        "primary",
+        "derived",
+        "reported"
+      ],
+      "description": "How the observation was obtained. primary is captured directly from the platform, derived is computed from primary captures, reported is taken from a summary and is weakest because a summary can disagree with the records it describes. This is provenance, not custody: it says where a value came from, never how fresh it is."
     }
   }
 }
