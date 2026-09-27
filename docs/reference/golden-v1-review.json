@@ -29,8 +29,8 @@
       "id": 3,
       "requirement": "AGENTS.md rewritten around agent judgment; machine-enforceable rules moved to validators/CI where possible",
       "status": "PARTIAL",
-      "evidence": "Two rules moved from prose to enforcement: the frontmatter scope rule now runs in a pull-request-scoped job, and the Golden suites, doctests and JSON contract parse run alongside it. An Evidence-Driven Agent Behavior section states the principle that a rule a validator can check belongs in a validator.",
-      "gap": "No systematic pass has been made over the remaining AGENTS.md prose to decide which rules are machine-checkable. Two were wired because review surfaced them, not because the file was audited end to end. Running validate_doc_quality.py --all also reports 29 pre-existing errors across 233 files that change-scoped CI never sees, so the enforced set is narrower than the documented set.",
+      "evidence": "AGENTS.md is reorganised around this repository's mission: Mission, Source of Truth, Claim Rules, Experiment Rules, Evidence Rules, Agent Behavior, Definition of Done, Exceptions. It opens on Mission and reaches the evidence rules by line 35, down from 1275 lines to 1070, with the series-wide contract moved to docs/meta/series-contract.md rather than deleted. Every rule backed by a validator survives with its script named. Two rules moved from prose to enforcement: the frontmatter scope rule and the Golden suites now run in a pull-request-scoped job.",
+      "gap": "The remaining prose has still not been audited rule by rule to decide what else a validator could check. validate_doc_quality.py --all reports 29 pre-existing errors that change-scoped CI never sees, so the enforced set stays narrower than the documented set.",
       "verify": "python3 tools/validate_frontmatter.py"
     },
     {
