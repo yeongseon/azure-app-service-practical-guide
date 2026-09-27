@@ -16,8 +16,11 @@
     }
   ],
   "known_gaps": [
-    "No run has produced evidence under this contract, so every assertion is NOT_TESTED rather than unproven. The collector exists and is tested offline against captured configs, but the lab has not been deployed and swapped.",
-    "trigger.sh does not swap back, so a run using it as-is leaves post_rollback_matches_pre_swap absent and the evaluation returns INCONCLUSIVE. Claiming the rollback matched without performing one would turn an unperformed step into supporting evidence."
+    "The one executed run returned INCONCLUSIVE, which is the correct answer rather than a failure. Five assertions held: the swap succeeded, production restarted, the non-sticky setting moved with the code, production configuration changed, and the rollback restored the pre-swap configuration. Two could not be observed.",
+    "Stickiness is unobservable in that run. The staging slot was still answering from the pre-swap production process, whose environment describes the slot it came from rather than the slot it now serves, so reading stickiness from it would measure the capture window instead of the platform. The collector now requires the destination worker to have started after the swap and leaves the observation absent otherwise. A longer settle, or polling for the restart, would close this.",
+    "Nothing queries deployment error rows, so deployment_error_count is absent on every run."
   ],
-  "executed_runs": []
+  "executed_runs": [
+    "20260927T114621Z-04c6c02c9ae1"
+  ]
 }

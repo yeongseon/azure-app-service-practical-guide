@@ -36,6 +36,7 @@ Exit codes: 0 evidence written, 2 the run directory is unusable.
 from __future__ import annotations
 
 import argparse
+import datetime
 import json
 import pathlib
 import sys
@@ -116,6 +117,44 @@ def error_row_count(console) -> int:
     return sum(1 for row in rows if "error" in json.dumps(row).lower())
 
 
+#: Keys that describe the running process rather than its configuration.
+#: A rollback necessarily restarts the worker, so comparing whole snapshots
+#: would report every rollback as a mismatch on the strength of a timestamp
+#: that is required to change.
+RUNTIME_KEYS = ("PROCESS_START_UTC",)
+
+
+def config_of(snapshot: dict) -> dict:
+    """The configuration half of a /config snapshot.
+
+    >>> config_of({"FEATURE_FLAG": "v1", "PROCESS_START_UTC": "t"})
+    {'FEATURE_FLAG': 'v1'}
+    """
+    return {k: v for k, v in snapshot.items() if k not in RUNTIME_KEYS}
+
+
+def started_after(process_start, boundary) -> bool:
+    """True when a worker demonstrably started after a moment in time.
+
+    Returns None when either timestamp is missing, because an unknown
+    ordering is not evidence of either ordering.
+
+    >>> started_after("2026-09-27T11:52:00+00:00", "2026-09-27T11:48:00+00:00")
+    True
+    >>> started_after("2026-09-27T11:41:00+00:00", "2026-09-27T11:48:00+00:00")
+    False
+    >>> started_after(None, "2026-09-27T11:48:00+00:00") is None
+    True
+    """
+    if not process_start or not boundary:
+        return None
+    try:
+        return (datetime.datetime.fromisoformat(process_start)
+                > datetime.datetime.fromisoformat(boundary))
+    except ValueError:
+        return None
+
+
 def collect(run_dir) -> dict:
     """Build a Golden evidence document from one captured swap."""
     run_dir = pathlib.Path(run_dir)
@@ -135,19 +174,37 @@ def collect(run_dir) -> dict:
         None if start_before is None or start_after is None
         else start_before != start_after)
 
+    # A swap moves workers between slots. Until the destination worker has
+    # restarted it still answers from the pre-swap process, holding the
+    # other slot's environment in memory, so its /config describes where it
+    # came from rather than where it now is. Reading stickiness from that
+    # snapshot measures the capture window, not the platform. A run that
+    # cannot show the staging worker restarted therefore cannot support or
+    # refute the stickiness assertion, and says so instead of guessing.
+    # "Changed" is not the test. A swap hands the destination slot the
+    # other slot's running worker, so the process identity changes while
+    # the process itself predates the swap and still holds the environment
+    # it started with. The worker must have started AFTER the swap to be
+    # carrying this slot's settings.
+    staging_restarted = started_after(
+        staging_after.get("PROCESS_START_UTC"), swap.get("ended_at"))
+
     observations = {
         "swap_exit_code": swap.get("exit_code"),
         "production_restart_observed": restart_observed,
         "non_sticky_feature_flag_swapped": swapped_with_code(
             prod_before, staging_before, prod_after, staging_after, NON_STICKY),
-        "sticky_db_connection_remained": remained_with_slot(
-            prod_before, staging_before, prod_after, staging_after, STICKY),
-        "production_config_changed": prod_after != prod_before,
+        "sticky_db_connection_remained": (
+            None if not staging_restarted
+            else remained_with_slot(
+                prod_before, staging_before, prod_after, staging_after, STICKY)),
+        "production_config_changed": config_of(prod_after) != config_of(prod_before),
         "deployment_error_count": error_row_count(console),
         # A rollback that never happened cannot match anything. Claiming
         # otherwise would turn an unperformed step into supporting evidence.
         "post_rollback_matches_pre_swap": (
-            None if rollback is None else rollback == prod_before),
+            None if rollback is None
+            else config_of(rollback) == config_of(prod_before)),
     }
 
     incomplete = sorted(key for key, value in observations.items() if value is None)

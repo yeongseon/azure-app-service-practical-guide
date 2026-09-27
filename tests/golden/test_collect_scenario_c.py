@@ -35,13 +35,17 @@ MANIFEST = json.loads(
     (ROOT / "labs/slot-swap-config-drift/golden/manifest.template.json").read_text())
 
 PROD_BEFORE = {"FEATURE_FLAG": "off", "DB_CONNECTION_STRING": "prod-db",
-               "PROCESS_START_UTC": "2026-09-27T10:00:00Z"}
+               "PROCESS_START_UTC": "2026-09-27T10:00:00+00:00"}
 STAGING_BEFORE = {"FEATURE_FLAG": "on", "DB_CONNECTION_STRING": "staging-db",
-                  "PROCESS_START_UTC": "2026-09-27T10:00:00Z"}
+                  "PROCESS_START_UTC": "2026-09-27T10:00:00+00:00"}
 PROD_AFTER = {"FEATURE_FLAG": "on", "DB_CONNECTION_STRING": "prod-db",
-              "PROCESS_START_UTC": "2026-09-27T10:05:00Z"}
+              "PROCESS_START_UTC": "2026-09-27T10:05:00+00:00"}
+# The staging worker must have started AFTER the swap to be carrying this
+# slot's settings. A real run showed the destination answering from the
+# pre-swap process, which holds the other slot's environment in memory.
+SWAP_ENDED = "2026-09-27T10:02:00+00:00"
 STAGING_AFTER = {"FEATURE_FLAG": "off", "DB_CONNECTION_STRING": "staging-db",
-                 "PROCESS_START_UTC": "2026-09-27T10:05:00Z"}
+                 "PROCESS_START_UTC": "2026-09-27T10:05:00+00:00"}
 
 
 def build_run(**overrides):
@@ -55,7 +59,8 @@ def build_run(**overrides):
         "staging-before.json": overrides.get("staging_before", STAGING_BEFORE),
         "prod-after.json": overrides.get("prod_after", PROD_AFTER),
         "staging-after.json": overrides.get("staging_after", STAGING_AFTER),
-        "swap.json": {"exit_code": overrides.get("swap_exit", 0)},
+        "swap.json": {"exit_code": overrides.get("swap_exit", 0),
+                      "ended_at": overrides.get("swap_ended", SWAP_ENDED)},
         "console-query-0.json": {"stdout": overrides.get("console", "[]")},
     }
     if "rollback" in overrides:
@@ -131,6 +136,40 @@ class UnperformedStepTests(unittest.TestCase):
         (run / "swap.json").write_text("{not json")
         with self.assertRaises(collect_c.CollectionError):
             collect_c.collect(run)
+
+
+class ActivationPreconditionTests(unittest.TestCase):
+    """Stickiness is unobservable until the destination worker restarts.
+
+    A real run produced CONTRADICTED on this assertion. Investigation
+    showed the staging slot was still answering from the pre-swap
+    production process, whose environment describes where it came from
+    rather than where it now is. Reading stickiness from that snapshot
+    measures the capture window, not the platform.
+    """
+
+    def test_a_worker_predating_the_swap_cannot_show_stickiness(self):
+        stale = dict(STAGING_AFTER, PROCESS_START_UTC="2026-09-27T10:01:00+00:00")
+        evidence = collect_c.collect(build_run(staging_after=stale))
+        self.assertNotIn("sticky_db_connection_remained", evidence["observations"])
+        self.assertIn("sticky_db_connection_remained", evidence["incomplete_fields"])
+
+    def test_that_run_is_inconclusive_not_contradicted(self):
+        stale = dict(STAGING_AFTER, PROCESS_START_UTC="2026-09-27T10:01:00+00:00")
+        self.assertEqual(
+            evaluate_with(collect_c.collect(build_run(staging_after=stale)))["hypothesis_status"],
+            "INCONCLUSIVE")
+
+    def test_a_restarted_worker_does_show_stickiness(self):
+        """Guards the precondition from rejecting every run."""
+        evidence = collect_c.collect(build_run())
+        self.assertIs(evidence["observations"]["sticky_db_connection_remained"], True)
+
+    def test_a_rollback_is_matched_on_configuration_not_process_identity(self):
+        """A rollback restarts the worker, so timestamps must differ."""
+        restarted = dict(PROD_BEFORE, PROCESS_START_UTC="2026-09-27T10:09:00+00:00")
+        evidence = collect_c.collect(build_run(rollback=restarted))
+        self.assertIs(evidence["observations"]["post_rollback_matches_pre_swap"], True)
 
 
 class DiscriminationTests(unittest.TestCase):
