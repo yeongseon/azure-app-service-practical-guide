@@ -10,6 +10,14 @@
 
 Comprehensive guide for running web applications on Azure App Service — from first deployment to production troubleshooting.
 
+Microsoft Learn documents how App Service behaves. This guide answers a
+different question: how an engineer reproduces that behaviour, observes it,
+and knows what the observation does and does not prove. Labs here are
+experiments with stated hypotheses and evidence that is allowed to
+disappoint them, and the [Golden evidence model](docs/reference/golden-evidence-model.md)
+defines what a run may claim — including when the honest answer is that
+nothing was proven.
+
 ## What's Inside
 
 | Section | Description | Status |

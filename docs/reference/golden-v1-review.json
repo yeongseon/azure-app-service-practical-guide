@@ -1,0 +1,132 @@
+{
+  "review": "Golden Repository v1",
+  "epic": 173,
+  "document_updated_at": "2026-09-27",
+  "verdict": "NOT_COMPLETE",
+  "verdict_basis": "Two Definition-of-Done items are unmet and four are partial. The EPIC forbids claiming validation without evidence, so the review reports the gaps rather than rounding them up.",
+  "counts": {
+    "MET": 9,
+    "PARTIAL": 4,
+    "NOT_MET": 2,
+    "total": 15
+  },
+  "items": [
+    {
+      "id": 1,
+      "requirement": "README states the evidence-driven reproduction mission and the difference from Microsoft Learn",
+      "status": "MET",
+      "evidence": "README.md opens by distinguishing this guide from Microsoft Learn and links the evidence model.",
+      "verify": "grep -ci 'microsoft learn' README.md"
+    },
+    {
+      "id": 2,
+      "requirement": "Repository-wide KEEP / REWRITE / MOVE / DELETE / ARCHIVE audit completed",
+      "status": "MET",
+      "evidence": "19 paths decided in docs/reference/golden-repository-audit.json: 16 KEEP, 3 ARCHIVE, 0 DELETE. The single REWRITE was resolved during the epic and became KEEP.",
+      "verify": "python3 tests/golden/test_repository_audit.py"
+    },
+    {
+      "id": 3,
+      "requirement": "AGENTS.md rewritten around agent judgment; machine-enforceable rules moved to validators/CI where possible",
+      "status": "PARTIAL",
+      "evidence": "An Evidence-Driven Agent Behavior section was added and one documented-but-unenforced rule became a CI step, which surfaced two real violations. The file was extended, not rewritten; most of its prose rules remain unenforced by any validator.",
+      "gap": "No systematic pass over the remaining prose rules to determine which are machine-checkable.",
+      "verify": "python3 tools/validate_frontmatter.py"
+    },
+    {
+      "id": 4,
+      "requirement": "Common Evidence / Assertion / Hypothesis representations exist",
+      "status": "MET",
+      "evidence": "Four schemas under schemas/golden/ define manifest, assertion, result and reproduction.",
+      "verify": "python3 tests/golden/test_evaluate_run.py"
+    },
+    {
+      "id": 5,
+      "requirement": "Execution status separated from hypothesis status",
+      "status": "MET",
+      "evidence": "EXECUTION_STATUS and HYPOTHESIS_STATUS are separate frozen vocabularies in scripts/golden/evaluate_run.py. A run that did not execute cannot report a hypothesis verdict.",
+      "verify": "python3 tests/golden/test_negative_evidence.py"
+    },
+    {
+      "id": 6,
+      "requirement": "Raw evidence separated from generated verdict; run identity exists",
+      "status": "MET",
+      "evidence": "The result contract carries run identity and the evaluator derives the verdict from assertion outcomes rather than accepting an asserted one.",
+      "verify": "python3 tests/golden/test_evaluate_run.py"
+    },
+    {
+      "id": 7,
+      "requirement": "captured_at separated from evaluation/document timestamps",
+      "status": "MET",
+      "evidence": "captured_at, evaluated_at and document_updated_at are distinct fields. This is the ACA defect where re-evaluation time was stamped into a field named for capture.",
+      "verify": "python3 tests/golden/test_negative_evidence.py"
+    },
+    {
+      "id": 8,
+      "requirement": "Negative tests: missing, empty, malformed, contradictory, wrong-run, recovery-missing, comparison-semantics mismatch",
+      "status": "MET",
+      "evidence": "tests/golden/test_negative_evidence.py covers all seven named classes across 18 tests, each mutation-verified against the evaluator.",
+      "verify": "python3 tests/golden/test_negative_evidence.py"
+    },
+    {
+      "id": 9,
+      "requirement": "Golden scenarios A (deterministic), B (comparative), C (configuration/state) completed",
+      "status": "PARTIAL",
+      "evidence": "Scenarios A and C ship a manifest template, an evidence-classification file and a mutation-verified suite. Scenario B gained a shared classifier, so its two probes can no longer disagree about the same response, and its own suite.",
+      "gap": "Scenario B has no manifest template and no evidence-classification file, so only two of the three scenarios carry a Golden contract. Separately, nothing has been executed against Azure: both manifests ship execution_status NOT_RUN, so the contracts that exist are complete while the runs are not.",
+      "verify": "python3 tests/golden/test_scenario_a.py && python3 tests/golden/test_scenario_b.py && python3 tests/golden/test_scenario_c.py"
+    },
+    {
+      "id": 10,
+      "requirement": "Independent reproduction completed for at least one scenario",
+      "status": "NOT_MET",
+      "evidence": "evidence/reproductions/scenario-a.json records NOT_ATTEMPTED on both the reproduction and documentation axes.",
+      "gap": "Requires a second operator and a live subscription. The gate that would evaluate a replay exists and is tested; nothing has been replayed through it.",
+      "verify": "python3 tests/golden/test_reproduction.py"
+    },
+    {
+      "id": 11,
+      "requirement": "Cleanup procedure exists and is verified",
+      "status": "NOT_MET",
+      "evidence": "One cleanup script exists across twelve labs, in cd-reconnect-rbac-conflict, which is not a Golden scenario. None of the three scenario labs has one.",
+      "gap": "Not addressed in this epic. A resource-deleting script that cannot be executed would be shipped unverified, which is the failure mode this epic exists to remove, so none was written to tick the box.",
+      "verify": "ls labs/*/cleanup.sh | wc -l"
+    },
+    {
+      "id": 12,
+      "requirement": "Historical evidence policy applied",
+      "status": "PARTIAL",
+      "evidence": "Both Golden scenarios classify their retained captures and state what each artifact cannot support. The README now describes the labs as evidence-retained rather than validated.",
+      "gap": "No repository-level policy states how long historical captures stay authoritative or when they are re-verified.",
+      "verify": "python3 tests/golden/test_lab_classification.py"
+    },
+    {
+      "id": 13,
+      "requirement": "Legacy labs classified Golden / migration-needed / archive-candidate",
+      "status": "MET",
+      "evidence": "All 12 labs classified in labs/golden-classification.json: 2 golden, 9 migration-needed, 1 archive-candidate. Coverage is asserted in both directions so neither an unclassified lab nor an orphan entry passes.",
+      "verify": "python3 tests/golden/test_lab_classification.py"
+    },
+    {
+      "id": 14,
+      "requirement": "README validation/maturity wording matches actual evidence",
+      "status": "MET",
+      "evidence": "Lab-validated became Evidence-retained, the legend names both missing conditions, and the lab count was corrected from 10 to 12. The guard fails once a reproduction or completed run exists, forcing the claim to be re-decided rather than staying forbidden after it becomes true.",
+      "verify": "python3 tests/golden/test_readme_claims.py"
+    },
+    {
+      "id": 15,
+      "requirement": "Existing documentation quality gates do not regress",
+      "status": "PARTIAL",
+      "evidence": "PII reports 0 blocking on every changed file, repetition reports 0 errors across 233 files, and frontmatter validation now exits 0 where it previously exited 1.",
+      "gap": "mkdocs build --strict was NOT RUN. mkdocs is not installed in this environment and no package manager was available to install it. Two mkdocs.yml nav entries were added and verified only by YAML parse, not by a strict build.",
+      "verify": "python3 scripts/validate_pii.py && python3 scripts/detect_repetition.py docs"
+    }
+  ],
+  "blocking_for_v1": [
+    "Item 10: no scenario has been independently reproduced.",
+    "Item 11: the Golden scenarios have no cleanup procedure.",
+    "Item 15: mkdocs build --strict has not been run against the nav changes."
+  ],
+  "notes": "Items 9, 10 and 11 reduce to two missing inputs: a Golden contract for Scenario B, and an execution against a live subscription by a second operator. The gates and suites that would consume such a run exist and are mutation-verified; what is absent is the run. The Scenario B gap was found by mutation-testing this review's own suite, not by reading it."
+}
