@@ -6,10 +6,17 @@
       "path": "labs/slot-swap-config-drift/artifacts-sanitized/trigger/",
       "trust": "trusted-historical",
       "reason": "Captured 2026-04-04 by the pre-Golden procedure. Contains post-swap diag output and KQL exports that illustrate the swap mechanism, but carries no run_id and no declared assertions, so it cannot be evaluated against this contract."
+    },
+    {
+      "path": "scripts/golden/collect_scenario_c.py",
+      "trust": "trusted-current",
+      "reason": "Reads the four config snapshots the trigger captures and emits them as named observations. trigger.sh already computed these facts and printed them as prose, which no assertion could be checked against; the computation was never the problem, the destination was. It decides nothing, and a capture that is absent leaves its field absent and named in incomplete_fields.",
+      "supports": [],
+      "cannot_support": []
     }
   ],
   "known_gaps": [
-    "No collector emits any field this contract declares. The lab ships trigger.sh and verify.sh, neither of which writes an evidence document, while the manifest asserts on swap_exit_code, production_restart_observed, non_sticky_feature_flag_swapped, sticky_db_connection_remained, production_config_changed, deployment_error_count and post_rollback_matches_pre_swap. A run today would return INCONCLUSIVE on every assertion.",
-    "The contract is a declaration of what a future collector must produce, not a description of what this lab currently measures. Only Scenario A ships a runner that emits evidence in this shape."
+    "No run has produced evidence under this contract, so every assertion is NOT_TESTED rather than unproven. The collector exists and is tested offline against captured configs, but the lab has not been deployed and swapped.",
+    "trigger.sh does not swap back, so a run using it as-is leaves post_rollback_matches_pre_swap absent and the evaluation returns INCONCLUSIVE. Claiming the rollback matched without performing one would turn an unperformed step into supporting evidence."
   ]
 }

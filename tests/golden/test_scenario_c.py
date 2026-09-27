@@ -139,9 +139,29 @@ class HistoricalEvidenceTests(unittest.TestCase):
             self.assertTrue((ROOT / item["path"]).exists(), item["path"])
 
     def test_pre_golden_captures_are_not_trusted_current(self):
+        """Retained captures predate this contract and cannot be current.
+
+        The rule is about captures, not about every entry. It was written
+        when the only entries were retained artifacts, so forbidding
+        trusted-current outright was equivalent. A collector added later
+        is not a capture: it is executable, tested, and current by
+        definition, so the check now names what it actually governs.
+        """
         data = json.loads((LAB / "evidence-classification.json").read_text())
-        for item in data["artifacts"]:
-            self.assertNotEqual(item["trust"], "trusted-current")
+        captures = [i for i in data["artifacts"]
+                    if not i["path"].endswith((".py", ".sh"))]
+        self.assertTrue(captures, "no retained captures left to check")
+        for item in captures:
+            with self.subTest(path=item["path"]):
+                self.assertNotEqual(item["trust"], "trusted-current")
+
+    def test_a_retained_capture_still_cannot_claim_currency(self):
+        """Guards the narrowed check from being satisfied vacuously."""
+        data = json.loads((LAB / "evidence-classification.json").read_text())
+        paths = [i["path"] for i in data["artifacts"]]
+        self.assertTrue(
+            any("artifacts-sanitized" in p for p in paths),
+            "the classification no longer lists any retained capture")
 
 
 if __name__ == "__main__":
