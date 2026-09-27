@@ -59,7 +59,7 @@
   "known_gaps": [
     "No run has produced evidence under this contract; executed_runs is empty. The instrumentation now exists: scripts/golden/run_scenario_b.py drives three phases against the unpooled path, records every probe as a status or a transport error, holds concurrent pressure between the baseline and load phases, and probes the destination directly. Its output feeds the collector with no field absent, verified offline.",
     "A live run has not been attempted. Reproducing SNAT exhaustion needs sustained concurrent pressure and may not reproduce on the first attempt, and an unsupervised run risks leaving billable resources behind, so the run is deliberately left as a separate step rather than started without the ability to see it through and clean up after it.",
-    "The destination probe is the discriminating observation. Until a run captures it, connection-level failures remain equally consistent with port exhaustion and with the destination being down, and the evaluation correctly returns INCONCLUSIVE rather than choosing between them."
+    "The destination probe is the discriminating observation, and destination_health_status has not yet been captured by any run. Until it is, connection-level failures remain equally consistent with port exhaustion and with the destination being down, and the evaluation correctly returns INCONCLUSIVE rather than choosing between them."
   ],
   "executed_runs": []
 }

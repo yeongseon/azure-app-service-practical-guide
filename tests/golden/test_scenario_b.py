@@ -223,9 +223,22 @@ class GoldenContractTests(unittest.TestCase):
         self.assertIn("control", roles)
         self.assertIn("recovery", roles)
 
-    def test_the_missing_collector_is_disclosed_not_hidden(self):
+    def test_the_discriminating_observation_is_accounted_for(self):
+        """It must be either captured by a run, or disclosed as missing.
+
+        This replaced a test asserting the collector for that field was
+        missing. A runner now probes the destination, so pinning its
+        absence expired; the durable property is that the observation
+        which separates exhaustion from a dead destination is never
+        silently unaccounted for.
+        """
         gaps = " ".join(self.classification["known_gaps"]).lower()
+        executed = self.classification.get("executed_runs") or []
         self.assertIn("destination_health_status", gaps)
+        if not executed:
+            self.assertRegex(
+                gaps, r"has not yet been captured|no run has produced",
+                msg="no run exists, so the field must be disclosed as uncaptured")
 
 
 if __name__ == "__main__":
