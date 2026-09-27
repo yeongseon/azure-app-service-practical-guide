@@ -47,11 +47,19 @@
         "discriminating-destination-stays-healthy"
       ],
       "retention_status": "trusted-current"
+    },
+    {
+      "path": "scripts/golden/run_scenario_b.py",
+      "retention_status": "trusted-current",
+      "reason": "Drives the three phases and records raw outcomes. It classifies nothing: a completed round trip records its status whatever that status is, and a connection that never completed records the transport error, leaving the distinction to the shared classifier. HTTPError is caught before URLError so a server that answered 5xx is not recorded as a connection failure, which would have counted it as the SNAT signal.",
+      "supports": [],
+      "cannot_support": []
     }
   ],
   "known_gaps": [
-    "No run has produced evidence under this contract, so every assertion is NOT_TESTED rather than unproven. The collector exists and is tested offline against captured probe records, but the lab has not been deployed and no load has been generated.",
-    "Nothing yet writes the probe captures the collector reads. The workload classifies through app/classification.py but does not persist per-phase probe records, and no step probes the destination's own health. Until both exist, a real run leaves destination_health_status absent and the evaluation returns INCONCLUSIVE, which is correct: without it, transport failures are equally consistent with the destination being down."
+    "No run has produced evidence under this contract; executed_runs is empty. The instrumentation now exists: scripts/golden/run_scenario_b.py drives three phases against the unpooled path, records every probe as a status or a transport error, holds concurrent pressure between the baseline and load phases, and probes the destination directly. Its output feeds the collector with no field absent, verified offline.",
+    "A live run has not been attempted. Reproducing SNAT exhaustion needs sustained concurrent pressure and may not reproduce on the first attempt, and an unsupervised run risks leaving billable resources behind, so the run is deliberately left as a separate step rather than started without the ability to see it through and clean up after it.",
+    "The destination probe is the discriminating observation. Until a run captures it, connection-level failures remain equally consistent with port exhaustion and with the destination being down, and the evaluation correctly returns INCONCLUSIVE rather than choosing between them."
   ],
   "executed_runs": []
 }
