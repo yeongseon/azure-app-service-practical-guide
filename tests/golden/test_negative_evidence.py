@@ -213,5 +213,50 @@ class VacuityRegressionTests(unittest.TestCase):
         self.fail(f"a contradiction was dropped and reported {result['hypothesis_status']!r}")
 
 
+class WrongRunTests(unittest.TestCase):
+    """Evidence from another run must not be assembled into this result.
+
+    The model named a wrong-run case from the start, but nothing compared
+    evidence identity against the manifest, so a result could be built from
+    another run's captures and no assertion would object.
+    """
+
+    def _run(self, manifest_run_id, evidence_doc):
+        directory = pathlib.Path(tempfile.mkdtemp())
+        (directory / "manifest.json").write_text(json.dumps({
+            "run_id": manifest_run_id, "execution_status": "COMPLETE",
+            "captured_at": "2026-09-27T00:00:00Z",
+            "assertions": [{"id": "s", "field": "status", "equals": 503}]}))
+        (directory / "evidence.json").write_text(json.dumps(evidence_doc))
+        return directory
+
+    def test_evidence_from_another_run_is_rejected(self):
+        directory = self._run("run-A", {
+            "run_id": "run-B", "captured_at": "2026-09-27T00:00:00Z",
+            "observations": {"status": 503}})
+        with self.assertRaises(ev.ModelError) as caught:
+            ev.evaluate(directory)
+        self.assertIn("run-B", str(caught.exception))
+
+    def test_matching_run_ids_are_accepted_and_marked_bound(self):
+        """Guards the check from rejecting all evidence."""
+        directory = self._run("run-A", {
+            "run_id": "run-A", "captured_at": "2026-09-27T00:00:00Z",
+            "observations": {"status": 503}})
+        result = ev.evaluate(directory)
+        self.assertEqual(result["hypothesis_status"], "SUPPORTED")
+        self.assertEqual(result["evidence_identity"], "BOUND")
+
+    def test_evidence_without_identity_is_marked_unbound(self):
+        """Legacy flat evidence stays usable but is not silently trusted."""
+        directory = self._run("run-A", {"status": 503})
+        self.assertEqual(ev.evaluate(directory)["evidence_identity"], "UNBOUND")
+
+    def test_an_identity_without_observations_is_malformed(self):
+        directory = self._run("run-A", {"run_id": "run-A", "captured_at": "x"})
+        with self.assertRaises(ev.ModelError):
+            ev.evaluate(directory)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=1)

@@ -3,11 +3,11 @@
   "epic": 173,
   "document_updated_at": "2026-09-27",
   "verdict": "NOT_COMPLETE",
-  "verdict_basis": "Two Definition-of-Done items are unmet and three are partial. The EPIC forbids claiming validation without evidence, so the review reports the gaps rather than rounding them up.",
+  "verdict_basis": "One Definition-of-Done item is unmet and three are partial. All four reduce to the same missing input: no run against a live subscription, and no second operator to replay one.",
   "counts": {
-    "MET": 8,
-    "PARTIAL": 5,
-    "NOT_MET": 2,
+    "MET": 11,
+    "PARTIAL": 3,
+    "NOT_MET": 1,
     "total": 15
   },
   "items": [
@@ -36,10 +36,9 @@
     {
       "id": 4,
       "requirement": "Common Evidence / Assertion / Hypothesis representations exist",
-      "status": "PARTIAL",
-      "evidence": "Assertion, manifest, result and reproduction schemas exist under schemas/golden/ and the evaluator derives a hypothesis verdict from assertion outcomes.",
-      "verify": "python3 tests/golden/test_evaluate_run.py",
-      "gap": "There is no Evidence schema. evidence.json has no declared contract, so the shipped schemas cover assertion and hypothesis but not evidence itself."
+      "status": "MET",
+      "evidence": "Five schemas under schemas/golden/ cover evidence, assertion, manifest, result and reproduction. evidence.schema.json declares the identity and capture time of raw observations, which is what lets the evaluator reject evidence from another run.",
+      "verify": "python3 tests/golden/test_evaluate_run.py"
     },
     {
       "id": 5,
@@ -65,17 +64,16 @@
     {
       "id": 8,
       "requirement": "Negative tests: missing, empty, malformed, contradictory, wrong-run, recovery-missing, comparison-semantics mismatch",
-      "status": "PARTIAL",
-      "evidence": "tests/golden/test_negative_evidence.py covers all seven named classes across 18 tests.",
-      "verify": "python3 tests/golden/test_negative_evidence.py",
-      "gap": "No wrong-run test exists. Nothing compares evidence identity against the manifest's run_id, so evidence from a different run is not rejected. The comparison-semantics case is also limited to equality and membership."
+      "status": "MET",
+      "evidence": "tests/golden/test_negative_evidence.py covers missing, empty, malformed, contradictory, wrong-run, recovery-missing and comparison-semantics cases across 24 tests. The wrong-run case compares evidence identity against the manifest run_id and was confirmed to fail when the identity check is removed.",
+      "verify": "python3 tests/golden/test_negative_evidence.py"
     },
     {
       "id": 9,
       "requirement": "Golden scenarios A (deterministic), B (comparative), C (configuration/state) completed",
       "status": "PARTIAL",
-      "evidence": "Scenarios A and C ship a manifest template, an evidence-classification file and a suite. Scenario B gained a shared classifier, so its two probes can no longer disagree about the same response, and its own suite.",
-      "gap": "Scenario B has no manifest template and no evidence-classification file, so only two of the three scenarios carry a Golden contract. Separately, nothing has been executed against Azure: both manifests ship execution_status NOT_RUN, so the contracts that exist are complete while the runs are not.",
+      "evidence": "All three scenarios now ship a manifest template, an evidence-classification file and a suite. Scenario B's contract declares the discriminating assertion that separates SNAT exhaustion from destination failure, and its suite proves an unhealthy destination refuses the hypothesis rather than supporting it.",
+      "gap": "No scenario has been executed against Azure. All three manifests ship execution_status NOT_RUN, so the contracts are complete while the runs are not. Scenario B additionally has no collector for destination_health_status, so a run today would return INCONCLUSIVE rather than SUPPORTED.",
       "verify": "python3 tests/golden/test_scenario_a.py && python3 tests/golden/test_scenario_b.py && python3 tests/golden/test_scenario_c.py"
     },
     {
@@ -89,17 +87,16 @@
     {
       "id": 11,
       "requirement": "Cleanup procedure exists and is verified",
-      "status": "NOT_MET",
-      "evidence": "One cleanup script exists across twelve labs, in cd-reconnect-rbac-conflict, which is not a Golden scenario. None of the three scenario labs has one.",
-      "gap": "Not addressed in this epic. A resource-deleting script that cannot be executed would be shipped unverified, which is the failure mode this epic exists to remove, so none was written to tick the box.",
-      "verify": "ls labs/*/cleanup.sh | wc -l"
+      "status": "PARTIAL",
+      "evidence": "All three scenario labs ship cleanup.sh. Each deletes the lab's resource group rather than enumerating resources, so cleanup stays complete as the Bicep template changes, and each refuses to run without an explicit RG.",
+      "gap": "Not verified. No script has been executed against a subscription, so 'exists' is satisfied and 'is verified' is not. Verification requires a real deployment to delete.",
+      "verify": "ls labs/*/cleanup.sh && bash -n labs/*/cleanup.sh"
     },
     {
       "id": 12,
       "requirement": "Historical evidence policy applied",
-      "status": "PARTIAL",
-      "evidence": "Both Golden scenarios classify their retained captures and state what each artifact cannot support. The README now describes the labs as evidence-retained rather than validated.",
-      "gap": "No repository-level policy states how long historical captures stay authoritative or when they are re-verified.",
+      "status": "MET",
+      "evidence": "docs/reference/golden-evidence-model.md states the historical evidence policy: how long a capture stays authoritative, what re-verification requires, and that a capture predating the contract it is cited under is trusted-historical rather than primary. Both Golden scenarios classify their retained captures accordingly.",
       "verify": "python3 tests/golden/test_lab_classification.py"
     },
     {
@@ -125,8 +122,7 @@
     }
   ],
   "blocking_for_v1": [
-    "Item 10: no scenario has been independently reproduced.",
-    "Item 11: the Golden scenarios have no cleanup procedure."
+    "Item 10: no scenario has been independently reproduced."
   ],
   "notes": "Items 9, 10 and 11 reduce to two missing inputs: a Golden contract for Scenario B, and an execution against a live subscription by a second operator. Review found two false-positive paths in the evaluator and the reproduction gate while every suite was green, which is the same vacuity this model exists to reject; both are now fixed and pinned by regression tests that were confirmed to fail when each fix is reverted.",
   "review_history": [

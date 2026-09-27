@@ -130,6 +130,37 @@ def combine(outcomes) -> str:
     return "SUPPORTED"
 
 
+def _bind_evidence(document: dict, run_id: str):
+    """Return (observations, identity_state) for one evidence document.
+
+    Evidence that declares a run_id must agree with the manifest. Without
+    this, a result could be assembled from another run's captures and
+    nothing would object -- the wrong-run case the model names but the
+    evaluator did not previously check.
+
+    >>> _bind_evidence({"run_id": "r1", "observations": {"status": 503}}, "r1")
+    ({'status': 503}, 'BOUND')
+    >>> _bind_evidence({"status": 503}, "r1")
+    ({'status': 503}, 'UNBOUND')
+    >>> _bind_evidence({"run_id": "other", "observations": {}}, "r1")
+    Traceback (most recent call last):
+    evaluate_run.ModelError: evidence belongs to run 'other', not 'r1'
+    """
+    if not document:
+        return {}, "ABSENT"
+    declared = document.get("run_id")
+    if declared is None:
+        # Legacy flat evidence carries no identity. It is usable but the
+        # result records that nothing tied it to this run.
+        return document, "UNBOUND"
+    if declared != run_id:
+        raise ModelError(f"evidence belongs to run {declared!r}, not {run_id!r}")
+    observations = document.get("observations")
+    if not isinstance(observations, dict):
+        raise ModelError("evidence declares a run_id but no observations object")
+    return observations, "BOUND"
+
+
 def evaluate(run_dir) -> dict:
     """Evaluate one run directory and return a result record."""
     run_dir = pathlib.Path(run_dir)
@@ -143,7 +174,11 @@ def evaluate(run_dir) -> dict:
             raise ModelError(f"manifest is missing run identity field: {key}")
 
     assertions = manifest.get("assertions") or []
-    evidence = _read_json(run_dir / "evidence.json") if (run_dir / "evidence.json").is_file() else {}
+    evidence_doc = (
+        _read_json(run_dir / "evidence.json")
+        if (run_dir / "evidence.json").is_file() else {}
+    )
+    evidence, evidence_identity = _bind_evidence(evidence_doc, manifest["run_id"])
 
     # Keying outcomes by a caller-supplied id let a later assertion overwrite
     # an earlier one, so a manifest declaring the same id twice could drop a
@@ -178,6 +213,7 @@ def evaluate(run_dir) -> dict:
         "captured_at": manifest["captured_at"],
         "evaluated_at": manifest.get("evaluated_at"),
         "execution_status": execution_status,
+        "evidence_identity": evidence_identity,
         "hypothesis_status": hypothesis_status,
         "assertion_outcomes": per_assertion,
         "generated_verdict_claimed": generated_claimed,

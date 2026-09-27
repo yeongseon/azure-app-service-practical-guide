@@ -24,6 +24,8 @@ import importlib.util
 import pathlib
 import socketserver
 import threading
+import json
+import tempfile
 import unittest
 import urllib.error
 import urllib.request
@@ -129,6 +131,101 @@ class TransportParityTests(unittest.TestCase):
         for status in (200, 204, 301, 400, 401, 403, 404, 429, 500, 502, 503):
             with self.subTest(status=status):
                 self.assertEqual(*self._both(status))
+
+
+class GoldenContractTests(unittest.TestCase):
+    """Scenario B shipped a classifier and a suite but no Golden contract.
+
+    Review found the review itself claiming all three scenarios carried
+    contracts while this one carried none, so the contract is pinned here.
+    """
+
+    LAB = pathlib.Path(__file__).resolve().parents[2] / "labs/snat-exhaustion/golden"
+
+    @classmethod
+    def setUpClass(cls):
+        import importlib.util
+        root = pathlib.Path(__file__).resolve().parents[2]
+        spec = importlib.util.spec_from_file_location(
+            "evb", root / "scripts/golden/evaluate_run.py")
+        cls.ev = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(cls.ev)
+        cls.template = json.loads((cls.LAB / "manifest.template.json").read_text())
+        cls.classification = json.loads(
+            (cls.LAB / "evidence-classification.json").read_text())
+
+    def _run(self, observations, execution="COMPLETE"):
+        directory = pathlib.Path(tempfile.mkdtemp()) / "run"
+        directory.mkdir(parents=True)
+        manifest = dict(self.template)
+        manifest.update(run_id="20260927T050607Z-b1c2d3",
+                        resource_id="/subscriptions/x/rg/app",
+                        captured_at="2026-09-27T05:06:07Z",
+                        execution_status=execution)
+        (directory / "manifest.json").write_text(json.dumps(manifest))
+        (directory / "evidence.json").write_text(json.dumps({
+            "run_id": manifest["run_id"],
+            "captured_at": manifest["captured_at"],
+            "observations": observations}))
+        return directory
+
+    COMPLETE = {"baseline_success_count": 50, "load_transport_failure_count": 7,
+                "destination_health_status": 200, "load_http_error_count": 0,
+                "recovery_success_count": 50}
+
+    def test_the_template_ships_unrun(self):
+        self.assertEqual(self.template["execution_status"], "NOT_RUN")
+        self.assertIsNone(self.template["run_id"])
+        self.assertIsNone(self.template["captured_at"])
+
+    def test_a_template_alone_yields_no_verdict(self):
+        result = self.ev.evaluate(self._run(self.COMPLETE, execution="NOT_RUN"))
+        self.assertEqual(result["hypothesis_status"], "NOT_TESTED")
+
+    def test_a_complete_run_with_full_evidence_is_supported(self):
+        self.assertEqual(
+            self.ev.evaluate(self._run(self.COMPLETE))["hypothesis_status"], "SUPPORTED")
+
+    def test_an_unhealthy_destination_refuses_the_hypothesis(self):
+        """The discriminating assertion that separates the two explanations.
+
+        If the destination is itself unhealthy, transport failures are
+        explained without port exhaustion and the hypothesis must not stand.
+        """
+        evidence = dict(self.COMPLETE, destination_health_status=503)
+        self.assertEqual(
+            self.ev.evaluate(self._run(evidence))["hypothesis_status"], "CONTRADICTED")
+
+    def test_http_errors_instead_of_transport_failures_refuse_it(self):
+        evidence = dict(self.COMPLETE, load_http_error_count=12)
+        self.assertEqual(
+            self.ev.evaluate(self._run(evidence))["hypothesis_status"], "CONTRADICTED")
+
+    def test_a_missing_discriminator_is_inconclusive_not_supported(self):
+        evidence = dict(self.COMPLETE)
+        del evidence["destination_health_status"]
+        self.assertEqual(
+            self.ev.evaluate(self._run(evidence))["hypothesis_status"], "INCONCLUSIVE")
+
+    def test_no_recovery_prevents_support(self):
+        evidence = dict(self.COMPLETE, recovery_success_count=0)
+        self.assertEqual(
+            self.ev.evaluate(self._run(evidence))["hypothesis_status"], "CONTRADICTED")
+
+    def test_every_role_and_claim_level_is_from_the_frozen_vocabulary(self):
+        for assertion in self.template["assertions"]:
+            self.assertIn(assertion["role"], self.ev.EVIDENCE_ROLES)
+            self.assertIn(assertion["claim_level"], self.ev.CLAIM_LEVELS)
+
+    def test_the_contract_declares_a_discriminating_assertion(self):
+        roles = {a["role"] for a in self.template["assertions"]}
+        self.assertIn("discriminating", roles)
+        self.assertIn("control", roles)
+        self.assertIn("recovery", roles)
+
+    def test_the_missing_collector_is_disclosed_not_hidden(self):
+        gaps = " ".join(self.classification["known_gaps"]).lower()
+        self.assertIn("destination_health_status", gaps)
 
 
 if __name__ == "__main__":

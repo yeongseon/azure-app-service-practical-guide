@@ -135,13 +135,43 @@ class GroundedVerdictTests(unittest.TestCase):
         self.assertIn("snat-exhaustion", golden_labs())
         self.assertGreaterEqual(len(golden_labs()), 3)
 
-    def test_cleanup_is_not_met_because_golden_scenarios_lack_one(self):
-        self.assertEqual(by_id(11)["status"], "NOT_MET")
+    def test_cleanup_status_tracks_what_exists_and_what_ran(self):
+        """Item 11 requires a procedure that exists AND is verified.
+
+        This replaced a test pinning the absence of any cleanup script.
+        That expired when the scripts were written, which is what it was
+        for. The durable property is that the status distinguishes the two
+        halves: scripts present but never executed is PARTIAL, not MET.
+        """
+        present = [lab for lab in golden_labs()
+                   if (ROOT / "labs" / lab / "cleanup.sh").exists()]
+        item = by_id(11)
+        if not present:
+            self.assertEqual(item["status"], "NOT_MET")
+            return
+        self.assertEqual(
+            sorted(present), sorted(golden_labs()),
+            msg="some scenarios have cleanup and others do not; say so in the item")
+        self.assertNotEqual(
+            item["status"], "NOT_MET",
+            msg="every scenario has a cleanup script, so NOT_MET is stale")
+        if item["status"] == "MET":
+            self.assertNotIn(
+                "not verified", item.get("gap", "").lower(),
+                msg="item 11 claims MET while disclosing the scripts were never run")
+        else:
+            self.assertIn("verif", item["gap"].lower())
+
+    def test_every_cleanup_script_refuses_to_run_without_a_target(self):
+        """A resource-deleting script must not default its target."""
         for lab in golden_labs():
+            path = ROOT / "labs" / lab / "cleanup.sh"
+            if not path.exists():
+                continue
             with self.subTest(lab=lab):
-                self.assertFalse(
-                    (ROOT / "labs" / lab / "cleanup.sh").exists(),
-                    msg=f"{lab} now has a cleanup script, so item 11 must be re-decided")
+                body = path.read_text()
+                self.assertIn("set -euo pipefail", body)
+                self.assertRegex(body, r'if \[ -z "\$RG" \]')
 
     def test_scenarios_are_partial_because_nothing_has_run(self):
         self.assertEqual(by_id(9)["status"], "PARTIAL")

@@ -59,8 +59,8 @@
     },
     {
       "lab": "snat-exhaustion",
-      "classification": "migration-needed",
-      "reason": "Scenario B's classification confounder is fixed: both transports share one classifier and verify.sh no longer declares its own reproduction. Still needs a golden/ manifest declaring assertions before it can be evaluated, so it is not yet Golden."
+      "classification": "golden",
+      "reason": "Ships a Golden contract: a manifest template declaring the discriminating assertion that separates SNAT exhaustion from destination failure, an evidence-classification naming what its retained captures cannot support, and a suite proving an unhealthy destination refuses the hypothesis. Both transports classify through one shared function, so a disagreement between urllib and requests can no longer look like evidence about Azure."
     },
     {
       "lab": "windows-java-httpplatformhandler-timeout",

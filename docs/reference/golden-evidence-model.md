@@ -143,6 +143,56 @@ result = (a and b) or b
 result = (strong or fallback) and invariant
 ```
 
+## Historical evidence policy
+
+A capture is evidence about the moment it was taken, not a standing fact.
+This policy says how long one stays usable and what it takes to renew it.
+
+### Trust levels for retained captures
+
+| Level | Meaning |
+|---|---|
+| `primary` | Captured by the procedure declared in the contract it is cited under. |
+| `trusted-historical` | Captured by an earlier procedure, before the contract existed. Usable as illustration; not usable to satisfy an assertion the earlier procedure did not collect for. |
+| `reported` | Taken from a summary rather than raw records. Weakest, because a summary can disagree with what it claims to describe. |
+
+A capture predating the contract it is cited under is `trusted-historical`,
+never `primary`. Reclassifying it upward requires re-capture, not re-reading.
+
+### Retention and re-verification
+
+A capture stays authoritative until the platform behaviour it records
+changes. Because that is not observable from the capture, each Golden
+scenario states what would invalidate its evidence rather than asserting an
+expiry date. Re-verification means running the contract again and producing
+a new run directory; editing an old one is forbidden, since a run directory
+is the record of a moment.
+
+Retained captures are never edited to match a new contract. When a contract
+changes so that an old capture no longer satisfies it, the capture is
+reclassified and the gap recorded in `known_gaps`, so the shortfall stays
+visible instead of being silently absorbed.
+
+### What a retained capture may not do
+
+It may not satisfy an assertion its collector never attempted. The
+distinction matters most for discriminating assertions: an old capture that
+did not record the competing explanation cannot rule it out, and treating
+its silence as agreement converts missing data into support.
+
+## The run directory
+
+A run is one directory. The evaluator reads exactly two files from it:
+
+| File | Purpose |
+|---|---|
+| `manifest.json` | Run identity, execution status, and the assertions declared before execution. |
+| `evidence.json` | Raw observations, carrying the `run_id` they were captured under. |
+
+`result.json`, when present, is recomputed and compared, never consumed. A
+collector may write additional files, and the evaluator ignores them: they
+are provenance for a reader, not inputs to a verdict.
+
 ## See Also
 
 - [Content Validation Status](content-validation-status.md)
