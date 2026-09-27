@@ -169,9 +169,19 @@ class GoldenContractTests(unittest.TestCase):
             "observations": observations}))
         return directory
 
-    COMPLETE = {"baseline_success_count": 50, "load_transport_failure_count": 7,
+    @property
+    def COMPLETE(self):
+        """Evidence sized from the runner, not from a remembered number."""
+        import importlib.util
+        root = pathlib.Path(__file__).resolve().parents[2]
+        spec = importlib.util.spec_from_file_location(
+            "run_b_sc", root / "scripts/golden/run_scenario_b.py")
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        probes = module.PROBES_PER_PHASE
+        return {"baseline_success_count": probes, "load_transport_failure_count": 7,
                 "destination_health_status": 200, "load_http_error_count": 0,
-                "recovery_success_count": 50}
+                "recovery_success_count": probes}
 
     def test_the_template_ships_unrun(self):
         self.assertEqual(self.template["execution_status"], "NOT_RUN")

@@ -12,9 +12,9 @@
       "id": "baseline-outbound-succeeds",
       "role": "control",
       "field": "baseline_success_count",
-      "equals": 50,
+      "equals": 12,
       "claim_level": "Observed",
-      "note": "Before load, every outbound probe completes. Without this the later failures cannot be attributed to exhaustion rather than a destination that was broken all along."
+      "note": "Before load, every outbound probe completes. Without this the later failures cannot be attributed to exhaustion rather than a destination that was broken all along. The expected count equals PROBES_PER_PHASE in scripts/golden/run_scenario_b.py; a test asserts the two agree so changing one without the other fails rather than silently contradicting every run."
     },
     {
       "id": "symptom-transport-failures-appear",
@@ -32,15 +32,7 @@
         9,
         10,
         11,
-        12,
-        13,
-        14,
-        15,
-        16,
-        17,
-        18,
-        19,
-        20
+        12
       ],
       "claim_level": "Observed",
       "note": "Connections fail before any HTTP status is returned. A transport failure is the symptom; an HTTP error code is not, because the destination answering 5xx would mean the destination failed rather than the connection."
@@ -65,9 +57,9 @@
       "id": "recovery-outbound-succeeds-again",
       "role": "recovery",
       "field": "recovery_success_count",
-      "equals": 50,
+      "equals": 12,
       "claim_level": "Observed",
-      "note": "After connection pressure is removed, outbound probes succeed again. Without recovery the run cannot distinguish exhaustion from a permanent break introduced during the load phase."
+      "note": "After connection pressure is removed, outbound probes succeed again. Without recovery the run cannot distinguish exhaustion from a permanent break introduced during the load phase. The expected count equals PROBES_PER_PHASE in scripts/golden/run_scenario_b.py; a test asserts the two agree so changing one without the other fails rather than silently contradicting every run."
     }
   ],
   "notes": "Scenario B is the comparative scenario: its verdict depends on two probes agreeing about the same response rather than on a single measurement. Both transports classify through labs/snat-exhaustion/app/classification.py so that urllib and requests cannot disagree about an identical response, which was the defect that made an earlier version of this lab self-grading. execution_status is NOT_RUN because this contract has never been executed against Azure; the counts above are the declared success criteria, not observations."

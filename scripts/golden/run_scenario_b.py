@@ -41,9 +41,16 @@ sys.dont_write_bytecode = True
 
 LAB = "snat-exhaustion"
 
-#: Probes per phase. The contract's baseline and recovery assertions
-#: expect every probe in those phases to succeed.
-PROBES_PER_PHASE = 50
+#: Probes per phase. The contract's baseline and recovery assertions expect
+#: every probe in those phases to succeed, and read this constant rather
+#: than repeating the number, so the two cannot drift.
+#:
+#: A first live run measured the real cost: one probe to the unpooled path
+#: fans out into roughly forty outbound calls, so fifty probes per phase was
+#: about six thousand requests across three phases and did not finish inside
+#: a window that could be supervised. Twelve keeps the phases meaningful
+#: while making a run completable.
+PROBES_PER_PHASE = 12
 
 #: Concurrent workers used to create connection pressure. Exhaustion is a
 #: function of sockets held in TIME_WAIT, so pressure must be concurrent
@@ -154,8 +161,12 @@ def execute(app: str, destination: str, output: pathlib.Path) -> pathlib.Path:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("app")
-    parser.add_argument("--destination", required=True,
-                        help="URL the workload calls, probed directly for its own health")
+    parser.add_argument(
+        "--destination", required=True,
+        help=("URL the workload calls, probed directly for its own health. Prefer an endpoint the "
+              "lab controls: the first run used a public rate-limited host, which throttled the "
+              "experiment rather than the platform under test. The app's own /health served through "
+              "its public hostname still leaves through SNAT and is not rate limited."))
     parser.add_argument("--output", required=True,
                         help="Private evidence directory outside the repository")
     args = parser.parse_args()

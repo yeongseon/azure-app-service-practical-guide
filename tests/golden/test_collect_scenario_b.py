@@ -36,6 +36,13 @@ def _load(name, relative):
 collect_b = _load("collect_b", "scripts/golden/collect_scenario_b.py")
 ev = _load("ev_b", "scripts/golden/evaluate_run.py")
 classification = _load("cls_b", "labs/snat-exhaustion/app/classification.py")
+_runner = _load("run_b_fix", "scripts/golden/run_scenario_b.py")
+
+#: Fixtures derive the phase size from the runner rather than repeating
+#: it. They previously hardcoded 50 and broke the moment the runner
+#: changed, which is the same drift the contract itself had.
+PROBES = _runner.PROBES_PER_PHASE
+FAILURES = 7
 
 MANIFEST = json.loads(
     (ROOT / "labs/snat-exhaustion/golden/manifest.template.json").read_text())
@@ -48,10 +55,10 @@ def build_run(baseline=None, load=None, recovery=None, health=200, omit=()):
         "run_id": "20260927T110000Z-b0b0b0b0b0b0",
         "started_at": "2026-09-27T11:00:00+00:00"}))
     phases = {
-        "baseline": [{"status": 200}] * 50 if baseline is None else baseline,
-        "load": ([{"transport_error": "EADDRNOTAVAIL"}] * 7 + [{"status": 200}] * 43
+        "baseline": [{"status": 200}] * PROBES if baseline is None else baseline,
+        "load": ([{"transport_error": "EADDRNOTAVAIL"}] * FAILURES + [{"status": 200}] * (PROBES - FAILURES)
                  if load is None else load),
-        "recovery": [{"status": 200}] * 50 if recovery is None else recovery,
+        "recovery": [{"status": 200}] * PROBES if recovery is None else recovery,
     }
     for name, probes in phases.items():
         if name in omit:
@@ -143,7 +150,7 @@ class HonestAbsenceTests(unittest.TestCase):
 
     def test_zero_transport_failures_is_reported_not_omitted(self):
         """A real zero must stay a zero; only an uncaptured phase is absent."""
-        evidence = collect_b.collect(build_run(load=[{"status": 200}] * 50))
+        evidence = collect_b.collect(build_run(load=[{"status": 200}] * PROBES))
         self.assertEqual(evidence["observations"]["load_transport_failure_count"], 0)
         self.assertNotIn("load_transport_failure_count", evidence["incomplete_fields"])
 
@@ -166,11 +173,11 @@ class DiscriminationTests(unittest.TestCase):
     def test_no_transport_failures_under_load_contradicts(self):
         self.assertEqual(
             evaluate_with(collect_b.collect(
-                build_run(load=[{"status": 200}] * 50)))["hypothesis_status"],
+                build_run(load=[{"status": 200}] * PROBES)))["hypothesis_status"],
             "CONTRADICTED")
 
     def test_http_errors_instead_of_transport_failures_contradict(self):
-        load = [{"status": 500}] * 7 + [{"status": 200}] * 43
+        load = [{"status": 500}] * FAILURES + [{"status": 200}] * (PROBES - FAILURES)
         self.assertEqual(
             evaluate_with(collect_b.collect(build_run(load=load)))["hypothesis_status"],
             "CONTRADICTED")
@@ -178,13 +185,13 @@ class DiscriminationTests(unittest.TestCase):
     def test_a_broken_baseline_contradicts(self):
         self.assertEqual(
             evaluate_with(collect_b.collect(
-                build_run(baseline=[{"status": 500}] * 50)))["hypothesis_status"],
+                build_run(baseline=[{"status": 500}] * PROBES)))["hypothesis_status"],
             "CONTRADICTED")
 
     def test_no_recovery_contradicts(self):
         self.assertEqual(
             evaluate_with(collect_b.collect(
-                build_run(recovery=[{"transport_error": "x"}] * 50)))["hypothesis_status"],
+                build_run(recovery=[{"transport_error": "x"}] * PROBES)))["hypothesis_status"],
             "CONTRADICTED")
 
 

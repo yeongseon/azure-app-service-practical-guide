@@ -79,6 +79,61 @@ class JoinTests(unittest.TestCase):
         self.assertEqual(observations["baseline_success_count"], runner.PROBES_PER_PHASE)
 
 
+class ContractAgreementTests(unittest.TestCase):
+    """The contract's expected counts must follow the runner's constant.
+
+    The manifest previously repeated the number 50 in two assertions while
+    the runner defined its own PROBES_PER_PHASE. Changing one would have
+    left the other contradicting every run, and the contradiction would
+    have read as the platform failing rather than as a stale expectation.
+    """
+
+    MANIFEST = json.loads(
+        (ROOT / "labs/snat-exhaustion/golden/manifest.template.json").read_text())
+
+    def _expected(self, field):
+        return next(a for a in self.MANIFEST["assertions"] if a["field"] == field)
+
+    def test_full_phase_counts_equal_the_probe_constant(self):
+        for field in ("baseline_success_count", "recovery_success_count"):
+            with self.subTest(field=field):
+                self.assertEqual(
+                    self._expected(field)["equals"], runner.PROBES_PER_PHASE,
+                    msg="the contract expects a count the runner cannot produce")
+
+    def test_the_transport_failure_range_fits_within_a_phase(self):
+        allowed = self._expected("load_transport_failure_count")["in"]
+        self.assertLessEqual(
+            max(allowed), runner.PROBES_PER_PHASE,
+            msg="the contract allows more failures than there are probes")
+        self.assertGreaterEqual(
+            min(allowed), 1,
+            msg="zero transport failures must not satisfy the symptom assertion")
+
+    def test_a_faithful_run_of_that_size_is_supported(self):
+        """The constant and the contract agree in practice, not just in numbers."""
+        evidence = collector.collect(runner_shaped_run())
+        directory = pathlib.Path(tempfile.mkdtemp()) / "g"
+        directory.mkdir(parents=True)
+        manifest = dict(self.MANIFEST)
+        manifest.update(run_id=evidence["run_id"], captured_at=evidence["captured_at"],
+                        execution_status="COMPLETE")
+        (directory / "manifest.json").write_text(json.dumps(manifest))
+        (directory / "evidence.json").write_text(json.dumps(evidence))
+        evaluator = _load("ev_b2", "scripts/golden/evaluate_run.py")
+        self.assertEqual(evaluator.evaluate(directory)["hypothesis_status"], "SUPPORTED")
+
+    def test_the_probe_count_is_small_enough_to_finish(self):
+        """A run nobody can supervise to the end is a run that never happens.
+
+        One probe fans out into roughly forty outbound calls, measured on a
+        live deployment. This keeps a three-phase run inside a window that
+        can be watched and cleaned up after.
+        """
+        self.assertLessEqual(runner.PROBES_PER_PHASE * 40 * 3, 2000)
+        self.assertGreaterEqual(runner.PROBES_PER_PHASE, 10)
+
+
 class ProbeRecordTests(unittest.TestCase):
     """A probe records what happened, not what it means."""
 
