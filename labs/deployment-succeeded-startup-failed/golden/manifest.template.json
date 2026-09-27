@@ -1,0 +1,77 @@
+{
+  "run_id": "TEMPLATE-replace-with-YYYYMMDDTHHMMSSZ-<hex6>",
+  "resource_id": "TEMPLATE-replace-with-/subscriptions/.../sites/<app>",
+  "captured_at": null,
+  "evaluated_at": null,
+  "document_updated_at": "2026-09-27T00:00:00Z",
+  "execution_status": "NOT_RUN",
+  "evidence_trust": "unverified",
+  "hypothesis": "Deployment success and runtime success are separable: a deployment that reports success can still leave the app failing at runtime, and the discriminating signal is an import error naming the wrong module.",
+  "assertions": [
+    {
+      "id": "baseline-healthy",
+      "role": "control",
+      "field": "baseline_status",
+      "equals": 200,
+      "claim_level": "Observed"
+    },
+    {
+      "id": "deployment-reported-success",
+      "role": "control",
+      "field": "deploy_exit_code",
+      "equals": 0,
+      "claim_level": "Observed"
+    },
+    {
+      "id": "fault-config-applied",
+      "role": "control",
+      "field": "fault_startup_command",
+      "equals": "gunicorn --bind=0.0.0.0:8000 --timeout=120 wrong_module:app",
+      "claim_level": "Observed"
+    },
+    {
+      "id": "fault-config-activated",
+      "role": "control",
+      "field": "fault_config_readback",
+      "equals": "gunicorn --bind=0.0.0.0:8000 --timeout=120 wrong_module:app",
+      "claim_level": "Observed"
+    },
+    {
+      "id": "symptom-runtime-5xx",
+      "role": "symptom",
+      "field": "fault_status_class",
+      "equals": "5xx",
+      "claim_level": "Observed"
+    },
+    {
+      "id": "discriminating-import-error",
+      "role": "discriminating",
+      "field": "fault_import_error_hits",
+      "in": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "claim_level": "Observed"
+    },
+    {
+      "id": "recovery-healthy",
+      "role": "recovery",
+      "field": "recovery_status",
+      "equals": 200,
+      "claim_level": "Observed"
+    }
+  ],
+  "notes": [
+    "fault-config-activated is deliberately separate from fault-config-applied. A control-plane write returning the requested command shows the platform accepted it, not that the serving worker was recycled. Without the readback a still-healthy app is ambiguous between 'the entrypoint does not matter' and 'the change had not taken effect yet', and only the first is a disproof.",
+    "fault_status_class is recorded as a class rather than a raw code so that a non-5xx response is CONTRADICTED rather than silently reclassified.",
+    "execution_status is NOT_RUN until a real Azure run produces this file. The evaluator reports NOT_TESTED for the hypothesis in that state; no verdict is implied by the presence of this template."
+  ]
+}

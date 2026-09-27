@@ -1,0 +1,16 @@
+{
+  "run_id": "20260927T104304Z-aba0d3a9daa7",
+  "captured_at": "2026-09-27T10:43:04.507694+00:00",
+  "observations": {
+    "baseline_status": 200,
+    "deploy_exit_code": 0,
+    "fault_startup_command": "gunicorn --bind=0.0.0.0:8000 --timeout=120 wrong_module:app",
+    "fault_config_readback": "gunicorn --bind=0.0.0.0:8000 --timeout=120 wrong_module:app",
+    "fault_status_class": "5xx",
+    "fault_import_error_hits": 2,
+    "recovery_status": 200
+  },
+  "collector": "scripts/golden/collect_scenario_a.py",
+  "incomplete_fields": [],
+  "capture_provenance": "derived"
+}

@@ -1,0 +1,8 @@
+{
+  "scenario": "deployment-succeeded-startup-failed",
+  "collector": "scripts/golden/collect_scenario_a.py",
+  "sanitised": true,
+  "sanitisation": "Subscription, tenant and resource identifiers are zeroed per the repository PII rules. Observations, timestamps and outcomes are unmodified, so a replay recomputes the same verdict from the same values.",
+  "replay": "python3 scripts/golden/evaluate_run.py evidence/runs/20260927T104304Z-aba0d3a9daa7",
+  "note": "Retained so a reviewer can re-evaluate without Azure access. The run identifier is declared in the lab's evidence-classification executed_runs."
+}

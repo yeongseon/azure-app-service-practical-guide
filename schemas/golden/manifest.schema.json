@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yeongseon.github.io/azure-app-service-practical-guide/schemas/golden/manifest.schema.json",
+  "title": "Golden v1 run manifest",
+  "description": "Run identity and the assertions declared BEFORE execution. Declaring assertions up front is what stops a run from choosing its own success criteria after seeing the evidence.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "run_id",
+    "resource_id",
+    "captured_at",
+    "execution_status",
+    "assertions"
+  ],
+  "properties": {
+    "run_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Unique per run. Evidence from one run must never be evaluated against another. Null in a template: a manifest that has not run has no identity to state."
+    },
+    "resource_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1,
+      "description": "Null in a template: a manifest that has not run has no identity to state."
+    },
+    "captured_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time",
+      "description": "When the EVIDENCE was collected. Never overwritten by a later evaluation. Null in a template: a manifest that has not run has no identity to state."
+    },
+    "evaluated_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time",
+      "description": "When the gates were re-derived offline. Distinct from captured_at: re-running an evaluator must not restate old evidence as freshly captured. Null in a template: a manifest that has not run has no identity to state."
+    },
+    "document_updated_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time",
+      "description": "When the prose was last edited. Distinct from both timestamps above."
+    },
+    "execution_status": {
+      "enum": [
+        "COMPLETE",
+        "PARTIAL",
+        "BLOCKED",
+        "FAILED",
+        "NOT_RUN",
+        "RUNNING"
+      ]
+    },
+    "evidence_trust": {
+      "enum": [
+        "trusted-current",
+        "trusted-historical",
+        "unverified",
+        "invalid"
+      ],
+      "default": "trusted-current"
+    },
+    "assertions": {
+      "type": "array",
+      "items": {
+        "$ref": "https://yeongseon.github.io/azure-app-service-practical-guide/schemas/golden/assertion.schema.json"
+      }
+    },
+    "hypothesis": {
+      "type": "string",
+      "description": "The claim the declared assertions are meant to test. Stated before execution so a run cannot choose what it was asking after seeing the answer."
+    },
+    "notes": {
+      "type": [
+        "string",
+        "array"
+      ],
+      "description": "Author commentary. Carries no weight in evaluation."
+    }
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "run_id": null,
+  "resource_id": null,
+  "captured_at": null,
+  "evaluated_at": null,
+  "document_updated_at": "2026-09-27",
+  "execution_status": "NOT_RUN",
+  "evidence_trust": "trusted-current",
+  "hypothesis": "Outbound connections from the app exhaust the SNAT port allocation of its App Service plan, so new outbound connections to the same destination begin failing at the transport layer while the destination itself stays healthy.",
+  "assertions": [
+    {
+      "id": "baseline-outbound-succeeds",
+      "role": "control",
+      "field": "baseline_success_count",
+      "equals": 12,
+      "claim_level": "Observed",
+      "note": "Before load, every outbound probe completes. Without this the later failures cannot be attributed to exhaustion rather than a destination that was broken all along. The expected count equals PROBES_PER_PHASE in scripts/golden/run_scenario_b.py; a test asserts the two agree so changing one without the other fails rather than silently contradicting every run."
+    },
+    {
+      "id": "symptom-transport-failures-appear",
+      "role": "symptom",
+      "field": "load_transport_failure_count",
+      "in": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "claim_level": "Observed",
+      "note": "Connections fail before any HTTP status is returned. A transport failure is the symptom; an HTTP error code is not, because the destination answering 5xx would mean the destination failed rather than the connection."
+    },
+    {
+      "id": "discriminating-destination-stays-healthy",
+      "role": "discriminating",
+      "field": "destination_health_status",
+      "equals": 200,
+      "claim_level": "Observed",
+      "note": "This is what separates SNAT exhaustion from destination failure. If the destination is also unhealthy the transport failures are explained without invoking port exhaustion, and the hypothesis is not supported."
+    },
+    {
+      "id": "discriminating-http-errors-absent",
+      "role": "discriminating",
+      "field": "load_http_error_count",
+      "equals": 0,
+      "claim_level": "Observed",
+      "note": "Exhaustion prevents connections from being established, so failures arrive as transport errors and not as 4xx or 5xx responses. A run showing HTTP errors instead is describing a different fault."
+    },
+    {
+      "id": "recovery-outbound-succeeds-again",
+      "role": "recovery",
+      "field": "recovery_success_count",
+      "equals": 12,
+      "claim_level": "Observed",
+      "note": "After connection pressure is removed, outbound probes succeed again. Without recovery the run cannot distinguish exhaustion from a permanent break introduced during the load phase. The expected count equals PROBES_PER_PHASE in scripts/golden/run_scenario_b.py; a test asserts the two agree so changing one without the other fails rather than silently contradicting every run."
+    }
+  ],
+  "notes": "Scenario B is the comparative scenario: its verdict depends on two probes agreeing about the same response rather than on a single measurement. Both transports classify through labs/snat-exhaustion/app/classification.py so that urllib and requests cannot disagree about an identical response, which was the defect that made an earlier version of this lab self-grading. execution_status is NOT_RUN because this contract has never been executed against Azure; the counts above are the declared success criteria, not observations."
+}

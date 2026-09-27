@@ -33,6 +33,36 @@ jobs:
         run: |
           find apps labs scripts -type f -name '*.sh' -print0 | xargs -0 -r shellcheck
 
+  lab-verifiers:
+    name: Lab Evidence Verifiers
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Detect absorbed strong/fallback gate predicates
+        run: |
+          python3 -m doctest scripts/detect_absorbed_predicates.py
+          python3 scripts/detect_absorbed_predicates.py labs \
+            --allowlist scripts/absorbed-predicate-allowlist.txt \
+            --repo-root .
+
+      - name: Run startup-failure evaluator regression suite
+        run: python3 labs/deployment-succeeded-startup-failed/test_run.py
+
+      - name: Confirm the evaluator fails closed with no evidence
+        run: |
+          empty_run_dir="$(mktemp -d)"
+          if python3 labs/deployment-succeeded-startup-failed/run.py evaluate "${empty_run_dir}"; then
+            echo "The evaluator exited 0 for a run directory containing no evidence." >&2
+            echo "It must fail closed rather than report an unverified success." >&2
+            exit 1
+          fi
+
   nodejs:
     name: Node.js App
     runs-on: ubuntu-latest
