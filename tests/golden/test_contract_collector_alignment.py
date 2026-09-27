@@ -48,8 +48,16 @@ def emitted_fields(lab_name):
     against what the contract claims, without executing Azure.
     """
     fields = set()
-    for script in sorted((ROOT / "labs" / lab_name).glob("*.sh")):
-        text = script.read_text()
+    sources = list((ROOT / "labs" / lab_name).glob("*.sh"))
+    # A lab may also be served by a collector under scripts/golden/ that
+    # re-expresses its captures under the contract's names. Scenario A is
+    # collected that way, from a run directory its runner already produced.
+    for collector in sorted((ROOT / "scripts/golden").glob("collect_*.py")):
+        declared = re.search(r'^LAB = "([^"]+)"', collector.read_text(), re.M)
+        if declared and declared.group(1) == lab_name:
+            sources.append(collector)
+    for path in sorted(sources):
+        text = path.read_text()
         for match in re.finditer(r'"([a-z][a-z0-9_]*)"\s*:', text):
             fields.add(match.group(1))
     return fields
