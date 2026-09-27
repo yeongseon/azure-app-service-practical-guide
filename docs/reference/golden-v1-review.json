@@ -3,10 +3,10 @@
   "epic": 173,
   "document_updated_at": "2026-09-27",
   "verdict": "NOT_COMPLETE",
-  "verdict_basis": "No Definition-of-Done item is unmet outright, and two are partial. Scenario A has been reproduced by an operator other than its author, which was the last thing no amount of code could supply. What remains is documentation a stranger can follow without deviation, and a Scenario B run.",
+  "verdict_basis": "One Definition-of-Done item is partial and none is unmet. Independent reproduction is closed: the third operator reproduced the result and followed the documentation without a single deviation, which took two rounds of corrections driven by the two before it. What remains is a completed Scenario B run.",
   "counts": {
-    "MET": 13,
-    "PARTIAL": 2,
+    "MET": 14,
+    "PARTIAL": 1,
     "NOT_MET": 0,
     "total": 15
   },
@@ -78,10 +78,9 @@
     {
       "id": 10,
       "requirement": "Independent reproduction completed for at least one scenario",
-      "status": "PARTIAL",
-      "evidence": "Two independent operators have reproduced Scenario A, each given only the published documentation and the commit, each barred from reading the retained evidence, the review and the tests. Both obtained SUPPORTED, matching run 20260927T104304Z without being told the expected answer, and both confirmed their own cleanup. The second confirmed the exit-code repair from outside: the code the runner returned and the meaning the documentation gives it agreed, where the first had found them contradictory.",
-      "gap": "documentation_result is FAILED on both records, so neither passes the gate. The second reproduction found four further gaps, all about which command sequence is canonical: the runbook showed the shell scripts but never the run.py execute invocation that produces the verdict, prose named no subcommand so the natural guess was invalid, two procedures were presented without precedence, and two cleanup paths were documented without one being identified for independent use. All four are fixed and a canonical sequence now leads the runbook. Both records are annotated rather than rewritten, because each describes what its operator actually met. A third reproduction against the corrected page is what would close this.",
-      "verify": "python3 scripts/golden/check_reproduction.py evidence/reproductions/scenario-a.json"
+      "status": "MET",
+      "evidence": "Three independent operators have reproduced Scenario A, each given only the published documentation and the commit, each barred from the retained evidence, the review and the tests. All three obtained SUPPORTED without being told the expected answer, and all three confirmed their own cleanup. The third also passes the documentation axis: run 20260927T233923Z-1f4cb2082505 reports reproduction_result REPRODUCED and documentation_result REPRODUCED, with no deviations, and the operator stated plainly that the documentation was sufficient without consulting --help, reading source, or inferring anything. check_reproduction reports passed true.",
+      "verify": "python3 scripts/golden/check_reproduction.py evidence/reproductions/scenario-a-third.json"
     },
     {
       "id": 11,
@@ -120,7 +119,6 @@
     }
   ],
   "blocking_for_v1": [
-    "Item 10: the hypothesis reproduced independently but the documentation did not; five deviations are recorded.",
     "Item 9: Scenario B has not completed a live run."
   ],
   "notes": "Item 10 needs a person other than the operator who produced the runs; no amount of further code satisfies it. Item 9 needs Scenario B instrumented to persist per-phase probe records and probe the destination's own health, after which it can run. Scenario C's run left two observations absent and returned INCONCLUSIVE, which is the model working rather than failing.",
@@ -145,7 +143,8 @@
         "Splitting the trust field into retention_status and capture_provenance closed the two-vocabulary finding; a classification had been holding values from both axes in one field. A second Scenario C run aimed at the remaining observations failed to close them and instead exposed two more places where absence was being read as refutation: a restart boundary set at the swap's return rather than its start, and an unreachable slot compared as though it held a configuration.",
         "Independent reproduction was obtained. A separate agent, given only published docs and the commit, reproduced Scenario A's SUPPORTED verdict against fresh infrastructure. It also demonstrated the value of separating the two axes: the hypothesis reproduced while the documentation failed, five concrete defects being the reason.",
         "All five documentation defects the reproduction surfaced are fixed. The exit-code conflict was the substantive one and was a code defect rather than a documentation defect: run.py returned 1 for invalid evidence and 3 for a contradicted hypothesis while evaluate_run.py returned 1 for CONTRADICTED and 3 for NOT_TESTED, so a caller reading 3 could not tell a refuted hypothesis from one never tested. Both documents were individually accurate, which is why only running both tools could reveal it. The tools now publish one mapping and invalid evidence takes a code of its own.",
-        "A second independent reproduction verified the exit-code repair from outside and found four more documentation gaps, every one about which of two command sequences to follow. The pattern across both reproductions is consistent: the hypothesis reproduces readily and the instructions do not, which is precisely the split the two-axis gate exists to expose."
+        "A second independent reproduction verified the exit-code repair from outside and found four more documentation gaps, every one about which of two command sequences to follow. The pattern across both reproductions is consistent: the hypothesis reproduces readily and the instructions do not, which is precisely the split the two-axis gate exists to expose.",
+        "Independent reproduction now passes both axes. It took three attempts, and the first two failed only on documentation while reproducing the result immediately. Each failure named the specific passages that misled it, and the third operator, seeing the corrected page cold, reported no gaps and needed no --help. The two-axis gate is what made that progression visible instead of letting the first REPRODUCED stand as success."
       ],
       "findings_disputed": [
         "The reproduction gate was called vacuously satisfiable on a fabricated record. The specific invocation shown passed a dict where check() takes a path, and the cited output keys do not exist. The underlying NOT_TESTED equality defect was real and is fixed.",
