@@ -141,6 +141,21 @@ def evaluate(run, phases, logs):
                 'it does not positively prove the serving worker was recycled.']}
 
 
+#: Shell exit codes, shared with scripts/golden/evaluate_run.py.
+#:
+#: These two tools previously disagreed about the same numbers: 1 meant
+#: "evidence failed validation" here and "CONTRADICTED" there, and 3 meant
+#: "CONTRADICTED" here and "NOT_TESTED" there. An independent reproduction
+#: found it. A caller reading 3 could not tell a refuted hypothesis from one
+#: that was never tested, which is precisely the distinction this model
+#: exists to preserve, so the numbers now carry one meaning each.
+EXIT_CODES = {'SUPPORTED': 0, 'CONTRADICTED': 1, 'INCONCLUSIVE': 2, 'NOT_TESTED': 3}
+
+#: Evidence that failed validation. No hypothesis verdict is possible, so
+#: this is not a hypothesis code.
+EXIT_EVIDENCE_INVALID = 4
+
+
 def exit_code_for(result):
     """Map a result onto a shell exit code.
 
@@ -149,9 +164,14 @@ def exit_code_for(result):
     contract forbids presenting a refutation as a successful reproduction.
     """
     validation = result['evidence_validation']
-    if validation == 'PASS' and result.get('hypothesis_evaluation') == 'CONTRADICTED':
-        return 3
-    return {'PASS': 0, 'FAIL': 1, 'INCONCLUSIVE': 2}[validation]
+    if validation == 'FAIL':
+        # Evidence that failed validation supports no hypothesis verdict at
+        # all, so it gets a code of its own rather than borrowing one that
+        # already means something about the hypothesis.
+        return 4
+    if validation == 'INCONCLUSIVE':
+        return EXIT_CODES['INCONCLUSIVE']
+    return EXIT_CODES[result.get('hypothesis_evaluation') or 'NOT_TESTED']
 
 
 def command(folder, label, argv, timeout=900):
@@ -344,15 +364,22 @@ def cleanup(args):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest='action', required=True)
-    start = sub.add_parser('execute')
-    start.add_argument('resource_group')
-    start.add_argument('app')
-    start.add_argument('--output', required=True, help='Private evidence directory outside the repository')
-    check = sub.add_parser('evaluate')
-    check.add_argument('run_dir')
-    clean = sub.add_parser('cleanup')
-    clean.add_argument('run_dir')
-    clean.add_argument('resource_group')
+    # Every argument carries help text. An independent reproduction found
+    # that `--help` listed the subcommands without their positional
+    # arguments, so the CLI alone was not enough to construct a call.
+    start = sub.add_parser(
+        'execute', help='Run the experiment against Azure and capture evidence.')
+    start.add_argument('resource_group', help='Dedicated, disposable resource group holding the lab.')
+    start.add_argument('app', help='Name of the web app deployed into that group.')
+    start.add_argument('--output', required=True,
+                       help='Private evidence directory, outside the repository.')
+    check = sub.add_parser(
+        'evaluate', help='Re-evaluate a captured run offline. Reads no Azure state.')
+    check.add_argument('run_dir', help='Run directory produced by execute.')
+    clean = sub.add_parser(
+        'cleanup', help='Delete the lab resources and record the outcome in the run.')
+    clean.add_argument('run_dir', help='Run directory to annotate with the cleanup result.')
+    clean.add_argument('resource_group', help='Resource group to delete.')
     args = parser.parse_args()
     if args.action == 'execute':
         return execute(args)

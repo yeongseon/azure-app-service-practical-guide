@@ -202,7 +202,7 @@ its silence as agreement converts missing data into support.
 
 ## The run directory
 
-A run is one directory. The evaluator reads exactly two files from it:
+A run is one directory. `evaluate_run.py` reads exactly two files from it:
 
 | File | Purpose |
 |---|---|
@@ -212,6 +212,20 @@ A run is one directory. The evaluator reads exactly two files from it:
 `result.json`, when present, is recomputed and compared, never consumed. A
 collector may write additional files, and the evaluator ignores them: they
 are provenance for a reader, not inputs to a verdict.
+
+A scenario may also carry its own runner with its own capture layout. The
+startup-failure lab writes `run.json` and per-phase directories through
+`run.py`, which evaluates against `contract.json` rather than against a
+Golden manifest. Those two layouts are bridged, not merged: a collector such
+as `scripts/golden/collect_scenario_a.py` reads the runner's directory and
+re-expresses its captures as the `evidence.json` this model describes. An
+independent reproduction reported this relationship as unexplained, which it
+was.
+
+| Layout | Written by | Evaluated by |
+|---|---|---|
+| `run.json` plus phase directories | a scenario runner such as `run.py` | that runner, against `contract.json` |
+| `manifest.json` plus `evidence.json` | a collector | `evaluate_run.py`, against the declared assertions |
 
 ## See Also
 

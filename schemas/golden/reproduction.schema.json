@@ -91,6 +91,10 @@
           },
           "detail": {
             "type": "string"
+          },
+          "resolution": {
+            "type": "string",
+            "description": "How this deviation was addressed after the reproduction. Recording it here keeps the finding and its repair together without altering what was observed."
           }
         }
       }
@@ -100,6 +104,10 @@
         "string",
         "null"
       ]
+    },
+    "note": {
+      "type": "string",
+      "description": "Commentary on the record itself, such as whether the deviations it reports have since been repaired. A reproduction record describes what one operator encountered and is never edited to reflect later fixes, so this is where that context lives."
     }
   }
 }

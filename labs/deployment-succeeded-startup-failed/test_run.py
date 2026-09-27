@@ -185,11 +185,13 @@ class EvaluationTests(unittest.TestCase):
         self.phases['fault']['probes'] = [{'status': self.phases['fault']['status'], 'exit_code': 0} for _ in range(24)]
         refuted = pilot.evaluate(self.run, self.phases, self.logs)
         self.assertEqual(refuted['hypothesis_evaluation'], 'CONTRADICTED')
-        self.assertEqual(pilot.exit_code_for(refuted), 3)
+        self.assertEqual(pilot.exit_code_for(refuted), 1)  # CONTRADICTED, matching evaluate_run.py
 
         self.phases['fault']['run_id'] = 'other'
         failed = pilot.evaluate(self.run, self.phases, self.logs)
-        self.assertEqual(pilot.exit_code_for(failed), 1)
+        # Evidence that failed validation supports no hypothesis verdict,
+        # so it no longer borrows the code that now means CONTRADICTED.
+        self.assertEqual(pilot.exit_code_for(failed), 4)
 
     def test_raw_contradiction_cannot_be_overridden(self):
         self.phases['fault']['status'] = 200
@@ -256,7 +258,7 @@ class EvaluationTests(unittest.TestCase):
                 else:
                     target.write_text(content)
                 with contextlib.redirect_stdout(io.StringIO()):
-                    self.assertEqual(pilot.evaluate_folder(folder), 1)
+                    self.assertEqual(pilot.evaluate_folder(folder), 4)  # evidence FAIL, not CONTRADICTED
 
     def test_repeated_evaluation_preserves_capture(self):
         with tempfile.TemporaryDirectory() as temporary:
@@ -276,7 +278,7 @@ class EvaluationTests(unittest.TestCase):
             self.run['execution_status'] = 'FAILED'
             (folder / 'run.json').write_text(json.dumps(self.run))
             with contextlib.redirect_stdout(io.StringIO()):
-                self.assertEqual(pilot.evaluate_folder(folder), 1)
+                self.assertEqual(pilot.evaluate_folder(folder), 4)  # evidence FAIL, not CONTRADICTED
 
     def test_fault_error_still_attempts_recovery_and_preserves_new_runs(self):
         with tempfile.TemporaryDirectory() as temporary:
@@ -287,7 +289,7 @@ class EvaluationTests(unittest.TestCase):
                      mock.patch.object(pilot, 'azure', return_value=app), \
                      mock.patch.object(pilot, 'phase', side_effect=[{}, RuntimeError('fault failure'), {}]) as phase, \
                      contextlib.redirect_stdout(io.StringIO()):
-                    self.assertEqual(pilot.execute(args), 1)
+                    self.assertEqual(pilot.execute(args), 4)  # evidence FAIL, not CONTRADICTED
                     self.assertEqual([call.args[2] for call in phase.call_args_list],
                                      ['baseline', 'fault', 'recovery'])
             captures = list(pathlib.Path(temporary).glob('*/run.json'))

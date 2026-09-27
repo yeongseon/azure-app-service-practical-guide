@@ -363,9 +363,36 @@ Any one condition disproves the hypothesis:
 
 The current procedure establishes a healthy baseline before changing only the module entrypoint. The archived artifacts below were collected using an earlier procedure and are not evidence for the revised runner.
 
-The scenario-local [contract](https://github.com/yeongseon/azure-app-service-practical-guide/blob/main/labs/deployment-succeeded-startup-failed/contract.json) fixes criteria and sampling before execution. A new run creates a unique directory; evaluation never overwrites prior captures. Exit codes are `0` for evidence PASS with the hypothesis supported, `1` for FAIL, `2` for INCONCLUSIVE, and `3` for valid evidence whose hypothesis was CONTRADICTED. A refuted run is a real result, not a broken one, so it is reported separately rather than sharing exit `0` with a confirmed reproduction. Evidence PASS does not assert cleanup or independent reproduction. A fault phase that stays healthy is only recorded as CONTRADICTED when the configuration was read back unchanged after an exhausted probe budget; otherwise it stays INCONCLUSIVE, because a control-plane write alone does not show the serving worker was recycled.
+!!! warning "Historical values are not acceptance criteria"
+    Tables in later sections marked with observed values record what an earlier run saw. They
+    illustrate the failure's shape; they are not thresholds a fresh run must match, and a run
+    that differs from them is not thereby wrong. Judge a fresh run only by the verdict the
+    evaluator returns against `contract.json`. An independent reproduction reported that
+    separating the two took care, which is why this notice exists.
+
+The scenario-local [contract](https://github.com/yeongseon/azure-app-service-practical-guide/blob/main/labs/deployment-succeeded-startup-failed/contract.json) fixes criteria and sampling before execution. A new run creates a unique directory; evaluation never overwrites prior captures. Exit codes are shared with `scripts/golden/evaluate_run.py` so the same number means the same thing in both tools: `0` SUPPORTED, `1` CONTRADICTED, `2` INCONCLUSIVE, `3` NOT_TESTED, and `4` for evidence that failed validation, which supports no hypothesis verdict at all. An independent reproduction found these two tools disagreeing, with `1` and `3` each meaning two different things depending on which you ran. A refuted run is a real result, not a broken one, so it is reported separately rather than sharing exit `0` with a confirmed reproduction. Evidence PASS does not assert cleanup or independent reproduction. A fault phase that stays healthy is only recorded as CONTRADICTED when the configuration was read back unchanged after an exhausted probe budget; otherwise it stays INCONCLUSIVE, because a control-plane write alone does not show the serving worker was recycled.
 
 Use only a dedicated disposable resource group with permission to create App Service and Log Analytics, configure diagnostics, query logs, and delete the group. B1 compute and Log Analytics ingestion incur charges until cleaned up. Run one experiment at a time with no concurrent configuration changes. Read [Clean Up](#clean-up) before deployment; it also applies to failed or interrupted runs. Raw captures contain real resource IDs and configuration: keep them private outside Git, review and sanitize before publication, and retain public transformation records separately.
+
+### 3.0 Cleanup
+
+Delete everything the lab created when you are finished, whatever the outcome:
+
+```bash
+RG=rg-lab-startup bash labs/deployment-succeeded-startup-failed/cleanup.sh
+az group exists --name "$RG"
+```
+
+| Command | Purpose |
+| --- | --- |
+| `bash labs/.../cleanup.sh` | Delete the lab's resource group and everything in it. |
+| `RG=` | The resource group to delete. The script refuses to run without it. |
+| `az group exists` | Confirm the deletion finished. Deletion is asynchronous, so this prints `true` for a short while after the script returns. |
+
+The script deletes the whole group rather than enumerating resources, so it
+stays complete as the template changes. `run.py cleanup` exists as well and
+additionally records the cleanup status into a run directory; use it when you
+have a run to annotate, and this when you simply want the resources gone.
 
 ### 3.1 Prerequisites
 

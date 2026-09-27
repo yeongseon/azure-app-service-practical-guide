@@ -13,23 +13,29 @@
   "deviations": [
     {
       "kind": "incorrect-step",
-      "detail": "The lab guide and the evidence model state different exit-code meanings. The guide maps 1 to FAIL and 3 to CONTRADICTED; the model maps 1 to CONTRADICTED and 3 to NOT_TESTED. The run exited 0 so the result was unaffected, but a failing or contradicted run would be ambiguous."
+      "detail": "The lab guide and the evidence model state different exit-code meanings. The guide maps 1 to FAIL and 3 to CONTRADICTED; the model maps 1 to CONTRADICTED and 3 to NOT_TESTED. The run exited 0 so the result was unaffected, but a failing or contradicted run would be ambiguous.",
+      "resolution": "Fixed: both tools now publish one EXIT_CODES mapping and evidence-validation failure uses a separate code 4, pinned by tests/golden/test_exit_code_agreement.py."
     },
     {
       "kind": "undocumented-step",
-      "detail": "cleanup.sh is not mentioned in the published runbook, which documents run.py cleanup instead. The reproducer executed it only because the reproduction instructions required it."
+      "detail": "cleanup.sh is not mentioned in the published runbook, which documents run.py cleanup instead. The reproducer executed it only because the reproduction instructions required it.",
+      "resolution": "Fixed: the runbook documents cleanup.sh in section 3.0 with a command table."
     },
     {
       "kind": "incorrect-step",
-      "detail": "The evidence model describes a run directory of manifest.json and evidence.json and says the evaluator reads exactly two files. This scenario writes run.json and phase directories and no result.json, and nothing explains the relationship between the scenario format and the generic model."
+      "detail": "The evidence model describes a run directory of manifest.json and evidence.json and says the evaluator reads exactly two files. This scenario writes run.json and phase directories and no result.json, and nothing explains the relationship between the scenario format and the generic model.",
+      "resolution": "Fixed: the evidence model explains both run layouts and how a collector bridges them."
     },
     {
       "kind": "undocumented-step",
-      "detail": "run.py --help lists subcommands without their positional arguments, so the CLI alone is insufficient to construct an invocation."
+      "detail": "run.py --help lists subcommands without their positional arguments, so the CLI alone is insufficient to construct an invocation.",
+      "resolution": "Fixed: every run.py argument carries help text, so --help is sufficient to construct a call."
     },
     {
       "kind": "incorrect-step",
-      "detail": "The runbook interleaves historical observed values with the current procedure, so an operator must work to separate retained examples from acceptance criteria for a fresh run."
+      "detail": "The runbook interleaves historical observed values with the current procedure, so an operator must work to separate retained examples from acceptance criteria for a fresh run.",
+      "resolution": "Fixed: the runbook carries an explicit notice that historical observed values are not acceptance criteria for a fresh run."
     }
-  ]
+  ],
+  "note": "This record describes what the reproducing operator encountered on 2026-09-27 and is not edited to reflect later repairs. Every deviation it reports has since been fixed, and each carries a resolution, but the documentation_result stays FAILED because that is what this reproduction found. Closing the item needs a fresh reproduction against the corrected documentation, by an operator who has not seen this one."
 }

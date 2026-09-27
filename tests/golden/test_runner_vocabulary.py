@@ -106,10 +106,29 @@ class VocabularyBoundaryTests(unittest.TestCase):
         If the runner ever imports the evaluator, this guard becomes
         unnecessary and should be deleted in the same change rather than
         left as a second, weaker check of the same property.
+
+        The check is on imports, not on mentions. An earlier version
+        rejected any occurrence of the name, which failed when a comment
+        explained that the exit codes are shared with that tool. Naming a
+        sibling in prose is how a reader learns the codes agree; it does
+        not make the lab depend on it.
         """
+        import ast
+        tree = ast.parse(RUNNER.read_text())
+        imported = set()
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Import):
+                imported.update(alias.name for alias in node.names)
+            elif isinstance(node, ast.ImportFrom) and node.module:
+                imported.add(node.module)
+        for name in sorted(imported):
+            with self.subTest(module=name):
+                self.assertNotIn("evaluate_run", name)
+                self.assertNotIn("golden", name)
         source = RUNNER.read_text()
-        self.assertNotIn("evaluate_run", source)
-        self.assertNotIn("scripts.golden", source)
+        # Loading it dynamically is coupling too, however it is spelled.
+        self.assertNotRegex(source, r"spec_from_file_location\([^)]*evaluate_run")
+        self.assertNotRegex(source, r"sys\.path\.(insert|append)")
 
 
 if __name__ == "__main__":
