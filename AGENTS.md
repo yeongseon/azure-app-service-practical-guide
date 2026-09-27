@@ -1097,6 +1097,62 @@ content_validation:
 6. **PII Detection Gate**: Run `python scripts/validate_pii.py` to scan `docs/` for leaked identifiers before they reach the public site. The gate flags UUID-shaped subscription/tenant/object IDs and real email addresses (outside documentation-safe domains) as **blocking**, and RFC 1918 private IPv4 addresses as **advisory** (non-blocking) — private ranges are non-routable and used throughout the series as teaching examples. Synthetic UUIDs (all-same-character, uniform hyphen groups, sequential-hex runs such as `a1b2c3d4-e5f6-7890-abcd-ef1234567890`), documented public Azure built-in role definition IDs, and safe email domains (`example.com`, `contoso.com`, reserved TLDs like `.example`/`.test`, and `*.azurecomm.net`) are recognized automatically. A per-repo `scripts/pii-allowlist.txt` holds any additional confirmed-safe example values. In CI the `Validate PII` job runs the detector's doctests, blocks on **changed Markdown files only** (`--files`, so historical debt never becomes a permanent failure), and runs a full-repo advisory scan for visibility. This gate is a Prevention item of the cross-repo quality-gate audit ([azure-container-apps-practical-guide#384](https://github.com/yeongseon/azure-container-apps-practical-guide/issues/384)); it is vendored per repository so each guide carries its own script, workflow, and allowlist.
 7. **Visual Content Gate (advisory)**: Run `python scripts/validate_visual_content.py --all` to report factual-claim pages carrying **no visual aid** (no Mermaid fence, no `shot()` capture reference, no Markdown image). Scope reuses `scripts/lib/content_scope.is_in_scope` - the same factual-claim page set as the `content_validation` policy. The gate is **WARN-only**: it prints per-page warnings plus a coverage summary and always exits 0, making visual coverage a tracked CI metric without blocking on historical debt (verified series baseline: diagrams on 79-99% of pages, portal screenshots on App Service 95 / AKS 8 / elsewhere 0). In CI the `Validate Visual Content (advisory)` job runs the gate doctests and the full-repo report. Escalation to a blocking gate is a per-repo decision tracked in [azure-container-apps-practical-guide#391](https://github.com/yeongseon/azure-container-apps-practical-guide/issues/391); vendored per repository like the other shared-core gates.
 
+## Evidence-Driven Agent Behavior
+
+This repository answers a different question from Microsoft Learn. Learn
+documents how App Service behaves. This guide must show how an engineer
+reproduces that behaviour, observes it, and knows what the observation does
+and does not prove. Agent behaviour follows from that.
+
+### Rules that a validator can enforce belong in a validator
+
+A rule stated only in this file is advisory. Before adding a rule here, ask
+whether a script could check it; if so, write the script and wire it into a
+workflow, and let this file describe intent rather than restate the check.
+
+A documented rule that nothing executes is worse than no rule, because it
+reads as coverage. `tools/validate_frontmatter.py` was described here as
+rejecting a forbidden `content_validation` block while no workflow invoked
+it. Running it surfaced two violations that had accumulated unnoticed: a
+forbidden block emitted by the validation-status generator, and an invented
+`doc_type`. Both existed because the only thing enforcing the rule was
+prose.
+
+### Report what was run, not what was intended
+
+State the command, the exit code, and the observed output. A check that was
+not executed is reported as NOT RUN. "Should pass", "types check out" and
+"the tests I wrote cover it" are not results.
+
+Absence of evidence is INCONCLUSIVE, never a refutation. A missing field, a
+truncated capture and a log that has not arrived yet are all states of not
+knowing, and recording them as disproof manufactures findings the evidence
+does not support.
+
+### A suite that passes on first write is suspect
+
+Negative tests exist to refuse things. If a new guard passes immediately,
+prove it discriminates: break the code it protects and confirm the guard
+fails. An assertion that cannot fail is indistinguishable from one that is
+absent.
+
+Pin the invariant, not the incident. A test that encodes "this specific
+defect is present" expires the moment it is fixed; a test that encodes
+"this property must hold" keeps working.
+
+### Raw evidence outranks any generated summary
+
+Derived files are recomputed and compared, never consumed as input. When a
+summary and the raw records disagree, the raw records decide, and the
+disagreement is recorded rather than resolved silently.
+
+Keep `captured_at`, `evaluated_at` and `document_updated_at` distinct. A
+field named for capture that holds evaluation time republishes old evidence
+as current on every re-run.
+
+See [Golden Evidence Model](docs/reference/golden-evidence-model.md) for the
+vocabulary, the run layout and the evaluator.
+
 ## Mandatory Oracle Review (AI Agent Rule)
 
 **ALL work performed by AI agents MUST undergo Oracle quality review before completion.**

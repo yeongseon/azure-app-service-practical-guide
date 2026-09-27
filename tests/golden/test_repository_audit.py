@@ -76,27 +76,57 @@ class DeletionPolicyTests(unittest.TestCase):
                 self.assertEqual(row["decision"], "KEEP", msg=row["path"])
 
 
-class RewriteFindingTests(unittest.TestCase):
-    """The REWRITE finding must still be true, or the audit is stale."""
+class EnforcementInvariantTests(unittest.TestCase):
+    """A rule AGENTS.md says a validator enforces must actually be invoked.
 
-    def test_validate_frontmatter_is_marked_rewrite(self):
-        row = [r for r in AUDIT["paths"] if r["path"] == "tools/validate_frontmatter.py"][0]
-        self.assertEqual(row["decision"], "REWRITE")
+    This class replaced an earlier pair of tests that pinned the transient
+    finding itself: that validate_frontmatter.py was orphaned and therefore
+    marked REWRITE. Those tests failed the moment the defect was fixed,
+    which is what they were written to do. Pinning the finding is only
+    useful until it is resolved; the durable property is that a documented
+    enforcement claim is backed by an actual CI invocation.
+    """
 
-    def test_validate_frontmatter_is_genuinely_not_invoked_by_ci(self):
-        self.assertFalse(
-            invoked_by_ci("validate_frontmatter.py"),
-            msg="the audit claims this validator is never invoked; if CI now runs it, "
-                "the REWRITE finding is stale and must be re-decided")
+    def _claimed_enforcers(self):
+        """Validators AGENTS.md names as rejecting something."""
+        agents = (ROOT / "AGENTS.md").read_text()
+        found = set()
+        for match in re.finditer(r"`(tools/[\w./-]+\.py|scripts/[\w./-]+\.py)`", agents):
+            path = match.group(1)
+            window = agents[max(0, match.start() - 220):match.end() + 220].lower()
+            if any(w in window for w in ("will fail", "rejects", "fails with", "blocking")):
+                found.add(path)
+        return found
+
+    def test_agents_md_still_names_the_frontmatter_validator_as_an_enforcer(self):
+        self.assertIn("tools/validate_frontmatter.py", self._claimed_enforcers())
+
+    def test_every_validator_agents_md_calls_an_enforcer_is_invoked_by_ci(self):
+        for path in sorted(self._claimed_enforcers()):
+            if not (ROOT / path).is_file():
+                continue
+            self.assertTrue(
+                invoked_by_ci(pathlib.Path(path).name),
+                msg=f"AGENTS.md says {path} rejects something, but no workflow runs it, "
+                    "so the rule is documented and unenforced")
 
     def test_a_ci_wired_validator_is_correctly_detected(self):
         """Guards the detector itself against always returning False."""
         self.assertTrue(invoked_by_ci("validate_pii.py"))
 
-    def test_every_rewrite_reason_names_the_defect(self):
+    def test_an_uninvoked_script_is_correctly_detected_as_such(self):
+        """Guards the detector against always returning True."""
+        self.assertFalse(invoked_by_ci("build_doc_graph.py"))
+
+    def test_audit_decision_matches_the_measured_ci_state(self):
         for row in AUDIT["paths"]:
-            if row["decision"] == "REWRITE":
-                self.assertIn("invoke", row["reason"].lower(), msg=row["path"])
+            if not row["path"].endswith(".py"):
+                continue
+            if invoked_by_ci(pathlib.Path(row["path"]).name):
+                self.assertNotEqual(
+                    row["decision"], "REWRITE",
+                    msg=f"{row['path']} is invoked by CI, so a REWRITE-for-orphaning "
+                        "decision is stale")
 
 
 if __name__ == "__main__":

@@ -238,6 +238,13 @@ jobs:
         run: |
           pip install pyyaml requests
       
+      - name: Validate frontmatter scope and doc types
+        # AGENTS.md states this validator rejects a forbidden-but-present
+        # content_validation block. Until now no workflow invoked it, so the
+        # rule was documented but never applied and two violations accumulated
+        # in the tree unnoticed.
+        run: python3 tools/validate_frontmatter.py
+
       - name: Validate MSLearn URLs
         run: |
           python scripts/validate_mslearn_urls.py --verbose

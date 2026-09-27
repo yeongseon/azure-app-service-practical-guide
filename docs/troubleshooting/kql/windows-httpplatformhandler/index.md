@@ -1,7 +1,7 @@
 ---
 title: Windows httpPlatformHandler Queries
 slug: windows-httpplatformhandler-queries
-doc_type: kql-index
+doc_type: kql
 section: troubleshooting
 topics:
   - kql

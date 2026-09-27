@@ -8,7 +8,7 @@
     "DELETE",
     "ARCHIVE"
   ],
-  "delete_count_note": "No path is marked DELETE. Nothing measured in this audit justified destruction over archival.",
+  "delete_count_note": "No path is marked DELETE. Nothing measured in this audit justified destruction over archival. The single REWRITE finding was resolved by wiring the orphaned validator into CI rather than by removing it.",
   "paths": [
     {
       "path": "apps/",
@@ -67,8 +67,8 @@
     },
     {
       "path": "tools/validate_frontmatter.py",
-      "decision": "REWRITE",
-      "reason": "AGENTS.md states this validator fails on a forbidden-but-present content_validation block, but no workflow invokes it. CI runs only the doctests of the scope helper it imports, so the policy is documented as enforced while nothing applies it to real pages. The script works when run by hand. Wire it into CI rather than deleting it; the defect is the missing invocation, not the validator."
+      "decision": "KEEP",
+      "reason": "Now invoked by the Validate Content Sources workflow. It was previously documented in AGENTS.md as enforcing the content_validation scope rule while no workflow ran it, and running it surfaced two violations that had accumulated unnoticed: a forbidden content_validation block emitted by the validation-status generator, and an invented doc_type of kql-index. Both are fixed at their source and the validator exits 0."
     },
     {
       "path": "tools/build_doc_graph.py",
