@@ -1362,7 +1362,7 @@ render_overall_verdict() {
     if [[ "$SIGNATURE_CONFIRMED" == "true" ]]; then
         OVERALL_SIGNATURE_STATUS="CONFIRMED"
     elif [[ "$SIGNATURE_CHECKED" == "true" ]]; then
-        OVERALL_SIGNATURE_STATUS="REFUTED"
+        OVERALL_SIGNATURE_STATUS="CONTRADICTED"
     else
         OVERALL_SIGNATURE_STATUS="INSUFFICIENT DATA"
     fi

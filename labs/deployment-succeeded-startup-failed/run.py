@@ -125,7 +125,7 @@ def evaluate(run, phases, logs):
     if errors:
         hypothesis = 'INCONCLUSIVE'
     elif refutations:
-        hypothesis = 'REFUTED'
+        hypothesis = 'CONTRADICTED'
     elif gaps:
         hypothesis = 'INCONCLUSIVE'
     else:
@@ -149,7 +149,7 @@ def exit_code_for(result):
     contract forbids presenting a refutation as a successful reproduction.
     """
     validation = result['evidence_validation']
-    if validation == 'PASS' and result.get('hypothesis_evaluation') == 'REFUTED':
+    if validation == 'PASS' and result.get('hypothesis_evaluation') == 'CONTRADICTED':
         return 3
     return {'PASS': 0, 'FAIL': 1, 'INCONCLUSIVE': 2}[validation]
 

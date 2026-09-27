@@ -11,5 +11,5 @@
   "exclusions": "No rows excluded by the evaluator; any wrong-resource or out-of-window row fails integrity",
   "competing_hypotheses": ["dependency/import failure unrelated to module", "network reachability", "platform restart", "concurrent configuration change"],
   "cleanup": "Explicit cleanup command for the dedicated resource group; poll until group exists is false",
-  "status": {"execution": "NOT_RUN", "evidence_validation": "NOT_EVALUATED", "hypothesis": "NOT_EVALUATED", "independent_reproduction": "NOT_RUN", "cleanup": "NOT_NEEDED"}
+  "status": {"execution": "NOT_RUN", "evidence_validation": "NOT_TESTED", "hypothesis": "NOT_TESTED", "independent_reproduction": "NOT_RUN", "cleanup": "NOT_NEEDED"}
 }

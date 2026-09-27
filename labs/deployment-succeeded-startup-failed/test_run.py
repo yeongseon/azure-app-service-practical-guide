@@ -61,7 +61,7 @@ class EvaluationTests(unittest.TestCase):
         outcome = pilot.evaluate(self.run, self.phases, self.logs)
         self.assertNotEqual(
             outcome['hypothesis_evaluation'],
-            'REFUTED',
+            'CONTRADICTED',
             msg='a self-asserted activation flag must not license a refutation',
         )
 
@@ -78,7 +78,7 @@ class EvaluationTests(unittest.TestCase):
         self.logs = []
 
         outcome = pilot.evaluate(self.run, self.phases, self.logs)
-        self.assertNotEqual(outcome['hypothesis_evaluation'], 'REFUTED')
+        self.assertNotEqual(outcome['hypothesis_evaluation'], 'CONTRADICTED')
 
     def test_healthy_fault_without_activation_proof_is_inconclusive(self):
         """A control-plane write is not proof the workload picked it up.
@@ -110,7 +110,7 @@ class EvaluationTests(unittest.TestCase):
         bad entrypoint is genuinely configured, every probe still answers
         200, and nothing about the capture is malformed, the prediction is
         contradicted. That is a valid experimental result, so the evidence
-        axis stays PASS and only the hypothesis axis records REFUTED.
+        axis stays PASS and only the hypothesis axis records CONTRADICTED.
         Collapsing it into FAIL/INCONCLUSIVE would report a real refutation
         as a broken experiment.
         """
@@ -123,7 +123,7 @@ class EvaluationTests(unittest.TestCase):
 
         outcome = pilot.evaluate(self.run, self.phases, self.logs)
         self.assertEqual(outcome['evidence_validation'], 'PASS')
-        self.assertEqual(outcome['hypothesis_evaluation'], 'REFUTED')
+        self.assertEqual(outcome['hypothesis_evaluation'], 'CONTRADICTED')
 
     def test_refutation_is_not_reported_as_success(self):
         for probe in self.phases['fault']['probes']:
@@ -149,7 +149,7 @@ class EvaluationTests(unittest.TestCase):
 
         outcome = pilot.evaluate(self.run, self.phases, self.logs)
         self.assertEqual(outcome['evidence_validation'], 'PASS')
-        self.assertEqual(outcome['hypothesis_evaluation'], 'REFUTED')
+        self.assertEqual(outcome['hypothesis_evaluation'], 'CONTRADICTED')
         self.assertTrue(any('404' in item for item in outcome['refutations']))
 
     def test_integrity_failure_outranks_refutation(self):
@@ -184,7 +184,7 @@ class EvaluationTests(unittest.TestCase):
         self.phases['fault'].update(intervention_activated=True, config_readback=pilot.BAD, probe_budget_exhausted=True)
         self.phases['fault']['probes'] = [{'status': self.phases['fault']['status'], 'exit_code': 0} for _ in range(24)]
         refuted = pilot.evaluate(self.run, self.phases, self.logs)
-        self.assertEqual(refuted['hypothesis_evaluation'], 'REFUTED')
+        self.assertEqual(refuted['hypothesis_evaluation'], 'CONTRADICTED')
         self.assertEqual(pilot.exit_code_for(refuted), 3)
 
         self.phases['fault']['run_id'] = 'other'
