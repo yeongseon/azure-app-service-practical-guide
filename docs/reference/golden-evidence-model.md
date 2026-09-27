@@ -91,6 +91,42 @@ The evaluator does not name a root cause. It reports whether declared assertions
 | [`assertion.schema.json`](https://github.com/yeongseon/azure-app-service-practical-guide/blob/main/schemas/golden/assertion.schema.json) | One machine-evaluable claim about a named evidence field |
 | [`result.schema.json`](https://github.com/yeongseon/azure-app-service-practical-guide/blob/main/schemas/golden/result.schema.json) | Derived output, regenerable from raw |
 
+## Independent reproduction
+
+A scenario is independently reproduced when a second operator reaches the
+same verdict **from the documentation alone**.
+
+The reviewer receives the repository, a target commit, the public
+documentation and a working environment. The reviewer does not receive
+hidden steps, undocumented workarounds, private notes, or any statement of
+the expected root cause. Telling a reviewer what to find converts the
+exercise into confirmation.
+
+Two results are recorded separately, because they can diverge:
+
+| Result | Meaning |
+|---|---|
+| `reproduction_result` | Did the replay reach the same verdict? |
+| `documentation_result` | Could it be done from the documentation alone? |
+
+A reviewer who had to read source to fill a gap has shown that the *code*
+works and the *documentation* does not. The verdict may match while the
+documentation result is `FAILED`. Any deviation the reviewer had to invent
+counts the same way: a step absent from the documentation is a gap,
+whatever the outcome.
+
+A replay is not independent if it reuses the original run identity or is
+performed by the original operator. It would agree by construction,
+because it is the same evidence.
+
+```bash
+python3 scripts/golden/check_reproduction.py evidence/reproductions/<scenario>.json
+```
+
+Exit `0` requires both results to be `REPRODUCED`. An attempt that never
+happened is recorded as `NOT_ATTEMPTED` on both axes rather than omitted,
+so the gap is visible in the repository instead of inferred from absence.
+
 ## Predicate guidance
 
 A gate whose weak path subsumes its strong path is unsound. Written as `strong or fallback` where `fallback` is one of `strong`'s conjuncts, boolean absorption reduces the whole predicate to `fallback` alone, and every other condition becomes dead code while the gate keeps its reassuring name.
