@@ -1212,8 +1212,4 @@ mkdocs serve
 
 ## Git Commit Style
 
-```text
-type: short description
-```
-
-Allowed types: `feat`, `fix`, `docs`, `chore`, `refactor`
+Titles for issues, pull requests, and commits follow the **Title Convention** in [`CONTRIBUTING.md`](CONTRIBUTING.md#title-convention), the single source of truth for the format and the allowed types.
