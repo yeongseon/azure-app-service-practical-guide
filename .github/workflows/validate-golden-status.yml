@@ -1,0 +1,45 @@
+name: Validate Golden Status
+
+# Intentionally has no `paths:` filter, unlike every sibling workflow. The gates
+# this job re-runs read from docs/, apps/, labs/, scripts/, and tools/, so any
+# filter would let a change flip a gate's status without this job running --
+# the exact drift it exists to catch. It finishes in seconds; do not add one.
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  validate-golden-status:
+    name: Validate Golden Status
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install pyyaml 'ruamel.yaml==0.19.1'
+
+      - name: Run generator doctests
+        run: |
+          python -m doctest scripts/generate_golden_status.py -v
+
+      # Re-runs only the gates marked `verified_in_ci`: the ones needing nothing
+      # beyond the two packages above plus the coreutils already on the runner.
+      # Gates with their own heavy job (MkDocs, the reference-app builds, the
+      # Bicep build) are not re-run here, so this job stays fast while still
+      # catching a gate that flipped red since the dashboard was regenerated.
+      - name: Check gate registry, inventory, and status freshness
+        run: |
+          if ! python scripts/generate_golden_status.py --check; then
+            echo "::error::Golden Status is out of date. Run 'python3 scripts/generate_golden_status.py' and commit docs/meta/golden-status.md."
+            exit 1
+          fi

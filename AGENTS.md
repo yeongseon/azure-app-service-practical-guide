@@ -1096,6 +1096,71 @@ content_validation:
 5. **Repetition Gate**: Run `python scripts/detect_repetition.py docs` to catch generator-produced boilerplate — non-trivial prose lines repeated within a single Markdown page. Repeats matching a known scaffold marker in `scripts/repetition-markers.txt` **fail CI** (ERROR); any other significant repeat is reported as a non-blocking WARN. The detector excludes YAML frontmatter, fenced code blocks, and table/KQL-pipe rows, and honors a per-repo `scripts/repetition-allowlist.txt` of exact lines that are legitimately repeated. Enforced by the `Validate Documentation Repetition` CI job, which also runs the detector's doctests (`python -m doctest scripts/detect_repetition.py -v`). This gate is the Prevention arm of the cross-repo boilerplate-audit epic ([azure-container-apps-practical-guide#376](https://github.com/yeongseon/azure-container-apps-practical-guide/issues/376)); it is vendored per repository so each guide carries its own script, workflow, markers, and allowlist.
 6. **PII Detection Gate**: Run `python scripts/validate_pii.py` to scan `docs/` for leaked identifiers before they reach the public site. The gate flags UUID-shaped subscription/tenant/object IDs and real email addresses (outside documentation-safe domains) as **blocking**, and RFC 1918 private IPv4 addresses as **advisory** (non-blocking) — private ranges are non-routable and used throughout the series as teaching examples. Synthetic UUIDs (all-same-character, uniform hyphen groups, sequential-hex runs such as `a1b2c3d4-e5f6-7890-abcd-ef1234567890`), documented public Azure built-in role definition IDs, and safe email domains (`example.com`, `contoso.com`, reserved TLDs like `.example`/`.test`, and `*.azurecomm.net`) are recognized automatically. A per-repo `scripts/pii-allowlist.txt` holds any additional confirmed-safe example values. In CI the `Validate PII` job runs the detector's doctests, blocks on **changed Markdown files only** (`--files`, so historical debt never becomes a permanent failure), and runs a full-repo advisory scan for visibility. This gate is a Prevention item of the cross-repo quality-gate audit ([azure-container-apps-practical-guide#384](https://github.com/yeongseon/azure-container-apps-practical-guide/issues/384)); it is vendored per repository so each guide carries its own script, workflow, and allowlist.
 7. **Visual Content Gate (advisory)**: Run `python scripts/validate_visual_content.py --all` to report factual-claim pages carrying **no visual aid** (no Mermaid fence, no `shot()` capture reference, no Markdown image). Scope reuses `scripts/lib/content_scope.is_in_scope` - the same factual-claim page set as the `content_validation` policy. The gate is **WARN-only**: it prints per-page warnings plus a coverage summary and always exits 0, making visual coverage a tracked CI metric without blocking on historical debt (verified series baseline: diagrams on 79-99% of pages, portal screenshots on App Service 95 / AKS 8 / elsewhere 0). In CI the `Validate Visual Content (advisory)` job runs the gate doctests and the full-repo report. Escalation to a blocking gate is a per-repo decision tracked in [azure-container-apps-practical-guide#391](https://github.com/yeongseon/azure-container-apps-practical-guide/issues/391); vendored per repository like the other shared-core gates.
+8. **Frontmatter Schema Gate**: Run `python tools/validate_frontmatter.py` to validate `doc_type` and `section` values, slug uniqueness, relationship targets, and `content_validation` placement. Unresolved relationship slugs are **warnings**; only hard schema errors fail the job. Enforced by the `Validate Content Source Metadata` CI job.
+9. **Content Sources Schema Gate**: Run `python scripts/normalize_content_sources_schema.py --check` to reject the legacy list-form `content_sources` block. Enforced by the `Validate Content Source Metadata` CI job.
+10. **Golden Status Gate**: Run `python3 scripts/generate_golden_status.py` to execute every gate in the repository — the documentation gates above plus the reference-app and Bicep gates from `app-infra-ci.yml` — and regenerate the aggregated scorecard at [`docs/meta/golden-status.md`](docs/meta/golden-status.md). See [Golden Status Dashboard](#golden-status-dashboard) below for the registry contract, the CI check, and the rules for adding a gate.
+
+### Golden Status Dashboard
+
+The repository's gates live in five workflows and report in isolation, so no single place answers "is this repository currently golden?". [`scripts/generate_golden_status.py`](scripts/generate_golden_status.py) closes that gap: it runs every gate, records the outcome, and renders `docs/meta/golden-status.md`.
+
+Scope is the whole repository, not just `docs/`. The registry covers the documentation validators, the MkDocs strict build, the shell/ShellCheck gates, the Node.js, Python, .NET, and Java reference-app gates, and the Bicep template build.
+
+#### Registry is the source of truth
+
+Every gate is one entry in the module-level `GATES` tuple, carrying the command to run, what it enforces, its severity, and the workflow job(s) that enforce it. Bindings are a **tuple**, because a gate can be enforced by several jobs — the doctest batch is split across six. Three severities are distinguished, and the distinction is the point of the page:
+
+| Severity | Meaning |
+|---|---|
+| `Blocking` | A CI job fails the pull request when this gate fails. |
+| `Advisory` | Wired into CI but non-blocking by design (`continue-on-error`, or a gate that always exits 0 and reports a tracked metric). |
+| `Not in CI` | The validator exists in the repository but no workflow step invokes it, so its findings never reach a pull request. |
+
+Two invariants are machine-checked, so the severities cannot drift into fiction:
+
+- `Not in CI` means **zero** bindings; every other severity means **at least one**, and every bound workflow file must exist.
+- A gate whose dashboard invocation is wider than its CI invocation sets `superset=True`. `Document quality` (CI runs `--changed-only`, the dashboard runs `--all`) and `Documentation PII` (CI blocks on changed Markdown, the dashboard scans the full documentation tree) both do. A `superset` gate can never render as **Fail**, because a finding in the wider scope does not imply the CI job would fail — it renders as **Warn** with the scope difference stated in its note.
+
+Scripts under `scripts/` and `tools/` that look like validators but are deliberately not gates (dashboard generators, one-shot remediation fixers) must be listed in `NON_GATE_SCRIPTS` **with a reason**.
+
+#### Invocations
+
+| Invocation | Purpose |
+|---|---|
+| `python3 scripts/generate_golden_status.py` | Run every gate this machine can run and rewrite the dashboard. |
+| `python3 scripts/generate_golden_status.py --include-network` | Also run gates that make outbound HTTP requests (skipped by default). |
+| `python3 scripts/generate_golden_status.py --strict` | Exit non-zero when a blocking gate fails. |
+| `python3 scripts/generate_golden_status.py --gate KEY` | Run one gate, stream its raw output, exit with its code. |
+| `python3 scripts/generate_golden_status.py --check` | Registry completeness, inventory freshness, and status freshness. This is what CI runs. |
+
+A gate declares what the machine needs via `requires`, using `exe:NAME`, `py:MODULE`, or `path:REL`. When a requirement is unmet the gate renders as **Skipped** with the reason, rather than being silently omitted or reported as a false failure — this is why a developer without `dotnet` or `shellcheck` still gets an honest page.
+
+#### What CI enforces
+
+The `Validate Golden Status` job runs the generator's doctests and then `--check`, which enforces three things nothing else checks:
+
+1. **Registry completeness** — a candidate validator script added under `scripts/` or `tools/` (searched recursively; candidates are files whose name starts with a `SCRIPT_PREFIXES` entry, plus the explicit `SCRIPT_EXTRA_CANDIDATES`) without a `GATES` entry or a `NON_GATE_SCRIPTS` exclusion fails CI. Duplicate gate keys, a script claimed by two gates, a registered path that no longer exists, an exclusion without a reason, and a binding to a deleted workflow all fail too.
+2. **Inventory freshness** — the inventory table is fenced by `<!-- golden-status:inventory:start -->` / `:end` markers and diffed against the registry. Editing `GATES` without regenerating the page fails CI.
+3. **Status freshness** — gates marked `verified_in_ci` are re-run and their **status** compared against the `<!-- golden-status:results:start -->` region, so a gate that has flipped red cannot sit on the page reported as green.
+
+Only status is compared, never the detail cells. Detail carries file counts that change whenever a page is added, and diffing those would put a dashboard regeneration in every documentation pull request for no safety gain.
+
+`verified_in_ci` is set only on lightweight gates the base runner already supports — those needing nothing beyond `pyyaml`, `ruamel.yaml`, and the coreutils present on `ubuntu-latest`. Gates with their own heavy job (the MkDocs strict build, the reference-app builds, the Bicep build) are deliberately **not** re-verified here: they already have a dedicated job, and installing their toolchains would make this job the slowest in the repository. A `Not in CI` gate must never set `verified_in_ci`, because this job would then execute it and contradict its own severity; `registry_problems()` rejects that combination. The full `--check` runs in a few seconds.
+
+#### Where the committed snapshot comes from
+
+A developer machine rarely has every toolchain a gate needs (ShellCheck, Node, .NET, Java, Bicep) plus network access, so a locally generated page usually reports several **Skipped** rows and therefore cannot render `Golden`. The `Refresh Golden Status` workflow ([`.github/workflows/refresh-golden-status.yml`](.github/workflows/refresh-golden-status.yml)) exists for that: on a weekly schedule and on manual dispatch it installs every toolchain, runs `--include-network`, and opens a pull request with the result. It opens a PR rather than pushing to `main` because every change in this repository goes through the PR gates, and a bot push would land a snapshot the required checks never saw. A PR raised with the default `GITHUB_TOKEN` may need a write user to approve its workflow runs before the checks report. It is deliberately **not** triggered by `push`: provisioning five toolchains takes minutes, and a page that only needs to be periodically accurate does not justify that on every commit.
+
+Regenerating locally is still correct and encouraged for your own view; just expect toolchain-dependent rows to read **Skipped** until the scheduled refresh runs.
+
+#### Rules when adding or changing a gate
+
+- Add the `GATES` entry in the same commit as the validator, then regenerate and commit `docs/meta/golden-status.md`.
+- Gate output is echoed into the rendered page, so it passes through `scrub()`, which redacts GUID-, email-, IPv4-, IPv6-, Azure-hostname-, and long-token-shaped values. `scrub()` is a mitigation, **not** a complete PII scanner — a gate whose output could contain anything else MUST define `summary_keys` so only known summary lines are ever published.
+- Runtimes are bucketed (`< 10s`, `10-120s`, `> 120s`, with boundaries placed where no registered gate actually lands so network jitter cannot flip one) and the frontmatter carries no `last_reviewed`, so regenerating with the same invocation, the same environment, and unchanged gate outcomes rewrites only the provenance line. That line is intentionally volatile: it records the source revision, flags an uncommitted working tree, and stamps the generation date.
+- Never put a literal Mermaid fence marker or a literal `diagram-id` comment prefix into a gate's `display` string. Both appear verbatim in the rendered page and would be counted by the Diagram ID parity gate, corrupting its own input.
+- A gate's `argv` MUST reproduce what the CI job actually runs, and its `requires` MUST list everything that makes the result *meaningful*, not merely everything that makes it *exit zero*. `npm audit` reads the lockfile from the working directory, so invoking it as `npm --prefix apps/nodejs audit` from the repository root silently audits nothing and exits 0 — a false pass that hid a real high-severity advisory. The Node.js gates therefore `cd apps/nodejs` first, mirroring that job's `working-directory`. A false green is worse than a missing gate.
+- Never claim CI status the page cannot observe. The verdict admonition reports locally executed results (`Golden` / `Blocking gates pass, with gaps` / `Not golden`); it does not read GitHub Actions.
 
 ## Mandatory Oracle Review (AI Agent Rule)
 
