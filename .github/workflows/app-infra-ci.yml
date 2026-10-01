@@ -124,5 +124,7 @@ jobs:
           inlineScript: |
             find apps labs -type f -name '*.bicep' -print | sort | while IFS= read -r file; do
               echo "Building ${file}"
-              az bicep build --file "${file}" --stdout >/dev/null
+              # </dev/null stops `az` from consuming the file list on stdin.
+              # Without it this loop silently stops after the first template.
+              az bicep build --file "${file}" --stdout >/dev/null </dev/null
             done
