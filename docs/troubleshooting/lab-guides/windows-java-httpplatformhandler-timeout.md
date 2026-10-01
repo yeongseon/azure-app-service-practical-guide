@@ -912,7 +912,6 @@ az group delete --resource-group "$RG" --yes --no-wait
 
 - AppServiceHTTPLogs schema: [https://learn.microsoft.com/en-us/azure/azure-monitor/reference/tables/appservicehttplogs](https://learn.microsoft.com/en-us/azure/azure-monitor/reference/tables/appservicehttplogs)
 - WinHTTP error codes: [https://learn.microsoft.com/en-us/windows/win32/winhttp/error-messages](https://learn.microsoft.com/en-us/windows/win32/winhttp/error-messages)
-- Troubleshooting httpPlatformHandler: [https://learn.microsoft.com/en-us/aspnet/web-api/overview/testing-and-debugging/troubleshooting-httpplatformhandler](https://learn.microsoft.com/en-us/aspnet/web-api/overview/testing-and-debugging/troubleshooting-httpplatformhandler)
 - App Service front-end timeout: [https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/web-request-times-out-app-service](https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/web-request-times-out-app-service)
 - httpPlatformHandler configuration: [https://learn.microsoft.com/en-us/iis/extensions/httpplatformhandler/httpplatformhandler-configuration-reference](https://learn.microsoft.com/en-us/iis/extensions/httpplatformhandler/httpplatformhandler-configuration-reference)
 - Windows Java SE runtime: [https://learn.microsoft.com/en-us/azure/app-service/configure-language-java-deploy-run](https://learn.microsoft.com/en-us/azure/app-service/configure-language-java-deploy-run)

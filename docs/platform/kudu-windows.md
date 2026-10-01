@@ -30,8 +30,8 @@ content_validation:
     - claim: "Windows App Service apps use IIS w3wp.exe worker processes and Kudu Process Explorer displays them alongside the SCM worker."
       source: https://learn.microsoft.com/en-us/azure/app-service/resources-kudu
       verified: true
-    - claim: "Site Extensions are a Windows-only App Service feature and are installed from the Kudu Site Extensions gallery, which surfaces packages from a curated feed."
-      source: https://learn.microsoft.com/en-us/azure/app-service/web-sites-purchase-extensions
+    - claim: "App Service site-extension information exposes an extension_type of Gallery or WebRoot together with a feed_url property."
+      source: https://learn.microsoft.com/en-us/rest/api/appservice/web-apps/get-site-extension
       verified: true
     - claim: "WebJobs on Windows run inside the App Service worker process and their execution history is exposed via the Kudu /api/triggeredwebjobs and /api/continuouswebjobs REST endpoints."
       source: https://learn.microsoft.com/en-us/azure/app-service/webjobs-create
@@ -615,7 +615,7 @@ The remaining sections apply the Windows Kudu surfaces to six recurring incident
 - [Kudu service overview (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/resources-kudu)
 - [Deploy Files to Azure App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/deploy-zip) — ZipDeploy synchronous and async modes, `isAsync=true` semantics
 - [Run background tasks with WebJobs (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/webjobs-create)
-- [Site Extensions for Azure App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/web-sites-purchase-extensions)
+- [Web Apps - Get Site Extension (Microsoft Learn REST API reference)](https://learn.microsoft.com/en-us/rest/api/appservice/web-apps/get-site-extension) — the `SiteExtensionInfo` schema, including `extension_type` (`Gallery` / `WebRoot`) and `feed_url`
 - [Enable diagnostic logging (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs)
 - [Application Insights Profiler for App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/azure-monitor/profiler/profiler) — the recommended alternative to Kudu's built-in profiler for continuous production profiling
 - [projectkudu/kudu Wiki (GitHub, archived 2024-09-04)](https://github.com/projectkudu/kudu/wiki) — Windows Kudu REST API reference, Debug Console (`?shell=powershell`), Process Explorer semantics

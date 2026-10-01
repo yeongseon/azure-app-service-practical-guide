@@ -11,11 +11,11 @@ This page tracks `content_validation` metadata for **in-scope factual-claim docu
 
 ## Summary
 
-*Generated: 2026-09-11*
+*Generated: 2026-10-01*
 
 | Content Type | Total | Verified | Pending | Unverified | No Metadata |
 |---|---:|---:|---:|---:|---:|
-| Mermaid Diagrams | 383 | 383 | 0 | 0 | 0 |
+| Mermaid Diagrams | 384 | 384 | 0 | 0 | 0 |
 | In-Scope Factual-Claim Documents | 76 | 76 | 0 | 0 | 0 |
 
 !!! success "All In-Scope Documents Verified"
