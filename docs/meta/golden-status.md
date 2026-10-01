@@ -25,25 +25,24 @@ Every quality gate in this repository, its most recently recorded result, and th
 
 ## Summary
 
-*Snapshot of `cb72ddc plus uncommitted working-tree changes`, generated 2026-10-01.*
+*Snapshot of `6b62c63`, generated 2026-10-01.*
 
 | Metric | Count |
 |---|---:|
 | Registered gates | 27 |
-| ✅ Pass | 22 |
+| ✅ Pass | 26 |
 | ❌ Fail | 0 |
 | ⚠️ Warn | 1 |
-| ➖ Skipped | 4 |
+| ➖ Skipped | 0 |
 
 !!! warning "Blocking gates pass, with gaps"
-    No blocking gate failed in this snapshot, but 5 gate(s) reported findings, are unwired from CI, or could not run on the machine that generated this page. See Known Gaps.
+    No blocking gate failed in this snapshot, but 1 gate(s) reported findings, are unwired from CI, or could not run on the machine that generated this page. See Known Gaps.
 
 <!-- diagram-id: golden-status-gate-outcomes-pie -->
 ```mermaid
 pie title Quality Gate Outcomes
-    "Pass" : 22
+    "Pass" : 26
     "Warn" : 1
-    "Skipped" : 4
 ```
 
 ## Gate Results
@@ -63,7 +62,7 @@ These are locally executed results, not GitHub Actions statuses. **Skipped** mea
 | Document quality | Blocking | ⚠️ Warn | Documentation quality gate failed: 29 error(s) across 232 file(s). | < 10s |
 | Frontmatter YAML style | Blocking | ✅ Pass | Files with style drift: 0 · Parse errors: 0 | < 10s |
 | Microsoft Learn locale | Blocking | ✅ Pass | Files with locale drift: 0 | < 10s |
-| Microsoft Learn URL reachability | Advisory | ➖ Skipped | Network gate; re-run with --include-network. | < 10s |
+| Microsoft Learn URL reachability | Advisory | ✅ Pass | All URLs are valid! | 10-120s |
 | Lab artifact PII | Blocking | ✅ Pass | [scan_lab_pii] scanned=467 skipped_binary=0 skipped_decode=0 findings=0 | < 10s |
 | Documentation PII | Blocking | ✅ Pass | No blocking PII patterns detected! | < 10s |
 | Documentation repetition | Blocking | ✅ Pass | Scanned 232 file(s): 0 error(s), 6 warning(s). | < 10s |
@@ -71,15 +70,15 @@ These are locally executed results, not GitHub Actions statuses. **Skipped** mea
 | Frontmatter schema | Blocking | ✅ Pass | Checked 232 files · Found 0 errors, 28 warnings: | < 10s |
 | MkDocs strict build | Blocking | ✅ Pass | Site built with no strict-mode warnings. | 10-120s |
 | Shell script syntax | Blocking | ✅ Pass | All shell scripts parse. | < 10s |
-| ShellCheck | Blocking | ➖ Skipped | Executable `shellcheck` is not on PATH. | < 10s |
+| ShellCheck | Blocking | ✅ Pass | ShellCheck reported no findings. | < 10s |
 | Node.js dependency audit | Blocking | ✅ Pass | found 0 vulnerabilities | < 10s |
-| Node.js app tests | Blocking | ✅ Pass | ℹ tests 3 · ℹ pass 3 · ℹ fail 0 | < 10s |
+| Node.js app tests | Blocking | ✅ Pass | # tests 3 · # pass 3 · # fail 0 | < 10s |
 | Node.js production install | Blocking | ✅ Pass | Production tree resolved from the lockfile. | < 10s |
 | Python app compile | Blocking | ✅ Pass | All modules compiled. | < 10s |
 | Python app tests | Blocking | ✅ Pass | collected 4 items | < 10s |
-| .NET app build | Blocking | ➖ Skipped | Executable `dotnet` is not on PATH. | < 10s |
-| Java app tests | Blocking | ➖ Skipped | Executable `mvn` is not on PATH. | < 10s |
-| Bicep template build | Blocking | ✅ Pass | Bicep templates built: 37 | > 120s |
+| .NET app build | Blocking | ✅ Pass | Time Elapsed 00:00:13.30 | 10-120s |
+| Java app tests | Blocking | ✅ Pass | WARNING: Dynamic loading of agents will be disallowed by default in a future release | 10-120s |
+| Bicep template build | Blocking | ✅ Pass | Bicep templates built: 37 | 10-120s |
 
 <!-- golden-status:results:end -->
 
@@ -142,10 +141,6 @@ Generated from the `GATES` registry in `scripts/generate_golden_status.py`. CI f
 ## Known Gaps
 
 - **Document quality** reported findings that its CI job does not fail on: Documentation quality gate failed: 29 error(s) across 232 file(s).
-- **Microsoft Learn URL reachability** did not run here: Network gate; re-run with --include-network.
-- **ShellCheck** did not run here: Executable `shellcheck` is not on PATH.
-- **.NET app build** did not run here: Executable `dotnet` is not on PATH.
-- **Java app tests** did not run here: Executable `mvn` is not on PATH.
 
 ## How to Regenerate
 
