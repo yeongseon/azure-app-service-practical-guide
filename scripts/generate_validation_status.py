@@ -142,6 +142,11 @@ def generate_dashboard(tutorials: list[dict[str, Any]], today: date) -> str:
     # The file is path-skipped by scripts/validate_content_sources.py, but
     # emitting canonical shape keeps the dashboard consistent with peer pages
     # (e.g. content-validation-status.md) and aligns with sibling repositories.
+    #
+    # No content_validation block: docs/reference/ is out of scope per
+    # AGENTS.md §Text Content Validation, so tools/validate_frontmatter.py
+    # rejects one here. Both reference dashboards omit it for the same reason;
+    # do not add one back for "consistency" with content-validation-status.md.
     lines.append("---")
     lines.append("content_sources:")
     lines.append("  diagrams:")
@@ -151,16 +156,6 @@ def generate_dashboard(tutorials: list[dict[str, Any]], today: date) -> str:
     lines.append(
         "      justification: Auto-generated from tutorial validation frontmatter in this repository."
     )
-    lines.append("content_validation:")
-    lines.append("  status: verified")
-    lines.append(f'  last_reviewed: "{today.isoformat()}"')
-    lines.append("  reviewer: ai-agent")
-    lines.append("  core_claims:")
-    lines.append(
-        '    - claim: "The dashboard is generated from validation frontmatter in repository Markdown files."'
-    )
-    lines.append("      source: scripts/generate_validation_status.py")
-    lines.append("      verified: true")
     lines.append("---")
     lines.append("")
     lines.append("# Tutorial Validation Status")

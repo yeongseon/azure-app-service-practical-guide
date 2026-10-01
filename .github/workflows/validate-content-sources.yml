@@ -81,7 +81,15 @@ jobs:
       - name: Check frontmatter YAML style (canonical ruamel.yaml format)
         run: |
           python scripts/normalize_yaml_frontmatter.py --check
-      
+
+      - name: Validate frontmatter schema (doc_type, slugs, content_validation placement)
+        run: |
+          python tools/validate_frontmatter.py
+
+      - name: Check content_sources schema shape (canonical mapping form)
+        run: |
+          python scripts/normalize_content_sources_schema.py --check
+
       - name: Check Microsoft Learn URL locale (en-us prefix required)
         run: |
           python scripts/normalize_mslearn_locale.py --check

@@ -384,5 +384,6 @@ nav:
       - visualization/learning-paths.md
     - Meta:
       - meta/taxonomy.md
+      - Golden Status: meta/golden-status.md
   - Contributing:
     - contributing/index.md
