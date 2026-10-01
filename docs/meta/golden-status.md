@@ -25,25 +25,25 @@ Every quality gate in this repository, its most recently recorded result, and th
 
 ## Summary
 
-*Snapshot of `a5d8ed9 plus uncommitted working-tree changes`, generated 2026-10-01.*
+*Snapshot of `cb72ddc plus uncommitted working-tree changes`, generated 2026-10-01.*
 
 | Metric | Count |
 |---|---:|
 | Registered gates | 27 |
-| ✅ Pass | 24 |
+| ✅ Pass | 22 |
 | ❌ Fail | 0 |
 | ⚠️ Warn | 1 |
-| ➖ Skipped | 2 |
+| ➖ Skipped | 4 |
 
 !!! warning "Blocking gates pass, with gaps"
-    No blocking gate failed in this snapshot, but 3 gate(s) reported findings, are unwired from CI, or could not run on the machine that generated this page. See Known Gaps.
+    No blocking gate failed in this snapshot, but 5 gate(s) reported findings, are unwired from CI, or could not run on the machine that generated this page. See Known Gaps.
 
 <!-- diagram-id: golden-status-gate-outcomes-pie -->
 ```mermaid
 pie title Quality Gate Outcomes
-    "Pass" : 24
+    "Pass" : 22
     "Warn" : 1
-    "Skipped" : 2
+    "Skipped" : 4
 ```
 
 ## Gate Results
@@ -59,11 +59,11 @@ These are locally executed results, not GitHub Actions statuses. **Skipped** mea
 | Content sources | Blocking | ✅ Pass | Files with mermaid: 231 · Validation errors: 0 | < 10s |
 | Content sources schema | Blocking | ✅ Pass | Files with content_sources schema drift: 0 · Parse errors: 0 | < 10s |
 | Diagram ID parity | Blocking | ✅ Pass | mermaid blocks: 384 · diagram-id comments: 384 | < 10s |
-| CLI explanation tables | Blocking | ✅ Pass | All Azure CLI code fences have following explanation tables. | < 10s |
+| CLI explanation tables | Blocking | ✅ Pass | All Azure CLI code fences and Markdown tables are correctly terminated. | < 10s |
 | Document quality | Blocking | ⚠️ Warn | Documentation quality gate failed: 29 error(s) across 232 file(s). | < 10s |
 | Frontmatter YAML style | Blocking | ✅ Pass | Files with style drift: 0 · Parse errors: 0 | < 10s |
 | Microsoft Learn locale | Blocking | ✅ Pass | Files with locale drift: 0 | < 10s |
-| Microsoft Learn URL reachability | Advisory | ✅ Pass | Redirected URLs should be updated to canonical versions. | 10-120s |
+| Microsoft Learn URL reachability | Advisory | ➖ Skipped | Network gate; re-run with --include-network. | < 10s |
 | Lab artifact PII | Blocking | ✅ Pass | [scan_lab_pii] scanned=467 skipped_binary=0 skipped_decode=0 findings=0 | < 10s |
 | Documentation PII | Blocking | ✅ Pass | No blocking PII patterns detected! | < 10s |
 | Documentation repetition | Blocking | ✅ Pass | Scanned 232 file(s): 0 error(s), 6 warning(s). | < 10s |
@@ -71,7 +71,7 @@ These are locally executed results, not GitHub Actions statuses. **Skipped** mea
 | Frontmatter schema | Blocking | ✅ Pass | Checked 232 files · Found 0 errors, 28 warnings: | < 10s |
 | MkDocs strict build | Blocking | ✅ Pass | Site built with no strict-mode warnings. | 10-120s |
 | Shell script syntax | Blocking | ✅ Pass | All shell scripts parse. | < 10s |
-| ShellCheck | Blocking | ✅ Pass | ShellCheck reported no findings. | < 10s |
+| ShellCheck | Blocking | ➖ Skipped | Executable `shellcheck` is not on PATH. | < 10s |
 | Node.js dependency audit | Blocking | ✅ Pass | found 0 vulnerabilities | < 10s |
 | Node.js app tests | Blocking | ✅ Pass | ℹ tests 3 · ℹ pass 3 · ℹ fail 0 | < 10s |
 | Node.js production install | Blocking | ✅ Pass | Production tree resolved from the lockfile. | < 10s |
@@ -80,6 +80,7 @@ These are locally executed results, not GitHub Actions statuses. **Skipped** mea
 | .NET app build | Blocking | ➖ Skipped | Executable `dotnet` is not on PATH. | < 10s |
 | Java app tests | Blocking | ➖ Skipped | Executable `mvn` is not on PATH. | < 10s |
 | Bicep template build | Blocking | ✅ Pass | Bicep templates built: 37 | > 120s |
+
 <!-- golden-status:results:end -->
 
 ## Gate Inventory
@@ -95,7 +96,7 @@ Generated from the `GATES` registry in `scripts/generate_golden_status.py`. CI f
 | Content sources | Pages with Mermaid carry content_sources metadata with a valid source type. | Blocking | `python3 scripts/validate_content_sources.py` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
 | Content sources schema | content_sources blocks use the canonical mapping shape, not the legacy list form. | Blocking | `python3 scripts/normalize_content_sources_schema.py --check` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
 | Diagram ID parity | Mermaid fence count equals diagram-id comment count across docs/. | Blocking | `python3 scripts/generate_golden_status.py --gate diagram-id-parity` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
-| CLI explanation tables | Every az CLI fence is followed by a blank-line-terminated explanation table. | Blocking | `python3 scripts/validate_cli_explanations.py` | `Validate CLI Explanation Tables` — `validate-content-sources.yml` |
+| CLI explanation tables | Every az CLI fence has an explanation table, and Markdown tables in docs/ and repository-root contracts end with a blank line. | Blocking | `python3 scripts/validate_cli_explanations.py` | `Validate CLI Explanation Tables` — `validate-content-sources.yml` |
 | Document quality | Canonical section templates, tail sections, long CLI flags, and masked identifiers. | Blocking | `python3 scripts/validate_doc_quality.py --all` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
 | Frontmatter YAML style | Frontmatter matches the canonical ruamel.yaml serialization. | Blocking | `python3 scripts/normalize_yaml_frontmatter.py --check` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
 | Microsoft Learn locale | Every learn.microsoft.com URL carries the en-us locale prefix. | Blocking | `python3 scripts/normalize_mslearn_locale.py --check` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
@@ -116,6 +117,7 @@ Generated from the `GATES` registry in `scripts/generate_golden_status.py`. CI f
 | .NET app build | The ASP.NET Core reference project builds. | Blocking | `dotnet build apps/dotnet-aspnetcore/GuideApi/GuideApi.csproj` | `ASP.NET Core App` — `app-infra-ci.yml` |
 | Java app tests | The Spring Boot reference app Maven test phase passes. | Blocking | `mvn -q -f apps/java-springboot/pom.xml test` | `Java Spring Boot App` — `app-infra-ci.yml` |
 | Bicep template build | Every .bicep file under apps/ and labs/ compiles to ARM JSON. | Blocking | `az bicep build over every .bicep file under apps/ and labs/` | `Bicep Templates` — `app-infra-ci.yml` |
+
 <!-- golden-status:inventory:end -->
 
 ### Invocation notes
@@ -140,6 +142,8 @@ Generated from the `GATES` registry in `scripts/generate_golden_status.py`. CI f
 ## Known Gaps
 
 - **Document quality** reported findings that its CI job does not fail on: Documentation quality gate failed: 29 error(s) across 232 file(s).
+- **Microsoft Learn URL reachability** did not run here: Network gate; re-run with --include-network.
+- **ShellCheck** did not run here: Executable `shellcheck` is not on PATH.
 - **.NET app build** did not run here: Executable `dotnet` is not on PATH.
 - **Java app tests** did not run here: Executable `mvn` is not on PATH.
 
