@@ -57,10 +57,11 @@ jobs:
         run: |
           pip install pyyaml 'ruamel.yaml==0.19.1'
       
-      - name: Run doctests for content_scope and validate_content_sources
+      - name: Run doctests for content_scope, content sources, and doc quality
         run: |
           python -m doctest scripts/lib/content_scope.py -v
           python -m doctest scripts/validate_content_sources.py -v
+          python -m doctest scripts/validate_doc_quality.py -v
       
       - name: Validate mermaid format
         run: |

@@ -25,24 +25,24 @@ Every quality gate in this repository, its most recently recorded result, and th
 
 ## Summary
 
-*Snapshot of `6b62c63`, generated 2026-10-01.*
+*Snapshot of `8de97da plus uncommitted working-tree changes`, generated 2026-10-02.*
 
 | Metric | Count |
 |---|---:|
 | Registered gates | 27 |
-| ✅ Pass | 26 |
+| ✅ Pass | 23 |
 | ❌ Fail | 0 |
-| ⚠️ Warn | 1 |
-| ➖ Skipped | 0 |
+| ⚠️ Warn | 0 |
+| ➖ Skipped | 4 |
 
 !!! warning "Blocking gates pass, with gaps"
-    No blocking gate failed in this snapshot, but 1 gate(s) reported findings, are unwired from CI, or could not run on the machine that generated this page. See Known Gaps.
+    No blocking gate failed in this snapshot, but 4 gate(s) reported findings, are unwired from CI, or could not run on the machine that generated this page. See Known Gaps.
 
 <!-- diagram-id: golden-status-gate-outcomes-pie -->
 ```mermaid
 pie title Quality Gate Outcomes
-    "Pass" : 26
-    "Warn" : 1
+    "Pass" : 23
+    "Skipped" : 4
 ```
 
 ## Gate Results
@@ -52,17 +52,17 @@ These are locally executed results, not GitHub Actions statuses. **Skipped** mea
 <!-- golden-status:results:start -->
 | Gate | Severity | Status | Detail | Time |
 | --- | --- | --- | --- | --- |
-| Validator doctests | Blocking | ✅ Pass | 7 modules checked, every doctest passed. | < 10s |
+| Validator doctests | Blocking | ✅ Pass | 8 modules checked, every doctest passed. | < 10s |
 | Mermaid format | Blocking | ✅ Pass | Files checked: 232 · Files with errors: 0 | < 10s |
 | Mermaid syntax | Blocking | ✅ Pass | Diagrams checked: 384 · Errors found: 0 | < 10s |
 | Content sources | Blocking | ✅ Pass | Files with mermaid: 231 · Validation errors: 0 | < 10s |
 | Content sources schema | Blocking | ✅ Pass | Files with content_sources schema drift: 0 · Parse errors: 0 | < 10s |
 | Diagram ID parity | Blocking | ✅ Pass | mermaid blocks: 384 · diagram-id comments: 384 | < 10s |
 | CLI explanation tables | Blocking | ✅ Pass | All Azure CLI code fences and Markdown tables are correctly terminated. | < 10s |
-| Document quality | Blocking | ⚠️ Warn | Documentation quality gate failed: 29 error(s) across 232 file(s). | < 10s |
+| Document quality | Blocking | ✅ Pass | Documentation quality gate passed for 232 file(s). | < 10s |
 | Frontmatter YAML style | Blocking | ✅ Pass | Files with style drift: 0 · Parse errors: 0 | < 10s |
 | Microsoft Learn locale | Blocking | ✅ Pass | Files with locale drift: 0 | < 10s |
-| Microsoft Learn URL reachability | Advisory | ✅ Pass | All URLs are valid! | 10-120s |
+| Microsoft Learn URL reachability | Advisory | ➖ Skipped | Network gate; re-run with --include-network. | < 10s |
 | Lab artifact PII | Blocking | ✅ Pass | [scan_lab_pii] scanned=467 skipped_binary=0 skipped_decode=0 findings=0 | < 10s |
 | Documentation PII | Blocking | ✅ Pass | No blocking PII patterns detected! | < 10s |
 | Documentation repetition | Blocking | ✅ Pass | Scanned 232 file(s): 0 error(s), 6 warning(s). | < 10s |
@@ -70,15 +70,15 @@ These are locally executed results, not GitHub Actions statuses. **Skipped** mea
 | Frontmatter schema | Blocking | ✅ Pass | Checked 232 files · Found 0 errors, 28 warnings: | < 10s |
 | MkDocs strict build | Blocking | ✅ Pass | Site built with no strict-mode warnings. | 10-120s |
 | Shell script syntax | Blocking | ✅ Pass | All shell scripts parse. | < 10s |
-| ShellCheck | Blocking | ✅ Pass | ShellCheck reported no findings. | < 10s |
+| ShellCheck | Blocking | ➖ Skipped | Executable `shellcheck` is not on PATH. | < 10s |
 | Node.js dependency audit | Blocking | ✅ Pass | found 0 vulnerabilities | < 10s |
-| Node.js app tests | Blocking | ✅ Pass | # tests 3 · # pass 3 · # fail 0 | < 10s |
+| Node.js app tests | Blocking | ✅ Pass | ℹ tests 3 · ℹ pass 3 · ℹ fail 0 | < 10s |
 | Node.js production install | Blocking | ✅ Pass | Production tree resolved from the lockfile. | < 10s |
 | Python app compile | Blocking | ✅ Pass | All modules compiled. | < 10s |
 | Python app tests | Blocking | ✅ Pass | collected 4 items | < 10s |
-| .NET app build | Blocking | ✅ Pass | Time Elapsed 00:00:13.30 | 10-120s |
-| Java app tests | Blocking | ✅ Pass | WARNING: Dynamic loading of agents will be disallowed by default in a future release | 10-120s |
-| Bicep template build | Blocking | ✅ Pass | Bicep templates built: 37 | 10-120s |
+| .NET app build | Blocking | ➖ Skipped | Executable `dotnet` is not on PATH. | < 10s |
+| Java app tests | Blocking | ➖ Skipped | Executable `mvn` is not on PATH. | < 10s |
+| Bicep template build | Blocking | ✅ Pass | Bicep templates built: 37 | > 120s |
 
 <!-- golden-status:results:end -->
 
@@ -89,7 +89,7 @@ Generated from the `GATES` registry in `scripts/generate_golden_status.py`. CI f
 <!-- golden-status:inventory:start -->
 | Gate | Enforces | Severity | Command | Enforced by |
 | --- | --- | --- | --- | --- |
-| Validator doctests | Executable specs inside the validators themselves still pass. | Blocking | `python3 -m doctest scripts/lib/content_scope.py scripts/validate_content_sources.py scripts/validate_cli_explanations.py scripts/validate_pii.py scripts/detect_repetition.py scripts/validate_visual_content.py scripts/generate_golden_status.py` | `Validate Content Source Metadata` — `validate-content-sources.yml`<br>`Validate CLI Explanation Tables` — `validate-content-sources.yml`<br>`Validate PII` — `validate-content-sources.yml`<br>`Validate Documentation Repetition` — `validate-repetition.yml`<br>`Validate Visual Content (advisory)` — `validate-visual-content.yml`<br>`Validate Golden Status` — `validate-golden-status.yml` |
+| Validator doctests | Executable specs inside the validators themselves still pass. | Blocking | `python3 -m doctest scripts/lib/content_scope.py scripts/validate_content_sources.py scripts/validate_cli_explanations.py scripts/validate_pii.py scripts/detect_repetition.py scripts/validate_doc_quality.py scripts/validate_visual_content.py scripts/generate_golden_status.py` | `Validate Content Source Metadata` — `validate-content-sources.yml`<br>`Validate CLI Explanation Tables` — `validate-content-sources.yml`<br>`Validate PII` — `validate-content-sources.yml`<br>`Validate Documentation Repetition` — `validate-repetition.yml`<br>`Validate Visual Content (advisory)` — `validate-visual-content.yml`<br>`Validate Golden Status` — `validate-golden-status.yml` |
 | Mermaid format | Mermaid fences are unindented and correctly delimited. | Blocking | `python3 scripts/validate_mermaid_format.py` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
 | Mermaid syntax | Every diagram parses as valid Mermaid. | Blocking | `python3 scripts/validate_mermaid_syntax.py` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
 | Content sources | Pages with Mermaid carry content_sources metadata with a valid source type. | Blocking | `python3 scripts/validate_content_sources.py` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
@@ -140,7 +140,10 @@ Generated from the `GATES` registry in `scripts/generate_golden_status.py`. CI f
 
 ## Known Gaps
 
-- **Document quality** reported findings that its CI job does not fail on: Documentation quality gate failed: 29 error(s) across 232 file(s).
+- **Microsoft Learn URL reachability** did not run here: Network gate; re-run with --include-network.
+- **ShellCheck** did not run here: Executable `shellcheck` is not on PATH.
+- **.NET app build** did not run here: Executable `dotnet` is not on PATH.
+- **Java app tests** did not run here: Executable `mvn` is not on PATH.
 
 ## How to Regenerate
 
