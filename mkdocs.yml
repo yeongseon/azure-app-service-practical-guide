@@ -362,6 +362,7 @@ nav:
       - troubleshooting/lab-guides/intermittent-5xx.md
       - troubleshooting/lab-guides/memory-pressure.md
       - troubleshooting/lab-guides/no-space-left-on-device.md
+      - troubleshooting/lab-guides/private-endpoint-route-fault.md
       - troubleshooting/lab-guides/slot-swap-config-drift.md
       - troubleshooting/lab-guides/slow-start-cold-start.md
       - troubleshooting/lab-guides/snat-exhaustion.md

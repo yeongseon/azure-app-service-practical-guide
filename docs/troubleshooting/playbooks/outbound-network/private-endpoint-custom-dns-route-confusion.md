@@ -12,7 +12,7 @@ content_sources:
         - https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/troubleshoot-vnet-integration-apps
 content_validation:
   status: verified
-  last_reviewed: 2026-09-11
+  last_reviewed: 2026-10-02
   reviewer: agent
   core_claims:
     - claim: "Private Endpoint health, DNS resolution, and route policy are separate layers."
@@ -20,6 +20,9 @@ content_validation:
       verified: true
     - claim: "Private connectivity requires both correct DNS answer and permitted network path."
       source: "https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration"
+      verified: true
+    - claim: "A user-defined route overrides the /32 route of a private endpoint only when private endpoint network policies for route tables are enabled on the endpoint subnet and the route prefix is no broader than the virtual network address space; a 0.0.0.0/0 route does not override it."
+      source: "https://learn.microsoft.com/en-us/azure/private-link/disable-private-endpoint-network-policy"
       verified: true
 ---
 
@@ -375,6 +378,22 @@ AppServiceConsoleLogs
 - Effective route is valid and direct/private path tests succeed.
 - Failures are resolver-only, not connect-path failures.
 
+**Live reproduction (2026-10-02)**
+
+The [Private Endpoint Route Fault lab](../../lab-guides/private-endpoint-route-fault.md) held DNS, the zone link, and endpoint approval constant and added only an exact `/32` user-defined route from the integration subnet to an unused appliance address, then removed it.
+
+| Phase | Resolver answer | Standard FQDN dependency | Inbound `/connect` |
+|---|---|---|---|
+| Healthy | Endpoint address (8 of 8) | `409`, sub-second | `200`, about 0.45 s |
+| Route added | Endpoint address (8 of 8) | `ResultCode` `0`, about 8 s (connect timeout) | `200`, about 16 s |
+| Route removed | Endpoint address (8 of 8) | `409`, sub-second | `200`, about 0.4 s |
+
+- [Observed] The resolver answer never changed; only the route did. Calls failed when it was added and recovered when it was removed.
+- [Observed] No `5xx` and no console log rows: the fault is visible only as dependency duration at the client timeout with `ResultCode` `0`.
+- [Observed] Application Insights marks a fast `409` as `Success == false` too, so read `ResultCode` and duration, not the failure count.
+- [Inferred] "Private address plus `ResultCode` `0` at the client timeout" separates H3/H4 (path) from H1/H2 (DNS), where the DNS lab showed a public address with a fast `403`.
+- The override only works because the lab enables private endpoint network policies on the endpoint subnet; see the core claim sourced from [Manage network policies for private endpoints](https://learn.microsoft.com/en-us/azure/private-link/disable-private-endpoint-network-policy).
+
 **Validation (CLI + KQL)**
 ```bash
 az webapp show --resource-group <resource-group> --name <app-name> --query "{vnetRouteAllEnabled:siteConfig.vnetRouteAllEnabled, virtualNetworkSubnetId:virtualNetworkSubnetId}"
@@ -539,6 +558,7 @@ Abnormal: Concluding "outbound is broken because inbound private endpoints is 0"
 - [`../../kql/correlation/latency-vs-errors.md`](../../kql/correlation/latency-vs-errors.md)
 - [`../../first-10-minutes/outbound-network.md`](../../first-10-minutes/outbound-network.md)
 - [Lab: DNS Resolution (VNet)](../../lab-guides/dns-vnet-resolution.md)
+- [Lab: Private Endpoint Route Fault](../../lab-guides/private-endpoint-route-fault.md)
 - [Outbound Network (First 10 Minutes)](../../first-10-minutes/outbound-network.md)
 - [DNS Resolution (VNet-integrated App Service)](dns-resolution-vnet-integrated-app-service.md)
 
@@ -548,3 +568,5 @@ Abnormal: Concluding "outbound is broken because inbound private endpoints is 0"
 - [Azure App Service networking features](https://learn.microsoft.com/en-us/azure/app-service/networking-features)
 - [What is Azure Private Link?](https://learn.microsoft.com/en-us/azure/private-link/private-link-overview)
 - [Azure DNS private zones overview](https://learn.microsoft.com/en-us/azure/dns/private-dns-overview)
+- [Manage network policies for private endpoints](https://learn.microsoft.com/en-us/azure/private-link/disable-private-endpoint-network-policy)
+- [Virtual network traffic routing](https://learn.microsoft.com/en-us/azure/virtual-network/virtual-networks-udr-overview)

@@ -180,6 +180,7 @@ Deploy reproduction environments to your Azure subscription and observe real sym
 - [Container HTTP Pings](lab-guides/container-http-pings.md)
 - [SNAT Exhaustion](lab-guides/snat-exhaustion.md)
 - [DNS Resolution (VNet)](lab-guides/dns-vnet-resolution.md)
+- [Private Endpoint Route Fault](lab-guides/private-endpoint-route-fault.md)
 - [No Space Left on Device](lab-guides/no-space-left-on-device.md)
 - [Deployment Succeeded but Startup Failed](lab-guides/deployment-succeeded-startup-failed.md)
 - [Failed to Forward Request](lab-guides/failed-to-forward-request.md)
