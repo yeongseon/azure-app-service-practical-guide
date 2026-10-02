@@ -104,7 +104,9 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
   properties: {
     allowBlobPublicAccess: false
     minimumTlsVersion: 'TLS1_2'
-    publicNetworkAccess: 'Enabled'
+    // Disabled so the private endpoint is the only reachable path; with the zone
+    // unlinked, the public answer then fails, which is the fault this lab reproduces.
+    publicNetworkAccess: 'Disabled'
   }
 }
 

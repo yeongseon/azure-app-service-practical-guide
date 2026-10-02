@@ -902,6 +902,13 @@ Evidence minimum for that run:
 3. `kql-console` entries with DNS error signatures.
 4. zone link list proving misconfiguration before fix and correctness after fix.
 
+!!! note "Measured run, 2026-10-02: Azure-provided DNS does not produce a lookup error"
+    [Observed] With the default resolver path (embedded resolver forwarding to `168.63.129.16`), an unlinked `privatelink.blob.core.windows.net` zone, and storage public network access disabled, `/resolve` succeeded with a **public** address and the storage call returned HTTP `403`; no lookup error occurred.
+
+    [Observed] Linking the zone to the VNet changed resolution to the private endpoint address `10.50.2.4` without an app restart.
+
+    [Inferred] An explicit lookup error therefore requires the custom-resolver path described above; with Azure-provided DNS the evidence is a public answer plus a failing dependency in `AppDependencies`. `verify.sh` now checks that dependency signal. Full evidence is in the [DNS resolution playbook](../playbooks/outbound-network/dns-resolution-vnet-integrated-app-service.md#live-reproduction-evidence-2026-10-02).
+
 ### 4.14 Incident response value of this lab output
 
 Even without the failing VNet-integrated artifact, this guide provides:

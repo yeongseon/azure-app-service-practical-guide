@@ -11,7 +11,7 @@ fi
 WORKSPACE_ID=$(az monitor log-analytics workspace list \
     --resource-group "$RESOURCE_GROUP_NAME" \
     --query "[0].customerId" \
-    --output tsv)
+    --output tsv | tr -d '\r')
 
 if [ -z "$WORKSPACE_ID" ]; then
     echo "No Log Analytics workspace found in resource group: $RESOURCE_GROUP_NAME"
@@ -20,40 +20,35 @@ fi
 
 echo "Using Log Analytics workspace ID: $WORKSPACE_ID"
 
-dns_console_query='AppServiceConsoleLogs
+# The fault does not produce DNS errors or 5xx: the storage name resolves to a
+# public address, the call is rejected, and the app still answers 200. The
+# signal lives in Application Insights dependencies (see the DNS playbook).
+dependency_query='AppDependencies
 | where TimeGenerated > ago(2h)
-| where ResultDescription has_any ("DNS", "resolve", "Name or service not known", "getaddrinfo")
-| summarize hitCount = count()'
+| where Target has "blob.core.windows.net" and Target !has "privatelink"
+| summarize failed = countif(Success == false), total = count()'
 
-http_5xx_query='AppServiceHTTPLogs
-| where TimeGenerated > ago(2h)
-| where ScStatus >= 500
-| summarize hitCount = count()'
-
-dns_console_hits=$(az monitor log-analytics query \
+result=$(az monitor log-analytics query \
     --workspace "$WORKSPACE_ID" \
-    --analytics-query "$dns_console_query" \
-    --query "tables[0].rows[0][0]" \
-    --output tsv)
+    --analytics-query "$dependency_query" \
+    --query "[0].[failed, total]" \
+    --output tsv | tr -d '\r')
 
-http_5xx_hits=$(az monitor log-analytics query \
-    --workspace "$WORKSPACE_ID" \
-    --analytics-query "$http_5xx_query" \
-    --query "tables[0].rows[0][0]" \
-    --output tsv)
-
-dns_console_hits=${dns_console_hits:-0}
-http_5xx_hits=${http_5xx_hits:-0}
+failed=$(echo "$result" | awk '{print $1}')
+total=$(echo "$result" | awk '{print $2}')
+failed=${failed:-0}
+total=${total:-0}
 
 echo
-echo "Observed signal counts (last 2 hours):"
-echo "  DNS-related console log hits: $dns_console_hits"
-echo "  HTTP 5xx log hits: $http_5xx_hits"
+echo "Storage dependency calls via the standard FQDN (last 2 hours): ${failed} failed of ${total}"
 echo
 
-if [ "$dns_console_hits" -gt 0 ] || [ "$http_5xx_hits" -gt 0 ]; then
-    echo "✅ Expected DNS misconfiguration symptoms detected. Reproduction appears successful."
+if [ "$total" -eq 0 ]; then
+    echo "No dependency telemetry yet. Run trigger.sh, wait 2-5 minutes for ingestion, then re-run."
+    exit 1
+elif [ "$failed" -gt 0 ]; then
+    echo "Reproduction observed: storage calls are failing while the app keeps returning 200."
+    echo "Confirm the cause by checking which address the name resolves to (/resolve) and the zone's VNet links."
 else
-    echo "⚠️  No expected DNS symptoms detected yet."
-    echo "Run trigger.sh again, wait 2-5 minutes, then re-run verify.sh."
+    echo "All storage calls succeeded: the private path is working (expected after linking the zone)."
 fi

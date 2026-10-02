@@ -11,7 +11,7 @@ This page tracks `content_validation` metadata for **in-scope factual-claim docu
 
 ## Summary
 
-*Generated: 2026-10-01*
+*Generated: 2026-10-02*
 
 | Content Type | Total | Verified | Pending | Unverified | No Metadata |
 |---|---:|---:|---:|---:|---:|
@@ -96,7 +96,7 @@ pie title In-Scope Document Validation Status
 | [Deployment Failures](../troubleshooting/playbooks/deployment-failures.md) | ✅ | ✅ Verified | 4/4 | 2026-09-11 |
 | [Deployment Succeeded Startup Failed](../troubleshooting/playbooks/startup-availability/deployment-succeeded-startup-failed.md) | ✅ | ✅ Verified | 3/3 | 2026-09-11 |
 | [Detector Map](../troubleshooting/methodology/detector-map.md) | ✅ | ✅ Verified | 2/2 | 2026-09-11 |
-| [Dns Resolution Vnet Integrated App Service](../troubleshooting/playbooks/outbound-network/dns-resolution-vnet-integrated-app-service.md) | ✅ | ✅ Verified | 2/2 | 2026-09-11 |
+| [Dns Resolution Vnet Integrated App Service](../troubleshooting/playbooks/outbound-network/dns-resolution-vnet-integrated-app-service.md) | ✅ | ✅ Verified | 4/4 | 2026-10-02 |
 | [Evidence Map](../troubleshooting/evidence-map.md) | ✅ | ✅ Verified | 2/2 | 2026-09-11 |
 | [Failed To Forward Request](../troubleshooting/playbooks/startup-availability/failed-to-forward-request.md) | ✅ | ✅ Verified | 3/3 | 2026-09-11 |
 | [Intermittent 5Xx Under Load](../troubleshooting/playbooks/performance/intermittent-5xx-under-load.md) | ✅ | ✅ Verified | 2/2 | 2026-04-12 |
