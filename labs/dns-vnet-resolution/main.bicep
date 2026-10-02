@@ -10,6 +10,7 @@ var uniqueSuffix = uniqueString(resourceGroup().id)
 var serverFarmName = 'asp-${baseName}-${uniqueSuffix}'
 var webAppName = 'app-${baseName}-${uniqueSuffix}'
 var workspaceName = 'log-${baseName}-${uniqueSuffix}'
+var appInsightsName = 'appi-${baseName}-${uniqueSuffix}'
 var diagnosticSettingName = 'diag-${baseName}-${uniqueSuffix}'
 var virtualNetworkName = 'vnet-${baseName}-${uniqueSuffix}'
 var integrationSubnetName = 'snet-${baseName}-int'
@@ -42,6 +43,19 @@ resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2022-10
       name: 'PerGB2018'
     }
     retentionInDays: 30
+  }
+}
+
+// Workspace-based Application Insights. With the agent settings on the web app,
+// App Service autoinstruments Flask and `requests`, so the lab's /connect calls
+// land in the `dependencies` table alongside the App Service diagnostic logs.
+resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
+  name: appInsightsName
+  location: location
+  kind: 'web'
+  properties: {
+    Application_Type: 'web'
+    WorkspaceResourceId: logAnalyticsWorkspace.id
   }
 }
 
@@ -126,6 +140,14 @@ resource webApp 'Microsoft.Web/sites@2023-12-01' = {
           name: 'STORAGE_ACCOUNT_NAME'
           value: storageAccount.name
         }
+        {
+          name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
+          value: appInsights.properties.ConnectionString
+        }
+        {
+          name: 'ApplicationInsightsAgent_EXTENSION_VERSION'
+          value: '~3'
+        }
       ]
     }
   }
@@ -196,3 +218,4 @@ output webAppDefaultHostName string = webApp.properties.defaultHostName
 output logAnalyticsWorkspaceName string = logAnalyticsWorkspace.name
 output storageAccountName string = storageAccount.name
 output privateEndpointName string = privateEndpoint.name
+output appInsightsName string = appInsights.name

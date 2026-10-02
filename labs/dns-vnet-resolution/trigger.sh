@@ -33,5 +33,7 @@ echo
 rm --force /tmp/dns-resolve-response.json /tmp/dns-connect-response.json
 
 echo "Trigger complete."
-echo "Expected observation: DNS lookup and/or connection failures for storage private endpoint names"
+echo "Expected observation: the storage FQDN resolves to a PUBLIC address (no DNS error),"
+echo "and the call fails with 403 AuthorizationFailure from the storage public endpoint,"
 echo "because the Private DNS Zone is intentionally NOT linked to the VNet."
+echo "The app still returns 200, so look in Application Insights dependencies, not 5xx counts."
