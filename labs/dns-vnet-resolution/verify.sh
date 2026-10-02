@@ -11,7 +11,7 @@ fi
 WORKSPACE_ID=$(az monitor log-analytics workspace list \
     --resource-group "$RESOURCE_GROUP_NAME" \
     --query "[0].customerId" \
-    --output tsv)
+    --output tsv | tr -d '\r')
 
 if [ -z "$WORKSPACE_ID" ]; then
     echo "No Log Analytics workspace found in resource group: $RESOURCE_GROUP_NAME"
@@ -20,40 +20,39 @@ fi
 
 echo "Using Log Analytics workspace ID: $WORKSPACE_ID"
 
-dns_console_query='AppServiceConsoleLogs
-| where TimeGenerated > ago(2h)
-| where ResultDescription has_any ("DNS", "resolve", "Name or service not known", "getaddrinfo")
-| summarize hitCount = count()'
+# The fault does not produce DNS errors or 5xx: the storage name resolves to a
+# public address, the call is rejected, and the app still answers 200. The
+# signal lives in Application Insights dependencies (see the DNS playbook).
+# Judge the CURRENT state from the most recent call, not a 2-hour total: after
+# the zone is linked, earlier 403 rows are still inside any long window.
+WINDOW_MINUTES="${2:-15}"
+dependency_query="AppDependencies
+| where TimeGenerated > ago(${WINDOW_MINUTES}m)
+| where Target has \"blob.core.windows.net\" and Target !has \"privatelink\"
+| summarize calls = count(), latest = max(TimeGenerated) by ResultCode
+| order by latest desc"
 
-http_5xx_query='AppServiceHTTPLogs
-| where TimeGenerated > ago(2h)
-| where ScStatus >= 500
-| summarize hitCount = count()'
-
-dns_console_hits=$(az monitor log-analytics query \
+rows=$(az monitor log-analytics query \
     --workspace "$WORKSPACE_ID" \
-    --analytics-query "$dns_console_query" \
-    --query "tables[0].rows[0][0]" \
-    --output tsv)
-
-http_5xx_hits=$(az monitor log-analytics query \
-    --workspace "$WORKSPACE_ID" \
-    --analytics-query "$http_5xx_query" \
-    --query "tables[0].rows[0][0]" \
-    --output tsv)
-
-dns_console_hits=${dns_console_hits:-0}
-http_5xx_hits=${http_5xx_hits:-0}
+    --analytics-query "$dependency_query" \
+    --query "[].[ResultCode, calls]" \
+    --output tsv | tr -d '\r')
 
 echo
-echo "Observed signal counts (last 2 hours):"
-echo "  DNS-related console log hits: $dns_console_hits"
-echo "  HTTP 5xx log hits: $http_5xx_hits"
+echo "Storage calls via the standard FQDN in the last ${WINDOW_MINUTES} minutes (newest result code first):"
+if [ -z "$rows" ]; then
+    echo "  none"
+    echo "No dependency telemetry yet. Run trigger.sh, wait 2-5 minutes for ingestion, then re-run."
+    exit 1
+fi
+echo "$rows" | awk '{printf "  ResultCode %s: %s call(s)\n", $1, $2}'
+latest_code=$(echo "$rows" | head -n 1 | awk '{print $1}')
 echo
 
-if [ "$dns_console_hits" -gt 0 ] || [ "$http_5xx_hits" -gt 0 ]; then
-    echo "✅ Expected DNS misconfiguration symptoms detected. Reproduction appears successful."
+if [ "$latest_code" = "403" ]; then
+    echo "Fault reproduced: the latest call was rejected with HTTP 403 while the app keeps returning 200."
+    echo "Confirm the cause: /resolve should show a public address, and the zone should have no VNet link."
 else
-    echo "⚠️  No expected DNS symptoms detected yet."
-    echo "Run trigger.sh again, wait 2-5 minutes, then re-run verify.sh."
+    echo "The latest call returned ${latest_code}, not 403."
+    echo "This alone does not prove the private path; check that /resolve now returns the private endpoint address."
 fi

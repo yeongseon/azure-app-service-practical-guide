@@ -21,7 +21,7 @@ evidence:
   - lab
 summary: Diagnose DNS resolution failures in VNet-integrated App Service apps.
 status: stable
-last_reviewed: 2026-09-11
+last_reviewed: 2026-10-02
 content_sources:
   diagrams:
     - id: dns-vnet-resolution-flow
@@ -35,7 +35,7 @@ content_sources:
         - https://learn.microsoft.com/en-us/azure/app-service/overview-private-endpoint
 content_validation:
   status: verified
-  last_reviewed: 2026-09-11
+  last_reviewed: 2026-10-02
   reviewer: agent
   core_claims:
     - claim: "Regional VNet integration provides a network path, but does not automatically enable route-all or make all outbound traffic private."
@@ -43,6 +43,12 @@ content_validation:
       verified: true
     - claim: "DNS outcome depends on resolver configuration and zone linkage, while routing outcome depends on `vnetRouteAllEnabled` and subnet route tables."
       source: "https://learn.microsoft.com/en-us/azure/app-service/networking-features"
+      verified: true
+    - claim: "Creating a storage private endpoint updates the account's public DNS CNAME to an alias in the `privatelink` subdomain, and clients should connect using the standard storage FQDN rather than the `privatelink` subdomain URL."
+      source: "https://learn.microsoft.com/en-us/azure/storage/common/storage-private-endpoints"
+      verified: true
+    - claim: "App Service autoinstrumentation for Python on Linux (`ApplicationInsightsAgent_EXTENSION_VERSION=~3`) collects dependencies from libraries including `requests`."
+      source: "https://learn.microsoft.com/en-us/azure/azure-monitor/app/codeless-app-service"
       verified: true
 ---
 # DNS Resolution with VNet-Integrated App Service (Azure App Service Linux)
@@ -296,9 +302,10 @@ stlabdnsvnet         10.20.2.4
 
 ### Dependency Telemetry (Application Insights)
 
-When the app is instrumented with Application Insights, the `dependencies` table records the resolved outcome of each outbound call. A DNS failure surfaces here as a failed dependency whose `data`/`target` shows the hostname that could not be resolved, which is more precise than the `499` latency spikes in `AppServiceHTTPLogs`.
+When the app is instrumented with Application Insights, the `dependencies` table records the outcome of each outbound call. A missing Private DNS zone link usually does **not** surface as an unresolved hostname: the public CNAME chain still resolves, so the call reaches the storage public endpoint and fails there (for example HTTP `403` when public network access is disabled). Because the application often still returns `200` to its own caller, this failure can be invisible in `AppServiceHTTPLogs` and visible only here. See the live reproduction evidence below.
 
 ```kusto
+// Application Insights resource scope; in a Log Analytics workspace, query AppDependencies.
 dependencies
 | where timestamp > ago(6h)
 | where success == false
@@ -478,10 +485,46 @@ az monitor metrics list --resource "/subscriptions/<subscription-id>/resourceGro
 | Signal | Normal DNS-private path | Abnormal (dns-vnet incident pattern) |
 |---|---|---|
 | `/resolve` result | `*.privatelink.blob.core.windows.net` resolves to private IP (for example 10.x) | `*.privatelink.blob.core.windows.net` resolves to public IP `<ip-redacted>` |
-| `/connect` result | TLS/connect succeeds to private endpoint path | SSL/connect error against privatelink URL due to public endpoint routing |
+| `/connect` result (public FQDN) | HTTP response from the service after private resolution (`409` in the reproduction below) | HTTP `403` from the publicly resolved storage endpoint |
+| `/connect` result (`privatelink` FQDN) | TLS hostname validation failed in the reproduction below; connect using the standard storage FQDN, not the `privatelink` subdomain URL | Same TLS hostname validation failure |
 | `/diag/env` and `/diag/stats` | Low latency, consistent 200 | Mostly 200 but occasional 499/high latency spikes |
 | Platform startup logs | `Site started`, no startup errors | Same (healthy startup), proving issue is post-start dependency path |
 | Interpretation | Private DNS + route chain is aligned | Private DNS zone link/record path is misconfigured (H2/H3 focus) |
+
+### Live reproduction evidence (2026-10-02)
+
+Reproduced with `labs/dns-vnet-resolution` in `koreacentral`: a VNet-integrated Python app (B1), a storage account with `publicNetworkAccess: Disabled`, a blob private endpoint, and a `privatelink.blob.core.windows.net` zone that was deliberately **not** linked to the VNet. Application Insights autoinstrumentation (`ApplicationInsightsAgent_EXTENSION_VERSION=~3`) captured the app's outbound `requests` calls. The fault was then fixed by creating the missing VNet link, with no other change. All resources were deleted after collection.
+
+| Signal | Zone not linked (fault) | Zone linked (fix) |
+|---|---|---|
+| `getaddrinfo` for `<storage>.blob.core.windows.net` | `<ip-redacted>` (public) | `10.50.2.4` (private endpoint) |
+| Storage call via public FQDN, `AppDependencies.ResultCode` | `403`, 10 of 10 failed | `409`, 5 of 5 (service-level response after private resolution) |
+| Storage call via `privatelink` FQDN | TLS hostname validation failed, 10 of 10 | TLS hostname validation failed, 5 of 5 |
+| `AppServiceHTTPLogs` 5xx for `/connect` | `0` of 10 | `0` of 5 |
+| App resolver | `127.0.0.11` (embedded), upstream `168.63.129.16` | same |
+
+[Observed] With no zone link, the storage FQDN resolved to a public address and the call returned HTTP `403`; there was no `NXDOMAIN`, `SERVFAIL`, or resolver timeout. The lab app records the status code, not the Storage error body, so the specific Storage error code was not captured.
+
+[Observed] Creating only the VNet link changed resolution to the private endpoint address on the next request, with no app restart.
+
+[Measured] `AppServiceHTTPLogs` recorded zero 5xx responses in either phase; the app returned `200` while its dependency failed.
+
+[Inferred] A health check built only on 5xx counts would report this incident as healthy.
+
+[Inferred] In this controlled reproduction, where the missing VNet link was the only variable changed, the pair *public answer for a private-endpoint-backed name* plus *`403` in `AppDependencies`* identified **H2**. In a live incident a custom resolver (**H1/H3**) can produce the same pair, so confirm the zone's VNet links before concluding H2.
+
+[Observed] Calling the `privatelink.*` FQDN directly failed TLS hostname validation in both phases of this reproduction. Microsoft Learn advises against connecting through the `privatelink` subdomain URL; test the standard FQDN and inspect which address it resolves to.
+
+```kusto
+AppDependencies
+| where TimeGenerated > ago(2h)
+| where Target has "blob.core.windows.net"
+| summarize calls = count() by Target, ResultCode, Success, bin(TimeGenerated, 5m)
+| order by TimeGenerated asc
+```
+
+??? note "Evidence notes"
+    Collected 2026-10-02 from a dedicated, tagged resource group that was deleted after collection. Raw outputs were sanitized before inclusion: the public storage address is shown as `<ip-redacted>`; the private endpoint address `10.50.2.4` is the lab's own deterministic subnet address. The resolver lines come from `/etc/resolv.conf` inside the app container.
 
 ## 7. Likely Root Cause Patterns
 - Pattern A: Custom DNS forwarders do not forward Azure private zones (for example `privatelink.*`) to the proper upstream path.
@@ -551,6 +594,8 @@ Abnormal: Concluding "DNS is fine because a private endpoint exists" (Section 2,
 - [Lab: DNS Resolution (VNet)](../../lab-guides/dns-vnet-resolution.md)
 
 ## Sources
+- [Use private endpoints for Azure Storage (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/storage/common/storage-private-endpoints)
+- [Application Insights for Azure App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/azure-monitor/app/codeless-app-service)
 - [Integrate your app with an Azure virtual network](https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration)
 - [Azure DNS private zones overview](https://learn.microsoft.com/en-us/azure/dns/private-dns-overview)
 - [Name resolution for resources in Azure virtual networks](https://learn.microsoft.com/en-us/azure/virtual-network/virtual-networks-name-resolution-for-vms-and-role-instances)
