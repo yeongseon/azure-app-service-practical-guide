@@ -19,7 +19,7 @@ const crypto = require('node:crypto');
 const fs = require('node:fs');
 const path = require('node:path');
 const { chromium } = require('playwright');
-const { applyPiiReplacements, capturePortalScreenshot } = require('../portal-capture-helpers');
+const { capturePortalScreenshot } = require('../portal-capture-helpers');
 
 const PROFILE_PATH = path.join(__dirname, 'capture-profile.json');
 const PROFILE_BYTES = fs.readFileSync(PROFILE_PATH);
@@ -60,10 +60,11 @@ async function applyProfile(page, cdp) {
     screenWidth: viewport.width,
     screenHeight: viewport.height,
   });
-  // Chrome rejects a second identical locale override; that is the only error
-  // tolerated here, and the locale is asserted independently afterwards.
+  // Chrome rejects re-applying a locale override with "Another locale override
+  // is already in effect"; that exact case is tolerated because the locale is
+  // asserted independently. Every other error propagates.
   await cdp.send('Emulation.setLocaleOverride', { locale: emulation.locale }).catch((err) => {
-    if (!/already|override/i.test(String(err && err.message))) throw err;
+    if (!/already in effect/i.test(String(err && err.message))) throw err;
   });
   await cdp.send('Emulation.setTimezoneOverride', { timezoneId: emulation.timezoneId });
   await page.emulateMedia({
@@ -213,14 +214,18 @@ async function capture(args) {
       throw new Error(`refusing to capture, ${PROFILE.id} not met:\n  - ${violations.join('\n  - ')}`);
     }
 
-    await applyPiiReplacements(page);
-    await page.waitForTimeout(PROFILE.readiness.postPiiSettleMs);
-    await applyProfile(page, cdp);
-    const finalViolations = await profileViolations(page);
-    if (finalViolations.length) {
-      throw new Error(`profile drifted before capture:\n  - ${finalViolations.join('\n  - ')}`);
-    }
-    await capturePortalScreenshot(page, args.out);
+    await capturePortalScreenshot(page, args.out, {
+      settleMs: PROFILE.readiness.postPiiSettleMs,
+      // Runs after the helper's last DOM mutation, immediately before the pixels
+      // are taken, so nothing can change between the check and the capture.
+      beforeScreenshot: async () => {
+        await applyProfile(page, cdp);
+        const finalViolations = await profileViolations(page);
+        if (finalViolations.length) {
+          throw new Error(`profile drifted before capture:\n  - ${finalViolations.join('\n  - ')}`);
+        }
+      },
+    });
 
     const { width, height } = pngDimensions(args.out);
     const expected = PROFILE.capture;

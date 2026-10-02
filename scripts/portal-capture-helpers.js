@@ -171,10 +171,10 @@ async function capturePortalScreenshot(page, outputPath, options = {}) {
         'take a second viewport capture for below-the-fold content.',
     );
   }
-  const { requireAvatarMask = true } = options;
+  const { requireAvatarMask = true, settleMs = 400, beforeScreenshot } = options;
 
   const replacements = await applyPiiReplacements(page);
-  await page.waitForTimeout(400);
+  await page.waitForTimeout(settleMs);
 
   const avatar = await resolveAccountAvatarMask(page);
   const masks = avatar ? [avatar] : [];
@@ -190,6 +190,8 @@ async function capturePortalScreenshot(page, outputPath, options = {}) {
       '{ requireAvatarMask: false } to override.';
     throw new Error(message);
   }
+
+  if (beforeScreenshot) await beforeScreenshot();
 
   await page.screenshot({
     path: outputPath,
