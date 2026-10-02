@@ -22,7 +22,7 @@ Deploy the Express app from [01. Local Run](./01-local-run.md) to Azure App Serv
 <!-- diagram-id: simple-architecture -->
 ```mermaid
 flowchart TD
-    DEV[Local Node.js app] -->|az webapp up| APP[Azure App Service\nLinux Node 20 LTS]
+    DEV[Local Node.js app] -->|az webapp up| APP[Azure App Service\nLinux Node 24 LTS]
     USER[Browser] -->|HTTPS| APP
     APP --> LOGS[App Service log stream]
 

@@ -25,12 +25,12 @@ graph TD
 App Service supports current LTS versions. Check available versions via CLI:
 
 ```bash
-az webapp list-runtimes --linux --output table
+az webapp list-runtimes --os linux --runtime node --output table
 ```
 
 | Command/Code | Purpose |
 |--------------|---------|
-| `az webapp list-runtimes --linux --output table` | Lists the Linux runtime stacks available in Azure App Service |
+| `az webapp list-runtimes --os linux --runtime node --output table` | Lists the Node.js runtime stacks currently offered on Linux App Service |
 
 | Version | `--runtime` value | Status |
 | :--- | :--- | :--- |
@@ -200,7 +200,7 @@ Cold starts occur when an app scales out or starts after being idle.
 *   **`engines` field:** Specify the Node.js version to guide Oryx.
     ```json
     "engines": {
-      "node": ">=20.0.0"
+      "node": ">=24.0.0"
     }
     ```
 

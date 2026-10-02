@@ -24,7 +24,7 @@ Run the application locally with App Service-safe defaults before deploying to A
 <!-- diagram-id: diagram-1 -->
 ```mermaid
 flowchart TD
-    INET[Internet] -->|HTTPS| WA["Web App\nApp Service S1\nLinux Node 20 LTS"]
+    INET[Internet] -->|HTTPS| WA["Web App\nApp Service S1\nLinux Node 24 LTS"]
 
     subgraph VNET["VNet 10.0.0.0/16"]
         subgraph INT_SUB["Integration Subnet 10.0.1.0/24\nDelegation: Microsoft.Web/serverFarms"]
@@ -75,7 +75,7 @@ flowchart TD
 
 ## Prerequisites
 
-- **Node.js** v20+ (LTS recommended)
+- **Node.js** v24+ (LTS recommended)
 - **npm** or **yarn**
 - Basic terminal familiarity
 
@@ -195,9 +195,9 @@ curl http://localhost:3000/info
 Expected response:
 ```json
 {
-  "name": "azure-app-service-practical-guide",
+  "name": "azure-appservice-nodejs-guide",
   "version": "1.0.0",
-  "node": "v20.20.0",
+  "node": "v24.21.0",
   "environment": "development",
   "telemetryMode": "basic"
 }

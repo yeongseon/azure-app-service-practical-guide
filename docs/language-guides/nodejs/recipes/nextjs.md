@@ -27,7 +27,7 @@ Next.js is a popular React framework that supports both client-side and server-s
 ## Prerequisites
 
 - Next.js 12+ (standalone mode requires Next.js 12 or newer)
-- Azure App Service (Linux) with Node.js 18+
+- Azure App Service (Linux) with Node.js 24
 
 ## Implementation
 

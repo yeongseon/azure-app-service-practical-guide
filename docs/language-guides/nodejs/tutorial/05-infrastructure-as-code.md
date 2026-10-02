@@ -25,7 +25,7 @@ Manual resource creation in the portal is fine for experiments, but production w
 <!-- diagram-id: diagram-1 -->
 ```mermaid
 flowchart TD
-    INET[Internet] -->|HTTPS| WA["Web App\nApp Service S1\nLinux Node 20 LTS"]
+    INET[Internet] -->|HTTPS| WA["Web App\nApp Service S1\nLinux Node 24 LTS"]
 
     subgraph VNET["VNet 10.0.0.0/16"]
         subgraph INT_SUB["Integration Subnet 10.0.1.0/24\nDelegation: Microsoft.Web/serverFarms"]
@@ -312,7 +312,7 @@ az webapp create --resource-group $RG --plan $PLAN_NAME --name $APP_NAME --runti
 |--------------|---------|
 | `az group create ...` | Creates the resource group for the imperative deployment |
 | `az appservice plan create ...` | Creates the Linux App Service plan |
-| `az webapp create ... --runtime "NODE\|20-lts"` | Creates the Node.js web app |
+| `az webapp create ... --runtime "NODE\|24-lts"` | Creates the Node.js web app |
 
 ???+ example "Expected output"
 ```json

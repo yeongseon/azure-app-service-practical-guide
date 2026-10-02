@@ -24,7 +24,7 @@ Manage environment variables, secrets, and identity for your Node.js application
 <!-- diagram-id: diagram-1 -->
 ```mermaid
 flowchart TD
-    INET[Internet] -->|HTTPS| WA["Web App\nApp Service S1\nLinux Node 20 LTS"]
+    INET[Internet] -->|HTTPS| WA["Web App\nApp Service S1\nLinux Node 24 LTS"]
 
     subgraph VNET["VNet 10.0.0.0/16"]
         subgraph INT_SUB["Integration Subnet 10.0.1.0/24\nDelegation: Microsoft.Web/serverFarms"]
@@ -109,6 +109,12 @@ SCM_DO_BUILD_DURING_DEPLOYMENT      False          true
 WEBSITE_NODE_DEFAULT_VERSION        False          ~20
 WEBSITE_HTTPLOGGING_RETENTION_DAYS  False          7
 ```
+
+!!! note "`~20` is the captured value, not the current one"
+    This output was captured on 2026-05-01, before this guide moved to Node 24.
+    Following the tutorial today provisions `NODE|24-lts`, so the same command now
+    reports `~24`. The capture is kept verbatim rather than rewritten, because it is
+    dated evidence of a real run.
 
 ### Add or Update Settings
 ```bash
