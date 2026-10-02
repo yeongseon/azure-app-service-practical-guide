@@ -20,11 +20,10 @@ param appServicePlanSku string = 'B1'
 
 @description('Node.js LTS version')
 @allowed([
-  '18'
-  '20'
   '22'
+  '24'
 ])
-param nodeVersion string = '20'
+param nodeVersion string = '24'
 
 @description('Telemetry mode: basic (console-only) or advanced (Winston + OTel)')
 @allowed([
