@@ -119,3 +119,8 @@ Some situations straddle two phases — the design choice you make while plannin
 - [Language Guides Hub](../language-guides/index.md) — Python, Node.js, Java, .NET tutorials
 - [Decision Tree](../troubleshooting/decision-tree.md) — symptom-first troubleshooting router
 - [Evidence Map](../troubleshooting/evidence-map.md) — evidence-collection index
+
+## Sources
+
+- [Azure App Service overview (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/overview)
+- [Azure App Service plan overview (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/overview-hosting-plans) — the plan/tier decision behind the Plan phase of this router
