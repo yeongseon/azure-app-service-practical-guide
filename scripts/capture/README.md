@@ -36,8 +36,14 @@ sequences already present across the docs.
 
 ## Adding a new screenshot
 
-1. Capture the raw Portal PNG with Playwright + `portal-capture-helpers.js`
-   (see `scripts/portal-capture-helpers.md`).
+1. Capture the raw Portal PNG with the runner, which enforces
+   [`capture-profile.json`](capture-profile.json) and refuses to capture if any
+   condition fails (see `scripts/portal-capture-helpers.md`):
+
+    ```bash
+    CAPTURE_CDP_URL=http://<cdp-host>:9222 node scripts/capture/capture.cjs \
+      --url '<blade-url>' --ready '<selector>' --out /tmp/<shot-id>.png
+    ```
 2. Add an entry to `manifest.yaml` (new `id` = intended file stem).
 3. Encode and stamp:
 
@@ -45,8 +51,10 @@ sequences already present across the docs.
     capture-optimize-webp /path/to/raw.png --id <shot-id>
     ```
 
-4. Reference it in markdown with `[[[ shot("<shot-id>") ]]]`.
-5. `mkdocs build --strict` to verify it renders.
+4. Record the profile and the committed bytes' SHA-256 in
+   [`provenance.yaml`](provenance.yaml).
+5. Reference it in markdown with `[[[ shot("<shot-id>") ]]]`.
+6. `mkdocs build --strict` to verify it renders; `python3 scripts/validate_capture_assets.py` to verify geometry.
 
 ## Re-capturing (drift refresh)
 

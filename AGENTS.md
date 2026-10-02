@@ -541,7 +541,7 @@ Screenshots may be committed as WebP produced by the manifest-driven capture pip
 
 #### Capture method
 
-Use the reusable helper at [`scripts/portal-capture-helpers.js`](scripts/portal-capture-helpers.js). Usage instructions for both standalone Playwright and MCP `browser_run_code_unsafe` are in [`scripts/portal-capture-helpers.md`](scripts/portal-capture-helpers.md).
+Committed Portal screenshots are produced **only** by the capture runner [`scripts/capture/capture.cjs`](scripts/capture/capture.cjs), under the capture profile [`scripts/capture/capture-profile.json`](scripts/capture/capture-profile.json). The runner imports the PII helper [`scripts/portal-capture-helpers.js`](scripts/portal-capture-helpers.js); usage is in [`scripts/portal-capture-helpers.md`](scripts/portal-capture-helpers.md). Ad-hoc `page.screenshot()` calls and inline MCP snippets MUST NOT produce committed screenshots: an inline copy of the PII rules drifts (the copy formerly in `portal-capture-helpers.md` had lost the lowercase-hex, IPv4, and IPv6 rules), and an ad-hoc capture skips the profile.
 
 The helper applies replacements to text nodes **and** `aria-label` attributes across the main frame and every nested iframe (Portal blades render inside iframes), then masks only the Account-menu avatar using Playwright's native `mask` option with Portal blue (`#0078d4`) so the masked region blends into the UI.
 
@@ -564,6 +564,8 @@ Working pattern (attach to a real, human-authenticated Chrome over CDP):
 4. **Attach Playwright over CDP** with `chromium.connectOverCDP('http://localhost:9222')`, pick the page whose URL contains `portal.azure.com`, apply the PII helper, then screenshot. `browser.close()` on a CDP-attached browser only detaches the debugger; it does NOT close the user's Chrome.
 
 Common failure: relaunching the Chrome binary while Chrome is already running just opens a tab in the existing (non-debug) process and silently ignores `--remote-debugging-port`. Always confirm the port with `curl`/`nc` before assuming the debug instance is up.
+
+On Windows the same flags apply to `chrome.exe`; add `--remote-allow-origins=*` so a CDP client from another host is accepted. Chrome binds the debugging port to `127.0.0.1` only, so a WSL2 distribution in the default NAT networking mode cannot reach it directly; expose it with an elevated `netsh interface portproxy add v4tov4` from the WSL gateway address to `127.0.0.1:9222` (plus a matching inbound firewall rule), and pass that address to the runner as `CAPTURE_CDP_URL`. The window size and display scaling of that Chrome do not matter: the runner overrides and verifies the geometry.
 
 #### PII Replacement Rules
 
@@ -588,121 +590,54 @@ Common failure: relaunching the Chrome binary while Chrome is already running ju
 
 The replacement scope covers text nodes, `aria-label`, `title`, and the visible value of `input` / `textarea` controls so search bars and filter chips do not leak resource names.
 
-#### Capture workflow rules
+#### Capture profile (`portal-desktop-v1`)
 
-- **Re-navigate between captures.** Portal CSS is cumulative; leftover style injections from a previous capture leak into the next page (e.g. left-nav appearing as a black box). Always call `browser_navigate` to reload before applying the helper.
+Every committed Portal screenshot is taken under the same, machine-enforced conditions. The source of truth is [`scripts/capture/capture-profile.json`](scripts/capture/capture-profile.json); the runner applies each condition over CDP, re-applies it after navigation and immediately before capture, verifies it in every frame it can evaluate, and **refuses to capture** if any condition does not hold.
+
+| Condition | Value | How it is enforced |
+|---|---|---|
+| Viewport | 1600 x 1000 | `Emulation.setDeviceMetricsOverride`; `innerWidth`/`innerHeight` asserted |
+| Device pixel ratio | 1 | Same override; `devicePixelRatio` asserted, so a high-DPI display cannot leak through |
+| Browser zoom | 100% | `visualViewport.scale` asserted to be 1 |
+| Output | Exactly 1600 x 1000 PNG, viewport only | `fullPage` is rejected by the helper; the PNG header is checked and a wrong-sized file is deleted |
+| Portal language | English | `document.documentElement.lang` asserted to start with `en` |
+| Regional format | English (United States) | Locale override `en-US` |
+| Theme / color scheme | Light | `prefers-color-scheme: light` emulated and asserted |
+| Motion | Reduced | `prefers-reduced-motion: reduce`; screenshot animations disabled, caret hidden |
+| High contrast | Off | `forced-colors: active` asserted false |
+| Time zone | UTC | `Emulation.setTimezoneOverride`; asserted per frame |
+| Overlays | None | Capture refused while a dialog, flyout, or toast is visible |
+| Readiness | Blade-specific signal | Mandatory `--ready` selector, then `document.fonts.ready`, then a stable layout across consecutive samples, then PII replacement and a fixed settle delay. Network idle is **not** a readiness signal: the Portal keeps background requests open. |
+
+Portal account settings the runner cannot set for you, and which the human confirms once in the capture profile before a session: Language English, Regional format English (United States), Theme Light (not Auto), Portal menu behavior Flyout (closed at capture), Service menu behavior Collapsed, and pop-up notifications, surveys, and teaching bubbles Off. Keep DevTools closed during a session; a second CDP client can clear the overrides.
+
+Any change to a value that affects rendered pixels creates a **new profile id**; it is never edited in place. Below-the-fold content is documented with a second viewport capture under its own stable id, not with a taller image.
+
+Other rules:
+
 - **Use the Portal MSIT URL with tenant hint.** `https://ms.portal.azure.com/#@<tenant>.onmicrosoft.com/resource/...`. Plain `portal.azure.com` triggers a login redirect.
-- **Prefer the English-language Portal.** The primary avatar selector keys off the English `aria-label` "Account menu"; a localized Portal may still match the `button.fxs-menu-account` fallback class, but that fallback is best-effort and not a stable contract. The helper throws if neither selector matches, so non-English captures should be reviewed manually.
 - **Close every transient flyout, drawer, and command-bar dropdown** before capture. Account panel, Recent menu, notifications, and tenant switcher each surface PII the helper cannot fully rewrite (avatar thumbnails, embedded canvases, late-rendered iframe content).
-- **Wait for the target blade to finish rendering** before applying replacements. The helper's 400 ms post-replacement pause is not a substitute for a per-blade `browser_wait_for` against stable text or an element on the blade.
-- **Viewport: 1600 x 1000.** Captures the standard blade layout without horizontal scrollbars.
 - **No black-box masking.** If a value cannot be rewritten and is not a known avatar/badge, fail the capture and update `PII_RULES` rather than fall back to a black rectangle.
 
-If `PII_RULES` in the helper is updated, this table MUST be updated in the same commit.
+If `PII_RULES` in the helper is updated, the [PII Replacement Rules](#pii-replacement-rules) table MUST be updated in the same commit.
 
-#### Inline capture pattern (Playwright MCP `browser_run_code_unsafe`)
+#### Enforcement in CI
 
-When capturing via the Playwright MCP `browser_run_code_unsafe` tool (no `require()` access), the PII helper must be **inlined** in the snippet. The inline rules MUST match `scripts/portal-capture-helpers.js` exactly; do not omit or alter any rule.
+`scripts/validate_capture_assets.py` (CI step "Check screenshot geometry against the capture profile", Golden Status gate *Capture asset geometry*) fails a pull request if any manifest WebP is not exactly `target_width` x `round(target_width * 1000 / 1600)` (currently 1440 x 900) or any legacy Portal PNG still referenced from `docs/` is not 1600 x 1000. Historical violations recorded before the profile existed are listed with their observed size, a reason, and a tracking issue in `scripts/capture/dimension-exceptions.yaml`; that list may only shrink, and an entry for an asset that now conforms is itself a failure.
 
-**Mandatory inline structure (per capture):**
+`scripts/capture/provenance.yaml` records which profile produced each committed screenshot, keyed by manifest id (or repository-relative path for a legacy PNG), with the profile hash and the SHA-256 of the committed bytes; CI fails if either no longer matches. Captures made before the profile existed are intentionally absent rather than stamped with a profile they were not produced under. Never record Portal URLs there: they carry tenant, subscription, and resource identifiers.
 
-```javascript
-async (page) => {
-  const PII_SCRIPT = `(() => {
-    const subs = [
-      { re: /(?<![0-9a-f])[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}(?![0-9a-f])/gi, val: '00000000-0000-0000-0000-000000000000' },
-      { re: /\\bMCAPS[-A-Za-z0-9_]*\\b/g, val: 'Visual Studio Enterprise Subscription' },
-      { re: /Microsoft\\s+Non-Production/gi, val: 'Contoso' },
-      { re: /\\b[A-Za-z0-9._%+-]+@microsoft\\.com(?![A-Za-z0-9.-])/gi, val: 'user@example.com' },
-      { re: /\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.onmicrosoft\\.com(?![A-Za-z0-9.-])/gi, val: 'user@example.com' },
-      { re: /\\b[A-Za-z0-9-]+\\.onmicrosoft\\.com(?![A-Za-z0-9.-])/gi, val: 'contoso.onmicrosoft.com' },
-      { re: /\\bychoe\\b/gi, val: 'demouser' },
-      { re: /Yeongseon\\s+Choe/g, val: 'Demo User' },
-      { re: /\\byeongseon\\b/gi, val: 'demouser' },
-      { re: /\\b[0-9A-F]{32,}\\b/g, val: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' },
-      { re: /\\b[0-9a-f]{64}\\b/g, val: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' },
-      { re: /\\b[0-9a-f]{32}\\b/g, val: '00000000000000000000000000000000' },
-      { re: /\\b(?!10\\.)(?!172\\.(?:1[6-9]|2[0-9]|3[01])\\.)(?!192\\.168\\.)(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])(?:\\.(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])){3}\\b/g, val: '192.0.2.1' },
-      { re: /\\b(?:10\\.(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\.(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\.(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])|172\\.(?:1[6-9]|2[0-9]|3[01])\\.(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\.(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])|192\\.168\\.(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\.(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]))\\b/g, val: '10.0.0.0' },
-      { re: /(?<![:.a-fA-F0-9])(?:(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|(?:[0-9a-fA-F]{1,4}:){1,7}:|(?:[0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|(?:[0-9a-fA-F]{1,4}:){1,5}(?::[0-9a-fA-F]{1,4}){1,2}|(?:[0-9a-fA-F]{1,4}:){1,4}(?::[0-9a-fA-F]{1,4}){1,3}|(?:[0-9a-fA-F]{1,4}:){1,3}(?::[0-9a-fA-F]{1,4}){1,4}|(?:[0-9a-fA-F]{1,4}:){1,2}(?::[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:(?::[0-9a-fA-F]{1,4}){1,6}|:(?:(?::[0-9a-fA-F]{1,4}){1,7}|:))(?![:.a-fA-F0-9])/g, val: '2001:db8::1' },
-    ];
-    let count = 0;
-    const applySubs = (input) => {
-      let out = input;
-      for (const { re, val } of subs) {
-        re.lastIndex = 0;
-        out = out.replace(re, val);
-      }
-      return out;
-    };
-    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
-    const nodes = [];
-    let n;
-    while ((n = walker.nextNode())) nodes.push(n);
-    for (const node of nodes) {
-      const orig = node.textContent || '';
-      const next = applySubs(orig);
-      if (next !== orig) {
-        node.textContent = next;
-        count++;
-      }
-    }
-    document.querySelectorAll('[aria-label]').forEach((el) => {
-      const orig = el.getAttribute('aria-label') || '';
-      const next = applySubs(orig);
-      if (next !== orig) el.setAttribute('aria-label', next);
-    });
-    document.querySelectorAll('input, textarea').forEach((el) => {
-      const orig = el.value || '';
-      const next = applySubs(orig);
-      if (next !== orig) {
-        el.value = next;
-        count++;
-      }
-    });
-    document.querySelectorAll('[title]').forEach((el) => {
-      const orig = el.getAttribute('title') || '';
-      const next = applySubs(orig);
-      if (next !== orig) el.setAttribute('title', next);
-    });
-    return count;
-  })()`;
-  const mf = page.mainFrame();
-  await mf.evaluate(PII_SCRIPT);
-  for (const f of page.frames()) { if (f===mf) continue; try { await f.evaluate(PII_SCRIPT); } catch(e){} }
-  await page.waitForTimeout(400);
-
-  const selectors = ['button[aria-label*="Account menu"]', 'button.fxs-menu-account'];
-  let avatar = null;
-  for (const s of selectors) {
-    const loc = page.locator(s);
-    if ((await loc.count()) > 0) { avatar = loc.first(); break; }
-  }
-  if (!avatar) {
-    throw new Error('No Account-avatar element matched ' + JSON.stringify(selectors) + '. Wait for the blade to settle before capture; non-English Portals may still match the fxs-menu-account fallback but that is best-effort, not guaranteed.');
-  }
-
-  await page.screenshot({
-    path: 'docs/assets/<section>/<topic>/<NN>-<blade>-<state>.png',
-    fullPage: false,
-    mask: [avatar],
-    maskColor: '#0078d4',
-  });
-  return 'captured';
-}
-```
-
-**Backslash escaping rule (`browser_run_code_unsafe` JSON):**
-
-- Regex escapes (`\b`, `\s`, `\.`) must be written as `\\b`, `\\s`, `\\.` in the inline string literal.
-- The template literal itself goes inside the JSON `code` parameter, so the entire snippet is double-escaped one more level when passed as JSON.
+#### Per-capture procedure
 
 **Per-capture mandatory steps (in order):**
 
-1. **Navigate** to the target blade URL (`https://ms.portal.azure.com/#@<tenant>.onmicrosoft.com/resource/...`). Always re-navigate; never reuse a stale page.
-2. **Wait** for blade-specific text (`browser_wait_for` with stable text on the blade) before applying replacements. The 400 ms post-replacement pause inside the snippet is not a substitute.
-3. **Run the inline snippet** above via `browser_run_code_unsafe`. Replace `<section>`, `<topic>`, `<NN>`, `<blade>`, `<state>` in the screenshot path.
-4. **Verify** with the `read` tool on the PNG. Confirm visually:
+1. **Capture with the runner**, which re-navigates, applies and verifies the profile, waits for the `--ready` signal, applies PII replacements, and writes a raw PNG outside the repository:
+    ```bash
+    CAPTURE_CDP_URL=http://<cdp-host>:9222 node scripts/capture/capture.cjs --url '<blade-url>' --ready '<selector>' --out /tmp/<shot-id>.png
+    ```
+2. **Optimize** with `capture-optimize-webp` (new shot) or `capture-diff-gate` (recapture) as described in [`scripts/capture/README.md`](scripts/capture/README.md).
+3. **Record provenance** for the committed bytes in `scripts/capture/provenance.yaml`.
+4. **Verify** the final WebP with the `read` tool, not only the raw PNG. Confirm visually:
     - No `MICROSOFT NON-PRODUCTION` badge in top-right
     - No `ychoe@microsoft.com` or `Yeongseon Choe` anywhere
     - Subscription ID rendered as `00000000-0000-0000-0000-000000000000`
@@ -710,7 +645,7 @@ async (page) => {
     - Any Custom Domain Verification ID (or other long uppercase hex token) rendered as `AAAA…A`, never as a real value
     - No public IPv4 or IPv6 addresses visible in Networking-hub Outbound IP lists (should render as `192.0.2.1` / `2001:db8::1`) or Custom domains IP address field (should render as `192.0.2.1`). RFC1918 addresses render as `10.0.0.0`.
     - Account avatar masked with solid Portal-blue (`#0078d4`), not a black rectangle
-5. **If verification fails** → fix the helper / inline snippet and re-capture. Never ship a capture with raw PII or a black-box mask.
+5. **If verification fails** → fix the helper and re-capture. Never ship a capture with raw PII or a black-box mask.
 
 **What the helper does NOT mask (and why it is acceptable):**
 

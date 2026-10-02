@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "id": "portal-desktop-v1",
+  "description": "The only geometry and environment under which committed Azure Portal screenshots are produced. Any change that affects rendered pixels requires a new id, never an in-place edit.",
+  "viewport": {
+    "width": 1600,
+    "height": 1000,
+    "deviceScaleFactor": 1,
+    "mobile": false
+  },
+  "emulation": {
+    "locale": "en-US",
+    "timezoneId": "UTC",
+    "colorScheme": "light",
+    "reducedMotion": "reduce",
+    "forcedColors": "none"
+  },
+  "portal": {
+    "languagePrefix": "en",
+    "regionalFormat": "en-US",
+    "theme": "light",
+    "portalMenuBehavior": "flyout",
+    "serviceMenuBehavior": "collapsed",
+    "popUpNotifications": false,
+    "popUpSurveys": false,
+    "teachingBubbles": false
+  },
+  "readiness": {
+    "readySignalRequired": true,
+    "fontsReady": true,
+    "stableSamples": 3,
+    "sampleIntervalMs": 250,
+    "postPiiSettleMs": 500,
+    "timeoutMs": 30000
+  },
+  "capture": {
+    "format": "png",
+    "fullPage": false,
+    "animations": "disabled",
+    "caret": "hide",
+    "expectedPixelWidth": 1600,
+    "expectedPixelHeight": 1000
+  }
+}

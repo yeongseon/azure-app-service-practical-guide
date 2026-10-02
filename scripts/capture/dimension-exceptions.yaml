@@ -1,0 +1,88 @@
+# Historical captures that violate scripts/capture/capture-profile.json.
+#
+# This list may only shrink. scripts/validate_capture_assets.py fails if an
+# asset here now conforms (remove the entry), if its observed size changes, or
+# if any asset outside this list is non-conforming. Each entry is removed by
+# the recapture that fixes it, under the portal-desktop-v1 profile.
+
+exceptions:
+  - asset: troubleshooting/configuration/troubleshooting--configuration--05-slowstart-always-on-off.webp
+    observed: [1440, 1662]
+    reason: Variable-height or full-page capture taken before the fixed-viewport profile existed.
+    issue: 135
+  - asset: troubleshooting/kudu/troubleshooting--kudu--02-kudu-home.webp
+    observed: [1440, 1060]
+    reason: Variable-height or full-page capture taken before the fixed-viewport profile existed.
+    issue: 135
+  - asset: troubleshooting/kudu/troubleshooting--kudu--03-process-explorer.webp
+    observed: [1440, 1060]
+    reason: Variable-height or full-page capture taken before the fixed-viewport profile existed.
+    issue: 135
+  - asset: troubleshooting/kudu/troubleshooting--kudu--05-webconfig-verified.webp
+    observed: [1440, 1080]
+    reason: Variable-height or full-page capture taken before the fixed-viewport profile existed.
+    issue: 135
+  - asset: troubleshooting/log-analytics/troubleshooting--log-analytics--02-http-500-121-signature.webp
+    observed: [1440, 1662]
+    reason: Variable-height or full-page capture taken before the fixed-viewport profile existed.
+    issue: 135
+  - asset: troubleshooting/log-analytics/troubleshooting--log-analytics--11-slowstart-first-request-slow.webp
+    observed: [1440, 1662]
+    reason: Variable-height or full-page capture taken before the fixed-viewport profile existed.
+    issue: 135
+  - asset: troubleshooting/metrics/troubleshooting--metrics--06-slowstart-first-vs-warm-response.webp
+    observed: [1440, 1662]
+    reason: Variable-height or full-page capture taken before the fixed-viewport profile existed.
+    issue: 135
+  - asset: troubleshooting/networking/troubleshooting--networking--02-app-overview.webp
+    observed: [1440, 1744]
+    reason: Variable-height or full-page capture taken before the fixed-viewport profile existed.
+    issue: 135
+  - asset: troubleshooting/networking/troubleshooting--networking--03-app-networking-blade.webp
+    observed: [1440, 1744]
+    reason: Variable-height or full-page capture taken before the fixed-viewport profile existed.
+    issue: 135
+  - asset: troubleshooting/storage-firewall/troubleshooting--storage-firewall--01-storage-overview.webp
+    observed: [1440, 1744]
+    reason: Variable-height or full-page capture taken before the fixed-viewport profile existed.
+    issue: 135
+  - asset: troubleshooting/storage-firewall/troubleshooting--storage-firewall--02-networking-disabled.webp
+    observed: [1440, 1744]
+    reason: Variable-height or full-page capture taken before the fixed-viewport profile existed.
+    issue: 135
+  - asset: troubleshooting/storage-iam/troubleshooting--storage-iam--01-iam-landing.webp
+    observed: [1440, 1744]
+    reason: Variable-height or full-page capture taken before the fixed-viewport profile existed.
+    issue: 135
+  - asset: troubleshooting/storage-iam/troubleshooting--storage-iam--02-role-assignments.webp
+    observed: [1440, 1744]
+    reason: Variable-height or full-page capture taken before the fixed-viewport profile existed.
+    issue: 135
+  - asset: troubleshooting/activity-log/01-activity-log.png
+    observed: [3148, 2318]
+    reason: Captured at devicePixelRatio 2 with a ~1574x1159 viewport before the profile pinned DPR 1.
+    issue: 135
+  - asset: troubleshooting/app-insights/01-overview.png
+    observed: [3148, 2318]
+    reason: Captured at devicePixelRatio 2 with a ~1574x1159 viewport before the profile pinned DPR 1.
+    issue: 135
+  - asset: troubleshooting/diagnose-and-solve/01-overview.png
+    observed: [3148, 2318]
+    reason: Captured at devicePixelRatio 2 with a ~1574x1159 viewport before the profile pinned DPR 1.
+    issue: 135
+  - asset: troubleshooting/diagnose-and-solve/02-detector-web-app-down.png
+    observed: [3148, 2318]
+    reason: Captured at devicePixelRatio 2 with a ~1574x1159 viewport before the profile pinned DPR 1.
+    issue: 135
+  - asset: troubleshooting/log-analytics/01-logs.png
+    observed: [3148, 2318]
+    reason: Captured at devicePixelRatio 2 with a ~1574x1159 viewport before the profile pinned DPR 1.
+    issue: 135
+  - asset: troubleshooting/log-stream/01-log-stream.png
+    observed: [3148, 2318]
+    reason: Captured at devicePixelRatio 2 with a ~1574x1159 viewport before the profile pinned DPR 1.
+    issue: 135
+  - asset: troubleshooting/metrics/01-metrics-empty.png
+    observed: [3148, 2318]
+    reason: Captured at devicePixelRatio 2 with a ~1574x1159 viewport before the profile pinned DPR 1.
+    issue: 135

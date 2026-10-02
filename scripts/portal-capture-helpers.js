@@ -154,7 +154,17 @@ async function resolveAccountAvatarMask(page) {
 }
 
 async function capturePortalScreenshot(page, outputPath, options = {}) {
-  const { fullPage = false, requireAvatarMask = true } = options;
+  // fullPage is deliberately not an option: a full-page capture produces an
+  // image whose height depends on the blade's content, which violates the
+  // fixed 1600x1000 geometry in scripts/capture/capture-profile.json.
+  if (Object.prototype.hasOwnProperty.call(options, 'fullPage')) {
+    throw new Error(
+      'capturePortalScreenshot: fullPage is not supported. Committed Portal ' +
+        'captures use the fixed viewport in scripts/capture/capture-profile.json; ' +
+        'take a second viewport capture for below-the-fold content.',
+    );
+  }
+  const { requireAvatarMask = true } = options;
 
   const replacements = await applyPiiReplacements(page);
   await page.waitForTimeout(400);
@@ -176,7 +186,9 @@ async function capturePortalScreenshot(page, outputPath, options = {}) {
 
   await page.screenshot({
     path: outputPath,
-    fullPage,
+    fullPage: false,
+    animations: 'disabled',
+    caret: 'hide',
     mask: masks,
     maskColor: PORTAL_BLUE,
   });

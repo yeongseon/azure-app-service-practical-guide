@@ -62,6 +62,7 @@ jobs:
           python -m doctest scripts/lib/content_scope.py -v
           python -m doctest scripts/validate_content_sources.py -v
           python -m doctest scripts/validate_doc_quality.py -v
+          python -m doctest scripts/validate_capture_assets.py -v
       
       - name: Validate mermaid format
         run: |
@@ -94,6 +95,10 @@ jobs:
       - name: Check Microsoft Learn URL locale (en-us prefix required)
         run: |
           python scripts/normalize_mslearn_locale.py --check
+
+      - name: Check screenshot geometry against the capture profile
+        run: |
+          python scripts/validate_capture_assets.py
 
       - name: Scan lab artifacts for PII (real UUIDs, emails, hostnames, public IPs)
         run: |

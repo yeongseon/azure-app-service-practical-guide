@@ -122,6 +122,10 @@ DOCTEST_BINDINGS: tuple[tuple[str, Binding], ...] = (
         Binding("Validate Content Source Metadata", CONTENT_SOURCES_WORKFLOW),
     ),
     (
+        "scripts/validate_capture_assets.py",
+        Binding("Validate Content Source Metadata", CONTENT_SOURCES_WORKFLOW),
+    ),
+    (
         "scripts/validate_visual_content.py",
         Binding("Validate Visual Content (advisory)", VISUAL_WORKFLOW),
     ),
@@ -225,6 +229,17 @@ GATES: tuple[Gate, ...] = (
         note="CI runs these doctests one module per job; the dashboard runs them as one batch.",
         display="python3 -m doctest " + " ".join(DOCTEST_TARGETS),
         quiet_detail=f"{len(DOCTEST_TARGETS)} modules checked, every doctest passed.",
+        verified_in_ci=True,
+    ),
+    Gate(
+        key="capture-assets",
+        name="Capture asset geometry",
+        enforces="Every committed Portal screenshot matches the portal-desktop-v1 capture profile.",
+        argv=("{python}", "scripts/validate_capture_assets.py"),
+        severity=BLOCKING,
+        covers=("scripts/validate_capture_assets.py",),
+        bindings=(Binding("Validate Content Source Metadata", CONTENT_SOURCES_WORKFLOW),),
+        note="Known historical violations are listed in scripts/capture/dimension-exceptions.yaml, which may only shrink.",
         verified_in_ci=True,
     ),
     Gate(
