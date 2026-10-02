@@ -388,6 +388,39 @@ def validate_tail_sections(findings: list[Finding], path: Path, text: str) -> No
 
 
 def validate_templates(findings: list[Finding], path: Path, text: str) -> None:
+    r"""Dispatch a document to its template contract.
+
+    Proves the helpers stay wired to this caller: a deployment-method reference
+    is checked against the variant, not the full Operations template.
+
+    >>> ref = ROOT / "docs/operations/deployment/zip-deploy.md"
+    >>> f = []
+    >>> validate_templates(f, ref, "# T\n## Main Content\n## Advanced Topics\n")
+    >>> f
+    []
+    >>> f = []
+    >>> validate_templates(f, ref, "# T\n## Prerequisites\n")
+    >>> sorted(x.message for x in f)[0]
+    "Deployment method reference document is missing required section '## Advanced Topics'"
+
+    A playbook accepts a qualified heading but not an unrelated one:
+
+    >>> pb = ROOT / "docs/troubleshooting/playbooks/x/y.md"
+    >>> names = ["1. Summary", "2. Common Misreadings",
+    ...          "3. Competing Hypotheses (tool matrix)", "4. What to Check First",
+    ...          "5. Evidence to Collect", "6. Validation and Disproof by Hypothesis",
+    ...          "7. Likely Root Cause Patterns", "8. Short-Term Fixes", "9. Prevention"]
+    >>> body = "".join("## " + n + "\n" for n in names)
+    >>> f = []
+    >>> validate_templates(f, pb, body)
+    >>> f
+    []
+    >>> f = []
+    >>> bad = body.replace("Competing Hypotheses (tool matrix)", "Competing Hypotheses Are Not Required")
+    >>> validate_templates(f, pb, bad)
+    >>> [x.message for x in f]
+    ["Troubleshooting playbook document is missing required section '## Competing Hypotheses'"]
+    """
     if should_skip_policy(path) or is_index(path):
         return
     parts = path.relative_to(ROOT).parts
@@ -505,6 +538,21 @@ def validate_mermaid_metadata(
                 start,
                 f"diagram-id '{diagram_id}' is missing from content_sources.diagrams",
             )
+
+
+def _cli_block_messages(text: str) -> list[str]:
+    r"""Run :func:`validate_cli_blocks` on ``text``, proving the language gate is wired.
+
+    >>> _cli_block_messages("```bash\naz webapp show --name a\n```\n\nprose\n")
+    ['Azure CLI code block needs a nearby command explanation table']
+    >>> _cli_block_messages("```yaml\nrun: |\n  az webapp show --name a\n```\n\nprose\n")
+    []
+    >>> _cli_block_messages("```yaml\nrun: |\n  az webapp show -n a\n```\n\nprose\n")
+    ['Azure CLI examples must use long flags instead of -n']
+    """
+    findings: list[Finding] = []
+    validate_cli_blocks(findings, ROOT / "docs/platform/example.md", text)
+    return [f.message for f in findings]
 
 
 def validate_cli_blocks(

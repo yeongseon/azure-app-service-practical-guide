@@ -116,6 +116,18 @@ def find_unterminated_markdown_tables(lines: list[str]) -> list[int]:
     >>> find_unterminated_markdown_tables(nested)
     []
 
+    A closer must also be no deeper and carry no info string, matching
+    :func:`bash_fence_blocks`, so neither of these ends the region:
+
+    >>> deep = ["```text", "| A | B |", "| --- | --- |", "| 1 | 2 |",
+    ...         "    ```", "absorbed", "```", "after"]
+    >>> find_unterminated_markdown_tables(deep)
+    []
+    >>> info = ["```text", "| A | B |", "| --- | --- |", "| 1 | 2 |",
+    ...         "```python", "absorbed", "```", "after"]
+    >>> find_unterminated_markdown_tables(info)
+    []
+
     Prose that merely contains pipes is not a delimiter row:
 
     >>> find_unterminated_markdown_tables(["| not a table", "prose"])
@@ -127,14 +139,20 @@ def find_unterminated_markdown_tables(lines: list[str]) -> list[int]:
     index = 0
     total = len(lines)
     fence: str | None = None
+    fence_indent = ""
     while index < total:
         opener = FENCE_OPENER.match(lines[index])
         if opener:
             marker = opener.group(2)
             if fence is None:
-                fence = marker
-            elif marker[0] == fence[0] and len(marker) >= len(fence):
-                fence = None
+                fence, fence_indent = marker, opener.group(1)
+            elif (
+                marker[0] == fence[0]
+                and len(marker) >= len(fence)
+                and len(opener.group(1)) <= len(fence_indent)
+                and not opener.group(3).strip()
+            ):
+                fence, fence_indent = None, ""
             index += 1
             continue
         is_table_head = (
@@ -230,7 +248,7 @@ def bash_fence_blocks(lines: list[str]) -> list[tuple[int, int, list[str]]]:
             if opener:
                 marker = opener.group(2)
                 indent = opener.group(1)
-                collecting = fence_language(line) == "bash"
+                collecting = fence_language(line).lower() == "bash"
                 start = index + 1
                 body = []
             continue
