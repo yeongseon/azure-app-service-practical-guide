@@ -39,13 +39,13 @@ az webapp list-runtimes --os linux --runtime node --support all --output table
 | `--support all` | Includes end-of-life stacks, which the default `supported` filter omits. |
 | `--output table` | Renders the result as a table instead of JSON. |
 
-The following is the `--support all` output as checked on 2026-10-02:
+The relevant columns from that `--support all` listing, as checked on 2026-10-02:
 
 | Version | `--runtime` value | Support | End of life |
 | :--- | :--- | :--- | :--- |
 | Node.js 26.0 | `NODE|26` | Active | 2029-04-30 |
 | Node.js 24.0 LTS | `NODE|24-lts` | Active | 2028-04-30 |
-| Node.js 22.0 LTS | `NODE|22-lts` | Near end of support | 2027-04-30 |
+| Node.js 22.0 LTS | `NODE|22-lts` | Near (approaching end of support) | 2027-04-30 |
 | Node.js 20.0 LTS | `NODE|20-lts` | EOL | 2026-04-30 |
 | Node.js 18.0 LTS | `NODE|18-lts` | EOL | 2025-04-30 |
 
