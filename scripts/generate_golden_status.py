@@ -118,6 +118,10 @@ DOCTEST_BINDINGS: tuple[tuple[str, Binding], ...] = (
         Binding("Validate Documentation Repetition", REPETITION_WORKFLOW),
     ),
     (
+        "scripts/validate_doc_quality.py",
+        Binding("Validate Content Source Metadata", CONTENT_SOURCES_WORKFLOW),
+    ),
+    (
         "scripts/validate_visual_content.py",
         Binding("Validate Visual Content (advisory)", VISUAL_WORKFLOW),
     ),

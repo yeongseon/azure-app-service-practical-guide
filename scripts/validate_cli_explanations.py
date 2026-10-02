@@ -116,6 +116,18 @@ def find_unterminated_markdown_tables(lines: list[str]) -> list[int]:
     >>> find_unterminated_markdown_tables(nested)
     []
 
+    A closer must also be no deeper and carry no info string, matching
+    :func:`bash_fence_blocks`, so neither of these ends the region:
+
+    >>> deep = ["```text", "| A | B |", "| --- | --- |", "| 1 | 2 |",
+    ...         "    ```", "absorbed", "```", "after"]
+    >>> find_unterminated_markdown_tables(deep)
+    []
+    >>> info = ["```text", "| A | B |", "| --- | --- |", "| 1 | 2 |",
+    ...         "```python", "absorbed", "```", "after"]
+    >>> find_unterminated_markdown_tables(info)
+    []
+
     Prose that merely contains pipes is not a delimiter row:
 
     >>> find_unterminated_markdown_tables(["| not a table", "prose"])
@@ -127,14 +139,20 @@ def find_unterminated_markdown_tables(lines: list[str]) -> list[int]:
     index = 0
     total = len(lines)
     fence: str | None = None
+    fence_indent = ""
     while index < total:
         opener = FENCE_OPENER.match(lines[index])
         if opener:
             marker = opener.group(2)
             if fence is None:
-                fence = marker
-            elif marker[0] == fence[0] and len(marker) >= len(fence):
-                fence = None
+                fence, fence_indent = marker, opener.group(1)
+            elif (
+                marker[0] == fence[0]
+                and len(marker) >= len(fence)
+                and len(opener.group(1)) <= len(fence_indent)
+                and not opener.group(3).strip()
+            ):
+                fence, fence_indent = None, ""
             index += 1
             continue
         is_table_head = (
@@ -174,6 +192,88 @@ def validate_contract_file(path: Path) -> list[Finding]:
     ]
 
 
+def bash_fence_blocks(lines: list[str]) -> list[tuple[int, int, list[str]]]:
+    """Return ``(open_line, close_index, body)`` for each closed ``bash`` fence.
+
+    ``open_line`` is the opening fence's 1-based line number, matching what the
+    finding reports; ``close_index`` is the 0-based index of the closing fence,
+    where the explanation-table search starts.
+
+    Every fence is tracked, not only ``bash`` ones, so a ``bash`` fence nested
+    inside another block cannot open a phantom region. Only ``bash`` fences
+    accumulate a body, because other languages (mermaid, kusto, console
+    transcripts) may legitimately contain ``az ...`` text and need no
+    explanation table per AGENTS.md ("Shell: Use ``bash`` for all CLI
+    examples").
+
+    >>> [(o, b) for o, _c, b in bash_fence_blocks(["```bash", "az x", "```"])]
+    [(1, ['az x'])]
+
+    A nested ``bash`` fence inside a longer block is content, not an opener:
+
+    >>> bash_fence_blocks(["````markdown", "```bash", "az x", "```", "````"])
+    []
+
+    A closing fence must repeat the opener's character, be at least as long,
+    and sit no deeper. A shorter run, a different character, and a
+    deeper-indented run all fail to close:
+
+    >>> [o for o, _c, _b in bash_fence_blocks(["````bash", "az x", "```", "````"])]
+    [1]
+    >>> [o for o, _c, _b in bash_fence_blocks(["```bash", "az x", "~~~", "```"])]
+    [1]
+    >>> [o for o, _c, _b in bash_fence_blocks(["```bash", "az x", "    ```", "```"])]
+    [1]
+
+    An info string means content, so it never closes a block:
+
+    >>> bash_fence_blocks(["```bash", "az x", "```python", "print(1)"])
+    []
+
+    A longer closer is still a valid close:
+
+    >>> [o for o, _c, _b in bash_fence_blocks(["```bash", "az x", "`````"])]
+    [1]
+    """
+    blocks: list[tuple[int, int, list[str]]] = []
+    marker: str | None = None
+    indent = ""
+    collecting = False
+    start = 0
+    body: list[str] = []
+
+    for index, line in enumerate(lines):
+        opener = FENCE_OPENER.match(line)
+        if marker is None:
+            if opener:
+                marker = opener.group(2)
+                indent = opener.group(1)
+                collecting = fence_language(line).lower() == "bash"
+                start = index + 1
+                body = []
+            continue
+
+        if (
+            opener is not None
+            and opener.group(2)[0] == marker[0]
+            and len(opener.group(2)) >= len(marker)
+            and len(opener.group(1)) <= len(indent)
+            and not opener.group(3).strip()
+        ):
+            if collecting:
+                blocks.append((start, index, body))
+            marker = None
+            indent = ""
+            collecting = False
+            body = []
+            continue
+
+        if collecting:
+            body.append(line)
+
+    return blocks
+
+
 def validate_file(path: Path) -> list[Finding]:
     lines = path.read_text(encoding="utf-8").splitlines()
     findings: list[Finding] = []
@@ -186,46 +286,16 @@ def validate_file(path: Path) -> list[Finding]:
                 "(otherwise the next line is absorbed as a phantom table row).",
             )
         )
-    in_fence = False
-    fence_indent = ""
-    block_start = 0
-    block_lines: list[str] = []
-
-    for index, line in enumerate(lines):
-        fence = FENCE_PATTERN.match(line)
-        if not in_fence and fence:
-            # Only track ```bash fences. Other languages (mermaid, text, json,
-            # kusto, etc.) may legitimately contain `az ...` text in diagram
-            # labels or console-output transcripts, and do not need an
-            # explanation table per AGENTS.md ("Shell: Use bash for all CLI
-            # examples").
-            if fence_language(line) != "bash":
-                continue
-            in_fence = True
-            fence_indent = fence.group(1)
-            block_start = index + 1
-            block_lines = []
-            continue
-
-        if in_fence and fence and len(fence.group(1)) <= len(fence_indent):
-            if has_az_command(block_lines) and not has_following_table(
-                lines, index + 1
-            ):
-                findings.append(
-                    Finding(
-                        path=path,
-                        line=block_start,
-                        message="Azure CLI code fence must be followed by a "
-                        "command explanation table.",
-                    )
+    for start, close_index, body in bash_fence_blocks(lines):
+        if has_az_command(body) and not has_following_table(lines, close_index + 1):
+            findings.append(
+                Finding(
+                    path=path,
+                    line=start,
+                    message="Azure CLI code fence must be followed by a "
+                    "command explanation table.",
                 )
-            in_fence = False
-            fence_indent = ""
-            block_lines = []
-            continue
-
-        if in_fence:
-            block_lines.append(line)
+            )
 
     return findings
 

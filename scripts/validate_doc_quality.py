@@ -62,6 +62,21 @@ TROUBLESHOOTING_PLAYBOOK_SECTIONS = [
     "Prevention",
 ]
 
+DEPLOYMENT_REFERENCE_SECTIONS = [
+    "Main Content",
+    "Advanced Topics",
+]
+
+# AGENTS.md permits specific wording variations for playbook sections. Encode
+# them explicitly rather than matching loosely, so "Competing Hypotheses Are Not
+# Required" still fails while "Competing Hypotheses (tool matrix)" passes.
+PLAYBOOK_SECTION_ALIASES = {
+    "Summary": {"Summary", "Overview"},
+    "Immediate Mitigations": {"Immediate Mitigations", "Short-Term Fixes"},
+}
+
+TERMINAL_QUALIFIER_RE = re.compile(r"\s*\([^()]+\)$")
+
 LAB_SECTIONS = [
     "Setup",
     "Hypothesis",
@@ -264,6 +279,78 @@ def should_skip_policy(path: Path) -> bool:
     return relative.startswith("docs/contributing/")
 
 
+def is_deployment_method_reference(path: Path) -> bool:
+    """True for the deployment-method reference variant under operations/deployment/.
+
+    AGENTS.md defines these as method references that intentionally omit the
+    Prerequisites / When to Use / Procedure / Verification / Rollback structure.
+    Index pages and top-level operations runbooks are not part of the variant.
+
+    >>> is_deployment_method_reference(ROOT / "docs/operations/deployment/zip-deploy.md")
+    True
+    >>> is_deployment_method_reference(ROOT / "docs/operations/deployment/index.md")
+    False
+    >>> is_deployment_method_reference(ROOT / "docs/operations/deployment-slots.md")
+    False
+    """
+    try:
+        parts = path.relative_to(ROOT).parts
+    except ValueError:
+        return False
+    return (
+        parts[:3] == ("docs", "operations", "deployment")
+        and len(parts) > 3
+        and path.name != "index.md"
+    )
+
+
+def normalize_playbook_heading(name: str) -> str:
+    """Strip one trailing parenthetical qualifier from a playbook heading.
+
+    >>> normalize_playbook_heading("Competing Hypotheses (which tool is right)")
+    'Competing Hypotheses'
+    >>> normalize_playbook_heading("Summary")
+    'Summary'
+    >>> normalize_playbook_heading("Competing Hypotheses Are Not Required")
+    'Competing Hypotheses Are Not Required'
+    >>> normalize_playbook_heading("Evidence (a) (b)")
+    'Evidence (a)'
+    """
+    return TERMINAL_QUALIFIER_RE.sub("", name).strip()
+
+
+def requires_cli_table(lang: str) -> bool:
+    """True only for bash fences, matching AGENTS.md and validate_cli_explanations.
+
+    A YAML pipeline definition whose `inlineScript` happens to contain `az` is a
+    configuration artifact, not a command sequence the reader runs by hand.
+
+    >>> requires_cli_table("bash")
+    True
+    >>> requires_cli_table("bash {.copy}")
+    True
+    >>> [requires_cli_table(x) for x in ("yaml", "sh", "shell", "kusto", "")]
+    [False, False, False, False, False]
+    """
+    return lang.split(maxsplit=1)[0].lower() == "bash" if lang.strip() else False
+
+
+def require_playbook_sections(
+    findings: list[Finding], path: Path, text: str, names: list[str]
+) -> None:
+    """Require playbook sections, allowing documented aliases and qualifiers."""
+    found = {normalize_playbook_heading(name) for name in headings(text)}
+    for name in names:
+        if not (PLAYBOOK_SECTION_ALIASES.get(name, {name}) & found):
+            add(
+                findings,
+                path,
+                1,
+                f"Troubleshooting playbook document is missing required "
+                f"section '## {name}'",
+            )
+
+
 def require_sections(
     findings: list[Finding], path: Path, text: str, names: list[str], label: str
 ) -> None:
@@ -301,6 +388,39 @@ def validate_tail_sections(findings: list[Finding], path: Path, text: str) -> No
 
 
 def validate_templates(findings: list[Finding], path: Path, text: str) -> None:
+    r"""Dispatch a document to its template contract.
+
+    Proves the helpers stay wired to this caller: a deployment-method reference
+    is checked against the variant, not the full Operations template.
+
+    >>> ref = ROOT / "docs/operations/deployment/zip-deploy.md"
+    >>> f = []
+    >>> validate_templates(f, ref, "# T\n## Main Content\n## Advanced Topics\n")
+    >>> f
+    []
+    >>> f = []
+    >>> validate_templates(f, ref, "# T\n## Prerequisites\n")
+    >>> sorted(x.message for x in f)[0]
+    "Deployment method reference document is missing required section '## Advanced Topics'"
+
+    A playbook accepts a qualified heading but not an unrelated one:
+
+    >>> pb = ROOT / "docs/troubleshooting/playbooks/x/y.md"
+    >>> names = ["1. Summary", "2. Common Misreadings",
+    ...          "3. Competing Hypotheses (tool matrix)", "4. What to Check First",
+    ...          "5. Evidence to Collect", "6. Validation and Disproof by Hypothesis",
+    ...          "7. Likely Root Cause Patterns", "8. Short-Term Fixes", "9. Prevention"]
+    >>> body = "".join("## " + n + "\n" for n in names)
+    >>> f = []
+    >>> validate_templates(f, pb, body)
+    >>> f
+    []
+    >>> f = []
+    >>> bad = body.replace("Competing Hypotheses (tool matrix)", "Competing Hypotheses Are Not Required")
+    >>> validate_templates(f, pb, bad)
+    >>> [x.message for x in f]
+    ["Troubleshooting playbook document is missing required section '## Competing Hypotheses'"]
+    """
     if should_skip_policy(path) or is_index(path):
         return
     parts = path.relative_to(ROOT).parts
@@ -312,14 +432,19 @@ def validate_templates(findings: list[Finding], path: Path, text: str) -> None:
             findings, path, text, BEST_PRACTICES_SECTIONS, "Best Practices"
         )
     elif section == "operations":
-        require_sections(findings, path, text, OPERATIONS_SECTIONS, "Operations")
+        if is_deployment_method_reference(path):
+            require_sections(
+                findings,
+                path,
+                text,
+                DEPLOYMENT_REFERENCE_SECTIONS,
+                "Deployment method reference",
+            )
+        else:
+            require_sections(findings, path, text, OPERATIONS_SECTIONS, "Operations")
     elif section == "troubleshooting" and "playbooks" in parts:
-        require_sections(
-            findings,
-            path,
-            text,
-            TROUBLESHOOTING_PLAYBOOK_SECTIONS,
-            "Troubleshooting playbook",
+        require_playbook_sections(
+            findings, path, text, TROUBLESHOOTING_PLAYBOOK_SECTIONS
         )
 
 
@@ -415,6 +540,21 @@ def validate_mermaid_metadata(
             )
 
 
+def _cli_block_messages(text: str) -> list[str]:
+    r"""Run :func:`validate_cli_blocks` on ``text``, proving the language gate is wired.
+
+    >>> _cli_block_messages("```bash\naz webapp show --name a\n```\n\nprose\n")
+    ['Azure CLI code block needs a nearby command explanation table']
+    >>> _cli_block_messages("```yaml\nrun: |\n  az webapp show --name a\n```\n\nprose\n")
+    []
+    >>> _cli_block_messages("```yaml\nrun: |\n  az webapp show -n a\n```\n\nprose\n")
+    ['Azure CLI examples must use long flags instead of -n']
+    """
+    findings: list[Finding] = []
+    validate_cli_blocks(findings, ROOT / "docs/platform/example.md", text)
+    return [f.message for f in findings]
+
+
 def validate_cli_blocks(
     findings: list[Finding],
     path: Path,
@@ -427,10 +567,11 @@ def validate_cli_blocks(
     require_explanation_table = not (
         "playbooks" in parts or "first-10-minutes" in parts
     )
-    for start, end, _lang, body, lines in iter_code_fences(text):
+    for start, end, lang, body, lines in iter_code_fences(text):
         if not re.search(r"(^|\s)az\s+", body):
             continue
-        if require_explanation_table and not has_table_near(lines, start, end):
+        needs_table = require_explanation_table and requires_cli_table(lang)
+        if needs_table and not has_table_near(lines, start, end):
             if overlaps_changed(start, end, changed_ranges):
                 add(
                     findings,
