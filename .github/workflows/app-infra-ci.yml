@@ -60,6 +60,19 @@ jobs:
       - name: Verify production install
         run: npm ci --omit=dev --dry-run
 
+  nodejs-container:
+    name: Node.js Container Smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      # Builds the image the guide tells readers to deploy, runs it, and proves
+      # /health answers and sshd stays up. The npm job above never builds the
+      # image, so a base-image or Alpine/OpenSSH regression would otherwise pass.
+      - name: Build and smoke-test the container image
+        run: apps/nodejs/smoke-container.sh
+
   python:
     name: Python Flask App
     runs-on: ubuntu-latest

@@ -482,6 +482,18 @@ GATES: tuple[Gate, ...] = (
         quiet_detail="Production tree resolved from the lockfile.",
     ),
     Gate(
+        key="nodejs-container-smoke",
+        name="Node.js container smoke",
+        enforces="The Node.js reference image builds, serves /health, and keeps sshd running.",
+        argv=("bash", "apps/nodejs/smoke-container.sh"),
+        severity=BLOCKING,
+        bindings=(Binding("Node.js Container Smoke", APP_INFRA_WORKFLOW),),
+        note="Pulls the base image and runs npm ci during the build, so it is a network gate.",
+        requires=("exe:docker", "path:apps/nodejs/Dockerfile"),
+        summary_keys=("Container smoke passed", "did not return", "exited before", "sshd is not"),
+        network=True,
+    ),
+    Gate(
         key="python-app-compile",
         name="Python app compile",
         enforces="The Flask reference app and its tests compile.",
