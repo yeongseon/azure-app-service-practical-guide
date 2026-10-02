@@ -196,7 +196,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
 
       - name: Install, build, and test
         run: |
@@ -256,7 +256,7 @@ jobs:
 | `name: Set up Node.js` | Labels the Node.js setup step in the workflow log. |
 | `uses: actions/setup-node@v4` | Installs the requested Node.js runtime on the runner. |
 | `with:` | Supplies input parameters to the Node.js setup action. |
-| `node-version: '20'` | Pins the Node.js major version for the build. |
+| `node-version: '24'` | Pins the Node.js major version for the build. |
 | `name: Install, build, and test` | Labels the build validation step in the workflow log. |
 | `run: |` | Starts a multiline shell script step. |
 | `npm ci` | Installs dependencies from the lockfile. |

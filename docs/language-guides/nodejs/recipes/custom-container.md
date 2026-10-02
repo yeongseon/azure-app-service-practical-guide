@@ -54,7 +54,7 @@ A robust Node.js Dockerfile should use multi-stage builds and include SSH setup.
 
 ```dockerfile
 # Stage 1: Build
-FROM node:20-alpine AS builder
+FROM node:24-alpine AS builder
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
@@ -62,7 +62,7 @@ COPY . .
 RUN npm run build # If applicable
 
 # Stage 2: Runtime
-FROM node:20-alpine
+FROM node:24-alpine
 WORKDIR /app
 
 # Install SSH and configure for Kudu Web SSH

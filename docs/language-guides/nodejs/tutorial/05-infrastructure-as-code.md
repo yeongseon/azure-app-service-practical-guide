@@ -73,7 +73,7 @@ flowchart TD
 graph TB
     subgraph "Resource Group"
         ASP[App Service Plan<br/>Linux B1]
-        APP[App Service<br/>Node.js 20 LTS]
+        APP[App Service<br/>Node.js 24 LTS]
         AI[Application Insights]
         LAW[Log Analytics<br/>Workspace]
     end
@@ -305,7 +305,7 @@ INTEGRATION_SUBNET_NAME="snet-appsvc-integration"
 ```bash
 az group create --name $RG --location $LOCATION
 az appservice plan create --resource-group $RG --name $PLAN_NAME --is-linux --sku S1
-az webapp create --resource-group $RG --plan $PLAN_NAME --name $APP_NAME --runtime "NODE|20-lts"
+az webapp create --resource-group $RG --plan $PLAN_NAME --name $APP_NAME --runtime "NODE|24-lts"
 ```
 
 | Command/Code | Purpose |
@@ -400,7 +400,7 @@ az webapp config appsettings list --resource-group $RG --name $APP_NAME --query 
 ???+ example "Expected output"
 ```json
 {
-  "linuxFxVersion": "NODE|20-lts",
+  "linuxFxVersion": "NODE|24-lts",
   "appCommandLine": "node server.js"
 }
 ```

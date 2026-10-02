@@ -24,7 +24,7 @@ flowchart TD
 
 ## Prerequisites
 
-- Node.js 20 or later on Azure App Service
+- Node.js 24 or later on Azure App Service
 - `clientCertEnabled=true` on the site
 - A private certificate loaded for outbound calls when required
 

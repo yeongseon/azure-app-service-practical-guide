@@ -32,11 +32,17 @@ az webapp list-runtimes --linux --output table
 |--------------|---------|
 | `az webapp list-runtimes --linux --output table` | Lists the Linux runtime stacks available in Azure App Service |
 
-| Version | Status |
-| :--- | :--- |
-| **Node.js 20 (LTS)** | Current |
-| **Node.js 18 (LTS)** | Supported |
-| **Node.js 16 (LTS)** | Maintenance/Retired |
+| Version | `--runtime` value | Status |
+| :--- | :--- | :--- |
+| **Node.js 24 (LTS)** | `NODE|24-lts` | Current — what this guide targets |
+| **Node.js 26** | `NODE|26` | Available |
+| **Node.js 22 (LTS)** | `NODE|22-lts` | Supported |
+| **Node.js 20 and earlier** | — | Retired; no longer offered by App Service |
+
+!!! warning "Node.js 20 is gone from the runtime list"
+    `az webapp list-runtimes --os linux` no longer returns any `NODE|20` entry, so
+    `--runtime "NODE|20-lts"` now fails. Always confirm against the live list above
+    rather than copying a pinned value from older material.
 
 ## Oryx Build System
 

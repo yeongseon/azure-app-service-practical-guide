@@ -44,7 +44,7 @@ A multi-stage build allows you to use a heavy build image with all the compilati
 
 ```dockerfile
 # Stage 1: Build
-FROM node:20-bookworm AS builder
+FROM node:24-bookworm AS builder
 WORKDIR /app
 
 # Install compilation tools
@@ -61,7 +61,7 @@ COPY . .
 RUN npm run build
 
 # Stage 2: Runtime
-FROM node:20-bookworm-slim
+FROM node:24-bookworm-slim
 WORKDIR /app
 
 # Install runtime-only library dependencies (e.g., for sharp)

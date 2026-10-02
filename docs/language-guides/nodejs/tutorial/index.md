@@ -19,7 +19,7 @@ This tutorial walks through the full Azure App Service path for a Node.js app, f
 
 ## Prerequisites
 
-- **Node.js 20+**
+- **Node.js 24+**
 - **npm**
 - **Azure CLI**
 

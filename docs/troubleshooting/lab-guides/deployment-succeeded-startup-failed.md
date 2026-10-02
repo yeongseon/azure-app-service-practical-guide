@@ -62,6 +62,11 @@ The lab is intentionally designed to prove one specific distinction:
 
 This guide helps you explain why `az webapp deploy` can succeed while the app still fails at runtime, trace the Linux startup lifecycle, detect `wrong_module:app` failures from logs, validate recovery after correcting the startup command to `app:app`, and produce an artifact-backed incident narrative.
 
+!!! warning "Execution and evidence status"
+    The revised healthy → fault → recovery runner has **NOT_RUN** Azure execution and **NOT_RUN** independent reproduction. Its offline fixture tests do not constitute a cloud run. The retained April 4, 2026 artifacts are historical observations, with **INCONCLUSIVE** causal ordering and unverified cleanup; no new collection time is claimed.
+
+    Start with the [runbook](#3-runbook). Review the [historical evidence](#4-experiment-log) and its [timeline limitation](#47-hypothesis-verdict). The fixed scope is Linux B1, Python 3.11, a dedicated resource group, one web app, and one Log Analytics workspace. Configuration/API access and public HTTPS reachability are required.
+
 ## Lab Metadata
 
 | Attribute | Value |
@@ -356,9 +361,11 @@ Any one condition disproves the hypothesis:
 
 ## 3) Runbook
 
-This runbook is deterministic and maps to the artifacts captured in:
+The current procedure establishes a healthy baseline before changing only the module entrypoint. The archived artifacts below were collected using an earlier procedure and are not evidence for the revised runner.
 
-`labs/deployment-succeeded-startup-failed/artifacts-sanitized/`
+The scenario-local [contract](https://github.com/yeongseon/azure-app-service-practical-guide/blob/main/labs/deployment-succeeded-startup-failed/contract.json) fixes criteria and sampling before execution. A new run creates a unique directory; evaluation never overwrites prior captures. Exit codes are `0` for evidence PASS, `1` for FAIL, and `2` for INCONCLUSIVE. Evidence PASS does not assert cleanup or independent reproduction.
+
+Use only a dedicated disposable resource group with permission to create App Service and Log Analytics, configure diagnostics, query logs, and delete the group. B1 compute and Log Analytics ingestion incur charges until cleaned up. Run one experiment at a time with no concurrent configuration changes. Read [Clean Up](#clean-up) before deployment; it also applies to failed or interrupted runs. Raw captures contain real resource IDs and configuration: keep them private outside Git, review and sanitize before publication, and retain public transformation records separately.
 
 ### 3.1 Prerequisites
 
@@ -367,7 +374,9 @@ This runbook is deterministic and maps to the artifacts captured in:
 | Azure CLI authenticated | `az account show` |
 | Resource provider access | `az group list --output table` |
 | Bash shell | `bash --version` |
-| jq (optional for formatting) | `jq --version` |
+| Python 3.11 or newer (standard library only) | `python3 --version` |
+| curl | `curl --version` |
+| Azure CLI with Log Analytics query support and Bicep | `az version` and `az bicep version` |
 
 ### 3.2 Environment variables
 
@@ -394,8 +403,9 @@ az deployment group create \
 | `az group create` | Create the resource group for lab resources |
 | `--name` | Resource group name |
 | `--location` | Azure region for the resource group |
-| `az deployment group create` | Deploy the Bicep template to provision App Service with misconfigured startup command |
-| `--template-file` | Path to the Bicep template that sets `wrong_module:app` as the startup command |
+| `az deployment group create` | Deploy the Bicep template to provision App Service with a healthy startup command |
+| `--resource-group` | Target dedicated lab resource group |
+| `--template-file` | Path to the Bicep template that sets `app:app` as the baseline startup command |
 | `--parameters baseName` | Base name prefix for all generated resource names |
 
 Capture app name:
@@ -419,16 +429,21 @@ echo "$APP_NAME"
 ### 3.4 Trigger the incident
 
 ```bash
-bash "labs/deployment-succeeded-startup-failed/trigger.sh" "$RG" "$APP_NAME"
+bash "labs/deployment-succeeded-startup-failed/trigger.sh" "$RG" "$APP_NAME" --output /tmp/startup-lab-private
 ```
 
-What this trigger script does:
+The trigger prints `RUN_DIR=...`; copy that exact path into `RUN_DIR` below. It deploys the app with the healthy command, records a 200 baseline, sets `wrong_module:app`, and samples for HTTP 5xx. It then restores `app:app` with the same `--timeout=120` and verifies recovery, including when fault probing fails. Health polling is limited to 24 attempts per phase (20 seconds per request, 10 seconds between attempts). Log collection uses at most six requests with bounded waits.
 
-1. Packages app directory into ZIP.
-2. Runs `az webapp deploy --type zip`.
-3. Probes `/health` before fix (expected non-200).
-4. Sets startup command to `gunicorn --bind=0.0.0.0:8000 --timeout=120 app:app`.
-5. Probes `/health` again for recovery.
+```bash
+export RUN_DIR="/tmp/startup-lab-private/<printed-run-directory>"
+bash "labs/deployment-succeeded-startup-failed/verify.sh" "$RUN_DIR"
+```
+
+This command only reevaluates saved raw data. It checks same-run phase identity, resource identity, chronological windows, raw probe/summary agreement, required artifact sizes/digests, and source/contract fingerprints. Console rows must come from the exact app and fault window; no matching import log means INCONCLUSIVE, not zero errors or successful reproduction. Do not edit a run to repair missing data: preserve it and create a new run after fixing the cause.
+
+Each run records source HEAD plus exact relevant-file fingerprints, UTC phase times, tool versions, command exit codes, raw query results and artifact digests. Dirty files are identified by fingerprints rather than represented as the committed SHA. `captured_at` probe times and command times remain distinct from `evaluated_at`. Hashes do not prove execution authenticity. No current run is published until independently reviewed.
+
+Sections 3.5–3.11 provide optional manual diagnostics and recovery commands. Their illustrative rolling-window queries are not inputs to the scoped evaluator. If interruption prevents automatic recovery, use 3.11 and then clean up; do not mark that interrupted run successful.
 
 ### 3.5 Verify startup command before and after
 
@@ -944,15 +959,11 @@ File: `postfix/diag-env-20260404T055349Z.json`
 
 ### 4.7 Hypothesis verdict
 
-Verdict: **Supported**.
+Verdict: **INCONCLUSIVE** for a single ordered causal run.
 
-Why:
+[Observed] The stored recovery probes reach 200 around 05:47 UTC, while the retained wrong-module console rows are timestamped 05:54–05:55 UTC. The set also lacks a healthy pre-intervention baseline and verified cleanup record. These records preserve useful examples of startup failure and health responses, but do not establish that the shown fault preceded the shown recovery in one isolated run.
 
-1. Wrong startup module explicitly configured at baseline.
-2. Console logs show deterministic module import failure.
-3. HTTP behavior shows unavailability before fix.
-4. Only startup module reference changed.
-5. App recovered to healthy state after correction.
+[Not Proven] The historical collection does not prove that only the entrypoint changed or exclude concurrent restarts, networking failures, or mixed collection windows. Reevaluate the original timestamps without relabeling them as a new Azure run. The revised procedure requires new baseline/fault/recovery evidence and independent review before promotion.
 
 ### 4.8 Operational guidance distilled from this experiment
 
@@ -1015,15 +1026,15 @@ This section defines what you SHOULD observe at each phase of the lab. Use it to
 | Evidence Source | Expected State | What to Capture |
 |---|---|---|
 | Deployment APIs (`/api/zipdeploy`, deployment status) | Deployment workflow returns success/accepted (200/202) | Successful deployment response and timestamp |
-| App startup command config | Startup command contains wrong module reference | `gunicorn --bind=0.0.0.0:8000 --timeout=120 wrong_module:app` |
-| Baseline app config snapshot | Runtime configuration exists but app is not yet validated healthy | `app-config.json` and `startup-command.txt` artifacts |
+| App startup command config | Healthy module reference | `gunicorn --bind=0.0.0.0:8000 --timeout=120 app:app` |
+| Baseline health | App returns HTTP 200 before injection | `baseline/phase.json` raw probes |
 
 ### During Incident
 
 | Evidence Source | Expected State | Key Indicator |
 |---|---|---|
 | AppServiceHTTPLogs | User-facing paths fail with 503 and long request duration | Repeated `503` with `TimeTaken` around `49751-49765 ms` |
-| AppServiceConsoleLogs | No application boot output because app never reaches runnable code path | `0` rows in console export during failure window |
+| AppServiceConsoleLogs | Import failure for the targeted module in the fault window | `ModuleNotFoundError` mentioning `wrong_module`; absent logs are INCONCLUSIVE |
 | AppServicePlatformLogs | Startup probe/cancellation/termination sequence appears | `Site startup probe failed after 43.86s`, `CancellingStartup, LastError: ContainerTimeout`, `Site container terminated during site startup`, `Failed to start site. Revert by stopping site.` |
 
 ### After Recovery
@@ -1042,27 +1053,38 @@ graph TD
     A[Baseline Capture] --> B[Trigger Fault]
     B --> C[During: Collect Evidence]
     C --> D[After: Compare to Baseline]
-    D --> E[Verdict: Confirmed/Falsified]
+    D --> E[Evaluate support and limitations]
 ```
 
-### Evidence Chain: Why This Proves the Hypothesis
+### Evidence interpretation and falsification
 
-!!! success "Falsification Logic"
-    If you observe deployment success signals (200/202), concurrent 503s with long request times, zero console rows, and platform startup-probe timeout/cancellation messages, the hypothesis is CONFIRMED because code deployment succeeded but runtime never became healthy due to a bad WSGI entrypoint.
-    
-    If you do NOT observe this pattern (for example console shows normal app boot and request handling), the hypothesis is FALSIFIED — consider alternatives such as port binding mismatch, dependency startup failure, or networking path issues.
+A healthy baseline, HTTP 5xx after the entrypoint change, same-resource/time-window import failure, and health recovery after reverting that change support the scoped hypothesis. Recovery does not falsify the causal hypothesis. A healthy app under the wrong-module configuration contradicts the predicted fault, while missing logs or transport errors leave the cause unresolved. Platform restart, dependency problems, and concurrent changes remain competing explanations to inspect; a 503 or screenshot alone does not establish the module as the cause.
 
 ## Clean Up
 
+For a completed or failed run that wrote `run.json`, run the explicit cleanup command against the dedicated group:
+
 ```bash
-az group delete --name "$RG" --yes --no-wait
+python3 labs/deployment-succeeded-startup-failed/run.py cleanup "$RUN_DIR" "$RG"
+```
+
+It records the delete request, polls group existence up to 30 times, and writes a separate `cleanup-*/result.json`. Only a `false` existence result yields `VERIFIED`; timeout or API errors yield `FAILED`. Evidence remains outside the resource group. The run's original `cleanup_status: PENDING` remains unchanged; the separate cleanup record is the later outcome.
+
+If deployment or process termination occurred before a run manifest was written, preserve terminal output and clean up the same dedicated group directly:
+
+```bash
+az group delete --name "$RG" --yes
+az group exists --name "$RG"
 ```
 
 | Command/Flag | Purpose |
 |---|---|
-| `az group delete` | Delete the resource group and all contained lab resources |
-| `--yes` | Skip confirmation prompt for non-interactive execution |
-| `--no-wait` | Return immediately without waiting for deletion to complete |
+| `az group delete` | Delete all resources in the dedicated lab group and wait for completion |
+| `az group exists` | Verify the group no longer exists; expected output is `false` |
+| `--name` | Dedicated resource group to delete/check |
+| `--yes` | Confirm deletion of that group |
+
+Save both command results with UTC timestamps. An accepted deletion request alone is not cleanup verification. No deletion or residual-resource check has been executed for the revised procedure.
 
 ## Related Playbook
 
