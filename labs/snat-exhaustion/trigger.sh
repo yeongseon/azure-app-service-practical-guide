@@ -2,17 +2,20 @@
 set -euo pipefail
 
 APP_URL_INPUT="${1:-${APP_URL:-}}"
+ENDPOINT="${2:-outbound}"
 
-if [ -z "$APP_URL_INPUT" ]; then
-    echo "Usage: $0 <APP_URL>"
-    echo "Example: $0 https://app-labsnat-xxxxxxxx.azurewebsites.net"
+if [ -z "$APP_URL_INPUT" ] || { [ "$ENDPOINT" != "outbound" ] && [ "$ENDPOINT" != "outbound-fixed" ]; }; then
+    echo "Usage: $0 <APP_URL> [outbound|outbound-fixed]"
+    echo "  outbound        new connection per call (default)"
+    echo "  outbound-fixed  pooled session, same load shape, for the matched control"
+    echo "Example: $0 https://app-labsnat-xxxxxxxx.azurewebsites.net outbound"
     exit 1
 fi
 
 APP_URL="${APP_URL_INPUT%/}"
 
-echo "Starting SNAT exhaustion trigger against: $APP_URL"
-echo "Phase 1/1: Sending 200 concurrent requests to /outbound"
+echo "Starting trigger against: $APP_URL/$ENDPOINT"
+echo "Sending 200 requests (calls=40, at most 20 in flight) to /$ENDPOINT"
 
 status_dir=$(mktemp --directory)
 
@@ -25,7 +28,7 @@ for request_number in $(seq 1 200); do
             --max-time 180 \
             --output "$status_dir/$request_number.json" \
             --write-out "%{http_code}" \
-            "$APP_URL/outbound?calls=40" > "$status_dir/$request_number.status" 2>/dev/null
+            "$APP_URL/$ENDPOINT?calls=40" > "$status_dir/$request_number.status" 2>/dev/null
     ) &
 
     while [ "$(jobs -r | wc -l)" -ge 20 ]; do

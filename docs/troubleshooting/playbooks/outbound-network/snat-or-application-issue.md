@@ -439,7 +439,8 @@ The [SNAT exhaustion lab](../../lab-guides/snat-exhaustion.md#414-matched-rerun-
 | Phase duration | about 30 min | about 2 min |
 
 - [Measured] Pooling removed the inbound degradation with no change in outbound success.
-- [Observed] Every outbound call succeeded at the connection level. The inbound `499` pattern in the [Normal vs Abnormal Comparison](#normal-vs-abnormal-comparison) therefore appeared **without** SNAT exhaustion: slow per-call connection setup held the sync workers, which is H2 (Pattern C), not H1.
+- [Observed] Every outbound call succeeded at the connection level, yet the inbound `499` pattern in the [Normal vs Abnormal Comparison](#normal-vs-abnormal-comparison) appeared.
+- [Inferred] Slow per-call connection setup holding the sync workers (H2, Pattern C) is the best-supported explanation. SNAT exhaustion (H1) was not proven, and the Basic-tier detector gave no port data to rule it out.
 - [Observed] On the Basic tier the SNAT Port Exhaustion detector returned only a "non production tier" message and no port data. Confirm or rule out H1 on a production-tier plan.
 - [Observed] Application Insights records a dependency that returns `4xx` as `Success == false`. Group `AppDependencies` by `ResultCode` before treating a failure count as a connection problem; in the [private endpoint route lab](../../lab-guides/private-endpoint-route-fault.md), connect timeouts were recorded with `ResultCode` `0`.
 - [Inferred] A `499` cluster near a timeout boundary is evidence of held workers, and it supports H1 only when outbound calls also fail at the connection level and the detector shows port pressure.

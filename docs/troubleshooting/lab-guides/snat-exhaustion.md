@@ -107,7 +107,7 @@ Key point: SNAT mapping happens on platform egress. Your code does not directly 
 
 In this lab app:
 
-- `/outbound` uses `urllib.request` with `Connection: close`.
+- `/outbound` calls `requests.get()` with `Connection: close` for every call (no shared session). The April 2026 artifacts were captured with an earlier version that used `urllib.request`; both open a new connection per call.
 - Every outbound call tends to create a fresh TCP socket.
 - Under concurrency, sockets accumulate in active and post-close states.
 
@@ -410,28 +410,20 @@ Expected baseline shape:
 ### 3.6 Trigger failure mode
 
 ```bash
-bash "labs/snat-exhaustion/trigger.sh" "$APP_URL"
+bash "labs/snat-exhaustion/trigger.sh" "$APP_URL" outbound
 ```
 
 Trigger behavior from script:
 
-- Sends 200 `/outbound?calls=40` requests.
-- Runs concurrent batches (capped job count).
-- Summarizes transport (`000`) and HTTP (`5xx`) failures.
+- Sends 200 `/outbound?calls=40` requests, at most 20 in flight, each with a 180-second client timeout.
+- Summarizes outer status codes (`000` = no response) and the inner call results read from each JSON body, because the endpoint answers `200` even when inner calls fail.
 
 ### 3.7 Optional control check (pooled endpoint)
 
-Run a smaller controlled load against pooled mode:
+Wait about 5 minutes after the non-pooled phase, then run the same load shape against the pooled endpoint so the two phases are directly comparable (§4.14):
 
 ```bash
-for request_number in $(seq 1 40); do
-  curl \
-    --silent \
-    --show-error \
-    --output /dev/null \
-    --write-out "%{http_code}\n" \
-    "$APP_URL/outbound-fixed?calls=40"
-done
+bash "labs/snat-exhaustion/trigger.sh" "$APP_URL" outbound-fixed
 ```
 
 ### 3.8 Collect platform diagnostics
@@ -680,8 +672,8 @@ To cross-verify the `/outbound` status mix summarized in §4.6 (138 rows on `/ou
 - Blade heading reads "log-labsnat-6kr7mkxulwioo | Logs" and the sub-heading reads "Log Analytics workspace" — this confirms the query ran against the same workspace attached to this lab's Web App via the `Microsoft.Insights/diagnosticSettings` resource declared in `labs/snat-exhaustion/main.bicep`, matching the workspace referenced by the sanitized JSON exports in §4.1.
 - The KQL editor shows exactly the query `AppServiceHTTPLogs | where TimeGenerated > ago(2h) | where CsUriStem == '/outbound' | summarize Count = count() by ScStatus | order by ScStatus asc` — the `CsUriStem == '/outbound'` filter is an exact string match so rows for `/health`, `/diag/stats`, or `/outbound-fixed` are excluded even though they may share the same trigger window. The 2-hour lookback covers both the trigger execution and the log-ingestion delay (typically ~2-5 minutes for `AppServiceHTTPLogs`).
 - The Results grid shows exactly 3 rows (pagination "1 - 3 of 3") — no other status class appeared on `/outbound` in this window. The absence of `202` is expected because this query is scoped to `CsUriStem == '/outbound'`. In the original sanitized export, the two `202` rows are SCM deployment traffic on the `.scm` host (`/api/deployments/latest` and `/api/zipdeploy`), not responses from `/outbound-fixed` in `labs/snat-exhaustion/app/app.py`.
-- The `499` row shows `Count 152` — this dominates the distribution at ~90% of all `/outbound` requests, matching the original §4.6's `122 × 499 / 138 total = ~88%` ratio and confirming the primary failure signature is a proxy-level abort (SNAT-blocked outbound calls that never returned a response before a downstream timeout closed the connection), not an application-side 5xx error.
-- The `200` row shows `Count 12` — these are the small number of `/outbound` requests that completed successfully, most likely the earliest requests in the trigger burst that ran before SNAT ports were exhausted. The App Service SNAT-per-instance default is 128 ports, and the trigger issues 200 concurrent `/outbound?calls=40` requests (each making 40 outbound `urllib.request.urlopen` calls with `Connection: close`, so each request needs up to 40 fresh SNAT ports), so the first ~3 requests can drain the port pool.
+- The `499` row shows `Count 152` — this dominates the distribution at ~90% of all `/outbound` requests, matching the original §4.6's `122 × 499 / 138 total = ~88%` ratio and showing the primary failure signature is a proxy-level abort rather than an application-side 5xx error. The April analysis attributed the aborts to SNAT-blocked outbound calls; the §4.14 rerun produced the same `499` signature with no failed outbound calls, so the abort alone does not identify the cause.
+- The `200` row shows `Count 12` — these are the small number of `/outbound` requests that completed successfully, which the April analysis attributed to the earliest requests in the burst running before SNAT ports were exhausted (128 preallocated ports per instance, up to 40 fresh connections per request). That attribution was not independently confirmed; see §4.14.
 - The `502` row shows `Count 4` — a low-volume tail absent from the sanitized §4.6 export. This capture proves only that a small minority of `/outbound` requests failed as platform gateway errors during the same saturation window; because `AppServiceConsoleLogs` were empty in this reproduction, do not attribute those four rows specifically to gunicorn's `--timeout=120` worker recycle.
 - Query duration in bottom left reads a small millisecond value (here `1s 531ms`) — confirming the workspace is not throttled and the query hit indexed data, so the returned row count and status distribution are authoritative and not a partial-scan timeout.
 
@@ -704,10 +696,10 @@ To cross-verify the tail-latency evidence embedded in §4.6 (`Rows with TimeTake
 - The Results grid shows exactly 10 rows (pagination "1 - 10 of 10") and every row's `CsUriStem` column reads `/outbound` and every row's `ScStatus` column reads `499` — no `/outbound` request in the top-10 latency slice succeeded with 200 or platform-errored with 502. This confirms the failure signature at the extreme tail is uniformly client-abort/proxy-abort (499), not a mix of statuses.
 - `TimeTaken` values cluster extremely tightly at 240,015-240,036 ms (a 21 ms spread across all 10 rows) — this is the signature of a hard outer request-lifetime ceiling, not variable-latency degradation where you would expect a wider spread. The closest documented App Service timer is the ~230-second request timeout described in [Why does my request time out after 230 seconds?](https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/web-apps-performance-faqs#why-does-my-request-time-out-after-230-seconds); this capture is consistent with that class of upstream timeout, but the screenshot alone does not prove which exact timer owner produced the 240 s cutoff.
 - The ~240 s ceiling is far above the app-side gunicorn `--timeout=120` per-worker limit configured in `labs/snat-exhaustion/main.bicep` `appCommandLine`. That means the recorded HTTP lifetime is not explained by the 120 s worker timer alone. Because console logs were empty in this reproduction, avoid claiming a specific "worker killed at 120 s, then front-end waited another ~120 s" sequence; the defensible conclusion is only that an outer request timeout above the worker timeout dominates the tail.
-- The 10 `TimeGenerated` values span a ~22 minute 42 second wall-clock window (6:04:20 to 6:27:02 UTC) — this is not a bounded burst; it is a sustained SNAT exhaustion state where the port pool stayed depleted long enough that even requests initiated 22 minutes apart hit the same 240 s ceiling. If the timestamps had clustered inside a sub-30-second window, the interpretation would be "one brief exhaustion event"; the observed 22-minute spread instead confirms the failure regime persists as long as the trigger keeps issuing concurrent `/outbound?calls=40` requests.
+- The 10 `TimeGenerated` values span a ~22 minute 42 second wall-clock window (6:04:20 to 6:27:02 UTC) — this is not a bounded burst. Requests initiated 22 minutes apart hit the same 240 s ceiling, so the degraded state persisted as long as the trigger kept issuing concurrent `/outbound?calls=40` requests. The April analysis read this as sustained SNAT exhaustion; a persistent worker queue (§4.14) produces the same spread.
 - Query duration in bottom left reads `0s 912ms` — slightly faster than the §4.6.1 status-distribution query (`1s 531ms`) because `take 10` after an `order by TimeTaken desc` is cheaper than a full `summarize` over all rows in the window; both queries are well under the 30-second workspace timeout, so both result sets are authoritative.
 
-**Expected result**: The top-10 latency rows cluster at ~240 s with `ScStatus 499` on `/outbound`, matching the April §4.11 verdict (qualified by the §4.14 rerun): outbound connection attempts hang long enough to hit a consistent outer request timeout while SNAT ports are depleted and no fresh connection to `httpbin.org` can be opened. If instead the top-10 clustered at ~120 s with `ScStatus 502`, the dominant cutoff would have moved closer to the gunicorn worker timer rather than the outer request timeout; that is still compatible with SNAT pressure, but it would need confirmation from `AppServiceConsoleLogs` before attributing the immediate cutoff to worker recycle.
+**Expected result**: The top-10 latency rows cluster at ~240 s with `ScStatus 499` on `/outbound`, matching the April §4.11 verdict (qualified by the §4.14 rerun): requests stay pending long enough to hit a consistent outer request timeout. The April analysis attributed the wait to depleted SNAT ports; the §4.14 rerun shows the same ceiling can come from queued requests behind busy workers. If instead the top-10 clustered at ~120 s with `ScStatus 502`, the dominant cutoff would have moved closer to the gunicorn worker timer rather than the outer request timeout; that is still compatible with SNAT pressure, but it would need confirmation from `AppServiceConsoleLogs` before attributing the immediate cutoff to worker recycle.
 
 **Next step**: If a future reproduction shows the top-10 `TimeTaken` cluster near ~120 s instead of ~240 s (matching gunicorn `--timeout=120`), verify that shift with `AppServiceConsoleLogs` before changing configuration, because the root SNAT mitigation remains outbound connection reuse / pooling or larger SNAT capacity rather than simply raising `--timeout`.
 
@@ -794,7 +786,7 @@ timeline
 **Final verdict (April 2026 artifacts): Hypothesis supported by artifacts.**
 
 !!! warning "Matched rerun (2026-10-02) did not reproduce SNAT exhaustion"
-    The April run sent every call to the public `httpbin.org`, so its timeouts cannot be separated from that service's own throttling. A matched rerun against a storage endpoint owned by the lab produced the same inbound degradation (`499` responses and long `TimeTaken`) with **zero** failed outbound calls. In that rerun the reproduced chain is worker saturation caused by slow per-call connection setup, not SNAT port exhaustion. See [4.14](#414-matched-rerun-against-a-lab-owned-target-2026-10-02).
+    The April run sent every call to the public `httpbin.org`, so its timeouts cannot be separated from that service's own throttling. A matched rerun against a storage endpoint owned by the lab produced the same inbound degradation (`499` responses and long `TimeTaken`) with **zero** failed outbound calls. SNAT exhaustion was not proven in either run, and the rerun falsified the specific chain in [2.2](#22-causal-chain-under-test). Worker queueing caused by slow per-call connection setup is the best-supported explanation for the rerun. See [4.14](#414-matched-rerun-against-a-lab-owned-target-2026-10-02).
 
 ### 4.12 Practical mitigation mapping
 
@@ -816,8 +808,8 @@ Setup differences from the April run: the outbound target is a storage account d
 | Measure | Non-pooled `/outbound` | Pooled `/outbound-fixed` |
 |---|---:|---:|
 | Phase duration | 29 min 36 s | 1 min 58 s |
-| Outer responses within 180 s | 109 of 200 (`200`); 79 no response (`000`) | 200 of 200 (`200`) |
-| Inner outbound calls failed | 0 of 4,360 reported | 0 of 8,000 |
+| Outer responses within 180 s | 110 of 200 (`200`); 90 no response (`000`) | 200 of 200 (`200`) |
+| Inner outbound calls failed | 0 of 4,400 reported | 0 of 8,000 |
 | Dependency duration, highest per-minute p95 | 3,108 ms | 209 ms |
 | `AppServiceHTTPLogs` p50 `TimeTaken` | 171,589 ms (`200`), 179,972 ms (`499`) | 10,015 ms |
 | `499` responses | 90 | 0 |
