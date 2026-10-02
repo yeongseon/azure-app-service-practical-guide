@@ -1,0 +1,263 @@
+targetScope = 'resourceGroup'
+
+@description('Base name used to construct resource names.')
+param baseName string
+
+@description('Azure region for all resources.')
+param location string = resourceGroup().location
+
+var uniqueSuffix = uniqueString(resourceGroup().id)
+var serverFarmName = 'asp-${baseName}-${uniqueSuffix}'
+var webAppName = 'app-${baseName}-${uniqueSuffix}'
+var workspaceName = 'log-${baseName}-${uniqueSuffix}'
+var appInsightsName = 'appi-${baseName}-${uniqueSuffix}'
+var diagnosticSettingName = 'diag-${baseName}-${uniqueSuffix}'
+var virtualNetworkName = 'vnet-${baseName}-${uniqueSuffix}'
+var integrationSubnetName = 'snet-${baseName}-int'
+var privateEndpointSubnetName = 'snet-${baseName}-pep'
+var privateEndpointName = 'pep-${baseName}-${uniqueSuffix}'
+var routeTableName = 'rt-${baseName}-${uniqueSuffix}'
+var applianceSubnetName = 'snet-${baseName}-nva'
+var privateDnsZoneName = 'privatelink.blob.${environment().suffixes.storage}'
+var cleanBase = replace(baseName, '-', '')
+var storageAccountName = toLower(take('st${cleanBase}${uniqueSuffix}', 24))
+
+resource appServicePlan 'Microsoft.Web/serverfarms@2023-12-01' = {
+  name: serverFarmName
+  location: location
+  sku: {
+    name: 'B1'
+    tier: 'Basic'
+    size: 'B1'
+    capacity: 1
+  }
+  kind: 'linux'
+  properties: {
+    reserved: true
+  }
+}
+
+resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2022-10-01' = {
+  name: workspaceName
+  location: location
+  properties: {
+    sku: {
+      name: 'PerGB2018'
+    }
+    retentionInDays: 30
+  }
+}
+
+// Workspace-based Application Insights. With the agent settings on the web app,
+// App Service autoinstruments Flask and `requests`, so the lab's /connect calls
+// land in the `dependencies` table alongside the App Service diagnostic logs.
+resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
+  name: appInsightsName
+  location: location
+  kind: 'web'
+  properties: {
+    Application_Type: 'web'
+    WorkspaceResourceId: logAnalyticsWorkspace.id
+  }
+}
+
+// Starts empty. The route fault is a /32 route added at run time so that the
+// healthy -> fault -> recovery sequence changes only the route, never DNS.
+resource routeTable 'Microsoft.Network/routeTables@2023-11-01' = {
+  name: routeTableName
+  location: location
+  properties: {
+    disableBgpRoutePropagation: false
+    routes: []
+  }
+}
+
+resource virtualNetwork 'Microsoft.Network/virtualNetworks@2023-11-01' = {
+  name: virtualNetworkName
+  location: location
+  properties: {
+    addressSpace: {
+      addressPrefixes: [
+        '10.50.0.0/16'
+      ]
+    }
+    subnets: [
+      {
+        name: integrationSubnetName
+        properties: {
+          addressPrefix: '10.50.1.0/24'
+          routeTable: {
+            id: routeTable.id
+          }
+          delegations: [
+            {
+              name: 'webapp-delegation'
+              properties: {
+                serviceName: 'Microsoft.Web/serverFarms'
+              }
+            }
+          ]
+        }
+      }
+      {
+        name: privateEndpointSubnetName
+        properties: {
+          addressPrefix: '10.50.2.0/24'
+          // Network policies on so a user-defined route can take effect for
+          // traffic to the private endpoint address.
+          privateEndpointNetworkPolicies: 'Enabled'
+        }
+      }
+      {
+        // Empty subnet: the fault route points at an unused address here, so
+        // packets to the private endpoint are sent to a next hop that never answers.
+        name: applianceSubnetName
+        properties: {
+          addressPrefix: '10.50.3.0/24'
+        }
+      }
+    ]
+  }
+}
+
+resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
+  name: storageAccountName
+  location: location
+  sku: {
+    name: 'Standard_LRS'
+  }
+  kind: 'StorageV2'
+  properties: {
+    allowBlobPublicAccess: false
+    minimumTlsVersion: 'TLS1_2'
+    // Disabled so the private endpoint is the only reachable path.
+    publicNetworkAccess: 'Disabled'
+  }
+}
+
+resource privateDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' = {
+  name: privateDnsZoneName
+  location: 'global'
+}
+
+// Linked from the start: DNS is correct in every phase of this lab.
+resource privateDnsZoneLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-06-01' = {
+  name: 'link-${baseName}'
+  parent: privateDnsZone
+  location: 'global'
+  properties: {
+    registrationEnabled: false
+    virtualNetwork: {
+      id: virtualNetwork.id
+    }
+  }
+}
+
+resource webApp 'Microsoft.Web/sites@2023-12-01' = {
+  name: webAppName
+  location: location
+  kind: 'app,linux'
+  properties: {
+    serverFarmId: appServicePlan.id
+    httpsOnly: true
+    virtualNetworkSubnetId: virtualNetwork.properties.subnets[0].id
+    siteConfig: {
+      linuxFxVersion: 'PYTHON|3.11'
+      alwaysOn: false
+      appCommandLine: 'gunicorn --bind=0.0.0.0 --timeout=120 --workers=2 app:app'
+      ftpsState: 'Disabled'
+      minTlsVersion: '1.2'
+      appSettings: [
+        {
+          name: 'SCM_DO_BUILD_DURING_DEPLOYMENT'
+          value: 'true'
+        }
+        {
+          name: 'WEBSITE_VNET_ROUTE_ALL'
+          value: '1'
+        }
+        {
+          name: 'STORAGE_ACCOUNT_NAME'
+          value: storageAccount.name
+        }
+        {
+          name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
+          value: appInsights.properties.ConnectionString
+        }
+        {
+          name: 'ApplicationInsightsAgent_EXTENSION_VERSION'
+          value: '~3'
+        }
+      ]
+    }
+  }
+}
+
+resource privateEndpoint 'Microsoft.Network/privateEndpoints@2023-11-01' = {
+  name: privateEndpointName
+  location: location
+  properties: {
+    subnet: {
+      id: virtualNetwork.properties.subnets[1].id
+    }
+    privateLinkServiceConnections: [
+      {
+        name: 'blob-connection'
+        properties: {
+          privateLinkServiceId: storageAccount.id
+          groupIds: [
+            'blob'
+          ]
+        }
+      }
+    ]
+  }
+}
+
+resource privateEndpointDnsZoneGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2023-11-01' = {
+  name: 'pdnsz-${baseName}-${uniqueSuffix}'
+  parent: privateEndpoint
+  properties: {
+    privateDnsZoneConfigs: [
+      {
+        name: 'blob-private-zone-config'
+        properties: {
+          privateDnsZoneId: privateDnsZone.id
+        }
+      }
+    ]
+  }
+}
+
+resource webAppDiagnostics 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
+  name: diagnosticSettingName
+  scope: webApp
+  properties: {
+    workspaceId: logAnalyticsWorkspace.id
+    logs: [
+      {
+        category: 'AppServiceHTTPLogs'
+        enabled: true
+      }
+      {
+        category: 'AppServiceConsoleLogs'
+        enabled: true
+      }
+      {
+        category: 'AppServicePlatformLogs'
+        enabled: true
+      }
+    ]
+    metrics: []
+  }
+}
+
+output appServicePlanName string = appServicePlan.name
+output webAppName string = webApp.name
+output webAppDefaultHostName string = webApp.properties.defaultHostName
+output logAnalyticsWorkspaceName string = logAnalyticsWorkspace.name
+output storageAccountName string = storageAccount.name
+output privateEndpointName string = privateEndpoint.name
+output appInsightsName string = appInsights.name
+output routeTableName string = routeTable.name
+output virtualNetworkName string = virtualNetwork.name

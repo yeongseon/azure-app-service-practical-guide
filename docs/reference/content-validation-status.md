@@ -15,7 +15,7 @@ This page tracks `content_validation` metadata for **in-scope factual-claim docu
 
 | Content Type | Total | Verified | Pending | Unverified | No Metadata |
 |---|---:|---:|---:|---:|---:|
-| Mermaid Diagrams | 384 | 384 | 0 | 0 | 0 |
+| Mermaid Diagrams | 385 | 385 | 0 | 0 | 0 |
 | In-Scope Factual-Claim Documents | 76 | 76 | 0 | 0 | 0 |
 
 !!! success "All In-Scope Documents Verified"
@@ -107,13 +107,13 @@ pie title In-Scope Document Validation Status
 | [Outbound Network](../troubleshooting/first-10-minutes/outbound-network.md) | ✅ | ✅ Verified | 2/2 | 2026-09-11 |
 | [Performance](../troubleshooting/first-10-minutes/performance.md) | ✅ | ✅ Verified | 2/2 | 2026-09-11 |
 | [Performance Degradation](../troubleshooting/playbooks/performance-degradation.md) | ✅ | ✅ Verified | 5/5 | 2026-09-11 |
-| [Private Endpoint Custom Dns Route Confusion](../troubleshooting/playbooks/outbound-network/private-endpoint-custom-dns-route-confusion.md) | ✅ | ✅ Verified | 2/2 | 2026-09-11 |
+| [Private Endpoint Custom Dns Route Confusion](../troubleshooting/playbooks/outbound-network/private-endpoint-custom-dns-route-confusion.md) | ✅ | ✅ Verified | 3/3 | 2026-10-02 |
 | [Quick Diagnosis Cards](../troubleshooting/quick-diagnosis-cards.md) | ✅ | ✅ Verified | 2/2 | 2026-09-11 |
 | [Slot Swap Config Drift](../troubleshooting/playbooks/startup-availability/slot-swap-config-drift.md) | ✅ | ✅ Verified | 3/3 | 2026-09-11 |
 | [Slot Swap Failed During Warmup](../troubleshooting/playbooks/startup-availability/slot-swap-failed-during-warmup.md) | ✅ | ✅ Verified | 3/3 | 2026-09-11 |
 | [Slow Response But Low Cpu](../troubleshooting/playbooks/performance/slow-response-but-low-cpu.md) | ✅ | ✅ Verified | 2/2 | 2026-09-11 |
 | [Slow Start Cold Start](../troubleshooting/playbooks/performance/slow-start-cold-start.md) | ✅ | ✅ Verified | 2/2 | 2026-04-12 |
-| [Snat Or Application Issue](../troubleshooting/playbooks/outbound-network/snat-or-application-issue.md) | ✅ | ✅ Verified | 2/2 | 2026-09-11 |
+| [Snat Or Application Issue](../troubleshooting/playbooks/outbound-network/snat-or-application-issue.md) | ✅ | ✅ Verified | 2/2 | 2026-10-02 |
 | [Ssl Certificate Issues](../troubleshooting/playbooks/ssl-certificate-issues.md) | ✅ | ✅ Verified | 5/5 | 2026-09-11 |
 | [Startup Availability](../troubleshooting/first-10-minutes/startup-availability.md) | ✅ | ✅ Verified | 2/2 | 2026-09-11 |
 | [Storage Connectivity Firewall Authorization](../troubleshooting/playbooks/outbound-network/storage-connectivity-firewall-authorization.md) | ✅ | ✅ Verified | 4/4 | 2026-07-16 |

@@ -75,6 +75,7 @@ The `Diagnose and solve problems` blade is the first Portal stop when running th
 |-----|---------|-----------------|
 | [SNAT Exhaustion](snat-exhaustion.md) | Outbound connection failures from SNAT port exhaustion | [SNAT or Application Issue?](../playbooks/outbound-network/snat-or-application-issue.md) |
 | [DNS Resolution (VNet)](dns-vnet-resolution.md) | DNS resolution failure for private endpoints in VNet-integrated apps | [DNS Resolution (VNet)](../playbooks/outbound-network/dns-resolution-vnet-integrated-app-service.md) |
+| [Private Endpoint Route Fault](private-endpoint-route-fault.md) | Private endpoint calls time out while DNS resolves correctly | [Private Endpoint / Custom DNS / Route Confusion](../playbooks/outbound-network/private-endpoint-custom-dns-route-confusion.md) |
 
 ### Identity & Deployment
 

@@ -2,8 +2,6 @@ import importlib
 import os
 import threading
 import time
-import urllib.error
-import urllib.request
 from datetime import datetime, timezone
 
 flask_module = importlib.import_module("flask")
@@ -20,6 +18,7 @@ OUTBOUND_CALL_COUNTERS = {
     "with-pooling": {"successes": 0, "failures": 0},
 }
 _OUTBOUND_COUNTER_LOCK = threading.Lock()
+DEFAULT_TARGET = os.getenv("OUTBOUND_TARGET_URL", "https://httpbin.org/get")
 SAFE_ENV_KEYS = [
     "PORT",
     "WEBSITES_PORT",
@@ -28,6 +27,7 @@ SAFE_ENV_KEYS = [
     "WEBSITE_HOSTNAME",
     "SCM_DO_BUILD_DURING_DEPLOYMENT",
     "OUTBOUND_TIMEOUT_SECONDS",
+    "OUTBOUND_TARGET_URL",
 ]
 
 
@@ -122,7 +122,7 @@ def _int_arg(name: str, default: int) -> int:
 
 @app.get("/outbound")
 def outbound_without_pooling():
-    target_url = request.args.get("target", "https://httpbin.org/get")
+    target_url = request.args.get("target", DEFAULT_TARGET)
     calls = _int_arg("calls", 40)
     timeout_seconds = float(os.getenv("OUTBOUND_TIMEOUT_SECONDS", "3"))
 
@@ -131,19 +131,23 @@ def outbound_without_pooling():
     errors = []
     started = time.time()
 
+    # A new connection per call (no Session, Connection: close) is the anti-pattern
+    # under test. `requests` is used so each call appears in AppDependencies.
+    import requests as requests_lib
+
     for _ in range(calls):
-        req = urllib.request.Request(
-            target_url,
-            method="GET",
-            headers={"Connection": "close", "User-Agent": "snat-lab-no-pool"},
-        )
         try:
-            with urllib.request.urlopen(req, timeout=timeout_seconds) as resp:
-                if 200 <= resp.status < 500:
-                    successes += 1
-                else:
-                    failures += 1
-        except (urllib.error.URLError, TimeoutError, OSError) as exc:
+            resp = requests_lib.get(
+                target_url,
+                timeout=timeout_seconds,
+                headers={"Connection": "close", "User-Agent": "snat-lab-no-pool"},
+            )
+            if 200 <= resp.status_code < 500:
+                successes += 1
+            else:
+                failures += 1
+            resp.close()
+        except requests_lib.RequestException as exc:
             failures += 1
             if len(errors) < 5:
                 errors.append(str(exc))
@@ -173,7 +177,7 @@ def outbound_with_pooling():
     import requests as requests_lib
     from requests.adapters import HTTPAdapter
 
-    target_url = request.args.get("target", "https://httpbin.org/get")
+    target_url = request.args.get("target", DEFAULT_TARGET)
     calls = _int_arg("calls", 40)
     timeout_seconds = float(os.getenv("OUTBOUND_TIMEOUT_SECONDS", "3"))
 

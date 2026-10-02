@@ -21,7 +21,7 @@ evidence:
   - lab
 summary: Distinguish between SNAT port exhaustion and application-level connection issues.
 status: stable
-last_reviewed: 2026-09-11
+last_reviewed: 2026-10-02
 content_sources:
   diagrams:
     - id: snat-or-application-issue-flow
@@ -34,7 +34,7 @@ content_sources:
         - https://learn.microsoft.com/en-us/azure/app-service/networking-features
 content_validation:
   status: verified
-  last_reviewed: 2026-09-11
+  last_reviewed: 2026-10-02
   reviewer: agent
   core_claims:
     - claim: "SNAT applies only to outbound connections to PUBLIC IP addresses. Private Endpoint and Service Endpoint traffic does NOT consume SNAT ports."
@@ -93,8 +93,10 @@ Start by proving or disproving SNAT with the SNAT Port Exhaustion and TCP Connec
 ## 4. What to Check First
 ### Metrics
 - SNAT Port Exhaustion detector in App Service Diagnostics.
-- TCP Connections metric.
+- TCP Connections detector (per-instance TCP state history).
 - Outbound connection count per instance.
+
+In the 2026-10-02 reproduction below, the Linux web app exposed no socket, connection, or SNAT metric in Azure Monitor (24 metric definitions, none of them connection-related), so these signals come from the detectors, not from metric alerts.
 
 ### Logs
 - AppServiceConsoleLogs: look for "connection refused", "timeout", "SNAT" messages.
@@ -424,6 +426,24 @@ AppServiceConsoleLogs
 | SNAT detector expectation | Ports below pressure threshold | Ports near/exceed threshold during incidents |
 | Interpretation | Healthy dependency + connection lifecycle | Outbound connection pressure (SNAT and/or app connection management) |
 
+### Live reproduction evidence (2026-10-02)
+
+The [SNAT exhaustion lab](../../lab-guides/snat-exhaustion.md#414-matched-rerun-against-a-lab-owned-target-2026-10-02) was rerun on one Basic B1 Linux instance with a lab-owned public storage endpoint as the only outbound target. Two phases with the same load (200 requests of 40 outbound calls, concurrency 20) compared a new connection per call against a pooled `requests.Session`.
+
+| Signal | Non-pooled | Pooled |
+|---|---:|---:|
+| Failed outbound calls (connection level) | 0 | 0 |
+| Dependency duration, highest per-minute p95 | 3,108 ms | 209 ms |
+| Inbound `499` responses | 90 | 0 |
+| Inbound p50 `TimeTaken` | about 172 s | about 10 s |
+| Phase duration | about 30 min | about 2 min |
+
+- [Measured] Pooling removed the inbound degradation with no change in outbound success.
+- [Observed] Every outbound call succeeded at the connection level. The inbound `499` pattern in the [Normal vs Abnormal Comparison](#normal-vs-abnormal-comparison) therefore appeared **without** SNAT exhaustion: slow per-call connection setup held the sync workers, which is H2 (Pattern C), not H1.
+- [Observed] On the Basic tier the SNAT Port Exhaustion detector returned only a "non production tier" message and no port data. Confirm or rule out H1 on a production-tier plan.
+- [Observed] Application Insights records a dependency that returns `4xx` as `Success == false`. Group `AppDependencies` by `ResultCode` before treating a failure count as a connection problem; in the [private endpoint route lab](../../lab-guides/private-endpoint-route-fault.md), connect timeouts were recorded with `ResultCode` `0`.
+- [Inferred] A `499` cluster near a timeout boundary is evidence of held workers, and it supports H1 only when outbound calls also fail at the connection level and the detector shows port pressure.
+
 ## 7. Likely Root Cause Patterns
 - Pattern A: New HttpClient per request (classic .NET anti-pattern, also applies to Python requests.Session not reused).
 - Pattern B: Connection pool too small for traffic volume.
@@ -442,7 +462,7 @@ AppServiceConsoleLogs
 - Use Private Endpoints for all Azure PaaS dependencies.
 - Add NAT Gateway for non-Azure outbound traffic.
 - Implement circuit breaker pattern for dependency calls.
-- Monitor SNAT usage as a standard operational metric.
+- Review the SNAT Port Exhaustion detector after load changes; the web app does not expose SNAT usage as an Azure Monitor metric.
 
 ## 10. Portal Evidence
 
