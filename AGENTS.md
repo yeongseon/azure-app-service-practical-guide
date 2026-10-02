@@ -602,14 +602,14 @@ Every committed Portal screenshot is taken under the same, machine-enforced cond
 | Output | Exactly 1600 x 1000 PNG, viewport only | `fullPage` is rejected by the helper; the PNG header is checked and a wrong-sized file is deleted |
 | Portal language | English | `document.documentElement.lang` asserted to start with `en` |
 | Regional format | English (United States) | Locale override `en-US` |
-| Theme / color scheme | Light | `prefers-color-scheme: light` emulated and asserted |
+| CSS preferred color scheme | Light | `prefers-color-scheme: light` emulated and asserted. This does **not** prove the Portal account theme, which the human confirms (below). |
 | Motion | Reduced | `prefers-reduced-motion: reduce`; screenshot animations disabled, caret hidden |
 | High contrast | Off | `forced-colors: active` asserted false |
 | Time zone | UTC | `Emulation.setTimezoneOverride`; asserted per frame |
 | Overlays | None | Capture refused while a dialog, flyout, or toast is visible |
 | Readiness | Blade-specific signal | Mandatory `--ready` selector, then `document.fonts.ready`, then a stable layout across consecutive samples, then PII replacement and a fixed settle delay. Network idle is **not** a readiness signal: the Portal keeps background requests open. |
 
-Portal account settings the runner cannot set for you, and which the human confirms once in the capture profile before a session: Language English, Regional format English (United States), Theme Light (not Auto), Portal menu behavior Flyout (closed at capture), Service menu behavior Collapsed, and pop-up notifications, surveys, and teaching bubbles Off. Keep DevTools closed during a session; a second CDP client can clear the overrides.
+Portal account settings the runner does not yet verify, which the human confirms at the start of **every** capture session: Language English, Regional format English (United States), Theme **Light (not Auto)**, Portal menu behavior Flyout (closed at capture), Service menu behavior Collapsed with only the active group expanded, and pop-up notifications, surveys, and teaching bubbles Off. Keep DevTools closed during a session; a second CDP client can clear the overrides. The first session also runs a dry capture, including a deliberate failure, before any provenance record is written.
 
 Any change to a value that affects rendered pixels creates a **new profile id**; it is never edited in place. Below-the-fold content is documented with a second viewport capture under its own stable id, not with a taller image.
 

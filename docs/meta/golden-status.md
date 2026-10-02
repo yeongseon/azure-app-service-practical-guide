@@ -25,7 +25,7 @@ Every quality gate in this repository, its most recently recorded result, and th
 
 ## Summary
 
-*Snapshot of `b0917df plus uncommitted working-tree changes`, generated 2026-10-02.*
+*Snapshot of `e09469f plus uncommitted working-tree changes`, generated 2026-10-02.*
 
 | Metric | Count |
 |---|---:|
@@ -92,7 +92,7 @@ Generated from the `GATES` registry in `scripts/generate_golden_status.py`. CI f
 | Gate | Enforces | Severity | Command | Enforced by |
 | --- | --- | --- | --- | --- |
 | Validator doctests | Executable specs inside the validators themselves still pass. | Blocking | `python3 -m doctest scripts/lib/content_scope.py scripts/validate_content_sources.py scripts/validate_cli_explanations.py scripts/validate_pii.py scripts/detect_repetition.py scripts/validate_doc_quality.py scripts/validate_capture_assets.py scripts/validate_visual_content.py scripts/generate_golden_status.py` | `Validate Content Source Metadata` — `validate-content-sources.yml`<br>`Validate CLI Explanation Tables` — `validate-content-sources.yml`<br>`Validate PII` — `validate-content-sources.yml`<br>`Validate Documentation Repetition` — `validate-repetition.yml`<br>`Validate Visual Content (advisory)` — `validate-visual-content.yml`<br>`Validate Golden Status` — `validate-golden-status.yml` |
-| Capture asset geometry | Every committed Portal screenshot matches the portal-desktop-v1 capture profile. | Blocking | `python3 scripts/validate_capture_assets.py` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
+| Capture asset geometry | Committed Portal screenshots match the portal-desktop-v1 profile or are frozen historical exceptions; changed ones carry provenance. | Blocking | `python3 scripts/validate_capture_assets.py` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
 | Mermaid format | Mermaid fences are unindented and correctly delimited. | Blocking | `python3 scripts/validate_mermaid_format.py` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
 | Mermaid syntax | Every diagram parses as valid Mermaid. | Blocking | `python3 scripts/validate_mermaid_syntax.py` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
 | Content sources | Pages with Mermaid carry content_sources metadata with a valid source type. | Blocking | `python3 scripts/validate_content_sources.py` | `Validate Content Source Metadata` — `validate-content-sources.yml` |

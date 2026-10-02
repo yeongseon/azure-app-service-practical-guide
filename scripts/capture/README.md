@@ -6,9 +6,12 @@ blade overwrites the same file and never requires editing markdown.
 
 The implementation lives in the central
 [`azure-guide-capture-toolkit`](https://github.com/yeongseon/azure-guide-capture-toolkit)
-package (installed via `requirements-docs.txt`). This directory keeps only the
-repo-specific pieces: `manifest.yaml` (the screenshot registry for this guide)
-and `portal-capture-helpers.js` (in `scripts/`).
+package (installed via `requirements-docs.txt`). This directory keeps the
+repo-specific pieces: `manifest.yaml` (the screenshot registry),
+`capture-profile.json` (the fixed capture conditions), `capture.cjs` (the only
+supported capture runner), `provenance.yaml` (which profile produced each
+image), and `dimension-exceptions.yaml` (frozen historical violations). The PII
+helper is `scripts/portal-capture-helpers.js`.
 
 ## Components
 
@@ -77,3 +80,24 @@ capture-diff-gate /path/to/fresh.png --id <shot-id>
 - Capture/CLI: install the toolkit with its `capture` extra
   (`pip install "azure-guide-capture-toolkit[capture] @ git+https://github.com/yeongseon/azure-guide-capture-toolkit@v0.1.0"`)
   to get `Pillow` and `ruamel.yaml`; Node + Playwright for raw capture.
+
+## Provenance record
+
+Every screenshot added or re-encoded in a pull request needs an entry in
+[`provenance.yaml`](provenance.yaml); CI compares against the PR base and fails
+otherwise. Key it by manifest id (or repository-relative path for a legacy PNG):
+
+```yaml
+assets:
+  troubleshooting--kudu--02-kudu-home:
+    file: troubleshooting/kudu/troubleshooting--kudu--02-kudu-home.webp
+    final_sha256: <sha256 of the committed webp>
+    produced:
+      profile: portal-desktop-v1
+      profile_sha256: <sha256 printed by capture.cjs>
+      captured_at: 2026-10-02T12:34:56Z
+      browser: Chrome/<version>
+```
+
+`dimension-exceptions.yaml` may only shrink: CI rejects any entry absent from
+the PR base.

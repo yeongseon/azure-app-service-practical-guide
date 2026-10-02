@@ -234,7 +234,7 @@ GATES: tuple[Gate, ...] = (
     Gate(
         key="capture-assets",
         name="Capture asset geometry",
-        enforces="Every committed Portal screenshot matches the portal-desktop-v1 capture profile.",
+        enforces="Committed Portal screenshots match the portal-desktop-v1 profile or are frozen historical exceptions; changed ones carry provenance.",
         argv=("{python}", "scripts/validate_capture_assets.py"),
         severity=BLOCKING,
         covers=("scripts/validate_capture_assets.py",),

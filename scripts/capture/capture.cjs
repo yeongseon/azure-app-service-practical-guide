@@ -60,7 +60,11 @@ async function applyProfile(page, cdp) {
     screenWidth: viewport.width,
     screenHeight: viewport.height,
   });
-  await cdp.send('Emulation.setLocaleOverride', { locale: emulation.locale }).catch(() => {});
+  // Chrome rejects a second identical locale override; that is the only error
+  // tolerated here, and the locale is asserted independently afterwards.
+  await cdp.send('Emulation.setLocaleOverride', { locale: emulation.locale }).catch((err) => {
+    if (!/already|override/i.test(String(err && err.message))) throw err;
+  });
   await cdp.send('Emulation.setTimezoneOverride', { timezoneId: emulation.timezoneId });
   await page.emulateMedia({
     colorScheme: emulation.colorScheme,
@@ -98,6 +102,8 @@ async function profileViolations(page) {
         reduced: matchMedia('(prefers-reduced-motion: reduce)').matches,
         forced: matchMedia('(forced-colors: active)').matches,
         tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        locale: Intl.DateTimeFormat().resolvedOptions().locale,
+        navLang: navigator.language,
       }));
     } catch (_) {
       continue;
@@ -107,12 +113,21 @@ async function profileViolations(page) {
     if (emulation.reducedMotion === 'reduce' && !env.reduced) violations.push(`${where}: reduced motion not active`);
     if (env.forced) violations.push(`${where}: forced colors (high contrast) is active`);
     if (env.tz !== emulation.timezoneId) violations.push(`${where}: timezone is ${env.tz}, expected ${emulation.timezoneId}`);
+    if (env.locale !== emulation.locale || env.navLang !== emulation.locale) {
+      violations.push(`${where}: locale is ${env.locale} / navigator ${env.navLang}, expected ${emulation.locale}`);
+    }
   }
-  const overlay = await page
-    .locator('[role="dialog"]:visible, .fxs-popup:visible, .fxs-toast:visible')
-    .count()
-    .catch(() => 0);
-  if (overlay > 0) violations.push(`${overlay} dialog/flyout/toast is open; close it before capture`);
+  const overlaySelector = '[role="dialog"]:visible, [role="alertdialog"]:visible, .fxs-popup:visible, .fxs-toast:visible';
+  for (const frame of page.frames()) {
+    let open;
+    try {
+      open = await frame.locator(overlaySelector).count();
+    } catch (err) {
+      if (frame === page.mainFrame()) throw new Error(`overlay check failed: ${err.message}`);
+      continue;
+    }
+    if (open > 0) violations.push(`${open} dialog/flyout/toast open in ${frame === page.mainFrame() ? 'main frame' : 'a child frame'}`);
+  }
   return violations;
 }
 
@@ -128,7 +143,23 @@ async function waitForReady(page, ready, timeoutMs) {
   throw new Error(`ready signal ${JSON.stringify(ready)} did not appear within ${timeoutMs} ms`);
 }
 
-async function waitForStableLayout(page) {
+async function layoutSample(page, ready) {
+  const parts = [];
+  for (const frame of page.frames()) {
+    const geometry = await frame
+      .evaluate(() => {
+        const root = document.scrollingElement || document.documentElement;
+        return [root.scrollWidth, root.scrollHeight, document.querySelectorAll('*').length];
+      })
+      .catch(() => null);
+    if (geometry) parts.push(geometry);
+    const box = await frame.locator(ready).first().boundingBox().catch(() => null);
+    if (box) parts.push([Math.round(box.x), Math.round(box.y), Math.round(box.width), Math.round(box.height)]);
+  }
+  return JSON.stringify(parts);
+}
+
+async function waitForStableLayout(page, ready) {
   const { stableSamples, sampleIntervalMs, timeoutMs, fontsReady } = PROFILE.readiness;
   if (fontsReady) {
     for (const frame of page.frames()) {
@@ -139,9 +170,7 @@ async function waitForStableLayout(page) {
   let last = '';
   let streak = 0;
   while (Date.now() < deadline) {
-    const sample = await page.evaluate(() =>
-      JSON.stringify([document.body.scrollHeight, document.querySelectorAll('*').length]),
-    );
+    const sample = await layoutSample(page, ready);
     streak = sample === last ? streak + 1 : 0;
     last = sample;
     if (streak >= stableSamples) return;
@@ -152,6 +181,17 @@ async function waitForStableLayout(page) {
 
 async function main() {
   const args = parseArgs(process.argv.slice(2));
+  // A previous run's file must never be mistaken for this run's capture.
+  fs.rmSync(args.out, { force: true });
+  try {
+    await capture(args);
+  } catch (err) {
+    fs.rmSync(args.out, { force: true });
+    throw err;
+  }
+}
+
+async function capture(args) {
   const endpoint = process.env.CAPTURE_CDP_URL || 'http://127.0.0.1:9222';
   const browser = await chromium.connectOverCDP(endpoint);
   try {
@@ -166,7 +206,7 @@ async function main() {
     await page.goto(args.url, { waitUntil: 'domcontentloaded', timeout: PROFILE.readiness.timeoutMs });
     await applyProfile(page, cdp);
     await waitForReady(page, args.ready, PROFILE.readiness.timeoutMs);
-    await waitForStableLayout(page);
+    await waitForStableLayout(page, args.ready);
 
     const violations = await profileViolations(page);
     if (violations.length) {
@@ -176,15 +216,16 @@ async function main() {
     await applyPiiReplacements(page);
     await page.waitForTimeout(PROFILE.readiness.postPiiSettleMs);
     await applyProfile(page, cdp);
+    const finalViolations = await profileViolations(page);
+    if (finalViolations.length) {
+      throw new Error(`profile drifted before capture:\n  - ${finalViolations.join('\n  - ')}`);
+    }
     await capturePortalScreenshot(page, args.out);
 
     const { width, height } = pngDimensions(args.out);
     const expected = PROFILE.capture;
     if (width !== expected.expectedPixelWidth || height !== expected.expectedPixelHeight) {
-      fs.rmSync(args.out, { force: true });
-      throw new Error(
-        `captured ${width}x${height}, expected ${expected.expectedPixelWidth}x${expected.expectedPixelHeight}; deleted the output`,
-      );
+      throw new Error(`captured ${width}x${height}, expected ${expected.expectedPixelWidth}x${expected.expectedPixelHeight}`);
     }
     const version = browser.version();
     process.stdout.write(

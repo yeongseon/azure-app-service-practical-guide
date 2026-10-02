@@ -18,9 +18,11 @@ Usage:
 
 from __future__ import annotations
 
+import argparse
 import hashlib
 import json
 import struct
+import subprocess
 import sys
 from pathlib import Path
 
@@ -84,13 +86,59 @@ def expected_sizes(profile: dict, target_width: int) -> tuple[tuple[int, int], t
     return (raw_w, raw_h), (target_width, round(target_width * raw_h / raw_w))
 
 
+def git_show(ref: str, rel: str) -> bytes | None:
+    """Return a file's bytes at ``ref``, or None when it does not exist there."""
+    result = subprocess.run(
+        ["git", "show", f"{ref}:{rel}"], cwd=ROOT, capture_output=True, check=False
+    )
+    return result.stdout if result.returncode == 0 else None
+
+
+def new_exceptions(current: list[dict], base: list[dict] | None) -> list[str]:
+    """Exceptions present now that were absent at the base revision.
+
+    The file may only shrink, so any addition is a violation. A base without
+    the file is the bootstrap commit that introduces it, which is allowed.
+
+    >>> new_exceptions([{"asset": "a"}, {"asset": "b"}], [{"asset": "a"}])
+    ['b']
+    >>> new_exceptions([{"asset": "a"}], None)
+    []
+    """
+    if base is None:
+        return []
+    known = {e["asset"] for e in base}
+    return sorted(e["asset"] for e in current if e["asset"] not in known)
+
+
+def provenance_record_problems(key: str, record: dict, rel: str, profile_id: str, profile_sha: str) -> list[str]:
+    """Validate one provenance record against the asset it describes.
+
+    >>> ok = {"file": "x.webp", "final_sha256": "h",
+    ...       "produced": {"profile": "p1", "profile_sha256": "s"}}
+    >>> provenance_record_problems("k", ok, "x.webp", "p1", "s")
+    []
+    >>> provenance_record_problems("k", {"file": "y.webp"}, "x.webp", "p1", "s")
+    ['provenance k: file y.webp does not match the asset x.webp', 'provenance k: produced.profile must be p1, got None', 'provenance k: produced.profile_sha256 does not match p1']
+    """
+    found = []
+    if record.get("file") != rel:
+        found.append(f"provenance {key}: file {record.get('file')} does not match the asset {rel}")
+    produced = record.get("produced") or {}
+    if produced.get("profile") != profile_id:
+        found.append(f"provenance {key}: produced.profile must be {profile_id}, got {produced.get('profile')}")
+    if produced.get("profile_sha256") != profile_sha:
+        found.append(f"provenance {key}: produced.profile_sha256 does not match {profile_id}")
+    return found
+
+
 def referenced_legacy_pngs() -> list[Path]:
     """Legacy PNGs under docs/assets that some Markdown page still references."""
     text = "\n".join(p.read_text(encoding="utf-8") for p in (ROOT / "docs").rglob("*.md"))
     return [p for p in sorted(ASSETS.rglob("*.png")) if p.name in text]
 
 
-def problems() -> list[str]:
+def problems(base_ref: str | None = None) -> list[str]:
     profile_bytes = (CAPTURE / "capture-profile.json").read_bytes()
     profile = json.loads(profile_bytes)
     profile_sha = hashlib.sha256(profile_bytes).hexdigest()
@@ -131,7 +179,27 @@ def problems() -> list[str]:
     for rel in sorted(set(allowed) - set(measured)):
         found.append(f"{rel}: dimension exception for an asset that is not checked")
 
-    for key, record in (provenance.get("assets") or {}).items():
+    manifest_ids = {e["file"]: e["id"] for e in manifest.get("screenshots") or []}
+    records = provenance.get("assets") or {}
+    if base_ref:
+        base_raw = git_show(base_ref, "scripts/capture/dimension-exceptions.yaml")
+        base_list = None if base_raw is None else (yaml.safe_load(base_raw) or {}).get("exceptions") or []
+        for rel in new_exceptions(exceptions.get("exceptions") or [], base_list):
+            found.append(f"{rel}: new dimension exception; the list may only shrink, recapture instead")
+        # Every screenshot added or re-encoded in this change must say which
+        # profile produced it, so a new image cannot skip the standard.
+        for rel in sorted(measured):
+            current = (ASSETS / rel).read_bytes()
+            if git_show(base_ref, f"docs/assets/{rel}") == current:
+                continue
+            key = manifest_ids.get(rel, rel)
+            record = records.get(key)
+            if record is None:
+                found.append(f"{rel}: added or changed without a provenance record ({key})")
+                continue
+            found += provenance_record_problems(key, record, rel, profile["id"], profile_sha)
+
+    for key, record in records.items():
         produced = record.get("produced", {})
         path = ASSETS / record.get("file", "")
         if not path.is_file():
@@ -145,7 +213,12 @@ def problems() -> list[str]:
 
 
 def main() -> int:
-    found = problems()
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument(
+        "--base-ref",
+        help="Git ref of the PR base; enables shrink-only exceptions and provenance for changed images.",
+    )
+    found = problems(parser.parse_args().base_ref)
     if found:
         print("Capture asset check failed:")
         for item in found:

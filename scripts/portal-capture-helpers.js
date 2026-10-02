@@ -144,10 +144,17 @@ async function applyPiiReplacements(page) {
 }
 
 async function resolveAccountAvatarMask(page) {
+  // A hidden duplicate can match first; masking it would leave the visible
+  // avatar unmasked. Only a visible element with a non-empty box qualifies.
   for (const selector of ACCOUNT_AVATAR_SELECTORS) {
-    const locator = page.locator(selector);
-    if ((await locator.count()) > 0) {
-      return locator.first();
+    const candidates = page.locator(selector);
+    const count = await candidates.count();
+    for (let i = 0; i < count; i += 1) {
+      const candidate = candidates.nth(i);
+      const box = await candidate.boundingBox().catch(() => null);
+      if (box && box.width > 0 && box.height > 0 && (await candidate.isVisible())) {
+        return candidate;
+      }
     }
   }
   return null;

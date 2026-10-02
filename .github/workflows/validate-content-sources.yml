@@ -98,7 +98,7 @@ jobs:
 
       - name: Check screenshot geometry against the capture profile
         run: |
-          python scripts/validate_capture_assets.py
+          python scripts/validate_capture_assets.py --base-ref "${{ github.event.pull_request.base.sha || 'HEAD~1' }}"
 
       - name: Scan lab artifacts for PII (real UUIDs, emails, hostnames, public IPs)
         run: |
