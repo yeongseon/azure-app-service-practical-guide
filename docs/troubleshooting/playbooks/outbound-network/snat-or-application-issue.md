@@ -433,7 +433,7 @@ The [SNAT exhaustion lab](../../lab-guides/snat-exhaustion.md#414-matched-rerun-
 | Signal | Non-pooled | Pooled |
 |---|---:|---:|
 | Failed outbound calls (connection level) | 0 | 0 |
-| Dependency duration, highest per-minute p95 | 3,108 ms | 209 ms |
+| Dependency duration, highest per-minute p95 | 4,329 ms | 209 ms |
 | Inbound `499` responses | 90 | 0 |
 | Inbound p50 `TimeTaken` | about 172 s | about 10 s |
 | Phase duration | about 30 min | about 2 min |

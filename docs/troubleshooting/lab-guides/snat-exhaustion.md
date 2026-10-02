@@ -677,7 +677,7 @@ To cross-verify the `/outbound` status mix summarized in §4.6 (138 rows on `/ou
 - The `502` row shows `Count 4` — a low-volume tail absent from the sanitized §4.6 export. This capture proves only that a small minority of `/outbound` requests failed as platform gateway errors during the same saturation window; because `AppServiceConsoleLogs` were empty in this reproduction, do not attribute those four rows specifically to gunicorn's `--timeout=120` worker recycle.
 - Query duration in bottom left reads a small millisecond value (here `1s 531ms`) — confirming the workspace is not throttled and the query hit indexed data, so the returned row count and status distribution are authoritative and not a partial-scan timeout.
 
-**Expected result**: The 3 rows returned by the Portal show a dominant `499` count (>85% of `/outbound` requests) with minority `200` and a small `502` tail, matching §4.6's verdict for the April run, which attributed the pattern to SNAT-port exhaustion causing proxy-level connection aborts rather than application-side 5xx errors. The matched rerun in §4.14 produced the same `499` pattern with zero failed outbound calls, so the pattern alone does not prove SNAT exhaustion. If instead the Portal query returned a `Count` on `200` that exceeded `499` (i.e., majority success), the SNAT exhaustion trigger did not effectively saturate the port pool — the trigger's concurrency (`for request_number in $(seq 1 200)` with 20 parallel jobs in `labs/snat-exhaustion/trigger.sh`) may have been reduced below the threshold that drains 128 SNAT ports.
+**Expected result**: The 3 rows returned by the Portal show a dominant `499` count (>85% of `/outbound` requests) with minority `200` and a small `502` tail, matching §4.6's verdict for the April run, which attributed the pattern to SNAT-port exhaustion causing proxy-level connection aborts rather than application-side 5xx errors. The matched rerun in §4.14 produced the same `499` pattern with zero failed outbound calls, so the pattern alone does not prove SNAT exhaustion. If instead the Portal query returned a `Count` on `200` that exceeded `499` (i.e., majority success), the trigger did not reproduce the dominant degradation; check that its concurrency (200 requests with 20 in flight in `labs/snat-exhaustion/trigger.sh`) was not reduced. Neither outcome shows port-pool state on its own: that requires the SNAT Port Exhaustion detector on a production-tier plan.
 
 **Next step**: If a future reproduction shows the `502` count growing above ~20% of the total, confirm the path with `AppServiceConsoleLogs` and inspect `labs/snat-exhaustion/main.bicep` for changes to `appCommandLine` (specifically `--timeout=120`); if the lab genuinely needs more outbound headroom, prefer connection reuse / pooling, scale-out, or NAT gateway rather than scaling up SKU. Conversely, if the `200` count grows above ~30% of the total, the SNAT port pool may have been enlarged (for example by enabling VNet integration with a NAT gateway giving 64K SNAT ports per outbound IP) — check for a `Microsoft.Network/natGateways` resource attached to the Web App's outbound subnet, because that would fundamentally change the reproducibility of this lab's SNAT-exhaustion hypothesis.
 
@@ -785,7 +785,7 @@ timeline
 
 **Verdict (April 2026 artifacts): the timeout, `499`, and worker-churn symptoms of the hypothesis were observed. SNAT exhaustion itself was not directly measured, so the hypothesis is not confirmed without port-pressure evidence.**
 
-!!! warning "Matched rerun (2026-10-02) did not reproduce SNAT exhaustion"
+!!! warning "Matched rerun (2026-10-02) did not prove SNAT exhaustion"
     The April run sent every call to the public `httpbin.org`, so its timeouts cannot be separated from that service's own throttling. A matched rerun against a storage endpoint owned by the lab produced the same inbound degradation (`499` responses and long `TimeTaken`) with **zero** failed outbound calls. SNAT exhaustion was not proven in either run, and the rerun falsified the specific chain in [2.2](#22-causal-chain-under-test). Worker queueing caused by slow per-call connection setup is the best-supported explanation for the rerun. See [4.14](#414-matched-rerun-against-a-lab-owned-target-2026-10-02).
 
 ### 4.12 Practical mitigation mapping
@@ -810,12 +810,14 @@ Setup differences from the April run: the outbound target is a storage account d
 | Phase duration | 29 min 36 s | 1 min 58 s |
 | Outer responses within 180 s | 110 of 200 (`200`); 90 no response (`000`) | 200 of 200 (`200`) |
 | Inner outbound calls failed | 0 of 4,400 reported | 0 of 8,000 |
-| Dependency duration, highest per-minute p95 | 3,108 ms | 209 ms |
+| Dependency duration, highest per-minute p95 | 4,329 ms | 209 ms |
 | `AppServiceHTTPLogs` p50 `TimeTaken` | 171,589 ms (`200`), 179,972 ms (`499`) | 10,015 ms |
 | `499` responses | 90 | 0 |
 | `5xx` responses | 0 | 0 |
 
 ??? note "Evidence notes"
+    [Measured] Non-pooled calls abandoned by the client kept running on the server, so non-pooled dependency calls continued into the 16:30 UTC minute, where p95 peaked at 4,329 ms; the pooled phase started at 16:35 UTC.
+
     [Measured] `AppDependencies` recorded 16,006 calls, all with `ResultCode` `403` from the anonymous storage request; none had a connection-level failure.
 
     [Observed] Application Insights marks a `403` dependency as `Success == false`, so a dependency failure count includes target-side `4xx` answers. Group by `ResultCode` before reading it as a connection problem.
@@ -828,7 +830,7 @@ Setup differences from the April run: the outbound target is a storage account d
 
     [Observed] The web app exposes 24 Azure Monitor metric definitions; none of them is a socket, connection, or SNAT metric.
 
-    [Inferred] Every non-pooled call completed, but each took about 0.5 to 3 seconds because it opened a new TLS connection. Forty such calls per request held each of the 4 sync workers long enough that queued requests outlived the client timeout. That is the inbound `499` / `000` pattern without any outbound failure.
+    [Inferred] Every non-pooled call completed, but each took about 0.5 to 4 seconds (per-minute p95) because it opened a new TLS connection. Forty such calls per request held each of the 4 sync workers long enough that queued requests outlived the client timeout. That is the inbound `499` / `000` pattern without any outbound failure.
 
     [Not Proven] SNAT exhaustion. At roughly 4.5 new connections per second to one destination, this run stayed below the rate that would exhaust the preallocated ports, and the Basic tier gave no detector data to confirm or rule out port pressure.
 
@@ -863,7 +865,7 @@ This section defines what you SHOULD observe at each phase of the lab. Use it to
 |---|---|---|
 | AppServiceHTTPLogs (`/outbound`) | `499` dominates during burst | `TimeTaken ~29786-29840 ms` on timed-out outbound calls |
 | AppServiceHTTPLogs (`/diag/stats`) | Diagnostic endpoint can also time out | `499` with `TimeTaken 59709 ms` indicates full stall |
-| Trigger CSV + app payloads | Mixed `000`/`499`/`503` and timeout text | Connection churn exceeds available SNAT mappings |
+| Trigger CSV + app payloads | Mixed `000`/`499`/`503` and timeout text | Connection or worker pressure; SNAT attribution requires detector evidence |
 | Console logs | Worker timeout and kill churn | `WORKER TIMEOUT` and `SIGKILL` align with outbound pressure window |
 
 ### After Recovery
