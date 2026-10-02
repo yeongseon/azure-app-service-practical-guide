@@ -22,7 +22,7 @@ Deploy the Express app from [01. Local Run](./01-local-run.md) to Azure App Serv
 <!-- diagram-id: simple-architecture -->
 ```mermaid
 flowchart TD
-    DEV[Local Node.js app] -->|az webapp up| APP[Azure App Service\nLinux Node 20 LTS]
+    DEV[Local Node.js app] -->|az webapp up| APP[Azure App Service\nLinux Node 24 LTS]
     USER[Browser] -->|HTTPS| APP
     APP --> LOGS[App Service log stream]
 
@@ -68,16 +68,16 @@ LOCATION="koreacentral"
 Run this command from the Node.js app folder.
 
 ```bash
-az webapp up --name $APP_NAME --resource-group $RG --location $LOCATION --runtime "NODE:20-lts" --sku B1
+az webapp up --name $APP_NAME --resource-group $RG --location $LOCATION --runtime "NODE:24-lts" --sku B1
 ```
 
 | Command/Parameter | Purpose |
 |-------------------|---------|
-| `az webapp up --name $APP_NAME --resource-group $RG --location $LOCATION --runtime "NODE:20-lts" --sku B1` | Creates the resource group, App Service plan, and web app if needed, then uploads and deploys the current app source. |
+| `az webapp up --name $APP_NAME --resource-group $RG --location $LOCATION --runtime "NODE:24-lts" --sku B1` | Creates the resource group, App Service plan, and web app if needed, then uploads and deploys the current app source. |
 | `--name $APP_NAME` | Uses the specified globally unique web app name. |
 | `--resource-group $RG` | Places the deployment in the selected resource group. |
 | `--location $LOCATION` | Creates resources in the selected Azure region. |
-| `--runtime "NODE:20-lts"` | Uses the Node.js 20 LTS runtime on Linux App Service. |
+| `--runtime "NODE:24-lts"` | Uses the Node.js 24 LTS runtime on Linux App Service. |
 | `--sku B1` | Uses the Basic B1 pricing tier. |
 
 ???+ example "Expected output"
@@ -163,7 +163,7 @@ az group delete --name $RG --yes --no-wait
 
 [[[ shot("platform--architecture--01-app-service-overview") ]]]
 
-After running `az webapp up --runtime "NODE:20-lts"` in this tutorial, the Overview blade is the first Portal verification surface. The Essentials panel confirms the app the command created or reused: `Status: Running`, `Operating System: Linux`, `Default domain`, and the attached `App Service Plan` are all visible on this blade. The selected Properties tab adds `Runtime Stack` and `Runtime status` rows under `Web app` — the screenshot was captured from a Python deployment, so the visible value is `Runtime Stack: Python - 3.11`; the same row reports the Node.js stack value for this tutorial's Express app after deployment. Use the `Default domain` value to open the deployed app in a browser, which is the Portal-side check that corresponds to this tutorial's `curl` verification step.
+After running `az webapp up --runtime "NODE:24-lts"` in this tutorial, the Overview blade is the first Portal verification surface. The Essentials panel confirms the app the command created or reused: `Status: Running`, `Operating System: Linux`, `Default domain`, and the attached `App Service Plan` are all visible on this blade. The selected Properties tab adds `Runtime Stack` and `Runtime status` rows under `Web app` — the screenshot was captured from a Python deployment, so the visible value is `Runtime Stack: Python - 3.11`; the same row reports the Node.js stack value for this tutorial's Express app after deployment. Use the `Default domain` value to open the deployed app in a browser, which is the Portal-side check that corresponds to this tutorial's `curl` verification step.
 
 ## See Also
 

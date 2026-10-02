@@ -25,7 +25,7 @@ Every quality gate in this repository, its most recently recorded result, and th
 
 ## Summary
 
-*Snapshot of `8de97da plus uncommitted working-tree changes`, generated 2026-10-02.*
+*Snapshot of `5ddcc04 plus uncommitted working-tree changes`, generated 2026-10-02.*
 
 | Metric | Count |
 |---|---:|
@@ -78,7 +78,7 @@ These are locally executed results, not GitHub Actions statuses. **Skipped** mea
 | Python app tests | Blocking | ✅ Pass | collected 4 items | < 10s |
 | .NET app build | Blocking | ➖ Skipped | Executable `dotnet` is not on PATH. | < 10s |
 | Java app tests | Blocking | ➖ Skipped | Executable `mvn` is not on PATH. | < 10s |
-| Bicep template build | Blocking | ✅ Pass | Bicep templates built: 37 | > 120s |
+| Bicep template build | Blocking | ✅ Pass | Bicep templates built: 37 · Bicep parameter files built: 9 | > 120s |
 
 <!-- golden-status:results:end -->
 
@@ -115,7 +115,7 @@ Generated from the `GATES` registry in `scripts/generate_golden_status.py`. CI f
 | Python app tests | The Flask reference app pytest suite passes. | Blocking | `python3 -m pytest apps/python-flask/tests` | `Python Flask App` — `app-infra-ci.yml` |
 | .NET app build | The ASP.NET Core reference project builds. | Blocking | `dotnet build apps/dotnet-aspnetcore/GuideApi/GuideApi.csproj` | `ASP.NET Core App` — `app-infra-ci.yml` |
 | Java app tests | The Spring Boot reference app Maven test phase passes. | Blocking | `mvn -q -f apps/java-springboot/pom.xml test` | `Java Spring Boot App` — `app-infra-ci.yml` |
-| Bicep template build | Every .bicep file under apps/ and labs/ compiles to ARM JSON. | Blocking | `az bicep build over every .bicep file under apps/ and labs/` | `Bicep Templates` — `app-infra-ci.yml` |
+| Bicep template build | Every .bicep template and .bicepparam profile under apps/ and labs/ compiles. | Blocking | `az bicep build and build-params over apps/ and labs/` | `Bicep Templates` — `app-infra-ci.yml` |
 
 <!-- golden-status:inventory:end -->
 

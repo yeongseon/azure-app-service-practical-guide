@@ -25,7 +25,7 @@ Manual resource creation in the portal is fine for experiments, but production w
 <!-- diagram-id: diagram-1 -->
 ```mermaid
 flowchart TD
-    INET[Internet] -->|HTTPS| WA["Web App\nApp Service S1\nLinux Node 20 LTS"]
+    INET[Internet] -->|HTTPS| WA["Web App\nApp Service S1\nLinux Node 24 LTS"]
 
     subgraph VNET["VNet 10.0.0.0/16"]
         subgraph INT_SUB["Integration Subnet 10.0.1.0/24\nDelegation: Microsoft.Web/serverFarms"]
@@ -73,7 +73,7 @@ flowchart TD
 graph TB
     subgraph "Resource Group"
         ASP[App Service Plan<br/>Linux B1]
-        APP[App Service<br/>Node.js 20 LTS]
+        APP[App Service<br/>Node.js 24 LTS]
         AI[Application Insights]
         LAW[Log Analytics<br/>Workspace]
     end
@@ -305,14 +305,14 @@ INTEGRATION_SUBNET_NAME="snet-appsvc-integration"
 ```bash
 az group create --name $RG --location $LOCATION
 az appservice plan create --resource-group $RG --name $PLAN_NAME --is-linux --sku S1
-az webapp create --resource-group $RG --plan $PLAN_NAME --name $APP_NAME --runtime "NODE|20-lts"
+az webapp create --resource-group $RG --plan $PLAN_NAME --name $APP_NAME --runtime "NODE|24-lts"
 ```
 
 | Command/Code | Purpose |
 |--------------|---------|
 | `az group create ...` | Creates the resource group for the imperative deployment |
 | `az appservice plan create ...` | Creates the Linux App Service plan |
-| `az webapp create ... --runtime "NODE\|20-lts"` | Creates the Node.js web app |
+| `az webapp create ... --runtime "NODE\|24-lts"` | Creates the Node.js web app |
 
 ???+ example "Expected output"
 ```json
@@ -400,7 +400,7 @@ az webapp config appsettings list --resource-group $RG --name $APP_NAME --query 
 ???+ example "Expected output"
 ```json
 {
-  "linuxFxVersion": "NODE|20-lts",
+  "linuxFxVersion": "NODE|24-lts",
   "appCommandLine": "node server.js"
 }
 ```

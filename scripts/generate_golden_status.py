@@ -157,14 +157,23 @@ NODE_PROD_INSTALL_SHELL = "cd apps/nodejs && npm ci --omit=dev --dry-run"
 
 BICEP_BUILD_SHELL = """
 set -eu
-count=0
+templates=0
+params=0
 while IFS= read -r file; do
   # </dev/null stops `az` from consuming the file list on stdin. Without it the
   # loop silently stops after the first template.
   az bicep build --file "${file}" --stdout >/dev/null </dev/null
-  count=$((count + 1))
+  templates=$((templates + 1))
 done < <(find apps labs -type f -name '*.bicep' -print | sort)
-echo "Bicep templates built: ${count}"
+# Parameter files are a separate compilation surface: a profile pinning a value
+# the template no longer allows fails only here, so building *.bicep alone is a
+# false green.
+while IFS= read -r file; do
+  az bicep build-params --file "${file}" --stdout >/dev/null </dev/null
+  params=$((params + 1))
+done < <(find apps labs -type f -name '*.bicepparam' -print | sort)
+echo "Bicep templates built: ${templates}"
+echo "Bicep parameter files built: ${params}"
 """
 
 
@@ -522,7 +531,7 @@ GATES: tuple[Gate, ...] = (
     Gate(
         key="bicep-build",
         name="Bicep template build",
-        enforces="Every .bicep file under apps/ and labs/ compiles to ARM JSON.",
+        enforces="Every .bicep template and .bicepparam profile under apps/ and labs/ compiles.",
         argv=("bash", "-c", BICEP_BUILD_SHELL),
         severity=BLOCKING,
         bindings=(Binding("Bicep Templates", APP_INFRA_WORKFLOW),),
@@ -531,8 +540,8 @@ GATES: tuple[Gate, ...] = (
             "Both this gate and the workflow step redirect stdin per template; without that, "
             "`az` consumes the file list and the loop stops after the first file."
         ),
-        summary_keys=("Bicep templates built:",),
-        display="az bicep build over every .bicep file under apps/ and labs/",
+        summary_keys=("Bicep templates built:", "Bicep parameter files built:"),
+        display="az bicep build and build-params over apps/ and labs/",
     ),
 )
 

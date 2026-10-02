@@ -11,7 +11,11 @@ param slotName string = 'staging'
 param appInsightsConnectionString string
 
 @description('Node.js LTS version')
-param nodeVersion string = '20'
+@allowed([
+  '22'
+  '24'
+])
+param nodeVersion string = '24'
 
 @description('Telemetry mode')
 param telemetryMode string = 'basic'

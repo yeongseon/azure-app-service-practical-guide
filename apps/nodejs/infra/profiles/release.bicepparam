@@ -2,7 +2,7 @@ using '../main.bicep'
 
 param baseName = 'nodejs-ref-release'
 param appServicePlanSku = 'S1'
-param nodeVersion = '20'
+param nodeVersion = '24'
 param telemetryMode = 'advanced'
 param logLevel = 'info'
 param nodeEnv = 'production'

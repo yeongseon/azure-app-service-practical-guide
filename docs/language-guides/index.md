@@ -15,7 +15,7 @@ This section covers deploying web applications to Azure App Service in four lang
 | Language | Framework | Runtime | Guide |
 |----------|-----------|---------|-------|
 | Python | Flask + Gunicorn | Python 3.11 | [Python Guide](python/index.md) |
-| Node.js | Express | Node 20 LTS | [Node.js Guide](nodejs/index.md) |
+| Node.js | Express | Node 24 LTS | [Node.js Guide](nodejs/index.md) |
 | Java | Spring Boot | Java 17 | [Java Guide](java/index.md) |
 | .NET | ASP.NET Core | .NET 8 | [.NET Guide](dotnet/index.md) |
 

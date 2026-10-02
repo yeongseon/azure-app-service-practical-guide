@@ -26,7 +26,7 @@ Use this recipe after [02. First Deploy](../tutorial/02-first-deploy.md) when th
 <!-- diagram-id: private-network-deploy -->
 ```mermaid
 flowchart TD
-    INTERNET[Internet users] -->|HTTPS| APP[App Service\nNode.js 20 LTS]
+    INTERNET[Internet users] -->|HTTPS| APP[App Service\nNode.js 24 LTS]
 
     subgraph VNET[Virtual Network]
         subgraph INT[Integration subnet\nDelegated to Microsoft.Web/serverFarms]
