@@ -783,7 +783,7 @@ timeline
 | Worker churn evidence | ✅ Met | 18 `WORKER TIMEOUT`, 14 `SIGKILL` |
 | Recovery after pressure | ✅ Met | `diag-net` recovers from `504` to JSON |
 
-**Final verdict (April 2026 artifacts): Hypothesis supported by artifacts.**
+**Verdict (April 2026 artifacts): the timeout, `499`, and worker-churn symptoms of the hypothesis were observed. SNAT exhaustion itself was not directly measured, so the hypothesis is not confirmed without port-pressure evidence.**
 
 !!! warning "Matched rerun (2026-10-02) did not reproduce SNAT exhaustion"
     The April run sent every call to the public `httpbin.org`, so its timeouts cannot be separated from that service's own throttling. A matched rerun against a storage endpoint owned by the lab produced the same inbound degradation (`499` responses and long `TimeTaken`) with **zero** failed outbound calls. SNAT exhaustion was not proven in either run, and the rerun falsified the specific chain in [2.2](#22-causal-chain-under-test). Worker queueing caused by slow per-call connection setup is the best-supported explanation for the rerun. See [4.14](#414-matched-rerun-against-a-lab-owned-target-2026-10-02).
@@ -834,7 +834,7 @@ Setup differences from the April run: the outbound target is a storage account d
 
 | Proof criterion from [2.3](#23-proof-criteria) | Rerun result |
 |---|---|
-| Transport failures under load | Met for client `000`, but caused by queueing; no outbound transport failure |
+| Transport failures under load | Met for client `000`, best explained by queueing; no outbound transport failure |
 | HTTP degradation with long times | Met (`499`, long `TimeTaken`) |
 | Timeout body evidence | Not met (0 failed inner calls) |
 | Worker churn evidence | Not met (no console signatures) |
@@ -886,12 +886,12 @@ graph TD
     D --> E[Verdict: Confirmed/Falsified]
 ```
 
-### Evidence Chain: Why This Proves the Hypothesis
+### Evidence Chain: What Confirms or Falsifies the Hypothesis
 
 !!! success "Falsification Logic"
-    If you observe long `TimeTaken` `499` patterns on `/outbound` and even `/diag/stats`, plus worker timeout/kill churn in the same window, the hypothesis is CONFIRMED because outbound connection churn is stalling request processing in a SNAT-pressure cascade.
-    
-    If you do NOT observe timeout clustering, diagnostic endpoint stall, or worker churn under equivalent outbound concurrency, the hypothesis is FALSIFIED — consider upstream dependency outages or non-SNAT network constraints.
+    Long `TimeTaken` `499` patterns on `/outbound` and `/diag/stats`, plus worker timeout/kill churn in the same window, show that outbound work is stalling request processing. They are necessary but not sufficient: the §4.14 rerun produced the `499` pattern with zero failed outbound calls. The SNAT hypothesis is CONFIRMED only when outbound calls also fail at the connection level (connect timeouts, `EADDRNOTAVAIL`, `ResultCode` `0` in `AppDependencies`) and the SNAT Port Exhaustion detector, available on production tiers, shows port pressure in the same window.
+
+    If outbound calls succeed at the connection level while inbound requests degrade, the SNAT chain is FALSIFIED for that run. Consider worker saturation from slow per-call connection setup, upstream dependency latency, or non-SNAT network constraints.
 
 ---
 
