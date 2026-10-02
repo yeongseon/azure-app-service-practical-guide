@@ -22,27 +22,40 @@ graph TD
 
 ## Supported Node.js Versions
 
-App Service supports current LTS versions. Check available versions via CLI:
+The runtime inventory changes over time, so query it rather than trusting a
+pinned value. The default listing hides end-of-life stacks; add `--support all`
+to see them with their retirement dates:
 
 ```bash
 az webapp list-runtimes --os linux --runtime node --output table
+az webapp list-runtimes --os linux --runtime node --support all --output table
 ```
 
 | Command/Code | Purpose |
 |--------------|---------|
-| `az webapp list-runtimes --os linux --runtime node --output table` | Lists the Node.js runtime stacks currently offered on Linux App Service |
+| `az webapp list-runtimes` | Lists App Service runtime stacks. |
+| `--os linux` | Restricts the listing to Linux App Service. |
+| `--runtime node` | Restricts the listing to the Node.js stacks. |
+| `--support all` | Includes end-of-life stacks, which the default `supported` filter omits. |
+| `--output table` | Renders the result as a table instead of JSON. |
 
-| Version | `--runtime` value | Status |
-| :--- | :--- | :--- |
-| **Node.js 24 (LTS)** | `NODE|24-lts` | Current — what this guide targets |
-| **Node.js 26** | `NODE|26` | Available |
-| **Node.js 22 (LTS)** | `NODE|22-lts` | Supported |
-| **Node.js 20 and earlier** | — | Retired; no longer offered by App Service |
+The following is the `--support all` output as checked on 2026-10-02:
 
-!!! warning "Node.js 20 is gone from the runtime list"
-    `az webapp list-runtimes --os linux` no longer returns any `NODE|20` entry, so
-    `--runtime "NODE|20-lts"` now fails. Always confirm against the live list above
-    rather than copying a pinned value from older material.
+| Version | `--runtime` value | Support | End of life |
+| :--- | :--- | :--- | :--- |
+| Node.js 26.0 | `NODE|26` | Active | 2029-04-30 |
+| Node.js 24.0 LTS | `NODE|24-lts` | Active | 2028-04-30 |
+| Node.js 22.0 LTS | `NODE|22-lts` | Near end of support | 2027-04-30 |
+| Node.js 20.0 LTS | `NODE|20-lts` | EOL | 2026-04-30 |
+| Node.js 18.0 LTS | `NODE|18-lts` | EOL | 2025-04-30 |
+
+This guide targets **Node.js 24 LTS** (`NODE|24-lts`).
+
+!!! warning "Node.js 20 is end-of-life"
+    `NODE|20-lts` is past its 2026-04-30 end-of-life date and the default
+    `--support supported` listing omits it, so older material pinning it is
+    stale. Do not target it for new deployments, and re-check the live list
+    above rather than copying a version from a tutorial.
 
 ## Oryx Build System
 
