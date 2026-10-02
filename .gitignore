@@ -72,3 +72,4 @@ labs/**/main.json
 
 # Agent scratch workspace (never commit)
 .agent-scratch/
+

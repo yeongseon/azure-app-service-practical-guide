@@ -1,0 +1,9 @@
+# Which capture profile produced (or later verified) each committed screenshot.
+#
+# Keyed by manifest id, or by repository-relative path for a legacy PNG. Never
+# record Portal URLs: they carry tenant, subscription, and resource identifiers.
+# Captures made before portal-desktop-v1 existed are intentionally absent rather
+# than stamped with a profile they were not produced under.
+
+schema_version: 1
+assets: {}

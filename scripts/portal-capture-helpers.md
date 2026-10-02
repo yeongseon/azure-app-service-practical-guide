@@ -19,139 +19,61 @@ avoid leaking real Azure account identifiers into the documentation.
   `{ requireAvatarMask: false }` to override for blades where the top bar is
   intentionally absent.
 
-## Node.js usage
+## How to capture
 
-```javascript
-const { chromium } = require('playwright');
-const { capturePortalScreenshot } = require('./portal-capture-helpers');
+Committed Portal screenshots are produced **only** by the capture runner,
+[`capture/capture.cjs`](capture/capture.cjs), which imports this module. Do not
+call `capturePortalScreenshot()` from an ad-hoc script, and do not paste an
+inline copy of the PII rules into an MCP `browser_run_code_unsafe` call: an
+inline copy drifts from `PII_RULES` (the copy that used to live here had already
+lost the lowercase-hex, IPv4, and IPv6 rules) and a capture taken through it
+can leak exactly the identifiers this module exists to remove.
 
-const browser = await chromium.launch({ headless: false });
-const context = await browser.newContext({ viewport: { width: 1600, height: 1000 } });
-const page = await context.newPage();
-
-await page.goto(
-  'https://ms.portal.azure.com/#@<tenant>.onmicrosoft.com/resource/' +
-  'subscriptions/<sub>/resourceGroups/<rg>/providers/Microsoft.Web/sites/<app>/appServices'
-);
-
-await capturePortalScreenshot(
-  page,
-  'docs/assets/platform/architecture/01-overview-baseline.png'
-);
-
-await browser.close();
+```bash
+CAPTURE_CDP_URL=http://<cdp-host>:9222 node scripts/capture/capture.cjs \
+  --url 'https://ms.portal.azure.com/#@<tenant>.onmicrosoft.com/resource/...' \
+  --ready 'text=<stable text on the target blade>' \
+  --out /tmp/<shot-id>.png
 ```
 
-## MCP `browser_run_code_unsafe` usage
+| Command/Parameter | Purpose |
+|---|---|
+| `CAPTURE_CDP_URL` | CDP endpoint of the human's signed-in, device-compliant Chrome. |
+| `node scripts/capture/capture.cjs` | Applies `capture-profile.json`, verifies it, applies PII replacements, and captures. |
+| `--url` | Target Portal blade, always re-navigated so no state carries over. |
+| `--ready` | Playwright selector proving the blade has rendered; there is no default. |
+| `--out` | Raw PNG path, outside the repository until optimized and reviewed. |
 
-The MCP browser tool executes a single async function in an isolated page
-context, so it cannot `require()` this module. Inline the snippet below
-(replace `<OUTPUT_PATH>` per capture). Keep this snippet in lockstep with
-`PII_RULES` in `portal-capture-helpers.js` - any change in one must be
-mirrored in the other and in the [PII Replacement Rules](../AGENTS.md#pii-replacement-rules) table.
-
-```javascript
-async (page) => {
-  const piiScript = `(() => {
-    const subs = [
-      { re: /(?<![0-9a-f])[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}(?![0-9a-f])/gi, val: '00000000-0000-0000-0000-000000000000' },
-      { re: /\\bMCAPS[-A-Za-z0-9_]*\\b/g, val: 'Visual Studio Enterprise Subscription' },
-      { re: /Microsoft\\s+Non-Production/gi, val: 'Contoso' },
-      { re: /\\b[A-Za-z0-9._%+-]+@microsoft\\.com(?![A-Za-z0-9.-])/gi, val: 'user@example.com' },
-      { re: /\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.onmicrosoft\\.com(?![A-Za-z0-9.-])/gi, val: 'user@example.com' },
-      { re: /\\b[A-Za-z0-9-]+\\.onmicrosoft\\.com(?![A-Za-z0-9.-])/gi, val: 'contoso.onmicrosoft.com' },
-      { re: /\\bychoe\\b/gi, val: 'demouser' },
-      { re: /Yeongseon\\s+Choe/g, val: 'Demo User' },
-      { re: /\\byeongseon\\b/gi, val: 'demouser' },
-      { re: /\\b[0-9A-F]{32,}\\b/g, val: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' },
-    ];
-    let count = 0;
-    const applySubs = (input) => {
-      let out = input;
-      for (const { re, val } of subs) { re.lastIndex = 0; out = out.replace(re, val); }
-      return out;
-    };
-    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
-    const nodes = []; let n; while ((n = walker.nextNode())) nodes.push(n);
-    for (const node of nodes) {
-      const orig = node.textContent || '';
-      const next = applySubs(orig);
-      if (next !== orig) { node.textContent = next; count++; }
-    }
-    document.querySelectorAll('[aria-label]').forEach(el => {
-      const orig = el.getAttribute('aria-label') || '';
-      const next = applySubs(orig);
-      if (next !== orig) el.setAttribute('aria-label', next);
-    });
-    document.querySelectorAll('input, textarea').forEach(el => {
-      const orig = el.value || '';
-      const next = applySubs(orig);
-      if (next !== orig) { el.value = next; count++; }
-    });
-    document.querySelectorAll('[title]').forEach(el => {
-      const orig = el.getAttribute('title') || '';
-      const next = applySubs(orig);
-      if (next !== orig) el.setAttribute('title', next);
-    });
-    return count;
-  })()`;
-
-  const mainFrame = page.mainFrame();
-  let total = await mainFrame.evaluate(piiScript);
-  for (const frame of page.frames()) {
-    if (frame === mainFrame) continue;
-    try { total += await frame.evaluate(piiScript); } catch (_) {}
-  }
-  await page.waitForTimeout(400);
-
-  const selectors = ['button[aria-label*="Account menu"]', 'button.fxs-menu-account'];
-  let avatar = null;
-  for (const s of selectors) {
-    const loc = page.locator(s);
-    if ((await loc.count()) > 0) { avatar = loc.first(); break; }
-  }
-  if (!avatar) {
-    throw new Error('No Account-avatar element matched ' + JSON.stringify(selectors) + '. Wait for the blade to settle before capture; non-English Portals may still match the fxs-menu-account fallback but that is best-effort, not guaranteed.');
-  }
-
-  await page.screenshot({
-    path: '<OUTPUT_PATH>',
-    fullPage: false,
-    mask: [avatar],
-    maskColor: '#0078d4',
-  });
-
-  return 'replaced ' + total + ' text occurrences';
-};
-```
+The runner refuses to capture, and deletes any output, unless every condition in
+[`capture/capture-profile.json`](capture/capture-profile.json) holds: a 1600x1000
+viewport at device pixel ratio 1 and browser zoom 100%, an English Portal, light
+color scheme, reduced motion, no forced colors, UTC, and no open dialog, flyout,
+or toast. It then checks that the PNG it wrote is exactly 1600x1000. Hand the raw
+PNG to `capture-optimize-webp` (new shot) or `capture-diff-gate` (recapture) as
+described in [`capture/README.md`](capture/README.md).
 
 ## Capture workflow rules
 
-- **Re-navigate (`browser_navigate`) between captures.** Portal CSS is
-  cumulative, and leftover styles from a previous capture can leak into the
-  next page (for example, the left-nav rendering as a black box).
+- **Use the runner.** It re-navigates before every capture, so leftover Portal
+  CSS from a previous blade cannot leak into the next one.
 - **Use `ms.portal.azure.com` with the tenant hint fragment** (e.g.
   `#@<tenant>.onmicrosoft.com/...`). Plain `portal.azure.com` triggers a login
   redirect.
-- **Prefer the English-language Portal.** The primary avatar selector keys
-  off the English `aria-label` "Account menu". A localized Portal may still
-  match the `button.fxs-menu-account` fallback class, but that fallback is
-  best-effort and not a stable contract. The helper throws if neither
-  selector matches; non-English captures should be reviewed manually.
-- **Close every transient flyout, drawer, and command-bar dropdown** before
-  capture. Account panel, Recent menu, notifications panel, and tenant
-  switcher each surface PII the helper cannot fully rewrite (avatar
-  thumbnails, embedded canvases, late-rendered iframe content).
-- **Wait for the target blade to finish rendering** before applying
-  replacements. The 400 ms post-replacement pause inside the helper is not a
-  substitute for a per-blade `browser_wait_for` against a stable text or
-  element on the blade.
-- **Viewport: 1600 x 1000** captures the standard Portal blade layout without
-  horizontal scrollbars.
+- **English Portal is required, not preferred.** The primary avatar selector
+  keys off the English `aria-label` "Account menu", and the runner rejects a
+  non-English `document.documentElement.lang`.
+- **Close every transient flyout, drawer, and command-bar dropdown.** The
+  runner refuses to capture while a dialog, flyout, or toast is visible, because
+  those panels surface PII this module cannot rewrite.
+- **Always pass a blade-specific `--ready` selector.** The runner also waits for
+  fonts and a stable layout, and pauses after replacements, but none of that
+  substitutes for proof that the target blade rendered.
+- **No full-page captures.** `capturePortalScreenshot()` throws if `fullPage`
+  is passed. For below-the-fold content take a second viewport capture.
 - **No black-box masking.** If a value cannot be rewritten and is not a known
   avatar/badge, fail the capture and update `PII_RULES` rather than fall back
   to a black rectangle.
 
 If `PII_RULES` is updated, mirror the change in the
-[PII Replacement Rules](../AGENTS.md#pii-replacement-rules) table and in the
-inline MCP snippet above.
+[PII Replacement Rules](../AGENTS.md#pii-replacement-rules) table in the same
+commit.

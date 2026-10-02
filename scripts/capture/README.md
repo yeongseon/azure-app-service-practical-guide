@@ -6,9 +6,12 @@ blade overwrites the same file and never requires editing markdown.
 
 The implementation lives in the central
 [`azure-guide-capture-toolkit`](https://github.com/yeongseon/azure-guide-capture-toolkit)
-package (installed via `requirements-docs.txt`). This directory keeps only the
-repo-specific pieces: `manifest.yaml` (the screenshot registry for this guide)
-and `portal-capture-helpers.js` (in `scripts/`).
+package (installed via `requirements-docs.txt`). This directory keeps the
+repo-specific pieces: `manifest.yaml` (the screenshot registry),
+`capture-profile.json` (the fixed capture conditions), `capture.cjs` (the only
+supported capture runner), `provenance.yaml` (which profile produced each
+image), and `dimension-exceptions.yaml` (frozen historical violations). The PII
+helper is `scripts/portal-capture-helpers.js`.
 
 ## Components
 
@@ -36,8 +39,14 @@ sequences already present across the docs.
 
 ## Adding a new screenshot
 
-1. Capture the raw Portal PNG with Playwright + `portal-capture-helpers.js`
-   (see `scripts/portal-capture-helpers.md`).
+1. Capture the raw Portal PNG with the runner, which enforces
+   [`capture-profile.json`](capture-profile.json) and refuses to capture if any
+   condition fails (see `scripts/portal-capture-helpers.md`):
+
+    ```bash
+    CAPTURE_CDP_URL=http://<cdp-host>:9222 node scripts/capture/capture.cjs \
+      --url '<blade-url>' --ready '<selector>' --out /tmp/<shot-id>.png
+    ```
 2. Add an entry to `manifest.yaml` (new `id` = intended file stem).
 3. Encode and stamp:
 
@@ -45,8 +54,10 @@ sequences already present across the docs.
     capture-optimize-webp /path/to/raw.png --id <shot-id>
     ```
 
-4. Reference it in markdown with `[[[ shot("<shot-id>") ]]]`.
-5. `mkdocs build --strict` to verify it renders.
+4. Record the profile and the committed bytes' SHA-256 in
+   [`provenance.yaml`](provenance.yaml).
+5. Reference it in markdown with `[[[ shot("<shot-id>") ]]]`.
+6. `mkdocs build --strict` to verify it renders; `python3 scripts/validate_capture_assets.py` to verify geometry.
 
 ## Re-capturing (drift refresh)
 
@@ -69,3 +80,24 @@ capture-diff-gate /path/to/fresh.png --id <shot-id>
 - Capture/CLI: install the toolkit with its `capture` extra
   (`pip install "azure-guide-capture-toolkit[capture] @ git+https://github.com/yeongseon/azure-guide-capture-toolkit@v0.1.0"`)
   to get `Pillow` and `ruamel.yaml`; Node + Playwright for raw capture.
+
+## Provenance record
+
+Every screenshot added or re-encoded in a pull request needs an entry in
+[`provenance.yaml`](provenance.yaml); CI compares against the PR base and fails
+otherwise. Key it by manifest id (or repository-relative path for a legacy PNG):
+
+```yaml
+assets:
+  troubleshooting--kudu--02-kudu-home:
+    file: troubleshooting/kudu/troubleshooting--kudu--02-kudu-home.webp
+    final_sha256: <sha256 of the committed webp>
+    produced:
+      profile: portal-desktop-v1
+      profile_sha256: <sha256 printed by capture.cjs>
+      captured_at: 2026-10-02T12:34:56Z
+      browser: Chrome/<version>
+```
+
+`dimension-exceptions.yaml` may only shrink: CI rejects any entry absent from
+the PR base.

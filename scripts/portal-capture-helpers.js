@@ -144,20 +144,37 @@ async function applyPiiReplacements(page) {
 }
 
 async function resolveAccountAvatarMask(page) {
+  // A hidden duplicate can match first; masking it would leave the visible
+  // avatar unmasked. Only a visible element with a non-empty box qualifies.
   for (const selector of ACCOUNT_AVATAR_SELECTORS) {
-    const locator = page.locator(selector);
-    if ((await locator.count()) > 0) {
-      return locator.first();
+    const candidates = page.locator(selector);
+    const count = await candidates.count();
+    for (let i = 0; i < count; i += 1) {
+      const candidate = candidates.nth(i);
+      const box = await candidate.boundingBox().catch(() => null);
+      if (box && box.width > 0 && box.height > 0 && (await candidate.isVisible())) {
+        return candidate;
+      }
     }
   }
   return null;
 }
 
 async function capturePortalScreenshot(page, outputPath, options = {}) {
-  const { fullPage = false, requireAvatarMask = true } = options;
+  // fullPage is deliberately not an option: a full-page capture produces an
+  // image whose height depends on the blade's content, which violates the
+  // fixed 1600x1000 geometry in scripts/capture/capture-profile.json.
+  if (Object.prototype.hasOwnProperty.call(options, 'fullPage')) {
+    throw new Error(
+      'capturePortalScreenshot: fullPage is not supported. Committed Portal ' +
+        'captures use the fixed viewport in scripts/capture/capture-profile.json; ' +
+        'take a second viewport capture for below-the-fold content.',
+    );
+  }
+  const { requireAvatarMask = true, settleMs = 400, beforeScreenshot } = options;
 
   const replacements = await applyPiiReplacements(page);
-  await page.waitForTimeout(400);
+  await page.waitForTimeout(settleMs);
 
   const avatar = await resolveAccountAvatarMask(page);
   const masks = avatar ? [avatar] : [];
@@ -174,9 +191,13 @@ async function capturePortalScreenshot(page, outputPath, options = {}) {
     throw new Error(message);
   }
 
+  if (beforeScreenshot) await beforeScreenshot();
+
   await page.screenshot({
     path: outputPath,
-    fullPage,
+    fullPage: false,
+    animations: 'disabled',
+    caret: 'hide',
     mask: masks,
     maskColor: PORTAL_BLUE,
   });

@@ -25,12 +25,12 @@ Every quality gate in this repository, its most recently recorded result, and th
 
 ## Summary
 
-*Snapshot of `fb17c2e plus uncommitted working-tree changes`, generated 2026-10-02.*
+*Snapshot of `e09469f plus uncommitted working-tree changes`, generated 2026-10-02.*
 
 | Metric | Count |
 |---|---:|
-| Registered gates | 28 |
-| ✅ Pass | 24 |
+| Registered gates | 29 |
+| ✅ Pass | 25 |
 | ❌ Fail | 0 |
 | ⚠️ Warn | 0 |
 | ➖ Skipped | 4 |
@@ -41,18 +41,19 @@ Every quality gate in this repository, its most recently recorded result, and th
 <!-- diagram-id: golden-status-gate-outcomes-pie -->
 ```mermaid
 pie title Quality Gate Outcomes
-    "Pass" : 24
+    "Pass" : 25
     "Skipped" : 4
 ```
 
 ## Gate Results
 
-These are locally executed results, not GitHub Actions statuses. **Skipped** means the machine that generated this page lacked the toolchain the gate needs. **Warn** means the gate reported findings its CI job would not fail on, either because the job is advisory or because the dashboard runs a wider scope than CI does. 16 of 28 gates are re-run and compared by the `Validate Golden Status` job, so a flip to **Fail** cannot sit here unnoticed.
+These are locally executed results, not GitHub Actions statuses. **Skipped** means the machine that generated this page lacked the toolchain the gate needs. **Warn** means the gate reported findings its CI job would not fail on, either because the job is advisory or because the dashboard runs a wider scope than CI does. 17 of 29 gates are re-run and compared by the `Validate Golden Status` job, so a flip to **Fail** cannot sit here unnoticed.
 
 <!-- golden-status:results:start -->
 | Gate | Severity | Status | Detail | Time |
 | --- | --- | --- | --- | --- |
-| Validator doctests | Blocking | ✅ Pass | 8 modules checked, every doctest passed. | < 10s |
+| Validator doctests | Blocking | ✅ Pass | 9 modules checked, every doctest passed. | < 10s |
+| Capture asset geometry | Blocking | ✅ Pass | Capture assets conform to the capture profile. | < 10s |
 | Mermaid format | Blocking | ✅ Pass | Files checked: 232 · Files with errors: 0 | < 10s |
 | Mermaid syntax | Blocking | ✅ Pass | Diagrams checked: 384 · Errors found: 0 | < 10s |
 | Content sources | Blocking | ✅ Pass | Files with mermaid: 231 · Validation errors: 0 | < 10s |
@@ -90,7 +91,8 @@ Generated from the `GATES` registry in `scripts/generate_golden_status.py`. CI f
 <!-- golden-status:inventory:start -->
 | Gate | Enforces | Severity | Command | Enforced by |
 | --- | --- | --- | --- | --- |
-| Validator doctests | Executable specs inside the validators themselves still pass. | Blocking | `python3 -m doctest scripts/lib/content_scope.py scripts/validate_content_sources.py scripts/validate_cli_explanations.py scripts/validate_pii.py scripts/detect_repetition.py scripts/validate_doc_quality.py scripts/validate_visual_content.py scripts/generate_golden_status.py` | `Validate Content Source Metadata` — `validate-content-sources.yml`<br>`Validate CLI Explanation Tables` — `validate-content-sources.yml`<br>`Validate PII` — `validate-content-sources.yml`<br>`Validate Documentation Repetition` — `validate-repetition.yml`<br>`Validate Visual Content (advisory)` — `validate-visual-content.yml`<br>`Validate Golden Status` — `validate-golden-status.yml` |
+| Validator doctests | Executable specs inside the validators themselves still pass. | Blocking | `python3 -m doctest scripts/lib/content_scope.py scripts/validate_content_sources.py scripts/validate_cli_explanations.py scripts/validate_pii.py scripts/detect_repetition.py scripts/validate_doc_quality.py scripts/validate_capture_assets.py scripts/validate_visual_content.py scripts/generate_golden_status.py` | `Validate Content Source Metadata` — `validate-content-sources.yml`<br>`Validate CLI Explanation Tables` — `validate-content-sources.yml`<br>`Validate PII` — `validate-content-sources.yml`<br>`Validate Documentation Repetition` — `validate-repetition.yml`<br>`Validate Visual Content (advisory)` — `validate-visual-content.yml`<br>`Validate Golden Status` — `validate-golden-status.yml` |
+| Capture asset geometry | Committed Portal screenshots match the portal-desktop-v1 profile or are frozen historical exceptions; changed ones carry provenance. | Blocking | `python3 scripts/validate_capture_assets.py` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
 | Mermaid format | Mermaid fences are unindented and correctly delimited. | Blocking | `python3 scripts/validate_mermaid_format.py` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
 | Mermaid syntax | Every diagram parses as valid Mermaid. | Blocking | `python3 scripts/validate_mermaid_syntax.py` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
 | Content sources | Pages with Mermaid carry content_sources metadata with a valid source type. | Blocking | `python3 scripts/validate_content_sources.py` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
@@ -126,6 +128,7 @@ Generated from the `GATES` registry in `scripts/generate_golden_status.py`. CI f
 | Gate | Note |
 | --- | --- |
 | Validator doctests | CI runs these doctests one module per job; the dashboard runs them as one batch. |
+| Capture asset geometry | Known historical violations are listed in scripts/capture/dimension-exceptions.yaml, which may only shrink. |
 | Diagram ID parity | An inline shell step with no standalone script, so the dashboard re-runs the same comparison through its own --gate entry point. |
 | Document quality | CI blocks on changed files only. The dashboard runs --all, so findings here may include historical debt and cannot be mapped onto the changed-only CI scope. |
 | Microsoft Learn URL reachability | Network gate. CI runs it on push to main with continue-on-error to avoid rate limits. |
