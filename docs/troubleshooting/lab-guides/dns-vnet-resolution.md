@@ -907,7 +907,7 @@ Evidence minimum for that run:
 
     [Observed] Linking the zone to the VNet changed resolution to the private endpoint address `10.50.2.4` without an app restart.
 
-    [Inferred] An explicit lookup error therefore requires the custom-resolver path described above; with Azure-provided DNS the evidence is a public answer plus a failing dependency in `AppDependencies`. `verify.sh` now checks that dependency signal. Full evidence is in the [DNS resolution playbook](../playbooks/outbound-network/dns-resolution-vnet-integrated-app-service.md#live-reproduction-evidence-2026-10-02).
+    [Inferred] In this lab, removing only the zone link while keeping Azure-provided DNS produced a public answer rather than a lookup error. Reproducing the lookup-error variant described above would require introducing a separate resolver-path failure. `verify.sh` now reports the dependency result codes and judges the current state from the most recent call. Full evidence is in the [DNS resolution playbook](../playbooks/outbound-network/dns-resolution-vnet-integrated-app-service.md#live-reproduction-evidence-2026-10-02).
 
 ### 4.14 Incident response value of this lab output
 
