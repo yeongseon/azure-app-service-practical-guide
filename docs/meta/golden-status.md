@@ -25,12 +25,12 @@ Every quality gate in this repository, its most recently recorded result, and th
 
 ## Summary
 
-*Snapshot of `5ddcc04 plus uncommitted working-tree changes`, generated 2026-10-02.*
+*Snapshot of `fb17c2e plus uncommitted working-tree changes`, generated 2026-10-02.*
 
 | Metric | Count |
 |---|---:|
-| Registered gates | 27 |
-| ✅ Pass | 23 |
+| Registered gates | 28 |
+| ✅ Pass | 24 |
 | ❌ Fail | 0 |
 | ⚠️ Warn | 0 |
 | ➖ Skipped | 4 |
@@ -41,13 +41,13 @@ Every quality gate in this repository, its most recently recorded result, and th
 <!-- diagram-id: golden-status-gate-outcomes-pie -->
 ```mermaid
 pie title Quality Gate Outcomes
-    "Pass" : 23
+    "Pass" : 24
     "Skipped" : 4
 ```
 
 ## Gate Results
 
-These are locally executed results, not GitHub Actions statuses. **Skipped** means the machine that generated this page lacked the toolchain the gate needs. **Warn** means the gate reported findings its CI job would not fail on, either because the job is advisory or because the dashboard runs a wider scope than CI does. 16 of 27 gates are re-run and compared by the `Validate Golden Status` job, so a flip to **Fail** cannot sit here unnoticed.
+These are locally executed results, not GitHub Actions statuses. **Skipped** means the machine that generated this page lacked the toolchain the gate needs. **Warn** means the gate reported findings its CI job would not fail on, either because the job is advisory or because the dashboard runs a wider scope than CI does. 16 of 28 gates are re-run and compared by the `Validate Golden Status` job, so a flip to **Fail** cannot sit here unnoticed.
 
 <!-- golden-status:results:start -->
 | Gate | Severity | Status | Detail | Time |
@@ -70,10 +70,11 @@ These are locally executed results, not GitHub Actions statuses. **Skipped** mea
 | Frontmatter schema | Blocking | ✅ Pass | Checked 232 files · Found 0 errors, 28 warnings: | < 10s |
 | MkDocs strict build | Blocking | ✅ Pass | Site built with no strict-mode warnings. | 10-120s |
 | Shell script syntax | Blocking | ✅ Pass | All shell scripts parse. | < 10s |
-| ShellCheck | Blocking | ➖ Skipped | Executable `shellcheck` is not on PATH. | < 10s |
+| ShellCheck | Blocking | ✅ Pass | ShellCheck reported no findings. | < 10s |
 | Node.js dependency audit | Blocking | ✅ Pass | found 0 vulnerabilities | < 10s |
 | Node.js app tests | Blocking | ✅ Pass | ℹ tests 3 · ℹ pass 3 · ℹ fail 0 | < 10s |
 | Node.js production install | Blocking | ✅ Pass | Production tree resolved from the lockfile. | < 10s |
+| Node.js container smoke | Blocking | ➖ Skipped | Network gate; re-run with --include-network. | < 10s |
 | Python app compile | Blocking | ✅ Pass | All modules compiled. | < 10s |
 | Python app tests | Blocking | ✅ Pass | collected 4 items | < 10s |
 | .NET app build | Blocking | ➖ Skipped | Executable `dotnet` is not on PATH. | < 10s |
@@ -111,6 +112,7 @@ Generated from the `GATES` registry in `scripts/generate_golden_status.py`. CI f
 | Node.js dependency audit | The Express reference app has no moderate-or-worse production advisories. | Blocking | `cd apps/nodejs && npm audit --package-lock-only --omit=dev --audit-level=moderate` | `Node.js App` — `app-infra-ci.yml` |
 | Node.js app tests | The Express reference app test suite passes. | Blocking | `cd apps/nodejs && npm test` | `Node.js App` — `app-infra-ci.yml` |
 | Node.js production install | The Express reference app's production dependency tree resolves from its lockfile. | Blocking | `cd apps/nodejs && npm ci --omit=dev --dry-run` | `Node.js App` — `app-infra-ci.yml` |
+| Node.js container smoke | The Node.js reference image builds, serves /health, and keeps sshd running. | Blocking | `bash apps/nodejs/smoke-container.sh` | `Node.js Container Smoke` — `app-infra-ci.yml` |
 | Python app compile | The Flask reference app and its tests compile. | Blocking | `python3 -m compileall -q apps/python-flask/src apps/python-flask/tests` | `Python Flask App` — `app-infra-ci.yml` |
 | Python app tests | The Flask reference app pytest suite passes. | Blocking | `python3 -m pytest apps/python-flask/tests` | `Python Flask App` — `app-infra-ci.yml` |
 | .NET app build | The ASP.NET Core reference project builds. | Blocking | `dotnet build apps/dotnet-aspnetcore/GuideApi/GuideApi.csproj` | `ASP.NET Core App` — `app-infra-ci.yml` |
@@ -135,13 +137,14 @@ Generated from the `GATES` registry in `scripts/generate_golden_status.py`. CI f
 | Node.js dependency audit | --package-lock-only audits the lockfile, so the result cannot be skewed by a stale node_modules. CI audits the tree it just installed, which is equivalent. |
 | Node.js app tests | Needs `npm ci` in apps/nodejs first; the dashboard never installs dependencies. |
 | Node.js production install | Dry run, so it resolves from the lockfile without writing node_modules. |
+| Node.js container smoke | Pulls the base image and runs npm ci during the build, so it is a network gate. |
 | Python app tests | Needs apps/python-flask/requirements-dev.txt installed into the running interpreter. |
 | Bicep template build | Both this gate and the workflow step redirect stdin per template; without that, `az` consumes the file list and the loop stops after the first file. |
 
 ## Known Gaps
 
 - **Microsoft Learn URL reachability** did not run here: Network gate; re-run with --include-network.
-- **ShellCheck** did not run here: Executable `shellcheck` is not on PATH.
+- **Node.js container smoke** did not run here: Network gate; re-run with --include-network.
 - **.NET app build** did not run here: Executable `dotnet` is not on PATH.
 - **Java app tests** did not run here: Executable `mvn` is not on PATH.
 
