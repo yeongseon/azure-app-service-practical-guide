@@ -186,7 +186,7 @@ Treat **"Failed to forward request"** as a runtime proxy-path symptom, not a sin
 - Restart/recycle signals around failure windows
 - Whether failures are steady-state or bursty during deployment/restart windows
 
-Run this detector first to disambiguate the failure layer. Low `App Availability` with healthy `Platform Availability` means the platform proxy is working but cannot reach the app process, which matches the bind-mismatch, port-mismatch, and crash-after-bind hypotheses; if both are low, the symptom is outside this playbook's scope. Pair it with `Container Issues`, which shows explicit forwarding errors with `ContainerId`, and `Web App Restarted`, which reveals the post-bind crash loop. Widen the detector's time picker if the incident is older than its default scope.
+Run this detector first to disambiguate the failure layer. Low `App Availability` with healthy `Platform Availability` points the investigation toward the application side, where the bind-mismatch, port-mismatch, and crash-after-bind hypotheses apply; if both are low, look at the platform first. Pair it with `Container Issues`, which shows explicit forwarding errors with `ContainerId`, and `Web App Restarted`, which reveals the post-bind crash loop. Widen the detector's time picker if the incident is older than its default scope.
 
 ### Logs
 

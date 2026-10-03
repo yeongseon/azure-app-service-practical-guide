@@ -147,7 +147,7 @@ Categorize evidence into five primary types to build a multidimensional view of 
 4.  **Configuration**: App settings, VNet integration, and scaling rules. Source: Configuration blade or `az webapp show`.
 5.  **Runtime Behavior**: Observed HTTP responses (headers/body) and behavior under synthetic load. Source: `curl`, load testing.
 
-Application Insights combines four of the five evidence categories in one place: metrics on the Overview tiles, logs through the `Logs` button (`requests`, `dependencies`, `traces`, `exceptions`), runtime behavior through `Live metrics`, `Transaction search`, and `Application Map` in the `Investigate` group, and configuration signals via `customDimensions`. Use the Overview tiles as a one-glance health check before drilling into KQL, and note that an empty `Availability` tile simply means no synthetic availability test has been authored, which is itself a configuration gap worth flagging.
+Application Insights combines four of the five evidence categories in one place: metrics on the Overview tiles, logs through the `Logs` button (`requests`, `dependencies`, `traces`, `exceptions`), runtime behavior through `Live metrics`, `Transaction search`, and `Application Map` in the `Investigate` group, and configuration signals via `customDimensions`. Use the Overview tiles as a one-glance health check before drilling into KQL, and note that an empty `Availability` tile often means no availability test is configured; confirm that in the configuration before flagging it as a gap.
 
 ## Key KQL Tables Reference
 

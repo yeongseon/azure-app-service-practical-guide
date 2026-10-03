@@ -229,7 +229,7 @@ def problems(base_ref: str | None = None) -> list[str]:
 
 
 SOURCE_PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
-UNREGISTERED_OK = {"favicon.svg", "logo.svg"}
+UNREGISTERED_OK = {"favicon.svg", "logo.svg"}  # paths relative to docs/assets
 IMAGE_SUFFIXES = {".png", ".webp", ".jpg", ".jpeg", ".gif"}
 
 
@@ -247,6 +247,18 @@ def legacy_reencode_problems(records: dict, base_records: dict, base_ref: str,
     """
     found: list[str] = []
     sources: dict[str, str] = {}
+    outputs: dict[str, str] = {}
+    for key, record in records.items():
+        out_file = record.get("file", "")
+        if out_file in outputs:
+            found.append(f"provenance {key}: output {out_file} is already recorded by {outputs[out_file]}")
+        outputs[out_file] = key
+    files = [e.get("file") for e in (manifest or {}).get("screenshots") or []]
+    ids = [e.get("id") for e in (manifest or {}).get("screenshots") or []]
+    for dup in sorted({f for f in files if files.count(f) > 1}):
+        found.append(f"manifest.yaml: file {dup} is used by more than one entry")
+    for dup in sorted({i for i in ids if ids.count(i) > 1}):
+        found.append(f"manifest.yaml: id {dup} is used by more than one entry")
     for key, record in records.items():
         if record.get("kind") != "legacy_reencode":
             continue
@@ -355,6 +367,8 @@ def caption_missing(lines: list[str], index: int) -> bool:
     True
     >>> caption_missing(["![a](x)", "Purpose: p", "Look for:", "", "- item", "Expected result: e"], 0)
     False
+    >>> caption_missing(["![a](x)", "Purpose:", "- item", "Look for: l", "Expected result: e"], 0)
+    True
     """
     wanted = ["Purpose:", "Look for:", "Expected result:"]
     following = lines[index + 1:]
@@ -364,7 +378,9 @@ def caption_missing(lines: list[str], index: int) -> bool:
             break
         if text.startswith(wanted[0]):
             if not text[len(wanted[0]):].strip():
-                # an empty label is allowed only when a list item carries the content
+                if wanted[0] != "Look for:":
+                    return True
+                # an empty `Look for:` is allowed only when a list item carries the content
                 rest = next((t.strip() for t in following[offset + 1:] if t.strip()), "")
                 if not rest.startswith(("- ", "* ", "1. ")):
                     return True
@@ -385,6 +401,17 @@ def changed_lines(base_ref: str, rel: str) -> set[int] | None:
         start, count = int(m.group(1)), int(m.group(2) or 1)
         lines.update(range(start, start + count))
     return lines
+
+
+def captioned_at_base(base_ref: str, rel_page: str, kind: str, target: str) -> bool:
+    """True when the same image reference on this page was captioned at ``base_ref``."""
+    raw = git_show(base_ref, rel_page)
+    if raw is None:
+        return False
+    text = raw.decode("utf-8")
+    lines = prose_lines(text)
+    return any(k == kind and t == target and not caption_missing(lines, n - 1)
+               for n, k, t, _ in image_references(text))
 
 
 def image_metadata_problems(manifest: dict, base_ref: str | None) -> list[str]:
@@ -424,7 +451,9 @@ def image_metadata_problems(manifest: dict, base_ref: str | None) -> list[str]:
                 if alt.replace("\\", "") != entry["alt"]:
                     found.append(f"{where}: alt for {asset} must be the canonical legacy-assets.yaml alt")
             if caption_missing(lines, number - 1):
-                if base_ref and (fresh is None or number in fresh):
+                if base_ref and fresh is not None and number not in fresh and captioned_at_base(base_ref, rel_page, kind, target):
+                    found.append(f"{where}: caption lines were removed from this image reference")
+                elif base_ref and (fresh is None or number in fresh):
                     found.append(f"{where}: image needs Purpose / Look for / Expected result lines")
                 else:
                     advisory += 1
@@ -434,7 +463,7 @@ def image_metadata_problems(manifest: dict, base_ref: str | None) -> list[str]:
         found.append(f"legacy-assets.yaml: {asset} is not referenced; delete it with its file")
     registered = {e["file"] for e in shots.values()} | set(legacy)
     for path in sorted(ASSETS.rglob("*")):
-        if path.suffix.lower() in IMAGE_SUFFIXES | {".svg"} and path.name not in UNREGISTERED_OK:
+        if path.suffix.lower() in IMAGE_SUFFIXES | {".svg"} and str(path.relative_to(ASSETS)) not in UNREGISTERED_OK:
             if str(path.relative_to(ASSETS)) not in registered:
                 found.append(f"{path.relative_to(ASSETS)}: image file is not in manifest.yaml or legacy-assets.yaml")
     for asset, entry in legacy.items():
