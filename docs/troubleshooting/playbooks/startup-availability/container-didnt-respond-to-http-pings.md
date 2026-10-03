@@ -111,7 +111,7 @@ Treat this error as a startup reachability workflow, not a single failure mode. 
 - Linux - Number of Running Containers detector (is the container actually running?)
 - Restart count (is the platform killing and restarting the container repeatedly?)
 
-This is the detector to open first when the symptom is "Container didn't respond to HTTP pings". The two KPIs distinguish the failure surface: low `App Availability` with healthy `Platform Availability` means the container is running but never reaches probe-readiness, which is exactly this playbook's scope, while low `Platform Availability` puts the issue upstream of the container and outside it. `Container Issues` surfaces ping failure messages and exit codes directly, and `Web App Restarted` exposes the restart-loop pattern an application crash during startup produces.
+This is the detector to open first when the symptom is "Container didn't respond to HTTP pings". The two KPIs distinguish the failure surface: low `App Availability` with healthy `Platform Availability` points the investigation toward the application side, which is this playbook's scope, while low `Platform Availability` points toward the platform. `Container Issues` surfaces ping failure messages and exit codes directly, and `Web App Restarted` exposes the restart-loop pattern an application crash during startup produces.
 
 ### Logs
 

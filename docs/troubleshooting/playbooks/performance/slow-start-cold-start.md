@@ -60,7 +60,7 @@ Cold start latency is bursty and event-driven, while true performance regression
 - `AppServiceConsoleLogs`: startup sequence, import/load messages, Gunicorn worker boot timing, timeout/warning lines in `ResultDescription`.
 - `AppServiceHTTPLogs`: `TimeTaken`, `ScStatus`, `CsUriStem` around event windows.
 
-Log stream is the fastest way to watch a cold-start sequence unfold and measure the gap between `Starting gunicorn`, `Listening at: http://0.0.0.0:8000`, and the first `Booting worker with pid:` line, which is the dominant startup cost for Python apps on Linux App Service. Switch to the platform stream to also capture `Container is initializing` and `ContainerTimeout` transitions, then trigger a controlled restart with `az webapp restart` and time the sequence; a startup longer than the `WEBSITES_CONTAINER_START_TIME_LIMIT` budget (230 seconds by default) fails repeatedly and surfaces as `LastError: ContainerTimeout`. A measured startup beyond the SLO budget puts the optimization work in the app's import path, not in warm-up settings.
+Log stream is the fastest way to watch a cold-start sequence unfold and measure the gap between `Starting gunicorn`, `Listening at: http://0.0.0.0:8000`, and the first `Booting worker with pid:` line. Switch to the platform stream to also capture `Container is initializing` and `ContainerTimeout` transitions, then trigger a controlled restart with `az webapp restart` and time the sequence; a startup longer than the `WEBSITES_CONTAINER_START_TIME_LIMIT` budget (230 seconds by default) fails repeatedly and surfaces as `LastError: ContainerTimeout`.
 
 ### Platform Signals
 - Deployment timeline (`az webapp deployment list`) vs latency timeline.

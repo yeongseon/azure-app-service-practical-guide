@@ -267,7 +267,7 @@ The script extracts the 32-character hex ID from the error and prints both the r
 
 ### Inspect the conflicting assignment
 
-The `Activity log` blade is the Portal counterpart to the `az role assignment list` query below, showing the audit trail of ARM operations where Deployment Center's role-assignment attempts surface. Set `Event severity` to `All` so warnings and errors aren't hidden, scope the `Resource group` and `Resource` chips to the registry rather than the app, and use `Add Filter` to narrow to role-assignment operations; the conflicting ID appears in the `Operation name` cell.
+The `Activity log` blade is the Portal counterpart to the `az role assignment list` query below, showing the audit trail of ARM operations where Deployment Center's role-assignment attempts surface. Set `Event severity` to `All` so warnings and errors aren't hidden, scope the `Resource group` and `Resource` chips to the registry rather than the app, and use `Add Filter` to narrow to role-assignment operations. Open a failed operation to read its details and error payload, which is where the conflicting assignment is identified.
 
 ```bash
 az role assignment list \

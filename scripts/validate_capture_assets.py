@@ -223,7 +223,7 @@ def problems(base_ref: str | None = None) -> list[str]:
     if base_ref:
         base_prov = git_show(base_ref, "scripts/capture/provenance.yaml")
         base_records = ((yaml.safe_load(base_prov) or {}).get("assets") or {}) if base_prov else {}
-        found += legacy_reencode_problems(records, base_records, base_ref, raw_size, final_size)
+        found += legacy_reencode_problems(records, base_records, base_ref, raw_size, final_size, manifest)
     found += image_metadata_problems(manifest, base_ref)
     return found
 
@@ -233,8 +233,12 @@ UNREGISTERED_OK = {"favicon.svg", "logo.svg"}
 IMAGE_SUFFIXES = {".png", ".webp", ".jpg", ".jpeg", ".gif"}
 
 
+REENCODE_TOOL = "azure_guide_capture_toolkit.optimize_webp.encode"
+
+
 def legacy_reencode_problems(records: dict, base_records: dict, base_ref: str,
-                             raw_size: tuple[int, int], final_size: tuple[int, int]) -> list[str]:
+                             raw_size: tuple[int, int], final_size: tuple[int, int],
+                             manifest: dict | None = None) -> list[str]:
     """A legacy_reencode record never claims a capture profile.
 
     A new record must name a profile-size source PNG whose bytes exist at the
@@ -246,8 +250,8 @@ def legacy_reencode_problems(records: dict, base_records: dict, base_ref: str,
     for key, record in records.items():
         if record.get("kind") != "legacy_reencode":
             continue
-        if "produced" in record:
-            found.append(f"provenance {key}: legacy_reencode must not carry a produced profile")
+        if "produced" in record or "profile" in record:
+            found.append(f"provenance {key}: legacy_reencode must not carry a capture profile")
         if key in base_records:
             if base_records[key] != record:
                 found.append(f"provenance {key}: legacy_reencode records are immutable; recapture instead")
@@ -269,33 +273,77 @@ def legacy_reencode_problems(records: dict, base_records: dict, base_ref: str,
         out = ASSETS / record.get("file", "")
         if out.is_file() and webp_size(out.read_bytes()) != final_size:
             found.append(f"provenance {key}: output must be {final_size[0]}x{final_size[1]}")
+        transform = record.get("transform") or {}
+        quality = (manifest or {}).get("meta", {}).get("webp_quality")
+        want = {"tool": REENCODE_TOOL, "width": final_size[0], "height": final_size[1], "quality": quality}
+        if transform != want:
+            found.append(f"provenance {key}: transform must be {want}")
+        entry = next((e for e in (manifest or {}).get("screenshots") or [] if e["id"] == key), None)
+        if entry is None or entry.get("file") != record.get("file"):
+            found.append(f"provenance {key}: must match a manifest entry with the same id and file")
+        elif entry.get("captured_basis") != "repository_introduced" or not entry.get("verified"):
+            found.append(f"provenance {key}: manifest entry needs captured_basis: repository_introduced and a verified date")
     return found
 
 
-def image_references(text: str) -> list[tuple[int, str, str, str]]:
-    """Image references outside code fences: (line, kind, target, alt).
+def prose_lines(text: str) -> list[str]:
+    r"""Lines with fenced code, HTML comments, and inline code blanked out.
 
-    >>> image_references('a\\n[[[ shot("x") ]]]\\n![Alt](../assets/a.png)\\n```\\n![n](b.png)\\n```')
-    [(2, 'shot', 'x', ''), (3, 'path', '../assets/a.png', 'Alt')]
+    Line numbers are preserved so findings still point at the source line.
+
+    >>> prose_lines('a `shot("x")` b\n<!-- ![c](d.png) -->\n```\n![e](f.png)\n```')
+    ['a  b', '', '', '', '']
     """
-    refs, fence = [], False
-    for number, line in enumerate(text.split("\n"), 1):
-        if line.lstrip().startswith(("```", "~~~")):
-            fence = not fence
-            continue
+    text = re.sub(r"<!--.*?-->", lambda m: "\n" * m.group(0).count("\n"), text, flags=re.S)
+    out, fence = [], None
+    for line in text.split("\n"):
+        marker = re.match(r"\s*(`{3,}|~{3,})", line)
         if fence:
+            if marker and marker.group(1)[0] == fence[0] and len(marker.group(1)) >= len(fence):
+                fence = None
+            out.append("")
             continue
+        if marker:
+            fence = marker.group(1)
+            out.append("")
+            continue
+        out.append(re.sub(r"(`+)(?:(?!\1).)+?\1", "", line))
+    return out
+
+
+INLINE_IMAGE = re.compile(r"!\[((?:[^\]\\]|\\.)*)\]\(\s*<?([^)\s>]+)>?((?:\s+[^)]*)?)\)")
+UNSUPPORTED_IMAGE = re.compile(r"!\[(?:[^\]\\]|\\.)*\]\s*\[|<img\b|^\s*\[[^\]]+\]:\s*\S+\.(?:png|webp|jpe?g|gif|svg)\b", re.I)
+
+
+def image_references(text: str) -> list[tuple[int, str, str, str]]:
+    r"""Image references in rendered prose: (line, kind, target, alt).
+
+    ``kind`` is ``shot``, ``path``, or ``unsupported`` (reference-style images,
+    raw ``<img>``, or an image with a title), which the checks reject outright
+    because their metadata cannot be validated.
+
+    >>> image_references('a\n[[[ shot("x") ]]]\n![Alt](../assets/a.png)\n```\n![n](b.png)\n```')
+    [(2, 'shot', 'x', ''), (3, 'path', '../assets/a.png', 'Alt')]
+    >>> [r[1] for r in image_references('![a](b.png "t")\n![a][ref]\n<img src="c.png">\n`shot("z")`')]
+    ['unsupported', 'unsupported', 'unsupported']
+    """
+    refs = []
+    for number, line in enumerate(prose_lines(text), 1):
         for m in re.finditer(r'shot\(\s*["\']([^"\']+)["\']\s*\)', line):
             refs.append((number, "shot", m.group(1), ""))
-        for m in re.finditer(r"!\[((?:[^\]\\]|\\.)*)\]\(([^)\s]+)\)", line):
-            if not m.group(2).startswith(("http://", "https://")):
-                refs.append((number, "path", m.group(2), m.group(1)))
+        for m in INLINE_IMAGE.finditer(line):
+            if m.group(2).startswith(("http://", "https://")):
+                continue
+            kind = "unsupported" if m.group(3).strip() else "path"
+            refs.append((number, kind, m.group(2), m.group(1)))
+        if UNSUPPORTED_IMAGE.search(line):
+            refs.append((number, "unsupported", line.strip()[:60], ""))
     return refs
 
 
 def caption_missing(lines: list[str], index: int) -> bool:
-    """True unless Purpose / Look for / Expected result follow, in order, before
-    the next image or heading.
+    """True unless non-empty Purpose / Look for / Expected result lines follow,
+    in order, before the next image or heading. ``lines`` are prose lines.
 
     >>> caption_missing(["![a](x)", "", "Purpose: p", "Look for: l", "Expected result: e"], 0)
     False
@@ -303,13 +351,23 @@ def caption_missing(lines: list[str], index: int) -> bool:
     True
     >>> caption_missing(["![a](x)", "## Next", "Purpose: p"], 0)
     True
+    >>> caption_missing(["![a](x)", "Purpose:", "Look for: l", "Expected result: e"], 0)
+    True
+    >>> caption_missing(["![a](x)", "Purpose: p", "Look for:", "", "- item", "Expected result: e"], 0)
+    False
     """
     wanted = ["Purpose:", "Look for:", "Expected result:"]
-    for line in lines[index + 1:]:
+    following = lines[index + 1:]
+    for offset, line in enumerate(following):
         text = line.strip()
         if text.startswith("#") or "shot(" in text or text.startswith("!["):
             break
-        if wanted and text.startswith(wanted[0]):
+        if text.startswith(wanted[0]):
+            if not text[len(wanted[0]):].strip():
+                # an empty label is allowed only when a list item carries the content
+                rest = next((t.strip() for t in following[offset + 1:] if t.strip()), "")
+                if not rest.startswith(("- ", "* ", "1. ")):
+                    return True
             wanted.pop(0)
             if not wanted:
                 return False
@@ -340,10 +398,13 @@ def image_metadata_problems(manifest: dict, base_ref: str | None) -> list[str]:
     for page in sorted((ROOT / "docs").rglob("*.md")):
         rel_page = str(page.relative_to(ROOT))
         text = page.read_text(encoding="utf-8")
-        lines = text.split("\n")
+        lines = prose_lines(text)
         fresh = changed_lines(base_ref, rel_page) if base_ref else set()
         for number, kind, target, alt in image_references(text):
             where = f"{rel_page}:{number}"
+            if kind == "unsupported":
+                found.append(f"{where}: unsupported image syntax ({target}); use shot(\"<id>\") or a plain ![alt](path)")
+                continue
             if kind == "shot":
                 if target not in shots:
                     found.append(f"{where}: shot(\"{target}\") is not in manifest.yaml")

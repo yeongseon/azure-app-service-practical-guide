@@ -110,7 +110,7 @@ When a slot swap succeeds but production degrades, focus on post-swap behavior: 
 - Auto-swap configuration and startup budget (`WEBSITES_CONTAINER_START_TIME_LIMIT`).
 - Managed identity assignment and role bindings for production-scoped resources.
 
-The `Activity log` blade is the authoritative timeline source for slot swaps and the only place that records the exact `Succeeded` timestamp for `Swap Web App Slots` alongside the initiating principal in `Event initiated by`. Scope the filter to the affected app and the incident window, then correlate that timestamp against the first post-swap restart in `AppServicePlatformLogs` and the first user-visible 5xx in `AppServiceHTTPLogs`. Use `Download as CSV` to export the audit trail before the retention horizon expires, since it's what proves which slot configuration was effective when production began degrading.
+The `Activity log` blade records the control-plane timeline for slot swaps, including the `Succeeded` timestamp for `Swap Web App Slots` and the initiating principal in `Event initiated by`. Scope the filter to the affected app and the incident window, then correlate that timestamp against the first post-swap restart in `AppServicePlatformLogs` and the first user-visible 5xx in `AppServiceHTTPLogs`. Use `Download as CSV` to export the audit trail before the retention horizon expires. It shows when the swap operation completed, not which configuration the worker actually loaded; confirm that from the runtime evidence.
 
 ## 5. Evidence to Collect
 
