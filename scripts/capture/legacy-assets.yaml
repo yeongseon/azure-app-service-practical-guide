@@ -1,0 +1,60 @@
+# Legacy Portal PNGs that predate the capture profile and cannot be re-encoded to
+# it without cropping (3148x2318, not 16:10). They stay as PNG until recaptured.
+#
+# Rules (scripts/validate_capture_assets.py):
+#   - shrink-only: no entry may be added after this list was introduced;
+#   - bytes and size are pinned by sha256/width/height and may not change;
+#   - every Markdown reference must use the canonical `alt` exactly;
+#   - an entry with no remaining reference must be deleted with its file;
+#   - a replacement enters manifest.yaml through a real capture.
+# `introduced` is the date the file entered the repository, not a capture date.
+
+assets:
+  - id: legacy--troubleshooting--log-analytics--01-logs
+    file: troubleshooting/log-analytics/01-logs.png
+    alt: "Application Insights Logs blade with an empty KQL query editor, the time range set to Last 24 hours, and no query history"
+    width: 3148
+    height: 2318
+    sha256: 5b0ab98091c98260afcb94dbf649bf14ac39cb3e9aa005a40b38795fdf308db4
+    introduced: '2026-06-07'
+    issue: 135
+  - id: legacy--troubleshooting--metrics--01-metrics-empty
+    file: troubleshooting/metrics/01-metrics-empty.png
+    alt: "Metrics blade with an empty chart and the metric selector on the App Service standard metrics namespace with no metric selected"
+    width: 3148
+    height: 2318
+    sha256: 02885df70006531efaa215bd1694b828271869abc1917eb99d579460efb6f320
+    introduced: '2026-06-07'
+    issue: 135
+  - id: legacy--troubleshooting--diagnose-and-solve--01-overview
+    file: troubleshooting/diagnose-and-solve/01-overview.png
+    alt: "Diagnose and solve problems landing page with a Risk alerts card and troubleshooting category cards"
+    width: 3148
+    height: 2318
+    sha256: 9812a4dac8553e3b926828e6ad0ce79afd67da31f2515c26fa3553b2541a7743
+    introduced: '2026-06-07'
+    issue: 135
+  - id: legacy--troubleshooting--diagnose-and-solve--02-detector-web-app-down
+    file: troubleshooting/diagnose-and-solve/02-detector-web-app-down.png
+    alt: "Web App Down detector showing 100 percent availability over the last 24 hours and a message that no downtime was identified"
+    width: 3148
+    height: 2318
+    sha256: fb4b7c0ef1871a449a83197ea4fce289c71b5e8fb38ccea1d96416fbe4383ec6
+    introduced: '2026-06-07'
+    issue: 135
+  - id: legacy--troubleshooting--app-insights--01-overview
+    file: troubleshooting/app-insights/01-overview.png
+    alt: "Application Insights Overview with Failed requests, Server response time, Server requests, and Availability charts for the last hour"
+    width: 3148
+    height: 2318
+    sha256: 3bd5d8fc37b0dfe8214f29431618217a8d35b1e4ced6ff4aa31baa5d2bce2ccd
+    introduced: '2026-06-07'
+    issue: 135
+  - id: legacy--troubleshooting--activity-log--01-activity-log
+    file: troubleshooting/activity-log/01-activity-log.png
+    alt: "Activity log filtered to one web app over the last 6 hours, listing management operations with their status and initiator"
+    width: 3148
+    height: 2318
+    sha256: 92d0858073bc0ccfcd89fa371ce90727dfa79607287521d5caf6ce4ac21ee879
+    introduced: '2026-06-07'
+    issue: 135

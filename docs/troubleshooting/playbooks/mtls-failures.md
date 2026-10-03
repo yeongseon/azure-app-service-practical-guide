@@ -103,12 +103,6 @@ flowchart TD
 
 4. For ASE deployments, verify where ingress actually enters the App Service front-end layer.
 
-    #### Portal view: Networking blade as entry point for mTLS configuration
-
-    ![Azure portal Networking blade showing Inbound traffic configuration column (Public network access Enabled with no access restrictions Using default behavior, App assigned address Not configured, Private endpoints 0 private endpoints, Inbound IPv4 <ip-redacted>, Inbound IPv6 <ipv6-redacted>) and Outbound traffic configuration column (Virtual network integration Not configured, Hybrid connections Not configured, Outbound DNS Default Azure-provided, list of Outbound IPv4 and IPv6 addresses), Integration subnet configuration card showing NAT gateway N/A, NSG N/A, UDR N/A, toolbar with Refresh, Troubleshoot, Send us your feedback buttons](../../assets/troubleshooting/networking/01-networking-hub.png)
-
-    The `Networking` blade is the orientation surface for inbound-path verification. The `Inbound traffic configuration` column lists `Public network access` (`Enabled with no access restrictions`), `Private endpoints` (`0 private endpoints`), `Inbound IPv4` (`<ip-redacted>`), and `Inbound IPv6` (`<ipv6-redacted>`) — together these describe every surface on which an inbound client connection (including an mTLS handshake) can land for this app. The `Outbound traffic configuration` column (`Virtual network integration: Not configured`, `Hybrid connections: Not configured`) confirms no VNet egress detour exists in this baseline. The toolbar `Troubleshoot` button is the platform-supplied network-diagnostics launcher.
-
 ## 5. Evidence to Collect
 
 ### 5.1 CLI Investigation

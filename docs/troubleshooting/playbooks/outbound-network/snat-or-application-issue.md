@@ -469,7 +469,13 @@ The [SNAT exhaustion lab](../../lab-guides/snat-exhaustion.md#414-matched-rerun-
 
 This section walks the App Service **Networking** blade **in diagnostic order**, as a *step-by-step* trail rather than a single blade read. All four steps below read different cards of the **same** capture — the blade is one screen, but the diagnostic value comes from reading its cards in the order that establishes whether the app is on the constrained default SNAT pool (supports H1) or has a SNAT-mitigation topology in place — an expanded NAT Gateway pool or a dependency-side Private Endpoint bypass, which weakens H1 and shifts focus to H2/H3/H4. The capture is a real, PII-cleaned Azure Portal screenshot from a Linux App Service; the inbound/outbound IP values shown are RFC-5737 (`192.0.2.x`) and RFC-3849 (`2001:db8::`) documentation ranges, not real addresses.
 
-![Azure portal Networking blade for a Linux Web App, showing the Inbound traffic configuration column (Public network access Enabled with no access restrictions, App assigned address Not configured, Private endpoints 0 private endpoints, Inbound IPv4 and IPv6 addresses) and the Outbound traffic configuration column (Virtual network integration Not configured, Hybrid connections Not configured, Outbound DNS Default Azure-provided, Outbound IPv4 and IPv6 address lists), with the Integration subnet configuration card showing NAT gateway N/A, Network security group N/A, User defined route N/A, and a toolbar with Refresh, Troubleshoot, and Send us your feedback buttons](../../../assets/troubleshooting/networking/01-networking-hub.png)
+[[[ shot("operations--networking--01-networking-hub") ]]]
+
+Purpose: Show the app's inbound and outbound network configuration on one page.
+
+Look for: `Public network access` and `Private endpoints` under inbound traffic, and `Virtual network integration`, `Outbound DNS`, and the outbound address lists under outbound traffic.
+
+Expected result: This capture shows a public app without VNet integration, so outbound traffic uses the listed platform outbound addresses and the integration subnet settings show `N/A`.
 
 ### Step 1 — Establish the SNAT-mitigation prerequisite: `Outbound traffic configuration > Virtual network integration`
 

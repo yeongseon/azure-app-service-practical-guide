@@ -153,12 +153,6 @@ flowchart TD
     | `--query "{httpsOnly:httpsOnly,hostNames:hostNames,state:state}"` | Projects only these named top-level properties into a smaller object before formatting the output. |
     | `--output json` | Formats the command output as JSON for full-fidelity inspection. |
 
-#### Portal view: Networking blade as entry point for TLS bindings and hostname state
-
-![Azure portal Networking blade showing Inbound traffic configuration column (Public network access Enabled with no access restrictions Using default behavior, App assigned address Not configured, Private endpoints 0 private endpoints, Inbound IPv4 <ip-redacted>, Inbound IPv6 <ipv6-redacted>) and Outbound traffic configuration column (Virtual network integration Not configured, Hybrid connections Not configured, Outbound DNS Default Azure-provided, list of Outbound IPv4 and IPv6 addresses), Integration subnet configuration card showing NAT gateway N/A, NSG N/A, UDR N/A, toolbar with Refresh, Troubleshoot, Send us your feedback buttons](../../assets/troubleshooting/networking/01-networking-hub.png)
-
-The `Networking` blade is the orientation surface for verifying which inbound surface a client's TLS handshake terminates on. The visible `Inbound IPv4` (`<ip-redacted>`) and `Inbound IPv6` (`<ipv6-redacted>`) rows are the platform-assigned addresses an unbound hostname must resolve to for TLS to terminate at this app, while `Public network access` (`Enabled with no access restrictions`) and `Private endpoints` (`0 private endpoints`) describe whether the app is reachable on the multitenant front-end at all. The toolbar `Troubleshoot` button is the platform-supplied network-diagnostics launcher.
-
 ## 5. Evidence to Collect
 
 Capture DNS state, hostname binding state, certificate inventory, and user-facing symptom at the same time. Many SSL incidents are simply mismatched layers.

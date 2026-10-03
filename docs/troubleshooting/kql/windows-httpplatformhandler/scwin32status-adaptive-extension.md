@@ -43,11 +43,7 @@ flowchart TD
 
 ## Run It in the Portal
 
-#### Portal view: Logs blade (Log Analytics query editor)
-
-![Azure portal Logs blade for ai-test-20251107 (Application Insights) with a New Query 1 tab open, top-right controls Observability agent (New), Save, Share, Queries hub, and an inline toolbar Run + Time range: Last 24 hours + Show: 1000 results + KQL mode dropdown. The query editor shows placeholder text "Type your query here or click one of the queries to start" on line 1. Below the editor a Query history pane reads "No queries history — You haven't run any queries yet. To start, go to Queries on the side pane or type a query in the query editor." Left nav under Monitoring lists Alerts, Metrics, Diagnostic settings, Logs (selected), Workbooks, Dashboards with Grafana; the Investigate group above is collapsed.](../../../assets/troubleshooting/log-analytics/01-logs.png)
-
-Paste the query below into the `New Query 1` editor and press `Run`. The result grid returns one row per distinct `ScWin32Status` value present in the filtered set. If the app has been quiet you may see only a single row (`ScWin32Status = 0`); a second row with `ScWin32Status = 64` is what you are looking for.
+Paste the query below into the `New Query 1` editor and press `Run`. The result grid returns one row per distinct `ScWin32Status` value in the filtered set; on a quiet app you may see only `ScWin32Status = 0`, and a `ScWin32Status = 64` row is what you're looking for.
 
 ## Query
 

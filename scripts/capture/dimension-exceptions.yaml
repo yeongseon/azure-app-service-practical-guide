@@ -78,10 +78,6 @@ exceptions:
     observed: [3148, 2318]
     reason: Captured at devicePixelRatio 2 with a ~1574x1159 viewport before the profile pinned DPR 1.
     issue: 135
-  - asset: troubleshooting/log-stream/01-log-stream.png
-    observed: [3148, 2318]
-    reason: Captured at devicePixelRatio 2 with a ~1574x1159 viewport before the profile pinned DPR 1.
-    issue: 135
   - asset: troubleshooting/metrics/01-metrics-empty.png
     observed: [3148, 2318]
     reason: Captured at devicePixelRatio 2 with a ~1574x1159 viewport before the profile pinned DPR 1.

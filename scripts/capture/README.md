@@ -101,3 +101,29 @@ assets:
 
 `dimension-exceptions.yaml` may only shrink: CI rejects any entry absent from
 the PR base.
+
+A `kind: legacy_reencode` record documents a pre-profile PNG re-encoded to WebP
+without recapture. It carries `derived_from` (source path and its sha256 at the
+base revision) and `transform` instead of `produced`, so it never claims a
+capture profile. CI accepts a new one only when the source was a 1600x1000 PNG
+at the base, is deleted in the same change, and produced exactly one output; an
+existing one is immutable. Its manifest entry sets `captured` to the date the
+PNG entered the repository with `captured_basis: repository_introduced`, not an
+observed capture date.
+
+## Image metadata rules
+
+`scripts/validate_capture_assets.py` also enforces how docs use images:
+
+- Reference manifest screenshots only with `shot("id")`. A direct image path is
+  allowed only for an entry of [`legacy-assets.yaml`](legacy-assets.yaml), and its
+  alt must equal the registry's canonical `alt`.
+- Every image file under `docs/assets` must be in `manifest.yaml` or
+  `legacy-assets.yaml`, and every entry in either must be referenced.
+- `legacy-assets.yaml` holds the six 3148x2318 PNGs that cannot be re-encoded to
+  the profile without cropping. It may only shrink; bytes and size are pinned.
+- An image reference added or changed in a pull request must be followed by
+  `Purpose:`, `Look for:`, and `Expected result:` lines (in that order, before the
+  next image or heading). Existing gaps are reported as advisory.
+- Keep `alt` page-neutral: describe the visible pixels. Put page-specific intent
+  in the caption lines, so one image can be reused without contradictory alts.

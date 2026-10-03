@@ -54,11 +54,7 @@ If the symptom is on **Linux App Service**, use the [HTTP query pack](../http/in
 
 ## Run It in the Portal
 
-#### Portal view: Logs blade (Log Analytics query editor)
-
-![Azure portal Logs blade for ai-test-20251107 (Application Insights) with a New Query 1 tab open, top-right controls Observability agent (New), Save, Share, Queries hub, and an inline toolbar Run + Time range: Last 24 hours + Show: 1000 results + KQL mode dropdown. The query editor shows placeholder text "Type your query here or click one of the queries to start" on line 1. Below the editor a Query history pane reads "No queries history — You haven't run any queries yet. To start, go to Queries on the side pane or type a query in the query editor." Left nav under Monitoring lists Alerts, Metrics, Diagnostic settings, Logs (selected), Workbooks, Dashboards with Grafana; the Investigate group above is collapsed.](../../../assets/troubleshooting/log-analytics/01-logs.png)
-
-The `Logs` blade is the entry point for every query in this pack. Paste any of the snippets below into the `New Query 1` editor and press `Run`. All queries in this pack rely on either `AppServiceHTTPLogs` or `AppServiceConsoleLogs` - both tables are provisioned automatically when App Service Diagnostic Settings are routed to a Log Analytics workspace, so no additional Portal configuration is required beyond the workspace itself. The default `Time range: Last 24 hours` selector matches most of the `ago(24h)` filters in the queries; tighten it via the inline selector for burst-window investigations.
+Paste any snippet below into the `New Query 1` editor and press `Run`. Every query in this pack reads from `AppServiceHTTPLogs` or `AppServiceConsoleLogs`, both of which are populated once App Service diagnostic settings route to a Log Analytics workspace, so no extra Portal configuration is needed beyond the workspace itself. Tighten the blade-level `Time range` for burst-window investigations.
 
 ## Available Queries
 

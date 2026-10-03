@@ -285,7 +285,13 @@ Identity creation and RBAC propagation can take several minutes; validate role a
 
 #### Portal view: Configuration > General settings blade (Portal counterpart to `az webapp config set`)
 
-![Configuration General settings blade for a Web App with five tabs — General settings (active), Stack settings, Health check, Path mappings, Error pages — and a Refresh action. Platform settings section lists SCM Basic Auth Publishing Credentials (unchecked), FTP Basic Auth Publishing Credentials (unchecked), WebJobs runtime (unchecked), FTP state (FTPS only), Inbound IP mode (IPv4), HTTP version (1.1), HTTP 2.0 Proxy (Off), SSH (checked), Always on (unchecked), Session affinity (checked), Session affinity proxy (unchecked), HTTPS only (unchecked), Minimum Inbound TLS Version (1.2), SCM Minimum Inbound TLS Version (1.2), Minimum Inbound TLS Cipher Suite (TLS_RSA_WITH_AES_128_CBC_SHA, Default), and End-to-end TLS encryption (unchecked). Apply and Discard buttons are at the bottom of the blade.](../../../assets/best-practices/production-baseline/01-configuration-general.png)
+[[[ shot("best-practices--production-baseline--01-configuration-general") ]]]
+
+Purpose: Show where the platform settings discussed in this section are reviewed and changed.
+
+Look for: `FTP state`, `HTTP version`, `Always on`, `HTTPS only`, and `Minimum Inbound TLS Version`.
+
+Expected result: This capture shows `FTPS only`, `Always on` and `HTTPS only` cleared, and minimum TLS `1.2`; compare each value with the setting this page recommends.
 
 The `Configuration > General settings` blade is the Portal verification surface for the platform-level `az webapp config set` adjustments this tutorial makes. In the visible Platform settings list, `HTTPS only`, `Always on`, `FTP state`, `HTTP version`, and `Minimum Inbound TLS Version` are the same runtime controls you tune from the CLI. App-level settings such as `JAVA_OPTS` and `SPRING_PROFILES_ACTIVE` live on the separate `Environment variables` blade instead of this General settings page. This screenshot also makes the default state concrete: `Always on` and `HTTPS only` are both unchecked here, so you should not assume production-ready defaults after app creation. Use this blade after the CLI steps to confirm the platform settings applied to the Spring Boot app before moving on to app settings and connection strings.
 

@@ -727,3 +727,75 @@ screenshots:
   diff_threshold: 0.02
   captured: '2026-07-20'
   verified: '2026-07-20'
+
+- id: best-practices--networking--01-access-restrictions
+  file: best-practices/networking/best-practices--networking--01-access-restrictions.webp
+  alt: "Access Restrictions blade with public network access on its default enabled behavior, unmatched rule action set to Allow, and only the default Allow all rule"
+  page: best-practices/networking
+  diff_threshold: 0.02
+  captured: '2026-06-07'
+  captured_basis: repository_introduced
+  verified: '2026-10-03'
+
+- id: best-practices--production-baseline--01-configuration-general
+  file: best-practices/production-baseline/best-practices--production-baseline--01-configuration-general.webp
+  alt: "Configuration General settings tab listing platform settings including FTP state, HTTP version, Always on, HTTPS only, and minimum inbound TLS version"
+  page: best-practices/production-baseline
+  diff_threshold: 0.02
+  captured: '2026-06-07'
+  captured_basis: repository_introduced
+  verified: '2026-10-03'
+
+- id: best-practices--security--01-identity-blade
+  file: best-practices/security/best-practices--security--01-identity-blade.webp
+  alt: "Identity blade with the System assigned tab selected and the Status toggle set to Off"
+  page: best-practices/security
+  diff_threshold: 0.02
+  captured: '2026-06-07'
+  captured_basis: repository_introduced
+  verified: '2026-10-03'
+
+- id: operations--deployment--01-create-web-app-container-tab
+  file: operations/deployment/container/operations--deployment--01-create-web-app-container-tab.webp
+  alt: "Create Web App wizard on the Container tab with sidecar support on, the Quickstart image source, and the NGINX sample image on port 80"
+  page: operations/deployment/container
+  diff_threshold: 0.02
+  captured: '2026-06-07'
+  captured_basis: repository_introduced
+  verified: '2026-10-03'
+
+- id: operations--deployment--02-deployment-center-github
+  file: operations/deployment/github-actions/operations--deployment--02-deployment-center-github.webp
+  alt: "Deployment Center Settings tab with GitHub selected as the source, building with GitHub Actions, and organization, repository, and branch not yet selected"
+  page: operations/deployment/github-actions
+  diff_threshold: 0.02
+  captured: '2026-06-07'
+  captured_basis: repository_introduced
+  verified: '2026-10-03'
+
+- id: operations--deployment--03-slot-swap-config-changes
+  file: operations/deployment/slots-and-swap/operations--deployment--03-slot-swap-config-changes.webp
+  alt: "Swap pane from the staging slot to the production slot with a Source slot changes table listing app settings and their old and new values"
+  page: operations/deployment/slots-and-swap
+  diff_threshold: 0.02
+  captured: '2026-06-07'
+  captured_basis: repository_introduced
+  verified: '2026-10-03'
+
+- id: operations--deployment--04-app-settings
+  file: operations/deployment/zip-deploy/operations--deployment--04-app-settings.webp
+  alt: "Environment variables blade on the App settings tab listing five app settings with their values hidden"
+  page: operations/deployment/zip-deploy
+  diff_threshold: 0.02
+  captured: '2026-06-07'
+  captured_basis: repository_introduced
+  verified: '2026-10-03'
+
+- id: operations--networking--01-networking-hub
+  file: operations/networking/operations--networking--01-networking-hub.webp
+  alt: "Networking blade with public network access enabled, no private endpoints, virtual network integration not configured, and the outbound IPv4 and IPv6 address lists"
+  page: operations/networking
+  diff_threshold: 0.02
+  captured: '2026-06-07'
+  captured_basis: repository_introduced
+  verified: '2026-10-03'

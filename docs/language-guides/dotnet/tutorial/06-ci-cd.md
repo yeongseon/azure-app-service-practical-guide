@@ -259,7 +259,13 @@ Inspect Log Stream and Kudu diagnostics; redeploy after a clean publish from the
 
 #### Portal view: Deployment Center blade (built-in GitHub integration shown for comparison)
 
-![Azure Portal Deployment Center blade for app-test-20251107 Web App with the Settings tab selected and Containers (new), Logs, and FTPS Credentials tabs visible. The toolbar shows Save and Discard (disabled), Refresh, Browse, Sync (disabled), and Send us your feedback. An information banner at the top reads "You are now in the production slot, which is not recommended for setting up CI/CD. Learn more". The body text "Deploy and build code from your preferred source and build provider" precedes a Source dropdown set to GitHub, with "Building with GitHub Actions" and a Change provider link below. A GitHub section explains that App Service places a GitHub Actions workflow in the chosen repository and shows Signed in as demouser with a Change account link, followed by required Organization, Repository, and Branch dropdowns all in empty Select state. The left navigation expands Deployment with Deployment slots and Deployment Center (highlighted) entries.](../../../assets/operations/deployment/github-actions/01-deployment-center-github.png)
+[[[ shot("operations--deployment--02-deployment-center-github") ]]]
+
+Purpose: Show where the built-in GitHub Actions integration is configured.
+
+Look for: `Source` set to `GitHub`, `Building with GitHub Actions`, and the `Organization`, `Repository`, and `Branch` fields.
+
+Expected result: After you select all three and save, App Service places a GitHub Actions workflow in the chosen repository and branch.
 
 The Deployment Center blade shown here is App Service's built-in GitHub integration surface: the visible `Source: GitHub`, `Building with GitHub Actions`, and empty `Organization` / `Repository` / `Branch` selectors all belong to that flow. This .NET tutorial uses Azure DevOps Pipelines instead, so treat this capture as a contrast with App Service-managed CI/CD rather than the verification surface for the `AzureWebApp@1` pipeline defined above. The production-slot banner is still useful context because it shows the app is being configured directly on the live slot.
 
