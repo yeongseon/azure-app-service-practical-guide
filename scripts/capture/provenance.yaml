@@ -4,6 +4,109 @@
 # record Portal URLs: they carry tenant, subscription, and resource identifiers.
 # Captures made before portal-desktop-v1 existed are intentionally absent rather
 # than stamped with a profile they were not produced under.
+#
+# Two record kinds:
+#   (no kind)        produced by scripts/capture/capture.cjs under `produced.profile`.
+#   legacy_reencode  a pre-profile PNG re-encoded to WebP without recapture. It does
+#                    NOT claim a capture profile; `derived_from` pins the source PNG
+#                    bytes at the base revision, and the record is immutable: a new
+#                    image must be a real capture with a `produced` record.
 
 schema_version: 1
-assets: {}
+assets:
+  best-practices--networking--01-access-restrictions:
+    kind: legacy_reencode
+    file: best-practices/networking/best-practices--networking--01-access-restrictions.webp
+    final_sha256: 88b5e2e87ae80a0022033e76865b80757af4af10406ee1367adaa54ef9dec3c4
+    derived_from:
+      path: docs/assets/best-practices/networking/01-access-restrictions.png
+      sha256: e608d81ff74bc4918b49466a9c91b7522a4cf71b52de3151bad0ccd40a12b8d8
+    transform:
+      tool: azure_guide_capture_toolkit.optimize_webp.encode
+      width: 1440
+      height: 900
+      quality: 82
+  best-practices--production-baseline--01-configuration-general:
+    kind: legacy_reencode
+    file: best-practices/production-baseline/best-practices--production-baseline--01-configuration-general.webp
+    final_sha256: cdc4e453a1a795d051215701dad05e80f8b449edc4a08c1f99f708a5dc907351
+    derived_from:
+      path: docs/assets/best-practices/production-baseline/01-configuration-general.png
+      sha256: 7180065ca3a928d2fa8af904471973d1b87208d130b70bf8f274c325121c8909
+    transform:
+      tool: azure_guide_capture_toolkit.optimize_webp.encode
+      width: 1440
+      height: 900
+      quality: 82
+  best-practices--security--01-identity-blade:
+    kind: legacy_reencode
+    file: best-practices/security/best-practices--security--01-identity-blade.webp
+    final_sha256: 7bc3c59cf596542bd645784b591e8de5d16ab45fca9e9e6a2d3cc22d351dfaf2
+    derived_from:
+      path: docs/assets/best-practices/security/01-identity-blade.png
+      sha256: 68d510731037c166aeb498e82107ab46dcd831ac3a8eaed137eefdb1c9b4751d
+    transform:
+      tool: azure_guide_capture_toolkit.optimize_webp.encode
+      width: 1440
+      height: 900
+      quality: 82
+  operations--deployment--01-create-web-app-container-tab:
+    kind: legacy_reencode
+    file: operations/deployment/container/operations--deployment--01-create-web-app-container-tab.webp
+    final_sha256: 87a2e053ee6087f8965c05bc639757a86b399b315d09fea53a4d768f8eb8d720
+    derived_from:
+      path: docs/assets/operations/deployment/container/01-deployment-center-container.png
+      sha256: 6e700832466bc2cdfd629060085a5cc23bce876e99262b9d2a406aa6ce5074b0
+    transform:
+      tool: azure_guide_capture_toolkit.optimize_webp.encode
+      width: 1440
+      height: 900
+      quality: 82
+  operations--deployment--02-deployment-center-github:
+    kind: legacy_reencode
+    file: operations/deployment/github-actions/operations--deployment--02-deployment-center-github.webp
+    final_sha256: a7c338d7a46654a3187e8965e2d9e970d00160baaacd96566023f18167267b03
+    derived_from:
+      path: docs/assets/operations/deployment/github-actions/01-deployment-center-github.png
+      sha256: 79bd8fe511bbcf0dff63e7fd801f3e8df0c99763d36fd66ab4a3a54040c89e8c
+    transform:
+      tool: azure_guide_capture_toolkit.optimize_webp.encode
+      width: 1440
+      height: 900
+      quality: 82
+  operations--deployment--03-slot-swap-config-changes:
+    kind: legacy_reencode
+    file: operations/deployment/slots-and-swap/operations--deployment--03-slot-swap-config-changes.webp
+    final_sha256: 817273b73c3fd5c4b2c0ad828477aa6a74502520820fc15edbd20d0a75069208
+    derived_from:
+      path: docs/assets/operations/deployment/slots-and-swap/01-swap-dialog.png
+      sha256: caf53a859b888c3a403124f6f0a635a5a74700b806e30d93d175dd9b29a57170
+    transform:
+      tool: azure_guide_capture_toolkit.optimize_webp.encode
+      width: 1440
+      height: 900
+      quality: 82
+  operations--deployment--04-app-settings:
+    kind: legacy_reencode
+    file: operations/deployment/zip-deploy/operations--deployment--04-app-settings.webp
+    final_sha256: fc16fac10881ad24334878b2854d24ff75b3a0fbadbec98d2899b340951080e9
+    derived_from:
+      path: docs/assets/operations/deployment/zip-deploy/01-app-settings-run-from-package.png
+      sha256: 668534ef989cef322ed1145599d87c93701190854a846103086cd34a1ac75398
+    transform:
+      tool: azure_guide_capture_toolkit.optimize_webp.encode
+      width: 1440
+      height: 900
+      quality: 82
+  operations--networking--01-networking-hub:
+    kind: legacy_reencode
+    file: operations/networking/operations--networking--01-networking-hub.webp
+    final_sha256: 6d200a0b740403f9f1be3d6b718288371d027ee9a87fc35165ce2d244fee8ffc
+    derived_from:
+      path: docs/assets/troubleshooting/networking/01-networking-hub.png
+      sha256: d3f49362ccd38f340dffb4cc62b9a476a770fd80c18c075559b76f05706100f4
+    transform:
+      tool: azure_guide_capture_toolkit.optimize_webp.encode
+      width: 1440
+      height: 900
+      quality: 82

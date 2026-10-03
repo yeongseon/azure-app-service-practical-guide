@@ -12,6 +12,14 @@ until they are recaptured; each one must carry a reason and a tracking issue, an
 an exception for an asset that already conforms is itself an error so the list
 can only shrink.
 
+Image metadata is checked too. Docs reference a manifest screenshot only through
+``shot("id")``; a direct image path is allowed only for an entry of the frozen
+legacy registry ``scripts/capture/legacy-assets.yaml`` and must use its canonical
+alt. Every image file under ``docs/assets`` must be registered, and every
+registered image must be referenced. With ``--base-ref``, an image reference
+added or changed in the diff must be followed by ``Purpose:``, ``Look for:``, and
+``Expected result:`` lines; existing gaps are reported as advisory only.
+
 Usage:
     python3 scripts/validate_capture_assets.py
 """
@@ -21,6 +29,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 import struct
 import subprocess
 import sys
@@ -197,6 +206,8 @@ def problems(base_ref: str | None = None) -> list[str]:
             if record is None:
                 found.append(f"{rel}: added or changed without a provenance record ({key})")
                 continue
+            if record.get("kind") == "legacy_reencode":
+                continue  # validated by legacy_reencode_problems()
             found += provenance_record_problems(key, record, rel, profile["id"], profile_sha)
 
     for key, record in records.items():
@@ -209,6 +220,178 @@ def problems(base_ref: str | None = None) -> list[str]:
             found.append(f"provenance {key}: recorded profile hash does not match {profile['id']}")
         if record.get("final_sha256") != hashlib.sha256(path.read_bytes()).hexdigest():
             found.append(f"provenance {key}: asset bytes changed since provenance was recorded")
+    if base_ref:
+        base_prov = git_show(base_ref, "scripts/capture/provenance.yaml")
+        base_records = ((yaml.safe_load(base_prov) or {}).get("assets") or {}) if base_prov else {}
+        found += legacy_reencode_problems(records, base_records, base_ref, raw_size, final_size)
+    found += image_metadata_problems(manifest, base_ref)
+    return found
+
+
+SOURCE_PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
+UNREGISTERED_OK = {"favicon.svg", "logo.svg"}
+IMAGE_SUFFIXES = {".png", ".webp", ".jpg", ".jpeg", ".gif"}
+
+
+def legacy_reencode_problems(records: dict, base_records: dict, base_ref: str,
+                             raw_size: tuple[int, int], final_size: tuple[int, int]) -> list[str]:
+    """A legacy_reencode record never claims a capture profile.
+
+    A new record must name a profile-size source PNG whose bytes exist at the
+    base revision and are deleted in the same change; an existing record is
+    immutable, so later changes must go through a real capture.
+    """
+    found: list[str] = []
+    sources: dict[str, str] = {}
+    for key, record in records.items():
+        if record.get("kind") != "legacy_reencode":
+            continue
+        if "produced" in record:
+            found.append(f"provenance {key}: legacy_reencode must not carry a produced profile")
+        if key in base_records:
+            if base_records[key] != record:
+                found.append(f"provenance {key}: legacy_reencode records are immutable; recapture instead")
+            continue
+        src = (record.get("derived_from") or {}).get("path", "")
+        base_bytes = git_show(base_ref, src) if src else None
+        if base_bytes is None:
+            found.append(f"provenance {key}: source {src} does not exist at {base_ref}")
+            continue
+        if hashlib.sha256(base_bytes).hexdigest() != record["derived_from"].get("sha256"):
+            found.append(f"provenance {key}: source sha256 does not match {src} at {base_ref}")
+        if not base_bytes.startswith(SOURCE_PNG_SIGNATURE) or png_size(base_bytes) != raw_size:
+            found.append(f"provenance {key}: source must be a {raw_size[0]}x{raw_size[1]} PNG")
+        if (ROOT / src).exists():
+            found.append(f"provenance {key}: source {src} must be deleted in the same change")
+        if src in sources:
+            found.append(f"provenance {key}: source {src} already produced {sources[src]}")
+        sources[src] = key
+        out = ASSETS / record.get("file", "")
+        if out.is_file() and webp_size(out.read_bytes()) != final_size:
+            found.append(f"provenance {key}: output must be {final_size[0]}x{final_size[1]}")
+    return found
+
+
+def image_references(text: str) -> list[tuple[int, str, str, str]]:
+    """Image references outside code fences: (line, kind, target, alt).
+
+    >>> image_references('a\\n[[[ shot("x") ]]]\\n![Alt](../assets/a.png)\\n```\\n![n](b.png)\\n```')
+    [(2, 'shot', 'x', ''), (3, 'path', '../assets/a.png', 'Alt')]
+    """
+    refs, fence = [], False
+    for number, line in enumerate(text.split("\n"), 1):
+        if line.lstrip().startswith(("```", "~~~")):
+            fence = not fence
+            continue
+        if fence:
+            continue
+        for m in re.finditer(r'shot\(\s*["\']([^"\']+)["\']\s*\)', line):
+            refs.append((number, "shot", m.group(1), ""))
+        for m in re.finditer(r"!\[((?:[^\]\\]|\\.)*)\]\(([^)\s]+)\)", line):
+            if not m.group(2).startswith(("http://", "https://")):
+                refs.append((number, "path", m.group(2), m.group(1)))
+    return refs
+
+
+def caption_missing(lines: list[str], index: int) -> bool:
+    """True unless Purpose / Look for / Expected result follow, in order, before
+    the next image or heading.
+
+    >>> caption_missing(["![a](x)", "", "Purpose: p", "Look for: l", "Expected result: e"], 0)
+    False
+    >>> caption_missing(["![a](x)", "Look for: l", "Purpose: p", "Expected result: e"], 0)
+    True
+    >>> caption_missing(["![a](x)", "## Next", "Purpose: p"], 0)
+    True
+    """
+    wanted = ["Purpose:", "Look for:", "Expected result:"]
+    for line in lines[index + 1:]:
+        text = line.strip()
+        if text.startswith("#") or "shot(" in text or text.startswith("!["):
+            break
+        if wanted and text.startswith(wanted[0]):
+            wanted.pop(0)
+            if not wanted:
+                return False
+    return True
+
+
+def changed_lines(base_ref: str, rel: str) -> set[int] | None:
+    """Line numbers added or modified in ``rel`` since ``base_ref`` (None = new file)."""
+    if git_show(base_ref, rel) is None:
+        return None
+    diff = subprocess.run(["git", "diff", "--unified=0", base_ref, "--", rel],
+                          cwd=ROOT, capture_output=True, text=True, check=False).stdout
+    lines: set[int] = set()
+    for m in re.finditer(r"^@@ -\S+ \+(\d+)(?:,(\d+))? @@", diff, re.M):
+        start, count = int(m.group(1)), int(m.group(2) or 1)
+        lines.update(range(start, start + count))
+    return lines
+
+
+def image_metadata_problems(manifest: dict, base_ref: str | None) -> list[str]:
+    found: list[str] = []
+    shots = {e["id"]: e for e in manifest.get("screenshots") or []}
+    legacy_raw = (CAPTURE / "legacy-assets.yaml").read_text(encoding="utf-8")
+    legacy = {e["file"]: e for e in (yaml.safe_load(legacy_raw) or {}).get("assets") or []}
+    used_shots: set[str] = set()
+    used_legacy: set[str] = set()
+    advisory = 0
+    for page in sorted((ROOT / "docs").rglob("*.md")):
+        rel_page = str(page.relative_to(ROOT))
+        text = page.read_text(encoding="utf-8")
+        lines = text.split("\n")
+        fresh = changed_lines(base_ref, rel_page) if base_ref else set()
+        for number, kind, target, alt in image_references(text):
+            where = f"{rel_page}:{number}"
+            if kind == "shot":
+                if target not in shots:
+                    found.append(f"{where}: shot(\"{target}\") is not in manifest.yaml")
+                used_shots.add(target)
+            else:
+                resolved = (page.parent / target).resolve()
+                try:
+                    asset = str(resolved.relative_to(ASSETS.resolve()))
+                except ValueError:
+                    found.append(f"{where}: image {target} is outside docs/assets")
+                    continue
+                entry = legacy.get(asset)
+                if entry is None:
+                    found.append(f"{where}: direct image path {asset}; use shot(\"<id>\") from manifest.yaml")
+                    continue
+                used_legacy.add(asset)
+                if alt.replace("\\", "") != entry["alt"]:
+                    found.append(f"{where}: alt for {asset} must be the canonical legacy-assets.yaml alt")
+            if caption_missing(lines, number - 1):
+                if base_ref and (fresh is None or number in fresh):
+                    found.append(f"{where}: image needs Purpose / Look for / Expected result lines")
+                else:
+                    advisory += 1
+    for shot_id in sorted(set(shots) - used_shots):
+        found.append(f"manifest.yaml: {shot_id} is not referenced from docs; delete it with its file")
+    for asset in sorted(set(legacy) - used_legacy):
+        found.append(f"legacy-assets.yaml: {asset} is not referenced; delete it with its file")
+    registered = {e["file"] for e in shots.values()} | set(legacy)
+    for path in sorted(ASSETS.rglob("*")):
+        if path.suffix.lower() in IMAGE_SUFFIXES | {".svg"} and path.name not in UNREGISTERED_OK:
+            if str(path.relative_to(ASSETS)) not in registered:
+                found.append(f"{path.relative_to(ASSETS)}: image file is not in manifest.yaml or legacy-assets.yaml")
+    for asset, entry in legacy.items():
+        path = ASSETS / asset
+        if not path.is_file():
+            found.append(f"legacy-assets.yaml: {asset} does not exist")
+            continue
+        data = path.read_bytes()
+        if hashlib.sha256(data).hexdigest() != entry.get("sha256") or list(png_size(data)) != [entry.get("width"), entry.get("height")]:
+            found.append(f"legacy-assets.yaml: {asset} bytes or size changed; recapture into manifest.yaml instead")
+    if base_ref:
+        base_raw = git_show(base_ref, "scripts/capture/legacy-assets.yaml")
+        if base_raw is not None:
+            base_files = {e["file"] for e in (yaml.safe_load(base_raw) or {}).get("assets") or []}
+            for asset in sorted(set(legacy) - base_files):
+                found.append(f"legacy-assets.yaml: {asset} is new; the registry may only shrink")
+    if advisory:
+        print(f"Advisory: {advisory} existing image reference(s) without Purpose / Look for / Expected result.")
     return found
 
 

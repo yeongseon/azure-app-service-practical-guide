@@ -263,7 +263,13 @@ The `HTTP_PLATFORM_PORT` fallback shown in [Port and startup binding contract](#
 
 #### Portal view: Environment variables blade (where `ASPNETCORE_ENVIRONMENT` is managed)
 
-![Azure Portal Environment variables blade for app-test-20251107 Web App with the App settings tab selected (Connection strings tab adjacent). The toolbar shows a search box plus the actions plus Add, Refresh, Show values, Advanced edit, and Pull reference values. The settings table has columns Name, Value, Deployment slot setting, Source, and Delete and lists five App Service-sourced rows: APPLICATIONINSIGHTS_CONNECTION_STRING, APPLICATIONINSIGHTSAGENT_EXTENSION_ENABLED, ApplicationInsightsAgent_EXTENSION_VERSION, SCM_DO_BUILD_DURING_DEPLOYMENT, and WEBSITE_HTTPLOGGING_RETENTION_DAYS, each with a Show value link and Source App Service. The left navigation expands Settings with Environment variables highlighted, alongside Configuration, Instances, Authentication, Identity, Backups, Custom domains, Certificates, Networking, and WebJobs; Apply and Discard buttons are disabled at the bottom.](../../assets/operations/deployment/zip-deploy/01-app-settings-run-from-package.png)
+[[[ shot("operations--deployment--04-app-settings") ]]]
+
+Purpose: Show where app settings are reviewed in the Portal.
+
+Look for: The `Name`, `Value`, `Deployment slot setting`, and `Source` columns, and `Show values`.
+
+Expected result: Settings added with `az webapp config appsettings set` appear as rows here, with values hidden until you select `Show value`.
 
 The `Environment variables` blade with the `App settings` tab selected is the Portal surface where App Service app settings are managed. In this screenshot, the visible table columns are `Name`, `Value`, `Deployment slot setting`, `Source`, and `Delete`, and the toolbar exposes `Add`, `Refresh`, `Show values`, `Advanced edit`, and `Pull reference values`. Use the highlighted `Environment variables` entry in the left navigation to reach this blade when reviewing runtime configuration for the ASP.NET Core app.
 

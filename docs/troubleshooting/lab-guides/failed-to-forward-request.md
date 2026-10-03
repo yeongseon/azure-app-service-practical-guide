@@ -197,7 +197,13 @@ This baseline directly encodes the fault condition.
 
 #### Portal view: Diagnose and solve (Web App Down baseline reading)
 
-![Azure portal Diagnose and solve problems > Availability and Performance > Web App Down detector for app-test-20251107 with breadcrumb "Diagnose and solve problems > Availability and Performance > Web App Down". Two KPI tiles dominate the top: App Availability 100% (blue tile) and Platform Availability 100% (green tile). Organic SLA reads 100%. A green banner below states "No downtimes were identified for this Web App in the last 24 hours". Detector navigation rail on the left lists Container Issues, Linux CPU Drill Down, Linux Memory Drill Down, Web App Restarted, Web App Slow, SNAT Port Exhaustion, HTTP Server Errors.](../../assets/troubleshooting/diagnose-and-solve/02-detector-web-app-down.png)
+![Web App Down detector showing 100 percent availability over the last 24 hours and a message that no downtime was identified](../../assets/troubleshooting/diagnose-and-solve/02-detector-web-app-down.png)
+
+Purpose: Show a healthy baseline of the Web App Down detector.
+
+Look for: The availability chart, `Organic SLA`, and the downtime message below it.
+
+Expected result: A healthy app shows flat 100 percent availability and no downtime; during an outage the chart dips and a downtime window can be selected.
 
 The `Web App Down` detector is the deceptive baseline reading that traps inexperienced responders on this failure mode. Both `App Availability` and `Platform Availability` tiles read `100%` and the green banner declares `No downtimes were identified for this Web App in the last 24 hours` - because the container is technically running and the platform is healthy, the detector cannot mark availability as degraded even when every request returns `502`/`503` from the front-end proxy. The actual fault (`failed to forward request` between the proxy and `127.0.0.1:8000`) surfaces one or two detectors deeper in the left rail: `Container Issues`, `Web App Restarted`, and `HTTP Server Errors` are the right next clicks. Always pair this detector reading with the KQL queries in section 3.9 - `AppServicePlatformLogs` and `AppServiceHTTPLogs` show the proxy-side error truth this top-level detector understates.
 
@@ -434,11 +440,7 @@ done
 
 ### 3.9 KQL queries
 
-#### Portal view: Log stream (live bind-address tail)
-
-![Azure portal Log stream blade for app-test-20251107 with toolbar Log Level filter, Stop, Copy, Clear; a Logs section showing Runtime and Platform radio buttons (Runtime selected); an Instances dropdown showing a single instance hash b58cc693426fe8c6d1b45abb7e0487ceeee9eeb41200672d7683b5ebc05e075f next to a refresh icon; and a Lookback period set to Last 30 minutes. The streaming pane shows red INFO-level log entries with 2026-06-07 timestamps, x-ms-client-request-id 00000000-0000-0000-0000-000000000000 (PII masked), HTTP method POST, request headers (Content-Type application/json), and OpenTelemetry exporter transmissions to https://koreacentral-0.in.applicationinsights.azure.com/v2.1/track with Response status 200 and Items received 3, Items accepted 3.](../../assets/troubleshooting/log-stream/01-log-stream.png)
-
-The `Log stream` blade is the quickest place to confirm whether your app bound to a host the platform proxy can reach. This capture shows the `Runtime` radio selected and the `Instances` dropdown pinned to a single worker hash (`b58cc693...`) - the correct posture for catching the application's listen-port banner from one Gunicorn process without interleaving. Toggle to the `Platform` radio when you want the front-end proxy's startup probe and warmup messages instead; the `Lookback period: Last 30 minutes` setting comfortably spans the application's bind-and-listen sequence. Once the bind-address evidence is visible here in real time, the KQL queries below let you quantify the resulting HTTP `502` / `503` rates from `AppServiceHTTPLogs` for after-the-fact reporting.
+Log stream is the quickest way to confirm whether the app bound to a host the platform proxy can reach. Keep the `Runtime` radio selected and pin `Instances` to a single worker so the listen-port banner isn't interleaved, then toggle to `Platform` for the front-end proxy's startup probe and warmup messages. Once the bind-address evidence is visible, use the queries below to quantify the resulting `502` and `503` rates from `AppServiceHTTPLogs`.
 
 #### HTTP behavior
 

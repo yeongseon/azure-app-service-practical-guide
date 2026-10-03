@@ -195,7 +195,13 @@ Treat this section as a living operational standard:
 
 ### Verify best-practices surfaces in Azure Portal
 
-![app-test-20251107 | General settings | Web App | General settings | Stack settings | Health check | Path mappings | Error pages | Refresh | Platform settings | SCM Basic Auth Publishing Credentials | FTP Basic Auth Publishing Credentials | WebJobs runtime | FTP state | FTPS only | Inbound IP mode | IPv4 | HTTP version | 1.1 | HTTP 2.0 Proxy | Off | SSH | Always on | Session affinity | Session affinity proxy | HTTPS only | Minimum Inbound TLS Version | 1.2 | SCM Minimum Inbound TLS Version | 1.2 | Minimum Inbound TLS Cipher Suite | TLS_RSA_WITH_AES_128_CBC_SHA (Default) | End-to-end TLS encryption | Apply | Discard](../assets/best-practices/production-baseline/01-configuration-general.png)
+[[[ shot("best-practices--production-baseline--01-configuration-general") ]]]
+
+Purpose: Show where the platform settings discussed in this section are reviewed and changed.
+
+Look for: `FTP state`, `HTTP version`, `Always on`, `HTTPS only`, and `Minimum Inbound TLS Version`.
+
+Expected result: This capture shows `FTPS only`, `Always on` and `HTTPS only` cleared, and minimum TLS `1.2`; compare each value with the setting this page recommends.
 
 **[Observed]** `app-test-20251107 | General settings` `Web App` `General settings` `Stack settings` `Health check` `Path mappings` `Error pages` `Refresh` `Platform settings` `SCM Basic Auth Publishing Credentials` `FTP Basic Auth Publishing Credentials` `WebJobs runtime` `FTP state` `FTPS only` `Inbound IP mode` `IPv4` `HTTP version` `1.1` `HTTP 2.0 Proxy` `Off` `SSH` `Always on` `Session affinity` `Session affinity proxy` `HTTPS only` `Minimum Inbound TLS Version` `1.2` `SCM Minimum Inbound TLS Version` `1.2` `Minimum Inbound TLS Cipher Suite` `TLS_RSA_WITH_AES_128_CBC_SHA (Default)` `Change` `End-to-end TLS encryption` `Apply` `Discard`.
 

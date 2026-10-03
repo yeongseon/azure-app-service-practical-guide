@@ -72,14 +72,7 @@ az monitor metrics list --resource "$APP_ID" --metric "TcpConnections" --interva
 | `--interval PT1M` | Samples the metrics at this time granularity. |
 | `--aggregation Average Maximum` | Returns these aggregation(s) for each metric time bucket. |
 
-#### Portal view: Metrics blade (TCP Connections starting point)
-
-![Azure portal Metrics blade for app-test-20251107 with Scope set to app-test-20251107, Metric Namespace App Service standard metr... (truncated), and empty Metric and Aggregation dropdowns with placeholder Select metric and Avg. The chart canvas is empty, and three Sample data cards below describe Filter and Split, Plot multiple metrics, and Build custom dashboards with Learn more links.](../../assets/troubleshooting/metrics/01-metrics-empty.png)
-
-From this blade, select `TCP Connections` from the metric dropdown and add both `Avg` and `Max` aggregations. The default `Last 24 hours` window is usually too wide for SNAT triage - narrow to the incident window. **Apply splitting** by `Instance` so a single noisy worker doesn't get averaged away; SNAT exhaustion is per-instance, not per-plan. Pair this with the SNAT Port Exhaustion detector from Step 2 - both signals must align for the SNAT pressure hypothesis to hold.
-
-- Good signal: stable connection profile.
-- Bad signal: sharp step-ups aligned to timeouts/failures.
+Select `TCP Connections` and add both `Avg` and `Max` aggregations, then narrow the time range to the incident window; the default lookback is usually too wide for SNAT triage. Use `Apply splitting` by `Instance` so a single noisy worker isn't averaged away, since SNAT exhaustion is per-instance rather than per-plan.
 
 ## Step 4: Check VNet integration status (if used)
 Misconfigured or unhealthy integration causes asymmetric dependency failures.
@@ -98,7 +91,13 @@ az webapp vnet-integration list --resource-group "$RG" --name "$APP_NAME"
 
 #### Portal view: Networking hub (inbound + outbound at a glance)
 
-![Azure portal Networking blade for app-test-20251107 Web App, with toolbar Refresh / Troubleshoot / Send us your feedback. Left column Inbound traffic configuration shows Public network access "Enabled with no access restrictions (Using default behavior)", App assigned address "Not configured", Private endpoints "0 private endpoints", Inbound IPv4 addresses <ip-redacted>, and Inbound IPv6 addresses <ipv6-redacted>. Right column Outbound traffic configuration shows Virtual network integration "Not configured", Hybrid connections "Not configured", Outbound DNS "Default (Azure-provided)", and long list of Outbound IPv4 and IPv6 addresses. Bottom Integration subnet configuration section shows NAT gateway N/A, Network security group N/A, User defined route N/A.](../../assets/troubleshooting/networking/01-networking-hub.png)
+[[[ shot("operations--networking--01-networking-hub") ]]]
+
+Purpose: Show the app's inbound and outbound network configuration on one page.
+
+Look for: `Public network access` and `Private endpoints` under inbound traffic, and `Virtual network integration`, `Outbound DNS`, and the outbound address lists under outbound traffic.
+
+Expected result: This capture shows a public app without VNet integration, so outbound traffic uses the listed platform outbound addresses and the integration subnet settings show `N/A`.
 
 The Networking hub is the single pane that decides whether your outbound failure is a routing problem or a dependency problem. The **Outbound traffic configuration** column on the right is the first thing to check: `Virtual network integration: Not configured` plus `Outbound DNS: Default (Azure-provided)` plus the long list of `Outbound IPv4 addresses` means traffic egresses directly from the App Service shared outbound pool, NOT through your VNet - so private endpoints, NSGs, and custom DNS in your VNet have zero effect on it. If this app was supposed to reach a database via VNet integration, this screen would have proven the misconfiguration in 10 seconds. Note the **Integration subnet configuration** card showing `NAT gateway: N/A` - that line only populates when VNet integration is active.
 

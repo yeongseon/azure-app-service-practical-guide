@@ -428,15 +428,17 @@ bash "labs/snat-exhaustion/trigger.sh" "$APP_URL" outbound-fixed
 
 ### 3.8 Collect platform diagnostics
 
-#### Portal view: Diagnose and solve (network and SNAT detector hub)
-
-![Azure portal Diagnose and solve problems blade for app-test-20251107 with a Search box, Common Solutions tab selected, and a Risk alerts panel showing Availability 2 Critical with View more details link. The Troubleshooting categories grid shows seven cards: Availability and Performance (links Application Logs, App Down Workflow, Web App Down), Configuration and Management (links Investigate EasyAuth errors, IP Address Configuration, All Scaling Operations), Risk Assessments (links Availability risks, Configuration risks), Deployment (Troubleshoot link), Networking (Troubleshoot link), Diagnostic Tools (links Auto-Heal, Network Troubleshooter, Advanced Application Restart), and Load Test your App (Create Load Test link). A Popular troubleshooting tools list at the bottom shows Application Logs, App Down Workflow, Web App Down, Web App Slow, and Process Full List.](../../assets/troubleshooting/diagnose-and-solve/01-overview.png)
-
-The `Diagnose and solve problems` hub is the Portal first-stop for SNAT investigations - the `Networking` troubleshoot card and the `Network Troubleshooter` link under `Diagnostic Tools` both pivot directly to detectors that surface SNAT port pressure and outbound IP saturation. The `Availability and Performance` card's `Web App Slow` detector also frequently lights up first under SNAT exhaustion because the worker queue fills with TCP-blocked requests. Click into `Networking` here to land on the same blade shown below, then verify the outbound IP list against the per-instance SNAT port budget referenced in section 1.3. After this top-down triage, the queries in section 3.9 quantify the `499`/`503` error rate the detector tiles only summarize.
-
 #### Portal view: Networking blade (outbound IP context)
 
-![Azure portal Networking blade for app-test-20251107 (Web App) with toolbar Refresh, Troubleshoot, Send us your feedback and a "Check your network configuration..." description with a Learn more link. Two-column layout: Inbound traffic configuration shows Public network access "Enabled with no access restrictions (Using default behavior)", App assigned address "Not configured", Private endpoints "0 private endpoints", Inbound IPv4 addresses <ip-redacted>, and Inbound IPv6 addresses <ipv6-redacted>. Outbound traffic configuration shows Virtual network integration "Not configured", Hybrid connections "Not configured", Outbound DNS "Default (Azure-provided)", and a long Outbound IPv4 addresses list (<ip-redacted>, <ip-redacted>, <ip-redacted>, ... ~30 platform-pool addresses) plus an Outbound IPv6 addresses list. Integration subnet configuration shows NAT gateway, Network security group, and User defined route all N/A. Left nav highlights Networking (under Favorites).](../../assets/troubleshooting/networking/01-networking-hub.png)
+[[[ shot("operations--networking--01-networking-hub") ]]]
+
+`Diagnose and solve problems` is the Portal first stop for SNAT investigations: the `Networking` card and the `Network Troubleshooter` link under `Diagnostic Tools` both pivot to detectors that surface SNAT port pressure and outbound IP saturation. The `Web App Slow` detector under `Availability and Performance` often lights up first as well, because the worker queue fills with TCP-blocked requests.
+
+Purpose: Show the app's inbound and outbound network configuration on one page.
+
+Look for: `Public network access` and `Private endpoints` under inbound traffic, and `Virtual network integration`, `Outbound DNS`, and the outbound address lists under outbound traffic.
+
+Expected result: This capture shows a public app without VNet integration, so outbound traffic uses the listed platform outbound addresses and the integration subnet settings show `N/A`.
 
 The `Networking` blade is the Portal counterpart to the SNAT KQL queries below. The `Outbound traffic configuration` column confirms `Virtual network integration` is `Not configured` and shows the ~30 shared platform-pool `Outbound IPv4 addresses` (`<ip-redacted>`, `<ip-redacted>`, ...) that this app shares with other tenants. `NAT gateway`, `Network security group`, and `User defined route` all show `N/A` under `Integration subnet configuration`, so outbound traffic uses the default platform SNAT allocation rather than a dedicated pool. This establishes the constrained default egress capacity the hypothesis depends on; it does not by itself show that the ports were exhausted. After confirming this state, run the queries below to quantify the resulting `499`/`503` errors.
 

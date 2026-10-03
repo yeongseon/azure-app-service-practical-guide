@@ -242,7 +242,13 @@ Cold starts occur when an app scales out or starts after being idle.
 
 #### Portal view: Environment variables blade (runtime app settings managed here)
 
-![Azure Portal Environment variables blade for app-test-20251107 Web App with the App settings tab selected (Connection strings tab adjacent). The toolbar shows a search box plus the actions plus Add, Refresh, Show values, Advanced edit, and Pull reference values. The settings table has columns Name, Value, Deployment slot setting, Source, and Delete and lists five App Service-sourced rows: APPLICATIONINSIGHTS_CONNECTION_STRING, APPLICATIONINSIGHTSAGENT_EXTENSION_ENABLED, ApplicationInsightsAgent_EXTENSION_VERSION, SCM_DO_BUILD_DURING_DEPLOYMENT, and WEBSITE_HTTPLOGGING_RETENTION_DAYS, each with a Show value link and Source App Service. The left navigation expands Settings with Environment variables highlighted, alongside Configuration, Instances, Authentication, Identity, Backups, Custom domains, Certificates, Networking, and WebJobs; Apply and Discard buttons are disabled at the bottom.](../../assets/operations/deployment/zip-deploy/01-app-settings-run-from-package.png)
+[[[ shot("operations--deployment--04-app-settings") ]]]
+
+Purpose: Show where app settings are reviewed in the Portal.
+
+Look for: The `Name`, `Value`, `Deployment slot setting`, and `Source` columns, and `Show values`.
+
+Expected result: Settings added with `az webapp config appsettings set` appear as rows here, with values hidden until you select `Show value`.
 
 The `Environment variables` blade with the `App settings` tab selected is the Portal view of the runtime settings table for this Node.js app. In this screenshot, the visible row `SCM_DO_BUILD_DURING_DEPLOYMENT` appears alongside other App Service-managed entries in the same `Name`, `Value`, `Deployment slot setting`, and `Source` layout. The `Show value`, `Advanced edit`, and `Pull reference values` actions in the toolbar make this the same surface where those settings are inspected in the Portal. The highlighted `Environment variables` entry in the left navigation confirms the exact blade readers should open when checking runtime configuration.
 

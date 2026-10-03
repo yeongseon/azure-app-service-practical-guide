@@ -476,11 +476,7 @@ curl --silent "$APP_URL/diag/stats" > /tmp/intermittent-5xx-diag-stats-after.jso
 curl --silent "$APP_URL/diag/env" > /tmp/intermittent-5xx-diag-env-after.json
 ```
 
-#### Portal view: Application Insights overview (post-trigger triage anchor)
-
-![Application Insights Overview blade for ai-test-20251107 showing four pinned tiles: Failed requests (pink area chart, value 10), Server response time (blue dashed line at 1ms, value 1.07ms), Server requests (blue line with spikes, value 15), and Availability (flat green line at 0%, value --). The Essentials panel above lists Resource group rg-test-20251107, Location Korea Central, Subscription Visual Studio Enterprise Subscription, and a redacted Instrumentation key 00000000-0000-0000-0000-000000000000. A Show data for last tab strip has 1 hour selected.](../../assets/troubleshooting/app-insights/01-overview.png)
-
-The `Application Insights` overview is the highest-signal Portal view to open immediately after the trigger script in section 3.7 finishes. The `Failed requests` tile (`10` here) is the primary failure-burst indicator, `Server response time` separates fast-path latency from slow-endpoint queueing, and `Server requests` lets you visually correlate the failure burst with the request volume burst from `/slow`. The `Show data for last 1 hour` tab keeps the window tight enough that the starvation pattern is not smoothed away by older traffic - widen it to 24 hours only after the immediate-window signal is validated. From here, click the `Failed requests` tile to drill into the App Insights `requests` failure telemetry for the same failure window the platform `AppServiceHTTPLogs` queries in section 3.10 aggregate from a different angle.
+The Application Insights overview is the highest-signal Portal view to open right after the trigger script finishes. `Failed requests` is the primary burst indicator, `Server response time` separates fast-path latency from slow-endpoint queueing, and `Server requests` lets you correlate the failure burst with the request-volume burst from `/slow`. Keep the window at one hour so the starvation pattern isn't smoothed away by older traffic, and click the `Failed requests` tile to drill into the failure telemetry.
 
 ### 3.9 Query Log Analytics
 
@@ -594,11 +590,7 @@ az monitor log-analytics query \
 
 ### 3.10 KQL snippets for portal troubleshooting
 
-#### Portal view: Logs blade (Log Analytics query editor)
-
-![Azure portal Logs blade for ai-test-20251107 (Application Insights) with a New Query 1 tab open, top-right controls Observability agent (New), Save, Share, Queries hub, and an inline toolbar Run + Time range: Last 24 hours + Show: 1000 results + KQL mode dropdown. The query editor shows placeholder text "Type your query here or click one of the queries to start" on line 1. Below the editor a Query history pane reads "No queries history — You haven't run any queries yet. To start, go to Queries on the side pane or type a query in the query editor." Left nav under Monitoring lists Alerts, Metrics, Diagnostic settings, Logs (selected), Workbooks, Dashboards with Grafana; the Investigate group above is collapsed.](../../assets/troubleshooting/log-analytics/01-logs.png)
-
-The `Logs` blade is where you paste the KQL snippets below - this capture shows the Application Insights `Logs` experience (`ai-test-20251107`), but the workspace-based Log Analytics blade has the same query editor and toolbar. Use the `New Query 1` tab, keep `Time range: Last 24 hours` to cover the intermittent failure window (the lab's 5xx pattern usually spans hours, not minutes), and leave `Show: 1000 results` so summarized status distributions are not truncated. The `Queries hub` button in the top-right gives you a saved-query library; once you have run one of the snippets below, save it there so the next on-call engineer can re-run the same triage in one click. The empty `Query history` pane confirms this is a fresh session - paste the first KQL block to populate it.
+Keep the blade-level `Time range` wide enough to cover the intermittent failure window, since this lab's 5xx pattern usually spans hours rather than minutes, and leave `Show: 1000 results` so summarized status distributions aren't truncated. Save a snippet to the `Queries hub` once it proves useful so the next on-call engineer can re-run the same triage in one click.
 
 ```kusto
 AppServiceHTTPLogs

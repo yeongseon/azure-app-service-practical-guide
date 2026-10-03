@@ -342,7 +342,13 @@ az webapp log tail --resource-group "$RG" --name "$APP_NAME"
 
 #### Portal view: Access Restrictions blade (public reachability before separate inbound hardening)
 
-![Access Restrictions blade reached from the Networking page with Save and Refresh actions. The App access section explains that public access applies to both the main site and the advanced (SCM) tool site, and that "Deny public network access will block all incoming traffic except that comes from private endpoints"; the Public network access control offers three radio buttons — Enabled from all networks (with a note that selecting it will clear all current access restrictions), Enabled from select virtual networks and IP addresses, and Disabled — and shows an info banner reading "Enabled (using default behavior)". The Site access and rules section has Main site (active) and Advanced tool site tabs and describes rules being evaluated in priority order with the "Unmatched rule action" controlling un-rule-matched traffic. The Unmatched rule action selector has Allow (selected) and Deny radio buttons. Add and Delete buttons appear above a Filter rules search box and an Action : All filter chip with a removable X, followed by a rules table with columns Priority, Name, Source, Action, and HTTP headers. The table contains a single rule with Priority 2147483647, Name "Allow all", Source "Any", Action "Allow" (green checkmark), and HTTP headers "Not configured".](../../../assets/best-practices/networking/01-access-restrictions.png)
+[[[ shot("best-practices--networking--01-access-restrictions") ]]]
+
+Purpose: Show the inbound access state before any access restriction is added.
+
+Look for: `Public network access` shows `Enabled (using default behavior)`, `Unmatched rule action` is `Allow`, and the only rule is `Allow all` with priority `2147483647`.
+
+Expected result: With no custom rules, the app is reachable from any source until you add rules or disable public network access.
 
 The `Access Restrictions` blade is the Portal surface that shows whether the ASP.NET Core app is still publicly reachable while you work through the recipe's VNet integration, managed identity, and backend private endpoint steps. In the visible default state, `Public network access` is open and the rules table contains only `Allow all`, so this screenshot works as a before-state reminder that those outbound/private-connectivity steps do not automatically change inbound access. Use this blade only as a public-reachability check around the recipe, not as evidence that the recipe itself has already added access-restriction rules.
 

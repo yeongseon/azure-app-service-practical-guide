@@ -191,7 +191,13 @@ Deploy reproduction environments to your Azure subscription and observe real sym
 
 #### Portal view: Diagnose and solve problems landing page
 
-![Diagnose and solve problems blade for app-test-20251107 showing the Common Solutions tab with a Risk alerts panel (Availability 2 Critical, View more details) and a Troubleshooting categories grid with seven cards covering Availability and Performance, Configuration and Management, Risk Assessments, Deployment, Networking, Diagnostic Tools, and Load Test your App. A Popular troubleshooting tools list at the bottom shows Application Logs, App Down Workflow, Web App Down, Web App Slow, and Process Full List.](../assets/troubleshooting/diagnose-and-solve/01-overview.png)
+![Diagnose and solve problems landing page with a Risk alerts card and troubleshooting category cards](../assets/troubleshooting/diagnose-and-solve/01-overview.png)
+
+Purpose: Show the Portal entry point to the App Service detectors.
+
+Look for: The `Troubleshooting categories` cards, such as `Availability and Performance`, and the search box.
+
+Expected result: Choose the category that matches the symptom to open its detectors.
 
 The Portal's built-in `Diagnose and solve problems` blade is the operational entry point that complements the architecture and methodology pages below. Treat it as the first stop during an active incident — `Risk alerts` surfaces pre-detected critical issues, the seven `Troubleshooting categories` map directly to the failure classifications in the [Mental Model](mental-model.md), and the `Popular troubleshooting tools` (App Down Workflow, Web App Slow) run guided diagnostic flows that consolidate many manual KQL queries.
 
