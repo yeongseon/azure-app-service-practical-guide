@@ -15,7 +15,7 @@ This page tracks `content_validation` metadata for **in-scope factual-claim docu
 
 | Content Type | Total | Verified | Pending | Unverified | No Metadata |
 |---|---:|---:|---:|---:|---:|
-| Mermaid Diagrams | 386 | 386 | 0 | 0 | 0 |
+| Mermaid Diagrams | 387 | 387 | 0 | 0 | 0 |
 | In-Scope Factual-Claim Documents | 77 | 77 | 0 | 0 | 0 |
 
 !!! success "All In-Scope Documents Verified"
@@ -94,7 +94,7 @@ pie title In-Scope Document Validation Status
 | [Container Didnt Respond To Http Pings](../troubleshooting/playbooks/startup-availability/container-didnt-respond-to-http-pings.md) | ✅ | ✅ Verified | 3/3 | 2026-09-11 |
 | [Cors And Token Errors](../troubleshooting/playbooks/performance/cors-and-token-errors.md) | ✅ | ✅ Verified | 2/2 | 2026-09-11 |
 | [Decision Tree](../troubleshooting/decision-tree.md) | ✅ | ✅ Verified | 2/2 | 2026-09-11 |
-| [Deployment Failures](../troubleshooting/playbooks/deployment-failures.md) | ✅ | ✅ Verified | 4/4 | 2026-09-11 |
+| [Deployment Failures](../troubleshooting/playbooks/deployment-failures.md) | ✅ | ✅ Verified | 5/5 | 2026-10-13 |
 | [Deployment Succeeded Startup Failed](../troubleshooting/playbooks/startup-availability/deployment-succeeded-startup-failed.md) | ✅ | ✅ Verified | 3/3 | 2026-09-11 |
 | [Detector Map](../troubleshooting/methodology/detector-map.md) | ✅ | ✅ Verified | 2/2 | 2026-09-11 |
 | [Dns Resolution Vnet Integrated App Service](../troubleshooting/playbooks/outbound-network/dns-resolution-vnet-integrated-app-service.md) | ✅ | ✅ Verified | 4/4 | 2026-10-02 |
