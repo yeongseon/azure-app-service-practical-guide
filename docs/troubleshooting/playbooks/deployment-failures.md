@@ -9,9 +9,17 @@ content_sources:
         - https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots
         - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
         - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
+    - id: deployment-release-phase-timeline
+      type: flowchart
+      source: self-generated
+      justification: "Synthesized from Microsoft Learn ZIP deploy and Run From Package articles to show the two alternative activation branches (extraction versus package mount) between artifact upload and first healthy request. Learn does not publish one end-to-end sequence."
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/app-service/deploy-zip
+        - https://learn.microsoft.com/en-us/azure/app-service/deploy-run-package
+        - https://learn.microsoft.com/en-us/azure/app-service/deploy-best-practices
 content_validation:
   status: verified
-  last_reviewed: 2026-09-11
+  last_reviewed: 2026-10-13
   reviewer: agent
   core_claims:
     - claim: "Azure App Service deployment has three main components: deployment sources, build pipelines, and deployment mechanisms."
@@ -25,6 +33,9 @@ content_validation:
       verified: true
     - claim: "With a Standard App Service Plan tier or better, deployment slots can be used to validate changes and swap into production without downtime."
       source: "https://learn.microsoft.com/en-us/azure/app-service/deploy-best-practices"
+      verified: true
+    - claim: "With Run From Package the ZIP is mounted as the read-only wwwroot instead of being copied, which eliminates file lock conflicts between deployment and runtime; it is unsupported for Python apps and Java apps on Azure App Service."
+      source: "https://learn.microsoft.com/en-us/azure/app-service/deploy-run-package"
       verified: true
 ---
 
@@ -63,6 +74,28 @@ flowchart TD
     E -->|No| F[Check deployment history and artifact activation]
 ```
 
+### Release phase timeline
+
+A successful CI pipeline proves only that the pipeline finished. Between the artifact and the first healthy business request the release crosses several boundaries, and extraction and package mounting are alternative branches rather than consecutive steps.
+
+<!-- diagram-id: deployment-release-phase-timeline -->
+```mermaid
+%% diagram-id: deployment-release-phase-timeline
+flowchart TD
+    A[CI build or source packaging] --> B[Artifact identity<br/>hash and package layout]
+    B --> C[SCM authorization and upload<br/>a remote package URL is read by the runtime instead]
+    C --> D{Deployment mode}
+    D -->|Ordinary ZIP deploy| E[Extraction into wwwroot<br/>optional build automation]
+    D -->|Run From Package| F[Already-runnable ZIP<br/>mounted as read-only wwwroot]
+    E --> G[Restart and startup]
+    F --> G
+    G --> H[Warm-up]
+    H --> I[Health check]
+    I --> J[Representative business request]
+```
+
+Do not assume an exact ordering inside Kudu beyond what the deployment logs show. For how the mounted package works, see [Run From Package](../../platform/run-from-package.md).
+
 ## 2. Common Misreadings
 
 | Observation | Often Misread As | Actually Means |
@@ -72,6 +105,8 @@ flowchart TD
 | Slot swap failed | Staging code is always broken | Warm-up path, slot settings, or health behavior may be the actual blocker. |
 | Old version is still serving | CDN caching only | The new package may not have been activated, or swap never completed. |
 | Oryx logs mention warnings | Build definitely failed | Many warnings are survivable; isolate the first fatal line and the exit code. |
+| Pipeline is green and deployment record is `complete` | Content is in place and serving requests | A successful deployment cannot prove that startup, warm-up, content layout, or a business request succeeded. |
+| Run From Package is enabled | No deployment file-lock or concurrency problems can occur | Learn states it eliminates file lock conflicts between deployment and runtime. It does not cover upload failures, concurrent deployment races, or locks held outside `wwwroot`. |
 
 ## 3. Competing Hypotheses
 
@@ -314,6 +349,30 @@ Interpretation:
 - Recent `slotSwapStatus` confirms the release path included slot promotion.
 - Correlate this with HTTP and platform logs before repeating the swap.
 
+### 5.3 Evidence by release phase
+
+| Phase | Evidence to collect | Normal signal | Abnormal signal |
+|---|---|---|---|
+| CI build or packaging | External pipeline result, artifact hash, ZIP layout (no extra root directory) | Hash recorded; entry files at the ZIP root | Pipeline red, or ZIP contains a nested top-level directory |
+| SCM authorization and upload | Deployment record, deployment ID, auth errors | Record present with a deployment ID, `complete: true`, and a successful result | Auth failure, upload interruption, or no record at all |
+| Extraction or package mount | Kudu deployment log, `WEBSITE_RUN_FROM_PACKAGE` value, effective content path | Extraction finished, or the package is selected and mounted | `Extract zip failed`, or the app writes to a read-only `wwwroot` |
+| Optional build automation | Kudu or Oryx build output, `SCM_DO_BUILD_DURING_DEPLOYMENT` value | Build exits cleanly for a source tree | Fatal build line, or build skipped for a source-tree artifact |
+| Restart and startup | `AppServiceConsoleLogs`, `AppServicePlatformLogs`, process start time | Process starts, listens on the expected port, and stays up (check process start time and restart count) | `ContainerTimeout`, port mismatch, crash loop |
+| Warm-up and health check | Warm-up path response, health check status | Expected status within the startup budget | Timeout, unhealthy instance, or swap rollback |
+| First business request | `AppServiceHTTPLogs` for a representative route | 2xx for a real route | 404 or 5xx while the deployment record is green |
+
+App Service does not provide a universal file-operation audit stream. When you need to know who wrote or removed a file, rely only on evidence you instrumented yourself, such as application audit events or a pipeline artifact manifest.
+
+#### Differentiating the failure class
+
+| Class | Distinguishing evidence |
+|---|---|
+| Failed upload | No deployment record, or a record that never reaches `complete: true`; auth or network error on the SCM endpoint |
+| Failed build | Fatal Oryx or build lines in the deployment log for a source-tree artifact |
+| Locked files during extraction | Extraction fails on ordinary ZIP deploy with a file-in-use or sharing-violation message, or independent evidence shows the running process held the affected file; a mounted package avoiding the failure supports, but does not by itself prove, a lock |
+| Missing content | Deployment is green and the process starts, but expected files are absent from the effective content path |
+| Healthy runtime | Warm-up passes and a representative business request returns the expected status |
+
 ## 6. Validation and Disproof by Hypothesis
 
 ### H1: Deployment transport or Kudu orchestration failed
@@ -327,6 +386,7 @@ Validation steps:
 1. Confirm the latest deployment shows `complete: true`.
 2. Re-check whether SCM restarted or a second deployment interrupted the first one.
 3. If using external CI/CD, compare pipeline timestamp with App Service deployment timestamp.
+4. To test whether deployments are serialized, use two controlled deployments with unique artifact IDs or hashes. Start deployment A; once A has a deployment ID and is still non-terminal, submit deployment B on purpose. Capture comparable server-side start and end timestamps and the final status of both. Overlapping execution intervals show concurrency; B starting only after A reaches a terminal state shows serialization. A record that never completes is evidence of interruption, not proof of overlap.
 
 ### H2: Artifact, package shape, or build phase failed
 
@@ -339,6 +399,8 @@ Validation steps:
 1. Identify whether `SCM_DO_BUILD_DURING_DEPLOYMENT` matches the artifact type.
 2. Confirm the artifact includes the expected startup files and dependency manifest.
 3. If `WEBSITE_RUN_FROM_PACKAGE` is enabled, verify the package itself contains the runnable app layout. See [Run From Package](../../platform/run-from-package.md) for the documented package requirements and limits.
+4. If extraction failed on ordinary ZIP deploy, check whether the running app holds files in `wwwroot` open. Microsoft Learn notes that deployment and runtime share `wwwroot` on every method except Run From Package, so lock conflicts are possible there.
+5. Treat Run From Package as a mitigation only where the runtime supports it. It is unsupported for Python apps and Java apps on Azure App Service, and an app that writes to `wwwroot` must move that state elsewhere first.
 
 ### H3: Deployment succeeded but startup failed
 
@@ -374,12 +436,25 @@ Validation steps:
 | Partial release / stale routing | Deployment record changed but traffic still serves old content | Verify swap completion, active slot, and package activation path. |
 | App restart during release | Platform log shows stop/start loops immediately after deploy | Remove bad app setting, reduce startup pressure, and redeploy. |
 
+### Build-mode decision matrix
+
+Choose the deployment mode from what the pipeline publishes.
+
+| Pipeline output | Deployment mode | `SCM_DO_BUILD_DURING_DEPLOYMENT` | Guidance |
+|---|---|---|---|
+| Fully built, runnable ZIP | Run From Package | `false` or unset | Preferred package-mount case where the runtime is supported |
+| Fully built, runnable ZIP | Ordinary ZIP deploy | `false` or unset | Extracts prepared files into `wwwroot` |
+| Source tree that needs restore or build | Ordinary ZIP deploy | `true` | Kudu or Oryx performs build automation |
+| Source tree that needs build | Run From Package | Not an appropriate combination | Build before packaging, or use ordinary ZIP deploy with build automation |
+| Python source ZIP | Ordinary ZIP deploy | `true`, as the Python deployment guidance requires | Run From Package is unsupported |
+| Java app package | Java-specific WAR, JAR, or EAR deployment | Follow the Java deployment method | Do not use `WEBSITE_RUN_FROM_PACKAGE` |
+
 ## 8. Immediate Mitigations
 
 1. Freeze repeated deployments until one full evidence set is captured.
 2. If production is unhealthy, roll back by swapping back or redeploying the last known good package.
 3. If only staging is broken, stop promotion and validate startup in the slot URL before retrying.
-4. Correct deployment mode mismatches such as run-from-package vs build-on-deploy.
+4. Correct deployment mode mismatches such as run-from-package vs build-on-deploy, using the build-mode decision matrix in section 7.
 5. If warm-up is the blocker, temporarily use a lighter readiness path that proves the worker can accept traffic.
 6. Re-run the release only after confirming the first failing phase is fixed.
 
@@ -400,9 +475,13 @@ Validation steps:
 - [Slot Swap Failed During Warm-up](startup-availability/slot-swap-failed-during-warmup.md)
 - [Deployment Slots Operations](../../operations/deployment-slots.md)
 - [Run From Package](../../platform/run-from-package.md)
+- [ZIP Deploy and Run From Package (operations)](../../operations/deployment/zip-deploy.md)
+- [Deployment Options Reference](../../platform/deployment-options.md)
 
 ## Sources
 
 - [Deploy files to Azure App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/deploy-zip)
 - [Deploy to deployment slots in Azure App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots)
 - [Enable diagnostics logging for Azure App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs)
+- [Run your app from a ZIP package (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/deploy-run-package)
+- [Deployment best practices (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/deploy-best-practices)
