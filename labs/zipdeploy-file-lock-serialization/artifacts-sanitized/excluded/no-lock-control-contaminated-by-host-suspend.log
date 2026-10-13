@@ -1,0 +1,11 @@
+2026-10-13T16:06:56.584Z plan-sku-at-start=B1
+2026-10-13T16:07:01.750Z run-from-package-removed
+2026-10-13T16:09:31.824Z deploy-start control-baseline build=1
+2026-10-13T16:09:58.199Z deploy-end control-baseline build=1 cli_exit=0
+2026-10-13T16:10:13.656Z lab-token-configured (value not recorded) run=run-20261013T160650Z
+2026-10-13T16:10:17.279Z process-after-token startedAt=2026-10-13T16:10:16.825Z
+2026-10-13T16:10:39.900Z baseline-state {"startedAt": "2026-10-13T16:10:39.605Z", "build": "1", "lockFile": {"writeOpen": "ok", "size": 109}, "lockHolder": null}
+2026-10-13T16:10:39.996Z deploy-start control-no-lock build=2
+2026-10-13T16:11:06.100Z deploy-end control-no-lock build=2 cli_exit=0
+2026-10-13T22:47:48.737Z after-deploy-state {"startedAt": "2026-10-13T20:11:12.106Z", "build": "2", "lockFile": {"writeOpen": "ok", "size": 209}, "lockHolder": null}
+2026-10-13T22:48:41.192Z arm-complete no-lock-control run=run-20261013T160650Z

@@ -339,6 +339,7 @@ Validation steps:
 
 - [Playbooks](index.md)
 - [Deployment Failures](deployment-failures.md)
+- [Lab: Missing wwwroot Content Timeline and Run From Package](../lab-guides/missing-wwwroot-content.md)
 - [Run From Package](../../platform/run-from-package.md)
 - [Kudu Overview](../../platform/kudu-overview.md)
 - [Kudu on Windows](../../platform/kudu-windows.md)

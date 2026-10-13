@@ -1,0 +1,2012 @@
+[
+  {
+    "Level": "Informational",
+    "Message": "Container is starting.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:48:12.9593367Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting container: <container-id>_<app-name>_kudu.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:48:14.0985928Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting watchers and probes.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:48:14.1355302Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting metrics collection.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:48:14.1360965Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: EstablishingSiteNetworks, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:48:48.231018Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: StartingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:48:51.6614012Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image <ip-redacted>:13209/appsvc/node:20-lts_20260710.8.tuxprod for <app-name>., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:48:51.6614668Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Container is starting.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:48:52.0908149Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: MountingVolumes, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Mounting volumes for <app-name>., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:48:52.0909944Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Finished pulling container image and mounting volumes for <app-name>. Allocatinng the rest of the container resources to finish container creation., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:48:52.6093808Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting container: <container-id>_<app-name>.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:48:54.187518Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting watchers and probes.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:48:54.3766799Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting metrics collection.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:48:54.3769432Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container <app-name> successfully created and is running., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:48:54.3770827Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: InitiatingSiteWarmUpProbe, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container <app-name> successfully created and is running., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:48:54.7234955Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:48:54.7235067Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: WarmUpProbeSucceeded, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site startup probe succeeded after 28.0361158 seconds., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:49:22.9816553Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Site started.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:49:23.2790324Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Started, Action: None, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 10/13/2026 14:49:23 (UTC), DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:49:23.2791397Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Stopping, Action: StoppingSite, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 10/13/2026 14:43:14 (UTC), DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:49:43.4351805Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Stopping, Action: StoppingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 10/13/2026 14:43:14 (UTC), DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:49:43.4357424Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Stopping container: <container-id>_<app-name>.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:49:43.4481487Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Container is starting.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:49:48.1613857Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Deleting container: <container-id>_<app-name>. Retry count = 0",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:49:48.9797358Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: EstablishingSiteNetworks, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:49:50.6788866Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting container: <container-id>_<app-name>_kudu.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:49:52.3410071Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting watchers and probes.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:49:52.5927297Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting metrics collection.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:49:52.6094713Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: StartingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:49:52.9751678Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image <ip-redacted>:13209/appsvc/node:20-lts_20260710.8.tuxprod for <app-name>., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:49:52.9752435Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Container is starting.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:49:53.4534588Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: MountingVolumes, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Mounting volumes for <app-name>., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:49:53.4535419Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Finished pulling container image and mounting volumes for <app-name>. Allocatinng the rest of the container resources to finish container creation., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:49:54.6044196Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting container: <container-id>_<app-name>.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:49:55.7045822Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting watchers and probes.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:49:55.8921632Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting metrics collection.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:49:55.9167918Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container <app-name> successfully created and is running., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:49:55.9170117Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: InitiatingSiteWarmUpProbe, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container <app-name> successfully created and is running., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:49:56.198873Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:49:56.2270132Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: WarmUpProbeSucceeded, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site startup probe succeeded after 53.0419715 seconds., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:50:49.8889942Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Site started.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:50:50.2881034Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Started, Action: None, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 10/13/2026 14:50:50 (UTC), DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:50:50.288737Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Stopping container: <container-id>_<app-name>_kudu.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:51:01.7996915Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Deleting container: <container-id>_<app-name>_kudu. Retry count = 0",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:51:02.0571348Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Stopping, Action: StoppingSite, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 10/13/2026 14:49:23 (UTC), DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:51:10.4304634Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Stopping, Action: StoppingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 10/13/2026 14:49:23 (UTC), DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:51:10.4306289Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Stopping container: <container-id>_<app-name>.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:51:10.440106Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Deleting container: <container-id>_<app-name>. Retry count = 0",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:51:15.5558468Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: EstablishingSiteNetworks, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:52:43.2643246Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: StartingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:52:45.7064035Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image <ip-redacted>:13209/appsvc/node:20-lts_20260710.8.tuxprod for <app-name>., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:52:45.7065664Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Container is starting.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:52:46.1633901Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: MountingVolumes, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Mounting volumes for <app-name>., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:52:46.1635692Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Finished pulling container image and mounting volumes for <app-name>. Allocatinng the rest of the container resources to finish container creation., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:52:46.7481044Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting container: <container-id>_<app-name>.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:52:47.4852621Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting watchers and probes.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:52:47.682805Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting metrics collection.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:52:47.69334Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container <app-name> successfully created and is running., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:52:47.6943305Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: InitiatingSiteWarmUpProbe, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container <app-name> successfully created and is running., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:52:47.9896528Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:52:47.9899243Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: WarmUpProbeSucceeded, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site startup probe succeeded after 29.025661 seconds., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:53:17.2851568Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Site started.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:53:17.7556615Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Started, Action: None, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 10/13/2026 14:53:17 (UTC), DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:53:17.755743Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Stopping, Action: StoppingSite, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 10/13/2026 14:50:50 (UTC), DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:53:37.8644589Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Stopping, Action: StoppingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 10/13/2026 14:50:50 (UTC), DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:53:37.8647183Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Stopping container: <container-id>_<app-name>.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:53:37.8960642Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Deleting container: <container-id>_<app-name>. Retry count = 0",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:53:43.2196247Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: EstablishingSiteNetworks, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:55:10.3389836Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: StartingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:55:13.1454012Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image <ip-redacted>:13209/appsvc/node:20-lts_20260710.8.tuxprod for <app-name>., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:55:13.1455537Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Container is starting.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:55:13.5839305Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Container is starting.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:55:14.2318387Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: MountingVolumes, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Mounting volumes for <app-name>., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:55:14.2319293Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Finished pulling container image and mounting volumes for <app-name>. Allocatinng the rest of the container resources to finish container creation., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:55:15.4890163Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting container: <container-id>_<app-name>_kudu.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:55:16.2268948Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting watchers and probes.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:55:16.3440416Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting metrics collection.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:55:16.3446478Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting container: <container-id>_<app-name>.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:55:17.0095686Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting watchers and probes.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:55:17.1799768Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting metrics collection.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:55:17.1807526Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container <app-name> successfully created and is running., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:55:17.1980646Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: InitiatingSiteWarmUpProbe, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container <app-name> successfully created and is running., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:55:17.4260021Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:55:17.426015Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: WarmUpProbeSucceeded, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site startup probe succeeded after 37.0412735 seconds., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:55:54.7425201Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Site started.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:55:55.218898Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Started, Action: None, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 10/13/2026 14:55:55 (UTC), DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:55:55.2196831Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Stopping container: <container-id>_<app-name>_kudu.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:56:10.3032996Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Deleting container: <container-id>_<app-name>_kudu. Retry count = 0",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:56:10.5070328Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Stopping, Action: StoppingSite, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 10/13/2026 14:53:17 (UTC), DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:56:15.5053285Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Stopping, Action: StoppingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 10/13/2026 14:53:17 (UTC), DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:56:15.5056645Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Stopping container: <container-id>_<app-name>.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:56:15.543759Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Deleting container: <container-id>_<app-name>. Retry count = 0",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:56:20.7549799Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: EstablishingSiteNetworks, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:56:33.4220714Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: StartingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:56:36.7999038Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image <ip-redacted>:13209/appsvc/node:20-lts_20260710.8.tuxprod for <app-name>., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:56:36.8000846Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Container is starting.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:56:37.4189987Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: MountingVolumes, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Mounting volumes for <app-name>., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:56:37.4190585Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Finished pulling container image and mounting volumes for <app-name>. Allocatinng the rest of the container resources to finish container creation., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:56:38.874839Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting container: <container-id>_<app-name>.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:56:41.1219Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting watchers and probes.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:56:41.2289394Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting metrics collection.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:56:41.2294115Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container <app-name> successfully created and is running., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:56:41.2295285Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: InitiatingSiteWarmUpProbe, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container <app-name> successfully created and is running., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:56:41.5540502Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:56:41.5540628Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: WarmUpProbeSucceeded, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site startup probe succeeded after 66.1244247 seconds., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:57:48.0107355Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Site started.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:57:48.8613112Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Started, Action: None, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 10/13/2026 14:57:48 (UTC), DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:57:48.861738Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Stopping, Action: StoppingSite, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 10/13/2026 14:55:55 (UTC), DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:58:09.1495687Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Stopping, Action: StoppingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 10/13/2026 14:55:55 (UTC), DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:58:09.1543437Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Stopping container: <container-id>_<app-name>.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:58:09.2465567Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Deleting container: <container-id>_<app-name>. Retry count = 0",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:58:14.8477659Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Container is starting.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:58:15.3837335Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: EstablishingSiteNetworks, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:58:16.7036073Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: StartingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:58:18.785173Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image <ip-redacted>:13209/appsvc/node:20-lts_20260710.8.tuxprod for <app-name>., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:58:18.785257Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting container: <container-id>_<app-name>_kudu.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:58:19.0368359Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting watchers and probes.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:58:19.5718403Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting metrics collection.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:58:19.5805133Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Container is starting.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:58:20.1773854Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: MountingVolumes, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Mounting volumes for <app-name>., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:58:20.1774496Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Finished pulling container image and mounting volumes for <app-name>. Allocatinng the rest of the container resources to finish container creation., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:58:21.1065667Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting container: <container-id>_<app-name>.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:58:22.4646356Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting watchers and probes.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:58:22.5718588Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting metrics collection.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:58:22.5720149Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container <app-name> successfully created and is running., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:58:22.5721195Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: InitiatingSiteWarmUpProbe, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container <app-name> successfully created and is running., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:58:22.9011998Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:58:22.9012114Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: WarmUpProbeSucceeded, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site startup probe succeeded after 40.9479533 seconds., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:59:04.3288585Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Site started.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:59:04.9110006Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Started, Action: None, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 10/13/2026 14:59:04 (UTC), DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:59:04.9110484Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Stopping container: <container-id>_<app-name>_kudu.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:59:18.8400334Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Deleting container: <container-id>_<app-name>_kudu. Retry count = 0",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:59:18.9931768Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Container is starting.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:59:24.39136Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Stopping, Action: StoppingSite, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 10/13/2026 14:57:48 (UTC), DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:59:25.1197932Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Stopping, Action: StoppingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 10/13/2026 14:57:48 (UTC), DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:59:25.1204842Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Stopping container: <container-id>_<app-name>.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:59:25.4546299Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting container: <container-id>_<app-name>_kudu.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:59:27.9944348Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting watchers and probes.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:59:28.0969948Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting metrics collection.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:59:28.0971755Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Deleting container: <container-id>_<app-name>. Retry count = 0",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:59:30.4586943Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: EstablishingSiteNetworks, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:59:32.4379909Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: StartingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:59:34.286702Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image <ip-redacted>:13209/appsvc/node:20-lts_20260710.8.tuxprod for <app-name>., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:59:34.286925Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Container is starting.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:59:34.9851792Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: MountingVolumes, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Mounting volumes for <app-name>., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:59:34.9852498Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Finished pulling container image and mounting volumes for <app-name>. Allocatinng the rest of the container resources to finish container creation., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:59:36.9368285Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting container: <container-id>_<app-name>.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:59:37.6410108Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting watchers and probes.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:59:37.789379Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting metrics collection.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:59:37.7896215Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container <app-name> successfully created and is running., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:59:37.7900873Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: InitiatingSiteWarmUpProbe, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container <app-name> successfully created and is running., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:59:38.0791663Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:59:38.0791789Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: WarmUpProbeSucceeded, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site startup probe succeeded after 53.0702645 seconds., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:00:31.3150153Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Site started.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:00:31.6658426Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Started, Action: None, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 10/13/2026 15:00:31 (UTC), DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:00:31.6658986Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Stopping container: <container-id>_<app-name>_kudu.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:00:48.4146334Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Deleting container: <container-id>_<app-name>_kudu. Retry count = 0",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:00:48.5451483Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Stopping, Action: StoppingSite, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 10/13/2026 14:59:04 (UTC), DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:00:51.8182998Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Stopping, Action: StoppingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 10/13/2026 14:59:04 (UTC), DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:00:51.8191958Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Stopping container: <container-id>_<app-name>.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:00:51.8299631Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Deleting container: <container-id>_<app-name>. Retry count = 0",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:00:56.9435335Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: EstablishingSiteNetworks, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:00:58.3565997Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: StartingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:01:00.0311482Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image <ip-redacted>:13209/appsvc/node:20-lts_20260710.8.tuxprod for <app-name>., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:01:00.0312936Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Container is starting.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:01:00.5376132Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: MountingVolumes, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Mounting volumes for <app-name>., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:01:00.5376767Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Finished pulling container image and mounting volumes for <app-name>. Allocatinng the rest of the container resources to finish container creation., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:01:02.1443373Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting container: <container-id>_<app-name>.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:01:03.6662464Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting watchers and probes.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:01:03.8060092Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting metrics collection.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:01:03.8269075Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container <app-name> successfully created and is running., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:01:03.8443429Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: InitiatingSiteWarmUpProbe, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container <app-name> successfully created and is running., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:01:03.9590068Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:01:03.959019Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Stopping container: <container-id>_<app-name>.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:01:24.6969935Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Deleting container: <container-id>_<app-name>. Retry count = 0",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:01:30.3649092Z"
+  },
+  {
+    "Level": "Error",
+    "Message": "State: Stopping, Action: CancellingStartup, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site container: <app-name> terminated during site startup. Cancelling site startup., DetailsLevel: ERR",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:01:30.7213489Z"
+  },
+  {
+    "Level": "Error",
+    "Message": "State: Stopping, Action: CancellingStartup, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:01:31, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Site container: <app-name> terminated during site startup. Cancelling site startup., DetailsLevel: ERR",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:01:31.026361Z"
+  },
+  {
+    "Level": "Error",
+    "Message": "Failed to start site. Revert by stopping site.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:01:31.0815116Z"
+  },
+  {
+    "Level": "Error",
+    "Message": "State: Stopping, Action: StoppingSite, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:01:31, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Site container: <app-name> terminated during site startup. Cancelling site startup., DetailsLevel: ERR",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:01:31.0821595Z"
+  },
+  {
+    "Level": "Error",
+    "Message": "State: Stopping, Action: StoppingSiteContainers, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:01:31, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Site container: <app-name> terminated during site startup. Cancelling site startup., DetailsLevel: ERR",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:01:31.0827416Z"
+  },
+  {
+    "Level": "Error",
+    "Message": "State: Stopping, Action: UnmountingVolumes, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:01:31, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Site container: <app-name> terminated during site startup. Cancelling site startup., DetailsLevel: ERR",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:01:31.1107412Z"
+  },
+  {
+    "Level": "Error",
+    "Message": "State: Stopping, Action: StoppingSiteNetworks, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:01:31, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Site container: <app-name> terminated during site startup. Cancelling site startup., DetailsLevel: ERR",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:01:31.4637346Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Stopping container: <container-id>_<app-name>.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:01:44.2820312Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Deleting container: <container-id>_<app-name>. Retry count = 0",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:01:49.4298835Z"
+  },
+  {
+    "Level": "Error",
+    "Message": "Site container: <app-name> terminated. Stopping the entire site.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:01:49.6824988Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Stopping, Action: StoppingSite, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 10/13/2026 15:00:31 (UTC), DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:01:49.6833089Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Stopping, Action: StoppingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 10/13/2026 15:00:31 (UTC), DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:01:49.6834875Z"
+  },
+  {
+    "Level": "Error",
+    "Message": "State: Starting, Action: EstablishingSiteNetworks, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:01:31, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Site stopped at 10/13/2026 15:01:31 (UTC), DetailsLevel: ERR",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:04:30.6534857Z"
+  },
+  {
+    "Level": "Error",
+    "Message": "State: Starting, Action: StartingSiteContainers, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:01:31, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Site stopped at 10/13/2026 15:01:31 (UTC), DetailsLevel: ERR",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:04:31.8615005Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: PullingImage, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:01:31, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Pulling image <ip-redacted>:13209/appsvc/node:20-lts_20260710.8.tuxprod for <app-name>., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:04:31.8623411Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Container is starting.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:04:32.1918927Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: MountingVolumes, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:01:31, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Mounting volumes for <app-name>., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:04:32.1923656Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: CreatingContainer, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:01:31, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Finished pulling container image and mounting volumes for <app-name>. Allocatinng the rest of the container resources to finish container creation., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:04:33.3172029Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting container: <container-id>_<app-name>.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:04:33.7636738Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting watchers and probes.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:04:33.8236449Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting metrics collection.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:04:33.8323576Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: CreatingContainer, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:01:31, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Container <app-name> successfully created and is running., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:04:33.8325498Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: InitiatingSiteWarmUpProbe, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:01:31, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Container <app-name> successfully created and is running., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:04:34.0834765Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:01:31, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:04:34.0835279Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: WarmUpProbeSucceeded, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:01:31, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Site startup probe succeeded after 21.0597074 seconds., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:04:55.3544229Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Site started.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:04:55.6091683Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Started, Action: None, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:01:31, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Site started at 10/13/2026 15:04:55 (UTC), DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:04:55.6092172Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: EstablishingSiteNetworks, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:14:42.256152Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: StartingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:14:44.4805318Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image <ip-redacted>:13209/appsvc/node:20-lts_20260710.8.tuxprod for <app-name>., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:14:44.488442Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Container is starting.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:14:45.150135Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: MountingVolumes, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Mounting volumes for <app-name>., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:14:45.1506311Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Finished pulling container image and mounting volumes for <app-name>. Allocatinng the rest of the container resources to finish container creation., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:14:46.8219505Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting container: <container-id>_<app-name>.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:14:47.9922326Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting watchers and probes.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:14:48.1041404Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting metrics collection.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:14:48.1042882Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container <app-name> successfully created and is running., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:14:48.1046972Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: InitiatingSiteWarmUpProbe, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container <app-name> successfully created and is running., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:14:48.3858292Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:14:48.3858494Z"
+  },
+  {
+    "Level": "Error",
+    "Message": "State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:14:56, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: ERR",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:14:56.2739601Z"
+  },
+  {
+    "Level": "Error",
+    "Message": "Failed to start site. Revert by stopping site.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:14:56.3329474Z"
+  },
+  {
+    "Level": "Error",
+    "Message": "State: Stopping, Action: StoppingSite, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:14:56, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: ERR",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:14:56.3347113Z"
+  },
+  {
+    "Level": "Error",
+    "Message": "State: Stopping, Action: StoppingSiteContainers, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:14:56, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: ERR",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:14:56.3719355Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Stopping container: <container-id>_<app-name>.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:14:56.5297592Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Container is starting.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:14:57.9247318Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting container: <container-id>_<app-name>_kudu.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:15:00.7286198Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting watchers and probes.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:15:00.8093723Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting metrics collection.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:15:00.8095447Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Deleting container: <container-id>_<app-name>. Retry count = 0",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:15:01.538798Z"
+  },
+  {
+    "Level": "Error",
+    "Message": "State: Stopping, Action: CancellingStartup, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:14:56, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Site container: <app-name> terminated during site startup. Cancelling site startup., DetailsLevel: ERR",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:15:02.392211Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Stopping, Action: StoppingSite, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:01:31, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Site started at 10/13/2026 15:04:55 (UTC), DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:15:25.4327868Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Stopping, Action: StoppingSiteContainers, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:01:31, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Site started at 10/13/2026 15:04:55 (UTC), DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:15:25.4338533Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Stopping container: <container-id>_<app-name>.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:15:25.4933884Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Deleting container: <container-id>_<app-name>. Retry count = 0",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:15:30.5485841Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Stopping container: <container-id>_<app-name>_kudu.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:15:40.5638418Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Deleting container: <container-id>_<app-name>_kudu. Retry count = 0",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:15:40.7804311Z"
+  },
+  {
+    "Level": "Error",
+    "Message": "State: Starting, Action: EstablishingSiteNetworks, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:14:56, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Site stopped at 10/13/2026 15:15:03 (UTC), DetailsLevel: ERR",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:16:47.1290784Z"
+  },
+  {
+    "Level": "Error",
+    "Message": "State: Starting, Action: StartingSiteContainers, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:14:56, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Site stopped at 10/13/2026 15:15:03 (UTC), DetailsLevel: ERR",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:16:48.7370433Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: PullingImage, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:14:56, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Pulling image <ip-redacted>:13209/appsvc/node:20-lts_20260710.8.tuxprod for <app-name>., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:16:48.737151Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Container is starting.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:16:48.9469171Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: MountingVolumes, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:14:56, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Mounting volumes for <app-name>., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:16:48.9469955Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: CreatingContainer, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:14:56, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Finished pulling container image and mounting volumes for <app-name>. Allocatinng the rest of the container resources to finish container creation., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:16:49.2148894Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting container: <container-id>_<app-name>.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:16:50.2009554Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting watchers and probes.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:16:50.2698301Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting metrics collection.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:16:50.2699824Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: CreatingContainer, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:14:56, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Container <app-name> successfully created and is running., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:16:50.2700828Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: InitiatingSiteWarmUpProbe, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:14:56, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Container <app-name> successfully created and is running., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:16:50.6932306Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:14:56, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:16:50.6932448Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: WarmUpProbeSucceeded, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:14:56, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Site startup probe succeeded after 42.040192 seconds., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:17:32.9447792Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Site started.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:17:33.4935957Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Started, Action: None, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:14:56, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Site started at 10/13/2026 15:17:33 (UTC), DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:17:33.4940798Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: EstablishingSiteNetworks, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:17:39.0267434Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: StartingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:17:41.3900471Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image <ip-redacted>:13209/appsvc/node:20-lts_20260710.8.tuxprod for <app-name>., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:17:41.3901198Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Container is starting.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:17:41.7689329Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: MountingVolumes, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Mounting volumes for <app-name>., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:17:41.7691474Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Finished pulling container image and mounting volumes for <app-name>. Allocatinng the rest of the container resources to finish container creation., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:17:42.2466177Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting container: <container-id>_<app-name>.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:17:43.0472348Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting watchers and probes.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:17:43.1631929Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting metrics collection.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:17:43.1911724Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container <app-name> successfully created and is running., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:17:43.1913359Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: InitiatingSiteWarmUpProbe, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container <app-name> successfully created and is running., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:17:43.4776926Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:17:43.4777311Z"
+  },
+  {
+    "Level": "Error",
+    "Message": "State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:18:06, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: ERR",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:18:07.007556Z"
+  },
+  {
+    "Level": "Error",
+    "Message": "Failed to start site. Revert by stopping site.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:18:07.0381368Z"
+  },
+  {
+    "Level": "Error",
+    "Message": "State: Stopping, Action: StoppingSite, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:18:06, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: ERR",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:18:07.0761138Z"
+  },
+  {
+    "Level": "Error",
+    "Message": "State: Stopping, Action: StoppingSiteContainers, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:18:06, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: ERR",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:18:07.087044Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Stopping container: <container-id>_<app-name>.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:18:07.4055583Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Container is starting.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:18:11.4523163Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Deleting container: <container-id>_<app-name>. Retry count = 0",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:18:12.9720393Z"
+  },
+  {
+    "Level": "Error",
+    "Message": "State: Stopping, Action: CancellingStartup, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:18:06, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Site container: <app-name> terminated during site startup. Cancelling site startup., DetailsLevel: ERR",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:18:13.6899178Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting container: <container-id>_<app-name>_kudu.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:18:16.4495568Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting watchers and probes.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:18:16.5834048Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting metrics collection.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:18:16.5841557Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Stopping, Action: StoppingSite, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:14:56, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Site started at 10/13/2026 15:17:33 (UTC), DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:18:36.0340306Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Stopping, Action: StoppingSiteContainers, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:14:56, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Site started at 10/13/2026 15:17:33 (UTC), DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:18:36.0342969Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Stopping container: <container-id>_<app-name>.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:18:36.0654079Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Deleting container: <container-id>_<app-name>. Retry count = 0",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:18:41.2673232Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Stopping container: <container-id>_<app-name>_kudu.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:18:54.2180614Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Deleting container: <container-id>_<app-name>_kudu. Retry count = 0",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:18:54.3646282Z"
+  },
+  {
+    "Level": "Error",
+    "Message": "State: Starting, Action: EstablishingSiteNetworks, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:18:06, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Site stopped at 10/13/2026 15:18:14 (UTC), DetailsLevel: ERR",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:19:02.7417273Z"
+  },
+  {
+    "Level": "Error",
+    "Message": "State: Starting, Action: StartingSiteContainers, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:18:06, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Site stopped at 10/13/2026 15:18:14 (UTC), DetailsLevel: ERR",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:19:04.2063627Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: PullingImage, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:18:06, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Pulling image <ip-redacted>:13209/appsvc/node:20-lts_20260710.8.tuxprod for <app-name>., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:19:04.2141585Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Container is starting.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:19:04.6289296Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: MountingVolumes, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:18:06, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Mounting volumes for <app-name>., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:19:04.6290094Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: CreatingContainer, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:18:06, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Finished pulling container image and mounting volumes for <app-name>. Allocatinng the rest of the container resources to finish container creation., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:19:05.0913299Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting container: <container-id>_<app-name>.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:19:05.9360078Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting watchers and probes.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:19:06.079205Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting metrics collection.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:19:06.0879283Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: CreatingContainer, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:18:06, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Container <app-name> successfully created and is running., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:19:06.0896832Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: InitiatingSiteWarmUpProbe, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:18:06, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Container <app-name> successfully created and is running., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:19:06.2585275Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:18:06, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:19:06.2585673Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: WarmUpProbeSucceeded, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:18:06, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Site startup probe succeeded after 24.0369225 seconds., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:19:30.4250322Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Site started.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:19:30.8540686Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Started, Action: None, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:18:06, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Site started at 10/13/2026 15:19:30 (UTC), DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:19:30.8541707Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: EstablishingSiteNetworks, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:19:45.3142835Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: StartingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:19:49.2113518Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image <ip-redacted>:13209/appsvc/node:20-lts_20260710.8.tuxprod for <app-name>., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:19:49.211843Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Container is starting.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:19:49.6802709Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Container is starting.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:19:50.4619843Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: MountingVolumes, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Mounting volumes for <app-name>., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:19:50.4620446Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Finished pulling container image and mounting volumes for <app-name>. Allocatinng the rest of the container resources to finish container creation., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:19:52.4645415Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting container: <container-id>_<app-name>.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:19:53.8658691Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting container: <container-id>_<app-name>_kudu.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:19:53.9101457Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting watchers and probes.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:19:54.0664154Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting metrics collection.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:19:54.0666544Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting watchers and probes.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:19:54.5367721Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting metrics collection.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:19:54.5463775Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container <app-name> successfully created and is running., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:19:54.5468454Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: InitiatingSiteWarmUpProbe, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container <app-name> successfully created and is running., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:19:54.9808901Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:19:54.9809009Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: WarmUpProbeSucceeded, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site startup probe succeeded after 55.0970186 seconds., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:20:50.7550117Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Site started.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:20:51.8882837Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Started, Action: None, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 10/13/2026 15:20:51 (UTC), DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:20:51.8887904Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Stopping, Action: StoppingSite, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:18:06, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Site started at 10/13/2026 15:19:30 (UTC), DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:21:12.1987829Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Stopping, Action: StoppingSiteContainers, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:18:06, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Site started at 10/13/2026 15:19:30 (UTC), DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:21:12.2081912Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Stopping container: <container-id>_<app-name>.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:21:12.3475436Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Stopping container: <container-id>_<app-name>_kudu.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:21:14.2541188Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Deleting container: <container-id>_<app-name>_kudu. Retry count = 0",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:21:14.6290119Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Deleting container: <container-id>_<app-name>. Retry count = 0",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:21:17.6240874Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Stopping container: <container-id>_<app-name>.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:21:31.2876378Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Deleting container: <container-id>_<app-name>. Retry count = 0",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:21:36.8218393Z"
+  },
+  {
+    "Level": "Error",
+    "Message": "Site container: <app-name> terminated. Stopping the entire site.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:21:37.2193662Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Stopping, Action: StoppingSite, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:18:06, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Site started at 10/13/2026 15:20:51 (UTC), DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:21:37.2195355Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Stopping, Action: StoppingSiteContainers, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:18:06, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Site started at 10/13/2026 15:20:51 (UTC), DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:21:37.2196367Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: EstablishingSiteNetworks, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:18:06, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: , DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:24:51.8607147Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: StartingSiteContainers, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:18:06, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: , DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:24:53.3689013Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: PullingImage, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:18:06, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Pulling image <ip-redacted>:13209/appsvc/node:20-lts_20260710.8.tuxprod for <app-name>., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:24:53.3707929Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Container is starting.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:24:53.8464434Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: MountingVolumes, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:18:06, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Mounting volumes for <app-name>., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:24:53.854654Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: CreatingContainer, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:18:06, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Finished pulling container image and mounting volumes for <app-name>. Allocatinng the rest of the container resources to finish container creation., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:24:55.1065081Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting container: <container-id>_<app-name>.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:24:55.9200414Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting watchers and probes.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:24:55.9992461Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Starting metrics collection.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:24:56.0098134Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: CreatingContainer, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:18:06, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Container <app-name> successfully created and is running., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:24:56.0105886Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: InitiatingSiteWarmUpProbe, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:18:06, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Container <app-name> successfully created and is running., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:24:56.307352Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:18:06, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:24:56.3073646Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Starting, Action: WarmUpProbeSucceeded, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:18:06, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Site startup probe succeeded after 26.0578006 seconds., DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:25:22.493706Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "Site started.",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:25:22.9014916Z"
+  },
+  {
+    "Level": "Informational",
+    "Message": "State: Started, Action: None, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:18:06, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Site started at 10/13/2026 15:25:22 (UTC), DetailsLevel: INFO",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:25:22.9020031Z"
+  }
+]

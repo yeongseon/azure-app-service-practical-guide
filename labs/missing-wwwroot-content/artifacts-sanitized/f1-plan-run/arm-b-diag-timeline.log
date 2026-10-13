@@ -1,0 +1,13 @@
+2026-10-13T15:41:13.087Z run-from-package-enabled
+2026-10-13T15:41:13.256Z deploy-start mode=run-from-package startedAt-before=2026-10-13T15:40:37.219Z
+2026-10-13T15:41:44.981Z deploy-end mode=run-from-package
+2026-10-13T15:41:45.079Z new-process-after-deploy startedAt=2026-10-13T15:41:36.661Z
+2026-10-13T15:41:45.157Z healthy-after-deploy
+2026-10-13T15:41:49.921Z lab-token-configured (value not recorded) run=run-20261013T154104Z
+2026-10-13T15:42:30.738Z process-after-token startedAt=2026-10-13T15:42:24.744Z
+2026-10-13T15:42:36.924Z run-from-package-removed
+2026-10-13T15:42:37.072Z deploy-start mode=ordinary-zip startedAt-before=2026-10-13T15:42:24.744Z
+2026-10-13T15:43:09.612Z deploy-end mode=ordinary-zip
+2026-10-13T15:43:09.721Z new-process-after-deploy startedAt=2026-10-13T15:43:00.112Z
+2026-10-13T15:43:09.804Z healthy-after-deploy
+2026-10-13T15:43:20.075Z arm-complete arm-b-diag run=run-20261013T154104Z

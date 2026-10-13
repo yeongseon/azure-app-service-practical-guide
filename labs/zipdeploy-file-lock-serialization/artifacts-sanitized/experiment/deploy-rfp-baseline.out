@@ -1,0 +1,6 @@
+D:\a\_work\1\s\build_scripts\windows\artifacts\cli\Lib\site-packages\cryptography/hazmat/backends/openssl/backend.py:8: UserWarning: You are using cryptography on a 32-bit Python on a 64-bit Windows Operating System. Cryptography will be significantly faster if you switch to using a 64-bit Python.
+WARNING: Initiating deployment
+WARNING: Deploying from local path: artifacts/raw/experiment/deploy-3.zip
+WARNING: Polling the status of sync deployment. Start Time: 2026-10-13 22:58:23.142343+00:00 UTC
+WARNING: Deployment has completed successfully
+WARNING: You can visit your app at: http://<app-name>.azurewebsites.net

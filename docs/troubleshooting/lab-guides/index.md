@@ -28,6 +28,8 @@ graph TD
     C --> J[Deployment Ok Startup Failed]
     C --> K[Failed to Forward Request]
     C --> L[Slot Swap Config Drift]
+    C --> P[Missing wwwroot Content]
+    C --> Q[ZIP Deploy File Lock]
     D --> M[SNAT Exhaustion]
     D --> N[DNS Resolution VNet]
 ```
@@ -62,6 +64,8 @@ Each lab includes:
 | [Deployment Succeeded but Startup Failed](deployment-succeeded-startup-failed.md) | Deploy green but app down — wrong startup command | [Deployment Succeeded but Startup Failed](../playbooks/startup-availability/deployment-succeeded-startup-failed.md) |
 | [Failed to Forward Request](failed-to-forward-request.md) | Platform proxy can't reach app — wrong bind address | [Failed to Forward Request](../playbooks/startup-availability/failed-to-forward-request.md) |
 | [Slot Swap Config Drift](slot-swap-config-drift.md) | Swap succeeds but production restarts or config breaks | [Slot Swap Config Drift / Restart Race](../playbooks/startup-availability/slot-swap-config-drift.md) |
+| [Missing wwwroot Content](missing-wwwroot-content.md) | Asset absent from `wwwroot` and `404`; synthetic removal timeline and Run From Package mount | [Missing wwwroot Files and HTTP 404](../playbooks/missing-wwwroot-files-404.md) |
+| [ZIP Deploy File Lock, Run From Package, and Serialization](zipdeploy-file-lock-serialization.md) | Green ZIP deployment leaves a locked file stale on Windows; overlapping deployment is rejected | [Deployment Failures](../playbooks/deployment-failures.md) |
 
 ### Outbound / Network
 

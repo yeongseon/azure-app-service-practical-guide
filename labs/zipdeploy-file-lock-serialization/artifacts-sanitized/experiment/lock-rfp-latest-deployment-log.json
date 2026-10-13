@@ -1,0 +1,58 @@
+[
+  {
+    "details_url": null,
+    "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+    "log_time": "2026-10-13T23:01:12.9291255Z",
+    "message": "Updating submodules.",
+    "type": 0
+  },
+  {
+    "details_url": null,
+    "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+    "log_time": "2026-10-13T23:01:12.9784461Z",
+    "message": "Preparing deployment for commit id '3fbe0a03fc'.",
+    "type": 0
+  },
+  {
+    "details_url": null,
+    "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+    "log_time": "2026-10-13T23:01:13.1485491Z",
+    "message": "Skipping build. Project type: Run-From-Zip",
+    "type": 0
+  },
+  {
+    "details_url": null,
+    "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+    "log_time": "2026-10-13T23:01:13.1985607Z",
+    "message": "Skipping post build. Project type: Run-From-Zip",
+    "type": 0
+  },
+  {
+    "details_url": null,
+    "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+    "log_time": "2026-10-13T23:01:13.2416252Z",
+    "message": "Requesting site restart",
+    "type": 0
+  },
+  {
+    "details_url": null,
+    "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+    "log_time": "2026-10-13T23:01:13.2885725Z",
+    "message": "Requesting site restart. Attempt #1",
+    "type": 0
+  },
+  {
+    "details_url": null,
+    "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+    "log_time": "2026-10-13T23:01:14.522873Z",
+    "message": "Successfully requested a restart. Attempt #1",
+    "type": 0
+  },
+  {
+    "details_url": null,
+    "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+    "log_time": "2026-10-13T23:01:14.6171011Z",
+    "message": "Deployment successful.",
+    "type": 0
+  }
+]

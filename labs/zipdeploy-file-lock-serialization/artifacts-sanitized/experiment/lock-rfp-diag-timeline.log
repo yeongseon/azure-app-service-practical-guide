@@ -1,0 +1,6 @@
+2026-10-13T23:07:34.617Z plan-sku-at-start=B1
+2026-10-13T23:07:39.055Z lab-token-configured (value not recorded) run=run-20261013T230727Z
+2026-10-13T23:07:46.882Z process-after-token startedAt=2026-10-13T23:07:46.749Z
+2026-10-13T23:08:08.124Z ps-test response={"status":0,"signal":null,"error":null,"stdout":"mode=FullLanguage\r\nopened\r\n","stderr":""}
+2026-10-13T23:08:08.208Z state {"startedAt": "2026-10-13T23:07:46.749Z", "build": "4", "lockFile": {"writeOpen": "ok", "size": 409}, "lockHolder": null}
+2026-10-13T23:08:28.627Z arm-complete lock-rfp-diag run=run-20261013T230727Z

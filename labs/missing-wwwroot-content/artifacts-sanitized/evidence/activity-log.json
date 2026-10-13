@@ -1,0 +1,224 @@
+[
+  {
+    "caller": "<email-redacted>",
+    "operation": "Microsoft.Web/sites/config/write",
+    "status": "Succeeded",
+    "time": "2026-10-13T15:19:34.9835131Z"
+  },
+  {
+    "caller": "<email-redacted>",
+    "operation": "Microsoft.Web/sites/config/write",
+    "status": "Started",
+    "time": "2026-10-13T15:19:34.0146682Z"
+  },
+  {
+    "caller": "<email-redacted>",
+    "operation": "Microsoft.Web/sites/config/write",
+    "status": "Succeeded",
+    "time": "2026-10-13T15:17:50.0189466Z"
+  },
+  {
+    "caller": "<email-redacted>",
+    "operation": "Microsoft.Web/sites/config/write",
+    "status": "Started",
+    "time": "2026-10-13T15:17:48.8469812Z"
+  },
+  {
+    "caller": "<email-redacted>",
+    "operation": "Microsoft.Web/sites/config/write",
+    "status": "Succeeded",
+    "time": "2026-10-13T15:14:46.6498856Z"
+  },
+  {
+    "caller": "<email-redacted>",
+    "operation": "Microsoft.Web/sites/config/write",
+    "status": "Started",
+    "time": "2026-10-13T15:14:45.4936383Z"
+  },
+  {
+    "caller": "<email-redacted>",
+    "operation": "Microsoft.Web/sites/publishxml/action",
+    "status": "Succeeded",
+    "time": "2026-10-13T15:14:41.9844142Z"
+  },
+  {
+    "caller": "<email-redacted>",
+    "operation": "Microsoft.Web/sites/publishxml/action",
+    "status": "Started",
+    "time": "2026-10-13T15:14:41.8593531Z"
+  },
+  {
+    "caller": "<email-redacted>",
+    "operation": "Microsoft.Web/sites/publishxml/action",
+    "status": "Succeeded",
+    "time": "2026-10-13T15:14:28.5286516Z"
+  },
+  {
+    "caller": "<email-redacted>",
+    "operation": "Microsoft.Web/sites/publishxml/action",
+    "status": "Started",
+    "time": "2026-10-13T15:14:28.3880257Z"
+  },
+  {
+    "caller": "<email-redacted>",
+    "operation": "Microsoft.Web/sites/config/write",
+    "status": "Succeeded",
+    "time": "2026-10-13T14:59:12.8080729Z"
+  },
+  {
+    "caller": "<email-redacted>",
+    "operation": "Microsoft.Web/sites/config/write",
+    "status": "Started",
+    "time": "2026-10-13T14:59:11.7143206Z"
+  },
+  {
+    "caller": "<email-redacted>",
+    "operation": "Microsoft.Web/sites/config/write",
+    "status": "Succeeded",
+    "time": "2026-10-13T14:58:00.996196Z"
+  },
+  {
+    "caller": "<email-redacted>",
+    "operation": "Microsoft.Web/sites/config/write",
+    "status": "Started",
+    "time": "2026-10-13T14:57:59.9492854Z"
+  },
+  {
+    "caller": "<email-redacted>",
+    "operation": "Microsoft.Web/sites/publishxml/action",
+    "status": "Succeeded",
+    "time": "2026-10-13T14:56:15.1338528Z"
+  },
+  {
+    "caller": "<email-redacted>",
+    "operation": "Microsoft.Web/sites/publishxml/action",
+    "status": "Started",
+    "time": "2026-10-13T14:56:15.0088438Z"
+  },
+  {
+    "caller": "<email-redacted>",
+    "operation": "Microsoft.Web/sites/publishxml/action",
+    "status": "Succeeded",
+    "time": "2026-10-13T14:56:10.1238788Z"
+  },
+  {
+    "caller": "<email-redacted>",
+    "operation": "Microsoft.Web/sites/publishxml/action",
+    "status": "Started",
+    "time": "2026-10-13T14:56:09.9832519Z"
+  },
+  {
+    "caller": "<email-redacted>",
+    "operation": "Microsoft.Web/sites/restart/action",
+    "status": "Succeeded",
+    "time": "2026-10-13T14:55:09.2194213Z"
+  },
+  {
+    "caller": "<email-redacted>",
+    "operation": "Microsoft.Web/sites/restart/action",
+    "status": "Started",
+    "time": "2026-10-13T14:55:06.2036255Z"
+  },
+  {
+    "caller": "<email-redacted>",
+    "operation": "Microsoft.Authorization/policies/auditIfNotExists/action",
+    "status": "Succeeded",
+    "time": "2026-10-13T14:51:19.0588306Z"
+  },
+  {
+    "caller": "<email-redacted>",
+    "operation": "Microsoft.Authorization/policies/auditIfNotExists/action",
+    "status": "Succeeded",
+    "time": "2026-10-13T14:51:18.1954121Z"
+  },
+  {
+    "caller": "<email-redacted>",
+    "operation": "Microsoft.Authorization/policies/auditIfNotExists/action",
+    "status": "Succeeded",
+    "time": "2026-10-13T14:51:15.5657799Z"
+  },
+  {
+    "caller": "<email-redacted>",
+    "operation": "Microsoft.Authorization/policies/auditIfNotExists/action",
+    "status": "Succeeded",
+    "time": "2026-10-13T14:51:12.1410345Z"
+  },
+  {
+    "caller": "<email-redacted>",
+    "operation": "Microsoft.Authorization/policies/auditIfNotExists/action",
+    "status": "Succeeded",
+    "time": "2026-10-13T14:51:11.0472784Z"
+  },
+  {
+    "caller": "<email-redacted>",
+    "operation": "Microsoft.Authorization/policies/auditIfNotExists/action",
+    "status": "Succeeded",
+    "time": "2026-10-13T14:51:09.5235782Z"
+  },
+  {
+    "caller": "<email-redacted>",
+    "operation": "Microsoft.Authorization/policies/auditIfNotExists/action",
+    "status": "Succeeded",
+    "time": "2026-10-13T14:50:52.9977518Z"
+  },
+  {
+    "caller": "<email-redacted>",
+    "operation": "Microsoft.Authorization/policies/auditIfNotExists/action",
+    "status": "Succeeded",
+    "time": "2026-10-13T14:50:48.7686986Z"
+  },
+  {
+    "caller": "<email-redacted>",
+    "operation": "Microsoft.Authorization/policies/audit/action",
+    "status": "Succeeded",
+    "time": "2026-10-13T14:50:48.7686986Z"
+  },
+  {
+    "caller": "<email-redacted>",
+    "operation": "Microsoft.Authorization/policies/auditIfNotExists/action",
+    "status": "Succeeded",
+    "time": "2026-10-13T14:50:48.1023376Z"
+  },
+  {
+    "caller": "<email-redacted>",
+    "operation": "Microsoft.Authorization/policies/auditIfNotExists/action",
+    "status": "Succeeded",
+    "time": "2026-10-13T14:50:42.8398827Z"
+  },
+  {
+    "caller": "<email-redacted>",
+    "operation": "Microsoft.Authorization/policies/auditIfNotExists/action",
+    "status": "Succeeded",
+    "time": "2026-10-13T14:50:39.1405437Z"
+  },
+  {
+    "caller": "<email-redacted>",
+    "operation": "Microsoft.Web/sites/write",
+    "status": "Succeeded",
+    "time": "2026-10-13T14:50:06.8036194Z"
+  },
+  {
+    "caller": "<email-redacted>",
+    "operation": "Microsoft.Web/sites/config/write",
+    "status": "Succeeded",
+    "time": "2026-10-13T14:49:36.8473617Z"
+  },
+  {
+    "caller": "<email-redacted>",
+    "operation": "Microsoft.Web/sites/config/write",
+    "status": "Started",
+    "time": "2026-10-13T14:49:35.7537866Z"
+  },
+  {
+    "caller": "<email-redacted>",
+    "operation": "Microsoft.Web/sites/publishxml/action",
+    "status": "Succeeded",
+    "time": "2026-10-13T14:48:06.5202713Z"
+  },
+  {
+    "caller": "<email-redacted>",
+    "operation": "Microsoft.Web/sites/publishxml/action",
+    "status": "Started",
+    "time": "2026-10-13T14:48:06.4108977Z"
+  }
+]

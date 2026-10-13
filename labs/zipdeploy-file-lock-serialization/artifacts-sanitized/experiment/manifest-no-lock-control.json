@@ -1,0 +1,14 @@
+{
+  "runId": "run-20261013T230838Z",
+  "arm": "no-lock-control",
+  "armStartedAt": "2026-10-13T23:08:46.923Z",
+  "armFinishedAt": "2026-10-13T23:13:11.338Z",
+  "skuAtStart": "B1",
+  "skuAtEnd": "B1",
+  "location": "Korea Central",
+  "azureCliVersion": "2.89.0",
+  "sourceRevision": "20969deac4d958fff0c71a6c951573a1b0122a34",
+  "sourceDirtyAtRun": true,
+  "packageSetSha256": "83297d5a1d33de4437cd758de65386d459ff5d6954c74d0218b8b9b7b13fcf28",
+  "runtime": "Node.js 20 on Windows (iisnode)"
+}

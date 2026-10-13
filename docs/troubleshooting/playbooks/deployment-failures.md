@@ -475,6 +475,7 @@ Choose the deployment mode from what the pipeline publishes.
 - [Slot Swap Failed During Warm-up](startup-availability/slot-swap-failed-during-warmup.md)
 - [Deployment Slots Operations](../../operations/deployment-slots.md)
 - [Run From Package](../../platform/run-from-package.md)
+- [Lab: ZIP Deploy File Lock, Run From Package, and Deployment Serialization](../lab-guides/zipdeploy-file-lock-serialization.md)
 - [ZIP Deploy and Run From Package (operations)](../../operations/deployment/zip-deploy.md)
 - [Deployment Options Reference](../../platform/deployment-options.md)
 

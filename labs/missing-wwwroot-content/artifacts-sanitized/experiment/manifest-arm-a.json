@@ -1,0 +1,13 @@
+{
+  "runId": "run-20261013T144802Z",
+  "arm": "arm-a",
+  "armStartedAt": "2026-10-13T14:48:06.855Z",
+  "armFinishedAt": "2026-10-13T14:56:11.428Z",
+  "sku": "B1",
+  "runtime": "NODE|20-lts",
+  "location": "Korea Central",
+  "azureCliVersion": "2.89.0",
+  "sourceRevision": "20969deac4d958fff0c71a6c951573a1b0122a34",
+  "sourceDirtyAtRun": true,
+  "packageSha256": "9358de6d16aa39983d03976f2c6d4622ed96793d13b1c75f6efc9da77d5a0f9c"
+}

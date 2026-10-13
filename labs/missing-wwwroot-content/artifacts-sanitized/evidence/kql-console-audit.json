@@ -1,0 +1,82 @@
+[
+  {
+    "ResultDescription": "LAB_AUDIT {\"event\":\"server-started\",\"at\":\"2026-10-13T14:49:21.799Z\",\"port\":\"8080\",\"contentRoot\":\"/home/site/wwwroot\"}",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:49:21.8015855Z"
+  },
+  {
+    "ResultDescription": "LAB_AUDIT {\"event\":\"server-started\",\"at\":\"2026-10-13T14:50:48.705Z\",\"port\":\"8080\",\"contentRoot\":\"/home/site/wwwroot\"}",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:50:48.733046Z"
+  },
+  {
+    "ResultDescription": "LAB_AUDIT {\"event\":\"asset-removed\",\"at\":\"2026-10-13T14:51:15.780Z\",\"asset\":\"/assets/probe.txt\",\"run\":\"run-20261013T144802Z\"}",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:51:15.7808852Z"
+  },
+  {
+    "ResultDescription": "LAB_AUDIT {\"event\":\"server-started\",\"at\":\"2026-10-13T14:53:16.090Z\",\"port\":\"8080\",\"contentRoot\":\"/home/site/wwwroot\"}",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:53:16.1003592Z"
+  },
+  {
+    "ResultDescription": "LAB_AUDIT {\"event\":\"asset-removed\",\"at\":\"2026-10-13T14:53:33.694Z\",\"asset\":\"/assets/probe.txt\",\"run\":\"run-20261013T144802Z\"}",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:53:33.6954116Z"
+  },
+  {
+    "ResultDescription": "LAB_AUDIT {\"event\":\"server-started\",\"at\":\"2026-10-13T14:55:53.713Z\",\"port\":\"8080\",\"contentRoot\":\"/home/site/wwwroot\"}",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:55:53.7228525Z"
+  },
+  {
+    "ResultDescription": "LAB_AUDIT {\"event\":\"server-started\",\"at\":\"2026-10-13T14:57:47.443Z\",\"port\":\"8080\",\"contentRoot\":\"/home/site/wwwroot\"}",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:57:47.4617905Z"
+  },
+  {
+    "ResultDescription": "LAB_AUDIT {\"event\":\"server-started\",\"at\":\"2026-10-13T14:59:03.675Z\",\"port\":\"8080\",\"contentRoot\":\"/home/site/wwwroot\"}",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T14:59:03.6770087Z"
+  },
+  {
+    "ResultDescription": "LAB_AUDIT {\"event\":\"server-started\",\"at\":\"2026-10-13T15:00:30.820Z\",\"port\":\"8080\",\"contentRoot\":\"/home/site/wwwroot\"}",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:00:30.8798969Z"
+  },
+  {
+    "ResultDescription": "LAB_AUDIT {\"event\":\"asset-removed\",\"at\":\"2026-10-13T15:00:53.819Z\",\"asset\":\"/assets/probe.txt\",\"run\":\"run-20261013T145611Z\"}",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:00:53.8203185Z"
+  },
+  {
+    "ResultDescription": "LAB_AUDIT {\"event\":\"server-started\",\"at\":\"2026-10-13T15:04:55.075Z\",\"port\":\"8080\",\"contentRoot\":\"/home/site/wwwroot\"}",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:04:55.0957327Z"
+  },
+  {
+    "ResultDescription": "LAB_AUDIT {\"event\":\"server-started\",\"at\":\"2026-10-13T15:17:32.473Z\",\"port\":\"8080\",\"contentRoot\":\"/home/site/wwwroot\"}",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:17:32.4752093Z"
+  },
+  {
+    "ResultDescription": "LAB_AUDIT {\"event\":\"server-started\",\"at\":\"2026-10-13T15:19:29.967Z\",\"port\":\"8080\",\"contentRoot\":\"/home/site/wwwroot\"}",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:19:29.9689317Z"
+  },
+  {
+    "ResultDescription": "LAB_AUDIT {\"event\":\"server-started\",\"at\":\"2026-10-13T15:20:49.679Z\",\"port\":\"8080\",\"contentRoot\":\"/home/site/wwwroot\"}",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:20:49.7186543Z"
+  },
+  {
+    "ResultDescription": "LAB_AUDIT {\"event\":\"asset-removed\",\"at\":\"2026-10-13T15:20:57.720Z\",\"asset\":\"/assets/probe.txt\",\"run\":\"run-20261013T151438Z\"}",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:20:57.7213298Z"
+  },
+  {
+    "ResultDescription": "LAB_AUDIT {\"event\":\"server-started\",\"at\":\"2026-10-13T15:25:22.206Z\",\"port\":\"8080\",\"contentRoot\":\"/home/site/wwwroot\"}",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T15:25:22.225807Z"
+  }
+]
