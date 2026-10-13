@@ -15,8 +15,8 @@ This page tracks `content_validation` metadata for **in-scope factual-claim docu
 
 | Content Type | Total | Verified | Pending | Unverified | No Metadata |
 |---|---:|---:|---:|---:|---:|
-| Mermaid Diagrams | 387 | 387 | 0 | 0 | 0 |
-| In-Scope Factual-Claim Documents | 77 | 77 | 0 | 0 | 0 |
+| Mermaid Diagrams | 388 | 388 | 0 | 0 | 0 |
+| In-Scope Factual-Claim Documents | 78 | 78 | 0 | 0 | 0 |
 
 !!! success "All In-Scope Documents Verified"
     Every in-scope factual-claim document has verified Microsoft Learn sources for its core claims.
@@ -24,7 +24,7 @@ This page tracks `content_validation` metadata for **in-scope factual-claim docu
 <!-- diagram-id: content-validation-status-pie -->
 ```mermaid
 pie title In-Scope Document Validation Status
-    "Verified" : 77
+    "Verified" : 78
 ```
 
 ## By Section
@@ -103,6 +103,7 @@ pie title In-Scope Document Validation Status
 | [Intermittent 5Xx Under Load](../troubleshooting/playbooks/performance/intermittent-5xx-under-load.md) | ✅ | ✅ Verified | 2/2 | 2026-04-12 |
 | [Memory Pressure And Worker Degradation](../troubleshooting/playbooks/performance/memory-pressure-and-worker-degradation.md) | ✅ | ✅ Verified | 2/2 | 2026-04-12 |
 | [Mental Model](../troubleshooting/mental-model.md) | ✅ | ✅ Verified | 2/2 | 2026-09-11 |
+| [Missing Wwwroot Files 404](../troubleshooting/playbooks/missing-wwwroot-files-404.md) | ✅ | ✅ Verified | 5/5 | 2026-10-13 |
 | [Mtls Failures](../troubleshooting/playbooks/mtls-failures.md) | ✅ | ✅ Verified | 3/3 | 2026-09-11 |
 | [No Space Left On Device](../troubleshooting/playbooks/performance/no-space-left-on-device.md) | ✅ | ✅ Verified | 2/2 | 2026-04-12 |
 | [Outbound Network](../troubleshooting/first-10-minutes/outbound-network.md) | ✅ | ✅ Verified | 2/2 | 2026-09-11 |
