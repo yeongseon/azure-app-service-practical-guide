@@ -1,40 +1,34 @@
-name: Bug Report
-description: Report a repository bug, broken workflow, or incorrect behavior.
-title: "[Bug]: "
-labels: []
+name: Bug report
+description: Report a reproducible code or runbook defect
+title: 'fix: '
+labels: [bug, needs-triage]
 body:
-  - type: input
-    id: summary
+  - type: textarea
+    id: context
     attributes:
-      label: Summary
-      description: Provide a short summary of the problem.
-      placeholder: The docs build fails when...
+      label: Context
+      description: Include steps, environment, expected/actual behavior and sanitized evidence. No secrets or customer identifiers.
     validations:
       required: true
   - type: textarea
-    id: details
+    id: acceptance
     attributes:
-      label: Details
-      description: Describe what happened, what you expected, and any relevant context.
-      placeholder: What happened? What did you expect to happen?
+      label: Acceptance Checklist
+      description: State verifiable results. A maintainer assigns one priority label after triage.
+      placeholder: '- [ ] Describe an observable result'
     validations:
       required: true
   - type: textarea
-    id: reproduction
+    id: exclusions
     attributes:
-      label: Reproduction steps
-      description: List the exact steps needed to reproduce the issue.
-      placeholder: |
-        1. Go to ...
-        2. Run ...
-        3. Observe ...
+      label: Out of scope
+      description: Explicit exclusions, or None.
     validations:
       required: true
   - type: textarea
-    id: validation
+    id: references
     attributes:
-      label: Validation or evidence
-      description: Share logs, screenshots, links, or other evidence.
-      placeholder: Paste relevant output or links here.
+      label: References
+      description: Related issues, versions, documentation and evidence, or None.
     validations:
-      required: false
+      required: true
