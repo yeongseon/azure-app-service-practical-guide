@@ -129,6 +129,7 @@ nav:
     - mTLS: platform/mtls.md
     - Deployment:
       - Deployment Options: platform/deployment-options.md
+      - Run From Package: platform/run-from-package.md
       - Deployment Scenarios: platform/deployment-scenarios.md
     - Kudu:
       - Overview: platform/kudu-overview.md

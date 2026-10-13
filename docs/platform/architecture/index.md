@@ -747,7 +747,7 @@ Use these to align swap readiness with your app’s real warm-up endpoint and ex
 Use one or more alternatives:
 
 - Artifact rollback (redeploy previous known-good package)
-- Run-from-package with previous package version
+- Redeploy the previous known-good package; use [Run From Package](../run-from-package.md) where the runtime supports it
 - Blue-green traffic strategy in CI/CD workflow (external routing/control)
 
 !!! tip "Baseline should be tier-aware"
@@ -827,7 +827,7 @@ Use this as a minimum baseline before production go-live.
 - CI build/test pipeline produces immutable artifacts
 - Rollback method documented and tested
     - If Standard+ with slots: slot swap/rollback runbook
-    - If no slots: previous artifact redeploy or run-from-package fallback
+    - If no slots: previous artifact redeploy (see [Run From Package](../run-from-package.md) for supported runtimes)
 - Deployment identity/credentials minimized
 
 #### Observability baseline

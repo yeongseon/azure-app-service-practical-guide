@@ -516,7 +516,7 @@ The remaining sections apply the Windows Kudu surfaces to six recurring incident
     | `System.IO.FileNotFoundException: Could not load file or assembly ...` | Missing runtime dependency | Ensure the WebJob's `bin/` folder was included in the deploy artifact |
     | `Exit code -1073741819` (0xC0000005 access violation) | Native crash | Check `LogFiles/eventlog.xml` for the CLR crash record |
     | `WebJob timed out. Cancelling.` | Job exceeded WebJob timeout | Split into smaller jobs or migrate to Functions with a durable orchestration |
-    | `Access denied to path 'D:\home\site\wwwroot\...'` | Writing to `wwwroot` from a Run-From-Package deployment | Write to `D:\home\data\` (writable) instead |
+    | `Access denied to path 'D:\home\site\wwwroot\...'` | Writing to `wwwroot` from a Run-From-Package deployment | Write to `D:\home\data\` (writable) instead; see [Run From Package](run-from-package.md) |
 
 **What the evidence proves.** The Kudu WebJobs API returns the raw process output that ran, unfiltered by the runtime's exception handler. That is often the ONLY way to see a startup failure that occurred before your application logging was initialized.
 

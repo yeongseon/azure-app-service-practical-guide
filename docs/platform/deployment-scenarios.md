@@ -110,6 +110,9 @@ graph TD
 | Kudu (SCM) Site | Public access only | Depends on SCM private endpoint and public network access settings | Depends on SCM private endpoint and public network access settings | Depends on SCM private endpoint and public network access settings | Depends on ASE/network topology |
 | Deployment Slots | No | No | 5 | 20 | 20 |
 
+!!! note "SKU availability does not override runtime exclusions"
+    The Run from Package row shows SKU availability only. Run From Package is still unsupported for Python apps and Java apps on Azure App Service; see [Run From Package](run-from-package.md).
+
 !!! note "SCM reachability depends on topology, not just SKU"
     SCM/Kudu reachability depends on whether you configure an SCM private endpoint and whether public network access remains enabled. Private endpoints for multi-tenant App Service are available from the **Basic** tier onward, so Basic, Standard, and Premium apps can be public-only, dual-access, or effectively private depending on network configuration.
 
@@ -213,10 +216,11 @@ graph TD
 
 1. **Verify SKU Compatibility:** Ensure the chosen tier supports VNet integration (Basic+) or Private Endpoints (Basic+).
 2. **Subnet Delegation:** The integration subnet must be delegated to `Microsoft.Web/serverFarms` and must be empty before configuration.
-3. **App Settings (Code Deploy):** For ZIP or package-based deployments, configure `WEBSITE_RUN_FROM_PACKAGE=1` for faster startup and atomic swaps **only when the runtime supports it**. On Linux code apps, it is supported for Node.js and .NET, but not for Python or Java. (Not applicable for custom containers).
+3. **App Settings (Code Deploy):** For ZIP or package-based deployments, configure `WEBSITE_RUN_FROM_PACKAGE=1` **only when the runtime supports it** to run from a read-only, fully deployed package (see [Run From Package](run-from-package.md)). It is not supported for Python or Java apps on Azure App Service, it does not replace deployment slots for zero-downtime swaps, and it is not applicable to custom containers.
 4. **DNS Resolution:** Ensure private DNS zones (`privatelink.azurewebsites.net`) are linked to your VNet when using Private Endpoints.
 
 ## See Also
+- [Run From Package](run-from-package.md)
 - [Networking features overview](https://learn.microsoft.com/en-us/azure/app-service/networking-features)
 - [Zero-downtime deployments with slots](https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots)
 - [Security baseline for App Service](https://learn.microsoft.com/en-us/azure/app-service/security-baseline)
