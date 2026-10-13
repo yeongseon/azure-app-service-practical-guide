@@ -1,0 +1,43 @@
+name: Project operations
+
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize, labeled, unlabeled, ready_for_review]
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/ci/**'
+      - 'tests/ci/**'
+      - '.github/workflows/project-operations.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: project-operations-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    name: Operating contract tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.12'
+      - run: python -m unittest discover -s tests/ci -v
+  metadata:
+    name: PR metadata
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Check event metadata as data
+        run: python scripts/ci/check_project_metadata.py "$GITHUB_EVENT_PATH"
