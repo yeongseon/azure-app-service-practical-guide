@@ -85,6 +85,8 @@ If you upload a package some other way, such as FTP, you must create the `D:\hom
 !!! note "Windows-only path details"
     Microsoft Learn documents `SitePackages` and `packagename.txt` for Windows paths. It does not document an equivalent backing path for Linux. On Linux, rely only on the documented outcome: the package is mounted as the read-only `wwwroot`.
 
+    In the [Missing wwwroot Content lab](../troubleshooting/lab-guides/missing-wwwroot-content.md), a Linux Node.js 20 code app showed `/home/data/SitePackages` with a `packagename.txt` and a read-only `fuse-zip` mount of `wwwroot`. Treat that as an observation from one run, not a documented guarantee. The same lab found that a deployment submitted immediately after enabling the setting did not produce a mount, so verify the mount instead of trusting the setting value.
+
 ### Remote package activation
 
 Instead of `1`, you can set `WEBSITE_RUN_FROM_PACKAGE` to the URL of a ZIP file, such as a blob in Azure Blob Storage. The URL must end in `.zip`. Microsoft Learn recommends a private storage container, accessed either with a Shared Access Signature (SAS) or with a managed identity, so the App Service runtime can read the package securely.
@@ -154,7 +156,7 @@ These are commonly assumed but not stated by Microsoft Learn. Do not present the
 | A slot swap moves `packagename.txt` or a package pointer in a specific way | Not documented; only the general swap and warm-up behavior is documented |
 | Run From Package works with Oryx build-on-deploy after the mount | Not documented; the package must be ready to run |
 | Run From Package makes every app start faster | Not documented; Learn says it *may* reduce cold-start times, particularly for JavaScript functions with large npm package trees |
-| A Linux-equivalent of the Windows `SitePackages` path | Not documented |
+| A Linux-equivalent of the Windows `SitePackages` path | Not documented by Learn; observed once in a lab, see the note under local package activation |
 | Linux support is limited to Node.js and .NET | Not documented; only Python and Java apps are explicitly excluded |
 
 ### Selection summary
@@ -176,6 +178,7 @@ These are commonly assumed but not stated by Microsoft Learn. Do not present the
 - [ZIP Deploy and Run From Package (operations)](../operations/deployment/zip-deploy.md)
 - [Deployment Slots and Swap (operations)](../operations/deployment/slots-and-swap.md)
 - [Deployment failures playbook](../troubleshooting/playbooks/deployment-failures.md)
+- [Lab: Missing wwwroot Content Timeline and Run From Package](../troubleshooting/lab-guides/missing-wwwroot-content.md)
 
 ## Sources
 

@@ -1,0 +1,14 @@
+{
+  "runId": "run-20261013T225353Z",
+  "arm": "serialize",
+  "armStartedAt": "2026-10-13T22:54:07.611Z",
+  "armFinishedAt": "2026-10-13T22:55:22.071Z",
+  "skuAtStart": "B1",
+  "skuAtEnd": "B1",
+  "location": "Korea Central",
+  "azureCliVersion": "2.89.0",
+  "sourceRevision": "20969deac4d958fff0c71a6c951573a1b0122a34",
+  "sourceDirtyAtRun": true,
+  "packageSetSha256": "d0fd1cdf50fc8ffa7eac158d618e3d56230af316ae273943d333793f1383cd77",
+  "runtime": "Node.js 20 on Windows (iisnode)"
+}

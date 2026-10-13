@@ -1,0 +1,47 @@
+[
+  {
+    "ResultDescription": "LAB_AUDIT {\"event\":\"server-started\",\"at\":\"2026-10-13T22:51:35.813Z\",\"port\":\"8080\",\"contentRoot\":\"/home/site/wwwroot\"}",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T22:51:35.8608703Z"
+  },
+  {
+    "ResultDescription": "LAB_AUDIT {\"event\":\"server-started\",\"at\":\"2026-10-13T22:53:32.486Z\",\"port\":\"8080\",\"contentRoot\":\"/home/site/wwwroot\"}",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T22:53:32.505186Z"
+  },
+  {
+    "ResultDescription": "LAB_AUDIT {\"event\":\"server-started\",\"at\":\"2026-10-13T22:55:12.739Z\",\"port\":\"8080\",\"contentRoot\":\"/home/site/wwwroot\"}",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T22:55:12.7592432Z"
+  },
+  {
+    "ResultDescription": "LAB_AUDIT {\"event\":\"server-started\",\"at\":\"2026-10-13T22:58:31.284Z\",\"port\":\"8080\",\"contentRoot\":\"/home/site/wwwroot\"}",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T22:58:31.2962728Z"
+  },
+  {
+    "ResultDescription": "LAB_AUDIT {\"event\":\"asset-remove-failed\",\"at\":\"2026-10-13T22:58:50.319Z\",\"asset\":\"/assets/probe.txt\",\"code\":\"EROFS\",\"run\":\"run-20261013T161117Z\"}",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T22:58:50.3209586Z"
+  },
+  {
+    "ResultDescription": "LAB_AUDIT {\"event\":\"server-started\",\"at\":\"2026-10-13T23:00:18.672Z\",\"port\":\"8080\",\"contentRoot\":\"/home/site/wwwroot\"}",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T23:00:18.6918635Z"
+  },
+  {
+    "ResultDescription": "LAB_AUDIT {\"event\":\"server-started\",\"at\":\"2026-10-13T23:01:59.135Z\",\"port\":\"8080\",\"contentRoot\":\"/home/site/wwwroot\"}",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T23:01:59.1558364Z"
+  },
+  {
+    "ResultDescription": "LAB_AUDIT {\"event\":\"server-started\",\"at\":\"2026-10-13T23:03:50.190Z\",\"port\":\"8080\",\"contentRoot\":\"/home/site/wwwroot\"}",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T23:03:50.241378Z"
+  },
+  {
+    "ResultDescription": "LAB_AUDIT {\"event\":\"server-started\",\"at\":\"2026-10-13T23:04:58.522Z\",\"port\":\"8080\",\"contentRoot\":\"/home/site/wwwroot\"}",
+    "TableName": "PrimaryResult",
+    "TimeGenerated": "2026-10-13T23:04:58.5256506Z"
+  }
+]

@@ -1,0 +1,8 @@
+2026-10-13T22:54:10.703Z plan-sku-at-start=B1
+2026-10-13T22:54:10.717Z serialize-start
+2026-10-13T22:54:11.612Z submit-A
+2026-10-13T22:54:15.634Z submit-B
+2026-10-13T22:54:22.635Z B-cli-returned
+2026-10-13T22:54:28.072Z A-cli-returned
+2026-10-13T22:55:00.928Z final-state {"startedAt": "2026-10-13T22:55:00.774Z", "build": "5", "lockFile": {"writeOpen": "ok", "size": 509}, "lockHolder": null}
+2026-10-13T22:55:22.110Z arm-complete serialize run=run-20261013T225353Z

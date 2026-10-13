@@ -1,0 +1,6 @@
+WARNING: Polling the status of sync deployment. Start Time: 2026-10-13 14:48:41.828896+00:00 UTC
+WARNING: Status: Build successful. Time: 0(s)
+WARNING: Status: Starting the site... Time: 16(s)
+WARNING: Status: Site failed to start. Time: 611(s)
+Raw Error   : Deployment failed because the site failed to start within 10 mins.
+Error: Deployment for site '<app-name>' with DeploymentId 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx' failed because the worker proccess failed to start within the allotted time.

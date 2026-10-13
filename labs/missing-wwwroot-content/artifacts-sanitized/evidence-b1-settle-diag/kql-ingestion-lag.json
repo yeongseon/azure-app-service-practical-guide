@@ -1,0 +1,9 @@
+[
+  {
+    "MaxLagSeconds": "73",
+    "MedianLagSeconds": "56",
+    "MinLagSeconds": "56",
+    "Rows": "2",
+    "TableName": "PrimaryResult"
+  }
+]

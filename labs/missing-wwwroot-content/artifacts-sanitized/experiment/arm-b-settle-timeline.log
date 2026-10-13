@@ -1,0 +1,20 @@
+2026-10-13T22:48:21.981Z plan-sku-at-start=B1
+2026-10-13T22:48:27.931Z run-from-package-removed
+2026-10-13T22:50:28.369Z deploy-start mode=ordinary-zip startedAt-before=unknown
+2026-10-13T22:51:55.556Z deploy-end mode=ordinary-zip
+2026-10-13T22:51:55.908Z new-process-after-deploy startedAt=2026-10-13T22:51:35.792Z
+2026-10-13T22:51:56.000Z healthy-after-deploy
+2026-10-13T22:52:00.115Z lab-token-configured (value not recorded) run=run-20261013T161117Z
+2026-10-13T22:53:36.147Z process-after-token startedAt=2026-10-13T22:53:32.466Z
+2026-10-13T22:53:38.076Z S-baseline-ordinary asset_status=200
+2026-10-13T22:53:42.787Z run-from-package-enabled
+2026-10-13T22:55:19.070Z setting-change-process-observed startedAt=2026-10-13T22:55:12.718Z
+2026-10-13T22:57:19.096Z settle-wait-complete
+2026-10-13T22:57:19.638Z deploy-start mode=run-from-package-after-settle startedAt-before=2026-10-13T22:55:12.718Z
+2026-10-13T22:58:47.081Z deploy-end mode=run-from-package-after-settle
+2026-10-13T22:58:48.459Z new-process-after-deploy startedAt=2026-10-13T22:58:31.273Z
+2026-10-13T22:58:48.553Z healthy-after-deploy
+2026-10-13T22:58:48.902Z S1-remove-request
+2026-10-13T22:58:50.304Z S1-remove-response http_status=500
+2026-10-13T22:58:51.636Z S1-asset-status-after-removal-attempt=200
+2026-10-13T22:59:03.569Z arm-complete arm-b-settle run=run-20261013T161117Z

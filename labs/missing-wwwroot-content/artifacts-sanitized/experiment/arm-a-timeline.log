@@ -1,0 +1,26 @@
+2026-10-13T14:48:07.024Z deploy-start mode=ordinary-zip startedAt-before=unknown
+2026-10-13T14:49:31.875Z deploy-end mode=ordinary-zip
+2026-10-13T14:49:32.104Z new-process-after-deploy startedAt=2026-10-13T14:49:21.743Z
+2026-10-13T14:49:32.193Z healthy-after-deploy
+2026-10-13T14:49:37.140Z lab-token-configured (value not recorded) run=run-20261013T144802Z
+2026-10-13T14:50:55.416Z process-after-token startedAt=2026-10-13T14:50:48.671Z
+2026-10-13T14:50:55.588Z baseline asset_status=200
+2026-10-13T14:50:55.600Z A1-probe-loop-start
+2026-10-13T14:51:15.620Z A1-remove-request
+2026-10-13T14:51:15.775Z A1-remove-response http_status=200
+2026-10-13T14:52:27.513Z A1-probe-loop-end
+2026-10-13T14:52:27.645Z deploy-start mode=ordinary-zip-restore startedAt-before=2026-10-13T14:50:48.671Z
+2026-10-13T14:53:33.282Z deploy-end mode=ordinary-zip-restore
+2026-10-13T14:53:33.395Z new-process-after-deploy startedAt=2026-10-13T14:53:16.070Z
+2026-10-13T14:53:33.494Z healthy-after-deploy
+2026-10-13T14:53:33.584Z A2-baseline asset_status=200
+2026-10-13T14:53:33.597Z A2-probing-paused
+2026-10-13T14:53:33.609Z A2-remove-request
+2026-10-13T14:53:33.688Z A2-remove-response http_status=200
+2026-10-13T14:55:03.795Z A2-process-startedAt-before-restart=2026-10-13T14:53:16.070Z
+2026-10-13T14:55:03.808Z A2-restart-request
+2026-10-13T14:55:09.475Z A2-restart-returned
+2026-10-13T14:55:09.631Z A2-first-probe-after-restart-returned asset_status=404 startedAt=2026-10-13T14:53:16.070Z
+2026-10-13T14:56:00.852Z A2-new-process-observed startedAt=2026-10-13T14:55:53.692Z
+2026-10-13T14:56:01.016Z A2-probe-after-new-process asset_status=404
+2026-10-13T14:56:11.468Z arm-complete arm-a run=run-20261013T144802Z

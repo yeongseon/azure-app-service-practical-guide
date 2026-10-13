@@ -1,0 +1,20 @@
+2026-10-13T22:55:30.829Z plan-sku-at-start=B1
+2026-10-13T22:55:36.483Z run-from-package-enabled
+2026-10-13T22:58:06.507Z settle-wait-complete
+2026-10-13T22:58:06.589Z deploy-start rfp-baseline build=3
+2026-10-13T22:58:26.134Z deploy-end rfp-baseline build=3 cli_exit=0
+2026-10-13T22:58:42.362Z lab-token-configured (value not recorded) run=run-20261013T225522Z
+2026-10-13T22:58:57.120Z process-after-token startedAt=2026-10-13T22:58:56.967Z
+2026-10-13T22:59:18.330Z baseline-state {"startedAt": "2026-10-13T22:58:56.967Z", "build": "3", "lockFile": {"writeOpen": "ok", "size": 309}, "lockHolder": null}
+2026-10-13T22:59:21.773Z hold-lock-requested attempt=1 response={"holding":"data/lockme.txt","pid":5956,"alive":true} state={"startedAt": "2026-10-13T22:58:56.967Z", "build": "3", "lockFile": {"writeOpen": "ok", "size": 309}, "lockHolder": {"pid": 5956, "file": "data/lockme.txt", "alive": true}}
+2026-10-13T22:59:52.830Z lock-not-effective attempt=1 state={"startedAt": "2026-10-13T22:58:56.967Z", "build": "3", "lockFile": {"writeOpen": "ok", "size": 309}, "lockHolder": {"pid": 5956, "file": "data/lockme.txt", "alive": true}}
+2026-10-13T22:59:56.238Z hold-lock-requested attempt=2 response={"holding":"data/lockme.txt","pid":4828,"alive":true} state={"startedAt": "2026-10-13T22:58:56.967Z", "build": "3", "lockFile": {"writeOpen": "ok", "size": 309}, "lockHolder": {"pid": 4828, "file": "data/lockme.txt", "alive": true}}
+2026-10-13T23:00:27.185Z lock-not-effective attempt=2 state={"startedAt": "2026-10-13T22:58:56.967Z", "build": "3", "lockFile": {"writeOpen": "ok", "size": 309}, "lockHolder": {"pid": 4828, "file": "data/lockme.txt", "alive": true}}
+2026-10-13T23:00:30.393Z hold-lock-requested attempt=3 response={"holding":"data/lockme.txt","pid":3164,"alive":true} state={"startedAt": "2026-10-13T22:58:56.967Z", "build": "3", "lockFile": {"writeOpen": "ok", "size": 309}, "lockHolder": {"pid": 3164, "file": "data/lockme.txt", "alive": true}}
+2026-10-13T23:01:01.218Z lock-not-effective attempt=3 state={"startedAt": "2026-10-13T22:58:56.967Z", "build": "3", "lockFile": {"writeOpen": "ok", "size": 309}, "lockHolder": {"pid": 3164, "file": "data/lockme.txt", "alive": true}}
+2026-10-13T23:01:01.231Z lock-never-effective (continuing: the absence of a lock is itself the observation)
+2026-10-13T23:01:01.318Z deploy-start rfp-with-lock build=4
+2026-10-13T23:01:17.859Z deploy-end rfp-with-lock build=4 cli_exit=0
+2026-10-13T23:01:49.065Z after-deploy-state {"startedAt": "2026-10-13T23:01:48.833Z", "build": "4", "lockFile": {"writeOpen": "ok", "size": 409}, "lockHolder": null}
+2026-10-13T23:01:54.242Z after-release-state {"startedAt": "2026-10-13T23:01:48.833Z", "build": "4", "lockFile": {"writeOpen": "ok", "size": 409}, "lockHolder": null}
+2026-10-13T23:02:07.382Z arm-complete lock-rfp run=run-20261013T225522Z

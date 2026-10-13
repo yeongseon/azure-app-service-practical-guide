@@ -1,0 +1,16 @@
+2026-10-13T15:14:46.915Z run-from-package-removed
+2026-10-13T15:16:57.038Z deploy-start mode=ordinary-zip startedAt-before=unknown
+2026-10-13T15:17:45.663Z deploy-end mode=ordinary-zip
+2026-10-13T15:17:45.785Z new-process-after-deploy startedAt=2026-10-13T15:17:32.433Z
+2026-10-13T15:17:45.869Z healthy-after-deploy
+2026-10-13T15:17:50.276Z lab-token-configured (value not recorded) run=run-20261013T151438Z
+2026-10-13T15:19:31.143Z process-after-token startedAt=2026-10-13T15:19:29.929Z
+2026-10-13T15:19:31.292Z R-baseline-ordinary asset_status=200
+2026-10-13T15:19:35.343Z run-from-package-enabled
+2026-10-13T15:19:35.517Z deploy-start mode=run-from-package-first startedAt-before=2026-10-13T15:19:29.929Z
+2026-10-13T15:20:42.044Z deploy-end mode=run-from-package-first
+2026-10-13T15:20:57.456Z new-process-after-deploy startedAt=2026-10-13T15:20:49.637Z
+2026-10-13T15:20:57.542Z healthy-after-deploy
+2026-10-13T15:20:57.638Z R1-remove-request
+2026-10-13T15:20:57.703Z R1-remove-response http_status=200
+2026-10-13T15:20:57.834Z deploy-start mode=run-from-package-second startedAt-before=2026-10-13T15:20:49.637Z

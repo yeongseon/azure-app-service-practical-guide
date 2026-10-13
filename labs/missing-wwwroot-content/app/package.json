@@ -1,0 +1,12 @@
+{
+  "name": "lab-missing-wwwroot-content",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Synthetic lab app: serves a static test asset and exposes a controlled, instrumented removal action.",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

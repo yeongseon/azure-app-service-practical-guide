@@ -1,0 +1,38 @@
+[
+  {
+    "caller": "<email-redacted>",
+    "operation": "Microsoft.Web/serverfarms/write",
+    "status": "Succeeded",
+    "time": "2026-10-13T16:05:53.9052894Z"
+  },
+  {
+    "caller": "<email-redacted>",
+    "operation": "Microsoft.Web/serverfarms/write",
+    "status": "Started",
+    "time": "2026-10-13T16:05:50.4521416Z"
+  },
+  {
+    "caller": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+    "operation": "Microsoft.Web/serverfarms/write",
+    "status": "Succeeded",
+    "time": "2026-10-13T15:37:01.1163545Z"
+  },
+  {
+    "caller": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+    "operation": "Microsoft.Web/serverfarms/write",
+    "status": "Started",
+    "time": "2026-10-13T15:36:51.1005653Z"
+  },
+  {
+    "caller": "<email-redacted>",
+    "operation": "Microsoft.Web/serverfarms/write",
+    "status": "Succeeded",
+    "time": "2026-10-13T14:48:40.7712109Z"
+  },
+  {
+    "caller": "<email-redacted>",
+    "operation": "Microsoft.Web/serverfarms/write",
+    "status": "Started",
+    "time": "2026-10-13T14:48:39.3492898Z"
+  }
+]

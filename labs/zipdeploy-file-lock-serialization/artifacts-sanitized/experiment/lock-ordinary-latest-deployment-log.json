@@ -1,0 +1,93 @@
+[
+  {
+    "details_url": null,
+    "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+    "log_time": "2026-10-13T22:52:35.3630917Z",
+    "message": "Updating submodules.",
+    "type": 0
+  },
+  {
+    "details_url": null,
+    "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+    "log_time": "2026-10-13T22:52:35.5037149Z",
+    "message": "Preparing deployment for commit id 'bb10a06750'.",
+    "type": 0
+  },
+  {
+    "details_url": null,
+    "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+    "log_time": "2026-10-13T22:52:35.7850673Z",
+    "message": "Running build. Project type: OneDeploy",
+    "type": 0
+  },
+  {
+    "details_url": null,
+    "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+    "log_time": "2026-10-13T22:52:35.8318405Z",
+    "message": "Copying the manifest",
+    "type": 0
+  },
+  {
+    "details_url": null,
+    "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+    "log_time": "2026-10-13T22:52:35.9255936Z",
+    "message": "Clean deploying to C:\\home\\site\\wwwroot",
+    "type": 0
+  },
+  {
+    "details_url": "https://<app-name>.scm.<azurewebsites-domain-redacted>/api/deployments/bb10a06750384f048063792ec264a3b4/log/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+    "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+    "log_time": "2026-10-13T22:52:36.0193418Z",
+    "message": "Generating deployment script.",
+    "type": 0
+  },
+  {
+    "details_url": "https://<app-name>.scm.<azurewebsites-domain-redacted>/api/deployments/bb10a06750384f048063792ec264a3b4/log/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+    "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+    "log_time": "2026-10-13T22:52:36.2693421Z",
+    "message": "Running deployment command...",
+    "type": 2
+  },
+  {
+    "details_url": null,
+    "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+    "log_time": "2026-10-13T22:52:39.9069617Z",
+    "message": "Build completed succesfully.",
+    "type": 0
+  },
+  {
+    "details_url": null,
+    "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+    "log_time": "2026-10-13T22:52:40.0016104Z",
+    "message": "Running post deployment command(s)...",
+    "type": 0
+  },
+  {
+    "details_url": null,
+    "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+    "log_time": "2026-10-13T22:52:40.1116395Z",
+    "message": "Requesting site restart",
+    "type": 0
+  },
+  {
+    "details_url": null,
+    "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+    "log_time": "2026-10-13T22:52:40.1725873Z",
+    "message": "Requesting site restart. Attempt #1",
+    "type": 0
+  },
+  {
+    "details_url": null,
+    "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+    "log_time": "2026-10-13T22:52:41.4707136Z",
+    "message": "Successfully requested a restart. Attempt #1",
+    "type": 0
+  },
+  {
+    "details_url": null,
+    "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+    "log_time": "2026-10-13T22:52:41.5008968Z",
+    "message": "Deployment successful.",
+    "type": 0
+  }
+]

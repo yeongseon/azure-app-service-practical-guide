@@ -1,0 +1,9 @@
+{
+  "name": "lab-zipdeploy-file-lock-serialization",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Synthetic lab app: holds an exclusive handle on a data file so deployment behavior can be compared.",
+  "scripts": {
+    "start": "node server.js"
+  }
+}

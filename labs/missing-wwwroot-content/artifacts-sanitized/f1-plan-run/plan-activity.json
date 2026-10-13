@@ -1,0 +1,50 @@
+[
+  {
+    "caller": "<email-redacted>",
+    "operation": "Microsoft.Web/serverfarms/delete",
+    "status": "Succeeded",
+    "time": "2026-10-13T15:49:59.9274792Z"
+  },
+  {
+    "caller": "<email-redacted>",
+    "operation": "Microsoft.Web/serverfarms/delete",
+    "status": "Started",
+    "time": "2026-10-13T15:49:58.6618888Z"
+  },
+  {
+    "caller": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+    "operation": "Microsoft.Web/serverfarms/write",
+    "status": "Succeeded",
+    "time": "2026-10-13T15:37:01.5987876Z"
+  },
+  {
+    "caller": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+    "operation": "Microsoft.Web/serverfarms/write",
+    "status": "Started",
+    "time": "2026-10-13T15:36:49.4579534Z"
+  },
+  {
+    "caller": "<email-redacted>",
+    "operation": "Microsoft.Web/serverfarms/write",
+    "status": "Succeeded",
+    "time": "2026-10-13T14:40:05.242595Z"
+  },
+  {
+    "caller": "<email-redacted>",
+    "operation": "Microsoft.Web/serverfarms/write",
+    "status": "Started",
+    "time": "2026-10-13T14:40:00.8636941Z"
+  },
+  {
+    "caller": "<email-redacted>",
+    "operation": "Microsoft.Web/serverfarms/delete",
+    "status": "Succeeded",
+    "time": "2026-10-13T14:23:48.022563Z"
+  },
+  {
+    "caller": "<email-redacted>",
+    "operation": "Microsoft.Web/serverfarms/delete",
+    "status": "Started",
+    "time": "2026-10-13T14:23:46.4756654Z"
+  }
+]

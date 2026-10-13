@@ -1,0 +1,14 @@
+2026-10-13T22:48:50.587Z plan-sku-at-start=B1
+2026-10-13T22:48:56.381Z run-from-package-removed
+2026-10-13T22:51:26.476Z deploy-start ordinary-baseline build=1
+2026-10-13T22:51:39.144Z deploy-end ordinary-baseline build=1 cli_exit=0
+2026-10-13T22:51:46.329Z lab-token-configured (value not recorded) run=run-20261013T224841Z
+2026-10-13T22:51:54.715Z process-after-token startedAt=2026-10-13T22:51:54.477Z
+2026-10-13T22:52:14.848Z baseline-state {"startedAt": "2026-10-13T22:51:54.477Z", "build": "1", "lockFile": {"writeOpen": "ok", "size": 109}, "lockHolder": null}
+2026-10-13T22:52:18.150Z hold-lock-requested attempt=1 response={"holding":"data/lockme.txt","pid":2440,"alive":true} state={"startedAt": "2026-10-13T22:51:54.477Z", "build": "1", "lockFile": {"writeOpen": "ok", "size": 109}, "lockHolder": {"pid": 2440, "file": "data/lockme.txt", "alive": true}}
+2026-10-13T22:52:21.891Z lock-effective attempt=1 state={"startedAt": "2026-10-13T22:51:54.477Z", "build": "1", "lockFile": {"writeOpen": "EBUSY", "size": 109}, "lockHolder": {"pid": 2440, "file": "data/lockme.txt", "alive": true}}
+2026-10-13T22:52:21.956Z deploy-start ordinary-with-lock build=2
+2026-10-13T22:52:45.679Z deploy-end ordinary-with-lock build=2 cli_exit=0
+2026-10-13T22:53:21.766Z after-deploy-state {"startedAt": "2026-10-13T22:53:21.566Z", "build": "2", "lockFile": {"writeOpen": "ok", "size": 109}, "lockHolder": null}
+2026-10-13T22:53:30.406Z after-release-state {"startedAt": "2026-10-13T22:53:21.566Z", "build": "2", "lockFile": {"writeOpen": "ok", "size": 109}, "lockHolder": null}
+2026-10-13T22:53:53.036Z arm-complete lock-ordinary run=run-20261013T224841Z

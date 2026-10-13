@@ -1,0 +1,13 @@
+[
+  "2026-10-13T15:19:30.3020114Z Site startup probe succeeded after 24.0369225 seconds.",
+  "2026-10-13T15:19:30.4250322Z State: Starting, Action: WarmUpProbeSucceeded, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:18:06, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Site startup probe succeeded after 24.0369225 seconds., DetailsLevel: INFO",
+  "2026-10-13T15:19:30.8540686Z Site started.",
+  "2026-10-13T15:20:50.0783072Z Site startup probe succeeded after 55.0970186 seconds.",
+  "2026-10-13T15:20:50.7550117Z State: Starting, Action: WarmUpProbeSucceeded, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site startup probe succeeded after 55.0970186 seconds., DetailsLevel: INFO",
+  "2026-10-13T15:20:51.8882837Z Site started.",
+  "2026-10-13T15:21:30.6652151Z Update mount on running container.",
+  "2026-10-13T15:21:31.2142854Z Container failed to remount volume. Terminate.",
+  "2026-10-13T15:25:22.3754079Z Site startup probe succeeded after 26.0578006 seconds.",
+  "2026-10-13T15:25:22.4937060Z State: Starting, Action: WarmUpProbeSucceeded, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/13/2026 15:18:06, LastErrorDetails: The container did not complete startup successfully. Please inspect your container logs for more details., Details: Site startup probe succeeded after 26.0578006 seconds., DetailsLevel: INFO",
+  "2026-10-13T15:25:22.9014916Z Site started."
+]
