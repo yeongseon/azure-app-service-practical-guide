@@ -104,7 +104,7 @@ Different hosting modes have different observation points. Use this table to pri
 
 | Symptom | Linux Code | Linux Container | Windows Code |
 |---|---|---|---|
-| **Startup fails** | `AppServiceConsoleLogs` — Oryx build output, runtime startup | `AppServiceConsoleLogs` — Docker logs, `ENTRYPOINT`/`CMD` output | Application Event Logs, `WEBSITE_RUN_FROM_PACKAGE` extraction |
+| **Startup fails** | `AppServiceConsoleLogs` — Oryx build output, runtime startup | `AppServiceConsoleLogs` — Docker logs, `ENTRYPOINT`/`CMD` output | Application Event Logs, `WEBSITE_RUN_FROM_PACKAGE` mount or package-selection issues |
 | **Wrong port/binding** | Check `--bind` in startup command (Gunicorn, etc.) | Check `WEBSITES_PORT`, `PORT` env var, `EXPOSE` in Dockerfile | Typically auto-configured; check `web.config` for IIS settings |
 | **Missing dependencies** | Oryx build logs, `requirements.txt` / `package.json` | Image build logs; dependencies baked into image | NuGet restore logs, MSBuild output |
 | **Slow cold start** | Module import time, lazy loading patterns | Image pull time (check image size), container init | Assembly loading, JIT compilation |

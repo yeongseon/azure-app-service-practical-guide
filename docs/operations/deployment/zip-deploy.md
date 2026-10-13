@@ -68,10 +68,10 @@ Use `az webapp up` for first-time experimentation or tutorials. Use ZIP Deploy w
 
 ### Enable `WEBSITE_RUN_FROM_PACKAGE`
 
-`WEBSITE_RUN_FROM_PACKAGE=1` tells App Service to run from a mounted package instead of relying on mutable file copies in `wwwroot`. This improves consistency and reduces partial-copy or file-lock issues during deployment.
+`WEBSITE_RUN_FROM_PACKAGE=1` tells App Service to run from a mounted package instead of relying on mutable file copies in `wwwroot`. This improves consistency and, per Microsoft Learn, eliminates file lock conflicts between deployment and runtime. For how activation works, limits, and what the platform does not document, see [Run From Package](../../platform/run-from-package.md).
 
-!!! warning "Linux runtime-specific support"
-    For Linux code apps, Run From Package is supported for Node.js and .NET, but not for Python apps or Java apps on Linux. Use standard ZIP deploy for unsupported Linux runtimes.
+!!! warning "Runtime-specific support"
+    Run From Package is unsupported for Python apps and Java apps on Azure App Service. Microsoft Learn does not publish an exhaustive "Node.js and .NET only" Linux support matrix, so do not infer one. For Python, use standard ZIP deploy with build automation enabled. For Java, use the Java-specific WAR, JAR, or EAR deployment. For runtimes where Run From Package is available, provide a prebuilt, ready-to-run ZIP without deployment-time build automation.
 
 ```bash
 az webapp config appsettings set \
@@ -212,6 +212,7 @@ az webapp config appsettings list \
 - [Deployment Methods](./index.md)
 - [GitHub Actions](./github-actions.md)
 - [Slots and Swap](./slots-and-swap.md)
+- [Run From Package (platform)](../../platform/run-from-package.md)
 
 ## Sources
 

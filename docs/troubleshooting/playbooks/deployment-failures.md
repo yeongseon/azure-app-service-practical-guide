@@ -338,7 +338,7 @@ Validation steps:
 
 1. Identify whether `SCM_DO_BUILD_DURING_DEPLOYMENT` matches the artifact type.
 2. Confirm the artifact includes the expected startup files and dependency manifest.
-3. If `WEBSITE_RUN_FROM_PACKAGE` is enabled, verify the package itself contains the runnable app layout.
+3. If `WEBSITE_RUN_FROM_PACKAGE` is enabled, verify the package itself contains the runnable app layout. See [Run From Package](../../platform/run-from-package.md) for the documented package requirements and limits.
 
 ### H3: Deployment succeeded but startup failed
 
@@ -399,6 +399,7 @@ Validation steps:
 - [Deployment Succeeded but Startup Failed](startup-availability/deployment-succeeded-startup-failed.md)
 - [Slot Swap Failed During Warm-up](startup-availability/slot-swap-failed-during-warmup.md)
 - [Deployment Slots Operations](../../operations/deployment-slots.md)
+- [Run From Package](../../platform/run-from-package.md)
 
 ## Sources
 

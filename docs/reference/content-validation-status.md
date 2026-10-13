@@ -11,12 +11,12 @@ This page tracks `content_validation` metadata for **in-scope factual-claim docu
 
 ## Summary
 
-*Generated: 2026-10-02*
+*Generated: 2026-10-13*
 
 | Content Type | Total | Verified | Pending | Unverified | No Metadata |
 |---|---:|---:|---:|---:|---:|
-| Mermaid Diagrams | 385 | 385 | 0 | 0 | 0 |
-| In-Scope Factual-Claim Documents | 76 | 76 | 0 | 0 | 0 |
+| Mermaid Diagrams | 386 | 386 | 0 | 0 | 0 |
+| In-Scope Factual-Claim Documents | 77 | 77 | 0 | 0 | 0 |
 
 !!! success "All In-Scope Documents Verified"
     Every in-scope factual-claim document has verified Microsoft Learn sources for its core claims.
@@ -24,7 +24,7 @@ This page tracks `content_validation` metadata for **in-scope factual-claim docu
 <!-- diagram-id: content-validation-status-pie -->
 ```mermaid
 pie title In-Scope Document Validation Status
-    "Verified" : 76
+    "Verified" : 77
 ```
 
 ## By Section
@@ -46,6 +46,7 @@ pie title In-Scope Document Validation Status
 | [Networking](../platform/networking.md) | ✅ | ✅ Verified | 10/10 | 2026-07-16 |
 | [Request Lifecycle](../platform/request-lifecycle.md) | ✅ | ✅ Verified | 5/5 | 2026-09-11 |
 | [Resource Relationships](../platform/resource-relationships.md) | ✅ | ✅ Verified | 5/5 | 2026-09-11 |
+| [Run From Package](../platform/run-from-package.md) | ✅ | ✅ Verified | 5/5 | 2026-10-13 |
 | [Scaling](../platform/scaling.md) | ✅ | ✅ Verified | 4/4 | 2026-09-11 |
 | [Security Architecture](../platform/security-architecture.md) | ✅ | ✅ Verified | 5/5 | 2026-09-11 |
 | [Storage Connectivity](../platform/storage-connectivity.md) | ✅ | ✅ Verified | 6/6 | 2026-07-16 |

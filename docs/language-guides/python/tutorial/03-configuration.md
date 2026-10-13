@@ -153,10 +153,6 @@ Masked example:
   {
     "name": "DB_PASSWORD",
     "value": "@Microsoft.KeyVault(SecretUri=https://kv-flask-tutorial.vault.azure.net/secrets/DbPassword/)"
-  },
-  {
-    "name": "WEBSITE_RUN_FROM_PACKAGE",
-    "value": "1"
   }
 ]
 ```

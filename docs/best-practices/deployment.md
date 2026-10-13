@@ -217,14 +217,14 @@ az webapp config appsettings set \
 
 ### Run From Package Deployment
 
-Run From Package mounts a ZIP package as read-only `wwwroot`. This improves consistency and avoids partial file-copy states.
+Run From Package mounts a ZIP package as read-only `wwwroot`. This improves consistency and avoids partial file-copy states. It is unsupported for Python apps and Java apps on Azure App Service; see [Run From Package](../platform/run-from-package.md).
 
 #### Benefits
 
-- Atomic package mounting behavior
-- Better startup consistency
-- Reduced file lock contention
-- Easier rollback to previous package
+- Only fully deployed package content runs; no partially copied `wwwroot` state
+- No file lock conflicts between deployment and runtime (per Microsoft Learn)
+- Possible cold-start improvement for some workloads, such as JavaScript Functions with large dependency trees
+- Rollback by redeploying the previous known-good package
 
 #### Trade-Offs
 
@@ -241,7 +241,7 @@ az webapp config appsettings set \
 
 | Command | Purpose | Key flags |
 |---|---|---|
-| `az webapp config appsettings set --settings WEBSITE_RUN_FROM_PACKAGE=1` | Enable Run From Package mode so wwwroot is mounted read-only from the ZIP artifact | Value `1` mounts the most recent deployment ZIP; runtime writes to wwwroot will fail — externalize state to Storage or database |
+| `az webapp config appsettings set --settings WEBSITE_RUN_FROM_PACKAGE=1` | Enable Run From Package mode so wwwroot is mounted read-only from the ZIP artifact | Value `1` mounts the selected local deployment ZIP; runtime writes to wwwroot will fail — externalize state to Storage or database |
 
 ### Rollback Strategies
 

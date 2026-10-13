@@ -66,7 +66,7 @@ Once you finish this page, jump to [Kudu API Reference](../reference/kudu-querie
 
 ## Why Kudu Matters
 
-Most App Service deployment paths—ZIP deploy, Run from Package, Local Git, GitHub Actions, FTP, OneDeploy—either talk to Kudu directly or rely on it for the post-deploy step (unpacking the artifact, running Oryx, recycling the worker). When something goes wrong between "deployment succeeded" and "app responds 200 OK," Kudu is usually where the evidence lives.
+Most App Service deployment paths—ZIP deploy, Run from Package (local package; a remote package URL is read by the App Service runtime instead, see [Run From Package](./run-from-package.md)), Local Git, GitHub Actions, FTP, OneDeploy—either talk to Kudu directly or rely on it for the post-deploy step (unpacking the artifact, running Oryx, recycling the worker). When something goes wrong between "deployment succeeded" and "app responds 200 OK," Kudu is usually where the evidence lives.
 
 Three concrete capabilities make Kudu non-replaceable:
 
@@ -90,6 +90,9 @@ flowchart TD
     AppHost -->|Reads| Storage
     ScmHost -->|REST + UI| Tools["Process Explorer / Debug Console / Site Extensions / WebSSH"]
 ```
+
+!!! note "Run From Package exception"
+    The diagram shows the default extraction path. With Run From Package, the deployment artifact is not extracted into `wwwroot`; the ZIP is mounted as a read-only `wwwroot`. See [Run From Package](./run-from-package.md).
 
 | Aspect | Main site | SCM (Kudu) site |
 |---|---|---|
@@ -416,6 +419,7 @@ For runtime-specific patterns (custom container SSH setup, package inspection, b
 - [Windows Kudu and Diagnostic Tools](../troubleshooting/playbooks/startup-availability/windows-kudu-diagnostics.md) — Windows-specific tool selection playbook
 - [How App Service Works](./architecture/index.md) — main site vs SCM plane in the broader architecture
 - [Deployment Options Reference](./deployment-options.md) — how each deployment method uses Kudu
+- [Run From Package](./run-from-package.md) — mounted read-only `wwwroot` instead of extraction
 - [Networking Best Practices](../best-practices/networking.md) — SCM access restrictions in context
 - [Troubleshooting Reference](../reference/troubleshooting.md) — broader diagnostic surface map
 

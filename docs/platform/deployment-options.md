@@ -35,7 +35,7 @@ content_validation:
     - claim: "az webapp deploy is the recommended unified deployment API, replacing az webapp deployment source config-zip"
       source: https://learn.microsoft.com/en-us/azure/app-service/deploy-zip
       verified: true
-    - claim: "WEBSITE_RUN_FROM_PACKAGE mounts the ZIP as read-only wwwroot; Linux support is runtime-specific"
+    - claim: "WEBSITE_RUN_FROM_PACKAGE mounts the ZIP as read-only wwwroot; it is unsupported for Python apps and Java apps on Azure App Service"
       source: https://learn.microsoft.com/en-us/azure/app-service/deploy-run-package
       verified: true
     - claim: "Local Git deployment requires SCM basic authentication to be explicitly enabled"
@@ -62,8 +62,8 @@ Azure App Service supports multiple deployment methods that differ in OS support
 flowchart TD
     A[Choose a deployment method] --> B{Artifact type?}
     B -- ZIP package --> C{Windows or Linux?}
-    C -- Windows --> D[ZIP Deploy or Run from Package]
-    C -- Linux --> E[ZIP Deploy; Run from Package for Node.js/.NET only]
+    C -- Windows --> D[ZIP Deploy or Run from Package; not for Java apps]
+    C -- Linux --> E[ZIP Deploy; Run from Package unless Python or Java]
     B -- WAR / JAR / EAR --> F[az webapp deploy --type war/jar/ear]
     B -- Container image --> G[Web App for Containers]
     B -- Source code --> H{CI/CD system?}
@@ -167,12 +167,12 @@ az webapp deployment source config-zip \
 
 ## Run from Package
 
-Mounts a ZIP file directly as the read-only `wwwroot` instead of unpacking it. Enables atomic deploys and eliminates file extraction time.
+Mounts a ZIP file directly as the read-only `wwwroot` instead of unpacking it. Microsoft Learn lists these benefits: it eliminates file lock conflicts between deployment and runtime and ensures only fully deployed apps run. It may also reduce cold-start times for some workloads (notably JavaScript Functions with large dependency trees); it is not a general startup-speed guarantee. For how activation works and what the platform does and does not document, see [Run From Package](run-from-package.md).
 
 | Property | Value |
 |---|---|
-| Windows | ✅ |
-| Linux | ⚠️ Runtime-specific: supported for Node.js and .NET on Linux; not supported for Python apps or Java apps on Linux |
+| Windows | ✅ (not supported for Java apps) |
+| Linux | ⚠️ Runtime-specific: not supported for Python apps or Java apps; Learn publishes no exhaustive list of supported Linux runtimes |
 | `wwwroot` | Read-only at runtime |
 | Blob URL support | `WEBSITE_RUN_FROM_PACKAGE=<SAS URL>` |
 | Local ZIP | `WEBSITE_RUN_FROM_PACKAGE=1` |
@@ -206,8 +206,8 @@ az webapp deploy \
 | `WEBSITE_RUN_FROM_PACKAGE=<URL>` | Mount remote ZIP from Blob SAS URL |
 | `WEBSITE_USE_ZIP` | **Deprecated** — use `WEBSITE_RUN_FROM_PACKAGE` instead |
 
-!!! warning "Linux runtime-specific support"
-    On Linux App Service, `WEBSITE_RUN_FROM_PACKAGE` is **not supported for Python apps or Java apps on Linux**. It is supported for **Node.js and .NET on Linux**. For unsupported Linux runtimes, use standard ZIP deploy instead of Run from Package.
+!!! warning "Runtime-specific support"
+    `WEBSITE_RUN_FROM_PACKAGE` is **unsupported for Python apps and Java apps on Azure App Service**. Microsoft Learn does not publish an exhaustive "Node.js and .NET only" Linux support matrix, so do not infer one. For Python, use standard ZIP deploy with build automation enabled. For Java, use the Java-specific WAR, JAR, or EAR deployment. For runtimes where Run From Package is available, provide a prebuilt, ready-to-run ZIP without deployment-time build automation.
 
 !!! note "Read-only wwwroot"
     With Run from Package active, any attempt to write to `wwwroot` at runtime will fail. Store runtime state in Azure Storage or an external service.
@@ -580,7 +580,7 @@ This table summarizes the key behavioral differences between Windows and Linux A
 |---|---|---|
 | Default app root | `D:\home\site\wwwroot` | `/home/site/wwwroot` |
 | Build engine | Kudu (MSBuild / script) | Oryx (auto-detect language) |
-| Run from Package | ✅ Fully supported | ⚠️ Runtime-specific (Node.js/.NET supported; Python/Java on Linux not supported) |
+| Run from Package | ✅ Supported (not for Java apps) | ⚠️ Runtime-specific (not supported for Python or Java apps) |
 | Web Deploy (MSDeploy) | ✅ | ❌ |
 | Kudu SCM UI | Full UI | Basic UI |
 | SCM basic auth default | Disabled (since 2023) | Disabled (since 2023) |
@@ -609,6 +609,7 @@ This table summarizes the key behavioral differences between Windows and Linux A
 
 - [Deployment Methods Operations Guide](../operations/deployment/index.md)
 - [ZIP Deploy Guide](../operations/deployment/zip-deploy.md)
+- [Run From Package](./run-from-package.md)
 - [GitHub Actions Guide](../operations/deployment/github-actions.md)
 - [Slots and Swap Guide](../operations/deployment/slots-and-swap.md)
 - [Web App for Containers](./containers/index.md)
