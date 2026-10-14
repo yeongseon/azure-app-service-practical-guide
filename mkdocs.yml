@@ -310,6 +310,7 @@ nav:
         - troubleshooting/playbooks/startup-availability/warmup-vs-health-check.md
         - troubleshooting/playbooks/startup-availability/auth-redirect-loop.md
         - troubleshooting/playbooks/startup-availability/windows-iis-webconfig-startup.md
+        - troubleshooting/playbooks/startup-availability/windows-first-static-asset-request-500.md
         - troubleshooting/playbooks/startup-availability/windows-container-health-probes.md
         - troubleshooting/playbooks/startup-availability/windows-kudu-diagnostics.md
       - Performance:
