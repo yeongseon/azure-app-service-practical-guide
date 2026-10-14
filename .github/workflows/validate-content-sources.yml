@@ -68,7 +68,15 @@ jobs:
       - name: Validate Windows troubleshooting navigation
         run: |
           python scripts/validate_windows_navigation.py
-      
+
+      - name: Test documented repository path validation
+        run: |
+          python -m unittest scripts.tests.test_validate_documented_paths -v
+
+      - name: Validate documented repository paths
+        run: |
+          python scripts/validate_documented_paths.py
+
       - name: Validate mermaid format
         run: |
           python scripts/validate_mermaid_format.py

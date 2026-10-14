@@ -63,7 +63,7 @@ The lab is intentionally designed to prove one specific distinction:
 This guide helps you explain why `az webapp deploy` can succeed while the app still fails at runtime, trace the Linux startup lifecycle, detect `wrong_module:app` failures from logs, validate recovery after correcting the startup command to `app:app`, and produce an artifact-backed incident narrative.
 
 !!! warning "Execution and evidence status"
-    The revised healthy → fault → recovery runner has **NOT_RUN** Azure execution and **NOT_RUN** independent reproduction. Its offline fixture tests do not constitute a cloud run. The retained April 4, 2026 artifacts are historical observations, with **INCONCLUSIVE** causal ordering and unverified cleanup; no new collection time is claimed.
+    The revised fault-first → deployment → repair procedure has **NOT_RUN** Azure execution and **NOT_RUN** independent reproduction. Local validation does not constitute a cloud run. The retained April 4, 2026 artifacts are historical observations, with **INCONCLUSIVE** causal ordering and unverified cleanup; no new collection time is claimed.
 
     Start with the [runbook](#3-runbook). Review the [historical evidence](#4-experiment-log) and its [timeline limitation](#47-hypothesis-verdict). The fixed scope is Linux B1, Python 3.11, a dedicated resource group, one web app, and one Log Analytics workspace. Configuration/API access and public HTTPS reachability are required.
 
@@ -309,16 +309,16 @@ not only deployment rollback.
 7. After startup command corrected to app:app, process boots and /health returns 200
 ```
 
-### 2.3 Proof criteria
+### 2.3 Proof criteria for the checked-in procedure
 
 All criteria below must be met:
 
-1. Startup command evidence shows `wrong_module:app` before fix.
-2. Console logs contain module import failure (`No module named 'wrong_module'`).
-3. HTTP telemetry shows failed app probes before fix (503 and/or timeout behavior).
-4. Startup command is changed to `app:app`.
-5. Post-fix `/health` returns 200.
-6. Post-fix diagnostics endpoint (`/diag/stats`) returns valid JSON from running process.
+1. The Bicep deployment provisions `wrong_module:app` before the application package is deployed.
+2. `az webapp deploy` completes while that faulty startup command remains configured.
+3. The trigger's first `/health` probe returns a non-200 result or times out.
+4. The trigger changes the startup command to `app:app` without redeploying the package.
+5. The trigger's post-repair `/health` probe returns 200, or a later manual probe confirms recovery after restart completes.
+6. The verifier finds a matching `ModuleNotFoundError`, `wrong_module`, or `No module named` console-log row within its rolling two-hour query window. A zero count is inconclusive because ingestion may be delayed or the evidence may have aged out.
 
 ### 2.4 Disproof criteria
 
@@ -333,22 +333,22 @@ Any one condition disproves the hypothesis:
 
 ### 2.5 Alternate hypotheses considered
 
-| Alternate hypothesis | Why considered | Why rejected in this run |
+| Alternate hypothesis | Why considered | Historical indication; recheck on a new run |
 |---|---|---|
-| Code package is corrupt | 503 present | Deployment APIs succeeded and app recovered without changing code package |
-| Port binding mismatch | Typical startup issue | Corrected module alone restored service |
-| Storage mount issue | Can break startup in some custom setups | Logs specifically show `ModuleNotFoundError` |
-| Python runtime mismatch | Can fail imports | Failure text names exact missing module configured in startup command |
+| Code package is corrupt | 503 present | Historical artifacts show deployment success and later recovery without a package change, but their ordering is inconclusive |
+| Port binding mismatch | Typical startup issue | Historical recovery followed an entrypoint repair; confirm the same sequence in a new isolated run |
+| Storage mount issue | Can break startup in some custom setups | Historical logs contain `ModuleNotFoundError`; collect same-run evidence before rejecting storage issues |
+| Python runtime mismatch | Can fail imports | Historical failure text names the configured missing module; recheck the active runtime and logs on a new run |
 
 ### 2.6 Expected observations if hypothesis is true
 
-| Time segment | Expected | Observed |
+| Procedure stage | Expected from the checked-in scripts | Current procedure status |
 |---|---|---|
-| Baseline | Startup command points to wrong module | Yes |
-| Trigger phase | `/health` non-200 before fix | Yes |
-| Trigger phase | Console shows module import failure | Yes |
-| Remediation | Startup command changed to `app:app` | Yes |
-| Postfix | `/health` returns 200 and diagnostics work | Yes |
+| Provisioning | Bicep configures `wrong_module:app` | NOT_RUN |
+| Deployment and initial probe | ZIP deployment completes, then `/health` is non-200 or times out | NOT_RUN |
+| Automatic repair | Trigger changes the startup command to `app:app` | NOT_RUN |
+| Post-repair probe | `/health` returns 200 after restart, or requires a later manual check | NOT_RUN |
+| Verification | Rolling two-hour console-log query finds the targeted import-failure evidence | NOT_RUN |
 
 ### 2.7 Risk to production if not detected
 
@@ -361,9 +361,9 @@ Any one condition disproves the hypothesis:
 
 ## 3) Runbook
 
-The current procedure establishes a healthy baseline before changing only the module entrypoint. The archived artifacts below were collected using an earlier procedure and are not evidence for the revised runner.
+The current procedure is fault-first: Bicep provisions the web app with `wrong_module:app`, the trigger deploys valid application code into that fault, records one failed probe, repairs the startup command to `app:app`, and records one post-repair probe. The verifier then searches a rolling two-hour console-log window. The archived artifacts below came from an earlier procedure and are not evidence that these checked-in scripts have run successfully.
 
-The scenario-local [contract](https://github.com/yeongseon/azure-app-service-practical-guide/blob/main/labs/deployment-succeeded-startup-failed/contract.json) fixes criteria and sampling before execution. A new run creates a unique directory; evaluation never overwrites prior captures. Exit codes are `0` for evidence PASS, `1` for FAIL, and `2` for INCONCLUSIVE. Evidence PASS does not assert cleanup or independent reproduction.
+Define the expected fault, repair, and rolling query window before execution. Preserve terminal output and any collected evidence outside the disposable resource group without overwriting earlier captures. A successful repair probe does not assert cleanup or independent reproduction, and a zero verifier count is inconclusive rather than a pass.
 
 Use only a dedicated disposable resource group with permission to create App Service and Log Analytics, configure diagnostics, query logs, and delete the group. B1 compute and Log Analytics ingestion incur charges until cleaned up. Run one experiment at a time with no concurrent configuration changes. Read [Clean Up](#clean-up) before deployment; it also applies to failed or interrupted runs. Raw captures contain real resource IDs and configuration: keep them private outside Git, review and sanitize before publication, and retain public transformation records separately.
 
@@ -403,9 +403,9 @@ az deployment group create \
 | `az group create` | Create the resource group for lab resources |
 | `--name` | Resource group name |
 | `--location` | Azure region for the resource group |
-| `az deployment group create` | Deploy the Bicep template to provision App Service with a healthy startup command |
+| `az deployment group create` | Deploy the Bicep template to provision App Service with the intentional `wrong_module:app` startup fault |
 | `--resource-group` | Target dedicated lab resource group |
-| `--template-file` | Path to the Bicep template that sets `app:app` as the baseline startup command |
+| `--template-file` | Path to the Bicep template that sets `wrong_module:app` before the package deployment |
 | `--parameters baseName` | Base name prefix for all generated resource names |
 
 Capture app name:
@@ -429,34 +429,34 @@ echo "$APP_NAME"
 ### 3.4 Trigger the incident
 
 ```bash
-bash "labs/deployment-succeeded-startup-failed/trigger.sh" "$RG" "$APP_NAME" --output /tmp/startup-lab-private
+bash "labs/deployment-succeeded-startup-failed/trigger.sh" "$RG" "$APP_NAME"
 ```
 
-The trigger prints `RUN_DIR=...`; copy that exact path into `RUN_DIR` below. It deploys the app with the healthy command, records a 200 baseline, sets `wrong_module:app`, and samples for HTTP 5xx. It then restores `app:app` with the same `--timeout=120` and verifies recovery, including when fault probing fails. Health polling is limited to 24 attempts per phase (20 seconds per request, 10 seconds between attempts). Log collection uses at most six requests with bounded waits.
+The checked-in trigger packages and deploys the application while the Bicep-defined `wrong_module:app` startup command is active. After a 15-second wait it probes `/health` once, reports the non-200 result expected during the fault, changes the startup command to `gunicorn --bind=0.0.0.0:8000 app:app`, waits 20 seconds, and probes `/health` once more. A final `200` confirms recovery; any other status means the app may still be restarting and must be checked again manually.
 
 ```bash
-export RUN_DIR="/tmp/startup-lab-private/<printed-run-directory>"
-bash "labs/deployment-succeeded-startup-failed/verify.sh" "$RUN_DIR"
+bash "labs/deployment-succeeded-startup-failed/verify.sh" "$RG"
 ```
 
-This command only reevaluates saved raw data. It checks same-run phase identity, resource identity, chronological windows, raw probe/summary agreement, required artifact sizes/digests, and source/contract fingerprints. Console rows must come from the exact app and fault window; no matching import log means INCONCLUSIVE, not zero errors or successful reproduction. Do not edit a run to repair missing data: preserve it and create a new run after fixing the cause.
+The checked-in verifier selects the first Log Analytics workspace in the resource group and queries `AppServiceConsoleLogs` from the previous two hours for `ModuleNotFoundError`, `wrong_module`, or `No module named`. It prints the matching count and up to 20 recent rows. A positive count is the expected startup-failure evidence; zero means evidence has not arrived or is outside the query window, not that the fault was absent.
 
-Each run records source HEAD plus exact relevant-file fingerprints, UTC phase times, tool versions, command exit codes, raw query results and artifact digests. Dirty files are identified by fingerprints rather than represented as the committed SHA. `captured_at` probe times and command times remain distinct from `evaluated_at`. Hashes do not prove execution authenticity. No current run is published until independently reviewed.
+!!! warning "NOT_RUN"
+    This revised procedure has not been rerun for the currently checked-in `trigger.sh` and `verify.sh`. The archived artifacts later in this guide came from an earlier procedure and do not validate these exact commands.
 
-Sections 3.5–3.11 provide optional manual diagnostics and recovery commands. Their illustrative rolling-window queries are not inputs to the scoped evaluator. If interruption prevents automatic recovery, use 3.11 and then clean up; do not mark that interrupted run successful.
+Sections 3.5–3.11 provide optional manual diagnostics and recovery commands. Their illustrative rolling-window queries are separate from `verify.sh`, whose checked-in query searches the previous two hours. If interruption prevents automatic recovery, use 3.11 and then clean up; do not mark that interrupted run successful.
 
 ### 3.5 Verify startup command before and after
 
-Before fix (artifact-backed expected value):
+Before repair (Bicep-defined value for the checked-in procedure):
 
 ```text
 gunicorn --bind=0.0.0.0:8000 --timeout=120 wrong_module:app
 ```
 
-After fix (artifact-backed expected value):
+After repair (value set by the checked-in trigger):
 
 ```text
-gunicorn --bind=0.0.0.0:8000 --timeout=120 app:app
+gunicorn --bind=0.0.0.0:8000 app:app
 ```
 
 CLI verification command:
@@ -616,15 +616,15 @@ force the known-good startup command:
 az webapp config set \
   --resource-group "$RG" \
   --name "$APP_NAME" \
-  --startup-file "gunicorn --bind=0.0.0.0:8000 --timeout=120 app:app"
+  --startup-file "gunicorn --bind=0.0.0.0:8000 app:app"
 ```
 
 | Command | Purpose |
 |---------|---------|
-| `az webapp config set --resource-group "$RG" --name "$APP_NAME" --startup-file "gunicorn --bind=0.0.0.0:8000 --timeout=120 app:app"` | Replaces the broken startup command with the known-good Gunicorn command that imports `app:app`. |
-| `--resource-group "$RG" --name "$APP_NAME" --startup-file "gunicorn --bind=0.0.0.0:8000 --timeout=120 app:app"` | Applies the configuration change in this resource group. |
-| `--name "$APP_NAME" --startup-file "gunicorn --bind=0.0.0.0:8000 --timeout=120 app:app"` | Targets this web app. |
-| `--startup-file "gunicorn --bind=0.0.0.0:8000 --timeout=120 app:app"` | Sets the app startup command to the corrected Gunicorn entrypoint. |
+| `az webapp config set --resource-group "$RG" --name "$APP_NAME" --startup-file "gunicorn --bind=0.0.0.0:8000 app:app"` | Replaces the broken startup command with the same known-good Gunicorn command that the checked-in trigger applies. |
+| `--resource-group "$RG" --name "$APP_NAME" --startup-file "gunicorn --bind=0.0.0.0:8000 app:app"` | Applies the configuration change in this resource group. |
+| `--name "$APP_NAME" --startup-file "gunicorn --bind=0.0.0.0:8000 app:app"` | Targets this web app. |
+| `--startup-file "gunicorn --bind=0.0.0.0:8000 app:app"` | Sets the app startup command to the exact corrected Gunicorn entrypoint used by `trigger.sh`. |
 
 Then verify:
 
@@ -957,9 +957,9 @@ File: `postfix/diag-env-20260404T055349Z.json`
 
 Verdict: **INCONCLUSIVE** for a single ordered causal run.
 
-[Observed] The stored recovery probes reach 200 around 05:47 UTC, while the retained wrong-module console rows are timestamped 05:54–05:55 UTC. The set also lacks a healthy pre-intervention baseline and verified cleanup record. These records preserve useful examples of startup failure and health responses, but do not establish that the shown fault preceded the shown recovery in one isolated run.
+[Observed] The stored recovery probes reach 200 around 05:47 UTC, while the retained wrong-module console rows are timestamped 05:54–05:55 UTC. The set also lacks a pre-fault HTTP 200 capture and verified cleanup record. These records preserve useful examples of startup failure and health responses, but do not establish that the shown fault preceded the shown recovery in one isolated run.
 
-[Not Proven] The historical collection does not prove that only the entrypoint changed or exclude concurrent restarts, networking failures, or mixed collection windows. Reevaluate the original timestamps without relabeling them as a new Azure run. The revised procedure requires new baseline/fault/recovery evidence and independent review before promotion.
+[Not Proven] The historical collection does not prove that only the entrypoint changed or exclude concurrent restarts, networking failures, or mixed collection windows. Reevaluate the original timestamps without relabeling them as a new Azure run. The checked-in fault-first procedure requires a new deployment/fault/repair sequence, evidence from the verifier's rolling two-hour window, cleanup verification, and independent review before promotion.
 
 ### 4.8 Operational guidance distilled from this experiment
 
@@ -1017,13 +1017,13 @@ AppServicePlatformLogs
 
 This section defines what you SHOULD observe at each phase of the lab. Use it to validate your investigation is on track.
 
-### Before Trigger (Baseline)
+### After Provisioning, Before the Trigger
 
 | Evidence Source | Expected State | What to Capture |
 |---|---|---|
 | Deployment APIs (`/api/zipdeploy`, deployment status) | Deployment workflow returns success/accepted (200/202) | Successful deployment response and timestamp |
-| App startup command config | Healthy module reference | `gunicorn --bind=0.0.0.0:8000 --timeout=120 app:app` |
-| Baseline health | App returns HTTP 200 before injection | `baseline/phase.json` raw probes |
+| App startup command config | Intentional missing-module reference provisioned by Bicep | `gunicorn --bind=0.0.0.0:8000 --timeout=120 wrong_module:app` |
+| Application package | Not yet deployed by the trigger | Bicep deployment output and the trigger's subsequent deployment output |
 
 ### During Incident
 
@@ -1037,36 +1037,29 @@ This section defines what you SHOULD observe at each phase of the lab. Use it to
 
 | Evidence Source | Expected State | Key Indicator |
 |---|---|---|
-| Startup command config | Module reference corrected | `gunicorn --bind=0.0.0.0:8000 --timeout=120 app:app` |
-| Health and diagnostics endpoints | App starts and serves normally | `/health` returns `200` and diagnostics endpoints respond |
+| Startup command config | Module reference corrected by the trigger | `gunicorn --bind=0.0.0.0:8000 app:app` |
+| Health endpoint | App starts and serves normally | The trigger's second `/health` probe returns `200`, or a later manual probe confirms recovery |
 | AppServiceHTTPLogs | Availability restored | 200 responses resume for user-facing requests |
+| AppServiceConsoleLogs | Fault evidence appears within the verifier window | `verify.sh` reports a positive count from its rolling two-hour query; zero remains inconclusive |
 
 ### Evidence Timeline
 
 <!-- diagram-id: troubleshooting-lab-guides-deployment-succeeded-startup-failed-diagram-4 -->
 ```mermaid
 graph TD
-    A[Baseline Capture] --> B[Trigger Fault]
-    B --> C[During: Collect Evidence]
-    C --> D[After: Compare to Baseline]
-    D --> E[Evaluate support and limitations]
+    A[Provision App with wrong_module] --> B[Deploy Package into Fault]
+    B --> C[Probe Failure and Repair Command]
+    C --> D[Probe Recovery]
+    D --> E[Query Prior Two Hours and Evaluate Limits]
 ```
 
 ### Evidence interpretation and falsification
 
-A healthy baseline, HTTP 5xx after the entrypoint change, same-resource/time-window import failure, and health recovery after reverting that change support the scoped hypothesis. Recovery does not falsify the causal hypothesis. A healthy app under the wrong-module configuration contradicts the predicted fault, while missing logs or transport errors leave the cause unresolved. Platform restart, dependency problems, and concurrent changes remain competing explanations to inspect; a 503 or screenshot alone does not establish the module as the cause.
+For the checked-in fault-first procedure, deployment success while `wrong_module:app` is configured, a failed first probe, same-resource import-failure evidence within the verifier's rolling two-hour window, and recovery after the trigger sets `app:app` support the scoped hypothesis. A healthy app under the wrong-module configuration contradicts the predicted fault. A missing log match, a transport-only error, or a post-repair non-200 leaves the cause unresolved and requires additional collection rather than a pass. Platform restart, dependency problems, and concurrent changes remain competing explanations; a 503 or screenshot alone does not establish the module as the cause.
 
 ## Clean Up
 
-For a completed or failed run that wrote `run.json`, run the explicit cleanup command against the dedicated group:
-
-```bash
-python3 labs/deployment-succeeded-startup-failed/run.py cleanup "$RUN_DIR" "$RG"
-```
-
-It records the delete request, polls group existence up to 30 times, and writes a separate `cleanup-*/result.json`. Only a `false` existence result yields `VERIFIED`; timeout or API errors yield `FAILED`. Evidence remains outside the resource group. The run's original `cleanup_status: PENDING` remains unchanged; the separate cleanup record is the later outcome.
-
-If deployment or process termination occurred before a run manifest was written, preserve terminal output and clean up the same dedicated group directly:
+Preserve terminal output and evidence outside the resource group, then clean up the dedicated group directly:
 
 ```bash
 az group delete --name "$RG" --yes

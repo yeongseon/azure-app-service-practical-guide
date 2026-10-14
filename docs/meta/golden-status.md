@@ -25,12 +25,12 @@ Every quality gate in this repository, its most recently recorded result, and th
 
 ## Summary
 
-*Snapshot of `9300502 plus uncommitted working-tree changes`, generated 2026-10-14.*
+*Snapshot of `76f50cd`, generated 2026-10-14.*
 
 | Metric | Count |
 |---|---:|
-| Registered gates | 31 |
-| ✅ Pass | 24 |
+| Registered gates | 32 |
+| ✅ Pass | 25 |
 | ❌ Fail | 0 |
 | ⚠️ Warn | 0 |
 | ➖ Skipped | 7 |
@@ -41,13 +41,13 @@ Every quality gate in this repository, its most recently recorded result, and th
 <!-- diagram-id: golden-status-gate-outcomes-pie -->
 ```mermaid
 pie title Quality Gate Outcomes
-    "Pass" : 24
+    "Pass" : 25
     "Skipped" : 7
 ```
 
 ## Gate Results
 
-These are locally executed results, not GitHub Actions statuses. **Skipped** means the machine that generated this page lacked the toolchain the gate needs. **Warn** means the gate reported findings its CI job would not fail on, either because the job is advisory or because the dashboard runs a wider scope than CI does. 19 of 31 gates are re-run and compared by the `Validate Golden Status` job, so a flip to **Fail** cannot sit here unnoticed.
+These are locally executed results, not GitHub Actions statuses. **Skipped** means the machine that generated this page lacked the toolchain the gate needs. **Warn** means the gate reported findings its CI job would not fail on, either because the job is advisory or because the dashboard runs a wider scope than CI does. 20 of 32 gates are re-run and compared by the `Validate Golden Status` job, so a flip to **Fail** cannot sit here unnoticed.
 
 <!-- golden-status:results:start -->
 | Gate | Severity | Status | Detail | Time |
@@ -60,6 +60,7 @@ These are locally executed results, not GitHub Actions statuses. **Skipped** mea
 | Content sources schema | Blocking | ✅ Pass | Files with content_sources schema drift: 0 · Parse errors: 0 | < 10s |
 | Diagram ID parity | Blocking | ✅ Pass | mermaid blocks: 395 · diagram-id comments: 395 | < 10s |
 | CLI explanation tables | Blocking | ✅ Pass | All Azure CLI code fences and Markdown tables are correctly terminated. | < 10s |
+| Documented repository paths | Blocking | ✅ Pass | Documented repository path errors: 0 | < 10s |
 | Document quality | Blocking | ✅ Pass | Documentation quality gate passed for 242 file(s). | < 10s |
 | Frontmatter YAML style | Blocking | ✅ Pass | Files with style drift: 0 · Parse errors: 0 | < 10s |
 | Microsoft Learn locale | Blocking | ✅ Pass | Files with locale drift: 0 | < 10s |
@@ -101,6 +102,7 @@ Generated from the `GATES` registry in `scripts/generate_golden_status.py`. CI f
 | Content sources schema | content_sources blocks use the canonical mapping shape, not the legacy list form. | Blocking | `python3 scripts/normalize_content_sources_schema.py --check` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
 | Diagram ID parity | Mermaid fence count equals diagram-id comment count across docs/. | Blocking | `python3 scripts/generate_golden_status.py --gate diagram-id-parity` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
 | CLI explanation tables | Every az CLI fence has an explanation table, and Markdown tables in docs/ and repository-root contracts end with a blank line. | Blocking | `python3 scripts/validate_cli_explanations.py` | `Validate CLI Explanation Tables` — `validate-content-sources.yml` |
+| Documented repository paths | Repository-local links, main-branch GitHub links, and registered command paths resolve in the checked-out tree. | Blocking | `python3 scripts/validate_documented_paths.py` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
 | Document quality | Canonical section templates, tail sections, long CLI flags, and masked identifiers. | Blocking | `python3 scripts/validate_doc_quality.py --all` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
 | Frontmatter YAML style | Frontmatter matches the canonical ruamel.yaml serialization. | Blocking | `python3 scripts/normalize_yaml_frontmatter.py --check` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
 | Microsoft Learn locale | Every learn.microsoft.com URL carries the en-us locale prefix. | Blocking | `python3 scripts/normalize_mslearn_locale.py --check` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
