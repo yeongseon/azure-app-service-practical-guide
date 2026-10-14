@@ -1,9 +1,12 @@
 """Offline tests for the read-only PR metadata contract."""
 import importlib.util
 from pathlib import Path
+import re
+import subprocess
 import unittest
 
 ROOT = Path(__file__).resolve().parents[2]
+PR_TITLE_WORKFLOW = ROOT / ".github/workflows/pr-title.yml"
 SPEC = importlib.util.spec_from_file_location("metadata", ROOT / "scripts/ci/check_project_metadata.py")
 metadata = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(metadata)
@@ -17,6 +20,18 @@ def pr(**changes):
 
 
 class MetadataTests(unittest.TestCase):
+    def test_standalone_title_pattern_rejects_trailing_reference(self):
+        workflow = PR_TITLE_WORKFLOW.read_text(encoding="utf-8")
+        pattern_match = re.search(r"pattern='([^']+)'", workflow)
+        suffix_match = re.search(r"trailing_reference='([^']+)'", workflow)
+        self.assertIsNotNone(pattern_match)
+        self.assertIsNotNone(suffix_match)
+        expression = r'pattern="$1"; trailing_reference="$2"; title="$3"; [[ "$title" =~ $pattern ]] && [[ ! "$title" =~ $trailing_reference ]]'
+        rejected = subprocess.run(["bash", "-c", expression, "--", pattern_match.group(1), suffix_match.group(1), "ci: add checks (#217)"], check=False)
+        accepted = subprocess.run(["bash", "-c", expression, "--", pattern_match.group(1), suffix_match.group(1), "ci: add checks"], check=False)
+        self.assertNotEqual(rejected.returncode, 0)
+        self.assertEqual(accepted.returncode, 0)
+
     def test_valid(self):
         self.assertEqual(metadata.validate(pr()), [])
 
@@ -91,6 +106,11 @@ class MetadataTests(unittest.TestCase):
     def test_foreign_reference(self):
         value = pr()
         value["body"] = value["body"].replace("Refs #217", "Refs other/repo#217")
+        self.assertTrue(metadata.validate(value))
+
+    def test_mixed_local_and_foreign_references(self):
+        value = pr()
+        value["body"] = value["body"].replace("Refs #217", "Refs #217 and Refs other/repo#218")
         self.assertTrue(metadata.validate(value))
 
     def test_zero_reference(self):

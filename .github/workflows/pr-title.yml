@@ -30,7 +30,8 @@ jobs:
           TITLE: ${{ github.event.pull_request.title }}
         run: |
           pattern='^(feat|fix|docs|test|perf|refactor|ci|build|chore|style|revert)(\([a-z0-9][a-z0-9._/,-]*\))?!?: [^[:space:]](.*[^.[:space:]])?$'
-          if [[ "$TITLE" =~ $pattern ]]; then
+          trailing_reference='\(#[0-9]+\)$'
+          if [[ "$TITLE" =~ $pattern ]] && [[ ! "$TITLE" =~ $trailing_reference ]]; then
             printf 'Title OK: %s\n' "$TITLE"
             exit 0
           fi
@@ -40,6 +41,7 @@ jobs:
             - type is one of: feat fix docs test perf refactor ci build chore style revert
             - lowercase type and scope, one space after the colon
             - a non-empty description with no trailing period
+            - no trailing "(#123)" suffix; link issues in the PR body instead
             - add "!" before the colon for a breaking change: "feat(api)!: drop the v1 endpoints"
 
           Examples:
