@@ -25,7 +25,7 @@ Every quality gate in this repository, its most recently recorded result, and th
 
 ## Summary
 
-*Snapshot of `9300502 plus uncommitted working-tree changes`, generated 2026-10-14.*
+*Snapshot pending regeneration after rebase.*
 
 | Metric | Count |
 |---|---:|
@@ -52,25 +52,26 @@ These are locally executed results, not GitHub Actions statuses. **Skipped** mea
 <!-- golden-status:results:start -->
 | Gate | Severity | Status | Detail | Time |
 | --- | --- | --- | --- | --- |
-| Validator doctests | Blocking | ✅ Pass | 11 modules checked, every doctest passed. | < 10s |
+| Validator doctests | Blocking | Pending regeneration | Dashboard will be regenerated after the rebase. | < 10s |
 | Capture asset geometry | Blocking | ✅ Pass | Capture assets conform to the capture profile. | < 10s |
-| Mermaid format | Blocking | ✅ Pass | Files checked: 242 · Files with errors: 0 | < 10s |
-| Mermaid syntax | Blocking | ✅ Pass | Diagrams checked: 395 · Errors found: 0 | < 10s |
-| Content sources | Blocking | ✅ Pass | Files with mermaid: 241 · Validation errors: 0 | < 10s |
+| Mermaid format | Blocking | ✅ Pass | Files checked: 237 · Files with errors: 0 | < 10s |
+| Mermaid syntax | Blocking | ✅ Pass | Diagrams checked: 390 · Errors found: 0 | < 10s |
+| Content sources | Blocking | ✅ Pass | Files with mermaid: 236 · Validation errors: 0 | < 10s |
 | Content sources schema | Blocking | ✅ Pass | Files with content_sources schema drift: 0 · Parse errors: 0 | < 10s |
-| Diagram ID parity | Blocking | ✅ Pass | mermaid blocks: 395 · diagram-id comments: 395 | < 10s |
+| Diagram ID parity | Blocking | ✅ Pass | mermaid blocks: 390 · diagram-id comments: 390 | < 10s |
 | CLI explanation tables | Blocking | ✅ Pass | All Azure CLI code fences and Markdown tables are correctly terminated. | < 10s |
-| Document quality | Blocking | ✅ Pass | Documentation quality gate passed for 242 file(s). | < 10s |
+| Documented repository paths | Blocking | ✅ Pass | Documented repository path errors: 0 | < 10s |
+| Document quality | Blocking | ✅ Pass | Documentation quality gate passed for 237 file(s). | < 10s |
 | Frontmatter YAML style | Blocking | ✅ Pass | Files with style drift: 0 · Parse errors: 0 | < 10s |
 | Microsoft Learn locale | Blocking | ✅ Pass | Files with locale drift: 0 | < 10s |
 | Microsoft Learn URL reachability | Advisory | ➖ Skipped | Network gate; re-run with --include-network. | < 10s |
 | Lab artifact PII | Blocking | ✅ Pass | [scan_lab_pii] scanned=584 skipped_binary=0 skipped_decode=0 findings=0 | < 10s |
 | Documentation PII | Blocking | ✅ Pass | No blocking PII patterns detected! | < 10s |
-| Documentation repetition | Blocking | ✅ Pass | Scanned 242 file(s): 0 error(s), 6 warning(s). | < 10s |
-| Quick-triage causal claims | Blocking | ✅ Pass | Quick-triage causal-claim contract passed (7 files). · Scope is a phrase denylist only; technical review remains required. | < 10s |
-| Visual content coverage | Advisory | ✅ Pass | full repo: 83/83 in-scope pages carry a visual aid (100.0%). Advisory gate — exit 0 regardless (see issue #388). | < 10s |
-| Windows troubleshooting navigation | Blocking | ✅ Pass | Windows troubleshooting navigation: 2 entry points link all 5 required playbooks. | < 10s |
-| Frontmatter schema | Blocking | ✅ Pass | Checked 242 files · Found 0 errors, 28 warnings: | < 10s |
+| Documentation repetition | Blocking | Pending regeneration | Dashboard will be regenerated after the rebase. | < 10s |
+| Quick-triage causal claims | Blocking | Pending regeneration | Dashboard will be regenerated after the rebase. | < 10s |
+| Visual content coverage | Advisory | Pending regeneration | Dashboard will be regenerated after the rebase. | < 10s |
+| Windows troubleshooting navigation | Blocking | Pending regeneration | Dashboard will be regenerated after the rebase. | < 10s |
+| Frontmatter schema | Blocking | Pending regeneration | Dashboard will be regenerated after the rebase. | < 10s |
 | MkDocs strict build | Blocking | ✅ Pass | Site built with no strict-mode warnings. | 10-120s |
 | Shell script syntax | Blocking | ✅ Pass | All shell scripts parse. | < 10s |
 | ShellCheck | Blocking | ➖ Skipped | Executable `shellcheck` is not on PATH. | < 10s |
@@ -101,6 +102,7 @@ Generated from the `GATES` registry in `scripts/generate_golden_status.py`. CI f
 | Content sources schema | content_sources blocks use the canonical mapping shape, not the legacy list form. | Blocking | `python3 scripts/normalize_content_sources_schema.py --check` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
 | Diagram ID parity | Mermaid fence count equals diagram-id comment count across docs/. | Blocking | `python3 scripts/generate_golden_status.py --gate diagram-id-parity` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
 | CLI explanation tables | Every az CLI fence has an explanation table, and Markdown tables in docs/ and repository-root contracts end with a blank line. | Blocking | `python3 scripts/validate_cli_explanations.py` | `Validate CLI Explanation Tables` — `validate-content-sources.yml` |
+| Documented repository paths | Repository-local links, main-branch GitHub links, and registered command paths resolve in the checked-out tree. | Blocking | `python3 scripts/validate_documented_paths.py` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
 | Document quality | Canonical section templates, tail sections, long CLI flags, and masked identifiers. | Blocking | `python3 scripts/validate_doc_quality.py --all` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
 | Frontmatter YAML style | Frontmatter matches the canonical ruamel.yaml serialization. | Blocking | `python3 scripts/normalize_yaml_frontmatter.py --check` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
 | Microsoft Learn locale | Every learn.microsoft.com URL carries the en-us locale prefix. | Blocking | `python3 scripts/normalize_mslearn_locale.py --check` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
@@ -110,7 +112,6 @@ Generated from the `GATES` registry in `scripts/generate_golden_status.py`. CI f
 | Documentation repetition | No known scaffold marker is repeated within a single page. | Blocking | `python3 scripts/detect_repetition.py docs` | `Validate Documentation Repetition` — `validate-repetition.yml` |
 | Quick-triage causal claims | Known categorical causal shortcuts stay out of quick-triage documentation surfaces. | Blocking | `python3 scripts/check_quick_triage_claims.py` | `Validate Documentation Repetition` — `validate-repetition.yml` |
 | Visual content coverage | Factual-claim pages carry at least one diagram, screenshot, or image. | Advisory | `python3 scripts/validate_visual_content.py --all` | `Validate Visual Content (advisory)` — `validate-visual-content.yml` |
-| Windows troubleshooting navigation | Both primary troubleshooting indexes directly link every intended Windows playbook. | Blocking | `python3 scripts/validate_windows_navigation.py` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
 | Frontmatter schema | Valid doc_type and section values, unique slugs, resolvable relationships, content_validation placement. | Blocking | `python3 tools/validate_frontmatter.py` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
 | MkDocs strict build | The site builds with no broken internal links and no navigation warnings. | Blocking | `mkdocs build --strict` | `Build Documentation` — `validate-content-sources.yml` |
 | Shell script syntax | Every tracked .sh file under apps/, labs/, and scripts/ parses. | Blocking | `bash -c "find apps labs scripts -type f -name '*.sh' -print0 | xargs -0 -r bash -n"` | `Shell Scripts` — `app-infra-ci.yml` |
