@@ -363,7 +363,7 @@ Any one condition disproves the hypothesis:
 
 The current procedure establishes a healthy baseline before changing only the module entrypoint. The archived artifacts below were collected using an earlier procedure and are not evidence for the revised runner.
 
-The scenario-local [contract](https://github.com/yeongseon/azure-app-service-practical-guide/blob/main/labs/deployment-succeeded-startup-failed/contract.json) fixes criteria and sampling before execution. A new run creates a unique directory; evaluation never overwrites prior captures. Exit codes are `0` for evidence PASS, `1` for FAIL, and `2` for INCONCLUSIVE. Evidence PASS does not assert cleanup or independent reproduction.
+Define criteria and sampling before execution. Keep each run in a unique directory and do not overwrite prior captures. Evidence PASS does not assert cleanup or independent reproduction.
 
 Use only a dedicated disposable resource group with permission to create App Service and Log Analytics, configure diagnostics, query logs, and delete the group. B1 compute and Log Analytics ingestion incur charges until cleaned up. Run one experiment at a time with no concurrent configuration changes. Read [Clean Up](#clean-up) before deployment; it also applies to failed or interrupted runs. Raw captures contain real resource IDs and configuration: keep them private outside Git, review and sanitize before publication, and retain public transformation records separately.
 
@@ -1058,15 +1058,7 @@ A healthy baseline, HTTP 5xx after the entrypoint change, same-resource/time-win
 
 ## Clean Up
 
-For a completed or failed run that wrote `run.json`, run the explicit cleanup command against the dedicated group:
-
-```bash
-python3 labs/deployment-succeeded-startup-failed/run.py cleanup "$RUN_DIR" "$RG"
-```
-
-It records the delete request, polls group existence up to 30 times, and writes a separate `cleanup-*/result.json`. Only a `false` existence result yields `VERIFIED`; timeout or API errors yield `FAILED`. Evidence remains outside the resource group. The run's original `cleanup_status: PENDING` remains unchanged; the separate cleanup record is the later outcome.
-
-If deployment or process termination occurred before a run manifest was written, preserve terminal output and clean up the same dedicated group directly:
+Preserve terminal output and evidence outside the resource group, then clean up the dedicated group directly:
 
 ```bash
 az group delete --name "$RG" --yes
