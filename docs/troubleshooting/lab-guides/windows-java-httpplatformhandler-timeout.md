@@ -352,103 +352,70 @@ Before starting, verify your environment:
 -   **Maven**: 3.8.x or later.
 -   **JDK**: 17 (Microsoft Build of OpenJDK is standard).
 -   **Bash**: Version 4 or 5 is required for the load scripts.
+-   **k6**: Required by the Lab 2 deployment preflight and open-model load scripts.
+-   **curl and Python 3**: Required by warm-up, evidence collection, and deployment-output parsing.
+
+The retained scripts are the executable contract. Static checks in this repository verify that paths, Bicep, shell syntax, and the guide-to-script deployment contract agree. They do not re-run the cloud experiment; no new Azure execution is claimed by this update.
 
 ### 3.2 Set standard variables
 
-Consistency in naming avoids configuration drift between the Bicep deployment and the load-gen scripts. Setting these as environment variables ensures that subsequent CLI commands can reference them without manual string replacement, reducing the risk of PII leaks.
+Choose only the deployment input here. The Bicep template appends a `uniqueString` suffix to generated resource names, so do not predict the Web App or plan name from `BASE_NAME`.
 
 ```bash
-# Variables for deployment and identification
-# RG: The target resource group for all lab resources
-export RG="rg-lab-winjaval2sat"
-
-# LOCATION: The Azure region. koreacentral is used for lower latency and availability.
-export LOCATION="koreacentral"
-
 # BASE_NAME: Used to generate unique resource names to avoid global namespace collisions.
-export BASE_NAME="winjaval2"
-
-# APP_NAME: The globally unique name for your App Service.
-export APP_NAME="app-${BASE_NAME}-example"
-
-# PLAN_NAME: The name for the App Service Plan (hosting server).
-export PLAN_NAME="plan-${BASE_NAME}-example"
+export BASE_NAME="winjaval2sat"
+export LAB2_DIR="labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation"
 ```
 
-### 3.3 Create resource group
+### 3.3 Build the retained Stage 0 application
 
-The resource group acts as a logical container for all the lab's resources. Creating it first is a mandatory step before any Bicep deployment.
-
-```bash
-# Create the resource group in your chosen region
-az group create --resource-group "$RG" --location "$LOCATION"
-```
-
-| Command/Flag | Purpose |
-|---|---|
-| `az group create` | Create a resource group to contain all lab resources |
-| `--resource-group` | Resource group name |
-| `--location` | Azure region for the resource group |
-
-### 3.4 Deploy Bicep (B1 Windows Java SE 17)
-
-The infrastructure for this lab is defined using Bicep, which provides a declarative way to provision Azure resources. This specific template configures:
--   A **Windows App Service Plan** on the B1 (Basic) tier.
--   A **Web App** configured for Java 17.
--   A **Log Analytics Workspace** for log ingestion.
--   **Diagnostic Settings** that route `AppServiceHTTPLogs` and `AppServicePlatformLogs` to the workspace.
+Lab 2 deliberately reuses the Stage 0 Spring Boot application byte-for-byte. There is no `lab-2-loopback-saturation/app` directory. Build the retained source first; its Maven `finalName` produces `target/app.jar`, and both Bicep templates configure Windows Java SE 17 with `WEBSITE_JAVA_JAR_FILE_NAME=app.jar`.
 
 ```bash
-# Deploy the infrastructure using the Bicep template
-# This step may take 2-3 minutes as it provisions the Log Analytics workspace.
-az deployment group create \
-  --resource-group "$RG" \
-  --template-file "labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/main.bicep" \
-  --parameters baseName="$BASE_NAME" location="$LOCATION"
-```
-
-| Command/Flag | Purpose |
-|---|---|
-| `az deployment group create` | Deploy Azure resources from a Bicep template |
-| `--resource-group` | Target resource group for the deployment |
-| `--template-file` | Path to the Bicep template (provisions B1 Windows plan, Java SE web app, Log Analytics, diagnostic settings) |
-| `--parameters` | Override template parameters for base name and region |
-
-**Verification**: After deployment, verify the Web App is reachable. It should return a default 404 or a welcome page if the app hasn't been deployed yet.
-
-```bash
-# Check the status code of the newly created app
-curl -s -o /dev/null -w "%{http_code}" "https://${APP_NAME}.azurewebsites.net"
-```
-
-### 3.5 Build and deploy application package
-
-The lab application is a minimal Spring Boot service designed to simulate long-running requests. We use Maven to package it into a JAR file and then use the `az webapp deploy` command to upload it as a ZIP-based deployment.
-
-```bash
-# Navigate to the app directory
-cd "labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/app"
-
-# Compile the code and package it into a JAR
-# The -DskipTests flag is used here for speed in a lab environment.
+cd "labs/windows-java-httpplatformhandler-timeout/stage-0-config-discovery/app"
 mvn clean package -DskipTests
+cd ../../../..
+```
 
-# Deploy the JAR to the Azure Web App
-# We use --type zip because the artifact is a standalone executable JAR.
+### 3.4 Deploy Lab 2 with the retained script
+
+The Lab 2 script creates `rg-lab-${BASE_NAME}` in Korea Central, deploys `lab-2-loopback-saturation/main.bicep`, reads the generated Web App name from the deployment outputs, and uploads the Stage 0 JAR with OneDeploy JAR mode. It refuses to overwrite an existing resource group unless you explicitly pass `--force`.
+
+```bash
+bash labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/deploy.sh "$BASE_NAME"
+```
+
+The deployment script's application upload is equivalent to this command, where `$APP_NAME` is the generated `webAppName` output and `$JAR_PATH` points to `stage-0-config-discovery/app/target/app.jar`:
+
+```bash
 az webapp deploy \
   --resource-group "$RG" \
   --name "$APP_NAME" \
-  --src-path "target/app-1.0-SNAPSHOT.jar" \
-  --type zip
+  --src-path "$JAR_PATH" \
+  --type jar \
+  --async false \
+  --clean true
 ```
 
 | Command/Flag | Purpose |
 |---|---|
-| `az webapp deploy` | Deploy application package to the App Service |
-| `--resource-group` | Resource group containing the web app |
-| `--name` | Web app name |
-| `--src-path` | Path to the compiled JAR artifact |
-| `--type zip` | Deploy as a ZIP package (App Service extracts it at the site root) |
+| `az webapp deploy` | Upload the executable JAR to the generated Windows Java SE Web App. |
+| `--resource-group` | Use the `rg-lab-${BASE_NAME}` group created by the script. |
+| `--name` | Target the Web App name returned by the Bicep deployment. |
+| `--src-path` | Select the Stage 0 `app.jar` bytes found by the script. |
+| `--type jar` | Use OneDeploy JAR mode so the runtime receives `app.jar`, not ZIP extraction. |
+| `--async false` | Wait for deployment completion before continuing. |
+| `--clean true` | Remove stale deployment content before placing the JAR. |
+
+After the script succeeds, load the exact generated names from `results/deploy-metadata.json`. The retained experiment scripts read this file themselves; the exports below are for the manual `curl` and Azure CLI examples that follow.
+
+```bash
+export DEPLOY_METADATA="$LAB2_DIR/results/deploy-metadata.json"
+export RG="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["resourceGroup"])' "$DEPLOY_METADATA")"
+export APP_NAME="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["webAppName"])' "$DEPLOY_METADATA")"
+export PLAN_NAME="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["appServicePlanName"])' "$DEPLOY_METADATA")"
+export APP_HOSTNAME="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["webAppHostname"])' "$DEPLOY_METADATA")"
+```
 
 ### 3.6 Baseline health checks (single /slow/240 probe)
 
@@ -458,7 +425,7 @@ Before starting the load test, we must establish a baseline. A single sequential
 # Perform a single request that sleeps for 240 seconds.
 # This request is guaranteed to exceed the 230s front-end timeout.
 # Look for a 500 error after exactly 230 seconds.
-curl -i "https://${APP_NAME}.azurewebsites.net/slow/240"
+curl -i "https://${APP_HOSTNAME}/slow/240"
 ```
 
 ### 3.7 E1 — Per-rate saturation probes (4 rates)
@@ -471,9 +438,11 @@ This phase of the experiment tests the application's breaking point. By graduall
 -   **Rate 1.05 req/s**: Critical Overload. Rapid queue buildup expected.
 
 ```bash
-# Run the multi-rate experiment script.
-# Each rate is tested for 10 minutes to allow for "cold start" effects to pass.
-bash run-e1-saturation.sh --rates "0.5 0.75 0.9 1.05" --duration 10m
+# Run each rate separately. Each invocation uses the script's default 15-minute duration.
+bash labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/run-e1-per-rate.sh --rate 0.5 --run-id 1
+bash labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/run-e1-per-rate.sh --rate 0.75 --run-id 2
+bash labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/run-e1-per-rate.sh --rate 0.9 --run-id 3
+bash labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/run-e1-per-rate.sh --rate 1.05 --run-id 4
 ```
 
 ### 3.8 E2 — Sustained load run (0.5 req/s for 20 min)
@@ -483,7 +452,7 @@ Once we've identified that 0.5 req/s is sufficient to trigger the failure, we ru
 ```bash
 # Run the sustained load experiment at 0.5 requests per second.
 # The 20-minute duration is chosen to ensure we have at least 15 minutes of stable "saturated" data.
-bash run-e2-sustained.sh --rate 0.5 --duration 20m
+bash labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/run-e2-sustained.sh --rate 0.5 --duration 20m
 ```
 
 ### 3.9 E3 — M1a mitigation probes (requestTimeout=60s)
@@ -507,29 +476,12 @@ To mitigate the 230s platform timeout, we must introduce our own timeout at the 
 </configuration>
 ```
 
-Apply the configuration change:
+Apply the primary configuration canary. Its retained deployment script invokes OneDeploy with `--type static --target-path web.config`, then records which deployment path succeeded.
 
 ```bash
-# Upload web.config as a static file to the site root.
-# This replaces the default configuration generated by the platform.
-az webapp deploy \
-  --resource-group "$RG" \
-  --name "$APP_NAME" \
-  --src-path "web.config" \
-  --type static
-
-# Verify the mitigation with a few manual probes.
-# These should now return 502 errors in ~60 seconds instead of 500 errors in ~230 seconds.
-bash run-e3-probes.sh --count 3
+bash labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/deploy-webconfig-m1a.sh primary
+bash labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/run-e3-m1a-probes.sh --canary primary --n 3
 ```
-
-| Command/Flag | Purpose |
-|---|---|
-| `az webapp deploy` | Deploy a file to the App Service |
-| `--resource-group` | Resource group containing the web app |
-| `--name` | Web app name |
-| `--src-path` | Local path to the web.config file to upload |
-| `--type static` | Deploy as a static file to wwwroot (does not trigger ZIP extraction or build) |
 
 [[[ shot("troubleshooting--kudu--05-webconfig-verified") ]]]
 
@@ -625,7 +577,7 @@ M1a addresses the failure mode preventively by shortening `requestTimeout` so th
 **Enable via Bicep** (this lab uses this path):
 
 ```bash
-bash enable-autoheal-m2.sh
+bash labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/enable-autoheal-m2.sh
 ```
 
 The script redeploys the Bicep template with `enableCustomAutoHeal=true` and `autoHealActionType=Recycle`. It waits for the Web App to return to a healthy state before finishing.
@@ -694,9 +646,9 @@ Access: Azure Portal -> App Service -> **Diagnose and solve problems** -> **Diag
 The analysis below is based on a comprehensive set of artifacts collected from a B1 Windows Java SE instance. These artifacts represent the ground truth for our investigation.
 
 -   **Pre-E1 Baseline**: `results/pre-e1/manifest.json` (3 requests). Establishes the sequential behavior.
--   **E1 (Saturation)**: `results/e1/rate-*.experiment.json` (4 runs). Maps the arrival rate to the failure signature.
--   **E2 (Sustained)**: `results/e2/sustained.experiment.json` (233 requests). Provides statistical significance for the 62% failure rate.
--   **E3 (Mitigation)**: `results/e3/probe-*.log` (3 probes). Validates the signature shift to 502.3.12002.
+-   **E1 (Saturation)**: `results/e1/run-<id>-rate-<rate>/` (4 runs). Maps each arrival rate to the failure signature.
+-   **E2 (Sustained)**: `results/e2/rate-<rate>/` (233 requests in the retained 0.5 req/s run). Provides statistical significance for the 62% failure rate.
+-   **E3 (Mitigation)**: `results/e3/primary/` (3 probes). Validates the signature shift to 502.3.12002.
 
 ### 4.2 Baseline state (pre-E1: 3/3 at 500/121/0, TimeTaken ~230s, 0 rows win32=64)
 
@@ -761,7 +713,7 @@ Across all load experiments, we observed a total of ~1,177 requests. The cumulat
   "ScSubStatus": 121,
   "TimeTaken": 230007,
   "Win32Status": 64,
-  "ResourceId": "/subscriptions/<subscription-id>/resourceGroups/rg-lab-winjaval2sat/providers/Microsoft.Web/sites/app-winjaval2sat-example"
+  "ResourceId": "/subscriptions/<subscription-id>/resourceGroups/rg-lab-winjaval2sat/providers/Microsoft.Web/sites/app-winjaval2sat-<suffix>"
 }
 ```
 
@@ -878,18 +830,13 @@ timeline
 
 ## Clean Up
 
-To avoid ongoing costs, delete the resource group.
+To avoid ongoing costs, run the retained cleanup script. Without arguments it loads the exact resource group from `results/deploy-metadata.json` and prompts before starting asynchronous deletion. Pass the group explicitly if metadata was not written.
 
 ```bash
-az group delete --resource-group "$RG" --yes --no-wait
+bash labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/cleanup.sh "$RG"
 ```
 
-| Command/Flag | Purpose |
-|---|---|
-| `az group delete` | Delete the resource group and all contained resources |
-| `--resource-group` | Resource group to delete |
-| `--yes` | Skip confirmation prompt |
-| `--no-wait` | Return immediately without waiting for deletion to complete |
+The script prints the group before deletion and requires interactive confirmation unless `--yes` is provided. Its successful return means deletion was initiated, not that Azure has finished deleting the group. Preserve sanitized evidence before cleanup and use `az group show --resource-group "$RG"` later if you need to confirm completion.
 
 ---
 
@@ -916,5 +863,3 @@ az group delete --resource-group "$RG" --yes --no-wait
 - httpPlatformHandler configuration: [https://learn.microsoft.com/en-us/iis/extensions/httpplatformhandler/httpplatformhandler-configuration-reference](https://learn.microsoft.com/en-us/iis/extensions/httpplatformhandler/httpplatformhandler-configuration-reference)
 - Windows Java SE runtime: [https://learn.microsoft.com/en-us/azure/app-service/configure-language-java-deploy-run](https://learn.microsoft.com/en-us/azure/app-service/configure-language-java-deploy-run)
 - App Service language support policy: [https://learn.microsoft.com/en-us/azure/app-service/language-support-policy](https://learn.microsoft.com/en-us/azure/app-service/language-support-policy)
-
-

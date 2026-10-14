@@ -12,11 +12,11 @@ Windows Java SE is under-documented in the App Service troubleshooting corpus (a
 
 | Stage | Status | Purpose |
 |---|---|---|
-| Stage 0: Effective config discovery | Ready to run | Gate before Lab 1 / Lab 2. Answers four falsifiable questions about front-end timeout, effective `web.config`, idle-vs-absolute timeout, and Auto-Heal isolation. |
-| Lab 1: Baseline timeout + `500.121.64` signature | Gated on Stage 0 | Reproduce the timeout signature without downstream load or mitigation. Confirms hypotheses H1 (front-end limit) + H2 (handler default) + H4 (effective config) + H7 (idle vs absolute). |
-| Lab 2: Loopback saturation + mitigation | Gated on Lab 1 | Add controlled loopback pressure and Auto-Heal / config-tuning mitigations. Confirms hypothesis H3 (loopback backlog) + H6 (queue saturation) and validates mitigations M1 (`requestTimeout` extension) and M2 (custom Auto-Heal). |
+| Stage 0: Effective config discovery | Scripts and historical results committed | Builds the shared Java 17 `app.jar` and records the effective timeout/configuration discovery. |
+| Lab 1: Baseline timeout + `500.121.64` signature | Scripts and historical results committed | Retains the baseline probes and evidence that preceded Lab 2. |
+| Lab 2: Loopback saturation + mitigation | Scripts and historical results committed | Reuses the Stage 0 JAR for load and mitigation experiments. The current guide/script consistency is statically checked; this documentation update did not execute Azure. |
 
-Lab 1 and Lab 2 will not be committed until Stage 0 output confirms or refutes the design assumptions the Oracle review flagged. See [`stage-0-config-discovery/README.md`](stage-0-config-discovery/README.md) for the discovery matrix.
+The directories and sanitized historical results are present in this checkout. Their presence is not a claim that the experiment was independently reproduced during a documentation-only update. See [`stage-0-config-discovery/README.md`](stage-0-config-discovery/README.md) for the discovery matrix.
 
 ## Why a discovery gate
 
@@ -39,6 +39,7 @@ Stage 0 addresses flaw #1 (empirical timer measurement) and flaw #4 (Auto-Heal i
 | JDK | 17 (matching App Service) | Local `mvn package` |
 | `curl`, `python3` | Any recent | Probes and Kudu API parsing |
 | Bash | 4+ | Scripts use `set -euo pipefail` and arrays |
+| k6 | Current supported release | Lab 2 deployment preflight and open-model load generation |
 
 Stage 0 costs less than $0.50 at B1 Basic in Korea Central. Lab 1 is projected in the same order. Lab 2 introduces higher-tier plans and open-model load and is projected between $5 and $30 based on the Oracle cost review.
 
@@ -65,7 +66,7 @@ Out of scope:
 ```
 labs/windows-java-httpplatformhandler-timeout/
 |-- README.md                              # This file
-`-- stage-0-config-discovery/
+|-- stage-0-config-discovery/
     |-- README.md                          # Stage 0 objectives, decision matrix
     |-- main.bicep                         # B1 Windows Java SE with Auto-Heal disabled
     |-- deploy.sh                          # Deploy + build + upload JAR
@@ -77,6 +78,15 @@ labs/windows-java-httpplatformhandler-timeout/
         |-- pom.xml                        # Spring Boot 3.3.4 Java 17
         `-- src/main/java/com/example/stage0/
             `-- Stage0Application.java     # /slow/{n}, /stream/{n}, actuator
+|-- lab-1-baseline-signature/              # Baseline probes and historical results
+`-- lab-2-loopback-saturation/
+    |-- main.bicep                         # Windows Java SE 17 Lab 2 resources
+    |-- deploy.sh                          # Reuses Stage 0 target/*.jar with --type jar
+    |-- cleanup.sh                         # Metadata-aware resource-group cleanup
+    |-- run-e1-per-rate.sh                 # Multi-rate open-model load
+    |-- run-e2-sustained.sh                # Sustained load
+    |-- run-e3-m1a-probes.sh               # web.config mitigation probes
+    `-- results/                            # Sanitized historical evidence
 ```
 
 ## Related

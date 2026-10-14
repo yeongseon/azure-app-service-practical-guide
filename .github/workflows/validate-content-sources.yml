@@ -72,6 +72,7 @@ jobs:
       - name: Test documented repository path validation
         run: |
           python -m unittest scripts.tests.test_validate_documented_paths -v
+          python -m unittest scripts.tests.test_windows_java_lab_consistency -v
 
       - name: Validate documented repository paths
         run: |
