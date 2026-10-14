@@ -29,6 +29,7 @@ ICON_FAIL = "❌ Fail"
 ICON_STALE = "⚠️ Stale"
 ICON_NOT_TESTED = "➖ Not Tested"
 ICON_NO_DATA = "➖ No Data"
+VALID_RESULTS = frozenset({"pass", "fail", "not_tested"})
 
 
 def parse_frontmatter(filepath: Path) -> dict[str, Any] | None:
@@ -75,8 +76,14 @@ def get_method_status(
     result = method_data.get("result", "not_tested")
     last_tested = method_data.get("last_tested")
 
-    if result == "not_tested" or last_tested is None:
-        return ICON_NOT_TESTED, None
+    if not isinstance(result, str) or result not in VALID_RESULTS:
+        return ICON_NO_DATA, str(last_tested) if last_tested is not None else None
+
+    if result == "not_tested":
+        return (ICON_NOT_TESTED, None) if last_tested is None else (ICON_NO_DATA, str(last_tested))
+
+    if last_tested is None:
+        return ICON_NO_DATA, None
 
     # Parse date
     if isinstance(last_tested, date):
@@ -89,6 +96,9 @@ def get_method_status(
 
     date_str = test_date.isoformat()
     age = (today - test_date).days
+
+    if age < 0:
+        return ICON_NO_DATA, date_str
 
     if result == "fail":
         return ICON_FAIL, date_str
