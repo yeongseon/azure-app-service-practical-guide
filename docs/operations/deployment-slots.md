@@ -550,6 +550,8 @@ For language-specific operational guidance, see:
 - [Operations Index](./index.md)
 - [Health and Recovery](./health-recovery.md)
 - [Security](./security.md)
+- [Windows slot-swap first-request latency playbook](../troubleshooting/playbooks/startup-availability/windows-slot-swap-first-request-latency.md)
+- [Windows slot-swap binding drift and worker recycle playbook](../troubleshooting/playbooks/startup-availability/windows-slot-swap-binding-recycle.md)
 - [Deployment slots (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots)
 
 ## Sources
