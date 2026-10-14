@@ -116,6 +116,7 @@ nav:
     - Architecture:
       - Overview: platform/architecture/index.md
       - Request Lifecycle: platform/request-lifecycle.md
+      - Process Lifecycle and In-Flight Work: platform/process-lifecycle-and-in-flight-work.md
       - Resource Relationships: platform/resource-relationships.md
       - Authentication Architecture: platform/authentication-architecture.md
       - Security Architecture: platform/security-architecture.md
