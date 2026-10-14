@@ -6,6 +6,9 @@ on:
       - 'apps/**'
       - 'docs/**'
       - 'labs/**'
+      - 'evidence/**'
+      - 'schemas/golden/**'
+      - 'tests/golden/**'
       - 'scripts/**'
       - 'tools/**'
       - '.github/workflows/**'
@@ -16,6 +19,9 @@ on:
       - 'apps/**'
       - 'docs/**'
       - 'labs/**'
+      - 'evidence/**'
+      - 'schemas/golden/**'
+      - 'tests/golden/**'
       - 'scripts/**'
       - 'tools/**'
       - '.github/workflows/**'
@@ -38,6 +44,7 @@ jobs:
       dotnet: ${{ steps.impact.outputs.dotnet }}
       java: ${{ steps.impact.outputs.java }}
       bicep: ${{ steps.impact.outputs.bicep }}
+      golden: ${{ steps.impact.outputs.golden }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -77,6 +84,8 @@ jobs:
 
   lab-verifiers:
     name: Lab Evidence Verifiers
+    needs: classify
+    if: needs.classify.outputs.golden == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -246,6 +255,7 @@ jobs:
       - dotnet
       - java
       - bicep
+      - lab-verifiers
     runs-on: ubuntu-latest
     env:
       SELECTED_SCRIPTS: ${{ needs.classify.outputs.scripts }}
@@ -263,6 +273,8 @@ jobs:
       RESULT_DOTNET: ${{ needs.dotnet.result }}
       RESULT_JAVA: ${{ needs.java.result }}
       RESULT_BICEP: ${{ needs.bicep.result }}
+      SELECTED_GOLDEN: ${{ needs.classify.outputs.golden }}
+      RESULT_GOLDEN: ${{ needs.lab-verifiers.result }}
     steps:
       - uses: actions/checkout@v4
 
