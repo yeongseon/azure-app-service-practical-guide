@@ -22,21 +22,24 @@ def bash_fences(markdown: str) -> tuple[str, ...]:
 
 
 def referenced_lab_scripts(markdown: str) -> set[Path]:
+    """Return every `.sh` file the guide mentions, in fences or prose.
+
+    A token with a slash is repository-relative; a bare name must exist
+    somewhere under the Windows Java lab directory.
+    """
     references: set[Path] = set()
-    for fence in bash_fences(markdown):
-        for repo_path in re.findall(r"\blabs/[A-Za-z0-9_./-]+\.sh\b", fence):
-            references.add(ROOT / repo_path)
-        for script_name in re.findall(
-            r"(?:\bbash\s+|\./)(?P<name>(?:run|deploy)-[A-Za-z0-9_.-]+\.sh)\b",
-            fence,
-        ):
-            references.add(LAB_2 / script_name)
+    for token in re.findall(r"(?<![A-Za-z0-9_.-])[A-Za-z0-9_./-]+\.sh\b", markdown):
+        if "/" in token:
+            references.add(ROOT / token.removeprefix("./"))
+            continue
+        matches = sorted(LAB_ROOT.rglob(token))
+        references.add(matches[0] if matches else LAB_2 / token)
     return references
 
 
 class WindowsJavaLabConsistencyTests(unittest.TestCase):
     def test_lab_2_bash_fences_reference_existing_scripts(self) -> None:
-        # Given the runnable Bash fences in the published Lab 2 guide
+        # Given the published Lab 2 guide, including fences and prose
         guide = GUIDE.read_text(encoding="utf-8")
 
         # When repository-qualified and Lab 2-local script references are resolved
@@ -48,6 +51,25 @@ class WindowsJavaLabConsistencyTests(unittest.TestCase):
 
         # Then every documented script is present in the repository
         self.assertEqual([], missing)
+
+    def test_missing_script_references_are_detected_in_fences_and_prose(self) -> None:
+        # Given references to nonexistent scripts in each documented form
+        mutated = (
+            "```bash\nbash run-nonexistent-fence.sh --rate 1\n```\n"
+            "Prose mentions nonexistent-prose.sh here and "
+            "labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/nonexistent-path.sh.\n"
+        )
+
+        # When the references are resolved
+        missing = {
+            path.name for path in referenced_lab_scripts(mutated) if not path.is_file()
+        }
+
+        # Then each class of reference is reported as missing
+        self.assertEqual(
+            {"run-nonexistent-fence.sh", "nonexistent-prose.sh", "nonexistent-path.sh"},
+            missing,
+        )
 
     def test_guide_uses_stage_zero_jar_source_from_deploy_script(self) -> None:
         # Given the published guide and retained Lab 2 deployment script
