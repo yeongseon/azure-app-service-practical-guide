@@ -3,11 +3,11 @@
   "epic": 173,
   "document_updated_at": "2026-09-27",
   "verdict": "NOT_COMPLETE",
-  "verdict_basis": "One Definition-of-Done item is partial and none is unmet. Independent reproduction is closed: the third operator reproduced the result and followed the documentation without a single deviation, which took two rounds of corrections driven by the two before it. What remains is a completed Scenario B run.",
+  "verdict_basis": "One Definition-of-Done item is partial and one is unmet. Scenario B has not completed a live run. The three committed replay records were produced by AI-agent sessions, so they demonstrate repeatability and documentation refinement but do not satisfy independent human reproduction.",
   "counts": {
-    "MET": 14,
+    "MET": 13,
     "PARTIAL": 1,
-    "NOT_MET": 0,
+    "NOT_MET": 1,
     "total": 15
   },
   "items": [
@@ -78,8 +78,9 @@
     {
       "id": 10,
       "requirement": "Independent reproduction completed for at least one scenario",
-      "status": "MET",
-      "evidence": "Three independent operators have reproduced Scenario A, each given only the published documentation and the commit, each barred from the retained evidence, the review and the tests. All three obtained SUPPORTED without being told the expected answer, and all three confirmed their own cleanup. The third also passes the documentation axis: run 20260927T233923Z-1f4cb2082505 reports reproduction_result REPRODUCED and documentation_result REPRODUCED, with no deviations, and the operator stated plainly that the documentation was sufficient without consulting --help, reading source, or inferring anything. check_reproduction reports passed true.",
+      "status": "NOT_MET",
+      "evidence": "Three AI-agent sessions repeated Scenario A and improved the documentation. They are explicitly classified as agent repeat runs, not a genuinely different human operator, so check_reproduction refuses the independent-reproduction gate.",
+      "gap": "A different human operator must follow only the public procedure and collect a distinct run with independently retained raw evidence, verified recovery, and cleanup.",
       "verify": "python3 scripts/golden/check_reproduction.py evidence/reproductions/scenario-a-third.json"
     },
     {
@@ -100,14 +101,14 @@
       "id": 13,
       "requirement": "Legacy labs classified Golden / migration-needed / archive-candidate",
       "status": "MET",
-      "evidence": "All 12 labs classified in labs/golden-classification.json: 2 golden, 9 migration-needed, 1 archive-candidate. Coverage is asserted in both directions so neither an unclassified lab nor an orphan entry passes.",
+      "evidence": "All 15 current scenario directories are classified in labs/golden-classification.json; labs/_shared is explicitly excluded. Coverage is asserted in both directions so additions, renames, removals, and orphan entries fail.",
       "verify": "python3 tests/golden/test_lab_classification.py"
     },
     {
       "id": 14,
       "requirement": "README validation/maturity wording matches actual evidence",
       "status": "MET",
-      "evidence": "Lab-validated became Evidence-retained, the legend names both missing conditions, and the lab count was corrected from 10 to 12. The guard fails once a reproduction or completed run exists, forcing the claim to be re-decided rather than staying forbidden after it becomes true.",
+      "evidence": "Lab-validated became Evidence-retained, the legend scopes evaluated runs and states that no qualifying independent human reproduction exists, and all localized READMEs report the same 15-scenario inventory.",
       "verify": "python3 tests/golden/test_readme_claims.py"
     },
     {
@@ -119,9 +120,10 @@
     }
   ],
   "blocking_for_v1": [
-    "Item 9: Scenario B has not completed a live run."
+    "Item 9: Scenario B has not completed a live run.",
+    "Item 10: no genuinely different human operator has independently reproduced a scenario."
   ],
-  "notes": "Item 10 needs a person other than the operator who produced the runs; no amount of further code satisfies it. Item 9 needs Scenario B instrumented to persist per-phase probe records and probe the destination's own health, after which it can run. Scenario C's run left two observations absent and returned INCONCLUSIVE, which is the model working rather than failing.",
+  "notes": "Item 10 needs a genuinely different human operator; AI-agent repeat runs cannot satisfy it. Item 9 needs Scenario B instrumented to persist per-phase probe records and probe the destination's own health, after which it can run. Scenario C's run left two observations absent and returned INCONCLUSIVE, which is the model working rather than failing.",
   "review_history": [
     {
       "reviewer": "oracle",

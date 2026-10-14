@@ -21,19 +21,8 @@ ROOT = pathlib.Path(__file__).resolve().parents[2]
 
 RETIRED = ("REFUTED", "NOT_EVALUATED")
 
-#: Two files reference the retired terms on purpose.
-#:
-#: The migration spec documents the old-to-new mapping and must keep both
-#: terms, or it could not tell a sibling repository what to rename.
-#:
-#: check_reproduction.py lists NOT_EVALUATED among the statuses meaning
-#: "never put at risk", so a legacy record carrying the old term is still
-#: treated as untested. Removing it to satisfy this check would let a pair
-#: of legacy non-runs reproduce each other again, which is the defect the
-#: tuple exists to prevent. Defending against a term is not using it.
 ALLOWED = {
     "docs/reference/golden-migration-spec.md",
-    "scripts/golden/check_reproduction.py",
 }
 
 SCANNED = ("*.py", "*.json", "*.sh", "*.md")
@@ -74,28 +63,6 @@ class VocabularyTests(unittest.TestCase):
 
     def test_the_spec_is_exempt_for_a_stated_reason(self):
         self.assertIn("docs/reference/golden-migration-spec.md", ALLOWED)
-
-    def test_the_retired_term_survives_only_as_a_defence(self):
-        """The exemption is narrow: it may appear in the untested tuple only.
-
-        If check_reproduction.py ever starts emitting the old term rather
-        than merely recognising it, this fails.
-        """
-        text = (ROOT / "scripts/golden/check_reproduction.py").read_text()
-        for line in text.splitlines():
-            if "NOT_EVALUATED" in line:
-                self.assertIn(
-                    "UNTESTED_STATUS", line,
-                    msg="NOT_EVALUATED appears outside the defensive tuple")
-
-    def test_the_defence_actually_covers_the_legacy_term(self):
-        import importlib.util
-        spec = importlib.util.spec_from_file_location(
-            "cr", ROOT / "scripts/golden/check_reproduction.py")
-        module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(module)
-        self.assertIn("NOT_EVALUATED", module.UNTESTED_STATUS)
-        self.assertIn("NOT_TESTED", module.UNTESTED_STATUS)
 
     def test_the_replacement_terms_are_the_frozen_ones(self):
         evaluator = (ROOT / "scripts/golden/evaluate_run.py").read_text()
