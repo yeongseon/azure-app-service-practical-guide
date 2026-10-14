@@ -1,7 +1,7 @@
 ---
 content_validation:
   status: verified
-  last_reviewed: 2026-09-11
+  last_reviewed: 2026-10-14
   reviewer: agent
   core_claims:
     - claim: "Health check pings a path that you choose on all instances of an App Service app at 1-minute intervals."
@@ -29,7 +29,7 @@ Use this checklist when an Azure App Service Linux app does not come up cleanly 
 ```mermaid
 graph TD
     A[Symptom: Startup failures or health ping errors] --> B{Startup logs present?}
-    B -- No --> C[Suspect crash or launch failure]
+    B -- No --> C[Telemetry inconclusive: verify logging and process state]
     B -- Yes --> D{Start-fail-restart loop?}
     D -- Yes --> E[Platform restart-loop hypothesis]
     D -- No --> F{Linux port config consistent with listener?}
@@ -54,7 +54,7 @@ Look for: The availability chart, `Organic SLA`, and the downtime message below 
 
 Expected result: A healthy app shows flat 100 percent availability and no downtime; during an outage the chart dips and a downtime window can be selected.
 
-Before running the KQL query below, confirm the symptom is observable from the platform's perspective using the `Web App Down` detector. The `App Availability` and `Platform Availability` lines distinguish your app's HTTP availability from the platform infrastructure — when `App Availability` drops but `Platform Availability` stays at 100%, the failure is in your container or code, not the App Service platform. The `Drag and select a time window on the graph` action runs the full availability diagnostic against the selected window and surfaces correlated detector results. When `Organic SLA: 100%` and the chart is flat, the symptom has not been observed by the platform yet — proceed to the console logs below to look for in-progress startup failures.
+Before running the KQL query below, check whether the `Web App Down` detector observed the symptom in the incident window. [Observed] A lower `App Availability` line with a healthy `Platform Availability` line scopes the detector's result; it makes application or container hypotheses useful next checks. [Not Proven] A healthy platform line does not exclude every platform contribution, downstream side effect, or problem outside the detector's scope. Select the incident window to review the correlated detector results, then compare them with platform events, HTTP logs, and per-instance process state. If the detector has no matching window or is unavailable, record `Unknown` rather than assigning a layer.
 
 - KQL:
 
@@ -65,7 +65,7 @@ AppServiceConsoleLogs
 | order by TimeGenerated desc
 ```
 
-Log stream is the real-time complement to the historical query above. The `Runtime` radio captures application stdout/stderr, where Python tracebacks, Node.js `Error: listen EADDRINUSE`, and Java `BindException` appear within seconds of a restart; the `Platform` radio shows container lifecycle and health-probe messages. If the stream is silent through a restart cycle, the container is failing before any logging framework initializes, so move on to the platform-event step.
+Log stream is the real-time complement to the historical query above. The `Runtime` radio can show application stdout/stderr, including Python tracebacks, Node.js `Error: listen EADDRINUSE`, and Java `BindException`; the `Platform` radio shows container lifecycle and health-probe messages. [Observed] A silent stream means only that this collection path returned no lines. [Not Proven] It does not prove that the process failed before logging initialized. Verify that the intended log type is enabled, the application writes to console or `/home/LogFiles`, the correct instance is selected, and the stream has not stalled. Also allow for collection delay and query-window mismatch. Then compare the platform-event query with SSH/process and listener checks. If logging configuration, stream health, or telemetry availability cannot be established, record `INCONCLUSIVE`.
 
 ## Step 2: Check platform events for container start/fail loop
 Platform logs confirm if App Service can start and keep the container alive.
@@ -183,6 +183,7 @@ After these checks, you should be able to:
     - **Binding mismatch** -> bind to `0.0.0.0`
     - **Startup timeout** -> increase time limit and reduce startup work
     - **Crash on boot** -> investigate stack trace/runtime dependency error
+    - **Unknown / unavailable telemetry** -> preserve `INCONCLUSIVE`, repair collection, and repeat the process/listener checks before attributing a cause
     - Select immediate corrective path before full deep dive.
 
 ## Next Steps

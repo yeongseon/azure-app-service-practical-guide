@@ -1,7 +1,7 @@
 ---
 content_validation:
   status: verified
-  last_reviewed: 2026-09-11
+  last_reviewed: 2026-10-14
   reviewer: agent
   core_claims:
     - claim: "Azure App Service diagnostics includes networking diagnostics such as SNAT Port Exhaustion and TCP Connections."
@@ -30,9 +30,10 @@ Use this checklist when Azure App Service Linux can serve some traffic but fails
 graph TD
     A[Symptom: Dependency calls fail] --> B{Inbound reachable?}
     B -- No --> C[Also investigate ingress path]
-    B -- Yes --> D{SNAT detector near exhaustion?}
+    B -- Yes --> D{SNAT detector shows incident-window pressure?}
     D -- Yes --> E[SNAT pressure hypothesis]
     D -- No --> F{DNS resolution healthy?}
+    D -- Unavailable --> U[Unknown: compare dependency and worker evidence]
     F -- No --> G[DNS issue hypothesis]
     F -- Yes --> H{VNet or PE routing aligned?}
     H -- No --> I[Route or Private Endpoint issue]
@@ -44,19 +45,25 @@ graph TD
 
 ## Step 1: Classify inbound vs outbound symptom first
 Avoid losing time on ingress when the failure is dependency egress.
+
 - Quick check:
-    - Inbound issue: clients cannot reach your app endpoint.    - Outbound issue: app endpoint is reachable, but dependency calls fail.- Validate with app logs or synthetic call path.
+    - Inbound issue: clients cannot reach your app endpoint.
+    - Outbound issue: app endpoint is reachable, but dependency calls fail.
+    - Validate with app logs or synthetic call path.
 - Good signal: clear isolation to outbound-only failure.
 - Bad signal: mixed signals (both inbound and outbound), requiring parallel checks.
 
 ## Step 2: Check SNAT Port Exhaustion detector
-SNAT exhaustion is one of the most common App Service Linux outbound failure causes under load.
+Treat SNAT pressure as one competing hypothesis for outbound failures under load.
+
 - Portal path: **App Service -> Diagnose and solve problems -> Availability and Performance -> SNAT Port Exhaustion**
-- Good signal: utilization is comfortably below limits during incident.
-- Bad signal: near/at exhaustion when failures occur.
+- Evidence against this hypothesis: detector pressure stays comfortably below limits on the affected instance during the incident.
+- Evidence supporting this hypothesis: measured near/at exhaustion aligns with outbound failures on the same instance and window.
+- `Unknown`: the detector has no port data or is unavailable; continue with dependency, DNS, client-cancellation, and worker-queueing checks rather than inferring SNAT from inbound `499`/`503` or timeout duration.
 
 ## Step 3: Check TCP Connections metric trend
 High connection churn with poor reuse often precedes SNAT incidents.
+
 - Portal path: **App Service -> Metrics -> TCP Connections**
 - Azure CLI:
 
@@ -76,6 +83,7 @@ Select `TCP Connections` and add both `Avg` and `Max` aggregations, then narrow 
 
 ## Step 4: Check VNet integration status (if used)
 Misconfigured or unhealthy integration causes asymmetric dependency failures.
+
 - Portal path: **App Service -> Networking -> VNet integration**
 - Azure CLI:
 
@@ -99,13 +107,14 @@ Look for: `Public network access` and `Private endpoints` under inbound traffic,
 
 Expected result: This capture shows a public app without VNet integration, so outbound traffic uses the listed platform outbound addresses and the integration subnet settings show `N/A`.
 
-The Networking hub is the single pane that decides whether your outbound failure is a routing problem or a dependency problem. The **Outbound traffic configuration** column on the right is the first thing to check: `Virtual network integration: Not configured` plus `Outbound DNS: Default (Azure-provided)` plus the long list of `Outbound IPv4 addresses` means traffic egresses directly from the App Service shared outbound pool, NOT through your VNet - so private endpoints, NSGs, and custom DNS in your VNet have zero effect on it. If this app was supposed to reach a database via VNet integration, this screen would have proven the misconfiguration in 10 seconds. Note the **Integration subnet configuration** card showing `NAT gateway: N/A` - that line only populates when VNet integration is active.
+The Networking hub shows the app's configured routing context; it does not decide the failure domain or prove a misconfiguration. Use its VNet integration, outbound DNS, address, and integration-subnet fields to form a route hypothesis. Then test DNS and connectivity from inside the app, compare per-target dependency telemetry in the incident window, inspect effective routes and attached NSG/NAT resources, and use policy or deployment evidence to confirm whether the observed configuration differs from the intended design.
 
 - Good signal: expected subnet integration and healthy state.
 - Bad signal: disconnected/misconfigured integration, wrong subnet, or route mismatch.
 
 ## Step 5: Validate DNS resolution from Kudu/SSH
 Prove whether failures happen before connect (resolution) or after connect (network/dependency).
+
 - Portal path: **App Service -> Development Tools -> SSH** (or Kudu SSH)
 - Commands:
 
@@ -119,12 +128,16 @@ nslookup <dependency-private-endpoint-fqdn>
 
 ## Step 6: Check Private Endpoint + DNS mapping (if applicable)
 Private Endpoint without correct DNS zone linkage can silently route to wrong targets.
+
 - Portal path:
-    - **Dependency resource -> Networking -> Private endpoint connections**    - **Private DNS zones -> Virtual network links**- Good signal: approved Private Endpoint and correct private DNS zone links.
+    - **Dependency resource -> Networking -> Private endpoint connections**
+    - **Private DNS zones -> Virtual network links**
+- Good signal: approved Private Endpoint and correct private DNS zone links.
 - Bad signal: pending/rejected endpoint, missing DNS link, or public IP resolution when private expected.
 
 ## Step 7: Check NAT Gateway attachment and health (if applicable)
 If NAT Gateway is expected but not applied, outbound behavior may differ from design.
+
 - Portal path: **VNet -> Subnets -> <integration subnet> -> NAT Gateway**
 - Azure CLI:
 
@@ -144,6 +157,7 @@ az network vnet subnet show --resource-group "$RG" --vnet-name "$VNET_NAME" --na
 
 ## Step 8: Confirm timeout/error signatures in console logs
 Use log signatures to separate DNS, connect, and upstream timeout patterns.
+
 - KQL:
 
 ```kql
@@ -157,11 +171,24 @@ AppServiceConsoleLogs
 - Good signal: no concentrated outbound error pattern.
 - Bad signal: repeated DNS or connect-timeout errors in incident window.
 
+Console timeout errors identify the failing operation more precisely than inbound status alone, but still compare per-target dependency health and worker saturation. A repeated HTTP time boundary can result from client cancellation, queued work, or dependency timeout as well as SNAT pressure.
+
 ## Decision Points
 After these checks, you should be able to:
+
 - Narrow to 1-2 hypotheses:
-    - **SNAT pressure**: detector + TCP connection trend support exhaustion    - **DNS issue**: nslookup failures or wrong resolution path    - **Route/Private Endpoint issue**: VNet/PE/DNS zone mismatch- Choose next playbook:
-    - SNAT -> connection reuse/SNAT playbook    - DNS -> DNS resolution playbook    - Route/PE -> Private Endpoint and custom DNS playbook
+    - **SNAT pressure**: incident-window detector data shows pressure alongside outbound errors.
+    - **DNS issue**: in-app resolution tests fail or return an unexpected path.
+    - **Route/Private Endpoint issue**: configured routing context, effective routes, and policy or deployment evidence disagree with the intended VNet, Private Endpoint, or DNS design.
+    - **Dependency or worker pressure**: failures isolate to a target or queueing grows without measured SNAT pressure.
+    - **Unknown**: required detector, dependency, route, policy, or application telemetry is unavailable.
+- Choose the next playbook or action:
+    - **SNAT pressure**: use the connection reuse/SNAT playbook.
+    - **DNS issue**: use the DNS resolution playbook.
+    - **Route/Private Endpoint issue**: use the Private Endpoint and custom DNS playbook.
+    - **Dependency or worker pressure**: inspect same-window dependency telemetry and worker queueing.
+    - **Unknown**: collect the missing evidence before selecting a causal playbook.
+
 ## Next Steps
 - [SNAT or Application Issue?](../playbooks/outbound-network/snat-or-application-issue.md)
 - [DNS Resolution (VNet-Integrated)](../playbooks/outbound-network/dns-resolution-vnet-integrated-app-service.md)

@@ -17,10 +17,10 @@ related:
   - troubleshooting-architecture-overview
 summary: Step-by-step decision flow to route symptoms to the correct playbook.
 status: stable
-last_reviewed: 2026-09-11
+last_reviewed: 2026-10-14
 content_validation:
   status: verified
-  last_reviewed: 2026-09-11
+  last_reviewed: 2026-10-14
   reviewer: agent
   core_claims:
     - claim: "Azure App Service diagnostics groups troubleshooting into categories such as Availability and Performance, Deployment, and Networking."
@@ -120,8 +120,10 @@ flowchart TD
     F -->|Yes| G[Container Didn't Respond to HTTP Pings]
     F -->|No| H[Slow Response but Low CPU]
 
-    D --> I{Outbound signatures present?}
-    I -->|Yes| J[SNAT or Application Issue]
+    D --> I{Measured outbound evidence present?}
+    I -->|SNAT detector pressure| J[SNAT pressure hypothesis]
+    I -->|Dependency errors or worker queueing| J2[Dependency or application hypothesis]
+    I -->|Telemetry unavailable| J3[INCONCLUSIVE: restore collection]
     I -->|No| K[Failed to Forward Request]
 
     E --> L{Recent deploy or swap?}
@@ -159,7 +161,7 @@ flowchart TD
 | App became unstable after swap | slot config drift or restart race | [Slot Swap Config Drift](playbooks/startup-availability/slot-swap-config-drift.md) |
 | High latency with low CPU | dependency wait, lock contention, sync blocking | [Slow Response but Low CPU](playbooks/performance/slow-response-but-low-cpu.md) |
 | Gradual slowdown then recycle | memory growth and worker degradation | [Memory Pressure and Worker Degradation](playbooks/performance/memory-pressure-and-worker-degradation.md) |
-| Intermittent outbound timeout/reset | SNAT pressure or outbound connection churn | [SNAT or Application Issue?](playbooks/outbound-network/snat-or-application-issue.md) |
+| Intermittent outbound timeout/reset | SNAT, dependency, DNS, client cancellation, or worker-queueing hypotheses; discriminate with per-target failures and measured detector pressure | [SNAT or Application Issue?](playbooks/outbound-network/snat-or-application-issue.md) |
 | Name resolution failures in VNet integration | DNS resolver path or custom DNS mismatch | [DNS Resolution (VNet-Integrated)](playbooks/outbound-network/dns-resolution-vnet-integrated-app-service.md) |
 | Private endpoint dependency unreachable | private DNS zone/routing configuration mismatch | [Private Endpoint / Custom DNS Route Confusion](playbooks/outbound-network/private-endpoint-custom-dns-route-confusion.md) |
 | Errors include `No space left on device` | local filesystem exhaustion | [No Space Left on Device](playbooks/performance/no-space-left-on-device.md) |
@@ -179,6 +181,8 @@ flowchart TD
 - 15-minute HTTP status trend (`AppServiceHTTPLogs`)
 - platform event timeline for restarts/deployments (`AppServicePlatformLogs` + Activity Log)
 - console signatures for startup and outbound failures (`AppServiceConsoleLogs`)
+
+An empty query result is `INCONCLUSIVE` until you verify logging configuration, collection delay, query scope, and telemetry availability. A healthy detector line scopes that detector only; it does not exclude every platform contribution. HTTP `499`/`503` and duration patterns route the investigation but do not prove client cancellation, worker queueing, dependency failure, or SNAT pressure.
 
 ```kusto
 AppServiceHTTPLogs
@@ -262,11 +266,15 @@ az webapp config show --resource-group <resource-group> --name <app-name>
 ## Practical triage examples
 
 1. **Intermittent 502 + connect timeout logs + burst traffic**
-    - Decision tree branch: 5xx → intermittent → outbound candidate.    - Start with [SNAT or Application Issue?](playbooks/outbound-network/snat-or-application-issue.md).
+    - Decision tree branch: 5xx → intermittent → outbound candidate.
+    - Start with [SNAT or Application Issue?](playbooks/outbound-network/snat-or-application-issue.md).
 2. **Deployment succeeded + immediate 503 + ping failures**
-    - Decision tree branch: restart/deployment → startup failing.    - Start with [Deployment Succeeded but Startup Failed](playbooks/startup-availability/deployment-succeeded-startup-failed.md).
+    - Decision tree branch: restart/deployment → startup failing.
+    - Start with [Deployment Succeeded but Startup Failed](playbooks/startup-availability/deployment-succeeded-startup-failed.md).
 3. **Latency grows over hours + recycle + memory climb**
-    - Decision tree branch: performance → memory.    - Start with [Memory Pressure and Worker Degradation](playbooks/performance/memory-pressure-and-worker-degradation.md).
+    - Decision tree branch: performance → memory.
+    - Start with [Memory Pressure and Worker Degradation](playbooks/performance/memory-pressure-and-worker-degradation.md).
+
 ## See Also
 
 - [Troubleshooting Method](methodology/troubleshooting-method.md)

@@ -1,7 +1,7 @@
 ---
 content_validation:
   status: verified
-  last_reviewed: 2026-09-11
+  last_reviewed: 2026-10-14
   reviewer: agent
   core_claims:
     - claim: "Metrics you might want to monitor include Average memory working set, CPU time, Memory working set, Requests, and Response time."
@@ -131,6 +131,8 @@ Performance incidents often mask outbound connection pressure.
 - Good signal: detector does not show near-exhaustion during incident.
 - Bad signal: near/at exhaustion with corresponding timeout growth.
 
+This correlation prioritizes a hypothesis; it does not establish causation. Distinguish measured SNAT pressure from client cancellation, worker queueing, and a slow or failing dependency. If detector or dependency telemetry is unavailable, record `Unknown` rather than attributing HTTP `499`/`503` or a repeated duration boundary to SNAT.
+
 ## Step 7: Check dependency health and timeout signatures
 Differentiate app compute pressure from downstream dependency slowness.
 - If Application Insights exists: inspect dependency duration/failure trend in the same time window.
@@ -163,9 +165,18 @@ AppServiceHTTPLogs
 
 ## Decision Points
 After these checks, you should be able to:
+
 - Narrow to 1-2 hypotheses:
-    - **CPU-bound**: sustained CPU saturation with broad latency increase    - **Memory-bound**: high memory pressure plus restart/worker degradation patterns    - **Dependency-bound**: timeout-heavy console/dependency signals with normal CPU- Select immediate direction:
-    - CPU-bound -> scale up and profile hot paths    - Dependency-bound -> dependency/network playbook    - Memory-bound -> memory pressure playbook
+    - **CPU-bound**: sustained CPU saturation with a broad latency increase.
+    - **Memory-bound**: high memory pressure plus restart or worker-degradation patterns.
+    - **Dependency-bound**: same-window dependency duration or failure signals increase while CPU remains normal.
+    - **Unknown**: the incident window lacks per-instance resource, request-start, queueing, or dependency evidence.
+- Select the immediate direction:
+    - **CPU-bound**: scale up and profile hot paths.
+    - **Dependency-bound**: use the dependency or network playbook.
+    - **Memory-bound**: use the memory pressure playbook.
+    - **Unknown**: collect the missing per-instance and dependency evidence before choosing a mitigation.
+
 ## Next Steps
 - [Slow Response but Low CPU](../playbooks/performance/slow-response-but-low-cpu.md)
 - [Memory Pressure & Worker Degradation](../playbooks/performance/memory-pressure-and-worker-degradation.md)

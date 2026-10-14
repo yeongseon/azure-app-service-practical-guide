@@ -5,6 +5,7 @@ on:
     paths:
       - 'docs/**'
       - 'scripts/detect_repetition.py'
+      - 'scripts/check_quick_triage_claims.py'
       - 'scripts/repetition-markers.txt'
       - 'scripts/repetition-allowlist.txt'
       - '.github/workflows/validate-repetition.yml'
@@ -14,6 +15,7 @@ on:
     paths:
       - 'docs/**'
       - 'scripts/detect_repetition.py'
+      - 'scripts/check_quick_triage_claims.py'
       - 'scripts/repetition-markers.txt'
       - 'scripts/repetition-allowlist.txt'
       - '.github/workflows/validate-repetition.yml'
@@ -39,3 +41,8 @@ jobs:
       - name: Detect generator boilerplate repetition
         run: |
           python scripts/detect_repetition.py docs
+
+      - name: Check quick-triage causal-claim contract
+        run: |
+          python -m doctest scripts/check_quick_triage_claims.py -v
+          python scripts/check_quick_triage_claims.py

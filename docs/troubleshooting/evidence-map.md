@@ -17,10 +17,10 @@ related:
   - quick-diagnosis-cards
 summary: Maps investigation questions to evidence sources, CLI commands, and KQL queries.
 status: stable
-last_reviewed: 2026-09-11
+last_reviewed: 2026-10-14
 content_validation:
   status: verified
-  last_reviewed: 2026-09-11
+  last_reviewed: 2026-10-14
   reviewer: agent
   core_claims:
     - claim: "Azure App Service diagnostics is an interactive troubleshooting experience in the Azure portal that requires no configuration."
@@ -78,13 +78,13 @@ Set the blade-level `Time range` to match each query's `| where TimeGenerated > 
 |---|---|---|---|
 | Was the app restarting? | Platform logs + Activity Log | `az monitor activity-log list --resource-group <resource-group> --offset 24h` | `AppServicePlatformLogs` |
 | Were requests failing? | HTTP logs | `az monitor metrics list --resource <app-resource-id> --metric "Http5xx,Requests" --interval PT1M` | `AppServiceHTTPLogs` |
-| Was startup failing? | Console logs | `az webapp log tail --resource-group <resource-group> --name <app-name>` | `AppServiceConsoleLogs` |
+| Was startup failing? | Console logs plus process/listener and platform events | `az webapp log tail --resource-group <resource-group> --name <app-name>` | `AppServiceConsoleLogs` + `AppServicePlatformLogs` |
 | Was a dependency slow? | App logs + latency trend | `az monitor metrics list --resource <app-resource-id> --metric "AverageResponseTime" --interval PT1M` | `AppServiceAppLogs` |
 | Was DNS failing? | Console/app logs + runtime test output | `az webapp ssh --resource-group <resource-group> --name <app-name>` | `AppServiceConsoleLogs` |
 | Was scale involved? | Metrics + platform events | `az monitor metrics list --resource <app-resource-id> --metric "CpuPercentage,MemoryWorkingSet" --interval PT1M` | `AppServicePlatformLogs` |
 | Was disk full? | Console logs + filesystem command output | `az webapp log tail --resource-group <resource-group> --name <app-name>` | `AppServiceConsoleLogs` |
 | Was memory exhausted? | Process/platform signals | `az monitor metrics list --resource <app-resource-id> --metric "MemoryWorkingSet" --interval PT1M` | `AppServicePlatformLogs` |
-| Was SNAT exhausted? | Outbound diagnostics + errors | `az monitor metrics list --resource <app-resource-id> --metric "Http5xx,Requests" --interval PT1M` | `AppServiceConsoleLogs` |
+| Was SNAT exhausted? | SNAT detector pressure in the incident window plus per-target outbound errors | `az monitor metrics list --resource <app-resource-id> --metric "Http5xx,Requests" --interval PT1M` | `AppServiceConsoleLogs` (supporting evidence only) |
 | Was there a deployment? | Activity Log | `az monitor activity-log list --resource-group <resource-group> --offset 24h --status Succeeded` | `AppServicePlatformLogs` |
 | Was health check failing? | Platform health signals | `az webapp show --resource-group <resource-group> --name <app-name>` | `AppServicePlatformLogs` |
 | Was slot swap involved? | Activity Log + swap events | `az webapp deployment slot list --resource-group <resource-group> --name <app-name>` | `AppServicePlatformLogs` |
@@ -146,7 +146,7 @@ AppServiceHTTPLogs
 
 ## 3) Was startup failing?
 
-Log stream is the fastest way to tell whether startup is silent (no logs at all) or failing (errors visible in real time). The `Runtime` radio shows application stdout/stderr, where Python tracebacks, Node.js `Error: listen EADDRINUSE`, and Java `BindException` surface; switch to `Platform` to see whether App Service itself is restarting the container. Each worker streams independently, so rotate through the `Instances` dropdown when only one instance is failing.
+Log stream can reveal startup errors in real time, but an empty stream is not a negative observation about the process. [Observed] Record whether the selected instance and enabled log type produced lines. [Inferred] Matching tracebacks or bind errors can prioritize a crash or listener hypothesis. [Not Proven] No lines do not show that startup failed before logging initialized. Verify log configuration, application output destination, query window, collection delay, selected instance, and stream health; then compare platform events with process/listener state. If those checks or the telemetry source are unavailable, record `INCONCLUSIVE`.
 
 ### CLI
 
@@ -182,7 +182,7 @@ Look for: The `Failed requests`, `Server response time`, and `Server requests` c
 
 Expected result: Charts with data confirm the app is sending telemetry; charts that stay empty after traffic point to instrumentation or connection-string problems.
 
-The Application Insights Overview is the right starting point when the question is "is a dependency slow?" because `Server response time` is the primary signal — values much greater than the historical baseline indicate downstream latency. Pair this with `Failed requests` to distinguish slow-but-succeeding calls from outright dependency failures. The `Logs` button in the command bar opens the same KQL editor used by the query below, but you should also check `Application Dashboard` for the curated dependency view. The `1 hour` window is the right scope for active incidents; widen to `1 day` to see whether the latency pattern is recurring (e.g., scheduled batch jobs or noisy neighbors). Note `Logs workspace` shows this is a workspace-based Application Insights resource — required for `AppDependencies` and `AppRequests` tables in the KQL below.
+The Application Insights Overview can establish that response time changed, but a value above baseline does not identify downstream latency. Treat dependency slowness as a hypothesis until same-window `AppDependencies` duration and failure data isolate the affected target and operation; compare those rows with request timing and worker pressure. The `Logs` button in the command bar opens the KQL editor used for that correlation, while `Application Dashboard` provides a curated dependency view. Use the incident window first, then widen it only to test whether the pattern recurs. `Logs workspace` identifies a workspace-based Application Insights resource where the `AppDependencies` and `AppRequests` tables can be queried.
 
 ### CLI
 
@@ -249,7 +249,7 @@ Look for: `Scope`, `Metric Namespace`, `Metric`, and `Aggregation`.
 
 Expected result: The chart stays empty until you select a metric and an aggregation.
 
-The Metrics blade is the visual companion to the `az monitor metrics list` CLI command below. The required fields are the same: `Scope` (the App Service resource), `Metric Namespace` (App Service standard metrics), `Metric` (e.g., `CpuPercentage`, `MemoryWorkingSet`, `Http5xx`), and `Aggregation` (Avg, Max, Sum, Count). For "was scale involved?" the canonical chart pairs `CpuPercentage` Max with `Requests` Sum over the same window — a Cpu spike that precedes a Requests drop indicates autoscale lag, while spikes that align indicate normal capacity tracking. Use `Apply splitting` to split a single metric by `Instance` to see whether one worker is hot — a critical signal for diagnosing noisy-neighbor or sticky-session imbalance. The `Drill into Logs` button is the bridge from the chart to the matching KQL query.
+The Metrics blade is the visual companion to the `az monitor metrics list` CLI command below. The required fields are the same: `Scope` (the App Service resource), `Metric Namespace` (App Service standard metrics), `Metric` (for example, `CpuPercentage`, `MemoryWorkingSet`, or `Http5xx`), and `Aggregation` (Avg, Max, Sum, or Count). A CPU spike before a request drop makes capacity or scaling delay a hypothesis, not a conclusion. Test it against autoscale events, instance-count and configured-capacity changes, queueing or request-start delay, and per-instance utilization in the same window. Use `Apply splitting` by `Instance` to determine whether pressure is broad or isolated, and use `Drill into Logs` to correlate the chart with platform events and request evidence.
 
 ### CLI
 
@@ -330,6 +330,8 @@ AppServicePlatformLogs
 ```
 
 ## 9) Was SNAT exhausted?
+
+Inbound `499`/`503` status and repeated duration boundaries are routing clues, not SNAT measurements. Compare client cancellation timestamps, worker queue depth or saturation, per-target dependency failures, and the SNAT Port Exhaustion detector for the same instance and window. [Inferred] SNAT pressure becomes the leading hypothesis only when outbound failures align with measured detector pressure. [Not Proven] If the detector or dependency telemetry is unavailable, keep the result `Unknown`; do not infer exhaustion from HTTP timing alone.
 
 ### CLI
 
