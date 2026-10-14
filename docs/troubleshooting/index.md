@@ -16,15 +16,15 @@ content_sources:
         - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
         - https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-http-502-http-503
 ---
-# App Service OSS Troubleshooting
+# App Service Troubleshooting
 
-A hypothesis-driven troubleshooting guide for Azure App Service OSS workloads.
+A hypothesis-driven troubleshooting guide for Azure App Service workloads on Windows and Linux.
 
 ---
 
 ## What This Is
 
-A practical field guide for troubleshooting real-world issues on Azure App Service Linux.
+A practical field guide for troubleshooting real-world issues on Azure App Service across its supported hosting modes.
 
 This is **not** a general Azure tutorial. It is designed to help engineers move from **symptom** to **validated interpretation** faster.
 
@@ -100,28 +100,48 @@ graph TD
 
 ## Hosting Mode: Where to Look First
 
-Different hosting modes have different observation points. Use this table to prioritize your investigation:
+Choose the entry path that matches the app before applying runtime-specific advice:
 
-| Symptom | Linux Code | Linux Container | Windows Code |
-|---|---|---|---|
-| **Startup fails** | `AppServiceConsoleLogs` — Oryx build output, runtime startup | `AppServiceConsoleLogs` — Docker logs, `ENTRYPOINT`/`CMD` output | Application Event Logs, `WEBSITE_RUN_FROM_PACKAGE` mount or package-selection issues |
-| **Wrong port/binding** | Check `--bind` in startup command (Gunicorn, etc.) | Check `WEBSITES_PORT`, `PORT` env var, `EXPOSE` in Dockerfile | Typically auto-configured; check `web.config` for IIS settings |
-| **Missing dependencies** | Oryx build logs, `requirements.txt` / `package.json` | Image build logs; dependencies baked into image | NuGet restore logs, MSBuild output |
-| **Slow cold start** | Module import time, lazy loading patterns | Image pull time (check image size), container init | Assembly loading, JIT compilation |
-| **Memory pressure** | `MemoryWorkingSet` metric, OOM in platform logs | `MemoryWorkingSet`, container memory limits | `MemoryWorkingSet`, w3wp process memory |
-| **Outbound timeouts** | SNAT metrics, `AppServiceConsoleLogs` connection errors | Same as Linux Code | SNAT metrics, outbound connection tracking |
-| **Config drift after swap** | App Settings sticky slot config | Same as Linux Code | `web.config` transforms, connection strings |
-| **Filesystem issues** | `/home` (persistent) vs `/tmp` (ephemeral), `df -h` via SSH | Container filesystem (ephemeral by default), mounted volumes | `D:\home` (persistent) vs `D:\local` (ephemeral) |
+| Hosting mode | Start here |
+|---|---|
+| **Windows code** | Use the [Windows symptom routes](#windows-symptom-routes) for IIS, `web.config`, Kudu, worker recycling, filesystem quotas, and Java timeout evidence. |
+| **Windows custom container** | Start with [Windows Container Health Probes](playbooks/startup-availability/windows-container-health-probes.md), then use the other Windows routes only when their IIS or worker-process model matches the symptom. |
+| **Linux code or custom container** | Use the [representative log patterns](#representative-log-patterns), Linux-oriented playbooks under [Topics](#topics), and the [Linux Kudu guide](../platform/kudu-linux.md). |
+
+Different hosting modes have different observation points. Use this table to prioritize your investigation without carrying Windows settings into Linux advice:
+
+| Symptom | Linux code | Linux custom container | Windows code | Windows custom container |
+|---|---|---|---|---|
+| **Startup fails** | `AppServiceConsoleLogs` — Oryx build output, runtime startup | `AppServiceConsoleLogs` — Docker logs, `ENTRYPOINT`/`CMD` output | Application Event Logs, `WEBSITE_RUN_FROM_PACKAGE` mount or package-selection issues | Container logs and the Windows health-probe path |
+| **Wrong port/binding** | Check `--bind` in startup command (Gunicorn, etc.) | Check `WEBSITES_PORT`, `PORT` environment variable, and `EXPOSE` in the Dockerfile | Check the deployed `web.config` and IIS handler settings | Check the image's listening port and App Service container configuration |
+| **Missing dependencies** | Oryx build logs, `requirements.txt` / `package.json` | Image build logs; dependencies baked into image | NuGet restore logs, MSBuild output | Image build logs; dependencies baked into image |
+| **Slow cold start** | Module import time, lazy loading patterns | Image pull time and container initialization | Assembly loading, JIT compilation | Image pull time and container initialization |
+| **Memory pressure** | `MemoryWorkingSet` metric, OOM in platform logs | `MemoryWorkingSet`, container memory limits | `MemoryWorkingSet`, `w3wp` process memory | `MemoryWorkingSet` and container process memory |
+| **Outbound timeouts** | SNAT metrics, `AppServiceConsoleLogs` connection errors | Same evidence as Linux code | SNAT metrics and outbound connection tracking | SNAT metrics and container logs |
+| **Config drift after swap** | App Settings sticky slot configuration | Same controls as Linux code | `web.config` transforms and connection strings | App Settings and image configuration |
+| **Filesystem issues** | `/home` (persistent) vs `/tmp` (ephemeral), `df -h` via SSH | Container filesystem and mounted volumes | `D:\home` (persistent) vs `D:\local` (ephemeral) | Container filesystem and mounted Windows storage |
 
 !!! tip "Hosting Mode Detection"
     Use `az webapp show --query "kind"` to check hosting mode:
     
     - `app,linux` → Linux Code
-    - `app,linux,container` → Linux Container  
+    - `app,linux,container` → Linux custom container
     - `app` → Windows Code
+    - A Windows app configured with a container image → Windows custom container
 
-!!! warning "Windows-Specific Gaps"
-    This guide focuses on Linux workloads. Windows-specific playbooks (IIS configuration, `web.config` issues, Windows containers) are referenced but not exhaustively covered.
+### Windows Symptom Routes
+
+| Symptom or task | Existing guide |
+|---|---|
+| IIS startup, handler, or deployed `web.config` failure | [Windows IIS and web.config Startup](playbooks/startup-availability/windows-iis-webconfig-startup.md) |
+| Windows custom container never becomes healthy | [Windows Container Health Probes](playbooks/startup-availability/windows-container-health-probes.md) |
+| Need Windows Kudu tool selection or a platform tour | [Windows Kudu Diagnostics](playbooks/startup-availability/windows-kudu-diagnostics.md) and [Kudu on Windows](../platform/kudu-windows.md) |
+| `w3wp` memory growth, recycle, or worker degradation | [Windows Memory Pressure and Worker Recycling](playbooks/performance/windows-memory-pressure-worker-recycling.md) |
+| `D:\home` or `D:\local` quota and filesystem symptoms | [Windows Filesystem Quotas](playbooks/performance/windows-filesystem-quotas.md) |
+| Windows Java SE `500.121` or httpPlatformHandler timeout | [Windows httpPlatformHandler KQL Pack](kql/windows-httpplatformhandler/index.md) and [Windows Java httpPlatformHandler Timeout Lab](lab-guides/windows-java-httpplatformhandler-timeout.md) |
+
+!!! info "Coverage and limitations"
+    The guide has dedicated Windows coverage for the routes above and cross-platform deployment coverage for [Deployment Failures](playbooks/deployment-failures.md), [Missing wwwroot Files and 404](playbooks/missing-wwwroot-files-404.md), the [Missing wwwroot Content Lab](lab-guides/missing-wwwroot-content.md), and the [ZIP Deploy File Lock Lab](lab-guides/zipdeploy-file-lock-serialization.md). Most remaining symptom playbooks and labs use Linux examples. Treat their general diagnostic method as reusable, but use Windows-specific paths, process names, settings, and evidence only from a Windows guide.
 
 ## Representative Log Patterns
 
