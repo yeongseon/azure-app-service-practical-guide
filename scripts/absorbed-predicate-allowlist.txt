@@ -1,0 +1,15 @@
+# Declared exceptions for scripts/detect_absorbed_predicates.py
+#
+# Format: <repo-relative-path>::<result>::<wide>::<narrow>  # reason
+#
+# The key names both predicate variables, not just the result, so an
+# exception cannot leak onto an unrelated predicate that reuses a common
+# result name such as b_pass. A reason is mandatory and stale entries fail
+# the gate, so a waiver cannot outlive the code it describes.
+#
+# An entry asserts the absorption is DELIBERATE: the narrow predicate is a
+# substantive check on its own and the wide one is only a stricter variant,
+# so no contradiction can pass. It does NOT excuse a fallback that discards
+# the evidence the sub-gate is named for.
+#
+# No declared exceptions in this repository.

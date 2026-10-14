@@ -1,0 +1,66 @@
+{
+  "policy": "Every artifact states what it can support and what it cannot. An artifact that cannot discriminate between two competing explanations is recorded as unable to, so a reader does not mistake volume of evidence for strength of evidence.",
+  "evaluated_at": "2026-09-27",
+  "artifacts": [
+    {
+      "path": "labs/snat-exhaustion/artifacts-sanitized/",
+      "reason": "Captured by an earlier procedure before this contract existed. Useful as an illustration of the failure's shape, not as evidence for the assertions above, because the earlier procedure did not record the destination's own health and so cannot separate exhaustion from destination failure.",
+      "supports": [],
+      "cannot_support": [
+        "symptom-transport-failures-appear",
+        "discriminating-destination-stays-healthy",
+        "discriminating-http-errors-absent"
+      ],
+      "retention_status": "trusted-historical"
+    },
+    {
+      "path": "labs/snat-exhaustion/app/classification.py",
+      "reason": "The shared classifier both transports call. It is the mechanism that makes the comparative claim checkable: if urllib and requests classified independently, a disagreement between them would look like evidence about Azure rather than a defect in the lab.",
+      "supports": [
+        "discriminating-http-errors-absent"
+      ],
+      "cannot_support": [
+        "discriminating-destination-stays-healthy"
+      ],
+      "retention_status": "trusted-current",
+      "capture_provenance": "primary"
+    },
+    {
+      "path": "labs/snat-exhaustion/verify.sh",
+      "reason": "Writes raw symptom counts to the evidence path and no longer prints a verdict. Those counts are not the fields this contract asserts on, so it cannot currently support any assertion here.",
+      "supports": [],
+      "cannot_support": [
+        "baseline-outbound-succeeds",
+        "symptom-transport-failures-appear",
+        "discriminating-destination-stays-healthy",
+        "discriminating-http-errors-absent",
+        "recovery-outbound-succeeds-again"
+      ],
+      "retention_status": "trusted-current",
+      "capture_provenance": "primary"
+    },
+    {
+      "path": "scripts/golden/collect_scenario_b.py",
+      "reason": "Counts outcomes per phase under this contract's names. It imports app/classification.py rather than re-deriving the status bands, because a third copy of the predicate would reintroduce the confounder that module was written to remove: the same response counted a success on one transport and a failure on the other. A probe reporting neither a status nor a transport error is refused rather than bucketed.",
+      "supports": [],
+      "cannot_support": [
+        "discriminating-destination-stays-healthy"
+      ],
+      "retention_status": "trusted-current"
+    },
+    {
+      "path": "scripts/golden/run_scenario_b.py",
+      "retention_status": "trusted-current",
+      "reason": "Drives the three phases and records raw outcomes. It classifies nothing: a completed round trip records its status whatever that status is, and a connection that never completed records the transport error, leaving the distinction to the shared classifier. HTTPError is caught before URLError so a server that answered 5xx is not recorded as a connection failure, which would have counted it as the SNAT signal.",
+      "supports": [],
+      "cannot_support": []
+    }
+  ],
+  "known_gaps": [
+    "No run has produced evidence under this contract; executed_runs is empty. The instrumentation exists and its output feeds the collector with no field absent, verified offline.",
+    "A first live run was started and stopped before completing. It established that the instrumentation works against a real deployment: probes were served and the app's own counters reported 120 successful outbound calls with no failures and no transport failures. It was stopped because one probe to the unpooled path fans out into roughly forty outbound calls, so fifty probes per phase was about six thousand requests against a public rate-limited host and did not finish inside a window that could be supervised.",
+    "That obstacle is now addressed rather than merely recorded. The probe count is twelve per phase, and the contract reads that constant instead of repeating the number, so the two cannot drift. The runner's help directs the destination at an endpoint the lab controls, since the first attempt throttled the experiment rather than the platform under test. What remains is to run it.",
+    "destination_health_status has still not been captured by any run. Until it is, connection-level failures remain equally consistent with port exhaustion and with the destination being down, and the evaluation correctly returns INCONCLUSIVE rather than choosing between them."
+  ],
+  "executed_runs": []
+}

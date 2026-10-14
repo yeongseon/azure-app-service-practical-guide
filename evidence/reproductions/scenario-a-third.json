@@ -1,0 +1,15 @@
+{
+  "scenario": "deployment-succeeded-startup-failed",
+  "commit": "09740fe",
+  "attempted_at": "2026-09-27",
+  "original_operator": "sisyphus-authoring-session",
+  "original_run_id": "20260927T104304Z-aba0d3a9daa7",
+  "original_hypothesis_status": "SUPPORTED",
+  "reviewer": "independent-reproduction-agent-third",
+  "replay_run_id": "20260927T233923Z-1f4cb2082505",
+  "replay_hypothesis_status": "SUPPORTED",
+  "blocked_reason": null,
+  "consulted_source_to_fill_doc_gap": false,
+  "deviations": [],
+  "note": "Third independent reproduction, against the runbook after the first two rounds of corrections. The operator had not seen either earlier attempt and was barred from the retained evidence, the review, the tests and all source. It answered that the documentation was sufficient to deploy, discover the generated app name, run the three phases, interpret the exit code and clean up without guessing, and it reported no gaps. It did not consult --help, which the second reproduction had needed in order to find the execute subcommand at all."
+}

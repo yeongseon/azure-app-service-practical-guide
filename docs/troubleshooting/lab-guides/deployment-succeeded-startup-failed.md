@@ -65,6 +65,10 @@ This guide helps you explain why `az webapp deploy` can succeed while the app st
 !!! warning "Execution and evidence status"
     The revised fault-first → deployment → repair procedure has **NOT_RUN** Azure execution and **NOT_RUN** independent reproduction. Local validation does not constitute a cloud run. The retained April 4, 2026 artifacts are historical observations, with **INCONCLUSIVE** causal ordering and unverified cleanup; no new collection time is claimed.
 
+    This PR also ships a structured healthy → fault → recovery runner. It is
+    separately **NOT_RUN** in Azure. Its offline fixture tests do not constitute
+    a cloud run or independent human reproduction.
+
     Start with the [runbook](#3-runbook). Review the [historical evidence](#4-experiment-log) and its [timeline limitation](#47-hypothesis-verdict). The fixed scope is Linux B1, Python 3.11, a dedicated resource group, one web app, and one Log Analytics workspace. Configuration/API access and public HTTPS reachability are required.
 
 ## Lab Metadata
@@ -366,6 +370,38 @@ The current procedure is fault-first: Bicep provisions the web app with `wrong_m
 Define the expected fault, repair, and rolling query window before execution. Preserve terminal output and any collected evidence outside the disposable resource group without overwriting earlier captures. A successful repair probe does not assert cleanup or independent reproduction, and a zero verifier count is inconclusive rather than a pass.
 
 Use only a dedicated disposable resource group with permission to create App Service and Log Analytics, configure diagnostics, query logs, and delete the group. B1 compute and Log Analytics ingestion incur charges until cleaned up. Run one experiment at a time with no concurrent configuration changes. Read [Clean Up](#clean-up) before deployment; it also applies to failed or interrupted runs. Raw captures contain real resource IDs and configuration: keep them private outside Git, review and sanitize before publication, and retain public transformation records separately.
+
+### 3.0 Structured runner (new, not Azure-executed)
+
+After deploying the checked-in Bicep template, the new runner can establish its
+own healthy baseline, inject `wrong_module:app`, collect bounded fault-window
+evidence, and restore `app:app`. This runner is additive: the checked-in
+`trigger.sh` and `verify.sh` still implement the fault-first procedure described
+throughout sections 3.1–3.11.
+
+```bash
+export APP_NAME="$(az webapp list --resource-group "$RG" --query '[0].name' --output tsv | tr -d '\r\n')"
+python3 labs/deployment-succeeded-startup-failed/run.py execute "$RG" "$APP_NAME" --output /tmp/startup-lab-private
+export RUN_DIR="/tmp/startup-lab-private/<printed-run-directory>"
+python3 labs/deployment-succeeded-startup-failed/run.py evaluate "$RUN_DIR"
+```
+
+| Command | Purpose |
+|---|---|
+| `az webapp list` | Read the single app name created in the dedicated resource group. |
+| `--resource-group` | Limit discovery to the lab-owned resource group. |
+| `--query '[0].name'` | Select the generated web-app name. |
+| `--output tsv` | Return a shell-safe scalar; the pipeline strips Windows line endings. |
+| `run.py execute` | Run healthy, fault, and recovery phases and print the immutable run directory. |
+| `--output` | Store private raw evidence outside the repository. |
+| `run.py evaluate` | Recompute the verdict from the saved run without contacting Azure. |
+
+The runner contract is `labs/deployment-succeeded-startup-failed/contract.json`.
+Exit codes are `0`
+SUPPORTED, `1` CONTRADICTED, `2` INCONCLUSIVE, `3` NOT_TESTED, and `4`
+evidence-invalid. Evidence validity, hypothesis, cleanup, and independent
+reproduction remain separate. Do not edit a deficient run; preserve it and make
+a new run after correcting the procedure.
 
 ### 3.1 Prerequisites
 

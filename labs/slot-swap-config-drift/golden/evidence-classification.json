@@ -1,0 +1,26 @@
+{
+  "policy": "Historical evidence is classified, never deleted.",
+  "evaluated_at": "2026-09-27T00:00:00Z",
+  "artifacts": [
+    {
+      "path": "labs/slot-swap-config-drift/artifacts-sanitized/trigger/",
+      "reason": "Captured 2026-04-04 by the pre-Golden procedure. Contains post-swap diag output and KQL exports that illustrate the swap mechanism, but carries no run_id and no declared assertions, so it cannot be evaluated against this contract.",
+      "retention_status": "trusted-historical"
+    },
+    {
+      "path": "scripts/golden/collect_scenario_c.py",
+      "reason": "Reads the four config snapshots the trigger captures and emits them as named observations. trigger.sh already computed these facts and printed them as prose, which no assertion could be checked against; the computation was never the problem, the destination was. It decides nothing, and a capture that is absent leaves its field absent and named in incomplete_fields.",
+      "supports": [],
+      "cannot_support": [],
+      "retention_status": "trusted-current"
+    }
+  ],
+  "known_gaps": [
+    "The retained run 20260927T114621Z returned INCONCLUSIVE. Five assertions held: the swap succeeded, production restarted, the non-sticky setting moved with the code, production configuration changed, and the rollback restored the pre-swap configuration. Two could not be observed.",
+    "A second run was attempted to close those two observations and did not. It is not retained because it observed less, not more: the staging slot was still cold-starting when its pre-swap snapshot was taken, so three cross-slot comparisons had no basis. It was still worth running, because it exposed two defects that made the collector report manufactured refutations. The restart boundary was the swap's return rather than its start, so a worker recycled inside the swap window read as never restarting; and an unreachable slot was compared as though it held a configuration, yielding False for every setting. Both are fixed and pinned.",
+    "Closing the remaining two observations needs a run where both slots are warm before the pre-swap capture, and a deployment error query whose results arrive within the run. The runner now issues that query; no run has yet produced rows through it."
+  ],
+  "executed_runs": [
+    "20260927T114621Z-04c6c02c9ae1"
+  ]
+}

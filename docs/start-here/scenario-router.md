@@ -127,3 +127,5 @@ Some situations straddle two phases — the design choice you make while plannin
 
 - [Azure App Service overview (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/overview)
 - [Azure App Service plan overview (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/overview-hosting-plans) — the plan/tier decision behind the Plan phase of this router
+- [Deployment best practices (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/deploy-best-practices)
+- [Monitor App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/monitor-app-service)

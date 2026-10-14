@@ -1,0 +1,36 @@
+{
+  "scenario": "deployment-succeeded-startup-failed",
+  "commit": "c5049d7",
+  "attempted_at": "2026-09-27",
+  "original_operator": "sisyphus-authoring-session",
+  "original_run_id": "20260927T104304Z-aba0d3a9daa7",
+  "original_hypothesis_status": "SUPPORTED",
+  "reviewer": "independent-reproduction-agent-second",
+  "replay_run_id": "20260927T232131Z-eb17b9ece27e",
+  "replay_hypothesis_status": "SUPPORTED",
+  "blocked_reason": null,
+  "consulted_source_to_fill_doc_gap": false,
+  "note": "A second independent reproduction, by an operator who had not seen the first and was barred from reading evidence/, the review, and the tests. It confirmed the exit-code repair from the outside: the code the runner returned and the meaning the documentation gives it agreed, which the first reproduction had found contradictory. It then found four further gaps, all about which command sequence is canonical.",
+  "deviations": [
+    {
+      "kind": "undocumented-step",
+      "detail": "The runbook shows trigger.sh and verify.sh but never shows the run.py execute invocation that produces the structured verdict and exit code. The reproducer could only find it from --help.",
+      "resolution": "Fixed: section 3.0 shows the run.py execute invocation with a command table."
+    },
+    {
+      "kind": "incorrect-step",
+      "detail": "Prose calls it 'the runner' without naming the subcommand. The natural guess, run.py run, is invalid: the choices are execute, evaluate and cleanup.",
+      "resolution": "Fixed: the canonical sequence names execute explicitly and states that run is not valid."
+    },
+    {
+      "kind": "incorrect-step",
+      "detail": "Two procedures are presented without saying which is canonical: trigger.sh plus verify.sh, or run.py execute plus run.py evaluate. The page says to judge a fresh run by the evaluator's verdict against contract.json, then demonstrates the shell pair.",
+      "resolution": "Fixed: section 3.0 is labelled the canonical sequence; trigger.sh and verify.sh are described as the earlier shell equivalents kept for the archived artifacts."
+    },
+    {
+      "kind": "incorrect-step",
+      "detail": "Two cleanup paths are documented, cleanup.sh and run.py cleanup, without identifying which an independent operator should use.",
+      "resolution": "Fixed: cleanup.sh is named as the path for independent reproduction, run.py cleanup for annotating a retained run."
+    }
+  ]
+}

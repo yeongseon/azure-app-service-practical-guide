@@ -9,6 +9,39 @@ Guidance for AI agents working in this repository.
 - **Live site**: <https://yeongseon.github.io/azure-app-service-practical-guide/>
 - **Repository**: <https://github.com/yeongseon/azure-app-service-practical-guide>
 
+## Golden Evidence Contract
+
+The repository distinguishes official documentation, local/static tests, live
+Azure execution, evidence validity, hypothesis outcome, recovery, cleanup,
+freshness, and independent reproduction. None of these claims implies another.
+
+- [`docs/reference/golden-evidence-model.md`](docs/reference/golden-evidence-model.md)
+  is the normative vocabulary and evaluator contract.
+- Collectors preserve raw observations and do not decide causes. Evaluators
+  recompute declared assertions and reject summaries that disagree with raw
+  evidence.
+- Hypothesis outcomes are `SUPPORTED`, `CONTRADICTED`, `INCONCLUSIVE`, and
+  `NOT_TESTED`. Execution outcomes are `COMPLETE`, `PARTIAL`, `BLOCKED`,
+  `FAILED`, and `NOT_RUN`.
+- Evidence roles are symptom, supporting, discriminating, control, and
+  recovery. Trust is tracked separately as trusted-current,
+  trusted-historical, unverified, or invalid.
+- Preserve `validation.az_cli.last_tested` and
+  `validation.bicep.last_tested`; only an actual execution updates the relevant
+  method. Keep `captured_at`, `evaluated_at`, and `document_updated_at`
+  separate. Replay or prose edits never refresh collection/test dates.
+- A completed experiment may be `INCONCLUSIVE`. Missing or delayed evidence is
+  not contradiction, and recovery after a change does not uniquely prove the
+  proposed cause.
+- Independent reproduction requires a different human operator following the
+  public procedure and collecting a distinct run. Automated or AI-agent repeat
+  runs may demonstrate repeatability but cannot satisfy the human-independent
+  gate.
+
+The short operational entry point remains [`AGENTS.md`](AGENTS.md). Title,
+template, and priority-label conventions remain solely in
+[`CONTRIBUTING.md`](CONTRIBUTING.md); do not duplicate older conventions here.
+
 ## Series-Wide Documentation Contract
 
 This repository is part of the Azure Practical Guide series. All repositories in the series must preserve a consistent reader experience while allowing repository-specific extensions.

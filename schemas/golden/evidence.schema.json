@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yeongseon.github.io/azure-app-service-practical-guide/schemas/golden/evidence.schema.json",
+  "title": "Golden v1 evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "description": "Raw observations collected by one run. Evidence states what was seen and never why. It carries the identity of the run that produced it so a result cannot be assembled from another run's captures, and it carries its own capture time so re-evaluation cannot restamp it.",
+  "required": [
+    "run_id",
+    "captured_at",
+    "observations"
+  ],
+  "properties": {
+    "run_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Identity of the run that captured these observations. The evaluator rejects evidence whose run_id differs from the manifest's, which is what makes wrong-run assembly detectable rather than silent."
+    },
+    "captured_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the observations were collected. Distinct from evaluated_at, which belongs to the result. Writing evaluation time here republishes old evidence as current on every re-run."
+    },
+    "observations": {
+      "type": "object",
+      "description": "Field name to observed value. Keys are the fields assertions name. Values are raw: a status code, a count, a duration. A verdict is not an observation.",
+      "additionalProperties": true
+    },
+    "collector": {
+      "type": "string",
+      "description": "What produced these observations, for provenance."
+    },
+    "incomplete_fields": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Fields the collector attempted and failed to capture. Naming them keeps an absent field distinguishable from a field that was never attempted, so absence stays INCONCLUSIVE rather than being read as a refutation."
+    },
+    "capture_provenance": {
+      "enum": [
+        "primary",
+        "derived",
+        "reported"
+      ],
+      "description": "How the observation was obtained. primary is captured directly from the platform, derived is computed from primary captures, reported is taken from a summary and is weakest because a summary can disagree with the records it describes. This is provenance, not custody: it says where a value came from, never how fresh it is."
+    }
+  }
+}

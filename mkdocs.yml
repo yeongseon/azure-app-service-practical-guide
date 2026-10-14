@@ -395,5 +395,6 @@ nav:
     - Meta:
       - meta/taxonomy.md
       - Golden Status: meta/golden-status.md
+      - Series Contract: meta/series-contract.md
   - Contributing:
     - contributing/index.md
