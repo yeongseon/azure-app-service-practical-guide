@@ -304,11 +304,11 @@ AppServiceConsoleLogs
 
 ## Decision Matrix
 
-| Observation | Most Likely Card | Confidence |
+| Observation | Next hypothesis or check | Confidence |
 |---|---|---|
-| 503 + no console output | Card 1 (Startup) | High |
+| 503 + no console output | Inconclusive. Before Card 1, verify logging is enabled, allow for collection delay, confirm the query window, scope, and instance, and check stream health. | None until telemetry coverage is established |
 | 5xx spikes with traffic | Card 2 (Load) | High |
-| Outbound timeout errors | Card 3 (SNAT) | Medium-High |
+| Outbound timeout errors | Card 3 (Outbound/network hypothesis). Separate DNS, route, dependency, worker, and connection-pressure causes; raise SNAT confidence only when the SNAT detector reports pressure for the same instance and incident window. | Low without same-window SNAT pressure |
 | DNS resolution errors | Card 4 (VNet DNS) | High |
 | First request slow, rest fast | Card 5 (Cold Start) | High |
 | Gradual slowdown → restart | Card 6 (Memory) | High |
