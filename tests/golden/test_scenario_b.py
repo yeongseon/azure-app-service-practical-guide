@@ -39,8 +39,12 @@ _spec.loader.exec_module(classification)
 
 class _Handler(http.server.BaseHTTPRequestHandler):
     status = 200
+    delay = 0
 
     def do_GET(self):
+        if self.delay:
+            import time
+            time.sleep(self.delay)
         self.send_response(self.status)
         self.end_headers()
         self.wfile.write(b"body")
@@ -132,6 +136,15 @@ class TransportParityTests(unittest.TestCase):
             with self.subTest(status=status):
                 self.assertEqual(*self._both(status))
 
+    def test_timeout_classifies_identically(self):
+        _Handler.delay = 0.2
+        try:
+            with _Server() as url:
+                self.assertEqual(classify_via_urllib(url, timeout=0.01),
+                                 classify_via_requests(url, timeout=0.01))
+        finally:
+            _Handler.delay = 0
+
 
 class GoldenContractTests(unittest.TestCase):
     """Scenario B shipped a classifier and a suite but no Golden contract.
@@ -165,6 +178,7 @@ class GoldenContractTests(unittest.TestCase):
         (directory / "manifest.json").write_text(json.dumps(manifest))
         (directory / "evidence.json").write_text(json.dumps({
             "run_id": manifest["run_id"],
+            "resource_id": manifest["resource_id"],
             "captured_at": manifest["captured_at"],
             "observations": observations}))
         return directory
@@ -181,7 +195,8 @@ class GoldenContractTests(unittest.TestCase):
         probes = module.PROBES_PER_PHASE
         return {"baseline_success_count": probes, "load_transport_failure_count": 7,
                 "destination_health_status": 200, "load_http_error_count": 0,
-                "recovery_success_count": probes}
+                "recovery_success_count": probes, "snat_port_pressure": "observed",
+                "destination_binding": True}
 
     def test_the_template_ships_unrun(self):
         self.assertEqual(self.template["execution_status"], "NOT_RUN")
@@ -195,6 +210,11 @@ class GoldenContractTests(unittest.TestCase):
     def test_a_complete_run_with_full_evidence_is_supported(self):
         self.assertEqual(
             self.ev.evaluate(self._run(self.COMPLETE))["hypothesis_status"], "SUPPORTED")
+
+    def test_unavailable_port_pressure_is_inconclusive(self):
+        evidence = dict(self.COMPLETE, snat_port_pressure="unavailable")
+        self.assertEqual(
+            self.ev.evaluate(self._run(evidence))["hypothesis_status"], "INCONCLUSIVE")
 
     def test_an_unhealthy_destination_refuses_the_hypothesis(self):
         """The discriminating assertion that separates the two explanations.

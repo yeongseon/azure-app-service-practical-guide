@@ -114,7 +114,8 @@ def index():
 
 @app.get("/health")
 def health():
-    return jsonify({"status": "healthy", "lab": "snat-exhaustion"}), 200
+    return jsonify({"status": "healthy", "lab": "snat-exhaustion",
+                    "outbound_target_url": DEFAULT_TARGET}), 200
 
 
 def _int_arg(name: str, default: int) -> int:

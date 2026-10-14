@@ -36,6 +36,7 @@ import sys
 import time
 import urllib.error
 import urllib.request
+import urllib.parse
 
 sys.dont_write_bytecode = True
 
@@ -130,6 +131,7 @@ def execute(app: str, destination: str, output: pathlib.Path) -> pathlib.Path:
         "run_id": identifier,
         "started_at": now(),
         "app": app,
+        "resource_id": f"/sites/{app}",
         "scenario": LAB,
         "outbound_url": outbound,
     }, indent=2))

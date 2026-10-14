@@ -56,6 +56,9 @@ def runner_shaped_run(load_transport=7, destination_status=200):
         (directory / name / "probes.json").write_text(json.dumps(probes))
     (directory / "destination-health.json").write_text(
         json.dumps({"at": "t", "status": destination_status}))
+    (directory / "port-pressure.json").write_text(json.dumps({"status": "observed"}))
+    (directory / "app-target.json").write_text(
+        json.dumps({"matches_requested_destination": True}))
     return directory
 
 

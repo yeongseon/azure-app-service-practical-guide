@@ -5,6 +5,7 @@
   "evaluated_at": null,
   "document_updated_at": "2026-09-27",
   "execution_status": "NOT_RUN",
+  "hypothesis_claim_level": "Inferred",
   "evidence_trust": "trusted-current",
   "hypothesis": "Outbound connections from the app exhaust the SNAT port allocation of its App Service plan, so new outbound connections to the same destination begin failing at the transport layer while the destination itself stays healthy.",
   "assertions": [
@@ -36,6 +37,22 @@
       ],
       "claim_level": "Observed",
       "note": "Connections fail before any HTTP status is returned. A transport failure is the symptom; an HTTP error code is not, because the destination answering 5xx would mean the destination failed rather than the connection."
+    },
+    {
+      "id": "control-destination-bound-to-workload",
+      "role": "control",
+      "field": "destination_binding",
+      "equals": true,
+      "claim_level": "Observed",
+      "note": "The directly probed destination must be the same destination configured for the app workload."
+    },
+    {
+      "id": "discriminating-snat-port-pressure",
+      "role": "discriminating",
+      "field": "snat_port_pressure",
+      "equals": "observed",
+      "claim_level": "Observed",
+      "note": "A direct port-pressure observation is required for the causal claim. unavailable or absent telemetry leaves the result INCONCLUSIVE."
     },
     {
       "id": "discriminating-destination-stays-healthy",
