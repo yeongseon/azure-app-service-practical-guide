@@ -63,6 +63,11 @@ jobs:
           python -m doctest scripts/validate_content_sources.py -v
           python -m doctest scripts/validate_doc_quality.py -v
           python -m doctest scripts/validate_capture_assets.py -v
+          python -m doctest scripts/validate_windows_navigation.py -v
+
+      - name: Validate Windows troubleshooting navigation
+        run: |
+          python scripts/validate_windows_navigation.py
       
       - name: Validate mermaid format
         run: |
