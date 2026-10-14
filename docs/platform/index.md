@@ -20,6 +20,7 @@ This section explains Azure App Service platform behavior in a language-agnostic
 | [How App Service Works](./architecture/index.md) | Platform architecture, sandbox model, filesystem, runtime contracts |
 | [Hosting Models](./hosting-models.md) | Plan tiers, OS choices, code vs container deployment models |
 | [Request Lifecycle](./request-lifecycle.md) | End-to-end request path, routing, timeouts, health checks |
+| [Process Lifecycle and In-Flight Work](./process-lifecycle-and-in-flight-work.md) | Maintenance replacement, recycle evidence, and interruption-safe work design |
 | [Scaling](./scaling.md) | Scale up/out strategies, autoscale rules, stateless design |
 | [Networking](./networking.md) | Inbound and outbound controls, private networking, DNS patterns |
 | [Mutual TLS Architecture](./mtls.md) | Inbound client certificates, outbound certificate loading, and ASE trust boundaries |

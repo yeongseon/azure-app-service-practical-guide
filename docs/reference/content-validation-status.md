@@ -44,6 +44,7 @@ pie title In-Scope Document Validation Status
 | [Kudu Windows](../platform/kudu-windows.md) | ✅ | ✅ Verified | 4/4 | 2026-07-01 |
 | [Mtls](../platform/mtls.md) | ✅ | ✅ Verified | 4/4 | 2026-09-11 |
 | [Networking](../platform/networking.md) | ✅ | ✅ Verified | 10/10 | 2026-07-16 |
+| [Process Lifecycle And In Flight Work](../platform/process-lifecycle-and-in-flight-work.md) | ✅ | ✅ Verified | 5/5 | 2026-10-14 |
 | [Request Lifecycle](../platform/request-lifecycle.md) | ✅ | ✅ Verified | 5/5 | 2026-09-11 |
 | [Resource Relationships](../platform/resource-relationships.md) | ✅ | ✅ Verified | 5/5 | 2026-09-11 |
 | [Run From Package](../platform/run-from-package.md) | ✅ | ✅ Verified | 5/5 | 2026-10-13 |

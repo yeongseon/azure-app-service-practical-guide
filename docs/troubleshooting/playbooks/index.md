@@ -67,6 +67,10 @@ graph TD
 | [Authentication Failures](authentication-failures.md) | Easy Auth, Entra ID, or identity-related sign-in failures |
 | [CD RBAC Role Assignment Conflict](cd-rbac-role-assignment-conflict.md) | `RoleAssignmentExists` on Deployment Center reconnect with managed-identity ACR pulls |
 
+### Process lifecycle and missing work
+
+If work appears missing near a maintenance event, crash, configured restart, scale event, or deployment, use [Process Lifecycle and In-Flight Work](../../platform/process-lifecycle-and-in-flight-work.md#build-a-timestamped-identity-and-probe-timeline). It provides the shared symptom-first timeline and evidence method for these competing causes. A separate playbook would duplicate that method before the initiating lifecycle path is known.
+
 ## Outbound / Network
 
 | Playbook | Symptom |
