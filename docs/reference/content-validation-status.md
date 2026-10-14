@@ -11,12 +11,12 @@ This page tracks `content_validation` metadata for **in-scope factual-claim docu
 
 ## Summary
 
-*Generated: 2026-10-13*
+*Generated: 2026-10-14*
 
 | Content Type | Total | Verified | Pending | Unverified | No Metadata |
 |---|---:|---:|---:|---:|---:|
-| Mermaid Diagrams | 390 | 390 | 0 | 0 | 0 |
-| In-Scope Factual-Claim Documents | 78 | 78 | 0 | 0 | 0 |
+| Mermaid Diagrams | 391 | 391 | 0 | 0 | 0 |
+| In-Scope Factual-Claim Documents | 79 | 79 | 0 | 0 | 0 |
 
 !!! success "All In-Scope Documents Verified"
     Every in-scope factual-claim document has verified Microsoft Learn sources for its core claims.
@@ -24,7 +24,7 @@ This page tracks `content_validation` metadata for **in-scope factual-claim docu
 <!-- diagram-id: content-validation-status-pie -->
 ```mermaid
 pie title In-Scope Document Validation Status
-    "Verified" : 78
+    "Verified" : 79
 ```
 
 ## By Section
@@ -37,8 +37,8 @@ pie title In-Scope Document Validation Status
 | [Deployment Options](../platform/deployment-options.md) | ✅ | ✅ Verified | 5/5 | 2026-09-11 |
 | [Deployment Scenarios](../platform/deployment-scenarios.md) | ✅ | ✅ Verified | 4/4 | 2026-09-11 |
 | [Hosting Models](../platform/hosting-models.md) | ✅ | ✅ Verified | 5/5 | 2026-09-11 |
-| [Index](../platform/architecture/index.md) | ✅ | ✅ Verified | 4/4 | 2026-09-11 |
 | [Index](../platform/containers/index.md) | ✅ | ✅ Verified | 5/5 | 2026-09-11 |
+| [Index](../platform/architecture/index.md) | ✅ | ✅ Verified | 4/4 | 2026-09-11 |
 | [Kudu Linux](../platform/kudu-linux.md) | ✅ | ✅ Verified | 5/5 | 2026-07-01 |
 | [Kudu Overview](../platform/kudu-overview.md) | ✅ | ✅ Verified | 5/5 | 2026-07-01 |
 | [Kudu Windows](../platform/kudu-windows.md) | ✅ | ✅ Verified | 4/4 | 2026-07-01 |
@@ -123,6 +123,7 @@ pie title In-Scope Document Validation Status
 | [Warmup Vs Health Check](../troubleshooting/playbooks/startup-availability/warmup-vs-health-check.md) | ✅ | ✅ Verified | 3/3 | 2026-09-11 |
 | [Windows Container Health Probes](../troubleshooting/playbooks/startup-availability/windows-container-health-probes.md) | ✅ | ✅ Verified | 3/3 | 2026-09-11 |
 | [Windows Filesystem Quotas](../troubleshooting/playbooks/performance/windows-filesystem-quotas.md) | ✅ | ✅ Verified | 2/2 | 2026-09-11 |
+| [Windows First Static Asset Request 500](../troubleshooting/playbooks/startup-availability/windows-first-static-asset-request-500.md) | ✅ | ✅ Verified | 4/4 | 2026-10-14 |
 | [Windows Iis Webconfig Startup](../troubleshooting/playbooks/startup-availability/windows-iis-webconfig-startup.md) | ✅ | ✅ Verified | 3/3 | 2026-09-11 |
 | [Windows Kudu Diagnostics](../troubleshooting/playbooks/startup-availability/windows-kudu-diagnostics.md) | ✅ | ✅ Verified | 3/3 | 2026-04-12 |
 | [Windows Memory Pressure Worker Recycling](../troubleshooting/playbooks/performance/windows-memory-pressure-worker-recycling.md) | ✅ | ✅ Verified | 2/2 | 2026-09-11 |
