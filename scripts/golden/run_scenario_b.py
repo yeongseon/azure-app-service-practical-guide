@@ -125,7 +125,8 @@ def execute(app: str, destination: str, output: pathlib.Path) -> pathlib.Path:
     directory = output / identifier
     directory.mkdir(parents=True, exist_ok=False)
 
-    outbound = f"https://{app}.azurewebsites.net/outbound"
+    outbound = (f"https://{app}.azurewebsites.net/outbound?"
+                + urllib.parse.urlencode({"destination": destination}))
 
     (directory / "run.json").write_text(json.dumps({
         "run_id": identifier,
@@ -134,6 +135,7 @@ def execute(app: str, destination: str, output: pathlib.Path) -> pathlib.Path:
         "resource_id": f"/sites/{app}",
         "scenario": LAB,
         "outbound_url": outbound,
+        "destination": destination,
     }, indent=2))
 
     for phase, probes in (("baseline", probe_phase(outbound)),):
@@ -141,7 +143,17 @@ def execute(app: str, destination: str, output: pathlib.Path) -> pathlib.Path:
         (directory / phase / "probes.json").write_text(json.dumps(probes, indent=2))
 
     pressure = apply_pressure(outbound, LOAD_SECONDS, LOAD_WORKERS)
-    (directory / "pressure.json").write_text(json.dumps(pressure, indent=2))
+    pressure["status"] = pressure.get("status", "unavailable")
+    (directory / "port-pressure.json").write_text(json.dumps(pressure, indent=2))
+    requested = urllib.parse.urlsplit(destination)
+    outbound_query = urllib.parse.parse_qs(urllib.parse.urlsplit(outbound).query)
+    bound_destination = outbound_query.get("destination", [None])[0]
+    (directory / "app-target.json").write_text(json.dumps({
+        "requested_destination": destination,
+        "outbound_destination": bound_destination,
+        "matches_requested_destination": bound_destination == destination
+        and bool(requested.scheme and requested.netloc),
+    }, indent=2))
     (directory / "load").mkdir()
     (directory / "load" / "probes.json").write_text(
         json.dumps(probe_phase(outbound), indent=2))

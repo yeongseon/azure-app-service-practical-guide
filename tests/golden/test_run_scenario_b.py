@@ -20,6 +20,7 @@ import sys
 import tempfile
 import unittest
 import urllib.error
+from unittest import mock
 
 sys.dont_write_bytecode = True
 
@@ -80,6 +81,47 @@ class JoinTests(unittest.TestCase):
         observations = collector.collect(runner_shaped_run(load_transport=9))["observations"]
         self.assertEqual(observations["load_transport_failure_count"], 9)
         self.assertEqual(observations["baseline_success_count"], runner.PROBES_PER_PHASE)
+
+    def test_execute_produces_binding_and_pressure_captures_for_the_collector(self):
+        output = pathlib.Path(tempfile.mkdtemp())
+        destination = "https://destination.example/health"
+        probes = [{"at": "t", "status": 200}] * runner.PROBES_PER_PHASE
+        seen_urls = []
+
+        def fake_probe(url, timeout=30):
+            seen_urls.append(url)
+            return {"at": "t", "status": 200}
+
+        with mock.patch.object(runner, "run_id", return_value="run-one"), \
+                mock.patch.object(runner, "probe_phase", return_value=probes), \
+                mock.patch.object(runner, "probe", side_effect=fake_probe), \
+                mock.patch.object(runner, "apply_pressure",
+                                  return_value={"status": "observed"}), \
+                mock.patch.object(runner.time, "sleep"):
+            directory = runner.execute("app-one", destination, output)
+
+        self.assertTrue((directory / "app-target.json").is_file())
+        self.assertTrue((directory / "port-pressure.json").is_file())
+        observations = collector.collect(directory)
+        self.assertEqual(observations["observations"]["destination_binding"], True)
+        self.assertEqual(observations["observations"]["snat_port_pressure"], "observed")
+        self.assertIn(destination, seen_urls)
+        run = json.loads((directory / "run.json").read_text())
+        self.assertEqual(run["destination"], destination)
+
+    def test_execute_records_unavailable_pressure_explicitly(self):
+        output = pathlib.Path(tempfile.mkdtemp())
+        probes = [{"at": "t", "status": 200}] * runner.PROBES_PER_PHASE
+        with mock.patch.object(runner, "run_id", return_value="run-two"), \
+                mock.patch.object(runner, "probe_phase", return_value=probes), \
+                mock.patch.object(runner, "probe", return_value={"at": "t", "status": 200}), \
+                mock.patch.object(runner, "apply_pressure", return_value={}), \
+                mock.patch.object(runner.time, "sleep"):
+            directory = runner.execute("app-two", "https://destination.example/health", output)
+        pressure = json.loads((directory / "port-pressure.json").read_text())
+        self.assertEqual(pressure["status"], "unavailable")
+        self.assertEqual(collector.collect(directory)["observations"]["snat_port_pressure"],
+                         "unavailable")
 
 
 class ContractAgreementTests(unittest.TestCase):
