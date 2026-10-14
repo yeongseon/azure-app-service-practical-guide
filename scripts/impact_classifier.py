@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 """Select App and Infra CI jobs from Git name-status changes.
 
-Executable Markdown is selected when its old or new document contains a fenced
-shell block with an Azure CLI command or a repository/script invocation. The
-document-level rule deliberately includes expected-output and recipe edits near
-commands; documents with ordinary prose only stay lightweight. Bicep remains a
-full apps/ and labs/ compilation gate because the repository has no proven
+Executable Markdown is selected when changed hunks touch a command fence or the
+recipe section containing it, including expected-output edits. Documents with
+unchanged command recipes and prose-only edits stay lightweight. Bicep remains
+a full apps/ and labs/ compilation gate because the repository has no proven
 transitive module and parameter dependency graph.
 """
 
@@ -39,8 +38,10 @@ APP_JOBS: Final = {
     "apps/java-springboot/": Job.JAVA,
 }
 SHELL_COMMAND_RE: Final = re.compile(
-    r"^\s*(?:\$\s*)?(?:az\s|(?:bash|sh|python3?|node|npm|mvn|dotnet)\s|\./|(?:apps|labs|scripts)/\S+\.sh\b)"
+    r"^\s*(?:\$\s*)?(?:(?:az|docker|curl|gunicorn|node|npm|dotnet|mvn|python3?|bash|sh|kubectl)(?:\s|$)|\./|(?:apps|labs|scripts)/\S+\.sh\b)"
 )
+FENCE_OPEN_RE: Final = re.compile(r"^\s*(`{3,}|~{3,})(?:bash|sh|shell)(?:\s+.*)?$")
+HEADING_RE: Final = re.compile(r"^(#{1,6})\s+")
 
 
 @dataclass(frozen=True, slots=True)
@@ -120,22 +121,50 @@ def executable_markdown_changed(old_text: str, new_text: str) -> bool:
         if tag != "equal":
             old_changed.update(range(old_start, old_end))
             new_changed.update(range(new_start, new_end))
-    changed = bool(old_changed or new_changed)
-    return changed and (_has_executable_block(old_lines) or _has_executable_block(new_lines))
+    return _changed_executable_region(old_lines, old_changed) or _changed_executable_region(
+        new_lines, new_changed
+    )
 
 
-def _has_executable_block(lines: list[str]) -> bool:
+def _changed_executable_region(lines: list[str], changed_lines: set[int]) -> bool:
+    executable_fences: list[tuple[int, int]] = []
     fence_start: int | None = None
+    fence_marker = ""
     for index, line in enumerate(lines):
-        if fence_start is None and re.match(r"^\s*```(?:bash|sh|shell)\s*$", line):
+        opening = FENCE_OPEN_RE.match(line)
+        if fence_start is None and opening is not None:
             fence_start = index
-        elif fence_start is not None and re.match(r"^\s*```\s*$", line):
+            fence_marker = opening.group(1)
+        elif fence_start is not None and re.match(
+            rf"^\s*{re.escape(fence_marker[0])}{{{len(fence_marker)},}}\s*$", line
+        ):
             block = lines[fence_start + 1 : index]
-            executable = any(SHELL_COMMAND_RE.search(block_line) for block_line in block)
-            if executable:
-                return True
+            if any(SHELL_COMMAND_RE.search(block_line) for block_line in block):
+                executable_fences.append((fence_start, index + 1))
             fence_start = None
-    return False
+            fence_marker = ""
+    return any(
+        changed_lines.intersection(_recipe_region(lines, start, end))
+        for start, end in executable_fences
+    )
+
+
+def _recipe_region(lines: list[str], fence_start: int, fence_end: int) -> range:
+    heading_index = 0
+    heading_level = 0
+    for index in range(fence_start - 1, -1, -1):
+        heading = HEADING_RE.match(lines[index])
+        if heading is not None:
+            heading_index = index
+            heading_level = len(heading.group(1))
+            break
+    region_end = len(lines)
+    for index in range(fence_end, len(lines)):
+        heading = HEADING_RE.match(lines[index])
+        if heading is not None and len(heading.group(1)) <= heading_level:
+            region_end = index
+            break
+    return range(heading_index, region_end)
 
 
 def classify_changes(

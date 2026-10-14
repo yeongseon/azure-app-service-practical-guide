@@ -5,7 +5,13 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from scripts.impact_classifier import Change, Job, classify_changes, parse_name_status_z
+from scripts.impact_classifier import (
+    Change,
+    Job,
+    classify_changes,
+    executable_markdown_changed,
+    parse_name_status_z,
+)
 
 
 ALL_JOBS = frozenset(Job)
@@ -55,6 +61,52 @@ class ImpactClassifierTests(unittest.TestCase):
             )
 
         self.assertEqual(selected, ALL_JOBS)
+
+    def test_docker_recipe_change_selects_full_verification(self) -> None:
+        old_text = "## Build\n\n```bash\ndocker build --tag demo .\n```\n"
+        new_text = "## Build\n\n```bash\ndocker build --tag app-demo .\n```\n"
+
+        changed = executable_markdown_changed(old_text, new_text)
+
+        self.assertTrue(changed)
+
+    def test_prose_only_change_outside_command_recipe_stays_lightweight(self) -> None:
+        old_text = (
+            "# Container\n\nOld introduction.\n\n"
+            "## Build\n\n```bash\ndocker build --tag demo .\n```\n"
+        )
+        new_text = old_text.replace("Old introduction.", "New introduction.")
+
+        changed = executable_markdown_changed(old_text, new_text)
+
+        self.assertFalse(changed)
+
+    def test_expected_output_fence_change_selects_full_verification(self) -> None:
+        old_text = (
+            "## Run\n\n```bash\ncurl --fail http://localhost:3000/health\n```\n\n"
+            "Expected output:\n\n```text\nhealthy\n```\n"
+        )
+        new_text = old_text.replace("healthy", "ok")
+
+        changed = executable_markdown_changed(old_text, new_text)
+
+        self.assertTrue(changed)
+
+    def test_annotated_command_fence_selects_full_verification(self) -> None:
+        old_text = "## Start\n\n```bash title=\"Start the app\"\ngunicorn app:app\n```\n"
+        new_text = old_text.replace("app:app", "src.app:app")
+
+        changed = executable_markdown_changed(old_text, new_text)
+
+        self.assertTrue(changed)
+
+    def test_tilde_command_fence_selects_full_verification(self) -> None:
+        old_text = "## Deploy\n\n~~~bash\nkubectl apply --filename app.yaml\n~~~\n"
+        new_text = old_text.replace("app.yaml", "deployment.yaml")
+
+        changed = executable_markdown_changed(old_text, new_text)
+
+        self.assertTrue(changed)
 
     def test_one_language_change_selects_only_its_app_job(self) -> None:
         selected = classify_changes((Change.modified("apps/python-flask/src/app.py"),))
