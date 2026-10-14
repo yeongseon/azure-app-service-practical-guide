@@ -41,7 +41,7 @@ Use this playbook when an App Service configuration update aimed at production r
 
 The successful slot request is a comparison point, not proof that the production payload, target, authorization context, or current resource state is valid. Do not classify the difference as an App Service platform defect until the exact requests and resource state have been normalized and every supported discriminator below is exhausted.
 
-**Verification scope (2026-10-14):** Azure CLI command syntax was checked with local `az ... --help`. The JSON normalizer was executed locally against synthetic files. No request was sent to an Azure resource, no configuration was changed, and reproduction against a failing resource is `NOT_RUN`.
+**Verification scope (2026-10-14):** Azure CLI command syntax was checked with Azure CLI 2.89.0 (`az ... --help`), using the Windows-hosted CLI from Ubuntu 26.04 on WSL2. The JSON normalizer was executed with Python 3.12.14 on Ubuntu 26.04/WSL2 against synthetic files, including a nested `name` and `type` difference. No request was sent to an Azure resource, no configuration was changed, and reproduction against a failing resource is `NOT_RUN`.
 
 <!-- diagram-id: arm-configuration-http-400-flow -->
 ```mermaid
@@ -97,8 +97,8 @@ An ARM error normally has a top-level `error` object with fields such as `code`,
 
 **Decision:**
 
-- [Observed] If the captured request went to an app hostname, stop this playbook and investigate the application's route, validation, and logs.
-- [Observed] If it went to the Resource Manager endpoint, continue with the exact operation.
+- If the captured request went to an app hostname, stop this playbook and investigate the application's route, validation, and logs.
+- If it went to the Resource Manager endpoint, continue with the exact operation.
 - [Unknown] If the host or request trace is unavailable, label the origin `INCONCLUSIVE`; do not call it ARM validation.
 
 ### 4.2 Build the immutable request record
@@ -201,40 +201,43 @@ az webapp config show \
 | `--slot staging` | Targets the staging slot only on the second command; omission means production. |
 | `--output json` | Produces structured input for normalization. |
 
-App settings are a secret-bearing surface. Save them only in an access-controlled temporary directory, compare names or redacted values, and delete local copies according to incident-handling policy.
+App settings are a secret-bearing surface. The commands below project setting names inside Azure CLI before writing output; they never print or persist setting values. Compare this name inventory first. If an investigation requires value hashes, use an approved secret-handling tool and a mode-`600` output inside a mode-`700` temporary directory with automatic cleanup. Never print values or write raw app-setting output to an ordinary `/tmp` file.
 
 ```bash
 az webapp config appsettings list \
     --resource-group $RG \
     --name $APP_NAME \
-    --output json > /tmp/production-appsettings.json
+    --query "[].name" \
+    --output json > /tmp/production-appsetting-names.json
 
 az webapp config appsettings list \
     --resource-group $RG \
     --name $APP_NAME \
     --slot staging \
-    --output json > /tmp/staging-appsettings.json
+    --query "[].name" \
+    --output json > /tmp/staging-appsetting-names.json
 ```
 
 | Command/Parameter | Purpose |
 |---|---|
-| `az webapp config appsettings list` | Reads app-setting names and values for comparison; output can contain secrets. |
+| `az webapp config appsettings list` | Reads app settings; the required query projects names before output is emitted. |
 | `--resource-group $RG` | Selects the resource group containing the app. |
 | `--name $APP_NAME` | Selects the parent App Service app. |
 | `--slot staging` | Targets the staging slot only on the second command; omission means production. |
-| `--output json` | Produces structured input for a protected comparison. |
+| `--query "[].name"` | Emits setting names only; values must never be printed or persisted by this workflow. |
+| `--output json` | Produces a structured name inventory for comparison. |
 
 Use REST GETs when the failing writer used a raw REST target, so comparison uses the same API version and resource shape:
 
 ```bash
 az rest \
     --method get \
-    --uri "https://management.azure.com/subscriptions/<subscription-id>/resourceGroups/rg-example/providers/Microsoft.Web/sites/app-example/config/web?api-version=2024-11-01" \
+    --url "https://management.azure.com/subscriptions/<subscription-id>/resourceGroups/rg-example/providers/Microsoft.Web/sites/app-example/config/web?api-version=2024-11-01" \
     --output json > /tmp/production-rest.json
 
 az rest \
     --method get \
-    --uri "https://management.azure.com/subscriptions/<subscription-id>/resourceGroups/rg-example/providers/Microsoft.Web/sites/app-example/slots/staging/config/web?api-version=2024-11-01" \
+    --url "https://management.azure.com/subscriptions/<subscription-id>/resourceGroups/rg-example/providers/Microsoft.Web/sites/app-example/slots/staging/config/web?api-version=2024-11-01" \
     --output json > /tmp/staging-rest.json
 ```
 
@@ -242,13 +245,13 @@ az rest \
 |---|---|
 | `az rest` | Calls the ARM REST endpoint using the signed-in CLI identity. |
 | `--method get` | Makes the operation read-only. |
-| `--uri ".../sites/app-example/config/web?api-version=2024-11-01"` | Reads synthetic production site configuration with the selected API version. |
-| `--uri ".../sites/app-example/slots/staging/config/web?api-version=2024-11-01"` | Reads synthetic staging-slot configuration with the same API version. |
+| `--url ".../sites/app-example/config/web?api-version=2024-11-01"` | Reads synthetic production site configuration with the selected API version. |
+| `--url ".../sites/app-example/slots/staging/config/web?api-version=2024-11-01"` | Reads synthetic staging-slot configuration with the same API version. |
 | `--output json` | Produces structured input for normalization. |
 
 ### 5.2 Normalize property-level differences
 
-The following **illustrative**, standard-library-only Python 3.11+ script recursively sorts object keys and removes resource identity or commonly volatile metadata. It does not know which arrays are semantically unordered and does not redact secrets. Use it only on protected site-configuration JSON, review the ignored fields for the API shape, and never feed raw app-setting values into a shared artifact.
+The following **illustrative**, standard-library-only Python 3.11+ script recursively sorts object keys and removes resource identity or commonly volatile metadata **only at the response root**. Nested `name` and `type` fields remain available for comparison. It does not know which arrays are semantically unordered and does not redact secrets. Use it only on protected site-configuration JSON, review the root-level ignored fields for the API shape, and never feed raw app-setting values into a shared artifact.
 
 ```python
 import json
@@ -258,28 +261,29 @@ from typing import TypeAlias, assert_never
 
 JSON: TypeAlias = None | bool | int | float | str | list["JSON"] | dict[str, "JSON"]
 
-IGNORED_KEYS = frozenset(
+ROOT_IGNORED_KEYS = frozenset(
     {
         "etag",
         "id",
         "lastModifiedTimeUtc",
         "name",
         "resourceGroup",
+        "systemData",
         "type",
     }
 )
 
 
-def normalize(value: JSON) -> JSON:
+def normalize(value: JSON, path: tuple[str | int, ...] = ()) -> JSON:
     match value:
         case dict() as mapping:
             return {
-                key: normalize(item)
+                key: normalize(item, (*path, key))
                 for key, item in sorted(mapping.items())
-                if key not in IGNORED_KEYS
+                if path or key not in ROOT_IGNORED_KEYS
             }
         case list() as items:
-            return [normalize(item) for item in items]
+            return [normalize(item, (*path, index)) for index, item in enumerate(items)]
         case str() | int() | float() | bool() | None:
             return value
         case unreachable:
