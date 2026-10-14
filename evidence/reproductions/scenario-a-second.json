@@ -3,14 +3,16 @@
   "commit": "c5049d7",
   "attempted_at": "2026-09-27",
   "original_operator": "sisyphus-authoring-session",
+  "original_operator_kind": "agent",
   "original_run_id": "20260927T104304Z-aba0d3a9daa7",
   "original_hypothesis_status": "SUPPORTED",
   "reviewer": "independent-reproduction-agent-second",
+  "reviewer_kind": "agent",
   "replay_run_id": "20260927T232131Z-eb17b9ece27e",
   "replay_hypothesis_status": "SUPPORTED",
   "blocked_reason": null,
   "consulted_source_to_fill_doc_gap": false,
-  "note": "A second independent reproduction, by an operator who had not seen the first and was barred from reading evidence/, the review, and the tests. It confirmed the exit-code repair from the outside: the code the runner returned and the meaning the documentation gives it agreed, which the first reproduction had found contradictory. It then found four further gaps, all about which command sequence is canonical.",
+  "note": "A second AI-agent repeat run, not an independent human reproduction. The agent had not seen the first record and was barred from reading evidence/, the review, and the tests. It confirmed the exit-code repair and found four further documentation gaps, but it cannot satisfy #179.",
   "deviations": [
     {
       "kind": "undocumented-step",

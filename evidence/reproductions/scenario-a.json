@@ -3,9 +3,11 @@
   "commit": "eb731a1d8e9d3b7ebcd9ec73a7f8c341e8a00aea",
   "attempted_at": "2026-09-27",
   "original_operator": "sisyphus-authoring-session",
+  "original_operator_kind": "agent",
   "original_run_id": "20260927T104304Z-aba0d3a9daa7",
   "original_hypothesis_status": "SUPPORTED",
   "reviewer": "independent-reproduction-agent",
+  "reviewer_kind": "agent",
   "replay_run_id": "20260927T223558Z-e391956951c1",
   "replay_hypothesis_status": "SUPPORTED",
   "blocked_reason": null,
@@ -37,5 +39,5 @@
       "resolution": "Fixed: the runbook carries an explicit notice that historical observed values are not acceptance criteria for a fresh run."
     }
   ],
-  "note": "This record describes what the reproducing operator encountered on 2026-09-27 and is not edited to reflect later repairs. Every deviation it reports has since been fixed, and each carries a resolution, but the documentation_result stays FAILED because that is what this reproduction found. Closing the item needs a fresh reproduction against the corrected documentation, by an operator who has not seen this one."
+  "note": "This record preserves an AI-agent repeat run from 2026-09-27. It is not independent human reproduction and cannot satisfy #179. Every deviation remains preserved with its later resolution; closing the item needs a fresh reproduction against the corrected documentation by a genuinely different human operator."
 }
