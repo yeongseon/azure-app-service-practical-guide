@@ -14,6 +14,11 @@ colon, no trailing period and no trailing `(#123)`. Put references in the body.
 Use `!` before the colon for breaking changes. This section is the single source
 of truth and overrides older title examples in the retained authoring contract.
 
+The standalone `PR title` workflow runs on opened, edited, reopened and
+synchronize events. It does not check out code, use secrets or request token
+permissions. The broader `PR metadata` workflow also runs after label changes;
+it uses only read permissions and treats the event payload as data.
+
 ## Issue Workflow
 
 Search for an existing tracking issue before coding. Use these sections in order:
@@ -43,6 +48,11 @@ Summary / Changes / Type of Change / Validation / Checklist / Related Issues.
 Link fully resolved issues with Closes #N. Partial work uses Refs #N with the
 remaining scope stated explicitly; do not auto-close an unfinished umbrella.
 Use Draft PRs for unfinished implementation. Never mark unrun checks complete.
+
+The `PR metadata` gate requires exactly these ordered level-two headings:
+Summary / Changes / Type of Change / Validation / Checklist / Related Issues.
+Its issue references are local numeric references only; do not use another
+repository's owner/repository syntax in the Related Issues section.
 
 Run `python -m unittest discover -s tests/ci -v`, relevant application/lab checks,
 and `mkdocs build --strict` when docs change. Install docs dependencies through
@@ -78,3 +88,18 @@ f43ca2047eb18f717314b6e555c8eb04d954f3ab: issue-first work, title/template consi
 priority labels, local trackers and tiered verification. Package publishing,
 95% package coverage and its repository-specific approval decisions are excluded.
 See #217 and #218. See [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) for community rules.
+
+## Versioned Priority Labels
+
+[`.github/priority-labels.json`](.github/priority-labels.json) is the versioned
+definition for the four recognized priority labels, including their colors and
+descriptions. Run the following read-only drift check before requesting a label
+sync; it never creates, edits or deletes labels:
+
+```bash
+python scripts/ci/sync_priority_labels.py --repo yeongseon/azure-app-service-practical-guide --check
+```
+
+The explicit `--apply` mode creates or updates only those four `priority:*`
+labels. It never deletes labels and must not be run against the live repository
+as part of this governance change.

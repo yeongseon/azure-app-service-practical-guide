@@ -1,4 +1,5 @@
-<!-- Titles follow CONTRIBUTING.md. Apply exactly one priority:* label. -->
+<!-- Titles follow CONTRIBUTING.md#title-convention. Apply exactly one priority:* label.
+     Keep issue/PR numbers out of the title and link same-repository issues below. -->
 
 ## Summary
 

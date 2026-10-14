@@ -18,6 +18,9 @@ independent reproduction are separate claims.
 The detailed contract is not deleted or weakened. Its older title examples and
 falsification wording are superseded by the explicit rules below.
 
+Titles and templates must point to the [Title Convention](CONTRIBUTING.md#title-convention),
+the one source of truth for the 11 types, optional scope and breaking marker.
+
 ## Project Operations
 
 Work issue-first. Search the existing backlog; use the canonical issue/PR
@@ -59,6 +62,10 @@ secrets. Paid Azure runs require a reviewed main commit and an explicitly
 enabled protected azure-e2e environment. Missing prerequisites remain blocked,
 not skipped-as-verified. This adoption does not provision credentials or enable
 paid recurring runs.
+
+The priority-label definition is versioned in `.github/priority-labels.json`.
+Its synchronization utility has an explicit read-only `--check` mode and never
+deletes unrelated labels; do not apply it to the live repository for this work.
 
 Retain sanitized evidence on failure. Cleanup only run-owned resources and
 verify absence; never delete subscription-wide resources by a name fragment.
