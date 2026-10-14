@@ -44,7 +44,7 @@ jobs:
           fetch-depth: 0
 
       - name: Test impact classifier
-        run: python -m unittest scripts/test_impact_classifier.py
+        run: python -m unittest scripts/test_impact_classifier.py scripts/test_impact_ci.py
 
       - name: Select impacted jobs
         id: impact
@@ -53,22 +53,11 @@ jobs:
           PR_BASE: ${{ github.event.pull_request.base.sha }}
           PUSH_BASE: ${{ github.event.before }}
         run: |
-          full_regression=false
-          if [[ "$EVENT_NAME" == workflow_dispatch || "$EVENT_NAME" == schedule ]]; then
-            full_regression=true
-            base=HEAD
-          elif [[ "$EVENT_NAME" == pull_request ]]; then
-            base="$PR_BASE"
-          elif [[ -n "$PUSH_BASE" ]] && git cat-file -e "${PUSH_BASE}^{commit}" 2>/dev/null; then
-            base="$PUSH_BASE"
-          else
-            base=HEAD^
-          fi
-          args=(--base "$base" --github-output "$GITHUB_OUTPUT")
-          if [[ "$full_regression" == true ]]; then
-            args+=(--full-regression)
-          fi
-          python scripts/impact_classifier.py "${args[@]}"
+          python scripts/impact_ci.py select \
+            --event-name "$EVENT_NAME" \
+            --pr-base "$PR_BASE" \
+            --push-base "$PUSH_BASE" \
+            --github-output "$GITHUB_OUTPUT"
 
   scripts:
     name: Shell Scripts
@@ -245,24 +234,7 @@ jobs:
       RESULT_JAVA: ${{ needs.java.result }}
       RESULT_BICEP: ${{ needs.bicep.result }}
     steps:
+      - uses: actions/checkout@v4
+
       - name: Require every selected job to succeed
-        run: |
-          if [[ "$RESULT_CLASSIFY" != success ]]; then
-            echo "::error::Impact classification did not succeed: $RESULT_CLASSIFY"
-            exit 1
-          fi
-          failed=0
-          for job in SCRIPTS NODEJS NODEJS_CONTAINER PYTHON DOTNET JAVA BICEP; do
-            selected_var="SELECTED_${job}"
-            result_var="RESULT_${job}"
-            selected="${!selected_var}"
-            result="${!result_var}"
-            if [[ "$selected" == true && "$result" != success ]]; then
-              echo "::error::Selected job ${job} finished as ${result}"
-              failed=1
-            elif [[ "$selected" != true && "$result" != skipped ]]; then
-              echo "::error::Unselected job ${job} unexpectedly finished as ${result}"
-              failed=1
-            fi
-          done
-          exit "$failed"
+        run: python scripts/impact_ci.py aggregate
