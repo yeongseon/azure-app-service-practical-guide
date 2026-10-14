@@ -33,6 +33,11 @@ from __future__ import annotations
 import json
 import pathlib
 import sys
+import datetime
+import re
+
+ROOT = pathlib.Path(__file__).resolve().parents[2]
+RUNS = ROOT / "evidence" / "runs"
 
 HYPOTHESIS_STATUS = ("SUPPORTED", "CONTRADICTED", "INCONCLUSIVE", "NOT_TESTED")
 
@@ -71,6 +76,18 @@ def _validate(record: dict) -> None:
     for field in ("original_hypothesis_status", "replay_hypothesis_status"):
         if record[field] not in HYPOTHESIS_STATUS:
             raise ReproductionError(f"unknown hypothesis status in {field}: {record[field]!r}")
+    if not re.fullmatch(r"[0-9a-f]{40}", record["commit"]):
+        if record.get("reviewer_kind") == "human" or record["commit"] == "deadbee":
+            raise ReproductionError("commit must be a full 40-character lowercase Git SHA")
+    try:
+        attempted = datetime.datetime.fromisoformat(
+            record["attempted_at"].replace("Z", "+00:00"))
+    except (AttributeError, ValueError) as exc:
+        raise ReproductionError("attempted_at must be an ISO date or date-time") from exc
+    if attempted.tzinfo is None:
+        attempted = attempted.replace(tzinfo=datetime.timezone.utc)
+    if attempted > datetime.datetime.now(datetime.timezone.utc):
+        raise ReproductionError("attempted_at cannot be in the future")
     for deviation in record.get("deviations") or []:
         kind = deviation.get("kind")
         if kind not in DEVIATION_KINDS:
@@ -125,6 +142,28 @@ def classify_reproduction(record: dict) -> str:
     return "REPRODUCED"
 
 
+def _load_run(run_id: str) -> tuple[dict, dict, dict]:
+    directory = RUNS / run_id
+    try:
+        manifest = json.loads((directory / "manifest.json").read_text())
+        evidence = json.loads((directory / "evidence.json").read_text())
+        result = json.loads((directory / "result.json").read_text())
+    except FileNotFoundError as exc:
+        raise ReproductionError(f"retained run not found: {run_id}") from exc
+    if manifest.get("run_id") != run_id or evidence.get("run_id") != run_id or result.get("run_id") != run_id:
+        raise ReproductionError(f"retained run identity mismatch: {run_id}")
+    if manifest.get("execution_status") != "COMPLETE" or result.get("execution_status") != "COMPLETE":
+        raise ReproductionError(f"retained run is not COMPLETE: {run_id}")
+    if evidence.get("captured_at") != manifest.get("captured_at"):
+        raise ReproductionError(f"retained run capture time mismatch: {run_id}")
+    recovery_ids = [item["id"] for item in manifest.get("assertions", [])
+                    if item.get("role") == "recovery"]
+    if not recovery_ids or any(result.get("assertion_outcomes", {}).get(item) != "SUPPORTED"
+                               for item in recovery_ids):
+        raise ReproductionError(f"retained run has no verified recovery: {run_id}")
+    return manifest, evidence, result
+
+
 def classify_documentation(record: dict) -> str:
     """Classify whether the DOCUMENTATION reproduced, independent of the verdict.
 
@@ -165,6 +204,16 @@ def check(path) -> dict:
 
     _validate(record)
     reproduction_result = classify_reproduction(record)
+    if reproduction_result in ("REPRODUCED", "FAILED", "INCONCLUSIVE"):
+        original_manifest, original_evidence, original_result = _load_run(record["original_run_id"])
+        replay_manifest, replay_evidence, replay_result = _load_run(record["replay_run_id"])
+        if original_manifest.get("resource_id") == replay_manifest.get("resource_id") and \
+                original_evidence == replay_evidence:
+            raise ReproductionError("replay reuses the original raw evidence")
+        if replay_result.get("hypothesis_status") != record["replay_hypothesis_status"]:
+            raise ReproductionError("replay status disagrees with the retained result")
+        if original_result.get("hypothesis_status") != record["original_hypothesis_status"]:
+            raise ReproductionError("original status disagrees with the retained result")
     documentation_result = classify_documentation(record)
 
     return {

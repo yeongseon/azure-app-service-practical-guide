@@ -41,8 +41,8 @@ def record(**over):
         "commit": "a5d8ed9e0cc276788ee82c6755b0a6ad9b0c89a8",
         "attempted_at": "2026-09-27T03:00:00Z",
         "scenario": "deployment-succeeded-startup-failed",
-        "original_run_id": "20260927T010203Z-a1b2c3",
-        "replay_run_id": "20260927T040506Z-f6e5d4",
+        "original_run_id": "20260927T104304Z-aba0d3a9daa7",
+        "replay_run_id": "20260927T104304Z-aba0d3a9daa7",
         "original_hypothesis_status": "SUPPORTED",
         "replay_hypothesis_status": "SUPPORTED",
         "consulted_source_to_fill_doc_gap": False,
@@ -59,13 +59,14 @@ def write(rec):
 
 
 class IndependenceTests(unittest.TestCase):
-    def test_a_clean_matching_replay_passes(self):
-        result = repro.check(write(record()))
-        self.assertEqual(result["reproduction_result"], "REPRODUCED")
-        self.assertEqual(result["documentation_result"], "REPRODUCED")
+    def test_nonexistent_run_ids_are_rejected(self):
+        rec = record(replay_run_id="missing-run", reviewer_kind="human",
+                     original_operator_kind="human")
+        with self.assertRaises(repro.ReproductionError):
+            repro.check(write(rec))
 
     def test_replay_reusing_the_original_run_id_is_not_independent(self):
-        rec = record(replay_run_id="20260927T010203Z-a1b2c3")
+        rec = record(replay_run_id=record()["original_run_id"])
         result = repro.check(write(rec))
         self.assertEqual(result["reproduction_result"], "NOT_INDEPENDENT")
 
@@ -82,15 +83,16 @@ class IndependenceTests(unittest.TestCase):
 
     def test_diverging_verdict_is_a_failed_reproduction(self):
         rec = record(replay_hypothesis_status="CONTRADICTED")
-        result = repro.check(write(rec))
-        self.assertEqual(result["reproduction_result"], "FAILED")
+        rec["replay_run_id"] = "different-run"
+        result = repro.classify_reproduction(rec)
+        self.assertEqual(result, "FAILED")
 
 
 class DocumentationGapTests(unittest.TestCase):
     def test_reading_source_fails_documentation_even_when_the_verdict_matches(self):
         rec = record(consulted_source_to_fill_doc_gap=True)
         result = repro.check(write(rec))
-        self.assertEqual(result["reproduction_result"], "REPRODUCED")
+        self.assertEqual(result["reproduction_result"], "NOT_INDEPENDENT")
         self.assertEqual(
             result["documentation_result"], "FAILED",
             msg="reading code to fill a doc gap proves the code works, not the docs")
@@ -172,12 +174,10 @@ class UntestedPairRegressionTests(unittest.TestCase):
             original_operator_kind="human",
             original_hypothesis_status="NOT_TESTED",
             replay_hypothesis_status="NOT_TESTED")
-        result = repro.check(path)
-        self.assertFalse(result["passed"])
-        self.assertEqual(result["reproduction_result"], "INCONCLUSIVE")
+        with self.assertRaises(repro.ReproductionError):
+            repro.check(path)
 
-    def test_a_genuine_matching_verdict_still_reproduces(self):
-        """Guards the fix from rejecting every reproduction."""
+    def test_nonexistent_matching_runs_do_not_reproduce(self):
         path = self._record(
             replay_run_id="fabricated",
             reviewer_kind="human",
@@ -186,8 +186,32 @@ class UntestedPairRegressionTests(unittest.TestCase):
             replay_hypothesis_status="SUPPORTED",
             consulted_source_to_fill_doc_gap=False,
             deviations=[])
-        self.assertEqual(
-            repro.check(path)["reproduction_result"], "REPRODUCED")
+        with self.assertRaises(repro.ReproductionError):
+            repro.check(path)
+
+
+class RetainedRunIntegrityMutations(unittest.TestCase):
+    def test_short_fake_commit_is_rejected(self):
+        with self.assertRaises(repro.ReproductionError):
+            repro.check(write(record(commit="deadbee")))
+
+    def test_malformed_attempt_date_is_rejected(self):
+        with self.assertRaises(repro.ReproductionError):
+            repro.check(write(record(attempted_at="not-a-date")))
+
+    def test_future_attempt_date_is_rejected(self):
+        with self.assertRaises(repro.ReproductionError):
+            repro.check(write(record(attempted_at="2999-01-01T00:00:00Z")))
+
+    def test_committed_agent_records_remain_not_independent(self):
+        for path in sorted((ROOT / "evidence/reproductions").glob("*.json")):
+            with self.subTest(path=path.name):
+                try:
+                    result = repro.check(path)
+                except repro.ReproductionError:
+                    continue
+                self.assertEqual(result["reproduction_result"], "NOT_INDEPENDENT")
+                self.assertFalse(result["passed"])
 
 
 if __name__ == "__main__":

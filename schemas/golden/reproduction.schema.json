@@ -49,7 +49,11 @@
     },
     "attempted_at": {
       "type": "string",
-      "format": "date-time"
+      "oneOf": [
+        {"format": "date-time"},
+        {"format": "date"}
+      ],
+      "description": "Attempt time. Date-only values are retained pre-contract records; new attempts must use date-time."
     },
     "scenario": {
       "type": "string",
