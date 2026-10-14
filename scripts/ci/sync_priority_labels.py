@@ -97,15 +97,13 @@ def main() -> int:
     parser.add_argument("--check", action="store_true", help="Read labels and fail when definitions are not synchronized.")
     parser.add_argument("--apply", action="store_true", help="Create or update only priority:* labels; never deletes labels.")
     arguments = parser.parse_args()
-    if arguments.check == arguments.apply:
-        parser.error("Specify exactly one of --check or --apply.")
     operations = plan(load_definitions(arguments.definitions), existing_labels(arguments.repo))
     if not operations:
         print("Priority labels conform. No labels were deleted.")
         return 0
     for operation in operations:
         print(f"{operation.action}: {operation.name}")
-    if arguments.check:
+    if not arguments.apply:
         return 1
     apply(arguments.repo, operations)
     return 0

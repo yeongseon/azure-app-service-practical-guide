@@ -1,5 +1,6 @@
 """Offline tests for non-destructive versioned priority-label synchronization."""
 import importlib.util
+from unittest import mock
 from pathlib import Path
 import sys
 import unittest
@@ -12,6 +13,18 @@ SPEC.loader.exec_module(labels)
 
 
 class PriorityLabelTests(unittest.TestCase):
+    def test_default_invocation_never_applies(self):
+        # Given: a repository with a drifted priority-label definition.
+        definitions = {"priority:high": ("d93f0b", "High")}
+
+        # When: the CLI runs without --check or --apply.
+        with mock.patch.object(labels, "load_definitions", return_value=definitions), mock.patch.object(labels, "existing_labels", return_value={}), mock.patch.object(labels, "apply") as apply_labels, mock.patch("sys.argv", ["sync_priority_labels.py", "--repo", "owner/repository"]):
+            exit_code = labels.main()
+
+        # Then: it reports drift without mutating labels.
+        self.assertEqual(exit_code, 1)
+        apply_labels.assert_not_called()
+
     def test_plan_is_empty_when_definitions_match(self):
         # Given: a repository matching the committed definitions.
         definitions = {"priority:high": ("d93f0b", "High")}
