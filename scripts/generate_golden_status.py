@@ -606,6 +606,7 @@ GATES: tuple[Gate, ...] = (
 # are deliberately not gates. Every entry needs a reason so the exclusion list
 # stays reviewable rather than becoming a dumping ground.
 NON_GATE_SCRIPTS: dict[str, str] = {
+    "scripts/ci/check_project_metadata.py": "Pull-request event payload validator, invoked only by its workflow.",
     "scripts/generate_golden_status.py": "This generator.",
     "scripts/generate_content_validation_status.py": "Dashboard generator, not a validator.",
     "scripts/generate_validation_status.py": "Dashboard generator, not a validator.",
