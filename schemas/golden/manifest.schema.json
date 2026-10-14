@@ -122,6 +122,21 @@
   },
   "allOf": [
     {
+      "if": {"required": ["hypothesis"]},
+      "then": {
+        "anyOf": [
+          {"required": ["hypothesis_claim_level"]},
+          {
+            "properties": {
+              "resource_id": {"type": "null"},
+              "evidence_trust": {"const": "unverified"}
+            },
+            "required": ["resource_id", "evidence_trust"]
+          }
+        ]
+      }
+    },
+    {
       "if": {"properties": {"execution_status": {"const": "COMPLETE"}}},
       "then": {
         "anyOf": [

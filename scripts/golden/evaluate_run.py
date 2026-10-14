@@ -33,6 +33,8 @@ import pathlib
 import sys
 import datetime
 import unicodedata
+import re
+import math
 
 CLAIM_LEVELS = ("Documented", "Observed", "Inferred", "Not Proven")
 HYPOTHESIS_STATUS = ("SUPPORTED", "CONTRADICTED", "INCONCLUSIVE", "NOT_TESTED")
@@ -123,16 +125,89 @@ def evaluate_assertion(assertion: dict, evidence: dict) -> str:
     role = assertion.get("role")
     if role is not None and role not in EVIDENCE_ROLES:
         raise ModelError(f"unknown evidence role: {role!r}")
+    if "exists" in assertion:
+        return "SUPPORTED" if (field in evidence) == assertion["exists"] else "CONTRADICTED"
     if field not in evidence:
         return "INCONCLUSIVE"
     observed = evidence[field]
     if observed == "unavailable":
         return "INCONCLUSIVE"
+    if isinstance(observed, dict) and {"numerator", "denominator", "ratio"} <= set(observed):
+        numerator = observed["numerator"]
+        denominator = observed["denominator"]
+        per_file_limit = observed.get("per_file_limit")
+        if (not isinstance(numerator, (int, float)) or isinstance(numerator, bool)
+                or not isinstance(denominator, (int, float)) or isinstance(denominator, bool)
+                or not math.isfinite(numerator) or not math.isfinite(denominator)
+                or denominator <= 0 or not isinstance(per_file_limit, (int, float))
+                or isinstance(per_file_limit, bool) or not math.isfinite(per_file_limit)
+                or per_file_limit <= 0):
+            return "INCONCLUSIVE"
+        observed = numerator / denominator
     if "equals" in assertion:
         return "SUPPORTED" if observed == assertion["equals"] else "CONTRADICTED"
     if "in" in assertion:
         return "SUPPORTED" if observed in assertion["in"] else "CONTRADICTED"
+    if "not_in" in assertion:
+        return "SUPPORTED" if observed not in assertion["not_in"] else "CONTRADICTED"
+    if "range" in assertion:
+        bounds = assertion["range"]
+        if not isinstance(observed, (int, float)) or isinstance(observed, bool):
+            return "CONTRADICTED"
+        minimum = bounds.get("minimum")
+        maximum = bounds.get("maximum")
+        if minimum is not None and observed < minimum:
+            return "CONTRADICTED"
+        if maximum is not None and observed > maximum:
+            return "CONTRADICTED"
+        return "SUPPORTED"
+    if "regex" in assertion:
+        if not isinstance(observed, str):
+            return "CONTRADICTED"
+        try:
+            return "SUPPORTED" if re.search(assertion["regex"], observed) else "CONTRADICTED"
+        except re.error as exc:
+            raise ModelError(f"assertion {assertion.get('id')!r} has invalid regex") from exc
     raise ModelError(f"assertion {assertion.get('id')!r} declares no comparison")
+
+
+def _predicate_values(assertion: dict) -> set | None:
+    if "equals" in assertion:
+        return {assertion["equals"]}
+    if "in" in assertion:
+        return set(assertion["in"])
+    return None
+
+
+def _absorbed(discriminating: dict, other: dict) -> bool:
+    strong_values = _predicate_values(discriminating)
+    weak_values = _predicate_values(other)
+    if strong_values is None or weak_values is None:
+        return True
+    return strong_values <= weak_values
+
+
+def _validate_new_run_provenance(manifest: dict) -> None:
+    retained_allowance = (manifest.get("resource_id") is None
+                          and manifest.get("evidence_trust") == "unverified")
+    provenance_fields = ("source_commit", "environment", "recipe_digest", "collector_digest")
+    if retained_allowance or not any(field in manifest for field in provenance_fields):
+        return
+    source_commit = manifest.get("source_commit")
+    if not isinstance(source_commit, str) or re.fullmatch(r"[0-9a-f]{40}", source_commit) is None:
+        raise ModelError("source_commit must be a full 40-character lowercase hex commit")
+    environment = manifest.get("environment")
+    if not isinstance(environment, dict) or not environment:
+        raise ModelError("environment must be a non-empty object")
+    for field in ("recipe_digest", "collector_digest"):
+        value = manifest.get(field)
+        if not isinstance(value, str) or re.fullmatch(r"sha256:[0-9a-f]{64}", value) is None:
+            raise ModelError(f"{field} must be an exact sha256 digest")
+
+
+def _evaluation_time() -> str:
+    value = datetime.datetime.now(datetime.timezone.utc).replace(microsecond=0)
+    return value.isoformat().replace("+00:00", "Z")
 
 
 def combine(outcomes) -> str:
@@ -197,6 +272,8 @@ def _bind_evidence(document: dict, manifest: dict):
     if window:
         started = _timestamp(window.get("started_at"), "capture_window started_at")
         ended = _timestamp(window.get("ended_at"), "capture_window ended_at")
+        if started > ended:
+            raise ModelError("capture window ends before it starts")
         if started > evidence_captured or evidence_captured > ended:
             raise ModelError("evidence captured_at falls outside the capture window")
     observations = document.get("observations")
@@ -217,6 +294,16 @@ def evaluate(run_dir) -> dict:
         if not manifest.get(key):
             raise ModelError(f"manifest is missing run identity field: {key}")
     _timestamp(manifest["captured_at"], "manifest captured_at")
+    _validate_new_run_provenance(manifest)
+
+    claim_level = manifest.get("hypothesis_claim_level")
+    retained_allowance = (manifest.get("resource_id") is None
+                          and manifest.get("evidence_trust") == "unverified")
+    new_causal_run = manifest.get("hypothesis") and any(
+        field in manifest for field in
+        ("source_commit", "environment", "recipe_digest", "collector_digest"))
+    if new_causal_run and not retained_allowance and claim_level not in CLAIM_LEVELS:
+        raise ModelError("causal hypothesis must declare an allowed hypothesis_claim_level")
 
     assertions = manifest.get("assertions") or []
     evidence_doc = (
@@ -240,7 +327,7 @@ def evaluate(run_dir) -> dict:
         for weak in assertions:
             if weak is item or weak.get("field") != item.get("field"):
                 continue
-            if "equals" in item and item["equals"] in weak.get("in", []):
+            if _absorbed(item, weak):
                 raise ModelError(
                     f"discriminating assertion {item.get('id')!r} is absorbed by {weak.get('id')!r}")
 
@@ -250,17 +337,17 @@ def evaluate(run_dir) -> dict:
         hypothesis_status = "NOT_TESTED"
     else:
         hypothesis_status = combine(per_assertion.values())
-        causal_claim = manifest.get("hypothesis_claim_level") in ("Inferred", "Not Proven")
-        if hypothesis_status == "SUPPORTED" and causal_claim and not strong:
+        causal_claim = bool(manifest.get("hypothesis"))
+        if hypothesis_status == "SUPPORTED" and causal_claim and (not strong or evidence_identity != "BOUND"):
             hypothesis_status = "INCONCLUSIVE"
-        if hypothesis_status == "SUPPORTED" and manifest.get("hypothesis_claim_level") == "Not Proven":
+        if hypothesis_status == "SUPPORTED" and claim_level == "Not Proven":
             hypothesis_status = "INCONCLUSIVE"
 
     # A generated verdict is recomputed and compared, never consumed.
     result = {
         "run_id": manifest["run_id"],
         "captured_at": manifest["captured_at"],
-        "evaluated_at": manifest.get("evaluated_at"),
+        "evaluated_at": _evaluation_time(),
         "execution_status": execution_status,
         "evidence_identity": evidence_identity,
         "hypothesis_status": hypothesis_status,
@@ -273,6 +360,7 @@ def evaluate(run_dir) -> dict:
         stored = _read_json(generated)
         generated_claimed = stored.get("hypothesis_status")
         comparable = {key: stored.get(key) for key in result}
+        comparable["evaluated_at"] = result["evaluated_at"]
         allowed = set(result) | {"generated_verdict_claimed", "generated_verdict_rejected"}
         generated_verdict_rejected = comparable != result or not set(stored) <= allowed
     result["generated_verdict_claimed"] = generated_claimed

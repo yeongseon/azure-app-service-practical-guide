@@ -4,6 +4,7 @@ import json
 import pathlib
 import tempfile
 import unittest
+from unittest import mock
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 SPEC = importlib.util.spec_from_file_location(
@@ -87,6 +88,23 @@ class EvidenceBindingMutations(unittest.TestCase):
         with self.assertRaises(ev.ModelError):
             ev.evaluate(write_run(manifest_doc=doc, evidence_doc=evidence()))
 
+    def test_future_capture_is_rejected_after_timezone_normalization(self):
+        doc = manifest()
+        doc["captured_at"] = "2999-01-01T00:00:00+14:00"
+        with self.assertRaises(ev.ModelError):
+            ev.evaluate(write_run(manifest_doc=doc, evidence_doc=evidence()))
+
+    def test_new_run_rejects_malformed_provenance(self):
+        for key, value in (("source_commit", "abc1234"),
+                           ("recipe_digest", "sha256:abc"),
+                           ("collector_digest", "b" * 64),
+                           ("environment", {})):
+            with self.subTest(key=key):
+                doc = manifest()
+                doc[key] = value
+                with self.assertRaises(ev.ModelError):
+                    ev.evaluate(write_run(manifest_doc=doc, evidence_doc=evidence()))
+
 
 class CausalSupportMutations(unittest.TestCase):
     def test_symptom_only_manifest_is_inconclusive(self):
@@ -96,6 +114,26 @@ class CausalSupportMutations(unittest.TestCase):
         ]
         result = ev.evaluate(write_run(manifest_doc=manifest(assertions),
                                        evidence_doc=evidence(observations={"status": 503})))
+        self.assertEqual(result["hypothesis_status"], "INCONCLUSIVE")
+
+    def test_observed_causal_claim_still_requires_discriminating_evidence(self):
+        doc = manifest([{"id": "symptom", "role": "symptom", "field": "status",
+                         "equals": 503, "claim_level": "Observed"}])
+        doc["hypothesis_claim_level"] = "Observed"
+        result = ev.evaluate(write_run(manifest_doc=doc,
+                                       evidence_doc=evidence(observations={"status": 503})))
+        self.assertEqual(result["hypothesis_status"], "INCONCLUSIVE")
+
+    def test_causal_claim_without_level_is_a_model_error(self):
+        doc = manifest([{"id": "symptom", "role": "symptom", "field": "status",
+                         "equals": 503, "claim_level": "Observed"}])
+        del doc["hypothesis_claim_level"]
+        with self.assertRaises(ev.ModelError):
+            ev.evaluate(write_run(manifest_doc=doc,
+                                  evidence_doc=evidence(observations={"status": 503})))
+
+    def test_unbound_discriminating_evidence_cannot_support_a_causal_claim(self):
+        result = ev.evaluate(write_run(evidence_doc={"status": 503, "cause_seen": True}))
         self.assertEqual(result["hypothesis_status"], "INCONCLUSIVE")
 
     def test_missing_discriminating_observation_is_inconclusive(self):
@@ -123,6 +161,49 @@ class CausalSupportMutations(unittest.TestCase):
         ]
         with self.assertRaises(ev.ModelError):
             ev.evaluate(write_run(manifest_doc=manifest(assertions), evidence_doc=evidence()))
+
+    def test_absorbed_in_predicate_is_rejected(self):
+        assertions = [
+            {"id": "weak", "role": "symptom", "field": "status", "in": [200, 503]},
+            {"id": "strong", "role": "discriminating", "field": "status", "in": [503]},
+        ]
+        with self.assertRaises(ev.ModelError):
+            ev.evaluate(write_run(manifest_doc=manifest(assertions), evidence_doc=evidence()))
+
+    def test_unknown_regex_containment_is_rejected_conservatively(self):
+        assertions = [
+            {"id": "weak", "role": "symptom", "field": "message", "regex": "5.*"},
+            {"id": "strong", "role": "discriminating", "field": "message", "regex": "503"},
+        ]
+        with self.assertRaises(ev.ModelError):
+            ev.evaluate(write_run(manifest_doc=manifest(assertions),
+                                  evidence_doc=evidence(observations={"message": "503"})))
+
+    def test_zero_over_zero_reported_as_one_is_not_supported(self):
+        assertions = [{"id": "ratio", "role": "discriminating", "field": "failure_ratio",
+                       "equals": 1.0}]
+        observations = {"failure_ratio": {"numerator": 0, "denominator": 0,
+                                            "ratio": 1.0, "per_file_limit": 10}}
+        result = ev.evaluate(write_run(manifest_doc=manifest(assertions),
+                                       evidence_doc=evidence(observations=observations)))
+        self.assertNotEqual(result["hypothesis_status"], "SUPPORTED")
+
+    def test_ratio_is_recomputed_from_raw_counts(self):
+        assertions = [{"id": "ratio", "role": "discriminating", "field": "failure_ratio",
+                       "equals": 1.0}]
+        observations = {"failure_ratio": {"numerator": 1, "denominator": 2,
+                                            "ratio": 1.0, "per_file_limit": 10}}
+        result = ev.evaluate(write_run(manifest_doc=manifest(assertions),
+                                       evidence_doc=evidence(observations=observations)))
+        self.assertEqual(result["assertion_outcomes"]["ratio"], "CONTRADICTED")
+
+    def test_ratio_without_positive_per_file_limit_is_inconclusive(self):
+        assertions = [{"id": "ratio", "role": "discriminating", "field": "failure_ratio",
+                       "equals": 1.0}]
+        observations = {"failure_ratio": {"numerator": 1, "denominator": 1, "ratio": 1.0}}
+        result = ev.evaluate(write_run(manifest_doc=manifest(assertions),
+                                       evidence_doc=evidence(observations=observations)))
+        self.assertEqual(result["assertion_outcomes"]["ratio"], "INCONCLUSIVE")
 
 
 class GeneratedResultIntegrityMutations(unittest.TestCase):
@@ -167,6 +248,17 @@ class OfflineReplayMutation(unittest.TestCase):
         for key in first.keys() | second.keys():
             if key != "evaluated_at":
                 self.assertEqual(first[key], second[key], key)
+
+    def test_evaluation_writes_a_fresh_evaluated_at_without_changing_capture(self):
+        directory = write_run(evidence_doc=evidence())
+        with mock.patch.object(ev.datetime, "datetime", wraps=ev.datetime.datetime) as clock:
+            now = ev.datetime.datetime(2026, 10, 14, 12, 0, tzinfo=ev.datetime.timezone.utc)
+            clock.now.return_value = now
+            result = ev.evaluate(directory)
+        self.assertEqual(result["evaluated_at"], "2026-10-14T12:00:00Z")
+        self.assertEqual(result["captured_at"], CAPTURED)
+        self.assertEqual(json.loads((directory / "manifest.json").read_text())["captured_at"],
+                         CAPTURED)
 
 
 if __name__ == "__main__":

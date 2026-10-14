@@ -37,6 +37,25 @@
       "description": "Accepted values.",
       "minItems": 1
     },
+    "not_in": {
+      "type": "array",
+      "description": "Rejected values.",
+      "minItems": 1
+    },
+    "range": {
+      "type": "object",
+      "description": "Numeric interval predicate.",
+      "minProperties": 1
+    },
+    "exists": {
+      "type": "boolean",
+      "description": "Whether the evidence field must exist."
+    },
+    "regex": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Regular-expression predicate. Predicate containment is treated as undecidable."
+    },
     "claim_level": {
       "enum": [
         "Documented",
@@ -60,6 +79,26 @@
     {
       "required": [
         "in"
+      ]
+    },
+    {
+      "required": [
+        "not_in"
+      ]
+    },
+    {
+      "required": [
+        "range"
+      ]
+    },
+    {
+      "required": [
+        "exists"
+      ]
+    },
+    {
+      "required": [
+        "regex"
       ]
     }
   ]
