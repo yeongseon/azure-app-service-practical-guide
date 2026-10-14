@@ -41,8 +41,8 @@ content_validation:
     - claim: WEBSITE_ROLE_INSTANCE_ID is a read-only identifier for the current App Service instance in the documented language-specific environments.
       source: https://learn.microsoft.com/en-us/azure/app-service/reference-app-settings
       verified: true
-    - claim: App Service Environment v3 upgrades add extra instances to preserve capacity while patched and restarted instances return to rotation.
-      source: https://learn.microsoft.com/en-us/azure/app-service/environment/how-to-upgrade-preference
+    - claim: For Linux containers, WEBSITES_CONTAINER_STOP_TIME_LIMIT controls how many seconds App Service waits for the container to terminate gracefully, with a default of 5 seconds and a maximum of 120 seconds.
+      source: https://learn.microsoft.com/en-us/azure/app-service/reference-app-settings
       verified: true
 ---
 # Process Lifecycle and In-Flight Work
@@ -119,6 +119,8 @@ These layers let an investigator say, for example, “a replacement became ready
 
 ### Design in-flight work for interruption
 
+Enable **Always On** when the app must remain loaded without user traffic. Microsoft Learn documents that, with Always On off by default, App Service unloads the app after 20 minutes without incoming requests; when enabled, the front-end load balancer sends a `GET` request to the application root every five minutes, and that continuous ping prevents the idle unload. Always On does not prevent maintenance, deployment, configuration, scale, crash, or replacement lifecycles. It is neither a durability mechanism nor a guarantee of uninterrupted or unlimited execution.
+
 - Make work items small enough to finish inside the application's normal bounded execution budget; no App Service lifecycle mechanism promises unlimited execution time.
 - Assign a stable idempotency key and make every externally visible side effect safe to repeat. Use uniqueness constraints, compare-and-set, upsert, or an inbox/outbox record instead of a check followed by an unprotected write.
 - Commit durable checkpoints at business-safe boundaries. A file under `/home` can persist across many App Service restarts, but shared-file persistence is not a transactional queue, lease, or exactly-once guarantee; use a database, object store, or messaging service appropriate to the consistency requirement.
@@ -137,7 +139,7 @@ Queue semantics are service-specific; “use a queue” is not a complete resili
 
 Implement the runtime and hosting model's supported shutdown callback: stop taking new background items, mark readiness unhealthy only when that behavior matches the routing design, allow already-started short work to finish, flush bounded telemetry, and close dependencies. Keep every step time-bounded and safe if the callback never arrives or is cut short.
 
-The documented maintenance sequence provides a 30-second default completion period for existing requests during the specific File Server overlapped-restart path. That number is not a universal shutdown allowance for crash, OOM, scale-in, deployment, Windows, Linux, containers, or ASE upgrades. `WEBSITES_CONTAINER_START_TIME_LIMIT`, `WEBSITE_WARMUP_PATH`, and `WEBSITE_WARMUP_STATUSES` govern startup and readiness; they do not extend old-process execution. This page therefore makes no generic promise that Linux receives `SIGTERM`, that Windows receives a particular notification, or that either OS receives an unlimited drain interval for every lifecycle path.
+The documented maintenance sequence provides a 30-second default completion period for existing requests during the specific File Server overlapped-restart path. That number is not a universal shutdown allowance for crash, OOM, scale-in, deployment, Windows, Linux, containers, or ASE upgrades. For Linux containers, Microsoft Learn defines `WEBSITES_CONTAINER_STOP_TIME_LIMIT` as the number of seconds App Service waits for the container to terminate gracefully: the default is **5 seconds**, and the setting can be increased to a maximum of **120 seconds**. This bounded container control does not promise a specific signal for every lifecycle path, so this page makes no generic claim that Linux always receives `SIGTERM` or that termination always proceeds through a particular signal sequence. Separately, `WEBSITES_CONTAINER_START_TIME_LIMIT`, `WEBSITE_WARMUP_PATH`, and `WEBSITE_WARMUP_STATUSES` govern startup and readiness; they do not extend old-process execution.
 
 ### Functions scheduling is a separate contract
 
@@ -168,6 +170,7 @@ No separate playbook is added for this concept. The reported symptom (“work is
 - [Set upgrade preference for App Service Environment planned maintenance](https://learn.microsoft.com/en-us/azure/app-service/environment/how-to-upgrade-preference)
 - [Set up staging environments in App Service](https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots)
 - [App Service environment variables and app settings reference](https://learn.microsoft.com/en-us/azure/app-service/reference-app-settings)
+- [Configure an App Service app](https://learn.microsoft.com/en-us/azure/app-service/configure-common)
 - [Azure Queue Storage trigger for Azure Functions](https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-storage-queue-trigger)
 - [Timer trigger for Azure Functions](https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-timer)
 - [Designing Azure Functions for identical input](https://learn.microsoft.com/en-us/azure/azure-functions/functions-idempotent)

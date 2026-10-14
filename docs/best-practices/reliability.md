@@ -159,19 +159,19 @@ flowchart TD
     M --> O[On-call and incident runbook]
 ```
 
-### Graceful Shutdown and SIGTERM Handling
+### Graceful Termination
 
-App Service can recycle instances during scale, patching, and deployment events. Applications must handle termination signals gracefully.
+App Service can recycle instances during scale, patching, and deployment events. Applications should use the runtime and hosting model's supported graceful-shutdown mechanism, but must remain safe if the callback doesn't arrive or the available time expires.
 
-!!! info "Plan for a short grace period — and treat the exact value as a configurable upper bound"
-    When App Service recycles a worker, it sends **SIGTERM** to the application process and then sends **SIGKILL** after a grace period. The exact duration depends on the hosting model:
+!!! info "Plan for a short, bounded grace period"
+    Microsoft Learn documents a container-specific graceful-termination control rather than a universal signal sequence for every App Service recycle path:
 
-    - **Code-based apps** on App Service have a relatively short grace window (often described as on the order of a few tens of seconds) for in-flight request drain and cleanup.
-    - **Custom containers** default to **5 seconds** before SIGKILL. You can extend this up to **1800 seconds** by setting the `WEBSITES_CONTAINER_STOP_TIME_LIMIT` app setting (see the Microsoft Learn "Configure a custom container" reference).
+    - For Linux containers, `WEBSITES_CONTAINER_STOP_TIME_LIMIT` is the number of seconds App Service waits for the container to terminate gracefully.
+    - The documented default is **5 seconds**, and the setting can be increased to a maximum of **120 seconds**.
 
-    Treat the grace period as small and configurable, not as a fixed platform guarantee. In-flight request completion, connection draining, and cleanup work must finish well within whatever window your hosting model provides.
+    Treat this period as bounded, not as a durability guarantee. Do not assume that every code-based app, operating system, hosting model, or lifecycle path receives `SIGTERM`, `SIGKILL`, or the same drain interval unless its current platform documentation establishes that contract.
 
-#### Why SIGTERM Handling Matters
+#### Why Graceful Termination Matters
 
 - Prevents abrupt termination of in-flight requests
 - Reduces partial writes and data corruption risk
@@ -179,10 +179,10 @@ App Service can recycle instances during scale, patching, and deployment events.
 
 #### Graceful Shutdown Checklist
 
-- Trap termination signals in application runtime
+- Register the runtime and hosting model's supported shutdown callback
 - Stop accepting new requests quickly (close the listener or health endpoint)
 - Finish in-flight requests within the platform's grace window for your hosting model
-- For custom containers, raise `WEBSITES_CONTAINER_STOP_TIME_LIMIT` if 5 seconds is insufficient (but keep it bounded)
+- For Linux containers, raise `WEBSITES_CONTAINER_STOP_TIME_LIMIT` if 5 seconds is insufficient, up to the documented 120-second maximum
 - Flush logs/telemetry and close outbound connections cleanly
 - Move long-running cleanup (large flush, archive upload) outside the request path so it does not depend on shutdown
 
@@ -314,7 +314,7 @@ Before calling a reliability posture production-ready, verify:
 - [ ] Health check is enabled in the App Service configuration (Portal or CLI).
 - [ ] Minimum 2 instances configured for production workloads.
 - [ ] Multi-region pattern (active-passive or active-active) is chosen when SLO requires regional resilience.
-- [ ] SIGTERM handler and grace-period configuration are validated for the hosting model.
+- [ ] Graceful-shutdown callback and termination-time configuration are validated for the hosting model.
 - [ ] Retry logic uses exponential backoff, jitter, and attempt caps.
 - [ ] Circuit breaker thresholds are tuned and emit state metrics.
 - [ ] Backup schedule aligned with database backup schedule; restore drill executed within RTO.
@@ -334,3 +334,4 @@ Before calling a reliability posture production-ready, verify:
 - [Monitor instances in Azure App Service with Health check (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/monitor-instances-health-check)
 - [Back up and restore your app in Azure App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/manage-backup)
 - [Create and manage deployment slots in Azure App Service (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots)
+- [App Service environment variables and app settings reference (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/app-service/reference-app-settings)
