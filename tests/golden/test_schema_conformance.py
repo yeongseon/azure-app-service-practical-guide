@@ -35,7 +35,8 @@ def check(document: dict, schema_name: str):
     import jsonschema
     schema = json.loads((SCHEMA_DIR / schema_name).read_text())
     validator = jsonschema.Draft202012Validator(
-        schema, registry=validate_schemas._registry())
+        schema, registry=validate_schemas._registry(),
+        format_checker=jsonschema.FormatChecker())
     return sorted(validator.iter_errors(document), key=lambda e: list(e.path))
 
 
@@ -75,10 +76,22 @@ class PlantedViolationTests(unittest.TestCase):
 
     def test_a_known_execution_status_is_accepted(self):
         """Guards the check above from rejecting everything."""
-        for status in ("COMPLETE", "NOT_RUN", "RUNNING"):
+        for status in ("COMPLETE", "NOT_RUN"):
             with self.subTest(status=status):
+                manifest = a_manifest(execution_status=status)
+                if status == "COMPLETE":
+                    manifest.update(
+                        source_commit="a" * 40,
+                        environment={"platform": "test"},
+                        recipe_digest="sha256:" + "b" * 64,
+                        collector_digest="sha256:" + "c" * 64,
+                    )
                 self.assertEqual(
-                    check(a_manifest(execution_status=status), "manifest.schema.json"), [])
+                    check(manifest, "manifest.schema.json"), [])
+
+    def test_malformed_date_is_rejected(self):
+        self.assertTrue(check(a_manifest(captured_at="not-a-date"),
+                              "manifest.schema.json"))
 
     def test_the_wrong_trust_vocabulary_is_rejected(self):
         """The provenance words do not belong in the custody field.

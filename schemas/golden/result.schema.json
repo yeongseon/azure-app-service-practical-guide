@@ -35,8 +35,7 @@
         "PARTIAL",
         "BLOCKED",
         "FAILED",
-        "NOT_RUN",
-        "RUNNING"
+        "NOT_RUN"
       ]
     },
     "hypothesis_status": {

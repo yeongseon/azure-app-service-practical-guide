@@ -132,6 +132,7 @@ def collect(run_dir) -> dict:
 
     return {
         "run_id": run["run_id"],
+        "resource_id": run.get("resource_id"),
         "captured_at": run["started_at"],
         "observations": observations,
         "collector": "scripts/golden/collect_scenario_a.py",

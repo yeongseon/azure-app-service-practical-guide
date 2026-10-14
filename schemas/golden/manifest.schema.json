@@ -49,8 +49,12 @@
         "string",
         "null"
       ],
-      "format": "date-time",
-      "description": "When the prose was last edited. Distinct from both timestamps above."
+      "oneOf": [
+        {"type": "string", "format": "date-time"},
+        {"type": "string", "format": "date"},
+        {"type": "null"}
+      ],
+      "description": "When the prose was last edited. Date-only values are an explicit pre-contract historical allowance; new records should use date-time."
     },
     "execution_status": {
       "enum": [
@@ -58,8 +62,7 @@
         "PARTIAL",
         "BLOCKED",
         "FAILED",
-        "NOT_RUN",
-        "RUNNING"
+        "NOT_RUN"
       ]
     },
     "evidence_trust": {
@@ -87,6 +90,54 @@
         "array"
       ],
       "description": "Author commentary. Carries no weight in evaluation."
+    },
+    "source_commit": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "environment": {
+      "type": "object",
+      "minProperties": 1
+    },
+    "recipe_digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "collector_digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "hypothesis_claim_level": {
+      "enum": ["Documented", "Observed", "Inferred", "Not Proven"]
+    },
+    "capture_window": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["started_at", "ended_at"],
+      "properties": {
+        "started_at": {"type": "string", "format": "date-time"},
+        "ended_at": {"type": "string", "format": "date-time"}
+      }
     }
-  }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"execution_status": {"const": "COMPLETE"}}},
+      "then": {
+        "anyOf": [
+          {
+            "required": ["source_commit", "environment", "recipe_digest", "collector_digest"]
+          },
+          {
+            "description": "Explicit pre-contract retained-run allowance. Historical packages with a sanitized null resource and unverified custody remain schema-valid without rewriting their immutable manifests.",
+            "properties": {
+              "resource_id": {"type": "null"},
+              "evidence_trust": {"const": "unverified"}
+            },
+            "required": ["resource_id", "evidence_trust"]
+          }
+        ]
+      }
+    }
+  ]
 }

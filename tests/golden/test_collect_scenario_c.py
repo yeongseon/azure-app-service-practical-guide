@@ -85,7 +85,7 @@ def evaluate_with(evidence):
     directory.mkdir(parents=True)
     manifest = dict(MANIFEST)
     manifest.update(run_id=evidence["run_id"], captured_at=evidence["captured_at"],
-                    execution_status="COMPLETE")
+                    resource_id=evidence.get("resource_id"), execution_status="COMPLETE")
     (directory / "manifest.json").write_text(json.dumps(manifest))
     (directory / "evidence.json").write_text(json.dumps(evidence))
     return ev.evaluate(directory)

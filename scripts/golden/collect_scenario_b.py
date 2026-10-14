@@ -129,6 +129,8 @@ def collect(run_dir) -> dict:
         phases[name] = count_outcomes(capture, classifier)
 
     health = _read(run_dir / "destination-health.json", required=False)
+    pressure = _read(run_dir / "port-pressure.json", required=False)
+    target = _read(run_dir / "app-target.json", required=False)
 
     baseline = phases["baseline"]
     load = phases["load"]
@@ -144,6 +146,9 @@ def collect(run_dir) -> dict:
         # equally consistent with the destination itself being down, and the
         # hypothesis cannot be separated from that explanation.
         "destination_health_status": None if health is None else health.get("status"),
+        "snat_port_pressure": None if pressure is None else pressure.get("status"),
+        "destination_binding": (
+            None if target is None else target.get("matches_requested_destination")),
     }
 
     incomplete = sorted(key for key, value in observations.items() if value is None)
@@ -152,6 +157,7 @@ def collect(run_dir) -> dict:
 
     return {
         "run_id": run["run_id"],
+        "resource_id": run.get("resource_id"),
         "captured_at": run["started_at"],
         "observations": observations,
         "collector": "scripts/golden/collect_scenario_b.py",

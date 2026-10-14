@@ -71,7 +71,8 @@ def validate(verbose: bool = False) -> list[str]:
     checked = 0
     for path, schema_name in documents():
         schema = json.loads((SCHEMA_DIR / schema_name).read_text())
-        validator = jsonschema.Draft202012Validator(schema, registry=registry)
+        validator = jsonschema.Draft202012Validator(
+            schema, registry=registry, format_checker=jsonschema.FormatChecker())
         document = json.loads(path.read_text())
         errors = sorted(validator.iter_errors(document), key=lambda e: list(e.path))
         checked += 1

@@ -67,6 +67,9 @@ def build_run(baseline=None, load=None, recovery=None, health=200, omit=()):
         (directory / name / "probes.json").write_text(json.dumps(probes))
     if "destination-health.json" not in omit and health is not None:
         (directory / "destination-health.json").write_text(json.dumps({"status": health}))
+    (directory / "port-pressure.json").write_text(json.dumps({"status": "observed"}))
+    (directory / "app-target.json").write_text(
+        json.dumps({"matches_requested_destination": True}))
     return directory
 
 
@@ -75,7 +78,7 @@ def evaluate_with(evidence):
     directory.mkdir(parents=True)
     manifest = dict(MANIFEST)
     manifest.update(run_id=evidence["run_id"], captured_at=evidence["captured_at"],
-                    execution_status="COMPLETE")
+                    resource_id=evidence.get("resource_id"), execution_status="COMPLETE")
     (directory / "manifest.json").write_text(json.dumps(manifest))
     (directory / "evidence.json").write_text(json.dumps(evidence))
     return ev.evaluate(directory)

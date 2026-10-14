@@ -31,15 +31,12 @@ from __future__ import annotations
 import json
 import pathlib
 import sys
+import datetime
+import unicodedata
 
 CLAIM_LEVELS = ("Documented", "Observed", "Inferred", "Not Proven")
 HYPOTHESIS_STATUS = ("SUPPORTED", "CONTRADICTED", "INCONCLUSIVE", "NOT_TESTED")
-#: RUNNING was added after the pilot runner was found emitting it. A run
-#: in flight is not PARTIAL, which means finished but incomplete, and the
-#: model simply had no word for it. It can never produce a verdict:
-#: evaluate() gates the hypothesis axis on COMPLETE, so RUNNING yields
-#: NOT_TESTED like every other non-final state.
-EXECUTION_STATUS = ("COMPLETE", "PARTIAL", "BLOCKED", "FAILED", "NOT_RUN", "RUNNING")
+EXECUTION_STATUS = ("COMPLETE", "PARTIAL", "BLOCKED", "FAILED", "NOT_RUN")
 EVIDENCE_ROLES = ("symptom", "supporting", "discriminating", "control", "recovery")
 EVIDENCE_TRUST = ("trusted-current", "trusted-historical", "unverified", "invalid")
 
@@ -75,13 +72,39 @@ def promote_claim(current: str, target: str) -> str:
     return target
 
 
+def _unique_object(pairs):
+    value = {}
+    normalized = set()
+    for key, item in pairs:
+        folded = unicodedata.normalize("NFKC", key).casefold()
+        if key in value:
+            raise ModelError(f"duplicate JSON key: {key!r}")
+        if folded in normalized:
+            raise ModelError(f"look-alike JSON key: {key!r}")
+        value[key] = item
+        normalized.add(folded)
+    return value
+
+
 def _read_json(path: pathlib.Path):
     try:
-        return json.loads(path.read_text())
+        return json.loads(path.read_text(), object_pairs_hook=_unique_object)
     except FileNotFoundError as exc:
         raise ModelError(f"required file missing: {path.name}") from exc
     except json.JSONDecodeError as exc:
         raise ModelError(f"malformed JSON in {path.name}: {exc}") from exc
+
+
+def _timestamp(value: str, field: str) -> datetime.datetime:
+    try:
+        parsed = datetime.datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except (AttributeError, ValueError) as exc:
+        raise ModelError(f"{field} is not a valid date-time: {value!r}") from exc
+    if parsed.tzinfo is None:
+        raise ModelError(f"{field} must include a timezone")
+    if parsed > datetime.datetime.now(datetime.timezone.utc):
+        raise ModelError(f"{field} is in the future: {value!r}")
+    return parsed
 
 
 def evaluate_assertion(assertion: dict, evidence: dict) -> str:
@@ -103,6 +126,8 @@ def evaluate_assertion(assertion: dict, evidence: dict) -> str:
     if field not in evidence:
         return "INCONCLUSIVE"
     observed = evidence[field]
+    if observed == "unavailable":
+        return "INCONCLUSIVE"
     if "equals" in assertion:
         return "SUPPORTED" if observed == assertion["equals"] else "CONTRADICTED"
     if "in" in assertion:
@@ -135,7 +160,7 @@ def combine(outcomes) -> str:
     return "SUPPORTED"
 
 
-def _bind_evidence(document: dict, run_id: str):
+def _bind_evidence(document: dict, manifest: dict):
     """Return (observations, identity_state) for one evidence document.
 
     Evidence that declares a run_id must agree with the manifest. Without
@@ -143,16 +168,17 @@ def _bind_evidence(document: dict, run_id: str):
     nothing would object -- the wrong-run case the model names but the
     evaluator did not previously check.
 
-    >>> _bind_evidence({"run_id": "r1", "observations": {"status": 503}}, "r1")
+    >>> _bind_evidence({"run_id": "r1", "captured_at": "2026-01-01T00:00:00Z", "observations": {"status": 503}}, {"run_id": "r1", "resource_id": None, "captured_at": "2026-01-01T00:00:00Z"})
     ({'status': 503}, 'BOUND')
-    >>> _bind_evidence({"status": 503}, "r1")
+    >>> _bind_evidence({"status": 503}, {"run_id": "r1", "resource_id": None, "captured_at": "2026-01-01T00:00:00Z"})
     ({'status': 503}, 'UNBOUND')
-    >>> _bind_evidence({"run_id": "other", "observations": {}}, "r1")
+    >>> _bind_evidence({"run_id": "other", "observations": {}}, {"run_id": "r1", "resource_id": None, "captured_at": "2026-01-01T00:00:00Z"})
     Traceback (most recent call last):
     evaluate_run.ModelError: evidence belongs to run 'other', not 'r1'
     """
     if not document:
         return {}, "ABSENT"
+    run_id = manifest["run_id"]
     declared = document.get("run_id")
     if declared is None:
         # Legacy flat evidence carries no identity. It is usable but the
@@ -160,6 +186,19 @@ def _bind_evidence(document: dict, run_id: str):
         return document, "UNBOUND"
     if declared != run_id:
         raise ModelError(f"evidence belongs to run {declared!r}, not {run_id!r}")
+    resource_id = manifest.get("resource_id")
+    if resource_id is not None and document.get("resource_id") != resource_id:
+        raise ModelError("evidence resource_id does not match the manifest")
+    evidence_captured = _timestamp(document.get("captured_at"), "evidence captured_at")
+    manifest_captured = _timestamp(manifest["captured_at"], "manifest captured_at")
+    if evidence_captured != manifest_captured:
+        raise ModelError("evidence captured_at does not match the manifest")
+    window = manifest.get("capture_window")
+    if window:
+        started = _timestamp(window.get("started_at"), "capture_window started_at")
+        ended = _timestamp(window.get("ended_at"), "capture_window ended_at")
+        if started > evidence_captured or evidence_captured > ended:
+            raise ModelError("evidence captured_at falls outside the capture window")
     observations = document.get("observations")
     if not isinstance(observations, dict):
         raise ModelError("evidence declares a run_id but no observations object")
@@ -177,13 +216,14 @@ def evaluate(run_dir) -> dict:
     for key in ("run_id", "captured_at"):
         if not manifest.get(key):
             raise ModelError(f"manifest is missing run identity field: {key}")
+    _timestamp(manifest["captured_at"], "manifest captured_at")
 
     assertions = manifest.get("assertions") or []
     evidence_doc = (
         _read_json(run_dir / "evidence.json")
         if (run_dir / "evidence.json").is_file() else {}
     )
-    evidence, evidence_identity = _bind_evidence(evidence_doc, manifest["run_id"])
+    evidence, evidence_identity = _bind_evidence(evidence_doc, manifest)
 
     # Keying outcomes by a caller-supplied id let a later assertion overwrite
     # an earlier one, so a manifest declaring the same id twice could drop a
@@ -195,25 +235,29 @@ def evaluate(run_dir) -> dict:
             raise ModelError(f"duplicate assertion id: {assertion_id!r}")
         per_assertion[assertion_id] = evaluate_assertion(assertion, evidence)
 
+    strong = [item for item in assertions if item.get("role") == "discriminating"]
+    for item in strong:
+        for weak in assertions:
+            if weak is item or weak.get("field") != item.get("field"):
+                continue
+            if "equals" in item and item["equals"] in weak.get("in", []):
+                raise ModelError(
+                    f"discriminating assertion {item.get('id')!r} is absorbed by {weak.get('id')!r}")
+
     # Execution status gates the hypothesis axis: a run that did not finish
     # has not tested anything, whatever its partial evidence happens to show.
     if execution_status != "COMPLETE":
         hypothesis_status = "NOT_TESTED"
     else:
         hypothesis_status = combine(per_assertion.values())
+        causal_claim = manifest.get("hypothesis_claim_level") in ("Inferred", "Not Proven")
+        if hypothesis_status == "SUPPORTED" and causal_claim and not strong:
+            hypothesis_status = "INCONCLUSIVE"
+        if hypothesis_status == "SUPPORTED" and manifest.get("hypothesis_claim_level") == "Not Proven":
+            hypothesis_status = "INCONCLUSIVE"
 
     # A generated verdict is recomputed and compared, never consumed.
-    generated = run_dir / "result.json"
-    generated_verdict_rejected = False
-    generated_claimed = None
-    if generated.is_file():
-        try:
-            generated_claimed = _read_json(generated).get("hypothesis_status")
-        except ModelError:
-            generated_claimed = None
-        generated_verdict_rejected = generated_claimed != hypothesis_status
-
-    return {
+    result = {
         "run_id": manifest["run_id"],
         "captured_at": manifest["captured_at"],
         "evaluated_at": manifest.get("evaluated_at"),
@@ -221,9 +265,19 @@ def evaluate(run_dir) -> dict:
         "evidence_identity": evidence_identity,
         "hypothesis_status": hypothesis_status,
         "assertion_outcomes": per_assertion,
-        "generated_verdict_claimed": generated_claimed,
-        "generated_verdict_rejected": generated_verdict_rejected,
     }
+    generated = run_dir / "result.json"
+    generated_verdict_rejected = False
+    generated_claimed = None
+    if generated.is_file():
+        stored = _read_json(generated)
+        generated_claimed = stored.get("hypothesis_status")
+        comparable = {key: stored.get(key) for key in result}
+        allowed = set(result) | {"generated_verdict_claimed", "generated_verdict_rejected"}
+        generated_verdict_rejected = comparable != result or not set(stored) <= allowed
+    result["generated_verdict_claimed"] = generated_claimed
+    result["generated_verdict_rejected"] = generated_verdict_rejected
+    return result
 
 
 def main() -> int:

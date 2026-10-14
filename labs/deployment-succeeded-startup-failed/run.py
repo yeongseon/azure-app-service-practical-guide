@@ -267,7 +267,7 @@ def execute(args):
     folder.mkdir(parents=True, exist_ok=False)
     print(f'RUN_DIR={folder}', flush=True)
     run = {'run_id': folder.name, 'started_at': now(), 'resource_group': args.resource_group,
-           'fingerprints': fingerprints(), 'execution_status': 'RUNNING'}
+           'fingerprints': fingerprints()}
     try:
         run['source_sha'] = command(folder, 'source-sha', ['git', '-C', str(ROOT), 'rev-parse', 'HEAD']).strip()
         command(folder, 'azure-version', ['az', 'version'])
