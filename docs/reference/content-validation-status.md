@@ -11,12 +11,12 @@ This page tracks `content_validation` metadata for **in-scope factual-claim docu
 
 ## Summary
 
-*Generated: 2026-10-13*
+*Generated: 2026-10-14*
 
 | Content Type | Total | Verified | Pending | Unverified | No Metadata |
 |---|---:|---:|---:|---:|---:|
-| Mermaid Diagrams | 390 | 390 | 0 | 0 | 0 |
-| In-Scope Factual-Claim Documents | 78 | 78 | 0 | 0 | 0 |
+| Mermaid Diagrams | 391 | 391 | 0 | 0 | 0 |
+| In-Scope Factual-Claim Documents | 79 | 79 | 0 | 0 | 0 |
 
 !!! success "All In-Scope Documents Verified"
     Every in-scope factual-claim document has verified Microsoft Learn sources for its core claims.
@@ -24,7 +24,7 @@ This page tracks `content_validation` metadata for **in-scope factual-claim docu
 <!-- diagram-id: content-validation-status-pie -->
 ```mermaid
 pie title In-Scope Document Validation Status
-    "Verified" : 78
+    "Verified" : 79
 ```
 
 ## By Section
@@ -37,8 +37,8 @@ pie title In-Scope Document Validation Status
 | [Deployment Options](../platform/deployment-options.md) | ✅ | ✅ Verified | 5/5 | 2026-09-11 |
 | [Deployment Scenarios](../platform/deployment-scenarios.md) | ✅ | ✅ Verified | 4/4 | 2026-09-11 |
 | [Hosting Models](../platform/hosting-models.md) | ✅ | ✅ Verified | 5/5 | 2026-09-11 |
-| [Index](../platform/architecture/index.md) | ✅ | ✅ Verified | 4/4 | 2026-09-11 |
 | [Index](../platform/containers/index.md) | ✅ | ✅ Verified | 5/5 | 2026-09-11 |
+| [Index](../platform/architecture/index.md) | ✅ | ✅ Verified | 4/4 | 2026-09-11 |
 | [Kudu Linux](../platform/kudu-linux.md) | ✅ | ✅ Verified | 5/5 | 2026-07-01 |
 | [Kudu Overview](../platform/kudu-overview.md) | ✅ | ✅ Verified | 5/5 | 2026-07-01 |
 | [Kudu Windows](../platform/kudu-windows.md) | ✅ | ✅ Verified | 4/4 | 2026-07-01 |
@@ -88,6 +88,7 @@ pie title In-Scope Document Validation Status
 |---|---|---|---|---|
 | [App Startup Failures](../troubleshooting/playbooks/app-startup-failures.md) | ✅ | ✅ Verified | 4/4 | 2026-09-11 |
 | [Architecture Overview](../troubleshooting/architecture-overview.md) | ✅ | ✅ Verified | 2/2 | 2026-09-11 |
+| [Arm Configuration Http 400](../troubleshooting/playbooks/arm-configuration-http-400.md) | ✅ | ✅ Verified | 5/5 | 2026-10-14 |
 | [Auth Redirect Loop](../troubleshooting/playbooks/startup-availability/auth-redirect-loop.md) | ✅ | ✅ Verified | 2/2 | 2026-09-11 |
 | [Authentication Failures](../troubleshooting/playbooks/authentication-failures.md) | ✅ | ✅ Verified | 5/5 | 2026-09-11 |
 | [Cd Rbac Role Assignment Conflict](../troubleshooting/playbooks/cd-rbac-role-assignment-conflict.md) | ✅ | ✅ Verified | 3/3 | 2026-09-11 |
