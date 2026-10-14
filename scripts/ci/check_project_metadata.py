@@ -29,12 +29,20 @@ def headings(body: str) -> list[str]:
     return result
 
 
-def validate(pr: dict) -> list[str]:
+def validate(pr: dict[str, object]) -> list[str]:
     errors = []
-    title, body = pr.get("title", ""), pr.get("body") or ""
+    title = pr.get("title", "")
+    body = pr.get("body", "")
+    if not isinstance(title, str) or not isinstance(body, str):
+        return ["The pull request title and body must be text."]
     if not TITLE.fullmatch(title) or re.search(r"\(#\d+\)$", title):
         errors.append("Use a Conventional Commit title without a trailing issue number or period.")
-    labels = [v["name"] if isinstance(v, dict) else v for v in pr.get("labels", [])]
+    raw_labels = pr.get("labels", [])
+    if not isinstance(raw_labels, list):
+        return [*errors, "Pull request labels must be an array."]
+    labels = [v["name"] if isinstance(v, dict) and isinstance(v.get("name"), str) else v for v in raw_labels]
+    if not all(isinstance(label, str) for label in labels):
+        return [*errors, "Pull request labels must have text names."]
     priorities = [v for v in labels if v.startswith("priority:")]
     if len(priorities) != 1 or priorities[0] not in PRIORITIES:
         errors.append("Apply exactly one priority:critical/high/medium/low label.")

@@ -35,6 +35,41 @@ class MetadataTests(unittest.TestCase):
     def test_title_prefix(self):
         self.assertTrue(metadata.validate(pr(title="Add some tests")))
 
+    def test_allowed_title_forms(self):
+        valid_titles = (
+            "feat: add a capability",
+            "fix: repair a defect",
+            "docs: explain a workflow",
+            "test: cover an edge case",
+            "perf: reduce query latency",
+            "refactor: simplify validation",
+            "ci: add a workflow",
+            "build: update a package",
+            "chore: remove stale output",
+            "style: normalize indentation",
+            "revert: restore prior behavior",
+            "feat(api)!: change a contract",
+        )
+        for title in valid_titles:
+            with self.subTest(title=title):
+                self.assertEqual(metadata.validate(pr(title=title)), [])
+
+    def test_invalid_title_forms(self):
+        invalid_titles = (
+            "Feat: uppercase type",
+            "feature: unknown type",
+            "fix: trailing period.",
+            "fix: trailing space ",
+            "fix(scope):",
+            "fix(API): uppercase scope",
+        )
+        for title in invalid_titles:
+            with self.subTest(title=title):
+                self.assertTrue(metadata.validate(pr(title=title)))
+
+    def test_untrusted_title_text_is_only_validated(self):
+        self.assertEqual(metadata.validate(pr(title="fix: shell $(touch /tmp/untrusted)")), [])
+
     def test_trailing_reference(self):
         self.assertTrue(metadata.validate(pr(title="ci: add checks (#217)")))
 
