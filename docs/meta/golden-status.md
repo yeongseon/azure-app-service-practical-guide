@@ -25,62 +25,63 @@ Every quality gate in this repository, its most recently recorded result, and th
 
 ## Summary
 
-*Snapshot of `a2bb0fa plus uncommitted working-tree changes`, generated 2026-10-03.*
+*Snapshot of `e466e15 plus uncommitted working-tree changes`, generated 2026-10-14.*
 
 | Metric | Count |
 |---|---:|
-| Registered gates | 29 |
-| ✅ Pass | 24 |
+| Registered gates | 30 |
+| ✅ Pass | 23 |
 | ❌ Fail | 0 |
 | ⚠️ Warn | 0 |
-| ➖ Skipped | 5 |
+| ➖ Skipped | 7 |
 
 !!! warning "Blocking gates pass, with gaps"
-    No blocking gate failed in this snapshot, but 5 gate(s) reported findings, are unwired from CI, or could not run on the machine that generated this page. See Known Gaps.
+    No blocking gate failed in this snapshot, but 7 gate(s) reported findings, are unwired from CI, or could not run on the machine that generated this page. See Known Gaps.
 
 <!-- diagram-id: golden-status-gate-outcomes-pie -->
 ```mermaid
 pie title Quality Gate Outcomes
-    "Pass" : 24
-    "Skipped" : 5
+    "Pass" : 23
+    "Skipped" : 7
 ```
 
 ## Gate Results
 
-These are locally executed results, not GitHub Actions statuses. **Skipped** means the machine that generated this page lacked the toolchain the gate needs. **Warn** means the gate reported findings its CI job would not fail on, either because the job is advisory or because the dashboard runs a wider scope than CI does. 17 of 29 gates are re-run and compared by the `Validate Golden Status` job, so a flip to **Fail** cannot sit here unnoticed.
+These are locally executed results, not GitHub Actions statuses. **Skipped** means the machine that generated this page lacked the toolchain the gate needs. **Warn** means the gate reported findings its CI job would not fail on, either because the job is advisory or because the dashboard runs a wider scope than CI does. 18 of 30 gates are re-run and compared by the `Validate Golden Status` job, so a flip to **Fail** cannot sit here unnoticed.
 
 <!-- golden-status:results:start -->
 | Gate | Severity | Status | Detail | Time |
 | --- | --- | --- | --- | --- |
 | Validator doctests | Blocking | ✅ Pass | 9 modules checked, every doctest passed. | < 10s |
 | Capture asset geometry | Blocking | ✅ Pass | Capture assets conform to the capture profile. | < 10s |
-| Mermaid format | Blocking | ✅ Pass | Files checked: 233 · Files with errors: 0 | < 10s |
-| Mermaid syntax | Blocking | ✅ Pass | Diagrams checked: 385 · Errors found: 0 | < 10s |
-| Content sources | Blocking | ✅ Pass | Files with mermaid: 232 · Validation errors: 0 | < 10s |
+| Mermaid format | Blocking | ✅ Pass | Files checked: 237 · Files with errors: 0 | < 10s |
+| Mermaid syntax | Blocking | ✅ Pass | Diagrams checked: 390 · Errors found: 0 | < 10s |
+| Content sources | Blocking | ✅ Pass | Files with mermaid: 236 · Validation errors: 0 | < 10s |
 | Content sources schema | Blocking | ✅ Pass | Files with content_sources schema drift: 0 · Parse errors: 0 | < 10s |
-| Diagram ID parity | Blocking | ✅ Pass | mermaid blocks: 385 · diagram-id comments: 385 | < 10s |
+| Diagram ID parity | Blocking | ✅ Pass | mermaid blocks: 390 · diagram-id comments: 390 | < 10s |
 | CLI explanation tables | Blocking | ✅ Pass | All Azure CLI code fences and Markdown tables are correctly terminated. | < 10s |
-| Document quality | Blocking | ✅ Pass | Documentation quality gate passed for 233 file(s). | < 10s |
+| Documented repository paths | Blocking | ✅ Pass | Documented repository path errors: 0 | < 10s |
+| Document quality | Blocking | ✅ Pass | Documentation quality gate passed for 237 file(s). | < 10s |
 | Frontmatter YAML style | Blocking | ✅ Pass | Files with style drift: 0 · Parse errors: 0 | < 10s |
 | Microsoft Learn locale | Blocking | ✅ Pass | Files with locale drift: 0 | < 10s |
 | Microsoft Learn URL reachability | Advisory | ➖ Skipped | Network gate; re-run with --include-network. | < 10s |
-| Lab artifact PII | Blocking | ✅ Pass | [scan_lab_pii] scanned=472 skipped_binary=0 skipped_decode=0 findings=0 | < 10s |
+| Lab artifact PII | Blocking | ✅ Pass | [scan_lab_pii] scanned=584 skipped_binary=0 skipped_decode=0 findings=0 | < 10s |
 | Documentation PII | Blocking | ✅ Pass | No blocking PII patterns detected! | < 10s |
-| Documentation repetition | Blocking | ✅ Pass | Scanned 233 file(s): 0 error(s), 6 warning(s). | < 10s |
-| Visual content coverage | Advisory | ✅ Pass | full repo: 76/76 in-scope pages carry a visual aid (100.0%). Advisory gate — exit 0 regardless (see issue #388). | < 10s |
-| Frontmatter schema | Blocking | ✅ Pass | Checked 233 files · Found 0 errors, 28 warnings: | < 10s |
+| Documentation repetition | Blocking | ✅ Pass | Scanned 237 file(s): 0 error(s), 6 warning(s). | < 10s |
+| Visual content coverage | Advisory | ✅ Pass | full repo: 78/78 in-scope pages carry a visual aid (100.0%). Advisory gate — exit 0 regardless (see issue #388). | < 10s |
+| Frontmatter schema | Blocking | ✅ Pass | Checked 237 files · Found 0 errors, 28 warnings: | < 10s |
 | MkDocs strict build | Blocking | ✅ Pass | Site built with no strict-mode warnings. | 10-120s |
 | Shell script syntax | Blocking | ✅ Pass | All shell scripts parse. | < 10s |
 | ShellCheck | Blocking | ➖ Skipped | Executable `shellcheck` is not on PATH. | < 10s |
 | Node.js dependency audit | Blocking | ✅ Pass | found 0 vulnerabilities | < 10s |
-| Node.js app tests | Blocking | ✅ Pass | ℹ tests 3 · ℹ pass 3 · ℹ fail 0 | < 10s |
+| Node.js app tests | Blocking | ➖ Skipped | `apps/nodejs/node_modules` does not exist. | < 10s |
 | Node.js production install | Blocking | ✅ Pass | Production tree resolved from the lockfile. | < 10s |
 | Node.js container smoke | Blocking | ➖ Skipped | Network gate; re-run with --include-network. | < 10s |
 | Python app compile | Blocking | ✅ Pass | All modules compiled. | < 10s |
-| Python app tests | Blocking | ✅ Pass | collected 4 items | < 10s |
+| Python app tests | Blocking | ➖ Skipped | Python module `pytest` is not importable; Python module `flask` is not importable. | < 10s |
 | .NET app build | Blocking | ➖ Skipped | Executable `dotnet` is not on PATH. | < 10s |
 | Java app tests | Blocking | ➖ Skipped | Executable `mvn` is not on PATH. | < 10s |
-| Bicep template build | Blocking | ✅ Pass | Bicep templates built: 38 · Bicep parameter files built: 9 | > 120s |
+| Bicep template build | Blocking | ✅ Pass | Bicep templates built: 40 · Bicep parameter files built: 9 | > 120s |
 
 <!-- golden-status:results:end -->
 
@@ -99,6 +100,7 @@ Generated from the `GATES` registry in `scripts/generate_golden_status.py`. CI f
 | Content sources schema | content_sources blocks use the canonical mapping shape, not the legacy list form. | Blocking | `python3 scripts/normalize_content_sources_schema.py --check` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
 | Diagram ID parity | Mermaid fence count equals diagram-id comment count across docs/. | Blocking | `python3 scripts/generate_golden_status.py --gate diagram-id-parity` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
 | CLI explanation tables | Every az CLI fence has an explanation table, and Markdown tables in docs/ and repository-root contracts end with a blank line. | Blocking | `python3 scripts/validate_cli_explanations.py` | `Validate CLI Explanation Tables` — `validate-content-sources.yml` |
+| Documented repository paths | Repository-local links, main-branch GitHub links, and registered command paths resolve in the checked-out tree. | Blocking | `python3 scripts/validate_documented_paths.py` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
 | Document quality | Canonical section templates, tail sections, long CLI flags, and masked identifiers. | Blocking | `python3 scripts/validate_doc_quality.py --all` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
 | Frontmatter YAML style | Frontmatter matches the canonical ruamel.yaml serialization. | Blocking | `python3 scripts/normalize_yaml_frontmatter.py --check` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
 | Microsoft Learn locale | Every learn.microsoft.com URL carries the en-us locale prefix. | Blocking | `python3 scripts/normalize_mslearn_locale.py --check` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
@@ -148,7 +150,9 @@ Generated from the `GATES` registry in `scripts/generate_golden_status.py`. CI f
 
 - **Microsoft Learn URL reachability** did not run here: Network gate; re-run with --include-network.
 - **ShellCheck** did not run here: Executable `shellcheck` is not on PATH.
+- **Node.js app tests** did not run here: `apps/nodejs/node_modules` does not exist.
 - **Node.js container smoke** did not run here: Network gate; re-run with --include-network.
+- **Python app tests** did not run here: Python module `pytest` is not importable; Python module `flask` is not importable.
 - **.NET app build** did not run here: Executable `dotnet` is not on PATH.
 - **Java app tests** did not run here: Executable `mvn` is not on PATH.
 

@@ -312,6 +312,17 @@ GATES: tuple[Gate, ...] = (
         verified_in_ci=True,
     ),
     Gate(
+        key="documented-paths",
+        name="Documented repository paths",
+        enforces="Repository-local links, main-branch GitHub links, and registered command paths resolve in the checked-out tree.",
+        argv=("{python}", "scripts/validate_documented_paths.py"),
+        severity=BLOCKING,
+        covers=("scripts/validate_documented_paths.py",),
+        bindings=(Binding("Validate Content Source Metadata", CONTENT_SOURCES_WORKFLOW),),
+        summary_keys=("Documented repository path errors:",),
+        verified_in_ci=True,
+    ),
+    Gate(
         key="doc-quality",
         name="Document quality",
         enforces="Canonical section templates, tail sections, long CLI flags, and masked identifiers.",

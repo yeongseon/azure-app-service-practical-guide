@@ -63,6 +63,14 @@ jobs:
           python -m doctest scripts/validate_content_sources.py -v
           python -m doctest scripts/validate_doc_quality.py -v
           python -m doctest scripts/validate_capture_assets.py -v
+
+      - name: Test documented repository path validation
+        run: |
+          python -m unittest scripts.tests.test_validate_documented_paths -v
+
+      - name: Validate documented repository paths
+        run: |
+          python scripts/validate_documented_paths.py
       
       - name: Validate mermaid format
         run: |
