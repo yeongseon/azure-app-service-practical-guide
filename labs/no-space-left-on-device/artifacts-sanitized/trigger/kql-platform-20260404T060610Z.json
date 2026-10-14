@@ -125,7 +125,7 @@
         [
           "2026-04-04T05:29:28.4715122Z",
           "Informational",
-          "Creating container with image: appsvc/python:3.11_20260203.2.tuxprod from registry: 10.1.0.4:13209 and fully qualified image name: 10.1.0.4:13209/appsvc/python:3.11_20260203.2.tuxprod"
+          "Creating container with image: appsvc/python:3.11_20260203.2.tuxprod from registry: 10.0.0.0:13209 and fully qualified image name: 10.0.0.0:13209/appsvc/python:3.11_20260203.2.tuxprod"
         ],
         [
           "2026-04-04T05:29:28.4623657Z",
@@ -255,7 +255,7 @@
         [
           "2026-04-04T05:29:26.5284421Z",
           "Informational",
-          "State: Starting, Action: PullingImage, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:26:28, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Pulling image 10.1.0.4:13209/appsvc/python:3.11_20260203.2.tuxprod for app-labnospace-ii2quhiube3ma., DetailsLevel: INFO"
+          "State: Starting, Action: PullingImage, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:26:28, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Pulling image 10.0.0.0:13209/appsvc/python:3.11_20260203.2.tuxprod for app-labnospace-ii2quhiube3ma., DetailsLevel: INFO"
         ],
         [
           "2026-04-04T05:29:26.5262631Z",
@@ -300,7 +300,7 @@
         [
           "2026-04-04T05:27:38.8647519Z",
           "Informational",
-          "Creating container with image: appsvc/kudulite:bullseye_20260204.5.tuxprod from registry: 10.1.0.4:13209 and fully qualified image name: 10.1.0.4:13209/appsvc/kudulite:bullseye_20260204.5.tuxprod"
+          "Creating container with image: appsvc/kudulite:bullseye_20260204.5.tuxprod from registry: 10.0.0.0:13209 and fully qualified image name: 10.0.0.0:13209/appsvc/kudulite:bullseye_20260204.5.tuxprod"
         ],
         [
           "2026-04-04T05:27:38.8640214Z",
@@ -550,7 +550,7 @@
         [
           "2026-04-04T05:25:47.8471361Z",
           "Informational",
-          "Creating container with image: appsvc/python:3.11_20260203.2.tuxprod from registry: 10.1.0.4:13209 and fully qualified image name: 10.1.0.4:13209/appsvc/python:3.11_20260203.2.tuxprod"
+          "Creating container with image: appsvc/python:3.11_20260203.2.tuxprod from registry: 10.0.0.0:13209 and fully qualified image name: 10.0.0.0:13209/appsvc/python:3.11_20260203.2.tuxprod"
         ],
         [
           "2026-04-04T05:25:47.8380595Z",
@@ -680,7 +680,7 @@
         [
           "2026-04-04T05:25:46.9300923Z",
           "Informational",
-          "State: Starting, Action: PullingImage, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:22:41, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Pulling image 10.1.0.4:13209/appsvc/python:3.11_20260203.2.tuxprod for app-labnospace-ii2quhiube3ma., DetailsLevel: INFO"
+          "State: Starting, Action: PullingImage, LastError: ContainerTimeout, LastErrorTimestamp: 04/04/2026 05:22:41, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Pulling image 10.0.0.0:13209/appsvc/python:3.11_20260203.2.tuxprod for app-labnospace-ii2quhiube3ma., DetailsLevel: INFO"
         ],
         [
           "2026-04-04T05:25:46.8911594Z",
@@ -970,7 +970,7 @@
         [
           "2026-04-04T05:21:45.9161729Z",
           "Informational",
-          "Creating container with image: appsvc/python:3.11_20260203.2.tuxprod from registry: 10.1.0.4:13209 and fully qualified image name: 10.1.0.4:13209/appsvc/python:3.11_20260203.2.tuxprod"
+          "Creating container with image: appsvc/python:3.11_20260203.2.tuxprod from registry: 10.0.0.0:13209 and fully qualified image name: 10.0.0.0:13209/appsvc/python:3.11_20260203.2.tuxprod"
         ],
         [
           "2026-04-04T05:21:45.9159794Z",

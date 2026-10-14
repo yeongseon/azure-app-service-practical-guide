@@ -90,7 +90,7 @@
         [
           "2026-04-04T05:04:31.674957Z",
           "Informational",
-          "Creating container with image: appsvc/python:3.11_20260203.2.tuxprod from registry: 10.1.0.6:13209 and fully qualified image name: 10.1.0.6:13209/appsvc/python:3.11_20260203.2.tuxprod"
+          "Creating container with image: appsvc/python:3.11_20260203.2.tuxprod from registry: 10.0.0.0:13209 and fully qualified image name: 10.0.0.0:13209/appsvc/python:3.11_20260203.2.tuxprod"
         ],
         [
           "2026-04-04T05:04:31.6695341Z",
@@ -210,7 +210,7 @@
         [
           "2026-04-04T05:04:31.5472117Z",
           "Informational",
-          "Image appsvc/python:3.11_20260203.2.tuxprod is pulled from registry 10.1.0.6:13209"
+          "Image appsvc/python:3.11_20260203.2.tuxprod is pulled from registry 10.0.0.0:13209"
         ],
         [
           "2026-04-04T05:04:31.1724555Z",
@@ -225,7 +225,7 @@
         [
           "2026-04-04T05:04:31.1713167Z",
           "Informational",
-          "State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image 10.1.0.6:13209/appsvc/python:3.11_20260203.2.tuxprod for app-labmem-hch2g6gq7u63u., DetailsLevel: INFO"
+          "State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image 10.0.0.0:13209/appsvc/python:3.11_20260203.2.tuxprod for app-labmem-hch2g6gq7u63u., DetailsLevel: INFO"
         ],
         [
           "2026-04-04T05:04:31.1689803Z",
@@ -270,7 +270,7 @@
         [
           "2026-04-04T05:04:15.853642Z",
           "Informational",
-          "Creating container with image: appsvc/kudulite:bullseye_20260204.5.tuxprod from registry: 10.1.0.4:13209 and fully qualified image name: 10.1.0.4:13209/appsvc/kudulite:bullseye_20260204.5.tuxprod"
+          "Creating container with image: appsvc/kudulite:bullseye_20260204.5.tuxprod from registry: 10.0.0.0:13209 and fully qualified image name: 10.0.0.0:13209/appsvc/kudulite:bullseye_20260204.5.tuxprod"
         ],
         [
           "2026-04-04T05:04:15.8389354Z",
@@ -570,7 +570,7 @@
         [
           "2026-04-03T15:13:56.9148138Z",
           "Informational",
-          "Creating container with image: appsvc/python:3.11_20260203.2.tuxprod from registry: 10.1.0.6:13209 and fully qualified image name: 10.1.0.6:13209/appsvc/python:3.11_20260203.2.tuxprod"
+          "Creating container with image: appsvc/python:3.11_20260203.2.tuxprod from registry: 10.0.0.0:13209 and fully qualified image name: 10.0.0.0:13209/appsvc/python:3.11_20260203.2.tuxprod"
         ],
         [
           "2026-04-03T15:13:56.9146501Z",
@@ -700,7 +700,7 @@
         [
           "2026-04-03T15:13:55.6199845Z",
           "Informational",
-          "State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image 10.1.0.6:13209/appsvc/python:3.11_20260203.2.tuxprod for app-labmem-hch2g6gq7u63u., DetailsLevel: INFO"
+          "State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image 10.0.0.0:13209/appsvc/python:3.11_20260203.2.tuxprod for app-labmem-hch2g6gq7u63u., DetailsLevel: INFO"
         ],
         [
           "2026-04-03T15:13:55.5683413Z",
