@@ -511,9 +511,8 @@ GATES: tuple[Gate, ...] = (
             Binding("Validate Golden Contracts", CONTENT_SOURCES_WORKFLOW),
             Binding("Lab Evidence Verifiers", APP_INFRA_WORKFLOW),
         ),
-        note="The workflow executes each suite file separately; unittest discovery covers the same tests in one invocation.",
+        note="The workflow executes each suite file separately after installing jsonschema and referencing; the lightweight Golden Status freshness job deliberately does not duplicate those dependencies.",
         quiet_detail="All Golden evidence contract suites passed.",
-        verified_in_ci=True,
     ),
     Gate(
         key="absorbed-predicates",

@@ -25,7 +25,7 @@ Every quality gate in this repository, its most recently recorded result, and th
 
 ## Summary
 
-*Snapshot of `e2a1afa`, generated 2026-10-14.*
+*Snapshot of `9d5576f plus uncommitted working-tree changes`, generated 2026-10-14.*
 
 | Metric | Count |
 |---|---:|
@@ -47,7 +47,7 @@ pie title Quality Gate Outcomes
 
 ## Gate Results
 
-These are locally executed results, not GitHub Actions statuses. **Skipped** means the machine that generated this page lacked the toolchain the gate needs. **Warn** means the gate reported findings its CI job would not fail on, either because the job is advisory or because the dashboard runs a wider scope than CI does. 23 of 35 gates are re-run and compared by the `Validate Golden Status` job, so a flip to **Fail** cannot sit here unnoticed.
+These are locally executed results, not GitHub Actions statuses. **Skipped** means the machine that generated this page lacked the toolchain the gate needs. **Warn** means the gate reported findings its CI job would not fail on, either because the job is advisory or because the dashboard runs a wider scope than CI does. 22 of 35 gates are re-run and compared by the `Validate Golden Status` job, so a flip to **Fail** cannot sit here unnoticed.
 
 <!-- golden-status:results:start -->
 | Gate | Severity | Status | Detail | Time |
@@ -150,7 +150,7 @@ Generated from the `GATES` registry in `scripts/generate_golden_status.py`. CI f
 | Visual content coverage | Advisory by design; it always exits 0 and reports coverage as a tracked metric. |
 | Frontmatter schema | Unresolved relationship slugs are warnings, so only hard schema errors fail the job. |
 | MkDocs strict build | Builds into a temporary directory so a local `mkdocs serve` is left alone. Needs the full docs toolchain, so the Validate Golden Status job does not re-verify it. |
-| Golden evidence contracts | The workflow executes each suite file separately; unittest discovery covers the same tests in one invocation. |
+| Golden evidence contracts | The workflow executes each suite file separately after installing jsonschema and referencing; the lightweight Golden Status freshness job deliberately does not duplicate those dependencies. |
 | Node.js dependency audit | --package-lock-only audits the lockfile, so the result cannot be skewed by a stale node_modules. CI audits the tree it just installed, which is equivalent. |
 | Node.js app tests | Needs `npm ci` in apps/nodejs first; the dashboard never installs dependencies. |
 | Node.js production install | Dry run, so it resolves from the lockfile without writing node_modules. |
