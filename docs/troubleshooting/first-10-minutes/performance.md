@@ -1,7 +1,7 @@
 ---
 content_validation:
   status: verified
-  last_reviewed: 2026-09-11
+  last_reviewed: 2026-10-14
   reviewer: agent
   core_claims:
     - claim: "Metrics you might want to monitor include Average memory working set, CPU time, Memory working set, Requests, and Response time."
@@ -130,6 +130,8 @@ Performance incidents often mask outbound connection pressure.
 - Portal path: **App Service -> Diagnose and solve problems -> Availability and Performance -> SNAT Port Exhaustion**
 - Good signal: detector does not show near-exhaustion during incident.
 - Bad signal: near/at exhaustion with corresponding timeout growth.
+
+This correlation prioritizes a hypothesis; it does not establish causation. Distinguish measured SNAT pressure from client cancellation, worker queueing, and a slow or failing dependency. If detector or dependency telemetry is unavailable, record `Unknown` rather than attributing HTTP `499`/`503` or a repeated duration boundary to SNAT.
 
 ## Step 7: Check dependency health and timeout signatures
 Differentiate app compute pressure from downstream dependency slowness.

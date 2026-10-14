@@ -1,7 +1,7 @@
 ---
 content_validation:
   status: verified
-  last_reviewed: 2026-09-11
+  last_reviewed: 2026-10-14
   reviewer: agent
   core_claims:
     - claim: "Azure App Service diagnostics includes networking diagnostics such as SNAT Port Exhaustion and TCP Connections."
@@ -30,9 +30,10 @@ Use this checklist when Azure App Service Linux can serve some traffic but fails
 graph TD
     A[Symptom: Dependency calls fail] --> B{Inbound reachable?}
     B -- No --> C[Also investigate ingress path]
-    B -- Yes --> D{SNAT detector near exhaustion?}
+    B -- Yes --> D{SNAT detector shows incident-window pressure?}
     D -- Yes --> E[SNAT pressure hypothesis]
     D -- No --> F{DNS resolution healthy?}
+    D -- Unavailable --> U[Unknown: compare dependency and worker evidence]
     F -- No --> G[DNS issue hypothesis]
     F -- Yes --> H{VNet or PE routing aligned?}
     H -- No --> I[Route or Private Endpoint issue]
@@ -50,10 +51,11 @@ Avoid losing time on ingress when the failure is dependency egress.
 - Bad signal: mixed signals (both inbound and outbound), requiring parallel checks.
 
 ## Step 2: Check SNAT Port Exhaustion detector
-SNAT exhaustion is one of the most common App Service Linux outbound failure causes under load.
+Treat SNAT pressure as one competing hypothesis for outbound failures under load.
 - Portal path: **App Service -> Diagnose and solve problems -> Availability and Performance -> SNAT Port Exhaustion**
-- Good signal: utilization is comfortably below limits during incident.
-- Bad signal: near/at exhaustion when failures occur.
+- Evidence against this hypothesis: detector pressure stays comfortably below limits on the affected instance during the incident.
+- Evidence supporting this hypothesis: measured near/at exhaustion aligns with outbound failures on the same instance and window.
+- `Unknown`: the detector has no port data or is unavailable; continue with dependency, DNS, client-cancellation, and worker-queueing checks rather than inferring SNAT from inbound `499`/`503` or timeout duration.
 
 ## Step 3: Check TCP Connections metric trend
 High connection churn with poor reuse often precedes SNAT incidents.
@@ -157,10 +159,12 @@ AppServiceConsoleLogs
 - Good signal: no concentrated outbound error pattern.
 - Bad signal: repeated DNS or connect-timeout errors in incident window.
 
+Console timeout errors identify the failing operation more precisely than inbound status alone, but still compare per-target dependency health and worker saturation. A repeated HTTP time boundary can result from client cancellation, queued work, or dependency timeout as well as SNAT pressure.
+
 ## Decision Points
 After these checks, you should be able to:
 - Narrow to 1-2 hypotheses:
-    - **SNAT pressure**: detector + TCP connection trend support exhaustion    - **DNS issue**: nslookup failures or wrong resolution path    - **Route/Private Endpoint issue**: VNet/PE/DNS zone mismatch- Choose next playbook:
+    - **SNAT pressure**: incident-window detector data shows pressure alongside outbound errors    - **DNS issue**: nslookup failures or wrong resolution path    - **Route/Private Endpoint issue**: VNet/PE/DNS zone mismatch    - **Dependency or worker pressure**: failures isolate to a target or queueing grows without measured SNAT pressure    - **Unknown**: required detector, dependency, or application telemetry is unavailable- Choose next playbook:
     - SNAT -> connection reuse/SNAT playbook    - DNS -> DNS resolution playbook    - Route/PE -> Private Endpoint and custom DNS playbook
 ## Next Steps
 - [SNAT or Application Issue?](../playbooks/outbound-network/snat-or-application-issue.md)

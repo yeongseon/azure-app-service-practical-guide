@@ -15,10 +15,10 @@ related:
   - mental-model
 summary: Rapid symptom-to-action cards for common App Service issues.
 status: stable
-last_reviewed: 2026-09-11
+last_reviewed: 2026-10-14
 content_validation:
   status: verified
-  last_reviewed: 2026-09-11
+  last_reviewed: 2026-10-14
   reviewer: agent
   core_claims:
     - claim: "App Service can stream logs written to console output or files stored under /home/LogFiles for troubleshooting."
@@ -59,7 +59,7 @@ graph TD
 |---|---|
 | **Symptom** | All requests return 503 immediately after deployment or restart |
 | **First Query** | `AppServiceConsoleLogs \| where TimeGenerated > ago(15m) \| where ResultDescription has_any ("failed", "error", "exception", "listening") \| take 50` |
-| **What to Look For** | Missing startup logs = startup command issue. `Listening at 127.0.0.1` = wrong bind. Traceback = app crash. |
+| **What to Look For** | [Observed] `Listening at 127.0.0.1` supports a bind-path hypothesis; a matching traceback supports a crash hypothesis. No rows are `INCONCLUSIVE`: verify log configuration, collection delay, query window, selected instance, and stream health, then inspect process/listener state. |
 | **Platform Segment** | Startup / Availability |
 | **Playbook** | [Deployment Succeeded but Startup Failed](playbooks/startup-availability/deployment-succeeded-startup-failed.md) |
 
@@ -108,7 +108,7 @@ az monitor metrics list --resource <app-resource-id> --metric "Http5xx,Requests,
 |---|---|
 | **Symptom** | Requests to external APIs/databases time out intermittently |
 | **First Query** | `AppServiceConsoleLogs \| where TimeGenerated > ago(1h) \| where ResultDescription has_any ("connect timed out", "ReadTimeout", "ConnectTimeout", "ECONNRESET") \| summarize count() by bin(TimeGenerated, 5m)` |
-| **What to Look For** | Connection errors increasing over time. Correlation with high outbound request volume. |
+| **What to Look For** | [Observed] Connection errors and outbound volume in the same window. [Not Proven] HTTP `499`/`503` or repeated timeout boundaries do not establish SNAT. Compare client cancellation, worker queueing, one-dependency failures, and measured SNAT detector pressure. If detector or dependency telemetry is unavailable, record `Unknown`. |
 | **Platform Segment** | Outbound / Network |
 | **Playbook** | [SNAT or Application Issue](playbooks/outbound-network/snat-or-application-issue.md) |
 

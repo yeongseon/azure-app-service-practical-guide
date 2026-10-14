@@ -76,12 +76,12 @@ graph TD
     B -->|No errors but wrong behavior| F[Config / Routing]
     
     C --> C1[Startup Probe Failed?]
-    C1 -->|Yes, 0 console logs| C2[Wrong startup command → Deployment Succeeded Startup Failed]
+    C1 -->|Yes, logs unavailable or empty| C2[Telemetry inconclusive → verify logging and process state]
     C1 -->|Yes, app listening on 127.0.0.1| C3[Wrong bind address → Failed to Forward Request]
     C1 -->|Yes, timeout on port| C4[Port mismatch → Container HTTP Pings]
     
     D --> D1{Outbound connections involved?}
-    D1 -->|Yes, connection timeouts| D2[SNAT Exhaustion]
+    D1 -->|Yes, connection timeouts| D2[Measure SNAT, dependency, and worker pressure]
     D1 -->|No, sync worker blocking| D3[Intermittent 5xx Under Load]
     
     E --> E1{First request after deploy?}
@@ -149,10 +149,10 @@ Quick reference for recognizing common failure signatures:
 
 | Pattern | Indicates | Playbook |
 |---|---|---|
-| `503` + TimeTaken > 40000ms + 0 console logs | Startup failure — app never ran | [Deployment Succeeded Startup Failed](playbooks/startup-availability/deployment-succeeded-startup-failed.md) |
+| `503` + high `TimeTaken` + no console rows | [Observed] Request failed slowly; startup failure is one hypothesis. [Not Proven] The app never ran. First verify log configuration, query window and collection delay, then compare platform events with process/listener state. If telemetry is unavailable, record `INCONCLUSIVE`. | [Deployment Succeeded Startup Failed](playbooks/startup-availability/deployment-succeeded-startup-failed.md) |
 | Console: `Listening at: http://127.0.0.1:8000` | Wrong bind address | [Failed to Forward Request](playbooks/startup-availability/failed-to-forward-request.md) |
 | `499` + TimeTaken ~5000ms on `/slow` endpoints | Client timeout, sync worker blocking | [Intermittent 5xx Under Load](playbooks/performance/intermittent-5xx-under-load.md) |
-| `499` + TimeTaken ~30000ms on `/outbound` | SNAT exhaustion or outbound timeout | [SNAT or Application Issue](playbooks/outbound-network/snat-or-application-issue.md) |
+| `499` or `503` near a repeated time boundary on `/outbound` | [Observed] A request ended near a timeout boundary. [Not Proven] SNAT exhaustion. Compare client cancellation, worker queueing, and dependency failures; select SNAT only when the detector shows port pressure in the same instance and window. | [SNAT or Application Issue](playbooks/outbound-network/snat-or-application-issue.md) |
 | `/resolve` returns public IP for privatelink FQDN | DNS misconfiguration (Private DNS Zone not linked) | [DNS Resolution VNet](playbooks/outbound-network/dns-resolution-vnet-integrated-app-service.md) |
 | `startup_duration` > 30s in platform logs | Cold start / slow start | [Slow Start / Cold Start](playbooks/performance/slow-start-cold-start.md) |
 | `/disk-status` shows /tmp > 50% | Disk pressure | [No Space Left on Device](playbooks/performance/no-space-left-on-device.md) |

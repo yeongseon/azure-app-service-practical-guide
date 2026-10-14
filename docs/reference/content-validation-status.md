@@ -95,12 +95,12 @@ pie title In-Scope Document Validation Status
 | [Cd Rbac Role Assignment Conflict](../troubleshooting/playbooks/cd-rbac-role-assignment-conflict.md) | ✅ | ✅ Verified | 3/3 | 2026-09-11 |
 | [Container Didnt Respond To Http Pings](../troubleshooting/playbooks/startup-availability/container-didnt-respond-to-http-pings.md) | ✅ | ✅ Verified | 3/3 | 2026-09-11 |
 | [Cors And Token Errors](../troubleshooting/playbooks/performance/cors-and-token-errors.md) | ✅ | ✅ Verified | 2/2 | 2026-09-11 |
-| [Decision Tree](../troubleshooting/decision-tree.md) | ✅ | ✅ Verified | 2/2 | 2026-09-11 |
+| [Decision Tree](../troubleshooting/decision-tree.md) | ✅ | ✅ Verified | 2/2 | 2026-10-14 |
 | [Deployment Failures](../troubleshooting/playbooks/deployment-failures.md) | ✅ | ✅ Verified | 5/5 | 2026-10-13 |
 | [Deployment Succeeded Startup Failed](../troubleshooting/playbooks/startup-availability/deployment-succeeded-startup-failed.md) | ✅ | ✅ Verified | 3/3 | 2026-09-11 |
 | [Detector Map](../troubleshooting/methodology/detector-map.md) | ✅ | ✅ Verified | 2/2 | 2026-09-11 |
 | [Dns Resolution Vnet Integrated App Service](../troubleshooting/playbooks/outbound-network/dns-resolution-vnet-integrated-app-service.md) | ✅ | ✅ Verified | 4/4 | 2026-10-02 |
-| [Evidence Map](../troubleshooting/evidence-map.md) | ✅ | ✅ Verified | 2/2 | 2026-09-11 |
+| [Evidence Map](../troubleshooting/evidence-map.md) | ✅ | ✅ Verified | 2/2 | 2026-10-14 |
 | [Failed To Forward Request](../troubleshooting/playbooks/startup-availability/failed-to-forward-request.md) | ✅ | ✅ Verified | 3/3 | 2026-09-11 |
 | [Intermittent 5Xx Under Load](../troubleshooting/playbooks/performance/intermittent-5xx-under-load.md) | ✅ | ✅ Verified | 2/2 | 2026-04-12 |
 | [Memory Pressure And Worker Degradation](../troubleshooting/playbooks/performance/memory-pressure-and-worker-degradation.md) | ✅ | ✅ Verified | 2/2 | 2026-04-12 |
@@ -108,18 +108,18 @@ pie title In-Scope Document Validation Status
 | [Missing Wwwroot Files 404](../troubleshooting/playbooks/missing-wwwroot-files-404.md) | ✅ | ✅ Verified | 5/5 | 2026-10-13 |
 | [Mtls Failures](../troubleshooting/playbooks/mtls-failures.md) | ✅ | ✅ Verified | 3/3 | 2026-09-11 |
 | [No Space Left On Device](../troubleshooting/playbooks/performance/no-space-left-on-device.md) | ✅ | ✅ Verified | 2/2 | 2026-04-12 |
-| [Outbound Network](../troubleshooting/first-10-minutes/outbound-network.md) | ✅ | ✅ Verified | 2/2 | 2026-09-11 |
-| [Performance](../troubleshooting/first-10-minutes/performance.md) | ✅ | ✅ Verified | 2/2 | 2026-09-11 |
+| [Outbound Network](../troubleshooting/first-10-minutes/outbound-network.md) | ✅ | ✅ Verified | 2/2 | 2026-10-14 |
+| [Performance](../troubleshooting/first-10-minutes/performance.md) | ✅ | ✅ Verified | 2/2 | 2026-10-14 |
 | [Performance Degradation](../troubleshooting/playbooks/performance-degradation.md) | ✅ | ✅ Verified | 5/5 | 2026-09-11 |
 | [Private Endpoint Custom Dns Route Confusion](../troubleshooting/playbooks/outbound-network/private-endpoint-custom-dns-route-confusion.md) | ✅ | ✅ Verified | 3/3 | 2026-10-02 |
-| [Quick Diagnosis Cards](../troubleshooting/quick-diagnosis-cards.md) | ✅ | ✅ Verified | 2/2 | 2026-09-11 |
+| [Quick Diagnosis Cards](../troubleshooting/quick-diagnosis-cards.md) | ✅ | ✅ Verified | 2/2 | 2026-10-14 |
 | [Slot Swap Config Drift](../troubleshooting/playbooks/startup-availability/slot-swap-config-drift.md) | ✅ | ✅ Verified | 3/3 | 2026-09-11 |
 | [Slot Swap Failed During Warmup](../troubleshooting/playbooks/startup-availability/slot-swap-failed-during-warmup.md) | ✅ | ✅ Verified | 3/3 | 2026-09-11 |
 | [Slow Response But Low Cpu](../troubleshooting/playbooks/performance/slow-response-but-low-cpu.md) | ✅ | ✅ Verified | 2/2 | 2026-09-11 |
 | [Slow Start Cold Start](../troubleshooting/playbooks/performance/slow-start-cold-start.md) | ✅ | ✅ Verified | 2/2 | 2026-04-12 |
 | [Snat Or Application Issue](../troubleshooting/playbooks/outbound-network/snat-or-application-issue.md) | ✅ | ✅ Verified | 2/2 | 2026-10-02 |
 | [Ssl Certificate Issues](../troubleshooting/playbooks/ssl-certificate-issues.md) | ✅ | ✅ Verified | 5/5 | 2026-09-11 |
-| [Startup Availability](../troubleshooting/first-10-minutes/startup-availability.md) | ✅ | ✅ Verified | 2/2 | 2026-09-11 |
+| [Startup Availability](../troubleshooting/first-10-minutes/startup-availability.md) | ✅ | ✅ Verified | 2/2 | 2026-10-14 |
 | [Storage Connectivity Firewall Authorization](../troubleshooting/playbooks/outbound-network/storage-connectivity-firewall-authorization.md) | ✅ | ✅ Verified | 4/4 | 2026-07-16 |
 | [Troubleshooting Method](../troubleshooting/methodology/troubleshooting-method.md) | ✅ | ✅ Verified | 2/2 | 2026-09-11 |
 | [Warmup Vs Health Check](../troubleshooting/playbooks/startup-availability/warmup-vs-health-check.md) | ✅ | ✅ Verified | 3/3 | 2026-09-11 |
