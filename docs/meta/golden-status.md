@@ -25,7 +25,7 @@ Every quality gate in this repository, its most recently recorded result, and th
 
 ## Summary
 
-*Snapshot of `a13bed6 plus uncommitted working-tree changes`, generated 2026-10-14.*
+*Snapshot of `b824093 plus uncommitted working-tree changes`, generated 2026-10-14.*
 
 | Metric | Count |
 |---|---:|
@@ -54,22 +54,22 @@ These are locally executed results, not GitHub Actions statuses. **Skipped** mea
 | --- | --- | --- | --- | --- |
 | Validator doctests | Blocking | ✅ Pass | 10 modules checked, every doctest passed. | < 10s |
 | Capture asset geometry | Blocking | ✅ Pass | Capture assets conform to the capture profile. | < 10s |
-| Mermaid format | Blocking | ✅ Pass | Files checked: 237 · Files with errors: 0 | < 10s |
-| Mermaid syntax | Blocking | ✅ Pass | Diagrams checked: 390 · Errors found: 0 | < 10s |
-| Content sources | Blocking | ✅ Pass | Files with mermaid: 236 · Validation errors: 0 | < 10s |
+| Mermaid format | Blocking | ✅ Pass | Files checked: 242 · Files with errors: 0 | < 10s |
+| Mermaid syntax | Blocking | ✅ Pass | Diagrams checked: 395 · Errors found: 0 | < 10s |
+| Content sources | Blocking | ✅ Pass | Files with mermaid: 241 · Validation errors: 0 | < 10s |
 | Content sources schema | Blocking | ✅ Pass | Files with content_sources schema drift: 0 · Parse errors: 0 | < 10s |
-| Diagram ID parity | Blocking | ✅ Pass | mermaid blocks: 390 · diagram-id comments: 390 | < 10s |
+| Diagram ID parity | Blocking | ✅ Pass | mermaid blocks: 395 · diagram-id comments: 395 | < 10s |
 | CLI explanation tables | Blocking | ✅ Pass | All Azure CLI code fences and Markdown tables are correctly terminated. | < 10s |
-| Document quality | Blocking | ✅ Pass | Documentation quality gate passed for 237 file(s). | < 10s |
+| Document quality | Blocking | ✅ Pass | Documentation quality gate passed for 242 file(s). | < 10s |
 | Frontmatter YAML style | Blocking | ✅ Pass | Files with style drift: 0 · Parse errors: 0 | < 10s |
 | Microsoft Learn locale | Blocking | ✅ Pass | Files with locale drift: 0 | < 10s |
 | Microsoft Learn URL reachability | Advisory | ➖ Skipped | Network gate; re-run with --include-network. | < 10s |
 | Lab artifact PII | Blocking | ✅ Pass | [scan_lab_pii] scanned=584 skipped_binary=0 skipped_decode=0 findings=0 | < 10s |
 | Documentation PII | Blocking | ✅ Pass | No blocking PII patterns detected! | < 10s |
-| Documentation repetition | Blocking | ✅ Pass | Scanned 237 file(s): 0 error(s), 6 warning(s). | < 10s |
-| Visual content coverage | Advisory | ✅ Pass | full repo: 78/78 in-scope pages carry a visual aid (100.0%). Advisory gate — exit 0 regardless (see issue #388). | < 10s |
+| Documentation repetition | Blocking | ✅ Pass | Scanned 242 file(s): 0 error(s), 6 warning(s). | < 10s |
+| Visual content coverage | Advisory | ✅ Pass | full repo: 83/83 in-scope pages carry a visual aid (100.0%). Advisory gate — exit 0 regardless (see issue #388). | < 10s |
 | Windows troubleshooting navigation | Blocking | ✅ Pass | Windows troubleshooting navigation: 2 entry points link all 5 required playbooks. | < 10s |
-| Frontmatter schema | Blocking | ✅ Pass | Checked 237 files · Found 0 errors, 28 warnings: | < 10s |
+| Frontmatter schema | Blocking | ✅ Pass | Checked 242 files · Found 0 errors, 28 warnings: | < 10s |
 | MkDocs strict build | Blocking | ✅ Pass | Site built with no strict-mode warnings. | 10-120s |
 | Shell script syntax | Blocking | ✅ Pass | All shell scripts parse. | < 10s |
 | ShellCheck | Blocking | ➖ Skipped | Executable `shellcheck` is not on PATH. | < 10s |
