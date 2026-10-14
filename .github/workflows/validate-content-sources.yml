@@ -76,7 +76,7 @@ jobs:
       - name: Validate documented repository paths
         run: |
           python scripts/validate_documented_paths.py
-      
+
       - name: Validate mermaid format
         run: |
           python scripts/validate_mermaid_format.py
