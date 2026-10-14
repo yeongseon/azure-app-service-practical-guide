@@ -19,6 +19,7 @@ JOB_NAMES: Final = (
     "DOTNET",
     "JAVA",
     "BICEP",
+    "GOLDEN",
 )
 
 

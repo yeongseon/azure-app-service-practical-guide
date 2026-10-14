@@ -28,6 +28,7 @@ class Job(StrEnum):
     DOTNET = "dotnet"
     JAVA = "java"
     BICEP = "bicep"
+    GOLDEN = "golden"
 
 
 ALL_JOBS: Final = frozenset(Job)
@@ -207,7 +208,19 @@ def classify_changes(
 
 
 def _jobs_for_path(path: str) -> set[Job]:
-    if path.startswith((".github/workflows/", "labs/_shared/", "scripts/", "tools/")):
+    if path.startswith(
+        (
+            ".github/workflows/",
+            "evidence/",
+            "labs/_shared/",
+            "schemas/golden/",
+            "scripts/",
+            "tests/golden/",
+            "tools/",
+        )
+    ):
+        return set(ALL_JOBS)
+    if path == "labs/golden-classification.json" or "/golden/" in path:
         return set(ALL_JOBS)
     if path.startswith("labs/"):
         return {Job.SCRIPTS, Job.BICEP}

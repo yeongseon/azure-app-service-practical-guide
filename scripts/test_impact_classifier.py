@@ -225,6 +225,18 @@ class ImpactClassifierTests(unittest.TestCase):
 
         self.assertEqual(selected, ALL_JOBS)
 
+    def test_golden_contract_surfaces_expand_all_jobs(self) -> None:
+        for path in (
+            "tests/golden/test_evaluate_run.py",
+            "schemas/golden/manifest.schema.json",
+            "scripts/golden/evaluate_run.py",
+            "evidence/runs/example/manifest.json",
+            "labs/golden-classification.json",
+            "labs/snat-exhaustion/golden/manifest.template.json",
+        ):
+            with self.subTest(path=path):
+                self.assertEqual(classify_changes((Change.modified(path),)), ALL_JOBS)
+
     def test_workflow_change_expands_all_jobs(self) -> None:
         selected = classify_changes(
             (Change.modified(".github/workflows/app-infra-ci.yml"),)
