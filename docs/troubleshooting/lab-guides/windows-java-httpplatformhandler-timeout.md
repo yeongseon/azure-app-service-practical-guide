@@ -713,7 +713,7 @@ Across all load experiments, we observed a total of ~1,177 requests. The cumulat
   "ScSubStatus": 121,
   "TimeTaken": 230007,
   "Win32Status": 64,
-  "ResourceId": "/subscriptions/<subscription-id>/resourceGroups/rg-lab-winjaval2sat/providers/Microsoft.Web/sites/app-winjaval2sat-example"
+  "ResourceId": "/subscriptions/<subscription-id>/resourceGroups/rg-lab-winjaval2sat/providers/Microsoft.Web/sites/app-winjaval2sat-<suffix>"
 }
 ```
 
