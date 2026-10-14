@@ -10,9 +10,11 @@ contains the detailed documentation workflow.
 Use `type: description` or `type(scope): description` for issues, PRs and commits.
 Allowed types: `feat`, `fix`, `docs`, `test`, `perf`, `refactor`, `ci`, `build`,
 `chore`, `style`, `revert`. Type/scope are lowercase; use one space after the
-colon, no trailing period and no trailing `(#123)`. Put references in the body.
-Use `!` before the colon for breaking changes. This section is the single source
-of truth and overrides older title examples in the retained authoring contract.
+colon and no trailing period. Do not put a trailing `(#123)` suffix in a PR
+title: link issues in the body instead. GitHub appends the PR number to the
+squash-commit subject automatically. Use `!` before the colon for breaking
+changes. This section is the single source of truth and overrides older title
+examples in the retained authoring contract.
 
 The standalone `PR title` workflow runs on opened, edited, reopened and
 synchronize events. It does not check out code, use secrets or request token
