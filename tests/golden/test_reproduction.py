@@ -24,6 +24,8 @@ import json
 import pathlib
 import tempfile
 import unittest
+from unittest import mock
+import hashlib
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 _spec = importlib.util.spec_from_file_location(
@@ -54,7 +56,7 @@ def record(**over):
 
 def write(rec):
     d = pathlib.Path(tempfile.mkdtemp()) / "reproduction.json"
-    d.write_text(json.dumps(rec))
+    d.write_text(rec if isinstance(rec, str) else json.dumps(rec))
     return d
 
 
@@ -212,6 +214,108 @@ class RetainedRunIntegrityMutations(unittest.TestCase):
                     continue
                 self.assertEqual(result["reproduction_result"], "NOT_INDEPENDENT")
                 self.assertFalse(result["passed"])
+
+
+class RunPackageMutationTests(unittest.TestCase):
+    def setUp(self):
+        self.runs = pathlib.Path(tempfile.mkdtemp())
+        self.patch = mock.patch.object(repro, "RUNS", self.runs)
+        self.patch.start()
+
+    def tearDown(self):
+        self.patch.stop()
+
+    def _run(self, run_id, scenario, resource_group, app_name, status=503,
+             cleanup_verified=True):
+        directory = self.runs / run_id
+        directory.mkdir()
+        captured = "2026-09-27T03:00:00Z"
+        manifest = {
+            "run_id": run_id,
+            "resource_id": f"/subscriptions/<subscription-id>/resourceGroups/{resource_group}/providers/Microsoft.Web/sites/{app_name}",
+            "captured_at": captured,
+            "execution_status": "COMPLETE",
+            "source_commit": "a" * 40,
+            "environment": {"resource_group": resource_group, "app_name": app_name},
+            "recipe_digest": "sha256:" + "b" * 64,
+            "collector_digest": "sha256:" + "c" * 64,
+            "hypothesis": "A causal hypothesis.",
+            "hypothesis_claim_level": "Inferred",
+            "assertions": [
+                {"id": "symptom", "role": "symptom", "field": "status", "equals": status},
+                {"id": "cause", "role": "discriminating", "field": "cause", "equals": True},
+                {"id": "recovery", "role": "recovery", "field": "recovery", "equals": 200},
+            ],
+        }
+        evidence = {"run_id": run_id, "resource_id": manifest["resource_id"],
+                    "captured_at": captured,
+                    "observations": {"status": status, "cause": True, "recovery": 200}}
+        (directory / "manifest.json").write_text(json.dumps(manifest))
+        (directory / "evidence.json").write_text(json.dumps(evidence))
+        result = repro.evaluator.evaluate(directory)
+        (directory / "result.json").write_text(json.dumps(result))
+        provenance = {
+            "scenario": scenario,
+            "cleanup_verified": cleanup_verified,
+            "digests": {
+                name: hashlib.sha256((directory / name).read_bytes()).hexdigest()
+                for name in ("manifest.json", "evidence.json", "result.json")
+            },
+        }
+        (directory / "provenance.json").write_text(json.dumps(provenance))
+
+    def _record(self, **overrides):
+        value = record(original_run_id="original", replay_run_id="replay")
+        value.update(overrides)
+        return write(value)
+
+    def test_synthetic_directories_without_provenance_cannot_pass(self):
+        self._run("original", "deployment-succeeded-startup-failed", "rg-one", "app-one")
+        self._run("replay", "deployment-succeeded-startup-failed", "rg-two", "app-two")
+        (self.runs / "replay" / "provenance.json").unlink()
+        with self.assertRaises(repro.ReproductionError):
+            repro.check(self._record())
+
+    def test_stored_supported_verdict_is_recomputed_from_raw_evidence(self):
+        self._run("original", "deployment-succeeded-startup-failed", "rg-one", "app-one")
+        self._run("replay", "deployment-succeeded-startup-failed", "rg-two", "app-two")
+        evidence = json.loads((self.runs / "replay/evidence.json").read_text())
+        evidence["observations"]["cause"] = False
+        (self.runs / "replay/evidence.json").write_text(json.dumps(evidence))
+        provenance = json.loads((self.runs / "replay/provenance.json").read_text())
+        provenance["digests"]["evidence.json"] = hashlib.sha256(
+            (self.runs / "replay/evidence.json").read_bytes()).hexdigest()
+        (self.runs / "replay/provenance.json").write_text(json.dumps(provenance))
+        with self.assertRaises(repro.ReproductionError):
+            repro.check(self._record())
+
+    def test_duplicate_and_case_variant_record_keys_are_rejected(self):
+        duplicate = json.dumps(record())[:-1] + ',"reviewer":"other"}'
+        with self.assertRaises(repro.ReproductionError):
+            repro.check(write(duplicate))
+        lookalike = record()
+        lookalike["Reviewer_Kind"] = lookalike["reviewer_kind"]
+        with self.assertRaises(repro.ReproductionError):
+            repro.check(write(lookalike))
+
+    def test_record_scenario_must_match_both_runs(self):
+        self._run("original", "deployment-succeeded-startup-failed", "rg-one", "app-one")
+        self._run("replay", "other-scenario", "rg-two", "app-two")
+        with self.assertRaises(repro.ReproductionError):
+            repro.check(self._record())
+
+    def test_runs_must_use_different_resource_groups_and_apps(self):
+        self._run("original", "deployment-succeeded-startup-failed", "rg-shared", "app-shared")
+        self._run("replay", "deployment-succeeded-startup-failed", "rg-shared", "app-shared")
+        with self.assertRaises(repro.ReproductionError):
+            repro.check(self._record())
+
+    def test_cleanup_evidence_is_required_for_both_runs(self):
+        self._run("original", "deployment-succeeded-startup-failed", "rg-one", "app-one")
+        self._run("replay", "deployment-succeeded-startup-failed", "rg-two", "app-two",
+                  cleanup_verified=False)
+        with self.assertRaises(repro.ReproductionError):
+            repro.check(self._record())
 
 
 if __name__ == "__main__":

@@ -35,9 +35,19 @@ import pathlib
 import sys
 import datetime
 import re
+import hashlib
+import importlib.util
+
+import jsonschema
+from referencing import Registry, Resource
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 RUNS = ROOT / "evidence" / "runs"
+SCHEMAS = ROOT / "schemas" / "golden"
+_EVALUATOR_SPEC = importlib.util.spec_from_file_location(
+    "golden_evaluator", ROOT / "scripts/golden/evaluate_run.py")
+evaluator = importlib.util.module_from_spec(_EVALUATOR_SPEC)
+_EVALUATOR_SPEC.loader.exec_module(evaluator)
 
 HYPOTHESIS_STATUS = ("SUPPORTED", "CONTRADICTED", "INCONCLUSIVE", "NOT_TESTED")
 
@@ -62,11 +72,66 @@ REQUIRED_FIELDS = (
     "original_run_id",
     "original_hypothesis_status",
     "replay_hypothesis_status",
+    "consulted_source_to_fill_doc_gap",
+    "deviations",
 )
 
 
 class ReproductionError(Exception):
     """Raised when a reproduction record does not conform to the schema."""
+
+
+def _read_json(path: pathlib.Path) -> dict:
+    try:
+        return json.loads(path.read_text(), object_pairs_hook=evaluator._unique_object)
+    except FileNotFoundError as exc:
+        raise ReproductionError(f"required file not found: {path}") from exc
+    except (json.JSONDecodeError, evaluator.ModelError) as exc:
+        raise ReproductionError(f"invalid JSON in {path.name}: {exc}") from exc
+
+
+def _schema_validator(name: str) -> jsonschema.Draft202012Validator:
+    registry = Registry()
+    for path in SCHEMAS.glob("*.schema.json"):
+        schema = _read_json(path)
+        registry = registry.with_resource(schema["$id"], Resource.from_contents(schema))
+    format_checker = jsonschema.FormatChecker()
+
+    @format_checker.checks("date-time", raises=(TypeError, ValueError))
+    def valid_date_time(value):
+        if not isinstance(value, str):
+            return True
+        parsed = datetime.datetime.fromisoformat(value.replace("Z", "+00:00"))
+        return "T" in value and parsed.tzinfo is not None
+
+    @format_checker.checks("date", raises=(TypeError, ValueError))
+    def valid_date(value):
+        if not isinstance(value, str):
+            return True
+        return datetime.date.fromisoformat(value).isoformat() == value
+
+    return jsonschema.Draft202012Validator(
+        _read_json(SCHEMAS / name), registry=registry, format_checker=format_checker)
+
+
+def _validate_schema(document: dict, name: str) -> None:
+    errors = sorted(_schema_validator(name).iter_errors(document), key=lambda error: list(error.path))
+    if errors:
+        location = "/".join(str(part) for part in errors[0].path) or "(root)"
+        raise ReproductionError(f"{name} {location}: {errors[0].message}")
+
+
+def valid_digest(value) -> bool:
+    return isinstance(value, str) and re.fullmatch(r"[0-9a-f]{64}", value) is not None
+
+
+def resources_are_independent(original: dict, replay: dict) -> bool:
+    original_environment = original.get("environment") or {}
+    replay_environment = replay.get("environment") or {}
+    return all(original_environment.get(key)
+               and replay_environment.get(key)
+               and original_environment[key].casefold() != replay_environment[key].casefold()
+               for key in ("resource_group", "app_name"))
 
 
 def _validate(record: dict) -> None:
@@ -144,24 +209,41 @@ def classify_reproduction(record: dict) -> str:
 
 def _load_run(run_id: str) -> tuple[dict, dict, dict]:
     directory = RUNS / run_id
-    try:
-        manifest = json.loads((directory / "manifest.json").read_text())
-        evidence = json.loads((directory / "evidence.json").read_text())
-        result = json.loads((directory / "result.json").read_text())
-    except FileNotFoundError as exc:
-        raise ReproductionError(f"retained run not found: {run_id}") from exc
+    if directory.is_symlink():
+        raise ReproductionError(f"retained run directory must not be a symlink: {run_id}")
+    manifest = _read_json(directory / "manifest.json")
+    evidence = _read_json(directory / "evidence.json")
+    result = _read_json(directory / "result.json")
+    provenance = _read_json(directory / "provenance.json")
+    for document, schema_name in ((manifest, "manifest.schema.json"),
+                                  (evidence, "evidence.schema.json"),
+                                  (result, "result.schema.json")):
+        _validate_schema(document, schema_name)
     if manifest.get("run_id") != run_id or evidence.get("run_id") != run_id or result.get("run_id") != run_id:
         raise ReproductionError(f"retained run identity mismatch: {run_id}")
     if manifest.get("execution_status") != "COMPLETE" or result.get("execution_status") != "COMPLETE":
         raise ReproductionError(f"retained run is not COMPLETE: {run_id}")
     if evidence.get("captured_at") != manifest.get("captured_at"):
         raise ReproductionError(f"retained run capture time mismatch: {run_id}")
+    recomputed = evaluator.evaluate(directory)
+    if recomputed["generated_verdict_rejected"]:
+        raise ReproductionError(f"retained result disagrees with raw evidence: {run_id}")
     recovery_ids = [item["id"] for item in manifest.get("assertions", [])
-                    if item.get("role") == "recovery"]
-    if not recovery_ids or any(result.get("assertion_outcomes", {}).get(item) != "SUPPORTED"
-                               for item in recovery_ids):
+                     if item.get("role") == "recovery"]
+    if not recovery_ids or any(recomputed.get("assertion_outcomes", {}).get(item) != "SUPPORTED"
+                                for item in recovery_ids):
         raise ReproductionError(f"retained run has no verified recovery: {run_id}")
-    return manifest, evidence, result
+    if provenance.get("scenario") is None or provenance.get("cleanup_verified") is not True:
+        raise ReproductionError(f"retained run lacks cleanup provenance: {run_id}")
+    digests = provenance.get("digests")
+    if not isinstance(digests, dict):
+        raise ReproductionError(f"retained run lacks artifact digests: {run_id}")
+    for name in ("manifest.json", "evidence.json", "result.json"):
+        expected = digests.get(name)
+        actual = hashlib.sha256((directory / name).read_bytes()).hexdigest()
+        if not valid_digest(expected) or expected != actual:
+            raise ReproductionError(f"retained run digest mismatch for {name}: {run_id}")
+    return manifest, evidence, recomputed | {"scenario": provenance["scenario"]}
 
 
 def classify_documentation(record: dict) -> str:
@@ -195,20 +277,19 @@ def classify_documentation(record: dict) -> str:
 def check(path) -> dict:
     """Read and check one reproduction record."""
     path = pathlib.Path(path)
-    try:
-        record = json.loads(path.read_text())
-    except FileNotFoundError as exc:
-        raise ReproductionError(f"reproduction record not found: {path}") from exc
-    except json.JSONDecodeError as exc:
-        raise ReproductionError(f"malformed reproduction record: {exc}") from exc
+    record = _read_json(path)
+    _validate_schema(record, "reproduction.schema.json")
 
     _validate(record)
     reproduction_result = classify_reproduction(record)
     if reproduction_result in ("REPRODUCED", "FAILED", "INCONCLUSIVE"):
         original_manifest, original_evidence, original_result = _load_run(record["original_run_id"])
         replay_manifest, replay_evidence, replay_result = _load_run(record["replay_run_id"])
-        if original_manifest.get("resource_id") == replay_manifest.get("resource_id") and \
-                original_evidence == replay_evidence:
+        if original_result["scenario"] != record["scenario"] or replay_result["scenario"] != record["scenario"]:
+            raise ReproductionError("reproduction scenario disagrees with retained run provenance")
+        if not resources_are_independent(original_manifest, replay_manifest):
+            raise ReproductionError("runs are not resource-independent")
+        if original_evidence == replay_evidence:
             raise ReproductionError("replay reuses the original raw evidence")
         if replay_result.get("hypothesis_status") != record["replay_hypothesis_status"]:
             raise ReproductionError("replay status disagrees with the retained result")
