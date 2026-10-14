@@ -476,6 +476,17 @@ GATES: tuple[Gate, ...] = (
         display="mkdocs build --strict",
     ),
     Gate(
+        key="impact-classifier-tests",
+        name="App and Infra impact classifier tests",
+        enforces="PR, push, rename, deletion, executable Markdown, app, lab, shared-helper, workflow, and full-regression changes select the intended jobs.",
+        argv=("{python}", "-m", "unittest", "scripts/test_impact_classifier.py"),
+        severity=BLOCKING,
+        covers=("scripts/impact_classifier.py", "scripts/test_impact_classifier.py"),
+        bindings=(Binding("Classify App and Infra Changes", APP_INFRA_WORKFLOW),),
+        quiet_detail="All impact-selection scenarios passed.",
+        verified_in_ci=True,
+    ),
+    Gate(
         key="shell-syntax",
         name="Shell script syntax",
         enforces="Every tracked .sh file under apps/, labs/, and scripts/ parses.",

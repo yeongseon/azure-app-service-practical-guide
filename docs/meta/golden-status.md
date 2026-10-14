@@ -25,12 +25,12 @@ Every quality gate in this repository, its most recently recorded result, and th
 
 ## Summary
 
-*Snapshot of `76f50cd`, generated 2026-10-14.*
+*Snapshot of `e466e15 plus uncommitted working-tree changes`, generated 2026-10-14.*
 
 | Metric | Count |
 |---|---:|
-| Registered gates | 32 |
-| ✅ Pass | 25 |
+| Registered gates | 30 |
+| ✅ Pass | 23 |
 | ❌ Fail | 0 |
 | ⚠️ Warn | 0 |
 | ➖ Skipped | 7 |
@@ -41,38 +41,36 @@ Every quality gate in this repository, its most recently recorded result, and th
 <!-- diagram-id: golden-status-gate-outcomes-pie -->
 ```mermaid
 pie title Quality Gate Outcomes
-    "Pass" : 25
+    "Pass" : 23
     "Skipped" : 7
 ```
 
 ## Gate Results
 
-These are locally executed results, not GitHub Actions statuses. **Skipped** means the machine that generated this page lacked the toolchain the gate needs. **Warn** means the gate reported findings its CI job would not fail on, either because the job is advisory or because the dashboard runs a wider scope than CI does. 20 of 32 gates are re-run and compared by the `Validate Golden Status` job, so a flip to **Fail** cannot sit here unnoticed.
+These are locally executed results, not GitHub Actions statuses. **Skipped** means the machine that generated this page lacked the toolchain the gate needs. **Warn** means the gate reported findings its CI job would not fail on, either because the job is advisory or because the dashboard runs a wider scope than CI does. 18 of 30 gates are re-run and compared by the `Validate Golden Status` job, so a flip to **Fail** cannot sit here unnoticed.
 
 <!-- golden-status:results:start -->
 | Gate | Severity | Status | Detail | Time |
 | --- | --- | --- | --- | --- |
-| Validator doctests | Blocking | ✅ Pass | 11 modules checked, every doctest passed. | < 10s |
+| Validator doctests | Blocking | ✅ Pass | 9 modules checked, every doctest passed. | < 10s |
 | Capture asset geometry | Blocking | ✅ Pass | Capture assets conform to the capture profile. | < 10s |
-| Mermaid format | Blocking | ✅ Pass | Files checked: 242 · Files with errors: 0 | < 10s |
-| Mermaid syntax | Blocking | ✅ Pass | Diagrams checked: 395 · Errors found: 0 | < 10s |
-| Content sources | Blocking | ✅ Pass | Files with mermaid: 241 · Validation errors: 0 | < 10s |
+| Mermaid format | Blocking | ✅ Pass | Files checked: 237 · Files with errors: 0 | < 10s |
+| Mermaid syntax | Blocking | ✅ Pass | Diagrams checked: 390 · Errors found: 0 | < 10s |
+| Content sources | Blocking | ✅ Pass | Files with mermaid: 236 · Validation errors: 0 | < 10s |
 | Content sources schema | Blocking | ✅ Pass | Files with content_sources schema drift: 0 · Parse errors: 0 | < 10s |
-| Diagram ID parity | Blocking | ✅ Pass | mermaid blocks: 395 · diagram-id comments: 395 | < 10s |
+| Diagram ID parity | Blocking | ✅ Pass | mermaid blocks: 390 · diagram-id comments: 390 | < 10s |
 | CLI explanation tables | Blocking | ✅ Pass | All Azure CLI code fences and Markdown tables are correctly terminated. | < 10s |
-| Documented repository paths | Blocking | ✅ Pass | Documented repository path errors: 0 | < 10s |
-| Document quality | Blocking | ✅ Pass | Documentation quality gate passed for 242 file(s). | < 10s |
+| Document quality | Blocking | ✅ Pass | Documentation quality gate passed for 237 file(s). | < 10s |
 | Frontmatter YAML style | Blocking | ✅ Pass | Files with style drift: 0 · Parse errors: 0 | < 10s |
 | Microsoft Learn locale | Blocking | ✅ Pass | Files with locale drift: 0 | < 10s |
 | Microsoft Learn URL reachability | Advisory | ➖ Skipped | Network gate; re-run with --include-network. | < 10s |
 | Lab artifact PII | Blocking | ✅ Pass | [scan_lab_pii] scanned=584 skipped_binary=0 skipped_decode=0 findings=0 | < 10s |
 | Documentation PII | Blocking | ✅ Pass | No blocking PII patterns detected! | < 10s |
-| Documentation repetition | Blocking | ✅ Pass | Scanned 242 file(s): 0 error(s), 6 warning(s). | < 10s |
-| Quick-triage causal claims | Blocking | ✅ Pass | Quick-triage causal-claim contract passed (7 files). · Scope is a phrase denylist only; technical review remains required. | < 10s |
-| Visual content coverage | Advisory | ✅ Pass | full repo: 83/83 in-scope pages carry a visual aid (100.0%). Advisory gate — exit 0 regardless (see issue #388). | < 10s |
-| Windows troubleshooting navigation | Blocking | ✅ Pass | Windows troubleshooting navigation: 2 entry points link all 5 required playbooks. | < 10s |
-| Frontmatter schema | Blocking | ✅ Pass | Checked 242 files · Found 0 errors, 28 warnings: | < 10s |
+| Documentation repetition | Blocking | ✅ Pass | Scanned 237 file(s): 0 error(s), 6 warning(s). | < 10s |
+| Visual content coverage | Advisory | ✅ Pass | full repo: 78/78 in-scope pages carry a visual aid (100.0%). Advisory gate — exit 0 regardless (see issue #388). | < 10s |
+| Frontmatter schema | Blocking | ✅ Pass | Checked 237 files · Found 0 errors, 28 warnings: | < 10s |
 | MkDocs strict build | Blocking | ✅ Pass | Site built with no strict-mode warnings. | 10-120s |
+| App and Infra impact classifier tests | Blocking | ✅ Pass | OK | < 10s |
 | Shell script syntax | Blocking | ✅ Pass | All shell scripts parse. | < 10s |
 | ShellCheck | Blocking | ➖ Skipped | Executable `shellcheck` is not on PATH. | < 10s |
 | Node.js dependency audit | Blocking | ✅ Pass | found 0 vulnerabilities | < 10s |
@@ -94,7 +92,7 @@ Generated from the `GATES` registry in `scripts/generate_golden_status.py`. CI f
 <!-- golden-status:inventory:start -->
 | Gate | Enforces | Severity | Command | Enforced by |
 | --- | --- | --- | --- | --- |
-| Validator doctests | Executable specs inside the validators themselves still pass. | Blocking | `python3 -m doctest scripts/lib/content_scope.py scripts/validate_content_sources.py scripts/validate_cli_explanations.py scripts/validate_pii.py scripts/detect_repetition.py scripts/check_quick_triage_claims.py scripts/validate_doc_quality.py scripts/validate_capture_assets.py scripts/validate_visual_content.py scripts/validate_windows_navigation.py scripts/generate_golden_status.py` | `Validate Content Source Metadata` — `validate-content-sources.yml`<br>`Validate CLI Explanation Tables` — `validate-content-sources.yml`<br>`Validate PII` — `validate-content-sources.yml`<br>`Validate Documentation Repetition` — `validate-repetition.yml`<br>`Validate Visual Content (advisory)` — `validate-visual-content.yml`<br>`Validate Golden Status` — `validate-golden-status.yml` |
+| Validator doctests | Executable specs inside the validators themselves still pass. | Blocking | `python3 -m doctest scripts/lib/content_scope.py scripts/validate_content_sources.py scripts/validate_cli_explanations.py scripts/validate_pii.py scripts/detect_repetition.py scripts/validate_doc_quality.py scripts/validate_capture_assets.py scripts/validate_visual_content.py scripts/generate_golden_status.py` | `Validate Content Source Metadata` — `validate-content-sources.yml`<br>`Validate CLI Explanation Tables` — `validate-content-sources.yml`<br>`Validate PII` — `validate-content-sources.yml`<br>`Validate Documentation Repetition` — `validate-repetition.yml`<br>`Validate Visual Content (advisory)` — `validate-visual-content.yml`<br>`Validate Golden Status` — `validate-golden-status.yml` |
 | Capture asset geometry | Committed Portal screenshots match the portal-desktop-v1 profile or are frozen historical exceptions; changed ones carry provenance; docs reference images only through the manifest or the frozen legacy registry, with captions on changed references. | Blocking | `python3 scripts/validate_capture_assets.py` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
 | Mermaid format | Mermaid fences are unindented and correctly delimited. | Blocking | `python3 scripts/validate_mermaid_format.py` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
 | Mermaid syntax | Every diagram parses as valid Mermaid. | Blocking | `python3 scripts/validate_mermaid_syntax.py` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
@@ -102,7 +100,6 @@ Generated from the `GATES` registry in `scripts/generate_golden_status.py`. CI f
 | Content sources schema | content_sources blocks use the canonical mapping shape, not the legacy list form. | Blocking | `python3 scripts/normalize_content_sources_schema.py --check` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
 | Diagram ID parity | Mermaid fence count equals diagram-id comment count across docs/. | Blocking | `python3 scripts/generate_golden_status.py --gate diagram-id-parity` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
 | CLI explanation tables | Every az CLI fence has an explanation table, and Markdown tables in docs/ and repository-root contracts end with a blank line. | Blocking | `python3 scripts/validate_cli_explanations.py` | `Validate CLI Explanation Tables` — `validate-content-sources.yml` |
-| Documented repository paths | Repository-local links, main-branch GitHub links, and registered command paths resolve in the checked-out tree. | Blocking | `python3 scripts/validate_documented_paths.py` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
 | Document quality | Canonical section templates, tail sections, long CLI flags, and masked identifiers. | Blocking | `python3 scripts/validate_doc_quality.py --all` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
 | Frontmatter YAML style | Frontmatter matches the canonical ruamel.yaml serialization. | Blocking | `python3 scripts/normalize_yaml_frontmatter.py --check` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
 | Microsoft Learn locale | Every learn.microsoft.com URL carries the en-us locale prefix. | Blocking | `python3 scripts/normalize_mslearn_locale.py --check` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
@@ -110,11 +107,10 @@ Generated from the `GATES` registry in `scripts/generate_golden_status.py`. CI f
 | Lab artifact PII | Lab scripts and templates carry no real UUIDs, emails, hostnames, or public IPs. | Blocking | `python3 scripts/scan_lab_pii.py` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
 | Documentation PII | No leaked subscription, tenant, or object IDs and no real email addresses in docs/. | Blocking | `python3 scripts/validate_pii.py` | `Validate PII` — `validate-content-sources.yml` |
 | Documentation repetition | No known scaffold marker is repeated within a single page. | Blocking | `python3 scripts/detect_repetition.py docs` | `Validate Documentation Repetition` — `validate-repetition.yml` |
-| Quick-triage causal claims | Known categorical causal shortcuts stay out of quick-triage documentation surfaces. | Blocking | `python3 scripts/check_quick_triage_claims.py` | `Validate Documentation Repetition` — `validate-repetition.yml` |
 | Visual content coverage | Factual-claim pages carry at least one diagram, screenshot, or image. | Advisory | `python3 scripts/validate_visual_content.py --all` | `Validate Visual Content (advisory)` — `validate-visual-content.yml` |
-| Windows troubleshooting navigation | Both primary troubleshooting indexes directly link every intended Windows playbook. | Blocking | `python3 scripts/validate_windows_navigation.py` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
 | Frontmatter schema | Valid doc_type and section values, unique slugs, resolvable relationships, content_validation placement. | Blocking | `python3 tools/validate_frontmatter.py` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
 | MkDocs strict build | The site builds with no broken internal links and no navigation warnings. | Blocking | `mkdocs build --strict` | `Build Documentation` — `validate-content-sources.yml` |
+| App and Infra impact classifier tests | PR, push, rename, deletion, executable Markdown, app, lab, shared-helper, workflow, and full-regression changes select the intended jobs. | Blocking | `python3 -m unittest scripts/test_impact_classifier.py` | `Classify App and Infra Changes` — `app-infra-ci.yml` |
 | Shell script syntax | Every tracked .sh file under apps/, labs/, and scripts/ parses. | Blocking | `bash -c "find apps labs scripts -type f -name '*.sh' -print0 | xargs -0 -r bash -n"` | `Shell Scripts` — `app-infra-ci.yml` |
 | ShellCheck | Shell scripts pass ShellCheck static analysis. | Blocking | `bash -c "find apps labs scripts -type f -name '*.sh' -print0 | xargs -0 -r shellcheck"` | `Shell Scripts` — `app-infra-ci.yml` |
 | Node.js dependency audit | The Express reference app has no moderate-or-worse production advisories. | Blocking | `cd apps/nodejs && npm audit --package-lock-only --omit=dev --audit-level=moderate` | `Node.js App` — `app-infra-ci.yml` |
@@ -140,7 +136,6 @@ Generated from the `GATES` registry in `scripts/generate_golden_status.py`. CI f
 | Microsoft Learn URL reachability | Network gate. CI runs it on push to main with continue-on-error to avoid rate limits. |
 | Documentation PII | CI blocks on changed Markdown only. The dashboard scans the full documentation tree, so findings here may include historical debt that CI does not fail on. |
 | Documentation repetition | Marker hits are errors; other repeated prose is reported as a non-blocking warning. |
-| Quick-triage causal claims | A sentence-scoped phrase denylist; passing does not prove causal correctness, so technical review remains required. |
 | Visual content coverage | Advisory by design; it always exits 0 and reports coverage as a tracked metric. |
 | Frontmatter schema | Unresolved relationship slugs are warnings, so only hard schema errors fail the job. |
 | MkDocs strict build | Builds into a temporary directory so a local `mkdocs serve` is left alone. Needs the full docs toolchain, so the Validate Golden Status job does not re-verify it. |
