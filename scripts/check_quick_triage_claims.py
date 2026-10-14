@@ -19,7 +19,25 @@ own tests; production documentation has no exemptions.
 ['http_and_empty_logs_prove_app_never_ran']
 >>> find_violations("499 at 30 seconds proves SNAT exhaustion")
 ['http_timing_proves_snat']
+>>> find_violations("499 near a repeated 30-second boundary => SNAT exhaustion")
+['http_timing_proves_snat']
+>>> find_violations("A silent stream shows the process died before logger setup")
+['empty_logs_prove_pre_logging_failure']
+>>> find_violations("No console logs; therefore the app did not execute")
+['empty_logs_prove_pre_logging_failure']
+>>> find_violations("503 with high TimeTaken and no console rows shows the app never ran")
+['http_and_empty_logs_prove_app_never_ran']
+>>> find_violations("499 at 30 seconds means SNAT cannot be involved")
+['http_timing_proves_snat']
 >>> find_violations("A healthy platform line narrows the next checks but does not exclude platform effects")
+[]
+>>> find_violations("499 at 30 seconds is not proof of SNAT exhaustion")
+[]
+>>> find_violations("A silent stream does not prove that the process died before logger setup")
+[]
+>>> find_violations("A 503 and absent rows are inconclusive until logging scope and delay are checked")
+[]
+>>> find_violations("A 499 ended the request. Thirty seconds later, a SNAT detector ran.")
 []
 """
 
@@ -49,38 +67,67 @@ ALLOWLIST: Final = {
         17,
         19,
         21,
+        23,
+        25,
+        27,
+        29,
+        31,
     }),
 }
 
+SENTENCE_RE: Final = re.compile(r"[^.!?\n]+(?:[.!?]+|$)")
+EXPLICIT_QUALIFICATION_RE: Final = re.compile(
+    r"\b(?:is|are) not (?:proof|evidence)\b|"
+    r"\b(?:do|does|did) not (?:prove|show|mean|indicate|confirm)\b|"
+    r"\bcannot (?:prove|show|confirm)\b",
+    re.IGNORECASE,
+)
+
 DENYLIST: Final = {
     "healthy_platform_excludes_platform": re.compile(
-        r"platform availability.{0,100}(?:100%|healthy).{0,100}"
-        r"(?:failure|problem|cause).{0,50}(?:is|lies in).{0,30}(?:your )?"
-        r"(?:container|code|application)(?:.{0,50}(?:not|rather than).{0,30}"
-        r"(?:app service )?platform)?",
-        re.IGNORECASE | re.DOTALL,
+        r"platform availability[^.!?\n]{0,100}(?:100%|healthy)[^.!?\n]{0,100}"
+        r"(?:failure|problem|cause)[^.!?\n]{0,50}(?:is|lies in)[^.!?\n]{0,30}"
+        r"(?:your )?(?:container|code|application)",
+        re.IGNORECASE,
     ),
     "empty_logs_prove_pre_logging_failure": re.compile(
-        r"(?:stream is silent|empty log(?: stream)?|no (?:console )?logs?).{0,100}"
-        r"(?:container|app|process).{0,40}(?:failed|failing|crashed).{0,60}"
-        r"before.{0,30}log(?:ging)?(?: framework)? (?:initialized|initializes|started)",
-        re.IGNORECASE | re.DOTALL,
+        r"(?:stream is silent|silent stream|empty log(?: stream)?|no (?:console )?logs?)"
+        r"[^.!?\n]{0,100}(?:(?:shows?|means|indicates|confirms|therefore)[^.!?\n]{0,30})?"
+        r"(?:container|app|process)[^.!?\n]{0,40}"
+        r"(?:(?:failed|failing|crashed|died)[^.!?\n]{0,60}before[^.!?\n]{0,30}"
+        r"(?:logger setup|log(?:ging)?(?: framework)? (?:initialized|initializes|started))|"
+        r"did not (?:execute|run))",
+        re.IGNORECASE,
     ),
     "http_and_empty_logs_prove_app_never_ran": re.compile(
-        r"503.{0,100}(?:high|[><~]\s*\d+).{0,30}(?:duration|timetaken|ms|seconds?).{0,100}"
-        r"(?:0|no|empty).{0,20}(?:console )?logs?.{0,80}(?:app )?never ran",
-        re.IGNORECASE | re.DOTALL,
+        r"503[^.!?\n]{0,100}(?:high|[><~]\s*\d+)[^.!?\n]{0,30}"
+        r"(?:duration|timetaken|ms|seconds?)[^.!?\n]{0,100}"
+        r"(?:0|no|empty|absent)[^.!?\n]{0,20}(?:console )?(?:logs?|rows)"
+        r"[^.!?\n]{0,80}(?:(?:shows?|means|indicates|confirms|therefore)[^.!?\n]{0,20})?"
+        r"(?:app )?never ran",
+        re.IGNORECASE,
     ),
     "http_timing_proves_snat": re.compile(
-        r"(?:499|503|499/503).{0,100}(?:time(?:taken)?|duration|seconds?|ms|boundary).{0,100}"
-        r"(?:proves?\b|confirms?\b|means\b|indicates\b|is\b).{0,40}snat(?: port)? exhaustion",
-        re.IGNORECASE | re.DOTALL,
+        r"(?:499|503|499/503)[^.!?\n]{0,100}"
+        r"(?:time(?:taken)?|duration|seconds?|ms|boundary)[^.!?\n]{0,100}"
+        r"(?:=>|proves?\b|confirms?\b|shows?\b|therefore\b|means\b|indicates\b|is\b)"
+        r"[^.!?\n]{0,40}snat(?: port)?(?: exhaustion| pressure)?"
+        r"(?:[^.!?\n]{0,20}cannot be involved)?",
+        re.IGNORECASE,
     ),
 }
 
 
 def find_violations(text: str) -> list[str]:
-    return [name for name, pattern in DENYLIST.items() if pattern.search(text)]
+    violations: list[str] = []
+    for sentence_match in SENTENCE_RE.finditer(text):
+        sentence = sentence_match.group(0)
+        if EXPLICIT_QUALIFICATION_RE.search(sentence):
+            continue
+        violations.extend(
+            name for name, pattern in DENYLIST.items() if pattern.search(sentence)
+        )
+    return list(dict.fromkeys(violations))
 
 
 def scan_file(path: Path) -> list[str]:
@@ -88,12 +135,17 @@ def scan_file(path: Path) -> list[str]:
     allowed_lines = ALLOWLIST.get(relative, frozenset())
     text = path.read_text(encoding="utf-8")
     findings: list[str] = []
-    for name, pattern in DENYLIST.items():
-        for match in pattern.finditer(text):
-            line = text.count("\n", 0, match.start()) + 1
-            if line not in allowed_lines:
-                excerpt = " ".join(match.group(0).split())
-                findings.append(f"{relative}:{line}: {name}: {excerpt}")
+    for sentence_match in SENTENCE_RE.finditer(text):
+        sentence = sentence_match.group(0)
+        if EXPLICIT_QUALIFICATION_RE.search(sentence):
+            continue
+        for name, pattern in DENYLIST.items():
+            for match in pattern.finditer(sentence):
+                start = sentence_match.start() + match.start()
+                line = text.count("\n", 0, start) + 1
+                if line not in allowed_lines:
+                    excerpt = " ".join(match.group(0).split())
+                    findings.append(f"{relative}:{line}: {name}: {excerpt}")
     return findings
 
 
