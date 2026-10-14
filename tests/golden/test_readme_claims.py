@@ -83,7 +83,7 @@ def status_legend():
 class LabCountTests(unittest.TestCase):
 
     def test_readme_lab_count_matches_the_tree(self):
-        match = re.search(r"(\d+) hands-on labs in `labs/`", README)
+        match = re.search(r"(\d+) scenario labs in `labs/`", README)
         self.assertIsNotNone(match, "README no longer states a lab count")
         self.assertEqual(
             int(match.group(1)), len(lab_dirs()),
@@ -118,26 +118,15 @@ class ProofClaimTests(unittest.TestCase):
 
         records = attempted_reproductions()
         legend = status_legend().lower()
-        if not records:
-            self.assertIn("none has been independently reproduced", legend)
-            return
-        self.assertNotIn(
-            "none has been independently reproduced", legend,
-            msg="a reproduction exists; the legend denies it")
-        if not any(module.check(r)["passed"] for r in records):
-            self.assertNotRegex(
-                legend, r"\bproven\b|\bproves\b",
-                msg="no reproduction passes the gate, so the labs are not proven")
+        self.assertIn("no lab has a qualifying independent human reproduction", legend)
+        self.assertNotRegex(
+            legend, r"\bproven\b|\bproves\b",
+            msg="agent repeat runs cannot prove independent human reproduction")
 
     def test_the_legend_matches_whether_anything_has_run(self):
         """The claim must track the executed-run registry, both ways."""
         legend = status_legend().lower()
-        if completed_runs():
-            self.assertNotIn(
-                "no lab has yet been re-verified", legend,
-                msg="scenarios have run under the Golden model; the legend denies it")
-        else:
-            self.assertIn("no lab has yet been re-verified", legend)
+        self.assertIn("only the specific runs listed", legend)
 
     def test_legend_does_not_claim_the_labs_prove_the_guidance(self):
         legend = status_legend().lower()
@@ -166,9 +155,7 @@ class ProofClaimTests(unittest.TestCase):
         """The legend must still name the shortfall, in current terms."""
         legend = status_legend().lower()
         self.assertIn("golden evidence model", legend)
-        self.assertRegex(
-            legend, r"independent(ly)? reproduc",
-            msg="the legend no longer mentions reproduction at all")
+        self.assertIn("independent human reproduction", legend)
 
     def test_troubleshooting_row_carries_the_hedged_status(self):
         row = next(

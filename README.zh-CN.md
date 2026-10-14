@@ -19,10 +19,10 @@
 | [最佳实践 (Best Practices)](https://yeongseon.github.io/azure-app-service-practical-guide/best-practices/) | 生产基线、安全、网络、部署、扩展、可靠性 | Comprehensive |
 | [语言指南 (Language Guides)](https://yeongseon.github.io/azure-app-service-practical-guide/language-guides/) | Python、Node.js、Java 和 .NET 的分步教程 | Comprehensive |
 | [运营 (Operations)](https://yeongseon.github.io/azure-app-service-practical-guide/operations/) | 部署槽、健康检查、安全、成本优化 | Comprehensive |
-| [故障排除 (Troubleshooting)](https://yeongseon.github.io/azure-app-service-practical-guide/troubleshooting/) | 实战手册、动手实验、KQL 查询包、决策树、证据图 | Lab-validated |
+| [故障排除 (Troubleshooting)](https://yeongseon.github.io/azure-app-service-practical-guide/troubleshooting/) | 实战手册、动手实验、KQL 查询包、决策树、证据图 | Evidence-retained |
 | [参考 (Reference)](https://yeongseon.github.io/azure-app-service-practical-guide/reference/) | CLI 速查表、KQL 查询、平台限制、诊断参考 | Comprehensive |
 
-**状态图例**: **Lab-validated** = 全方位且有可重现的实验验证指南 · **Comprehensive** = 完整章节，经 MSLearn 验证，可用于生产 · **Published** = 核心内容就绪，仍在扩充 · **In progress** = 部分内容，积极开发中 · **Planned** = 占位，内容尚未开始
+**状态图例**: **Evidence-retained** = 包含可运行资产和保留的采集资料，但只有各实验分类文件列出的运行经过 Golden 证据模型评估；目前没有合格的独立人工复现。**Comprehensive** = 已覆盖大部分规划范围并核对 Microsoft Learn 来源，但不代表生产认证。**Published** = 核心内容就绪，仍在扩充 · **In progress** = 部分内容，积极开发中 · **Planned** = 占位，内容尚未开始
 
 ## 语言指南
 
@@ -59,7 +59,7 @@ mkdocs serve
 
 ## 故障排除实验 (Troubleshooting Labs)
 
-`labs/` 文件夹中包含 10 个动手实验，配有 Bicep 模板，可重现真实的 App Service 问题。每个实验包括：
+`labs/` 中有 15 个由 `labs/golden-classification.json` 跟踪的场景实验；共享基础设施 `labs/_shared` 不计入。清单包含 Golden 合约实验、待迁移实验和分阶段实验，并不表示每个实验都已在 Azure 上执行。清单中包括：
 
 - 可证伪的假设和分步运行手册
 - 真实的 Azure 部署数据 (KQL 日志、CLI 输出、诊断端点)
