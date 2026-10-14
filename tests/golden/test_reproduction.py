@@ -35,7 +35,9 @@ _spec.loader.exec_module(repro)
 def record(**over):
     base = {
         "reviewer": "second-operator",
+        "reviewer_kind": "human",
         "original_operator": "first-operator",
+        "original_operator_kind": "human",
         "commit": "a5d8ed9e0cc276788ee82c6755b0a6ad9b0c89a8",
         "attempted_at": "2026-09-27T03:00:00Z",
         "scenario": "deployment-succeeded-startup-failed",
@@ -71,6 +73,12 @@ class IndependenceTests(unittest.TestCase):
         rec = record(reviewer="first-operator")
         result = repro.check(write(rec))
         self.assertEqual(result["reproduction_result"], "NOT_INDEPENDENT")
+
+    def test_agent_replay_is_repeatability_not_independent_reproduction(self):
+        rec = record(reviewer_kind="agent")
+        result = repro.check(write(rec))
+        self.assertEqual(result["reproduction_result"], "NOT_INDEPENDENT")
+        self.assertFalse(result["passed"])
 
     def test_diverging_verdict_is_a_failed_reproduction(self):
         rec = record(replay_hypothesis_status="CONTRADICTED")
@@ -160,6 +168,8 @@ class UntestedPairRegressionTests(unittest.TestCase):
     def test_two_untested_runs_do_not_reproduce_each_other(self):
         path = self._record(
             replay_run_id="fabricated",
+            reviewer_kind="human",
+            original_operator_kind="human",
             original_hypothesis_status="NOT_TESTED",
             replay_hypothesis_status="NOT_TESTED")
         result = repro.check(path)
@@ -170,6 +180,8 @@ class UntestedPairRegressionTests(unittest.TestCase):
         """Guards the fix from rejecting every reproduction."""
         path = self._record(
             replay_run_id="fabricated",
+            reviewer_kind="human",
+            original_operator_kind="human",
             original_hypothesis_status="SUPPORTED",
             replay_hypothesis_status="SUPPORTED",
             consulted_source_to_fill_doc_gap=False,

@@ -7,7 +7,9 @@
   "description": "One attempt by a second operator to reach the same verdict from the documentation alone. Verdict agreement and documentation quality are recorded separately: a reviewer who read source to fill a gap proved the code works, not the docs.",
   "required": [
     "reviewer",
+    "reviewer_kind",
     "original_operator",
+    "original_operator_kind",
     "commit",
     "attempted_at",
     "scenario",
@@ -26,6 +28,20 @@
     "original_operator": {
       "type": "string",
       "minLength": 1
+    },
+    "reviewer_kind": {
+      "enum": [
+        "human",
+        "agent"
+      ],
+      "description": "Only human reviewers can satisfy the independent-reproduction gate."
+    },
+    "original_operator_kind": {
+      "enum": [
+        "human",
+        "agent"
+      ],
+      "description": "The original run must also be attributable to a human operator for human independence."
     },
     "commit": {
       "type": "string",

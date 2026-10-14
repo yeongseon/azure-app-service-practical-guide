@@ -48,7 +48,9 @@ DEVIATION_KINDS = (
 
 REQUIRED_FIELDS = (
     "reviewer",
+    "reviewer_kind",
     "original_operator",
+    "original_operator_kind",
     "commit",
     "attempted_at",
     "scenario",
@@ -78,7 +80,7 @@ def _validate(record: dict) -> None:
 
 
 #: Statuses that mean the hypothesis was never put at risk.
-UNTESTED_STATUS = ("NOT_TESTED", "NOT_RUN", "NOT_EVALUATED")
+UNTESTED_STATUS = ("NOT_TESTED", "NOT_RUN")
 
 
 def classify_reproduction(record: dict) -> str:
@@ -109,6 +111,8 @@ def classify_reproduction(record: dict) -> str:
     if record["replay_run_id"] == record["original_run_id"]:
         return "NOT_INDEPENDENT"
     if record["reviewer"] == record["original_operator"]:
+        return "NOT_INDEPENDENT"
+    if record["reviewer_kind"] != "human" or record["original_operator_kind"] != "human":
         return "NOT_INDEPENDENT"
     if record["replay_hypothesis_status"] != record["original_hypothesis_status"]:
         return "FAILED"
