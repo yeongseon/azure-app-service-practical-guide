@@ -74,7 +74,7 @@ Read the result against this decision table:
 | < 60000 | Any | An application-level timer (Spring MVC async, `HttpClient.Timeout`, connection pool) or a downstream service is cutting the request. IIS is annotating the 500 with the httpPlatformHandler sub-status because the process signalled the cut, not because IIS itself timed out. |
 | Anything else | Very high | Look at the `min` and `max` separately - you likely have two or more independent failure modes mixed in the same result set. Add `| summarize ... by CsUriStem` to disaggregate by URL. |
 
-Lab 1 of the Windows Java httpPlatformHandler timeout lab (to be published under `docs/troubleshooting/lab-guides/` once Lab 2 completes) confirmed the top row of this table: mean 230001.3 ms, stdev 5.44 ms across 10 serialized probes on Windows Java SE 17 with `httpPlatformHandler` at defaults - a textbook front-end absolute cut.
+Lab 1 of the [Windows Java httpPlatformHandler Timeout Lab](../../lab-guides/windows-java-httpplatformhandler-timeout.md) confirmed the top row of this table: mean 230001.3 ms, stdev 5.44 ms across 10 serialized probes on Windows Java SE 17 with `httpPlatformHandler` at defaults - a textbook front-end absolute cut.
 
 The two `win32_*` columns are a fast preview of the [ScWin32Status .0 vs .64 distribution](scwin32status-adaptive-extension.md) query - if `win32_64_count` is nonzero, adaptive-extension activity is present and the raw mean should be interpreted with caution.
 

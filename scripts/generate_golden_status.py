@@ -130,6 +130,10 @@ DOCTEST_BINDINGS: tuple[tuple[str, Binding], ...] = (
         Binding("Validate Visual Content (advisory)", VISUAL_WORKFLOW),
     ),
     (
+        "scripts/validate_windows_navigation.py",
+        Binding("Validate Content Source Metadata", CONTENT_SOURCES_WORKFLOW),
+    ),
+    (
         "scripts/generate_golden_status.py",
         Binding("Validate Golden Status", GOLDEN_STATUS_WORKFLOW),
     ),
@@ -404,6 +408,16 @@ GATES: tuple[Gate, ...] = (
         covers=("scripts/validate_visual_content.py",),
         bindings=(Binding("Validate Visual Content (advisory)", VISUAL_WORKFLOW),),
         note="Advisory by design; it always exits 0 and reports coverage as a tracked metric.",
+        verified_in_ci=True,
+    ),
+    Gate(
+        key="windows-navigation",
+        name="Windows troubleshooting navigation",
+        enforces="Both primary troubleshooting indexes directly link every intended Windows playbook.",
+        argv=("{python}", "scripts/validate_windows_navigation.py"),
+        severity=BLOCKING,
+        covers=("scripts/validate_windows_navigation.py",),
+        bindings=(Binding("Validate Content Source Metadata", CONTENT_SOURCES_WORKFLOW),),
         verified_in_ci=True,
     ),
     Gate(
@@ -1142,7 +1156,7 @@ def source_revision() -> str:
         return completed.stdout.strip()
 
     revision = git("rev-parse", "--short", "HEAD") or "unknown"
-    if git("status", "--porcelain"):
+    if git("status", "--porcelain", "--", ".", ":!docs/meta/golden-status.md"):
         revision += " plus uncommitted working-tree changes"
     return revision
 

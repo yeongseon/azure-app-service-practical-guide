@@ -93,7 +93,7 @@ Reading top to bottom:
 2. **~230 seconds later**, IIS emits the `500/121` cut with `TimeTaken = 230005 ms`. The client is disconnected at this moment.
 3. **~69 seconds after the IIS cut** (i.e. at T = 300s), the Java process signals `stream.end` with `chunkCount = 11` and `elapsedMs = 300008` - the request-handler thread ran to completion despite the client being long gone.
 
-This sequence, observed live in Lab 1 of the Windows Java httpPlatformHandler timeout lab (to be published under `docs/troubleshooting/lab-guides/` once Lab 2 completes), proves three important things:
+This sequence, observed live in Lab 1 of the [Windows Java httpPlatformHandler Timeout Lab](../../lab-guides/windows-java-httpplatformhandler-timeout.md), proves three important things:
 
 1. **The front-end 230s limit is an ABSOLUTE request-duration limit on Windows App Service Java SE**, not an idle timeout. Streaming responses do not reset it, so streaming is **not** a workaround for exceeding 230s.
 2. **IIS + `httpPlatformHandler` do not stream chunks to the client on Java SE**. Even though the backend generated 11 chunks over 5 minutes, the client received zero chunks - the whole response is buffered until either the backend completes (in which case the client gets the full body) or IIS cuts at 230s (in which case the client gets a canonical `500.121` error page instead of any partial data).

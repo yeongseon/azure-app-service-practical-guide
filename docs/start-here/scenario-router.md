@@ -89,6 +89,9 @@ flowchart LR
 | An incident just started and I have 10 minutes | [First 10 Minutes](../troubleshooting/first-10-minutes/index.md) — ordered triage checklist |
 | I need a first-principles method for a novel symptom | [Troubleshooting Method](../troubleshooting/methodology/troubleshooting-method.md) — competing hypotheses framework |
 | My app fails to start after deploy | [App Startup Failures](../troubleshooting/playbooks/app-startup-failures.md) — startup log, container port, and warmup |
+| My Windows app has an IIS or `web.config` startup failure | [Windows IIS and web.config Startup](../troubleshooting/playbooks/startup-availability/windows-iis-webconfig-startup.md) — IIS handlers, startup timeout, and deployed configuration |
+| I need Windows Kudu diagnostics or worker-process evidence | [Windows Kudu Diagnostics](../troubleshooting/playbooks/startup-availability/windows-kudu-diagnostics.md) — choose Debug Console, Process Explorer, dumps, or deployment APIs |
+| My Windows Java app returns `500.121` near the request timeout | [Windows httpPlatformHandler KQL Pack](../troubleshooting/kql/windows-httpplatformhandler/index.md) — IIS sub-status and backend correlation queries |
 | My app returns intermittent 5xx under load | [Intermittent 5xx Under Load](../troubleshooting/playbooks/performance/intermittent-5xx-under-load.md) — worker exhaustion and thread starvation |
 | My app is under memory pressure or workers keep recycling | [Memory Pressure and Worker Degradation](../troubleshooting/playbooks/performance/memory-pressure-and-worker-degradation.md) — plan tier and GC behavior |
 | Outbound calls fail with DNS or private-endpoint routing issues | [PE Custom DNS Route Confusion](../troubleshooting/playbooks/outbound-network/private-endpoint-custom-dns-route-confusion.md) — VNet integration DNS |

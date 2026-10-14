@@ -25,7 +25,7 @@ content_sources:
 ---
 # Windows httpPlatformHandler Queries
 
-Reusable KQL queries for Azure App Service **Windows** Java SE apps running under IIS + `httpPlatformHandler`. Every query in this pack was validated during Lab 1 of the Windows Java httpPlatformHandler timeout lab (published under `docs/troubleshooting/lab-guides/` once Lab 2 completes).
+Reusable KQL queries for Azure App Service **Windows** Java SE apps running under IIS + `httpPlatformHandler`. Every query in this pack was validated during Lab 1 of the [Windows Java httpPlatformHandler Timeout Lab](../../lab-guides/windows-java-httpplatformhandler-timeout.md).
 
 Unlike the [Linux-oriented HTTP query pack](../http/index.md), these queries target the Windows-specific IIS sub-status codes (`500.121.0`, `500.121.64`), the `ScWin32Status` field that only Windows populates, and the correlation between IIS request-log cuts and Java process console markers.
 
@@ -78,7 +78,7 @@ Paste any snippet below into the `New Query 1` editor and press `Run`. Every que
 - Linux HTTP query pack: [HTTP Queries](../http/index.md)
 - Linux Console query pack: [Console Queries](../console/index.md)
 
-The final Windows Java httpPlatformHandler timeout lab guide will be published under `docs/troubleshooting/lab-guides/` once Lab 2 completes.
+- [Windows Java httpPlatformHandler Timeout Lab](../../lab-guides/windows-java-httpplatformhandler-timeout.md)
 
 ## Sources
 

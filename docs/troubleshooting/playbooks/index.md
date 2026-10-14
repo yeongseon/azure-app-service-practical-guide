@@ -19,6 +19,27 @@ Each playbook follows a hypothesis-driven structure: start from the symptom, lis
 
 The detector categories map closely to the playbooks below: `Availability and Performance` to the startup and performance playbooks, `Networking` to the outbound playbooks, and `Configuration and Management` plus `Deployment` to deployment failures. Open the detector hub first so Azure can surface the most likely detectors, then pick the matching playbook here for hypothesis-driven validation.
 
+## Choose a Hosting Mode
+
+| Hosting mode | Entry path |
+|---|---|
+| **Windows code** | Route by symptom through [Windows Playbooks and Evidence](#windows-playbooks-and-evidence). |
+| **Windows custom container** | Begin with [Windows Container Health Probes](startup-availability/windows-container-health-probes.md); follow another Windows route only when its runtime model matches. |
+| **Linux code or custom container** | Route through [Performance](#performance), [Outbound / Network](#outbound-network), or [Startup / Availability](#startup-availability); keep Linux paths and container settings separate from Windows guidance. |
+
+## Windows Playbooks and Evidence
+
+| Symptom or task | Existing guide |
+|---|---|
+| IIS startup, handler, or deployed `web.config` failure | [Windows IIS and web.config Startup](startup-availability/windows-iis-webconfig-startup.md) |
+| Windows custom container never becomes healthy | [Windows Container Health Probes](startup-availability/windows-container-health-probes.md) |
+| Need Windows Kudu tool selection or a platform tour | [Windows Kudu Diagnostics](startup-availability/windows-kudu-diagnostics.md) and [Kudu on Windows](../../platform/kudu-windows.md) |
+| `w3wp` memory growth, recycle, or worker degradation | [Windows Memory Pressure and Worker Recycling](performance/windows-memory-pressure-worker-recycling.md) |
+| `D:\home` or `D:\local` quota and filesystem symptoms | [Windows Filesystem Quotas](performance/windows-filesystem-quotas.md) |
+| Windows Java SE `500.121` or httpPlatformHandler timeout | [Windows httpPlatformHandler KQL Pack](../kql/windows-httpplatformhandler/index.md) and [Windows Java httpPlatformHandler Timeout Lab](../lab-guides/windows-java-httpplatformhandler-timeout.md) |
+
+The dedicated Windows set covers the symptoms above. Cross-platform deployment investigation also includes [Deployment Failures](deployment-failures.md), [Missing wwwroot Files and 404](missing-wwwroot-files-404.md), the [Missing wwwroot Content Lab](../lab-guides/missing-wwwroot-content.md), and the [ZIP Deploy File Lock Lab](../lab-guides/zipdeploy-file-lock-serialization.md). Other playbooks commonly use Linux examples; reuse their diagnostic method only after translating evidence through the correct hosting-mode guide.
+
 <!-- diagram-id: playbook-map -->
 ```mermaid
 graph TD
