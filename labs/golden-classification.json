@@ -75,7 +75,24 @@
     {
       "lab": "windows-java-httpplatformhandler-timeout",
       "classification": "archive-candidate",
-      "reason": "Structurally unlike every other lab: no top-level trigger/verify pair, instead three staged sub-labs (stage-0-config-discovery, lab-1-baseline-signature, lab-2-loopback-saturation). Migrating it means deciding whether each stage is its own Golden scenario. Archive-candidate is a decision to make that call deliberately, not a decision to delete."
+      "reason": "Structurally unlike every other lab: three staged sub-labs require separate migration decisions. Archive-candidate is a deliberate review state, not permission to delete retained evidence.",
+      "stages": [
+        {
+          "stage": "stage-0-config-discovery",
+          "classification": "migration-needed",
+          "artifact_trust": "trusted-historical"
+        },
+        {
+          "stage": "lab-1-baseline-signature",
+          "classification": "migration-needed",
+          "artifact_trust": "trusted-historical"
+        },
+        {
+          "stage": "lab-2-loopback-saturation",
+          "classification": "migration-needed",
+          "artifact_trust": "trusted-historical"
+        }
+      ]
     },
     {
       "lab": "zipdeploy-file-lock-serialization",

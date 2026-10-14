@@ -115,8 +115,8 @@
       "id": 15,
       "requirement": "Existing documentation quality gates do not regress",
       "status": "MET",
-      "evidence": "12 required checks pass on PR 186 and one is skipped, including Build Documentation, which runs mkdocs build --strict and confirms the nav entries this branch adds. PII reports 0 blocking, repetition 0 errors across 233 files, and frontmatter validation exits 0.",
-      "verify": "gh pr checks 186 --repo yeongseon/azure-app-service-practical-guide"
+      "evidence": "PR 234 current-head checks are the evidence source for this item; confirm the final head with the verification command before treating the item as satisfied. The required set includes mkdocs build --strict and the Golden contract suites.",
+      "verify": "gh pr checks 234 --repo yeongseon/azure-app-service-practical-guide"
     }
   ],
   "blocking_for_v1": [

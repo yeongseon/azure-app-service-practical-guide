@@ -75,6 +75,17 @@ class ShapeTests(unittest.TestCase):
         names = [row["lab"] for row in DATA["labs"]]
         self.assertEqual(len(names), len(set(names)))
 
+    def test_windows_java_stages_match_the_directory_inventory(self):
+        row = next(item for item in DATA["labs"]
+                   if item["lab"] == "windows-java-httpplatformhandler-timeout")
+        declared = {item["stage"] for item in row["stages"]}
+        directory = ROOT / "labs" / row["lab"]
+        actual = {path.name for path in directory.iterdir() if path.is_dir()}
+        self.assertEqual(declared, actual)
+        for item in row["stages"]:
+            self.assertIn(item["classification"], VALID)
+            self.assertIn(item["artifact_trust"], ev.EVIDENCE_TRUST)
+
 
 class GoldenClaimTests(unittest.TestCase):
     """A lab may only be called Golden if it actually declares a contract."""

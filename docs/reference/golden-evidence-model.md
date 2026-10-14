@@ -177,7 +177,8 @@ Where a value came from does not say how stale it is, and how fresh an
 artifact is does not say whether anyone observed it directly.
 
 A capture predating the contract it is cited under is `trusted-historical`,
-never `primary`. Reclassifying it upward requires re-capture, not re-reading.
+never trusted-current solely by re-reading. Reclassifying it upward requires
+re-capture, not re-reading.
 
 ### Retention and re-verification
 
