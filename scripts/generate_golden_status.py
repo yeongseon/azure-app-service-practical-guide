@@ -384,7 +384,7 @@ GATES: tuple[Gate, ...] = (
         enforces="Lab scripts and templates carry no real UUIDs, emails, hostnames, or public IPs.",
         argv=("{python}", "scripts/scan_lab_pii.py"),
         severity=BLOCKING,
-        covers=("scripts/scan_lab_pii.py",),
+        covers=("scripts/scan_lab_pii.py", "scripts/lab-pii-allowlist.txt"),
         bindings=(Binding("Validate Content Source Metadata", CONTENT_SOURCES_WORKFLOW),),
         verified_in_ci=True,
     ),
@@ -505,7 +505,10 @@ GATES: tuple[Gate, ...] = (
         severity=BLOCKING,
         covers=(
             "scripts/golden/check_reproduction.py",
+            "scripts/golden/evaluate_run.py",
+            "scripts/golden/run_scenario_b.py",
             "scripts/golden/validate_schemas.py",
+            "tests/golden/test_second_round_adversarial.py",
         ),
         bindings=(
             Binding("Validate Golden Contracts", CONTENT_SOURCES_WORKFLOW),
