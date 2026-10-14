@@ -45,13 +45,17 @@ graph TD
 
 ## Step 1: Classify inbound vs outbound symptom first
 Avoid losing time on ingress when the failure is dependency egress.
+
 - Quick check:
-    - Inbound issue: clients cannot reach your app endpoint.    - Outbound issue: app endpoint is reachable, but dependency calls fail.- Validate with app logs or synthetic call path.
+    - Inbound issue: clients cannot reach your app endpoint.
+    - Outbound issue: app endpoint is reachable, but dependency calls fail.
+    - Validate with app logs or synthetic call path.
 - Good signal: clear isolation to outbound-only failure.
 - Bad signal: mixed signals (both inbound and outbound), requiring parallel checks.
 
 ## Step 2: Check SNAT Port Exhaustion detector
 Treat SNAT pressure as one competing hypothesis for outbound failures under load.
+
 - Portal path: **App Service -> Diagnose and solve problems -> Availability and Performance -> SNAT Port Exhaustion**
 - Evidence against this hypothesis: detector pressure stays comfortably below limits on the affected instance during the incident.
 - Evidence supporting this hypothesis: measured near/at exhaustion aligns with outbound failures on the same instance and window.
@@ -59,6 +63,7 @@ Treat SNAT pressure as one competing hypothesis for outbound failures under load
 
 ## Step 3: Check TCP Connections metric trend
 High connection churn with poor reuse often precedes SNAT incidents.
+
 - Portal path: **App Service -> Metrics -> TCP Connections**
 - Azure CLI:
 
@@ -78,6 +83,7 @@ Select `TCP Connections` and add both `Avg` and `Max` aggregations, then narrow 
 
 ## Step 4: Check VNet integration status (if used)
 Misconfigured or unhealthy integration causes asymmetric dependency failures.
+
 - Portal path: **App Service -> Networking -> VNet integration**
 - Azure CLI:
 
@@ -108,6 +114,7 @@ The Networking hub shows the app's configured routing context; it does not decid
 
 ## Step 5: Validate DNS resolution from Kudu/SSH
 Prove whether failures happen before connect (resolution) or after connect (network/dependency).
+
 - Portal path: **App Service -> Development Tools -> SSH** (or Kudu SSH)
 - Commands:
 
@@ -121,12 +128,16 @@ nslookup <dependency-private-endpoint-fqdn>
 
 ## Step 6: Check Private Endpoint + DNS mapping (if applicable)
 Private Endpoint without correct DNS zone linkage can silently route to wrong targets.
+
 - Portal path:
-    - **Dependency resource -> Networking -> Private endpoint connections**    - **Private DNS zones -> Virtual network links**- Good signal: approved Private Endpoint and correct private DNS zone links.
+    - **Dependency resource -> Networking -> Private endpoint connections**
+    - **Private DNS zones -> Virtual network links**
+- Good signal: approved Private Endpoint and correct private DNS zone links.
 - Bad signal: pending/rejected endpoint, missing DNS link, or public IP resolution when private expected.
 
 ## Step 7: Check NAT Gateway attachment and health (if applicable)
 If NAT Gateway is expected but not applied, outbound behavior may differ from design.
+
 - Portal path: **VNet -> Subnets -> <integration subnet> -> NAT Gateway**
 - Azure CLI:
 
@@ -146,6 +157,7 @@ az network vnet subnet show --resource-group "$RG" --vnet-name "$VNET_NAME" --na
 
 ## Step 8: Confirm timeout/error signatures in console logs
 Use log signatures to separate DNS, connect, and upstream timeout patterns.
+
 - KQL:
 
 ```kql
