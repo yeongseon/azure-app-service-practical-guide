@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Select App and Infra CI jobs from Git name-status changes.
 
-Executable Markdown is selected when changed hunks touch a command fence or the
-recipe section containing it, including expected-output edits. Documents with
-unchanged command recipes and prose-only edits stay lightweight. Bicep remains
+Executable Markdown is selected when changed hunks touch a command fence or its
+adjacent or labeled expected-output fences. Unrelated prose stays lightweight.
+Bicep remains
 a full apps/ and labs/ compilation gate because the repository has no proven
 transitive module and parameter dependency graph.
 """
@@ -38,10 +38,11 @@ APP_JOBS: Final = {
     "apps/java-springboot/": Job.JAVA,
 }
 SHELL_COMMAND_RE: Final = re.compile(
-    r"^\s*(?:\$\s*)?(?:(?:az|docker|curl|gunicorn|node|npm|dotnet|mvn|python3?|bash|sh|kubectl)(?:\s|$)|\./|(?:apps|labs|scripts)/\S+\.sh\b)"
+    r"^\s*(?:\$\s*)?(?:(?:az|bash|cd|chmod|curl|docker|dotnet|flask|gradle|gunicorn|kubectl|mkdocs|mvn|node|npm|nslookup|pip3?|python3?|sh|sleep|uvicorn|zip)(?:\s|$)|/usr/sbin/sshd(?:\s|$)|\./|(?:apps|labs|scripts)/\S+\.sh\b)"
 )
 FENCE_OPEN_RE: Final = re.compile(r"^\s*(`{3,}|~{3,})(?:bash|sh|shell)(?:\s+.*)?$")
-HEADING_RE: Final = re.compile(r"^(#{1,6})\s+")
+ANY_FENCE_OPEN_RE: Final = re.compile(r"^\s*(`{3,}|~{3,})(?:\S.*)?$")
+OUTPUT_LABEL_RE: Final = re.compile(r"^\s*(?:(?:expected|example)\s+)?output\s*:\s*$", re.IGNORECASE)
 
 
 @dataclass(frozen=True, slots=True)
@@ -127,44 +128,54 @@ def executable_markdown_changed(old_text: str, new_text: str) -> bool:
 
 
 def _changed_executable_region(lines: list[str], changed_lines: set[int]) -> bool:
-    executable_fences: list[tuple[int, int]] = []
+    fences = _fence_ranges(lines)
+    executable_indexes = {
+        index
+        for index, (start, end) in enumerate(fences)
+        if FENCE_OPEN_RE.match(lines[start])
+        and any(SHELL_COMMAND_RE.search(line) for line in lines[start + 1 : end - 1])
+    }
+    executable_regions = [fences[index] for index in executable_indexes]
+    for index in executable_indexes:
+        next_index = index + 1
+        while next_index < len(fences) and not any(
+            lines[line_index].strip()
+            for line_index in range(fences[next_index - 1][1], fences[next_index][0])
+        ):
+            executable_regions.append(fences[next_index])
+            next_index += 1
+    for index, (start, end) in enumerate(fences):
+        label_index = start - 1
+        while label_index >= 0 and not lines[label_index].strip():
+            label_index -= 1
+        if (
+            label_index >= 0
+            and OUTPUT_LABEL_RE.match(lines[label_index])
+            and any(command_index < index for command_index in executable_indexes)
+        ):
+            executable_regions.append((start, end))
+    return any(
+        changed_lines.intersection(range(start, end))
+        for start, end in executable_regions
+    )
+
+
+def _fence_ranges(lines: list[str]) -> list[tuple[int, int]]:
+    fences: list[tuple[int, int]] = []
     fence_start: int | None = None
     fence_marker = ""
     for index, line in enumerate(lines):
-        opening = FENCE_OPEN_RE.match(line)
+        opening = ANY_FENCE_OPEN_RE.match(line)
         if fence_start is None and opening is not None:
             fence_start = index
             fence_marker = opening.group(1)
         elif fence_start is not None and re.match(
             rf"^\s*{re.escape(fence_marker[0])}{{{len(fence_marker)},}}\s*$", line
         ):
-            block = lines[fence_start + 1 : index]
-            if any(SHELL_COMMAND_RE.search(block_line) for block_line in block):
-                executable_fences.append((fence_start, index + 1))
+            fences.append((fence_start, index + 1))
             fence_start = None
             fence_marker = ""
-    return any(
-        changed_lines.intersection(_recipe_region(lines, start, end))
-        for start, end in executable_fences
-    )
-
-
-def _recipe_region(lines: list[str], fence_start: int, fence_end: int) -> range:
-    heading_index = 0
-    heading_level = 0
-    for index in range(fence_start - 1, -1, -1):
-        heading = HEADING_RE.match(lines[index])
-        if heading is not None:
-            heading_index = index
-            heading_level = len(heading.group(1))
-            break
-    region_end = len(lines)
-    for index in range(fence_end, len(lines)):
-        heading = HEADING_RE.match(lines[index])
-        if heading is not None and len(heading.group(1)) <= heading_level:
-            region_end = index
-            break
-    return range(heading_index, region_end)
+    return fences
 
 
 def classify_changes(

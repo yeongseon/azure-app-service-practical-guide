@@ -46,22 +46,6 @@ class ImpactClassifierTests(unittest.TestCase):
 
         self.assertEqual(selected, ALL_JOBS)
 
-    def test_expected_output_change_near_command_selects_full_verification(self) -> None:
-        old_text = "# Recipe\n\n```bash\naz webapp list\n```\n\nExpected: old\n"
-        new_text = "# Recipe\n\n```bash\naz webapp list\n```\n\nExpected: new\n"
-        with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
-            (root / "docs").mkdir()
-            _ = (root / "docs/recipe.md").write_text(new_text)
-
-            selected = classify_changes(
-                (Change.modified("docs/recipe.md"),),
-                root=root,
-                base_reader=lambda _: old_text,
-            )
-
-        self.assertEqual(selected, ALL_JOBS)
-
     def test_docker_recipe_change_selects_full_verification(self) -> None:
         old_text = "## Build\n\n```bash\ndocker build --tag demo .\n```\n"
         new_text = "## Build\n\n```bash\ndocker build --tag app-demo .\n```\n"
@@ -69,6 +53,23 @@ class ImpactClassifierTests(unittest.TestCase):
         changed = executable_markdown_changed(old_text, new_text)
 
         self.assertTrue(changed)
+
+    def test_repository_command_families_select_full_verification(self) -> None:
+        for command in (
+            "gradle bootRun",
+            "uvicorn app:app",
+            "flask run",
+            "mkdocs serve",
+            "pip install flask",
+            "nslookup example.com",
+        ):
+            with self.subTest(command=command):
+                old_text = f"## Run\n\n```bash\n{command}\n```\n"
+                new_text = old_text.replace(command, f"{command} --help")
+
+                changed = executable_markdown_changed(old_text, new_text)
+
+                self.assertTrue(changed)
 
     def test_prose_only_change_outside_command_recipe_stays_lightweight(self) -> None:
         old_text = (
@@ -81,12 +82,46 @@ class ImpactClassifierTests(unittest.TestCase):
 
         self.assertFalse(changed)
 
+    def test_same_section_prose_change_stays_lightweight(self) -> None:
+        old_text = (
+            "## Run\n\n```bash\nflask run\n```\n\n"
+            "Expected output:\n\n```text\nServing Flask app\n```\n\n"
+            "This prose explains what to do next.\n"
+        )
+        new_text = old_text.replace("what to do next", "the next step")
+
+        changed = executable_markdown_changed(old_text, new_text)
+
+        self.assertFalse(changed)
+
     def test_expected_output_fence_change_selects_full_verification(self) -> None:
         old_text = (
             "## Run\n\n```bash\ncurl --fail http://localhost:3000/health\n```\n\n"
             "Expected output:\n\n```text\nhealthy\n```\n"
         )
         new_text = old_text.replace("healthy", "ok")
+
+        changed = executable_markdown_changed(old_text, new_text)
+
+        self.assertTrue(changed)
+
+    def test_immediately_following_output_fence_selects_full_verification(self) -> None:
+        old_text = (
+            "## Run\n\n```bash\nflask run\n```\n\n"
+            "```text\nServing Flask app\n```\n"
+        )
+        new_text = old_text.replace("Serving Flask app", "Debug mode: off")
+
+        changed = executable_markdown_changed(old_text, new_text)
+
+        self.assertTrue(changed)
+
+    def test_output_labeled_fence_selects_full_verification(self) -> None:
+        old_text = (
+            "## Run\n\n```bash\nflask run\n```\n\nDetails.\n\n"
+            "Output:\n\n```text\nServing Flask app\n```\n"
+        )
+        new_text = old_text.replace("Serving Flask app", "Debug mode: off")
 
         changed = executable_markdown_changed(old_text, new_text)
 
