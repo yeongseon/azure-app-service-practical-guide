@@ -71,6 +71,38 @@ class ImpactClassifierTests(unittest.TestCase):
 
                 self.assertTrue(changed)
 
+    def test_typed_shell_fences_accept_any_command_family(self) -> None:
+        recipes = (
+            ("```bash", "```", "make test"),
+            ("~~~sh", "~~~", "pytest -q"),
+            ("```shell title=\"Install\"", "```", "pnpm install"),
+            ("```bash", "```", "yarn test"),
+            ("```sh", "```", "java -jar app.jar"),
+            ("~~~shell", "~~~", "go test ./..."),
+            ("```bash title=\"Check\"", "```", "npx prettier --check ."),
+            ("```shell", "```", "Get-ChildItem Env:"),
+            ("```Bash", "```", "make test"),
+            ("~~~SH", "~~~", "pytest -q"),
+        )
+        for opening, closing, command in recipes:
+            with self.subTest(opening=opening, command=command):
+                old_text = f"## Run\n\n{opening}\n{command}\n{closing}\n"
+                new_text = old_text.replace(command, f"{command} --verbose")
+
+                changed = executable_markdown_changed(old_text, new_text)
+
+                self.assertTrue(changed)
+
+    def test_untyped_fence_keeps_command_family_heuristic(self) -> None:
+        for command, expected in (("docker build .", True), ("make test", False)):
+            with self.subTest(command=command):
+                old_text = f"## Run\n\n```\n{command}\n```\n"
+                new_text = old_text.replace(command, f"{command} --verbose")
+
+                changed = executable_markdown_changed(old_text, new_text)
+
+                self.assertEqual(changed, expected)
+
     def test_prose_only_change_outside_command_recipe_stays_lightweight(self) -> None:
         old_text = (
             "# Container\n\nOld introduction.\n\n"
@@ -126,6 +158,29 @@ class ImpactClassifierTests(unittest.TestCase):
         changed = executable_markdown_changed(old_text, new_text)
 
         self.assertTrue(changed)
+
+    def test_output_under_later_heading_stays_lightweight(self) -> None:
+        old_text = (
+            "## Run\n\n```bash\nflask run\n```\n\n"
+            "## Troubleshooting\n\nOutput:\n\n```text\nNo issues found\n```\n"
+        )
+        new_text = old_text.replace("No issues found", "No failures found")
+
+        changed = executable_markdown_changed(old_text, new_text)
+
+        self.assertFalse(changed)
+
+    def test_output_after_unrelated_fence_stays_lightweight(self) -> None:
+        old_text = (
+            "## Run\n\n```bash\nflask run\n```\n\n"
+            "```text\nConfiguration note\n```\n\n"
+            "Output:\n\n```text\nNo issues found\n```\n"
+        )
+        new_text = old_text.replace("No issues found", "No failures found")
+
+        changed = executable_markdown_changed(old_text, new_text)
+
+        self.assertFalse(changed)
 
     def test_annotated_command_fence_selects_full_verification(self) -> None:
         old_text = "## Start\n\n```bash title=\"Start the app\"\ngunicorn app:app\n```\n"

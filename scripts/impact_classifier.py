@@ -40,9 +40,10 @@ APP_JOBS: Final = {
 SHELL_COMMAND_RE: Final = re.compile(
     r"^\s*(?:\$\s*)?(?:(?:az|bash|cd|chmod|curl|docker|dotnet|flask|gradle|gunicorn|kubectl|mkdocs|mvn|node|npm|nslookup|pip3?|python3?|sh|sleep|uvicorn|zip)(?:\s|$)|/usr/sbin/sshd(?:\s|$)|\./|(?:apps|labs|scripts)/\S+\.sh\b)"
 )
-FENCE_OPEN_RE: Final = re.compile(r"^\s*(`{3,}|~{3,})(?:bash|sh|shell)(?:\s+.*)?$")
+FENCE_OPEN_RE: Final = re.compile(r"^\s*(`{3,}|~{3,})(?:bash|sh|shell)(?:\s+.*)?$", re.IGNORECASE)
 ANY_FENCE_OPEN_RE: Final = re.compile(r"^\s*(`{3,}|~{3,})(?:\S.*)?$")
 OUTPUT_LABEL_RE: Final = re.compile(r"^\s*(?:(?:expected|example)\s+)?output\s*:\s*$", re.IGNORECASE)
+HEADING_RE: Final = re.compile(r"^\s{0,3}#{1,6}(?:\s+|$)")
 
 
 @dataclass(frozen=True, slots=True)
@@ -122,9 +123,8 @@ def executable_markdown_changed(old_text: str, new_text: str) -> bool:
         if tag != "equal":
             old_changed.update(range(old_start, old_end))
             new_changed.update(range(new_start, new_end))
-    return _changed_executable_region(old_lines, old_changed) or _changed_executable_region(
-        new_lines, new_changed
-    )
+    old_executable = _changed_executable_region(old_lines, old_changed)
+    return old_executable or _changed_executable_region(new_lines, new_changed)
 
 
 def _changed_executable_region(lines: list[str], changed_lines: set[int]) -> bool:
@@ -133,7 +133,10 @@ def _changed_executable_region(lines: list[str], changed_lines: set[int]) -> boo
         index
         for index, (start, end) in enumerate(fences)
         if FENCE_OPEN_RE.match(lines[start])
-        and any(SHELL_COMMAND_RE.search(line) for line in lines[start + 1 : end - 1])
+        or (
+            lines[start].strip() in {"```", "~~~"}
+            and any(SHELL_COMMAND_RE.search(line) for line in lines[start + 1 : end - 1])
+        )
     }
     executable_regions = [fences[index] for index in executable_indexes]
     for index in executable_indexes:
@@ -148,16 +151,18 @@ def _changed_executable_region(lines: list[str], changed_lines: set[int]) -> boo
         label_index = start - 1
         while label_index >= 0 and not lines[label_index].strip():
             label_index -= 1
+        section_start = label_index - 1
+        while section_start >= 0 and not HEADING_RE.match(lines[section_start]):
+            section_start -= 1
+        preceding_fence = index - 1
         if (
             label_index >= 0
             and OUTPUT_LABEL_RE.match(lines[label_index])
-            and any(command_index < index for command_index in executable_indexes)
+            and preceding_fence in executable_indexes
+            and section_start < fences[preceding_fence][0]
         ):
             executable_regions.append((start, end))
-    return any(
-        changed_lines.intersection(range(start, end))
-        for start, end in executable_regions
-    )
+    return any(changed_lines.intersection(range(start, end)) for start, end in executable_regions)
 
 
 def _fence_ranges(lines: list[str]) -> list[tuple[int, int]]:
