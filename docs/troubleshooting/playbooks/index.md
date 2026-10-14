@@ -86,6 +86,8 @@ graph TD
 | [Failed to Forward Request](startup-availability/failed-to-forward-request.md) | Platform proxy cannot reach app container at runtime |
 | [Slot Swap Config Drift / Restart Race](startup-availability/slot-swap-config-drift.md) | Swap succeeds but production restarts or config breaks |
 | [First Static-Asset Request Returns HTTP 500 After Deployment on Windows](startup-availability/windows-first-static-asset-request-500.md) | First static-asset request after deployment is 500, but the same request reloads as 200 |
+| [Windows Slot-Swap First-Request Latency](startup-availability/windows-slot-swap-first-request-latency.md) | First business request is slow after a successful Windows slot swap |
+| [Windows Slot-Swap Binding Drift and Worker Recycle](startup-availability/windows-slot-swap-binding-recycle.md) | Windows worker restarts near a swap and hostname-binding drift is one conditional hypothesis |
 
 ## See Also
 

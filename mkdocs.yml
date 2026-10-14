@@ -313,6 +313,8 @@ nav:
         - troubleshooting/playbooks/startup-availability/windows-first-static-asset-request-500.md
         - troubleshooting/playbooks/startup-availability/windows-container-health-probes.md
         - troubleshooting/playbooks/startup-availability/windows-kudu-diagnostics.md
+        - troubleshooting/playbooks/startup-availability/windows-slot-swap-first-request-latency.md
+        - troubleshooting/playbooks/startup-availability/windows-slot-swap-binding-recycle.md
       - Performance:
         - troubleshooting/playbooks/performance/intermittent-5xx-under-load.md
         - troubleshooting/playbooks/performance/memory-pressure-and-worker-degradation.md
