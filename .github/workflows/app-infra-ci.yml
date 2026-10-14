@@ -4,23 +4,65 @@ on:
   pull_request:
     paths:
       - 'apps/**'
+      - 'docs/**'
       - 'labs/**'
       - 'scripts/**'
       - 'tools/**'
-      - '.github/workflows/app-infra-ci.yml'
+      - '.github/workflows/**'
   push:
     branches:
       - main
     paths:
       - 'apps/**'
+      - 'docs/**'
       - 'labs/**'
       - 'scripts/**'
       - 'tools/**'
-      - '.github/workflows/app-infra-ci.yml'
+      - '.github/workflows/**'
+  workflow_dispatch:
+  schedule:
+    - cron: '30 5 * * 1'
+
+permissions:
+  contents: read
 
 jobs:
+  classify:
+    name: Classify App and Infra Changes
+    runs-on: ubuntu-latest
+    outputs:
+      scripts: ${{ steps.impact.outputs.scripts }}
+      nodejs: ${{ steps.impact.outputs.nodejs }}
+      nodejs_container: ${{ steps.impact.outputs.nodejs_container }}
+      python: ${{ steps.impact.outputs.python }}
+      dotnet: ${{ steps.impact.outputs.dotnet }}
+      java: ${{ steps.impact.outputs.java }}
+      bicep: ${{ steps.impact.outputs.bicep }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Test impact classifier
+        run: python -m unittest scripts/test_impact_classifier.py scripts/test_impact_ci.py
+
+      - name: Select impacted jobs
+        id: impact
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+          PUSH_BASE: ${{ github.event.before }}
+        run: |
+          python scripts/impact_ci.py select \
+            --event-name "$EVENT_NAME" \
+            --pr-base "$PR_BASE" \
+            --push-base "$PUSH_BASE" \
+            --github-output "$GITHUB_OUTPUT"
+
   scripts:
     name: Shell Scripts
+    needs: classify
+    if: needs.classify.outputs.scripts == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -35,6 +77,8 @@ jobs:
 
   nodejs:
     name: Node.js App
+    needs: classify
+    if: needs.classify.outputs.nodejs == 'true'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -62,6 +106,8 @@ jobs:
 
   nodejs-container:
     name: Node.js Container Smoke
+    needs: classify
+    if: needs.classify.outputs.nodejs_container == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -75,6 +121,8 @@ jobs:
 
   python:
     name: Python Flask App
+    needs: classify
+    if: needs.classify.outputs.python == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -96,6 +144,8 @@ jobs:
 
   dotnet:
     name: ASP.NET Core App
+    needs: classify
+    if: needs.classify.outputs.dotnet == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -109,6 +159,8 @@ jobs:
 
   java:
     name: Java Spring Boot App
+    needs: classify
+    if: needs.classify.outputs.java == 'true'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -127,6 +179,8 @@ jobs:
 
   bicep:
     name: Bicep Templates
+    needs: classify
+    if: needs.classify.outputs.bicep == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -149,3 +203,38 @@ jobs:
               echo "Building ${file}"
               az bicep build-params --file "${file}" --stdout >/dev/null </dev/null
             done
+
+  app-infra-result:
+    name: App and Infra CI Result
+    if: always()
+    needs:
+      - classify
+      - scripts
+      - nodejs
+      - nodejs-container
+      - python
+      - dotnet
+      - java
+      - bicep
+    runs-on: ubuntu-latest
+    env:
+      SELECTED_SCRIPTS: ${{ needs.classify.outputs.scripts }}
+      SELECTED_NODEJS: ${{ needs.classify.outputs.nodejs }}
+      SELECTED_NODEJS_CONTAINER: ${{ needs.classify.outputs.nodejs_container }}
+      SELECTED_PYTHON: ${{ needs.classify.outputs.python }}
+      SELECTED_DOTNET: ${{ needs.classify.outputs.dotnet }}
+      SELECTED_JAVA: ${{ needs.classify.outputs.java }}
+      SELECTED_BICEP: ${{ needs.classify.outputs.bicep }}
+      RESULT_CLASSIFY: ${{ needs.classify.result }}
+      RESULT_SCRIPTS: ${{ needs.scripts.result }}
+      RESULT_NODEJS: ${{ needs.nodejs.result }}
+      RESULT_NODEJS_CONTAINER: ${{ needs.nodejs-container.result }}
+      RESULT_PYTHON: ${{ needs.python.result }}
+      RESULT_DOTNET: ${{ needs.dotnet.result }}
+      RESULT_JAVA: ${{ needs.java.result }}
+      RESULT_BICEP: ${{ needs.bicep.result }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Require every selected job to succeed
+        run: python scripts/impact_ci.py aggregate
