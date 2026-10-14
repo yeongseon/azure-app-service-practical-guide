@@ -1,37 +1,34 @@
-name: Feature or Content Request
-description: Suggest a new section, guide, lab, workflow, or improvement.
-title: "[Request]: "
-labels: []
+name: Feature or task
+description: Propose a focused capability or maintenance task
+title: 'feat: '
+labels: [enhancement, needs-triage]
 body:
-  - type: input
-    id: summary
+  - type: textarea
+    id: context
     attributes:
-      label: Summary
-      description: Provide a short summary of the request.
-      placeholder: Add a guide for custom containers on Linux.
+      label: Context
+      description: Explain the use case, current gap and proposed local scope.
     validations:
       required: true
   - type: textarea
-    id: details
+    id: acceptance
     attributes:
-      label: Details
-      description: Explain the problem, goal, or gap this request would address.
-      placeholder: Readers need...
+      label: Acceptance Checklist
+      description: Concrete, verifiable completion criteria. Maintainers choose a priority label.
+      placeholder: '- [ ] Describe an observable result'
     validations:
       required: true
   - type: textarea
-    id: proposed-solution
+    id: exclusions
     attributes:
-      label: Proposed solution or content
-      description: Describe the change you would like to see.
-      placeholder: A new page or section covering...
+      label: Out of scope
+      description: Explicit exclusions and separate tracking issues, or None.
     validations:
-      required: false
+      required: true
   - type: textarea
-    id: audience
+    id: references
     attributes:
-      label: Intended audience or scenario
-      description: Describe who would benefit and in what situation.
-      placeholder: Operators troubleshooting...
+      label: References
+      description: Related local issues, reference implementations or documents, or None.
     validations:
-      required: false
+      required: true

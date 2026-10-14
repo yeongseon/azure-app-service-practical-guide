@@ -9,7 +9,7 @@ Thank you for your interest in contributing to Azure App Service Practical Guide
 3. Install dependencies: `pip install mkdocs-material mkdocs-minify-plugin`
 4. Start local preview: `mkdocs serve`
 5. Open `http://127.0.0.1:8000` in your browser
-6. Create a feature branch: `git checkout -b feature/your-change`
+6. Create a feature branch: `git checkout -b feat/your-change`
 7. Make changes and validate: `mkdocs build --strict`
 8. Submit a Pull Request
 
@@ -238,13 +238,10 @@ mkdocs build --strict
 mkdocs serve
 ```
 
-## Git Commit Style
+## Title Convention
 
-```
-type: short description
-```
-
-Allowed types: `feat`, `fix`, `docs`, `chore`, `refactor`
+Issues, pull requests, and commits follow the canonical
+[Title Convention](https://github.com/yeongseon/azure-app-service-practical-guide/blob/main/CONTRIBUTING.md#title-convention).
 
 ## Review Process
 

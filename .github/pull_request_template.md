@@ -1,15 +1,29 @@
+<!-- Titles follow CONTRIBUTING.md#title-convention. Apply exactly one priority:* label.
+     Keep issue/PR numbers out of the title and link same-repository issues below. -->
+
 ## Summary
 
-## Related issue
+<!-- What changes and why? -->
 
 ## Changes
 
+<!-- Concrete implementation and remaining scope. -->
+
+## Type of Change
+
+<!-- Bug fix / feature / documentation / refactoring / CI or maintenance. -->
+
 ## Validation
+
+<!-- Commands and actual results. Azure results require run ID, source commit,
+     environment, capture date, evidence, recovery and cleanup. Otherwise NOT_RUN. -->
 
 ## Checklist
 
-- [ ] Documentation build and related checks were run.
-- [ ] CLI commands use long flags, and any command claimed as validated was actually executed.
-- [ ] No subscription IDs, tenant IDs, object IDs, emails, secrets, or other PII were added.
-- [ ] Links and source metadata were updated where applicable.
-- [ ] Screenshots were visually checked and sanitized when applicable.
+- [ ] Relevant checks were run and their results recorded.
+- [ ] Verification dates and claims reflect work actually performed.
+- [ ] Scope and mandatory review gates were checked; no failing gate was bypassed.
+
+## Related Issues
+
+<!-- Closes #N for completed scope, or Refs #N with remaining work for partial scope. -->

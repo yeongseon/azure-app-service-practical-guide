@@ -1,0 +1,18 @@
+{
+  "priority:critical": {
+    "color": "b60205",
+    "description": "Immediate security/data loss or blocked publication pipeline"
+  },
+  "priority:high": {
+    "color": "d93f0b",
+    "description": "Serious correctness/reliability; before next planned publication"
+  },
+  "priority:medium": {
+    "color": "fbca04",
+    "description": "Normal planned work or limited impact with a workaround"
+  },
+  "priority:low": {
+    "color": "0e8a16",
+    "description": "Non-urgent polish or optional expansion"
+  }
+}
