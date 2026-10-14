@@ -35,6 +35,12 @@ own tests; production documentation has no exemptions.
 []
 >>> find_violations("A silent stream does not prove that the process died before logger setup")
 []
+>>> find_violations("499 at 30 seconds does not prove DNS; therefore SNAT exhaustion.")
+['http_timing_proves_snat']
+>>> find_violations("A silent stream does not prove startup success; the process died before logger setup.")
+['empty_logs_prove_pre_logging_failure']
+>>> find_violations("A silent stream does not prove startup success.")
+[]
 >>> find_violations("A 503 and absent rows are inconclusive until logging scope and delay are checked")
 []
 >>> find_violations("A 499 ended the request. Thirty seconds later, a SNAT detector ran.")
@@ -72,10 +78,17 @@ ALLOWLIST: Final = {
         27,
         29,
         31,
+        38,
+        40,
     }),
 }
 
 SENTENCE_RE: Final = re.compile(r"[^.!?\n]+(?:[.!?]+|$)")
+CLAUSE_SEPARATOR_RE: Final = re.compile(
+    r";|\s+-\s+|,\s*(?:but|therefore|so|because)\b|"
+    r"\b(?:therefore|so|because)\b",
+    re.IGNORECASE,
+)
 EXPLICIT_QUALIFICATION_RE: Final = re.compile(
     r"\b(?:is|are) not (?:proof|evidence)\b|"
     r"\b(?:do|does|did) not (?:prove|show|mean|indicate|confirm)\b|"
@@ -118,15 +131,29 @@ DENYLIST: Final = {
 }
 
 
+def sentence_violations(sentence: str) -> list[tuple[str, re.Match[str]]]:
+    separators = list(CLAUSE_SEPARATOR_RE.finditer(sentence))
+    clause_starts = [0, *(match.end() for match in separators)]
+    clause_ends = [
+        *(match.start() for match in separators),
+        len(sentence),
+    ]
+    violations: list[tuple[str, re.Match[str]]] = []
+    for clause_start, clause_end in zip(clause_starts, clause_ends, strict=True):
+        clause = sentence[clause_start:clause_end]
+        if EXPLICIT_QUALIFICATION_RE.search(clause):
+            continue
+        candidate = sentence[:clause_end]
+        for name, pattern in DENYLIST.items():
+            if (match := pattern.search(candidate)) and match.end() > clause_start:
+                violations.append((name, match))
+    return list(dict.fromkeys(violations))
+
+
 def find_violations(text: str) -> list[str]:
     violations: list[str] = []
     for sentence_match in SENTENCE_RE.finditer(text):
-        sentence = sentence_match.group(0)
-        if EXPLICIT_QUALIFICATION_RE.search(sentence):
-            continue
-        violations.extend(
-            name for name, pattern in DENYLIST.items() if pattern.search(sentence)
-        )
+        violations.extend(name for name, _match in sentence_violations(sentence_match.group(0)))
     return list(dict.fromkeys(violations))
 
 
@@ -137,15 +164,12 @@ def scan_file(path: Path) -> list[str]:
     findings: list[str] = []
     for sentence_match in SENTENCE_RE.finditer(text):
         sentence = sentence_match.group(0)
-        if EXPLICIT_QUALIFICATION_RE.search(sentence):
-            continue
-        for name, pattern in DENYLIST.items():
-            for match in pattern.finditer(sentence):
-                start = sentence_match.start() + match.start()
-                line = text.count("\n", 0, start) + 1
-                if line not in allowed_lines:
-                    excerpt = " ".join(match.group(0).split())
-                    findings.append(f"{relative}:{line}: {name}: {excerpt}")
+        for name, match in sentence_violations(sentence):
+            start = sentence_match.start() + match.start()
+            line = text.count("\n", 0, start) + 1
+            if line not in allowed_lines:
+                excerpt = " ".join(match.group(0).split())
+                findings.append(f"{relative}:{line}: {name}: {excerpt}")
     return findings
 
 
