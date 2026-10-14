@@ -1,17 +1,18 @@
 from __future__ import annotations
 
-import sys
 import tempfile
 import unittest
 from pathlib import Path
+from typing import override
 
-SCRIPTS = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(SCRIPTS))
-
-from validate_documented_paths import validate_tree
+from scripts.validate_documented_paths import PATH_EXCEPTIONS, validate_tree
 
 
 class DocumentedPathValidationTests(unittest.TestCase):
+    temporary: tempfile.TemporaryDirectory[str] = tempfile.TemporaryDirectory()
+    root: Path = Path()
+
+    @override
     def setUp(self) -> None:
         self.temporary = tempfile.TemporaryDirectory()
         self.addCleanup(self.temporary.cleanup)
@@ -19,48 +20,113 @@ class DocumentedPathValidationTests(unittest.TestCase):
         (self.root / "docs").mkdir()
 
     def write_doc(self, body: str) -> None:
-        (self.root / "docs" / "guide.md").write_text(body, encoding="utf-8")
+        _ = (self.root / "docs" / "guide.md").write_text(body, encoding="utf-8")
 
-    def test_rejects_missing_relative_link(self) -> None:
-        # Given a documentation link to a repository-local file that is absent
-        self.write_doc("[runner](../labs/example/run.py)\n")
-
-        # When the checkout is validated
-        findings = validate_tree(self.root)
-
-        # Then the missing relative target is reported
-        self.assertEqual([finding.kind for finding in findings], ["relative-link"])
-
-    def test_rejects_missing_main_blob_and_tree_links(self) -> None:
-        # Given main-branch links whose targets do not exist in this checkout
+    def test_rejects_missing_inline_and_github_targets(self) -> None:
+        # Given inline and main-branch links whose targets are absent
         self.write_doc(
-            "[file](https://github.com/yeongseon/azure-app-service-practical-guide/blob/main/labs/example/run.py)\n"
-            "[folder](https://github.com/yeongseon/azure-app-service-practical-guide/tree/main/labs/example)\n"
+            "\n".join(
+                (
+                    "[runner](../labs/example/run.py)",
+                    "[file](https://github.com/yeongseon/azure-app-service-practical-guide/blob/main/labs/example/run.py)",
+                    "[folder](https://github.com/yeongseon/azure-app-service-practical-guide/tree/main/labs/example)",
+                    "",
+                )
+            )
         )
 
         # When the checkout is validated
         findings = validate_tree(self.root)
 
-        # Then both links are resolved against the working tree and rejected
+        # Then every missing target is reported according to its link form
         self.assertEqual(
             [finding.kind for finding in findings],
-            ["github-main-link", "github-main-link"],
+            ["relative-link", "github-main-link", "github-main-link"],
         )
 
-    def test_rejects_missing_registered_command_paths(self) -> None:
-        # Given supported command forms that name absent repository files
+    def test_rejects_missing_reference_style_target_at_definition_and_usage(self) -> None:
+        # Given one used and one unused reference definition with missing targets
         self.write_doc(
-            "```bash\n"
-            "python3 labs/example/run.py execute\n"
-            "./labs/example/trigger.sh\n"
-            "az deployment group create --template-file labs/example/main.bicep\n"
-            "```\n"
+            "\n".join(
+                (
+                    "Read the [runner][run-ref].",
+                    "",
+                    "[run-ref]: ../labs/example/run.py?mode=fast#usage",
+                    "[unused-ref]: ../labs/example/unused.py",
+                    "",
+                )
+            )
         )
 
         # When the checkout is validated
         findings = validate_tree(self.root)
 
-        # Then each registered command reference is rejected
+        # Then the usage and both definitions are independently checked
+        self.assertEqual(
+            [(finding.line, finding.kind) for finding in findings],
+            [
+                (1, "reference-link"),
+                (3, "reference-definition"),
+                (4, "reference-definition"),
+            ],
+        )
+
+    def test_rejects_undefined_reference_style_usage(self) -> None:
+        # Given a reference-style usage with no definition
+        self.write_doc("Read the [runner][missing-ref].\n")
+
+        # When the checkout is validated
+        findings = validate_tree(self.root)
+
+        # Then the missing definition is reported
+        self.assertEqual(
+            [(finding.reference, finding.kind) for finding in findings],
+            [("missing-ref", "reference-definition")],
+        )
+
+    def test_rejects_missing_local_html_href_and_src(self) -> None:
+        # Given local HTML attributes pointing to absent repository files
+        self.write_doc(
+            "\n".join(
+                (
+                    '<a href="../labs/example/run.py?mode=fast#usage">runner</a>',
+                    '<img src="../assets/missing.png#preview" alt="missing">',
+                    "",
+                )
+            )
+        )
+
+        # When the checkout is validated
+        findings = validate_tree(self.root)
+
+        # Then both local HTML targets are rejected
+        self.assertEqual(
+            [(finding.reference, finding.kind) for finding in findings],
+            [
+                ("../labs/example/run.py?mode=fast#usage", "html-link"),
+                ("../assets/missing.png#preview", "html-link"),
+            ],
+        )
+
+    def test_rejects_missing_commands_only_in_executable_fences(self) -> None:
+        # Given supported command forms in an executable shell fence
+        self.write_doc(
+            "\n".join(
+                (
+                    "```bash",
+                    "python3 labs/example/run.py execute",
+                    "./labs/example/trigger.sh",
+                    "az deployment group create --template-file labs/example/main.bicep",
+                    "```",
+                    "",
+                )
+            )
+        )
+
+        # When the checkout is validated
+        findings = validate_tree(self.root)
+
+        # Then each missing command reference is rejected
         self.assertEqual(
             [finding.reference for finding in findings],
             [
@@ -70,43 +136,98 @@ class DocumentedPathValidationTests(unittest.TestCase):
             ],
         )
 
-    def test_accepts_existing_targets_and_generated_artifacts(self) -> None:
-        # Given existing link and command targets plus known generated outputs
+    def test_ignores_links_in_all_fences_and_commands_in_non_executable_fences(self) -> None:
+        # Given link examples in backtick/tilde fences and a command-shaped Kusto line
+        self.write_doc(
+            "\n".join(
+                (
+                    "````markdown",
+                    "[missing](../labs/nope/run.py)",
+                    "````",
+                    "~~~html",
+                    '<a href="../labs/nope/run.py">missing</a>',
+                    "~~~",
+                    "```kusto",
+                    "./labs/nope/run.py",
+                    "```",
+                    "",
+                )
+            )
+        )
+
+        # When the checkout is validated
+        findings = validate_tree(self.root)
+
+        # Then examples and non-executable language content are ignored
+        self.assertEqual(findings, ())
+
+    def test_accepts_tables_and_query_or_anchor_suffixes_for_existing_targets(self) -> None:
+        # Given existing targets linked from a Markdown table with URL suffixes
         lab = self.root / "labs" / "example"
         lab.mkdir(parents=True)
-        for name in ("run.py", "trigger.sh", "main.bicep"):
-            (lab / name).touch()
+        (lab / "run.py").touch()
         self.write_doc(
-            "[runner](../labs/example/run.py)\n"
-            "[lab](https://github.com/yeongseon/azure-app-service-practical-guide/tree/main/labs/example)\n"
-            "```bash\n"
-            "python3 labs/example/run.py --output artifacts/raw/evidence\n"
-            "./labs/example/trigger.sh --env artifacts/.env\n"
-            "az deployment group create --template-file labs/example/main.bicep\n"
-            "```\n"
+            "\n".join(
+                (
+                    "| Form | Target |",
+                    "|---|---|",
+                    "| Inline | [runner](../labs/example/run.py?mode=fast#usage) |",
+                    "| Reference | [runner][run-ref] |",
+                    '| HTML | <a href="../labs/example/run.py?raw=1#L1">runner</a> |',
+                    "",
+                    "[run-ref]: ../labs/example/run.py?mode=slow#reference",
+                    "",
+                )
+            )
         )
 
         # When the checkout is validated
         findings = validate_tree(self.root)
 
-        # Then checked-in targets pass and intentionally generated artifacts are ignored
+        # Then suffixes do not affect filesystem resolution and tables parse normally
         self.assertEqual(findings, ())
 
-    def test_ignores_placeholders_and_external_or_anchor_links(self) -> None:
-        # Given illustrative placeholders and links outside the repository
+    def test_accepts_every_registered_exception(self) -> None:
+        # Given one documented command path for every explicit exception
+        body = "".join(
+            f"```bash\npython3 {exception.example}\n```\n" for exception in PATH_EXCEPTIONS
+        )
+        self.write_doc(body)
+
+        # When the checkout is validated
+        findings = validate_tree(self.root)
+
+        # Then every reviewed exception is honored
+        self.assertEqual(findings, ())
+
+    def test_rejects_neighboring_typo_and_unregistered_future_path(self) -> None:
+        # Given paths close to registered generated, placeholder, and future exceptions
         self.write_doc(
-            "[section](#next) [Learn](https://learn.microsoft.com/en-us/azure/app-service/)\n"
-            "```bash\n"
-            "az deployment group create --template-file labs/<name>/main.bicep\n"
-            "```\n"
+            "\n".join(
+                (
+                    "```bash",
+                    "python3 artifacts/rawish/evidence.json",
+                    "python3 labs/missing/<app-nam>/run.py",
+                    "python3 labs/windows-java-httpplatformhandler-timeout/artifacts-sanitized/stage-1/result.json",
+                    "```",
+                    "",
+                )
+            )
         )
 
         # When the checkout is validated
         findings = validate_tree(self.root)
 
-        # Then non-concrete repository targets are outside this gate
-        self.assertEqual(findings, ())
+        # Then exceptions do not hide neighboring or unregistered paths
+        self.assertEqual(
+            [finding.reference for finding in findings],
+            [
+                "artifacts/rawish/evidence.json",
+                "labs/missing/<app-nam>/run.py",
+                "labs/windows-java-httpplatformhandler-timeout/artifacts-sanitized/stage-1/result.json",
+            ],
+        )
 
 
 if __name__ == "__main__":
-    unittest.main()
+    _ = unittest.main()
