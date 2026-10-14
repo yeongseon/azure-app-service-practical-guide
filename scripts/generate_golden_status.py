@@ -1153,7 +1153,15 @@ def source_revision() -> str:
         return completed.stdout.strip()
 
     revision = git("rev-parse", "--short", "HEAD") or "unknown"
-    if git("status", "--porcelain"):
+    status = git(
+        "status",
+        "--porcelain",
+        "--untracked-files=normal",
+        "--",
+        ".",
+        ":(exclude)docs/meta/golden-status.md",
+    )
+    if status:
         revision += " plus uncommitted working-tree changes"
     return revision
 
