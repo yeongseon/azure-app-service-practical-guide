@@ -4,23 +4,76 @@ on:
   pull_request:
     paths:
       - 'apps/**'
+      - 'docs/**'
       - 'labs/**'
       - 'scripts/**'
       - 'tools/**'
-      - '.github/workflows/app-infra-ci.yml'
+      - '.github/workflows/**'
   push:
     branches:
       - main
     paths:
       - 'apps/**'
+      - 'docs/**'
       - 'labs/**'
       - 'scripts/**'
       - 'tools/**'
-      - '.github/workflows/app-infra-ci.yml'
+      - '.github/workflows/**'
+  workflow_dispatch:
+  schedule:
+    - cron: '30 5 * * 1'
+
+permissions:
+  contents: read
 
 jobs:
+  classify:
+    name: Classify App and Infra Changes
+    runs-on: ubuntu-latest
+    outputs:
+      scripts: ${{ steps.impact.outputs.scripts }}
+      nodejs: ${{ steps.impact.outputs.nodejs }}
+      nodejs_container: ${{ steps.impact.outputs.nodejs_container }}
+      python: ${{ steps.impact.outputs.python }}
+      dotnet: ${{ steps.impact.outputs.dotnet }}
+      java: ${{ steps.impact.outputs.java }}
+      bicep: ${{ steps.impact.outputs.bicep }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Test impact classifier
+        run: python -m unittest scripts/test_impact_classifier.py
+
+      - name: Select impacted jobs
+        id: impact
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+          PUSH_BASE: ${{ github.event.before }}
+        run: |
+          full_regression=false
+          if [[ "$EVENT_NAME" == workflow_dispatch || "$EVENT_NAME" == schedule ]]; then
+            full_regression=true
+            base=HEAD
+          elif [[ "$EVENT_NAME" == pull_request ]]; then
+            base="$PR_BASE"
+          elif [[ -n "$PUSH_BASE" ]] && git cat-file -e "${PUSH_BASE}^{commit}" 2>/dev/null; then
+            base="$PUSH_BASE"
+          else
+            base=HEAD^
+          fi
+          args=(--base "$base" --github-output "$GITHUB_OUTPUT")
+          if [[ "$full_regression" == true ]]; then
+            args+=(--full-regression)
+          fi
+          python scripts/impact_classifier.py "${args[@]}"
+
   scripts:
     name: Shell Scripts
+    needs: classify
+    if: needs.classify.outputs.scripts == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -35,6 +88,8 @@ jobs:
 
   nodejs:
     name: Node.js App
+    needs: classify
+    if: needs.classify.outputs.nodejs == 'true'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -62,6 +117,8 @@ jobs:
 
   nodejs-container:
     name: Node.js Container Smoke
+    needs: classify
+    if: needs.classify.outputs.nodejs_container == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -75,6 +132,8 @@ jobs:
 
   python:
     name: Python Flask App
+    needs: classify
+    if: needs.classify.outputs.python == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -96,6 +155,8 @@ jobs:
 
   dotnet:
     name: ASP.NET Core App
+    needs: classify
+    if: needs.classify.outputs.dotnet == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -109,6 +170,8 @@ jobs:
 
   java:
     name: Java Spring Boot App
+    needs: classify
+    if: needs.classify.outputs.java == 'true'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -127,6 +190,8 @@ jobs:
 
   bicep:
     name: Bicep Templates
+    needs: classify
+    if: needs.classify.outputs.bicep == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -149,3 +214,55 @@ jobs:
               echo "Building ${file}"
               az bicep build-params --file "${file}" --stdout >/dev/null </dev/null
             done
+
+  app-infra-result:
+    name: App and Infra CI Result
+    if: always()
+    needs:
+      - classify
+      - scripts
+      - nodejs
+      - nodejs-container
+      - python
+      - dotnet
+      - java
+      - bicep
+    runs-on: ubuntu-latest
+    env:
+      SELECTED_SCRIPTS: ${{ needs.classify.outputs.scripts }}
+      SELECTED_NODEJS: ${{ needs.classify.outputs.nodejs }}
+      SELECTED_NODEJS_CONTAINER: ${{ needs.classify.outputs.nodejs_container }}
+      SELECTED_PYTHON: ${{ needs.classify.outputs.python }}
+      SELECTED_DOTNET: ${{ needs.classify.outputs.dotnet }}
+      SELECTED_JAVA: ${{ needs.classify.outputs.java }}
+      SELECTED_BICEP: ${{ needs.classify.outputs.bicep }}
+      RESULT_CLASSIFY: ${{ needs.classify.result }}
+      RESULT_SCRIPTS: ${{ needs.scripts.result }}
+      RESULT_NODEJS: ${{ needs.nodejs.result }}
+      RESULT_NODEJS_CONTAINER: ${{ needs.nodejs-container.result }}
+      RESULT_PYTHON: ${{ needs.python.result }}
+      RESULT_DOTNET: ${{ needs.dotnet.result }}
+      RESULT_JAVA: ${{ needs.java.result }}
+      RESULT_BICEP: ${{ needs.bicep.result }}
+    steps:
+      - name: Require every selected job to succeed
+        run: |
+          if [[ "$RESULT_CLASSIFY" != success ]]; then
+            echo "::error::Impact classification did not succeed: $RESULT_CLASSIFY"
+            exit 1
+          fi
+          failed=0
+          for job in SCRIPTS NODEJS NODEJS_CONTAINER PYTHON DOTNET JAVA BICEP; do
+            selected_var="SELECTED_${job}"
+            result_var="RESULT_${job}"
+            selected="${!selected_var}"
+            result="${!result_var}"
+            if [[ "$selected" == true && "$result" != success ]]; then
+              echo "::error::Selected job ${job} finished as ${result}"
+              failed=1
+            elif [[ "$selected" != true && "$result" != skipped ]]; then
+              echo "::error::Unselected job ${job} unexpectedly finished as ${result}"
+              failed=1
+            fi
+          done
+          exit "$failed"
