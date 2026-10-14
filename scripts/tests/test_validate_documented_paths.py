@@ -3,7 +3,6 @@ from __future__ import annotations
 import tempfile
 import unittest
 from pathlib import Path
-from typing import override
 
 from scripts.validate_documented_paths import PATH_EXCEPTIONS, validate_tree
 
@@ -12,7 +11,6 @@ class DocumentedPathValidationTests(unittest.TestCase):
     temporary: tempfile.TemporaryDirectory[str] = tempfile.TemporaryDirectory()
     root: Path = Path()
 
-    @override
     def setUp(self) -> None:
         self.temporary = tempfile.TemporaryDirectory()
         self.addCleanup(self.temporary.cleanup)
