@@ -359,24 +359,12 @@ The retained scripts are the executable contract. Static checks in this reposito
 
 ### 3.2 Set standard variables
 
-Consistency in naming avoids configuration drift between the Bicep deployment and the load-gen scripts. Setting these as environment variables ensures that subsequent CLI commands can reference them without manual string replacement, reducing the risk of PII leaks.
+Choose only the deployment input here. The Bicep template appends a `uniqueString` suffix to generated resource names, so do not predict the Web App or plan name from `BASE_NAME`.
 
 ```bash
-# Variables for deployment and identification
-# RG: The target resource group for all lab resources
-export RG="rg-lab-winjaval2sat"
-
-# LOCATION: The Azure region. koreacentral is used for lower latency and availability.
-export LOCATION="koreacentral"
-
 # BASE_NAME: Used to generate unique resource names to avoid global namespace collisions.
-export BASE_NAME="winjaval2"
-
-# APP_NAME: The globally unique name for your App Service.
-export APP_NAME="app-${BASE_NAME}-example"
-
-# PLAN_NAME: The name for the App Service Plan (hosting server).
-export PLAN_NAME="plan-${BASE_NAME}-example"
+export BASE_NAME="winjaval2sat"
+export LAB2_DIR="labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation"
 ```
 
 ### 3.3 Build the retained Stage 0 application
@@ -419,7 +407,15 @@ az webapp deploy \
 | `--async false` | Wait for deployment completion before continuing. |
 | `--clean true` | Remove stale deployment content before placing the JAR. |
 
-After the script succeeds, use `labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/results/deploy-metadata.json` for the exact generated app name, hostname, workspace ID, plan name, and resource group used by the remaining scripts.
+After the script succeeds, load the exact generated names from `results/deploy-metadata.json`. The retained experiment scripts read this file themselves; the exports below are for the manual `curl` and Azure CLI examples that follow.
+
+```bash
+export DEPLOY_METADATA="$LAB2_DIR/results/deploy-metadata.json"
+export RG="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["resourceGroup"])' "$DEPLOY_METADATA")"
+export APP_NAME="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["webAppName"])' "$DEPLOY_METADATA")"
+export PLAN_NAME="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["appServicePlanName"])' "$DEPLOY_METADATA")"
+export APP_HOSTNAME="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["webAppHostname"])' "$DEPLOY_METADATA")"
+```
 
 ### 3.6 Baseline health checks (single /slow/240 probe)
 
@@ -429,7 +425,7 @@ Before starting the load test, we must establish a baseline. A single sequential
 # Perform a single request that sleeps for 240 seconds.
 # This request is guaranteed to exceed the 230s front-end timeout.
 # Look for a 500 error after exactly 230 seconds.
-curl -i "https://${APP_NAME}.azurewebsites.net/slow/240"
+curl -i "https://${APP_HOSTNAME}/slow/240"
 ```
 
 ### 3.7 E1 — Per-rate saturation probes (4 rates)
@@ -442,9 +438,11 @@ This phase of the experiment tests the application's breaking point. By graduall
 -   **Rate 1.05 req/s**: Critical Overload. Rapid queue buildup expected.
 
 ```bash
-# Run the multi-rate experiment script.
-# Each rate is tested for 10 minutes to allow for "cold start" effects to pass.
-bash run-e1-saturation.sh --rates "0.5 0.75 0.9 1.05" --duration 10m
+# Run each rate separately. Each invocation uses the script's default 15-minute duration.
+bash labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/run-e1-per-rate.sh --rate 0.5 --run-id 1
+bash labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/run-e1-per-rate.sh --rate 0.75 --run-id 2
+bash labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/run-e1-per-rate.sh --rate 0.9 --run-id 3
+bash labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/run-e1-per-rate.sh --rate 1.05 --run-id 4
 ```
 
 ### 3.8 E2 — Sustained load run (0.5 req/s for 20 min)
@@ -454,7 +452,7 @@ Once we've identified that 0.5 req/s is sufficient to trigger the failure, we ru
 ```bash
 # Run the sustained load experiment at 0.5 requests per second.
 # The 20-minute duration is chosen to ensure we have at least 15 minutes of stable "saturated" data.
-bash run-e2-sustained.sh --rate 0.5 --duration 20m
+bash labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/run-e2-sustained.sh --rate 0.5 --duration 20m
 ```
 
 ### 3.9 E3 — M1a mitigation probes (requestTimeout=60s)
@@ -478,29 +476,12 @@ To mitigate the 230s platform timeout, we must introduce our own timeout at the 
 </configuration>
 ```
 
-Apply the configuration change:
+Apply the primary configuration canary. Its retained deployment script invokes OneDeploy with `--type static --target-path web.config`, then records which deployment path succeeded.
 
 ```bash
-# Upload web.config as a static file to the site root.
-# This replaces the default configuration generated by the platform.
-az webapp deploy \
-  --resource-group "$RG" \
-  --name "$APP_NAME" \
-  --src-path "web.config" \
-  --type static
-
-# Verify the mitigation with a few manual probes.
-# These should now return 502 errors in ~60 seconds instead of 500 errors in ~230 seconds.
-bash run-e3-probes.sh --count 3
+bash labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/deploy-webconfig-m1a.sh primary
+bash labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/run-e3-m1a-probes.sh --canary primary --n 3
 ```
-
-| Command/Flag | Purpose |
-|---|---|
-| `az webapp deploy` | Deploy a file to the App Service |
-| `--resource-group` | Resource group containing the web app |
-| `--name` | Web app name |
-| `--src-path` | Local path to the web.config file to upload |
-| `--type static` | Deploy as a static file to wwwroot (does not trigger ZIP extraction or build) |
 
 [[[ shot("troubleshooting--kudu--05-webconfig-verified") ]]]
 
@@ -596,7 +577,7 @@ M1a addresses the failure mode preventively by shortening `requestTimeout` so th
 **Enable via Bicep** (this lab uses this path):
 
 ```bash
-bash enable-autoheal-m2.sh
+bash labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/enable-autoheal-m2.sh
 ```
 
 The script redeploys the Bicep template with `enableCustomAutoHeal=true` and `autoHealActionType=Recycle`. It waits for the Web App to return to a healthy state before finishing.
@@ -665,9 +646,9 @@ Access: Azure Portal -> App Service -> **Diagnose and solve problems** -> **Diag
 The analysis below is based on a comprehensive set of artifacts collected from a B1 Windows Java SE instance. These artifacts represent the ground truth for our investigation.
 
 -   **Pre-E1 Baseline**: `results/pre-e1/manifest.json` (3 requests). Establishes the sequential behavior.
--   **E1 (Saturation)**: `results/e1/rate-*.experiment.json` (4 runs). Maps the arrival rate to the failure signature.
--   **E2 (Sustained)**: `results/e2/sustained.experiment.json` (233 requests). Provides statistical significance for the 62% failure rate.
--   **E3 (Mitigation)**: `results/e3/probe-*.log` (3 probes). Validates the signature shift to 502.3.12002.
+-   **E1 (Saturation)**: `results/e1/run-<id>-rate-<rate>/` (4 runs). Maps each arrival rate to the failure signature.
+-   **E2 (Sustained)**: `results/e2/rate-<rate>/` (233 requests in the retained 0.5 req/s run). Provides statistical significance for the 62% failure rate.
+-   **E3 (Mitigation)**: `results/e3/primary/` (3 probes). Validates the signature shift to 502.3.12002.
 
 ### 4.2 Baseline state (pre-E1: 3/3 at 500/121/0, TimeTaken ~230s, 0 rows win32=64)
 
@@ -882,4 +863,3 @@ The script prints the group before deletion and requires interactive confirmatio
 - httpPlatformHandler configuration: [https://learn.microsoft.com/en-us/iis/extensions/httpplatformhandler/httpplatformhandler-configuration-reference](https://learn.microsoft.com/en-us/iis/extensions/httpplatformhandler/httpplatformhandler-configuration-reference)
 - Windows Java SE runtime: [https://learn.microsoft.com/en-us/azure/app-service/configure-language-java-deploy-run](https://learn.microsoft.com/en-us/azure/app-service/configure-language-java-deploy-run)
 - App Service language support policy: [https://learn.microsoft.com/en-us/azure/app-service/language-support-policy](https://learn.microsoft.com/en-us/azure/app-service/language-support-policy)
-
