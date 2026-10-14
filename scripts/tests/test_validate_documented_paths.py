@@ -135,7 +135,7 @@ class DocumentedPathValidationTests(unittest.TestCase):
         )
 
     def test_ignores_links_in_all_fences_and_commands_in_non_executable_fences(self) -> None:
-        # Given link examples in backtick/tilde fences and a command-shaped Kusto line
+        # Given links in example fences and command-shaped lines in unsupported languages
         self.write_doc(
             "\n".join(
                 (
@@ -145,9 +145,15 @@ class DocumentedPathValidationTests(unittest.TestCase):
                     "~~~html",
                     '<a href="../labs/nope/run.py">missing</a>',
                     "~~~",
-                    "```kusto",
-                    "./labs/nope/run.py",
-                    "```",
+                    *(
+                        line
+                        for language in ("console", "shell", "zsh", "terminal", "kusto")
+                        for line in (
+                            f"```{language}",
+                            "python3 labs/nope/run.py",
+                            "```",
+                        )
+                    ),
                     "",
                 )
             )

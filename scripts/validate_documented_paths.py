@@ -8,7 +8,7 @@ import sys
 from dataclasses import dataclass
 from html.parser import HTMLParser
 from pathlib import Path
-from typing import Final, Literal, override
+from typing import Final, Literal
 from urllib.parse import unquote, urlsplit
 
 REPOSITORY_URL: Final = "https://github.com/yeongseon/azure-app-service-practical-guide"
@@ -23,9 +23,7 @@ GITHUB_MAIN_LINK: Final = re.compile(
     rf"^{re.escape(REPOSITORY_URL)}/(?:blob|tree)/main/(?P<path>[^?#]+)"
 )
 FENCE: Final = re.compile(r"^\s*(?P<marker>`{3,}|~{3,})(?P<info>.*)$")
-EXECUTABLE_FENCE_LANGUAGES: Final = frozenset(
-    {"bash", "console", "shell", "shell-session", "sh", "terminal", "zsh"}
-)
+EXECUTABLE_FENCE_LANGUAGES: Final = frozenset({"bash", "sh"})
 COMMAND_PATHS: Final[tuple[re.Pattern[str], ...]] = (
     re.compile(
         r"\b(?:python3?|bash|sh)\s+[\"']?(?P<path>(?:\./)?(?:labs|artifacts)/[^\s\"'|]+)"
@@ -113,7 +111,6 @@ class LocalHtmlTargetParser(HTMLParser):
         super().__init__(convert_charrefs=True)
         self.targets = []
 
-    @override
     def handle_starttag(
         self, tag: str, attrs: list[tuple[str, str | None]]
     ) -> None:
