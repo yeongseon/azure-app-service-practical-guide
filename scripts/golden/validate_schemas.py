@@ -22,6 +22,7 @@ Exit codes: 0 every document conforms, 1 at least one does not,
 from __future__ import annotations
 
 import argparse
+import datetime
 import json
 import pathlib
 import sys
@@ -30,6 +31,27 @@ sys.dont_write_bytecode = True
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 SCHEMA_DIR = ROOT / "schemas" / "golden"
+
+
+def _format_checker():
+    import jsonschema
+
+    checker = jsonschema.FormatChecker()
+
+    @checker.checks("date-time", raises=(TypeError, ValueError))
+    def valid_date_time(value):
+        if not isinstance(value, str):
+            return True
+        parsed = datetime.datetime.fromisoformat(value.replace("Z", "+00:00"))
+        return "T" in value and parsed.tzinfo is not None
+
+    @checker.checks("date", raises=(TypeError, ValueError))
+    def valid_date(value):
+        if not isinstance(value, str):
+            return True
+        return datetime.date.fromisoformat(value).isoformat() == value
+
+    return checker
 
 
 def _registry():
@@ -72,7 +94,7 @@ def validate(verbose: bool = False) -> list[str]:
     for path, schema_name in documents():
         schema = json.loads((SCHEMA_DIR / schema_name).read_text())
         validator = jsonschema.Draft202012Validator(
-            schema, registry=registry, format_checker=jsonschema.FormatChecker())
+            schema, registry=registry, format_checker=_format_checker())
         document = json.loads(path.read_text())
         errors = sorted(validator.iter_errors(document), key=lambda e: list(e.path))
         checked += 1

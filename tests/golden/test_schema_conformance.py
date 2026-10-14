@@ -36,7 +36,7 @@ def check(document: dict, schema_name: str):
     schema = json.loads((SCHEMA_DIR / schema_name).read_text())
     validator = jsonschema.Draft202012Validator(
         schema, registry=validate_schemas._registry(),
-        format_checker=jsonschema.FormatChecker())
+        format_checker=validate_schemas._format_checker())
     return sorted(validator.iter_errors(document), key=lambda e: list(e.path))
 
 
