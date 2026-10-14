@@ -165,9 +165,18 @@ AppServiceHTTPLogs
 
 ## Decision Points
 After these checks, you should be able to:
+
 - Narrow to 1-2 hypotheses:
-    - **CPU-bound**: sustained CPU saturation with broad latency increase    - **Memory-bound**: high memory pressure plus restart/worker degradation patterns    - **Dependency-bound**: timeout-heavy console/dependency signals with normal CPU- Select immediate direction:
-    - CPU-bound -> scale up and profile hot paths    - Dependency-bound -> dependency/network playbook    - Memory-bound -> memory pressure playbook
+    - **CPU-bound**: sustained CPU saturation with a broad latency increase.
+    - **Memory-bound**: high memory pressure plus restart or worker-degradation patterns.
+    - **Dependency-bound**: same-window dependency duration or failure signals increase while CPU remains normal.
+    - **Unknown**: the incident window lacks per-instance resource, request-start, queueing, or dependency evidence.
+- Select the immediate direction:
+    - **CPU-bound**: scale up and profile hot paths.
+    - **Dependency-bound**: use the dependency or network playbook.
+    - **Memory-bound**: use the memory pressure playbook.
+    - **Unknown**: collect the missing per-instance and dependency evidence before choosing a mitigation.
+
 ## Next Steps
 - [Slow Response but Low CPU](../playbooks/performance/slow-response-but-low-cpu.md)
 - [Memory Pressure & Worker Degradation](../playbooks/performance/memory-pressure-and-worker-degradation.md)

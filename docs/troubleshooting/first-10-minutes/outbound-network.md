@@ -101,7 +101,7 @@ Look for: `Public network access` and `Private endpoints` under inbound traffic,
 
 Expected result: This capture shows a public app without VNet integration, so outbound traffic uses the listed platform outbound addresses and the integration subnet settings show `N/A`.
 
-The Networking hub is the single pane that decides whether your outbound failure is a routing problem or a dependency problem. The **Outbound traffic configuration** column on the right is the first thing to check: `Virtual network integration: Not configured` plus `Outbound DNS: Default (Azure-provided)` plus the long list of `Outbound IPv4 addresses` means traffic egresses directly from the App Service shared outbound pool, NOT through your VNet - so private endpoints, NSGs, and custom DNS in your VNet have zero effect on it. If this app was supposed to reach a database via VNet integration, this screen would have proven the misconfiguration in 10 seconds. Note the **Integration subnet configuration** card showing `NAT gateway: N/A` - that line only populates when VNet integration is active.
+The Networking hub shows the app's configured routing context; it does not decide the failure domain or prove a misconfiguration. Use its VNet integration, outbound DNS, address, and integration-subnet fields to form a route hypothesis. Then test DNS and connectivity from inside the app, compare per-target dependency telemetry in the incident window, inspect effective routes and attached NSG/NAT resources, and use policy or deployment evidence to confirm whether the observed configuration differs from the intended design.
 
 - Good signal: expected subnet integration and healthy state.
 - Bad signal: disconnected/misconfigured integration, wrong subnet, or route mismatch.
@@ -163,9 +163,20 @@ Console timeout errors identify the failing operation more precisely than inboun
 
 ## Decision Points
 After these checks, you should be able to:
+
 - Narrow to 1-2 hypotheses:
-    - **SNAT pressure**: incident-window detector data shows pressure alongside outbound errors    - **DNS issue**: nslookup failures or wrong resolution path    - **Route/Private Endpoint issue**: VNet/PE/DNS zone mismatch    - **Dependency or worker pressure**: failures isolate to a target or queueing grows without measured SNAT pressure    - **Unknown**: required detector, dependency, or application telemetry is unavailable- Choose next playbook:
-    - SNAT -> connection reuse/SNAT playbook    - DNS -> DNS resolution playbook    - Route/PE -> Private Endpoint and custom DNS playbook
+    - **SNAT pressure**: incident-window detector data shows pressure alongside outbound errors.
+    - **DNS issue**: in-app resolution tests fail or return an unexpected path.
+    - **Route/Private Endpoint issue**: configured routing context, effective routes, and policy or deployment evidence disagree with the intended VNet, Private Endpoint, or DNS design.
+    - **Dependency or worker pressure**: failures isolate to a target or queueing grows without measured SNAT pressure.
+    - **Unknown**: required detector, dependency, route, policy, or application telemetry is unavailable.
+- Choose the next playbook or action:
+    - **SNAT pressure**: use the connection reuse/SNAT playbook.
+    - **DNS issue**: use the DNS resolution playbook.
+    - **Route/Private Endpoint issue**: use the Private Endpoint and custom DNS playbook.
+    - **Dependency or worker pressure**: inspect same-window dependency telemetry and worker queueing.
+    - **Unknown**: collect the missing evidence before selecting a causal playbook.
+
 ## Next Steps
 - [SNAT or Application Issue?](../playbooks/outbound-network/snat-or-application-issue.md)
 - [DNS Resolution (VNet-Integrated)](../playbooks/outbound-network/dns-resolution-vnet-integrated-app-service.md)
