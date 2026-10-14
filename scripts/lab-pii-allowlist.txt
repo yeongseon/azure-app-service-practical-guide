@@ -1,0 +1,34 @@
+# Narrow historical allowances for retained lab packages.
+# Format: repository-relative path|scanner category
+# These files contain deployment-suffixed App Service resource paths captured
+# before the expanded scanner existed. They are retained byte-for-byte as
+# experiment evidence; the suffix identifies a disposable lab deployment and
+# is not an account, subscription, tenant, user, or secret identifier.
+labs/container-http-pings/artifacts-sanitized/baseline/app-config.json|deployment-resource-path
+labs/container-http-pings/artifacts-sanitized/trigger/webapp-details-20260404T055338Z.json|deployment-resource-path
+labs/dns-vnet-resolution/artifacts-sanitized/baseline/app-config.json|deployment-resource-path
+labs/failed-to-forward-request/artifacts-sanitized/baseline/app-config.json|deployment-resource-path
+labs/intermittent-5xx/artifacts-sanitized/baseline/app-config.json|deployment-resource-path
+labs/memory-pressure/artifacts-sanitized/baseline/app-config.json|deployment-resource-path
+labs/memory-pressure/artifacts-sanitized/baseline/app-state.json|deployment-resource-path
+labs/no-space-left-on-device/artifacts-sanitized/baseline/app-config.json|deployment-resource-path
+labs/slot-swap-config-drift/artifacts-sanitized/baseline/app-config.json|deployment-resource-path
+labs/slow-start-cold-start/artifacts-sanitized/baseline/app-config.json|deployment-resource-path
+labs/snat-exhaustion/artifacts-sanitized/baseline/app-config.json|deployment-resource-path
+labs/windows-java-httpplatformhandler-timeout/lab-1-baseline-signature/results/az-webapp-config-show.json|deployment-resource-path
+labs/windows-java-httpplatformhandler-timeout/lab-1-baseline-signature/results/az-webapp-show.json|deployment-resource-path
+labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/results/deploy-metadata.json|deployment-resource-path
+labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/results/deploy-outputs.json|deployment-resource-path
+labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/results/e1/run-1-rate-0.5/manifest.json|deployment-resource-path
+labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/results/e1/run-2-rate-0.75/manifest.json|deployment-resource-path
+labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/results/e1/run-3-rate-0.9/manifest.json|deployment-resource-path
+labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/results/e1/run-4-rate-1.05/manifest.json|deployment-resource-path
+labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/results/e2/rate-0.5/manifest.json|deployment-resource-path
+labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/results/e3/manifest.json|deployment-resource-path
+labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/results/e3/primary/manifest.json|deployment-resource-path
+labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/results/effective-config-20260701T133917Z.json|deployment-resource-path
+labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/results/pre-e1/manifest.json|deployment-resource-path
+labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/results/preflight/manifest.json|deployment-resource-path
+labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/results/revert/manifest.json|deployment-resource-path
+labs/windows-java-httpplatformhandler-timeout/stage-0-config-discovery/results/az-webapp-config-show.json|deployment-resource-path
+labs/windows-java-httpplatformhandler-timeout/stage-0-config-discovery/results/az-webapp-show.json|deployment-resource-path
