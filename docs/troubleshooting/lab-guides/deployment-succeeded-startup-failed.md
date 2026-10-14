@@ -429,19 +429,19 @@ echo "$APP_NAME"
 ### 3.4 Trigger the incident
 
 ```bash
-bash "labs/deployment-succeeded-startup-failed/trigger.sh" "$RG" "$APP_NAME" --output /tmp/startup-lab-private
+bash "labs/deployment-succeeded-startup-failed/trigger.sh" "$RG" "$APP_NAME"
 ```
 
-The trigger prints `RUN_DIR=...`; copy that exact path into `RUN_DIR` below. It deploys the app with the healthy command, records a 200 baseline, sets `wrong_module:app`, and samples for HTTP 5xx. It then restores `app:app` with the same `--timeout=120` and verifies recovery, including when fault probing fails. Health polling is limited to 24 attempts per phase (20 seconds per request, 10 seconds between attempts). Log collection uses at most six requests with bounded waits.
+The checked-in trigger packages and deploys the application while the Bicep-defined `wrong_module:app` startup command is active. After a 15-second wait it probes `/health` once, reports the non-200 result expected during the fault, changes the startup command to `gunicorn --bind=0.0.0.0:8000 app:app`, waits 20 seconds, and probes `/health` once more. A final `200` confirms recovery; any other status means the app may still be restarting and must be checked again manually.
 
 ```bash
-export RUN_DIR="/tmp/startup-lab-private/<printed-run-directory>"
-bash "labs/deployment-succeeded-startup-failed/verify.sh" "$RUN_DIR"
+bash "labs/deployment-succeeded-startup-failed/verify.sh" "$RG"
 ```
 
-This command only reevaluates saved raw data. It checks same-run phase identity, resource identity, chronological windows, raw probe/summary agreement, required artifact sizes/digests, and source/contract fingerprints. Console rows must come from the exact app and fault window; no matching import log means INCONCLUSIVE, not zero errors or successful reproduction. Do not edit a run to repair missing data: preserve it and create a new run after fixing the cause.
+The checked-in verifier selects the first Log Analytics workspace in the resource group and queries `AppServiceConsoleLogs` from the previous two hours for `ModuleNotFoundError`, `wrong_module`, or `No module named`. It prints the matching count and up to 20 recent rows. A positive count is the expected startup-failure evidence; zero means evidence has not arrived or is outside the query window, not that the fault was absent.
 
-Each run records source HEAD plus exact relevant-file fingerprints, UTC phase times, tool versions, command exit codes, raw query results and artifact digests. Dirty files are identified by fingerprints rather than represented as the committed SHA. `captured_at` probe times and command times remain distinct from `evaluated_at`. Hashes do not prove execution authenticity. No current run is published until independently reviewed.
+!!! warning "NOT_RUN"
+    This revised procedure has not been rerun for the currently checked-in `trigger.sh` and `verify.sh`. The archived artifacts later in this guide came from an earlier procedure and do not validate these exact commands.
 
 Sections 3.5–3.11 provide optional manual diagnostics and recovery commands. Their illustrative rolling-window queries are not inputs to the scoped evaluator. If interruption prevents automatic recovery, use 3.11 and then clean up; do not mark that interrupted run successful.
 
