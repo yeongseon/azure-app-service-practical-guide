@@ -13,7 +13,7 @@ content_sources:
 ---
 # Playbooks
 
-Symptom-oriented troubleshooting guides for Azure App Service Linux.
+Symptom-oriented troubleshooting guides for Azure App Service, with platform applicability stated in each playbook.
 
 Each playbook follows a hypothesis-driven structure: start from the symptom, list competing hypotheses, collect evidence, validate or disprove, and identify the root cause.
 

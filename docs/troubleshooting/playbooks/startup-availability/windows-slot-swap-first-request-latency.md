@@ -233,7 +233,8 @@ AppServicePlatformLogs
 | Field | Record |
 |---|---|
 | Environment | Documentation-only review; no Azure subscription or app was used |
-| Repository source commit | `e466e157ee50dd0aded731ffc78ef2a7bfa1804e` |
+| Application source commit | `NOT_RUN` — no application artifact was deployed |
+| Documented procedure revision | This page revision in the merged history |
 | Learn verification date | 2026-10-14 |
 | Azure reproduction date | `NOT_RUN` |
 | Result | `NOT_RUN` — queries and comparison procedure were not executed against Azure |

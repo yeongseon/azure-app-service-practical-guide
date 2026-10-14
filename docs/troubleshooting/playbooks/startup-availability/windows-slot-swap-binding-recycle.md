@@ -170,7 +170,6 @@ Temporal adjacency is not causation. Without evidence that distinguishes the bin
 az monitor activity-log list --resource-group <resource-group> --start-time <incident-start-utc> --end-time <incident-end-utc> --query "[?contains(operationName.value, 'Microsoft.Web/sites/slots/slotsswap/action')]" --output json
 az webapp config appsettings list --resource-group <resource-group> --name <app-name> --slot <slot-name> --output json
 az webapp config hostname list --resource-group <resource-group> --webapp-name <app-name> --slot <slot-name> --output json
-az webapp deployment list-publishing-credentials --resource-group <resource-group> --name <app-name> --slot <slot-name> --query scmUri --output tsv
 ```
 
 | Command or flag | Purpose |
@@ -183,14 +182,11 @@ az webapp deployment list-publishing-credentials --resource-group <resource-grou
 | `--output json` | Preserves structured fields for evidence review. |
 | `az webapp config appsettings list` | Captures each slot's effective app-setting entries. |
 | `az webapp config hostname list` | Captures the selected slot's hostname-binding inventory. |
-| `az webapp deployment list-publishing-credentials` | Retrieves the SCM endpoint field; treat the full response as sensitive. |
 | `--name <app-name>` | Selects the parent web app. |
 | `--webapp-name <app-name>` | Selects the parent web app for the hostname command. |
 | `--slot <slot-name>` | Selects the slot being examined. |
-| `--query scmUri` | Returns only the SCM URI field from the publishing response. |
-| `--output tsv` | Emits the selected scalar field without JSON formatting. |
 
-Publishing credentials and hostnames are sensitive operational data. Do not paste raw output into issues or public logs. Prefer portal/Kudu access with Microsoft Entra authentication and create a sanitized evidence summary.
+Hostnames are sensitive operational data. Do not paste raw output into issues or public logs. For process evidence, follow the linked Windows Kudu diagnostics procedure with Microsoft Entra authentication and create a sanitized evidence summary; do not request publishing credentials merely to discover the SCM endpoint.
 
 ### KQL: platform candidate events
 
@@ -237,7 +233,8 @@ Do not change the setting until you have this baseline and have confirmed the wo
 | Field | Record |
 |---|---|
 | Environment | Documentation-only review; no Azure subscription or app was used |
-| Repository source commit | `e466e157ee50dd0aded731ffc78ef2a7bfa1804e` |
+| Application source commit | `NOT_RUN` — no application artifact was deployed |
+| Documented procedure revision | This page revision in the merged history |
 | Learn verification date | 2026-10-14 |
 | Azure reproduction date | `NOT_RUN` |
 | Storage-failover test | `NOT_RUN` — must not be induced for this playbook |
