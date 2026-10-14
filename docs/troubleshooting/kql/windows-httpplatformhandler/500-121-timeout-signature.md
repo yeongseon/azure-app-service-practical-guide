@@ -72,7 +72,7 @@ AppServiceHTTPLogs
 - **Rows with `ScWin32Status = 64`**: Adaptive-extension activity. See the [ScWin32Status .0 vs .64 distribution](scwin32status-adaptive-extension.md) query to quantify the ratio.
 - **`TimeTaken` values well below 230000 ms**: The cut is happening earlier than the front-end limit. Check whether `httpPlatformHandler.requestTimeout` has been reduced via a custom `web.config`, or whether the app is issuing an internal 500 that IIS is annotating with the same sub-status.
 
-Lab 1 of the Windows Java httpPlatformHandler timeout lab (to be published under `docs/troubleshooting/lab-guides/` once Lab 2 completes) demonstrated 10/10 rows with mean `TimeTaken = 230001 ms`, standard deviation 5 ms - a textbook front-end 230s cut with no adaptive-extension activity under serialized load.
+Lab 1 of the [Windows Java httpPlatformHandler Timeout Lab](../../lab-guides/windows-java-httpplatformhandler-timeout.md) demonstrated 10/10 rows with mean `TimeTaken = 230001 ms`, standard deviation 5 ms - a textbook front-end 230s cut with no adaptive-extension activity under serialized load.
 
 ## Limitations
 

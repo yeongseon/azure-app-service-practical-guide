@@ -82,7 +82,7 @@ Read your result against this decision table:
 | 60-90% | 10-40% | Occasional queue pressure. Look at the timestamps in the `earliest` / `latest` columns - if the `.64` rows cluster into a short window, correlate with a deployment, traffic spike, or downstream slowdown. |
 | < 50% | > 50% | **Sustained queue pressure or loopback saturation**. The dominant failure mode is no longer "slow request hits front-end ceiling"; it is "many requests queue in front of the httpPlatformHandler at once". Route to Lab 2 methodology (open-model load reproduction, mitigation candidates: `httpPlatformHandler.requestTimeout` extension, custom Auto-Heal, plan scale-out). |
 
-Lab 1 of the Windows Java httpPlatformHandler timeout lab (to be published under `docs/troubleshooting/lab-guides/` once Lab 2 completes) confirmed the top row: 10/10 rows with `ScWin32Status = 0` under serialized (queue depth 1) load, zero `.64` rows. This established that `.64` is **not** noise in the baseline signature - any `.64` observed in production is a real signal of concurrency-induced pressure.
+Lab 1 of the [Windows Java httpPlatformHandler Timeout Lab](../../lab-guides/windows-java-httpplatformhandler-timeout.md) confirmed the top row: 10/10 rows with `ScWin32Status = 0` under serialized (queue depth 1) load, zero `.64` rows. This established that `.64` is **not** noise in the baseline signature - any `.64` observed in production is a real signal of concurrency-induced pressure.
 
 ## Limitations
 
