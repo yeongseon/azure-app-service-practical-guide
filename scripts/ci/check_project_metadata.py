@@ -10,6 +10,7 @@ TYPES = "feat|fix|docs|test|perf|refactor|ci|build|chore|style|revert"
 TITLE = re.compile(rf"^({TYPES})(\([a-z0-9][a-z0-9._/,-]*\))?!?: \S(?:.*[^.\s])?$")
 PRIORITIES = {"priority:" + name for name in ("critical", "high", "medium", "low")}
 SECTIONS = ["Summary", "Changes", "Type of Change", "Validation", "Checklist", "Related Issues"]
+FOREIGN_ISSUE_REFERENCE = re.compile(r"\b[\w.-]+/[\w.-]+#[1-9][0-9]*\b")
 
 
 def headings(body: str) -> list[str]:
@@ -49,6 +50,8 @@ def validate(pr: dict[str, object]) -> list[str]:
     if headings(body) != SECTIONS:
         errors.append("Required ordered sections: " + " / ".join(SECTIONS))
     related = body.rsplit("## Related Issues", 1)[-1]
+    if FOREIGN_ISSUE_REFERENCE.search(related):
+        errors.append("Related Issues must not contain foreign owner/repository#N references.")
     if not re.search(r"(?im)^\s*(Closes|Fixes|Resolves|Refs) #[1-9][0-9]*\b", related):
         errors.append("Link a local issue; use Refs with remaining scope for partial work.")
     return errors
