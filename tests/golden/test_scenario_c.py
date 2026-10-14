@@ -49,7 +49,12 @@ def run_with(evidence, execution="COMPLETE"):
                     captured_at="2026-09-27T02:03:04Z",
                     execution_status=execution)
     (d / "manifest.json").write_text(json.dumps(manifest))
-    (d / "evidence.json").write_text(json.dumps(evidence))
+    (d / "evidence.json").write_text(json.dumps({
+        "run_id": manifest["run_id"],
+        "resource_id": manifest["resource_id"],
+        "captured_at": manifest["captured_at"],
+        "observations": evidence,
+    }))
     return d
 
 
