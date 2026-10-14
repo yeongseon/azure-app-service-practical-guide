@@ -295,6 +295,7 @@ nav:
     - Playbooks:
       - troubleshooting/playbooks/index.md
       - troubleshooting/playbooks/deployment-failures.md
+      - ARM Configuration HTTP 400: troubleshooting/playbooks/arm-configuration-http-400.md
       - troubleshooting/playbooks/missing-wwwroot-files-404.md
       - troubleshooting/playbooks/app-startup-failures.md
       - troubleshooting/playbooks/mtls-failures.md

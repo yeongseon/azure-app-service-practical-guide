@@ -60,6 +60,7 @@ graph TD
 | Playbook | Symptom |
 |----------|---------|
 | [Deployment Failures](deployment-failures.md) | Failed deployments, slot issues, or swap failures |
+| [Production ARM Configuration HTTP 400](arm-configuration-http-400.md) | Production configuration update returns ARM HTTP 400 while a comparable staging-slot request succeeds |
 | [Missing wwwroot Files and 404](missing-wwwroot-files-404.md) | Expected static file absent from served content, later 404, actor and loss time unknown |
 | [App Startup Failures](app-startup-failures.md) | Application or container never becomes ready |
 | [mTLS Failures](mtls-failures.md) | Missing client certificate headers, failed validation, or outbound certificate loading issues |

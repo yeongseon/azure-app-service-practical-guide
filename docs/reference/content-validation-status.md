@@ -89,6 +89,7 @@ pie title In-Scope Document Validation Status
 |---|---|---|---|---|
 | [App Startup Failures](../troubleshooting/playbooks/app-startup-failures.md) | ✅ | ✅ Verified | 4/4 | 2026-09-11 |
 | [Architecture Overview](../troubleshooting/architecture-overview.md) | ✅ | ✅ Verified | 2/2 | 2026-09-11 |
+| [Arm Configuration Http 400](../troubleshooting/playbooks/arm-configuration-http-400.md) | ✅ | ✅ Verified | 5/5 | 2026-10-14 |
 | [Auth Redirect Loop](../troubleshooting/playbooks/startup-availability/auth-redirect-loop.md) | ✅ | ✅ Verified | 2/2 | 2026-09-11 |
 | [Authentication Failures](../troubleshooting/playbooks/authentication-failures.md) | ✅ | ✅ Verified | 5/5 | 2026-09-11 |
 | [Cd Rbac Role Assignment Conflict](../troubleshooting/playbooks/cd-rbac-role-assignment-conflict.md) | ✅ | ✅ Verified | 3/3 | 2026-09-11 |
