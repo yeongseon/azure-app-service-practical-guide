@@ -7,7 +7,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
-from typing import final, override
+from typing import final
 
 
 SCRIPT = Path(__file__).with_name("impact_ci.py")
@@ -27,7 +27,6 @@ class ImpactCiIntegrationTests(unittest.TestCase):
     temporary_directory: tempfile.TemporaryDirectory[str] | None = None
     root = Path()
 
-    @override
     def setUp(self) -> None:
         self.temporary_directory = tempfile.TemporaryDirectory()
         self.root = Path(self.temporary_directory.name)
@@ -37,7 +36,6 @@ class ImpactCiIntegrationTests(unittest.TestCase):
         self._write("README.md", "initial\n")
         self._commit("initial")
 
-    @override
     def tearDown(self) -> None:
         if self.temporary_directory is not None:
             self.temporary_directory.cleanup()
