@@ -21,6 +21,7 @@ CLASSIFICATION = ROOT / "labs/golden-classification.json"
 DATA = json.loads(CLASSIFICATION.read_text())
 
 VALID = {"golden", "migration-needed", "archive-candidate"}
+EXPECTED_SCENARIO_COUNT = 15
 
 _spec = importlib.util.spec_from_file_location("ev", ROOT / "scripts/golden/evaluate_run.py")
 ev = importlib.util.module_from_spec(_spec)
@@ -35,6 +36,9 @@ def labs_on_disk():
 
 
 class CoverageTests(unittest.TestCase):
+    def test_current_inventory_has_fifteen_scenarios(self):
+        self.assertEqual(len(labs_on_disk()), EXPECTED_SCENARIO_COUNT)
+
     def test_every_lab_on_disk_is_classified(self):
         classified = {row["lab"] for row in DATA["labs"]}
         missing = labs_on_disk() - classified

@@ -43,9 +43,19 @@
       "reason": "Runnable trigger/verify pair with sanitized artifacts, no declared assertions and no run identity."
     },
     {
+      "lab": "missing-wwwroot-content",
+      "classification": "migration-needed",
+      "reason": "Ships a deterministic local ZIP-content regression suite and lab scripts, but has no Golden manifest, run identity, or artifact trust declaration yet. Its checked-in test evidence is useful local verification, not a Golden Azure run."
+    },
+    {
       "lab": "no-space-left-on-device",
       "classification": "migration-needed",
       "reason": "Runnable trigger/verify pair with sanitized artifacts, no declared assertions and no run identity."
+    },
+    {
+      "lab": "private-endpoint-route-fault",
+      "classification": "migration-needed",
+      "reason": "Contains runnable infrastructure, trigger and verification assets plus retained Azure evidence, but no Golden manifest binds those artifacts to declared assertions and a run identity. Retained captures require explicit trust classification during migration."
     },
     {
       "lab": "slot-swap-config-drift",
@@ -66,6 +76,11 @@
       "lab": "windows-java-httpplatformhandler-timeout",
       "classification": "archive-candidate",
       "reason": "Structurally unlike every other lab: no top-level trigger/verify pair, instead three staged sub-labs (stage-0-config-discovery, lab-1-baseline-signature, lab-2-loopback-saturation). Migrating it means deciding whether each stage is its own Golden scenario. Archive-candidate is a decision to make that call deliberately, not a decision to delete."
+    },
+    {
+      "lab": "zipdeploy-file-lock-serialization",
+      "classification": "migration-needed",
+      "reason": "Ships a deterministic local serialization regression suite and deployment assets, but no Golden manifest, run identity, or artifact trust declaration. Local test results must not be promoted to live Azure execution evidence."
     }
   ]
 }
