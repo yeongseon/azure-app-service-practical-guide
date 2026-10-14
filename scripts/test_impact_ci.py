@@ -55,6 +55,27 @@ class ImpactCiIntegrationTests(unittest.TestCase):
         self.assertEqual(outputs["python"], "true")
         self.assertEqual(outputs["java"], "false")
 
+    def test_pull_request_uses_base_sha_and_writes_exact_output_map(self) -> None:
+        base = self._git("rev-parse", "HEAD").stdout.strip()
+        self._write("apps/python-flask/src/app.py", "print('changed')\n")
+        self._commit("app")
+
+        result, outputs = self._select(event_name="pull_request", pr_base=base)
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(
+            outputs,
+            {
+                "scripts": "false",
+                "nodejs": "false",
+                "nodejs_container": "false",
+                "python": "true",
+                "dotnet": "false",
+                "java": "false",
+                "bicep": "false",
+            },
+        )
+
     def test_all_zero_push_base_fails_safe_to_full_regression(self) -> None:
         result, outputs = self._select(push_base="0" * 40)
 
@@ -133,7 +154,13 @@ class ImpactCiIntegrationTests(unittest.TestCase):
 
         self.assertEqual(result.returncode, 0, result.stderr)
 
-    def _select(self, *, push_base: str) -> tuple[subprocess.CompletedProcess[str], dict[str, str]]:
+    def _select(
+        self,
+        *,
+        event_name: str = "push",
+        pr_base: str = "",
+        push_base: str = "",
+    ) -> tuple[subprocess.CompletedProcess[str], dict[str, str]]:
         output = self.root / "github-output.txt"
         result = subprocess.run(
             (
@@ -141,7 +168,9 @@ class ImpactCiIntegrationTests(unittest.TestCase):
                 str(SCRIPT),
                 "select",
                 "--event-name",
-                "push",
+                event_name,
+                "--pr-base",
+                pr_base,
                 "--push-base",
                 push_base,
                 "--github-output",
