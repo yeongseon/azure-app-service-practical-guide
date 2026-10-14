@@ -76,6 +76,10 @@ enabled protected azure-e2e environment. Missing prerequisites remain blocked,
 not skipped-as-verified. This adoption does not provision credentials or enable
 paid recurring runs.
 
+`tools/validate_frontmatter.py` rejects invalid document types, duplicate slugs,
+and required-or-forbidden `content_validation` placement; keep it wired into PR
+CI whenever its contract is cited.
+
 The priority-label definition is versioned in `.github/priority-labels.json`.
 Its synchronization utility has an explicit read-only `--check` mode and never
 deletes unrelated labels; do not apply it to the live repository for this work.

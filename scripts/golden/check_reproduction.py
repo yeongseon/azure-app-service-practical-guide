@@ -101,7 +101,8 @@ def classify_reproduction(record: dict) -> str:
     'NOT_INDEPENDENT'
 
     >>> classify_reproduction({"replay_run_id": "z", "original_run_id": "a",
-    ...     "reviewer": "b", "original_operator": "c",
+    ...     "reviewer": "b", "reviewer_kind": "human",
+    ...     "original_operator": "c", "original_operator_kind": "human",
     ...     "original_hypothesis_status": "SUPPORTED",
     ...     "replay_hypothesis_status": "CONTRADICTED"})
     'FAILED'
