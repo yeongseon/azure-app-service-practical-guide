@@ -118,6 +118,10 @@ DOCTEST_BINDINGS: tuple[tuple[str, Binding], ...] = (
         Binding("Validate Documentation Repetition", REPETITION_WORKFLOW),
     ),
     (
+        "scripts/check_quick_triage_claims.py",
+        Binding("Validate Documentation Repetition", REPETITION_WORKFLOW),
+    ),
+    (
         "scripts/validate_doc_quality.py",
         Binding("Validate Content Source Metadata", CONTENT_SOURCES_WORKFLOW),
     ),
@@ -400,6 +404,18 @@ GATES: tuple[Gate, ...] = (
         verified_in_ci=True,
     ),
     Gate(
+        key="quick-triage-claims",
+        name="Quick-triage causal claims",
+        enforces="Known categorical causal shortcuts stay out of quick-triage documentation surfaces.",
+        argv=("{python}", "scripts/check_quick_triage_claims.py"),
+        severity=BLOCKING,
+        covers=("scripts/check_quick_triage_claims.py",),
+        bindings=(Binding("Validate Documentation Repetition", REPETITION_WORKFLOW),),
+        summary_keys=("Quick-triage causal-claim contract", "Scope is a phrase denylist"),
+        note="A sentence-scoped phrase denylist; passing does not prove causal correctness, so technical review remains required.",
+        verified_in_ci=True,
+    ),
+    Gate(
         key="visual-content",
         name="Visual content coverage",
         enforces="Factual-claim pages carry at least one diagram, screenshot, or image.",
@@ -599,7 +615,15 @@ NON_GATE_SCRIPTS: dict[str, str] = {
 }
 
 SCRIPT_ROOTS = ("scripts", "tools")
-SCRIPT_PREFIXES = ("validate_", "detect_", "normalize_", "scan_", "generate_", "remove_")
+SCRIPT_PREFIXES = (
+    "validate_",
+    "detect_",
+    "check_",
+    "normalize_",
+    "scan_",
+    "generate_",
+    "remove_",
+)
 SCRIPT_EXTRA_CANDIDATES = ("tools/build_doc_graph.py",)
 SCRIPT_SKIP_PARTS = ("__pycache__", "node_modules", ".venv")
 
