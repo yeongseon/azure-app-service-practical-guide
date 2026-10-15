@@ -26,6 +26,8 @@ import tempfile
 import unittest
 from unittest import mock
 import hashlib
+import contextlib
+import io
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 _spec = importlib.util.spec_from_file_location(
@@ -118,6 +120,23 @@ class IndependenceTests(unittest.TestCase):
         self.assertEqual(
             repro.classify_reproduction(rec, attestation_verifier=lambda attestation: True),
             "REPRODUCED")
+
+    def test_cli_verifier_hook_is_reachable_but_off_by_default(self):
+        rec = record(
+            replay_run_id="different-run",
+            attestation={
+                "url": "https://github.com/yeongseon/azure-app-service-practical-guide/pull/234#pullrequestreview-1",
+                "reviewer_login": "second-operator",
+                "original_operator_login": "first-operator",
+                "pr_author_login": "pr-author",
+            },
+        )
+        with mock.patch.object(repro, "check") as check, \
+                mock.patch.object(repro.sys, "argv", ["check_reproduction.py", str(write(rec))]), \
+                contextlib.redirect_stdout(io.StringIO()):
+            check.return_value = {"documentation_result": "REPRODUCED", "passed": False}
+            self.assertEqual(repro.main(), 1)
+            self.assertIsNone(check.call_args.args[1])
 
 
 class DocumentationGapTests(unittest.TestCase):
@@ -265,10 +284,12 @@ class RunPackageMutationTests(unittest.TestCase):
             "resource_id": f"/subscriptions/<subscription-id>/resourceGroups/{resource_group}/providers/Microsoft.Web/sites/{app_name}",
             "captured_at": captured,
             "execution_status": "COMPLETE",
-            "source_commit": "a" * 40,
-            "environment": {"resource_group": resource_group, "app_name": app_name},
-            "recipe_digest": "sha256:" + "b" * 64,
-            "collector_digest": "sha256:" + "c" * 64,
+            "source_commit": "3e0442bb19b966766598ffeae1fb47f3f6960837",
+            "environment": {"resource_group": resource_group, "app_name": app_name,
+                            "subscription_kind": "test", "region": "local",
+                            "runtime": "Python 3.11", "sku": "test-sku"},
+            "recipe_digest": "sha256:" + "0123456789abcdef" * 4,
+            "collector_digest": "sha256:" + "fedcba9876543210" * 4,
             "hypothesis": "A causal hypothesis.",
             "hypothesis_claim_level": "Inferred",
             "assertions": [

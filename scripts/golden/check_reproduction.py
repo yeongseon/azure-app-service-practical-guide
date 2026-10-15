@@ -24,6 +24,8 @@ documentation is a documentation gap, whatever the outcome.
 Usage::
 
     python3 scripts/golden/check_reproduction.py <reproduction.json>
+    python3 scripts/golden/check_reproduction.py <reproduction.json> \
+        --verifier package.module:callable
 
 Exit codes: ``0`` both results REPRODUCED, ``1`` otherwise.
 """
@@ -298,14 +300,14 @@ def classify_documentation(record: dict) -> str:
     return "REPRODUCED"
 
 
-def check(path) -> dict:
+def check(path, attestation_verifier: Callable[[dict], bool] | None = None) -> dict:
     """Read and check one reproduction record."""
     path = pathlib.Path(path)
     record = _read_json(path)
     _validate_schema(record, "reproduction.schema.json")
 
     _validate(record)
-    reproduction_result = classify_reproduction(record)
+    reproduction_result = classify_reproduction(record, attestation_verifier)
     replay_id = record.get("replay_run_id")
     validates_run_packages = (
         isinstance(replay_id, str)
@@ -345,11 +347,30 @@ def check(path) -> dict:
 
 
 def main() -> int:
-    if len(sys.argv) != 2:
-        print("usage: check_reproduction.py <reproduction.json>", file=sys.stderr)
+    import argparse
+
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("record")
+    parser.add_argument("--verifier", help="External attestation verifier as MODULE:CALLABLE")
+    args = parser.parse_args()
+    verifier = None
+    try:
+        if args.verifier:
+            module_name, callable_name = args.verifier.split(":", 1)
+            spec = importlib.util.find_spec(module_name)
+            if spec is None or spec.loader is None:
+                raise ReproductionError(f"verifier module not found: {module_name}")
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+            candidate = getattr(module, callable_name, None)
+            if not callable(candidate):
+                raise ReproductionError(f"verifier callable not found: {args.verifier}")
+            verifier = candidate
+    except (ValueError, ReproductionError) as exc:
+        print(f"reproduction record error: {exc}", file=sys.stderr)
         return 1
     try:
-        result = check(sys.argv[1])
+        result = check(args.record, verifier)
     except ReproductionError as exc:
         print(f"reproduction record error: {exc}", file=sys.stderr)
         return 1
