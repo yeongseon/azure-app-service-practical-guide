@@ -498,9 +498,20 @@ GATES: tuple[Gate, ...] = (
         verified_in_ci=True,
     ),
     Gate(
+        key="retained-golden-packages",
+        name="Retained Golden package immutability",
+        enforces="Existing retained run and lab Golden packages cannot be edited, renamed, or deleted relative to the base ref; new run directories remain allowed.",
+        argv=("{python}", "scripts/golden/check_retained_packages.py"),
+        severity=BLOCKING,
+        covers=("scripts/golden/check_retained_packages.py",),
+        bindings=(Binding("Validate Golden Contracts", CONTENT_SOURCES_WORKFLOW),),
+        note="On pull requests CI supplies the exact base SHA. Local runs default to origin/main; archive retirement requires a separate reviewed change rather than an in-place rewrite.",
+        summary_keys=("Retained Golden package immutability:",),
+    ),
+    Gate(
         key="golden-contracts",
         name="Golden evidence contracts",
-        enforces="Golden schemas, evaluator negative cases, inventory parity, vocabulary, and human-independent reproduction boundaries pass on Python 3.11.",
+        enforces="Golden schemas, evaluator negative cases, inventory parity, vocabulary, and externally attested reproduction boundaries pass on Python 3.11.",
         argv=("{python}", "-m", "unittest", "discover", "-s", "tests/golden", "-p", "test_*.py"),
         severity=BLOCKING,
         covers=(
