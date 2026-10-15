@@ -175,9 +175,11 @@ class GoldenContractTests(unittest.TestCase):
                          resource_id="/subscriptions/x/rg/app",
                          captured_at="2026-09-27T05:06:07Z",
                          execution_status=execution,
-                         source_commit="a" * 40, environment={"platform": "test"},
-                         recipe_digest="sha256:" + "b" * 64,
-                         collector_digest="sha256:" + "c" * 64)
+                         source_commit="3e0442bb19b966766598ffeae1fb47f3f6960837",
+                         environment={"subscription_kind": "test", "region": "local",
+                                      "runtime": "Python 3.11", "sku": "test-sku"},
+                         recipe_digest="sha256:" + "0123456789abcdef" * 4,
+                         collector_digest="sha256:" + "fedcba9876543210" * 4)
         (directory / "manifest.json").write_text(json.dumps(manifest))
         (directory / "evidence.json").write_text(json.dumps({
             "run_id": manifest["run_id"],
