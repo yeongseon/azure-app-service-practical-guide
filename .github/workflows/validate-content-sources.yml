@@ -47,8 +47,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-        with:
-          fetch-depth: 0
       
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -58,6 +56,9 @@ jobs:
       - name: Install dependencies
         run: |
           pip install pyyaml 'ruamel.yaml==0.19.1'
+
+      - name: Reject duplicate workflow YAML keys
+        run: python3 tests/golden/test_workflow_yaml.py
       
       - name: Run doctests for content_scope, content sources, and doc quality
         run: |
