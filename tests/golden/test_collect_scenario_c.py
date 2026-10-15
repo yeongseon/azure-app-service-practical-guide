@@ -12,11 +12,9 @@ capable of refusing the hypothesis.
 import importlib.util
 import json
 import pathlib
-import subprocess
 import sys
 import tempfile
 import unittest
-from typing import Final
 
 sys.dont_write_bytecode = True
 
@@ -35,8 +33,6 @@ ev = _load("ev_c", "scripts/golden/evaluate_run.py")
 
 MANIFEST = json.loads(
     (ROOT / "labs/slot-swap-config-drift/golden/manifest.template.json").read_text())
-SOURCE_COMMIT: Final = subprocess.check_output(
-    ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
 
 PROD_BEFORE = {"FEATURE_FLAG": "off", "DB_CONNECTION_STRING": "prod-db",
                "PROCESS_START_UTC": "2026-09-27T10:00:00+00:00"}
@@ -90,7 +86,7 @@ def evaluate_with(evidence):
     manifest = dict(MANIFEST)
     manifest.update(run_id=evidence["run_id"], captured_at=evidence["captured_at"],
                     resource_id=evidence.get("resource_id"), execution_status="COMPLETE",
-                    source_commit=SOURCE_COMMIT,
+                    source_commit="3e0442bb19b966766598ffeae1fb47f3f6960837",
                     environment={"subscription_kind": "test", "region": "local",
                                  "runtime": "Python 3.11", "sku": "test-sku"},
                     recipe_digest="sha256:" + "0123456789abcdef" * 4,
