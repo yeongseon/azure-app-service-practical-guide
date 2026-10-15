@@ -23,7 +23,8 @@ Usage::
     python3 scripts/golden/evaluate_run.py <run-dir>
 
 Exit codes: ``0`` SUPPORTED, ``1`` CONTRADICTED, ``2`` INCONCLUSIVE,
-``3`` NOT_TESTED (execution did not complete).
+``3`` NOT_TESTED (execution did not complete), ``4`` stored generated verdict
+rejected because it disagrees with raw evidence.
 """
 
 from __future__ import annotations
@@ -43,6 +44,7 @@ EVIDENCE_ROLES = ("symptom", "supporting", "discriminating", "control", "recover
 EVIDENCE_TRUST = ("trusted-current", "trusted-historical", "unverified", "invalid")
 
 EXIT_CODES = {"SUPPORTED": 0, "CONTRADICTED": 1, "INCONCLUSIVE": 2, "NOT_TESTED": 3}
+GENERATED_VERDICT_REJECTED_EXIT = 4
 
 # Observed outranks Inferred, so a claim may only ever move toward weaker.
 _CLAIM_STRENGTH = {"Observed": 3, "Documented": 2, "Inferred": 1, "Not Proven": 0}
@@ -89,8 +91,15 @@ def _unique_object(pairs):
 
 
 def _read_json(path: pathlib.Path):
+    def reject_non_finite(value: str):
+        raise ModelError(f"non-finite JSON number in {path.name}: {value}")
+
     try:
-        return json.loads(path.read_text(), object_pairs_hook=_unique_object)
+        return json.loads(
+            path.read_text(),
+            object_pairs_hook=_unique_object,
+            parse_constant=reject_non_finite,
+        )
     except FileNotFoundError as exc:
         raise ModelError(f"required file missing: {path.name}") from exc
     except json.JSONDecodeError as exc:
@@ -144,6 +153,21 @@ def evaluate_assertion(assertion: dict, evidence: dict) -> str:
                 or per_file_limit <= 0):
             return "INCONCLUSIVE"
         observed = numerator / denominator
+    expected_numbers = []
+    if "equals" in assertion:
+        expected_numbers.append(assertion["equals"])
+    if "in" in assertion:
+        expected_numbers.extend(assertion["in"])
+    if "not_in" in assertion:
+        expected_numbers.extend(assertion["not_in"])
+    numeric_comparison = any(
+        isinstance(value, (int, float)) and not isinstance(value, bool)
+        for value in expected_numbers
+    ) or "range" in assertion
+    if numeric_comparison:
+        if (not isinstance(observed, (int, float)) or isinstance(observed, bool)
+                or not math.isfinite(observed)):
+            return "CONTRADICTED"
     if "equals" in assertion:
         return "SUPPORTED" if observed == assertion["equals"] else "CONTRADICTED"
     if "in" in assertion:
@@ -152,7 +176,8 @@ def evaluate_assertion(assertion: dict, evidence: dict) -> str:
         return "SUPPORTED" if observed not in assertion["not_in"] else "CONTRADICTED"
     if "range" in assertion:
         bounds = assertion["range"]
-        if not isinstance(observed, (int, float)) or isinstance(observed, bool):
+        if (not isinstance(observed, (int, float)) or isinstance(observed, bool)
+                or not math.isfinite(observed)):
             return "CONTRADICTED"
         minimum = bounds.get("minimum")
         maximum = bounds.get("maximum")
@@ -188,10 +213,12 @@ def _absorbed(discriminating: dict, other: dict) -> bool:
 
 
 def _validate_new_run_provenance(manifest: dict) -> None:
+    if manifest.get("execution_status") != "COMPLETE" or not manifest.get("hypothesis"):
+        return
     retained_allowance = (manifest.get("resource_id") is None
                           and manifest.get("evidence_trust") == "unverified")
     provenance_fields = ("source_commit", "environment", "recipe_digest", "collector_digest")
-    if retained_allowance or not any(field in manifest for field in provenance_fields):
+    if retained_allowance:
         return
     source_commit = manifest.get("source_commit")
     if not isinstance(source_commit, str) or re.fullmatch(r"[0-9a-f]{40}", source_commit) is None:
@@ -320,7 +347,10 @@ def evaluate(run_dir) -> dict:
         assertion_id = assertion.get("id")
         if assertion_id in per_assertion:
             raise ModelError(f"duplicate assertion id: {assertion_id!r}")
-        per_assertion[assertion_id] = evaluate_assertion(assertion, evidence)
+        outcome = evaluate_assertion(assertion, evidence)
+        if assertion.get("claim_level") == "Not Proven" and outcome == "SUPPORTED":
+            outcome = "INCONCLUSIVE"
+        per_assertion[assertion_id] = outcome
 
     strong = [item for item in assertions if item.get("role") == "discriminating"]
     for item in strong:
@@ -384,6 +414,7 @@ def main() -> int:
             "generated result.json disagrees with the recomputation and was rejected",
             file=sys.stderr,
         )
+        return GENERATED_VERDICT_REJECTED_EXIT
     return EXIT_CODES[result["hypothesis_status"]]
 
 

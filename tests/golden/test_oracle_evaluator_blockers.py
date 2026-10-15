@@ -5,6 +5,8 @@ import pathlib
 import tempfile
 import unittest
 from unittest import mock
+import contextlib
+import io
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 SPEC = importlib.util.spec_from_file_location(
@@ -107,6 +109,22 @@ class EvidenceBindingMutations(unittest.TestCase):
 
 
 class CausalSupportMutations(unittest.TestCase):
+    def test_complete_non_historical_run_requires_every_provenance_field(self):
+        required = ("source_commit", "environment", "recipe_digest", "collector_digest",
+                    "hypothesis_claim_level")
+        for key in required:
+            with self.subTest(key=key):
+                doc = manifest()
+                del doc[key]
+                with self.assertRaises(ev.ModelError):
+                    ev.evaluate(write_run(manifest_doc=doc, evidence_doc=evidence()))
+
+        doc = manifest()
+        for key in required:
+            del doc[key]
+        with self.assertRaises(ev.ModelError):
+            ev.evaluate(write_run(manifest_doc=doc, evidence_doc=evidence()))
+
     def test_symptom_only_manifest_is_inconclusive(self):
         assertions = [
             {"id": "symptom", "role": "symptom", "field": "status", "equals": 503,
@@ -205,6 +223,32 @@ class CausalSupportMutations(unittest.TestCase):
                                        evidence_doc=evidence(observations=observations)))
         self.assertEqual(result["assertion_outcomes"]["ratio"], "INCONCLUSIVE")
 
+    def test_boolean_does_not_satisfy_numeric_equality(self):
+        assertions = [{"id": "numeric", "role": "discriminating", "field": "count",
+                       "equals": 1, "claim_level": "Observed"}]
+        result = ev.evaluate(write_run(manifest_doc=manifest(assertions),
+                                       evidence_doc=evidence(observations={"count": True})))
+        self.assertNotEqual(result["assertion_outcomes"]["numeric"], "SUPPORTED")
+
+    def test_non_finite_numeric_observation_is_rejected(self):
+        assertions = [{"id": "numeric", "role": "discriminating", "field": "count",
+                       "range": {"minimum": 0}, "claim_level": "Observed"}]
+        for value in (float("nan"), float("inf"), float("-inf")):
+            with self.subTest(value=value):
+                with self.assertRaises(ev.ModelError):
+                    ev.evaluate(write_run(manifest_doc=manifest(assertions),
+                                          evidence_doc=evidence(observations={"count": value})))
+
+    def test_not_proven_discriminating_assertion_cannot_contribute_support(self):
+        assertions = [
+            {"id": "symptom", "role": "symptom", "field": "status", "equals": 503,
+             "claim_level": "Observed"},
+            {"id": "cause", "role": "discriminating", "field": "cause_seen", "equals": True,
+             "claim_level": "Not Proven"},
+        ]
+        result = ev.evaluate(write_run(manifest_doc=manifest(assertions), evidence_doc=evidence()))
+        self.assertNotEqual(result["hypothesis_status"], "SUPPORTED")
+
 
 class GeneratedResultIntegrityMutations(unittest.TestCase):
     def recomputed(self, directory):
@@ -223,6 +267,23 @@ class GeneratedResultIntegrityMutations(unittest.TestCase):
         stored["assertion_outcomes"] = {"old-run-assertion": "SUPPORTED"}
         (directory / "result.json").write_text(json.dumps(stored))
         self.assertTrue(ev.evaluate(directory)["generated_verdict_rejected"])
+
+    def test_rejected_generated_verdict_has_distinct_nonzero_exit(self):
+        directory = write_run(evidence_doc=evidence())
+        stored = self.recomputed(directory)
+        stored["run_id"] = "forged-run"
+        (directory / "result.json").write_text(json.dumps(stored))
+        with mock.patch.object(ev.sys, "argv", ["evaluate_run.py", str(directory)]), \
+                contextlib.redirect_stdout(io.StringIO()), \
+                contextlib.redirect_stderr(io.StringIO()):
+            self.assertEqual(ev.main(), 4)
+
+    def test_json_nan_token_is_rejected_at_parse_boundary(self):
+        directory = write_run(evidence_doc='{"run_id":"%s","resource_id":"%s",'
+                               '"captured_at":"%s","observations":{"count":NaN}}'
+                               % (RUN_ID, RESOURCE, CAPTURED))
+        with self.assertRaises(ev.ModelError):
+            ev.evaluate(directory)
 
     def test_duplicate_json_keys_are_rejected(self):
         duplicate = '{"run_id":"%s","run_id":"other","resource_id":"%s",' \

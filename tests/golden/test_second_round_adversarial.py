@@ -50,7 +50,8 @@ class EvaluatorSelfAttackTests(unittest.TestCase):
             [{"id": "ratio", "role": "discriminating", "field": "ratio", "equals": 1.0}],
             {"ratio": {"numerator": float("nan"), "denominator": 1,
                        "ratio": 1.0, "per_file_limit": 10}})
-        self.assertNotEqual(evaluator.evaluate(directory)["hypothesis_status"], "SUPPORTED")
+        with self.assertRaises(evaluator.ModelError):
+            evaluator.evaluate(directory)
 
     def test_discriminating_exists_predicate_is_conservatively_absorbed(self):
         directory = write_run(
