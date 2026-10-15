@@ -9,6 +9,17 @@
 #   - a replacement enters manifest.yaml through a real capture.
 # `introduced` is the date the file entered the repository, not a capture date.
 
+audit:
+  base_commit: e6cc51c42929923a7acb9779a7bb8eac90130f12
+  reviewed: '2026-10-15'
+  manifest_entries: 106
+  webp_assets: 106
+  legacy_pngs: 6
+  direct_legacy_references: 16
+  orphan_assets: 0
+  remaining_stem_collisions: 1
+  disposition: retain_pending_profile_recapture
+
 assets:
   - id: legacy--troubleshooting--log-analytics--01-logs
     file: troubleshooting/log-analytics/01-logs.png
