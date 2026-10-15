@@ -4,6 +4,7 @@
 # before the expanded scanner existed. They are retained byte-for-byte as
 # experiment evidence; the suffix identifies a disposable lab deployment and
 # is not an account, subscription, tenant, user, or secret identifier.
+evidence/retained-digests.json|instance-id
 labs/container-http-pings/artifacts-sanitized/baseline/app-config.json|deployment-resource-path
 labs/container-http-pings/artifacts-sanitized/trigger/webapp-details-20260404T055338Z.json|deployment-resource-path
 labs/dns-vnet-resolution/artifacts-sanitized/baseline/app-config.json|deployment-resource-path
