@@ -64,6 +64,11 @@ evidence/<run-id>/
 
 Run directories are immutable and never overwrite a previous run. A collector re-run creates a new `run-id`. CI compares existing files under `evidence/runs/<run-id>/` and `labs/*/golden/` with the pull-request base and rejects edits, renames, and deletions while allowing newly added run directories. Retirement is an explicit archive operation in a separately reviewed change; it is never an in-place rewrite or a silent deletion.
 
+`evidence/retained-digests.json` anchors every retained file by SHA-256. Existing
+entries are append-only relative to the pull-request base, and digest checks run
+even when the comparison base is `HEAD`, so re-dating a package cannot be hidden
+by consistently rewriting its manifest, evidence, and result.
+
 ## Evaluator
 
 `scripts/golden/evaluate_run.py` is stdlib-only and re-derives every assertion outcome from raw evidence.
@@ -83,6 +88,11 @@ python3 scripts/golden/evaluate_run.py evidence/<run-id>
 A refutation does not share exit `0` with a confirmation. Exit `0` reads as "the reproduction worked", and a disproof is a different result, not a successful one.
 
 The evaluator does not name a root cause. It reports whether declared assertions held.
+For non-historical COMPLETE causal runs, provenance includes a source commit that
+resolves in this repository plus named subscription kind, region, runtime, and
+SKU fields. The explicit `--skip-source-commit-resolution` option is reserved
+for environments without Git object access and records
+`source_commit_resolution: SKIPPED_EXPLICITLY` in the result.
 
 ## Schemas
 
@@ -128,6 +138,17 @@ operator, and PR author logins, but offline checking returns
 confirms all three logins are distinct. Existing agent-authored records remain
 `NOT_INDEPENDENT`; this repository does not claim a human reproduction from
 author-controlled metadata.
+
+An external verifier is opt-in at the CLI boundary:
+
+```bash
+python3 scripts/golden/check_reproduction.py evidence/reproductions/<scenario>.json --verifier package.module:verify
+```
+
+Without `--verifier`, the checker remains offline and returns
+`ATTESTATION_UNVERIFIED`. The current retained run packages are explicitly
+historical in `evidence/retained-digests.json`; they are integrity-protected
+illustrations and cannot support a qualifying human reproduction record.
 
 ```bash
 python3 scripts/golden/check_reproduction.py evidence/reproductions/<scenario>.json
