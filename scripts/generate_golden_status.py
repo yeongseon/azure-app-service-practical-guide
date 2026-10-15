@@ -48,6 +48,7 @@ import subprocess
 import sys
 import tempfile
 import time
+from ruamel.yaml import YAML
 from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
@@ -1042,6 +1043,17 @@ def registry_problems() -> list[str]:
             if not (ROOT / binding.workflow).exists():
                 problems.append(
                     f"gate {gate.key!r} points at {binding.workflow}, which does not exist"
+                )
+                continue
+            workflow = YAML(typ="safe").load((ROOT / binding.workflow).read_text())
+            job_names = {
+                job.get("name", job_id)
+                for job_id, job in (workflow.get("jobs") or {}).items()
+                if isinstance(job, dict)
+            }
+            if binding.job not in job_names:
+                problems.append(
+                    f"gate {gate.key!r} binds missing job {binding.job!r} in {binding.workflow}"
                 )
         for path in gate.covers:
             if path in owner:
