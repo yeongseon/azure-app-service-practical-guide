@@ -24,8 +24,6 @@ documentation is a documentation gap, whatever the outcome.
 Usage::
 
     python3 scripts/golden/check_reproduction.py <reproduction.json>
-    python3 scripts/golden/check_reproduction.py <reproduction.json> \
-        --verifier package.module:callable
 
 Exit codes: ``0`` both results REPRODUCED, ``1`` otherwise.
 """
@@ -351,26 +349,9 @@ def main() -> int:
 
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("record")
-    parser.add_argument("--verifier", help="External attestation verifier as MODULE:CALLABLE")
     args = parser.parse_args()
-    verifier = None
     try:
-        if args.verifier:
-            module_name, callable_name = args.verifier.split(":", 1)
-            spec = importlib.util.find_spec(module_name)
-            if spec is None or spec.loader is None:
-                raise ReproductionError(f"verifier module not found: {module_name}")
-            module = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(module)
-            candidate = getattr(module, callable_name, None)
-            if not callable(candidate):
-                raise ReproductionError(f"verifier callable not found: {args.verifier}")
-            verifier = candidate
-    except (ValueError, ReproductionError) as exc:
-        print(f"reproduction record error: {exc}", file=sys.stderr)
-        return 1
-    try:
-        result = check(args.record, verifier)
+        result = check(args.record)
     except ReproductionError as exc:
         print(f"reproduction record error: {exc}", file=sys.stderr)
         return 1

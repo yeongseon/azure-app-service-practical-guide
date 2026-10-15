@@ -139,14 +139,8 @@ confirms all three logins are distinct. Existing agent-authored records remain
 `NOT_INDEPENDENT`; this repository does not claim a human reproduction from
 author-controlled metadata.
 
-An external verifier is opt-in at the CLI boundary:
-
-```bash
-python3 scripts/golden/check_reproduction.py evidence/reproductions/<scenario>.json --verifier package.module:verify
-```
-
-Without `--verifier`, the checker remains offline and returns
-`ATTESTATION_UNVERIFIED`. The current retained run packages are explicitly
+The CLI remains offline and returns `ATTESTATION_UNVERIFIED`; qualification is
+a maintainer decision outside this author-controlled record. The current retained run packages are explicitly
 historical in `evidence/retained-digests.json`; they are integrity-protected
 illustrations and cannot support a qualifying human reproduction record.
 

@@ -121,22 +121,16 @@ class IndependenceTests(unittest.TestCase):
             repro.classify_reproduction(rec, attestation_verifier=lambda attestation: True),
             "REPRODUCED")
 
-    def test_cli_verifier_hook_is_reachable_but_off_by_default(self):
-        rec = record(
-            replay_run_id="different-run",
-            attestation={
-                "url": "https://github.com/yeongseon/azure-app-service-practical-guide/pull/234#pullrequestreview-1",
-                "reviewer_login": "second-operator",
-                "original_operator_login": "first-operator",
-                "pr_author_login": "pr-author",
-            },
-        )
-        with mock.patch.object(repro, "check") as check, \
-                mock.patch.object(repro.sys, "argv", ["check_reproduction.py", str(write(rec))]), \
-                contextlib.redirect_stdout(io.StringIO()):
-            check.return_value = {"documentation_result": "REPRODUCED", "passed": False}
-            self.assertEqual(repro.main(), 1)
-            self.assertIsNone(check.call_args.args[1])
+    def test_cli_never_imports_author_supplied_verifier(self):
+        with mock.patch.object(
+                repro.sys,
+                "argv",
+                ["check_reproduction.py", str(write(record())), "--verifier", "evil:run"],
+        ), mock.patch.object(repro.importlib.util, "find_spec") as imported, \
+                contextlib.redirect_stderr(io.StringIO()):
+            with self.assertRaises(SystemExit):
+                repro.main()
+            imported.assert_not_called()
 
 
 class DocumentationGapTests(unittest.TestCase):
