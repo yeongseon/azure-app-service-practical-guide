@@ -38,6 +38,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import json
 import ipaddress
 import re
 import subprocess
@@ -319,6 +320,17 @@ def load_allowlist() -> dict[str, set[str]]:
     return entries
 
 
+def retained_digest_hashes(path: Path) -> set[str]:
+    if path.as_posix() != "evidence/retained-digests.json":
+        return set()
+    document = json.loads(path.read_text())
+    return {
+        digest
+        for package in (document.get("packages") or {}).values()
+        for digest in (package.get("files") or {}).values()
+    }
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -364,7 +376,10 @@ def main(argv: list[str] | None = None) -> int:
             continue
 
         scanned += 1
+        digest_hashes = retained_digest_hashes(file_path)
         for lineno, category, value in find_pii(text):
+            if category == "instance-id" and value in digest_hashes:
+                continue
             if category in ("rfc1918-ip", "instance-id", "deployment-resource-path") \
                     and "artifacts-sanitized" not in file_path.parts \
                     and "results" not in file_path.parts \
