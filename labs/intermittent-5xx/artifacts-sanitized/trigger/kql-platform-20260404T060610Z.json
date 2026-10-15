@@ -90,7 +90,7 @@
         [
           "2026-04-04T05:04:56.5853759Z",
           "Informational",
-          "Creating container with image: appsvc/python:3.11_20260203.2.tuxprod from registry: 10.1.0.4:13209 and fully qualified image name: 10.1.0.4:13209/appsvc/python:3.11_20260203.2.tuxprod"
+          "Creating container with image: appsvc/python:3.11_20260203.2.tuxprod from registry: 10.0.0.0:13209 and fully qualified image name: 10.0.0.0:13209/appsvc/python:3.11_20260203.2.tuxprod"
         ],
         [
           "2026-04-04T05:04:56.5852801Z",
@@ -210,7 +210,7 @@
         [
           "2026-04-04T05:04:56.4777363Z",
           "Informational",
-          "Image appsvc/python:3.11_20260203.2.tuxprod is pulled from registry 10.1.0.4:13209"
+          "Image appsvc/python:3.11_20260203.2.tuxprod is pulled from registry 10.0.0.0:13209"
         ],
         [
           "2026-04-04T05:04:56.1516962Z",
@@ -225,7 +225,7 @@
         [
           "2026-04-04T05:04:56.1506322Z",
           "Informational",
-          "State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image 10.1.0.4:13209/appsvc/python:3.11_20260203.2.tuxprod for app-lab5xx-o4evin7tt76tc., DetailsLevel: INFO"
+          "State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image 10.0.0.0:13209/appsvc/python:3.11_20260203.2.tuxprod for app-lab5xx-o4evin7tt76tc., DetailsLevel: INFO"
         ],
         [
           "2026-04-04T05:04:56.1481806Z",
@@ -270,7 +270,7 @@
         [
           "2026-04-04T05:04:25.6877449Z",
           "Informational",
-          "Creating container with image: appsvc/kudulite:bullseye_20260204.5.tuxprod from registry: 10.1.0.6:13209 and fully qualified image name: 10.1.0.6:13209/appsvc/kudulite:bullseye_20260204.5.tuxprod"
+          "Creating container with image: appsvc/kudulite:bullseye_20260204.5.tuxprod from registry: 10.0.0.0:13209 and fully qualified image name: 10.0.0.0:13209/appsvc/kudulite:bullseye_20260204.5.tuxprod"
         ],
         [
           "2026-04-04T05:04:25.684947Z",
@@ -555,7 +555,7 @@
         [
           "2026-04-03T15:14:05.7589966Z",
           "Informational",
-          "Creating container with image: appsvc/python:3.11_20260203.2.tuxprod from registry: 10.1.0.6:13209 and fully qualified image name: 10.1.0.6:13209/appsvc/python:3.11_20260203.2.tuxprod"
+          "Creating container with image: appsvc/python:3.11_20260203.2.tuxprod from registry: 10.0.0.0:13209 and fully qualified image name: 10.0.0.0:13209/appsvc/python:3.11_20260203.2.tuxprod"
         ],
         [
           "2026-04-03T15:14:05.7515371Z",
@@ -675,7 +675,7 @@
         [
           "2026-04-03T15:14:04.0858343Z",
           "Informational",
-          "Image appsvc/python:3.11_20260203.2.tuxprod is pulled from registry 10.1.0.6:13209"
+          "Image appsvc/python:3.11_20260203.2.tuxprod is pulled from registry 10.0.0.0:13209"
         ],
         [
           "2026-04-03T15:14:02.1362391Z",
@@ -690,7 +690,7 @@
         [
           "2026-04-03T15:14:02.1185425Z",
           "Informational",
-          "State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image 10.1.0.6:13209/appsvc/python:3.11_20260203.2.tuxprod for app-lab5xx-o4evin7tt76tc., DetailsLevel: INFO"
+          "State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image 10.0.0.0:13209/appsvc/python:3.11_20260203.2.tuxprod for app-lab5xx-o4evin7tt76tc., DetailsLevel: INFO"
         ],
         [
           "2026-04-03T15:14:02.0409045Z",
@@ -735,7 +735,7 @@
         [
           "2026-04-03T15:13:12.2098845Z",
           "Informational",
-          "Creating container with image: appsvc/kudulite:bullseye_20260204.5.tuxprod from registry: 10.1.0.4:13209 and fully qualified image name: 10.1.0.4:13209/appsvc/kudulite:bullseye_20260204.5.tuxprod"
+          "Creating container with image: appsvc/kudulite:bullseye_20260204.5.tuxprod from registry: 10.0.0.0:13209 and fully qualified image name: 10.0.0.0:13209/appsvc/kudulite:bullseye_20260204.5.tuxprod"
         ],
         [
           "2026-04-03T15:13:12.1512623Z",

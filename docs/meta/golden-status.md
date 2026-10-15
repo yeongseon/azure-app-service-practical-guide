@@ -25,12 +25,12 @@ Every quality gate in this repository, its most recently recorded result, and th
 
 ## Summary
 
-*Snapshot of `82271ce`, generated 2026-10-14.*
+*Snapshot of `9dbe844 plus uncommitted working-tree changes`, generated 2026-10-15.*
 
 | Metric | Count |
 |---|---:|
-| Registered gates | 33 |
-| ✅ Pass | 26 |
+| Registered gates | 37 |
+| ✅ Pass | 30 |
 | ❌ Fail | 0 |
 | ⚠️ Warn | 0 |
 | ➖ Skipped | 7 |
@@ -41,39 +41,43 @@ Every quality gate in this repository, its most recently recorded result, and th
 <!-- diagram-id: golden-status-gate-outcomes-pie -->
 ```mermaid
 pie title Quality Gate Outcomes
-    "Pass" : 26
+    "Pass" : 30
     "Skipped" : 7
 ```
 
 ## Gate Results
 
-These are locally executed results, not GitHub Actions statuses. **Skipped** means the machine that generated this page lacked the toolchain the gate needs. **Warn** means the gate reported findings its CI job would not fail on, either because the job is advisory or because the dashboard runs a wider scope than CI does. 21 of 33 gates are re-run and compared by the `Validate Golden Status` job, so a flip to **Fail** cannot sit here unnoticed.
+These are locally executed results, not GitHub Actions statuses. **Skipped** means the machine that generated this page lacked the toolchain the gate needs. **Warn** means the gate reported findings its CI job would not fail on, either because the job is advisory or because the dashboard runs a wider scope than CI does. 22 of 37 gates are re-run and compared by the `Validate Golden Status` job, so a flip to **Fail** cannot sit here unnoticed.
 
 <!-- golden-status:results:start -->
 | Gate | Severity | Status | Detail | Time |
 | --- | --- | --- | --- | --- |
 | Validator doctests | Blocking | ✅ Pass | 11 modules checked, every doctest passed. | < 10s |
 | Capture asset geometry | Blocking | ✅ Pass | Capture assets conform to the capture profile. | < 10s |
-| Mermaid format | Blocking | ✅ Pass | Files checked: 242 · Files with errors: 0 | < 10s |
+| Mermaid format | Blocking | ✅ Pass | Files checked: 245 · Files with errors: 0 | < 10s |
 | Mermaid syntax | Blocking | ✅ Pass | Diagrams checked: 395 · Errors found: 0 | < 10s |
 | Content sources | Blocking | ✅ Pass | Files with mermaid: 241 · Validation errors: 0 | < 10s |
 | Content sources schema | Blocking | ✅ Pass | Files with content_sources schema drift: 0 · Parse errors: 0 | < 10s |
 | Diagram ID parity | Blocking | ✅ Pass | mermaid blocks: 395 · diagram-id comments: 395 | < 10s |
 | CLI explanation tables | Blocking | ✅ Pass | All Azure CLI code fences and Markdown tables are correctly terminated. | < 10s |
 | Documented repository paths | Blocking | ✅ Pass | Documented repository path errors: 0 | < 10s |
-| Document quality | Blocking | ✅ Pass | Documentation quality gate passed for 242 file(s). | < 10s |
+| Document quality | Blocking | ✅ Pass | Documentation quality gate passed for 245 file(s). | < 10s |
 | Frontmatter YAML style | Blocking | ✅ Pass | Files with style drift: 0 · Parse errors: 0 | < 10s |
 | Microsoft Learn locale | Blocking | ✅ Pass | Files with locale drift: 0 | < 10s |
 | Microsoft Learn URL reachability | Advisory | ➖ Skipped | Network gate; re-run with --include-network. | < 10s |
-| Lab artifact PII | Blocking | ✅ Pass | [scan_lab_pii] scanned=584 skipped_binary=0 skipped_decode=0 findings=0 | < 10s |
+| Lab artifact PII | Blocking | ✅ Pass | [scan_lab_pii] scanned=612 skipped_binary=0 skipped_decode=0 findings=0 | < 10s |
 | Documentation PII | Blocking | ✅ Pass | No blocking PII patterns detected! | < 10s |
-| Documentation repetition | Blocking | ✅ Pass | Scanned 242 file(s): 0 error(s), 6 warning(s). | < 10s |
+| Documentation repetition | Blocking | ✅ Pass | Scanned 245 file(s): 0 error(s), 6 warning(s). | < 10s |
 | Quick-triage causal claims | Blocking | ✅ Pass | Quick-triage causal-claim contract passed (7 files). · Scope is a phrase denylist only; technical review remains required. | < 10s |
 | Visual content coverage | Advisory | ✅ Pass | full repo: 83/83 in-scope pages carry a visual aid (100.0%). Advisory gate — exit 0 regardless (see issue #388). | < 10s |
 | Windows troubleshooting navigation | Blocking | ✅ Pass | Windows troubleshooting navigation: 2 entry points link all 5 required playbooks. | < 10s |
-| Frontmatter schema | Blocking | ✅ Pass | Checked 242 files · Found 0 errors, 28 warnings: | < 10s |
+| Frontmatter schema | Blocking | ✅ Pass | Checked 245 files · Found 0 errors, 28 warnings: | < 10s |
 | MkDocs strict build | Blocking | ✅ Pass | Site built with no strict-mode warnings. | 10-120s |
 | App and Infra impact classifier tests | Blocking | ✅ Pass | OK | < 10s |
+| Workflow YAML duplicate keys | Blocking | ✅ Pass | OK | < 10s |
+| Retained Golden package immutability | Blocking | ✅ Pass | Retained Golden package immutability: PASS | < 10s |
+| Golden evidence contracts | Blocking | ✅ Pass | OK | < 10s |
+| Absorbed evidence predicates | Blocking | ✅ Pass | undeclared absorbed predicates: 0 (declared: 0, stale: 0) | < 10s |
 | Shell script syntax | Blocking | ✅ Pass | All shell scripts parse. | < 10s |
 | ShellCheck | Blocking | ➖ Skipped | Executable `shellcheck` is not on PATH. | < 10s |
 | Node.js dependency audit | Blocking | ✅ Pass | found 0 vulnerabilities | < 10s |
@@ -117,6 +121,10 @@ Generated from the `GATES` registry in `scripts/generate_golden_status.py`. CI f
 | Frontmatter schema | Valid doc_type and section values, unique slugs, resolvable relationships, content_validation placement. | Blocking | `python3 tools/validate_frontmatter.py` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
 | MkDocs strict build | The site builds with no broken internal links and no navigation warnings. | Blocking | `mkdocs build --strict` | `Build Documentation` — `validate-content-sources.yml` |
 | App and Infra impact classifier tests | PR, push, rename, deletion, executable Markdown, app, lab, shared-helper, workflow, and full-regression changes select the intended jobs. | Blocking | `python3 -m unittest scripts/test_impact_classifier.py scripts/test_impact_ci.py` | `Classify App and Infra Changes` — `app-infra-ci.yml` |
+| Workflow YAML duplicate keys | Every GitHub Actions workflow parses with duplicate mapping keys rejected. | Blocking | `python3 tests/golden/test_workflow_yaml.py` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
+| Retained Golden package immutability | Existing retained run and lab Golden packages cannot be edited, renamed, or deleted relative to the base ref; new run directories remain allowed. | Blocking | `python3 scripts/golden/check_retained_packages.py` | `Validate Golden Contracts` — `validate-content-sources.yml` |
+| Golden evidence contracts | Golden schemas, evaluator negative cases, inventory parity, vocabulary, and externally attested reproduction boundaries pass on Python 3.11. | Blocking | `python3 -m unittest discover -s tests/golden -p test_*.py` | `Validate Golden Contracts` — `validate-content-sources.yml`<br>`Lab Evidence Verifiers` — `app-infra-ci.yml` |
+| Absorbed evidence predicates | Weak fallback branches cannot bypass required strong evidence predicates in lab verifiers. | Blocking | `python3 scripts/detect_absorbed_predicates.py labs --allowlist scripts/absorbed-predicate-allowlist.txt --repo-root .` | `Lab Evidence Verifiers` — `app-infra-ci.yml` |
 | Shell script syntax | Every tracked .sh file under apps/, labs/, and scripts/ parses. | Blocking | `bash -c "find apps labs scripts -type f -name '*.sh' -print0 | xargs -0 -r bash -n"` | `Shell Scripts` — `app-infra-ci.yml` |
 | ShellCheck | Shell scripts pass ShellCheck static analysis. | Blocking | `bash -c "find apps labs scripts -type f -name '*.sh' -print0 | xargs -0 -r shellcheck"` | `Shell Scripts` — `app-infra-ci.yml` |
 | Node.js dependency audit | The Express reference app has no moderate-or-worse production advisories. | Blocking | `cd apps/nodejs && npm audit --package-lock-only --omit=dev --audit-level=moderate` | `Node.js App` — `app-infra-ci.yml` |
@@ -146,6 +154,8 @@ Generated from the `GATES` registry in `scripts/generate_golden_status.py`. CI f
 | Visual content coverage | Advisory by design; it always exits 0 and reports coverage as a tracked metric. |
 | Frontmatter schema | Unresolved relationship slugs are warnings, so only hard schema errors fail the job. |
 | MkDocs strict build | Builds into a temporary directory so a local `mkdocs serve` is left alone. Needs the full docs toolchain, so the Validate Golden Status job does not re-verify it. |
+| Retained Golden package immutability | On pull requests CI supplies the exact base SHA. Local runs default to origin/main; archive retirement requires a separate reviewed change rather than an in-place rewrite. |
+| Golden evidence contracts | The workflow executes each suite file separately after installing jsonschema and referencing; the lightweight Golden Status freshness job deliberately does not duplicate those dependencies. |
 | Node.js dependency audit | --package-lock-only audits the lockfile, so the result cannot be skewed by a stale node_modules. CI audits the tree it just installed, which is equivalent. |
 | Node.js app tests | Needs `npm ci` in apps/nodejs first; the dashboard never installs dependencies. |
 | Node.js production install | Dry run, so it resolves from the lockfile without writing node_modules. |

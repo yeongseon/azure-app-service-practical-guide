@@ -135,7 +135,7 @@
         [
           "2026-04-04T05:05:26.9496727Z",
           "Informational",
-          "Creating container with image: appsvc/python:3.11_20260203.2.tuxprod from registry: 10.1.0.6:13209 and fully qualified image name: 10.1.0.6:13209/appsvc/python:3.11_20260203.2.tuxprod"
+          "Creating container with image: appsvc/python:3.11_20260203.2.tuxprod from registry: 10.0.0.0:13209 and fully qualified image name: 10.0.0.0:13209/appsvc/python:3.11_20260203.2.tuxprod"
         ],
         [
           "2026-04-04T05:05:26.9424484Z",
@@ -275,7 +275,7 @@
         [
           "2026-04-04T05:05:25.2499082Z",
           "Informational",
-          "State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image 10.1.0.6:13209/appsvc/python:3.11_20260203.2.tuxprod for app-labdns-fbg6cycknd2gm., DetailsLevel: INFO"
+          "State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image 10.0.0.0:13209/appsvc/python:3.11_20260203.2.tuxprod for app-labdns-fbg6cycknd2gm., DetailsLevel: INFO"
         ],
         [
           "2026-04-04T05:05:25.2116957Z",
@@ -410,7 +410,7 @@
         [
           "2026-04-03T15:18:13.3281336Z",
           "Informational",
-          "Creating container with image: appsvc/python:3.11_20260203.2.tuxprod from registry: 10.1.0.6:13209 and fully qualified image name: 10.1.0.6:13209/appsvc/python:3.11_20260203.2.tuxprod"
+          "Creating container with image: appsvc/python:3.11_20260203.2.tuxprod from registry: 10.0.0.0:13209 and fully qualified image name: 10.0.0.0:13209/appsvc/python:3.11_20260203.2.tuxprod"
         ],
         [
           "2026-04-03T15:18:13.3279383Z",
@@ -550,7 +550,7 @@
         [
           "2026-04-03T15:18:11.3550494Z",
           "Informational",
-          "State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image 10.1.0.6:13209/appsvc/python:3.11_20260203.2.tuxprod for app-labdns-fbg6cycknd2gm., DetailsLevel: INFO"
+          "State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image 10.0.0.0:13209/appsvc/python:3.11_20260203.2.tuxprod for app-labdns-fbg6cycknd2gm., DetailsLevel: INFO"
         ],
         [
           "2026-04-03T15:18:11.3545787Z",
@@ -650,7 +650,7 @@
         [
           "2026-04-03T15:15:39.0964296Z",
           "Informational",
-          "Creating container with image: appsvc/python:3.11_20260203.2.tuxprod from registry: 10.1.0.6:13209 and fully qualified image name: 10.1.0.6:13209/appsvc/python:3.11_20260203.2.tuxprod"
+          "Creating container with image: appsvc/python:3.11_20260203.2.tuxprod from registry: 10.0.0.0:13209 and fully qualified image name: 10.0.0.0:13209/appsvc/python:3.11_20260203.2.tuxprod"
         ],
         [
           "2026-04-03T15:15:39.0951909Z",
@@ -790,7 +790,7 @@
         [
           "2026-04-03T15:15:37.7595315Z",
           "Informational",
-          "State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image 10.1.0.6:13209/appsvc/python:3.11_20260203.2.tuxprod for app-labdns-fbg6cycknd2gm., DetailsLevel: INFO"
+          "State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image 10.0.0.0:13209/appsvc/python:3.11_20260203.2.tuxprod for app-labdns-fbg6cycknd2gm., DetailsLevel: INFO"
         ],
         [
           "2026-04-03T15:15:37.7589811Z",

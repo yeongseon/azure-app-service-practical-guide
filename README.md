@@ -10,6 +10,14 @@
 
 Comprehensive guide for running web applications on Azure App Service — from first deployment to production troubleshooting.
 
+Microsoft Learn documents how App Service behaves. This guide answers a
+different question: how an engineer reproduces that behaviour, observes it,
+and knows what the observation does and does not prove. Labs here are
+experiments with stated hypotheses and evidence that is allowed to
+disappoint them, and the [Golden evidence model](docs/reference/golden-evidence-model.md)
+defines what a run may claim — including when the honest answer is that
+nothing was proven.
+
 ## What's Inside
 
 | Section | Description | Status |
@@ -19,10 +27,10 @@ Comprehensive guide for running web applications on Azure App Service — from f
 | [Best Practices](https://yeongseon.github.io/azure-app-service-practical-guide/best-practices/) | Production baseline, security, networking, deployment, scaling, reliability | Comprehensive |
 | [Language Guides](https://yeongseon.github.io/azure-app-service-practical-guide/language-guides/) | Step-by-step tutorials for Python, Node.js, Java, and .NET | Comprehensive |
 | [Operations](https://yeongseon.github.io/azure-app-service-practical-guide/operations/) | Deployment slots, health checks, security, cost optimization | Comprehensive |
-| [Troubleshooting](https://yeongseon.github.io/azure-app-service-practical-guide/troubleshooting/) | Playbooks, hands-on labs, KQL query packs, decision tree, evidence map | Lab-validated |
+| [Troubleshooting](https://yeongseon.github.io/azure-app-service-practical-guide/troubleshooting/) | Playbooks, hands-on labs, KQL query packs, decision tree, evidence map | Evidence-retained |
 | [Reference](https://yeongseon.github.io/azure-app-service-practical-guide/reference/) | CLI cheatsheet, KQL queries, platform limits, diagnostics reference | Comprehensive |
 
-**Status legend**: **Lab-validated** = Comprehensive + reproducible labs prove the guidance · **Comprehensive** = Full section, MSLearn-verified, production-ready · **Published** = Core content in place, still expanding · **In progress** = Partial content, active development · **Planned** = Placeholder, content not yet started
+**Status legend**: **Evidence-retained** = The section includes runnable assets and retained captures, but only the specific runs listed in each lab's evidence classification have been evaluated under the [Golden evidence model](docs/reference/golden-evidence-model.md). No lab has a qualifying independent human reproduction; the committed replay records were produced by AI-agent sessions and count only as repeat runs. **Comprehensive** = Planned content scope is substantially covered and source-reviewed against Microsoft Learn, not certified for production use. **Published** = Core content in place, still expanding. **In progress** = Partial content, active development. **Planned** = Placeholder, content not yet started.
 
 ## Language Guides
 
@@ -59,10 +67,10 @@ Minimal reference applications demonstrating Azure App Service patterns:
 
 ## Troubleshooting Labs
 
-10 hands-on labs in `labs/` with Bicep templates that reproduce real-world App Service issues. Each lab includes:
+15 scenario labs in `labs/` are tracked by `labs/golden-classification.json`; `labs/_shared` is infrastructure and is excluded. The inventory includes runnable experiments, staged labs, and migration-needed scenarios, so not every directory has the same artifact set or a completed Azure run. Across the inventory you will find:
 
 - Falsifiable hypothesis and step-by-step runbook
-- Real Azure deployment data (KQL logs, CLI output, diagnostic endpoints)
+- Retained evidence where a run actually occurred (KQL logs, CLI output, or diagnostic endpoints), with trust scoped per artifact set
 - Expected Evidence sections (Before / During / After with falsification logic)
 - Cross-links to corresponding playbooks
 

@@ -36,7 +36,7 @@
   "healthCheckPath": null,
   "http20Enabled": false,
   "httpLoggingEnabled": false,
-  "id": "/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/rg-lab-startup/providers/Microsoft.Web/sites/app-labstartup-pt7yrjbt2zmv2/config/web",
+  "id": "/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/rg-lab-startup/providers/Microsoft.Web/sites/<app-name>/config/web",
   "ipSecurityRestrictions": [
     {
       "action": "Allow",

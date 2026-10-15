@@ -381,6 +381,8 @@ nav:
     - Validation Dashboards:
       - Content Validation: reference/content-validation-status.md
       - Validation Status: reference/validation-status.md
+    - Golden Evidence Model: reference/golden-evidence-model.md
+    - Golden Migration Specification: reference/golden-migration-spec.md
     - CLI Cheatsheet: reference/cli-cheatsheet.md
     - Queries:
       - KQL Queries: reference/kql-queries.md
@@ -395,5 +397,6 @@ nav:
     - Meta:
       - meta/taxonomy.md
       - Golden Status: meta/golden-status.md
+      - Series Contract: meta/series-contract.md
   - Contributing:
     - contributing/index.md

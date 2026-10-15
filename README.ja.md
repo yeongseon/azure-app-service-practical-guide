@@ -19,10 +19,10 @@
 | [ベストプラクティス (Best Practices)](https://yeongseon.github.io/azure-app-service-practical-guide/best-practices/) | 運用ベースライン、セキュリティ、ネットワーク、デプロイ、スケーリング、信頼性 | Comprehensive |
 | [言語別ガイド (Language Guides)](https://yeongseon.github.io/azure-app-service-practical-guide/language-guides/) | Python、Node.js、Java、および .NET のステップバイステップチュートリアル | Comprehensive |
 | [運用 (Operations)](https://yeongseon.github.io/azure-app-service-practical-guide/operations/) | デプロイスロット、ヘルスチェック、セキュリティ、コスト最適化 | Comprehensive |
-| [トラブルシューティング (Troubleshooting)](https://yeongseon.github.io/azure-app-service-practical-guide/troubleshooting/) | プレイブック、ハンズオンラボ、KQL クエリパック、決定木、エビデンスマップ | Lab-validated |
+| [トラブルシューティング (Troubleshooting)](https://yeongseon.github.io/azure-app-service-practical-guide/troubleshooting/) | プレイブック、ハンズオンラボ、KQL クエリパック、決定木、エビデンスマップ | Evidence-retained |
 | [リファレンス (Reference)](https://yeongseon.github.io/azure-app-service-practical-guide/reference/) | CLI チートシート、KQL クエリ、プラットフォームの制限、診断リファレンス | Comprehensive |
 
-**ステータス凡例**: **Lab-validated** = 包括的かつ再現可能なラボによってガイドが実証済み · **Comprehensive** = 完成したセクション、MSLearn 検証済み、運用準備完了 · **Published** = 中核コンテンツ完備、継続的に拡張中 · **In progress** = 部分的なコンテンツ、活発に開発中 · **Planned** = プレースホルダー、コンテンツ未着手
+**ステータス凡例**: **Evidence-retained** = 実行可能な資産と保持されたキャプチャがありますが、Golden エビデンスモデルで評価済みなのは各ラボの分類ファイルに記載された実行だけです。独立した人間による再現はまだありません。**Comprehensive** = 計画範囲を概ねカバーし Microsoft Learn の出典をレビュー済みですが、本番利用を認定するものではありません。**Published** = 中核コンテンツ完備、継続的に拡張中 · **In progress** = 部分的なコンテンツ、活発に開発中 · **Planned** = プレースホルダー、コンテンツ未着手
 
 ## 言語別ガイド
 
@@ -59,7 +59,7 @@ Azure App Service のパターンを示す最小限のリファレンスアプ�
 
 ## トラブルシューティングラボ (Troubleshooting Labs)
 
-`labs/` フォルダには、実際の App Service の問題を再現する Bicep テンプレートを使用した 10 個のハンズオンラボが含まれています。各ラボの構成は以下の通りです：
+`labs/` には `labs/golden-classification.json` で追跡される 15 個のシナリオラボがあります。共有インフラの `labs/_shared` は除外されます。Golden 契約済み、移行が必要なもの、段階型ラボが混在し、すべてが Azure で実行済みという意味ではありません。インベントリには以下が含まれます：
 
 - 反証可能な仮説とステップバイステップのランブック
 - 実際の Azure デプロイデータ (KQL ログ、CLI 出力、診断エンドポイント)

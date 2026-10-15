@@ -1,0 +1,17 @@
+{
+  "scenario": "deployment-succeeded-startup-failed",
+  "commit": "09740fe",
+  "attempted_at": "2026-09-27",
+  "original_operator": "sisyphus-authoring-session",
+  "original_operator_kind": "agent",
+  "original_run_id": "20260927T104304Z-aba0d3a9daa7",
+  "original_hypothesis_status": "SUPPORTED",
+  "reviewer": "independent-reproduction-agent-third",
+  "reviewer_kind": "agent",
+  "replay_run_id": "20260927T233923Z-1f4cb2082505",
+  "replay_hypothesis_status": "SUPPORTED",
+  "blocked_reason": null,
+  "consulted_source_to_fill_doc_gap": false,
+  "deviations": [],
+  "note": "Third AI-agent repeat run against the corrected runbook, not an independent human reproduction. The agent had not seen the earlier records and was barred from retained evidence, the review, tests, and source. It reported no documentation gaps, which supports repeatability only and cannot satisfy #179."
+}

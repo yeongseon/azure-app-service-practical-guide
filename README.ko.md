@@ -19,10 +19,10 @@
 | [베스트 프랙티스 (Best Practices)](https://yeongseon.github.io/azure-app-service-practical-guide/best-practices/) | 운영 기준(Baseline), 보안, 네트워킹, 배포, 확장, 안정성 | Comprehensive |
 | [언어별 가이드 (Language Guides)](https://yeongseon.github.io/azure-app-service-practical-guide/language-guides/) | Python, Node.js, Java, .NET을 위한 단계별 튜토리얼 | Comprehensive |
 | [운영 (Operations)](https://yeongseon.github.io/azure-app-service-practical-guide/operations/) | 배포 슬롯, 상태 체크(Health checks), 보안, 비용 최적화 | Comprehensive |
-| [트러블슈팅 (Troubleshooting)](https://yeongseon.github.io/azure-app-service-practical-guide/troubleshooting/) | 플레이북, 실습 실험(Labs), KQL 쿼리 팩, 의사 결정 트리, 증거 맵(Evidence map) | Lab-validated |
+| [트러블슈팅 (Troubleshooting)](https://yeongseon.github.io/azure-app-service-practical-guide/troubleshooting/) | 플레이북, 실습 실험(Labs), KQL 쿼리 팩, 의사 결정 트리, 증거 맵(Evidence map) | Evidence-retained |
 | [참조 (Reference)](https://yeongseon.github.io/azure-app-service-practical-guide/reference/) | CLI 치트시트, KQL 쿼리, 플랫폼 제한 사항, 진단 참조 | Comprehensive |
 
-**상태 범례**: **Lab-validated** = 포괄적이며 재현 가능한 실험으로 가이드가 검증됨 · **Comprehensive** = 완성된 섹션, MSLearn 검증 완료, 운영 준비 완료 · **Published** = 핵심 콘텐츠 완비, 지속 확장 중 · **In progress** = 부분 콘텐츠, 활발히 개발 중 · **Planned** = 자리 표시자, 아직 콘텐츠 미착수
+**상태 범례**: **Evidence-retained** = 실행 자산과 보존된 캡처가 있지만, 각 실험의 분류 파일에 명시된 실행만 Golden 증거 모델로 평가되었습니다. 독립적인 인간 재현은 아직 없습니다. **Comprehensive** = 계획된 범위를 상당 부분 다루고 Microsoft Learn 출처를 검토했지만 운영 준비를 인증하지는 않습니다. **Published** = 핵심 콘텐츠 완비, 지속 확장 중 · **In progress** = 부분 콘텐츠, 활발히 개발 중 · **Planned** = 자리 표시자, 아직 콘텐츠 미착수
 
 ## 언어별 가이드
 
@@ -59,7 +59,7 @@ Azure App Service 패턴을 보여주는 최소한의 참조 애플리케이션�
 
 ## 트러블슈팅 실험 (Troubleshooting Labs)
 
-`labs/` 폴더에는 실제 App Service 이슈를 재현하는 Bicep 템플릿과 함께 10개의 실습 실험이 포함되어 있습니다. 각 실험의 구성은 다음과 같습니다:
+`labs/`에는 `labs/golden-classification.json`에서 추적하는 15개의 시나리오 실험이 있습니다. `labs/_shared`는 공용 인프라이므로 제외됩니다. 일부는 Golden 계약이 있고 일부는 마이그레이션이 필요하며, 모든 실험이 Azure에서 실행된 것은 아닙니다. 인벤토리에는 다음 항목이 포함됩니다:
 
 - 반증 가능한 가설 및 단계별 런북
 - 실제 Azure 배포 데이터 (KQL 로그, CLI 출력, 진단 엔드포인트)

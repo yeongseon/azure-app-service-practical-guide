@@ -19,6 +19,7 @@ ALL_OUTPUTS = {
     "dotnet",
     "java",
     "bicep",
+    "golden",
 }
 
 
@@ -71,6 +72,7 @@ class ImpactCiIntegrationTests(unittest.TestCase):
                 "dotnet": "false",
                 "java": "false",
                 "bicep": "false",
+                "golden": "false",
             },
         )
 
@@ -184,7 +186,7 @@ class ImpactCiIntegrationTests(unittest.TestCase):
 
     @staticmethod
     def _job_names() -> tuple[str, ...]:
-        return ("SCRIPTS", "NODEJS", "NODEJS_CONTAINER", "PYTHON", "DOTNET", "JAVA", "BICEP")
+        return ("SCRIPTS", "NODEJS", "NODEJS_CONTAINER", "PYTHON", "DOTNET", "JAVA", "BICEP", "GOLDEN")
 
     def _write(self, relative_path: str, content: str) -> None:
         path = self.root / relative_path

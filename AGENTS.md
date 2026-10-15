@@ -14,6 +14,8 @@ independent reproduction are separate claims.
   authoring contract, retained byte-for-byte, including templates, screenshots,
   PII, navigation, validators and mandatory merge gates.
 - README.md and the affected playbook, runbook and implementation.
+- [Golden Evidence Model](docs/reference/golden-evidence-model.md): normative
+  vocabulary, run identity, evidence roles, trust levels, and evaluator contract.
 
 The detailed contract is not deleted or weakened. Its older title examples and
 falsification wording are superseded by the explicit rules below.
@@ -53,6 +55,17 @@ verification and must not reopen or close work, merge PRs or rewrite commits.
   of a specific ASE maintenance mechanism.
 - Never publish secrets, customer identifiers or unapproved internal telemetry.
   Synthetic observations must not be relabeled as real customer or Azure runs.
+- Raw evidence outranks generated summaries. Collectors record observations;
+  evaluators derive declared assertions and never invent root cause.
+- Declare hypotheses, assertions, sampling, and disproof criteria before a run.
+  Run directories and captured evidence are immutable; replay creates only a
+  new evaluation record.
+- Hypothesis outcomes are `SUPPORTED`, `CONTRADICTED`, `INCONCLUSIVE`, or
+  `NOT_TESTED`. Execution is separately `COMPLETE`, `PARTIAL`, `BLOCKED`,
+  `FAILED`, or `NOT_RUN`.
+- Independent reproduction requires a genuinely different human operator and
+  independently collected raw evidence. Automation or another AI-agent replay
+  demonstrates repeatability only and leaves independence `NOT_MET`.
 
 ## Validation and Privilege Boundaries
 
@@ -62,6 +75,10 @@ secrets. Paid Azure runs require a reviewed main commit and an explicitly
 enabled protected azure-e2e environment. Missing prerequisites remain blocked,
 not skipped-as-verified. This adoption does not provision credentials or enable
 paid recurring runs.
+
+`tools/validate_frontmatter.py` rejects invalid document types, duplicate slugs,
+and required-or-forbidden `content_validation` placement; keep it wired into PR
+CI whenever its contract is cited.
 
 The priority-label definition is versioned in `.github/priority-labels.json`.
 Its synchronization utility has an explicit read-only `--check` mode and never

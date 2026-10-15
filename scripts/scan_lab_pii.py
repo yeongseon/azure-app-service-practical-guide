@@ -38,6 +38,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import json
 import ipaddress
 import re
 import subprocess
@@ -46,6 +47,7 @@ from pathlib import Path
 from typing import Iterable
 
 ZERO_GUID = "00000000-0000-0000-0000-000000000000"
+ALLOWLIST_PATH = Path(__file__).with_name("lab-pii-allowlist.txt")
 
 # Public Azure built-in role definition IDs — documented at
 # https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles
@@ -139,6 +141,11 @@ AZURE_HOST_RE = re.compile(
 BEARER_RE = re.compile(r"\bBearer\s+[A-Za-z0-9._\-+/=]{20,}", re.IGNORECASE)
 SAS_RE = re.compile(r"[?&]sig=[A-Za-z0-9%_\-+/=]{20,}", re.IGNORECASE)
 IP_RE = re.compile(r"\b(?:\d{1,3}\.){3}\d{1,3}\b")
+INSTANCE_ID_RE = re.compile(r"(?<![0-9a-f])[0-9a-f]{64}(?![0-9a-f])")
+DEPLOYED_RESOURCE_RE = re.compile(
+    r"/providers/Microsoft\.Web/sites/[A-Za-z0-9-]+-[a-z0-9]{6,}(?:/|\b)",
+    re.IGNORECASE,
+)
 
 # IPv6 regex mirrors the JS helper regex in portal-capture-helpers.js
 # (nine-branch pattern covering full form + all compressed :: positions).
@@ -258,6 +265,27 @@ def find_pii(text: str) -> Iterable[tuple[int, str, str]]:
             candidate = match.group(0)
             if is_public_ip(candidate):
                 yield lineno, "public-ip", candidate
+            else:
+                try:
+                    address = ipaddress.ip_address(candidate)
+                except ValueError:
+                    address = None
+                private_networks = (
+                    ipaddress.ip_network("10.0.0.0/8"),
+                    ipaddress.ip_network("172.16.0.0/12"),
+                    ipaddress.ip_network("192.168.0.0/16"),
+                )
+                if address is not None and any(address in network for network in private_networks) \
+                        and candidate != "10.0.0.0":
+                    yield lineno, "rfc1918-ip", candidate
+
+        for match in INSTANCE_ID_RE.finditer(line):
+            if match.group(0) == "a" * 64:
+                continue
+            yield lineno, "instance-id", match.group(0)
+
+        for match in DEPLOYED_RESOURCE_RE.finditer(line):
+            yield lineno, "deployment-resource-path", match.group(0)
 
         for match in IPV6_RE.finditer(line):
             value = match.group(0)
@@ -279,13 +307,37 @@ def is_scannable(path: Path) -> bool:
     return True
 
 
+def load_allowlist() -> dict[str, set[str]]:
+    entries: dict[str, set[str]] = {}
+    if not ALLOWLIST_PATH.is_file():
+        return entries
+    for line in ALLOWLIST_PATH.read_text().splitlines():
+        value = line.strip()
+        if not value or value.startswith("#"):
+            continue
+        path, category = value.split("|", 1)
+        entries.setdefault(path, set()).add(category)
+    return entries
+
+
+def retained_digest_hashes(path: Path) -> set[str]:
+    if path.as_posix() != "evidence/retained-digests.json":
+        return set()
+    document = json.loads(path.read_text())
+    return {
+        digest
+        for package in (document.get("packages") or {}).values()
+        for digest in (package.get("files") or {}).values()
+    }
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--paths",
         nargs="+",
-        default=["labs/"],
-        help="Paths (relative to repo root) to scan. Default: labs/",
+        default=["labs/", "evidence/"],
+        help="Paths (relative to repo root) to scan. Default: labs/ evidence/",
     )
     parser.add_argument(
         "--verbose",
@@ -301,6 +353,7 @@ def main(argv: list[str] | None = None) -> int:
         return 2
 
     findings: list[tuple[Path, int, str, str]] = []
+    allowlist = load_allowlist()
     scanned = 0
     skipped_binary = 0
     skipped_decode = 0
@@ -323,7 +376,18 @@ def main(argv: list[str] | None = None) -> int:
             continue
 
         scanned += 1
+        digest_hashes = retained_digest_hashes(file_path)
         for lineno, category, value in find_pii(text):
+            if category == "instance-id" and value in digest_hashes:
+                continue
+            if category in ("rfc1918-ip", "instance-id", "deployment-resource-path") \
+                    and "artifacts-sanitized" not in file_path.parts \
+                    and "results" not in file_path.parts \
+                    and "evidence" not in file_path.parts:
+                continue
+            allowed_categories = allowlist.get(file_path.as_posix(), set())
+            if category in allowed_categories:
+                continue
             findings.append((file_path, lineno, category, value))
 
     for file_path, lineno, category, value in findings:

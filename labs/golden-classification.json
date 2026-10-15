@@ -1,0 +1,103 @@
+{
+  "schema_note": "Classification only. Nothing here deletes or moves a lab; archive-candidate marks a lab whose migration shape needs an explicit decision.",
+  "evaluated_at": "2026-09-27T00:00:00Z",
+  "criteria": {
+    "golden": "Declares assertions before execution in golden/manifest.template.json, separates execution status from hypothesis status, and classifies any pre-Golden artifacts.",
+    "migration-needed": "Has runnable assets but no declared contract, so its verify step decides its own outcome instead of emitting evidence an evaluator can re-derive.",
+    "archive-candidate": "Structure does not map onto the Golden run layout without a deliberate decision about how it should be split."
+  },
+  "labs": [
+    {
+      "lab": "cd-reconnect-rbac-conflict",
+      "classification": "migration-needed",
+      "reason": "Has trigger.sh, verify.sh and cleanup.sh but no declared assertions. verify.sh decides its own outcome rather than emitting evidence for an evaluator."
+    },
+    {
+      "lab": "container-http-pings",
+      "classification": "migration-needed",
+      "reason": "Has trigger.sh and fix.sh but no verify.sh at all, so there is currently nothing to evaluate. Needs a collector plus a declared contract."
+    },
+    {
+      "lab": "deployment-succeeded-startup-failed",
+      "classification": "golden",
+      "reason": "Scenario A. Declares assertions with all four evidence roles in golden/manifest.template.json and classifies its pre-Golden artifacts. execution_status is NOT_RUN until a real Azure run produces evidence."
+    },
+    {
+      "lab": "dns-vnet-resolution",
+      "classification": "migration-needed",
+      "reason": "Runnable trigger/verify pair with sanitized artifacts, no declared assertions and no run identity."
+    },
+    {
+      "lab": "failed-to-forward-request",
+      "classification": "migration-needed",
+      "reason": "Runnable trigger/verify pair with sanitized artifacts, no declared assertions and no run identity."
+    },
+    {
+      "lab": "intermittent-5xx",
+      "classification": "migration-needed",
+      "reason": "Runnable trigger/verify pair. Intermittent symptoms make a declared sampling plan and an explicit INCONCLUSIVE outcome mandatory before this can be evaluated."
+    },
+    {
+      "lab": "memory-pressure",
+      "classification": "migration-needed",
+      "reason": "Runnable trigger/verify pair with sanitized artifacts, no declared assertions and no run identity."
+    },
+    {
+      "lab": "missing-wwwroot-content",
+      "classification": "migration-needed",
+      "reason": "Ships a deterministic local ZIP-content regression suite and lab scripts, but has no Golden manifest, run identity, or artifact trust declaration yet. Its checked-in test evidence is useful local verification, not a Golden Azure run."
+    },
+    {
+      "lab": "no-space-left-on-device",
+      "classification": "migration-needed",
+      "reason": "Runnable trigger/verify pair with sanitized artifacts, no declared assertions and no run identity."
+    },
+    {
+      "lab": "private-endpoint-route-fault",
+      "classification": "migration-needed",
+      "reason": "Contains runnable infrastructure, trigger and verification assets plus retained Azure evidence, but no Golden manifest binds those artifacts to declared assertions and a run identity. Retained captures require explicit trust classification during migration."
+    },
+    {
+      "lab": "slot-swap-config-drift",
+      "classification": "golden",
+      "reason": "Scenario C. Declares the stickiness mechanism as discriminating, a deployment-error control for the competing hypothesis, and an activation precondition on the production restart."
+    },
+    {
+      "lab": "slow-start-cold-start",
+      "classification": "migration-needed",
+      "reason": "Runnable trigger/verify pair. A latency claim needs a declared measurement and threshold before a verdict is meaningful."
+    },
+    {
+      "lab": "snat-exhaustion",
+      "classification": "golden",
+      "reason": "Ships a Golden contract: a manifest template declaring the discriminating assertion that separates SNAT exhaustion from destination failure, an evidence-classification naming what its retained captures cannot support, and a suite proving an unhealthy destination refuses the hypothesis. Both transports classify through one shared function, so a disagreement between urllib and requests can no longer look like evidence about Azure."
+    },
+    {
+      "lab": "windows-java-httpplatformhandler-timeout",
+      "classification": "archive-candidate",
+      "reason": "Structurally unlike every other lab: three staged sub-labs require separate migration decisions. Archive-candidate is a deliberate review state, not permission to delete retained evidence.",
+      "stages": [
+        {
+          "stage": "stage-0-config-discovery",
+          "classification": "migration-needed",
+          "artifact_trust": "trusted-historical"
+        },
+        {
+          "stage": "lab-1-baseline-signature",
+          "classification": "migration-needed",
+          "artifact_trust": "trusted-historical"
+        },
+        {
+          "stage": "lab-2-loopback-saturation",
+          "classification": "migration-needed",
+          "artifact_trust": "trusted-historical"
+        }
+      ]
+    },
+    {
+      "lab": "zipdeploy-file-lock-serialization",
+      "classification": "migration-needed",
+      "reason": "Ships a deterministic local serialization regression suite and deployment assets, but no Golden manifest, run identity, or artifact trust declaration. Local test results must not be promoted to live Azure execution evidence."
+    }
+  ]
+}

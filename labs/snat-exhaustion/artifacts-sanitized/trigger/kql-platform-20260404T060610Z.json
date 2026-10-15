@@ -85,7 +85,7 @@
         [
           "2026-04-04T05:51:37.4645809Z",
           "Informational",
-          "Creating container with image: appsvc/python:3.11_20260203.2.tuxprod from registry: 10.1.0.6:13209 and fully qualified image name: 10.1.0.6:13209/appsvc/python:3.11_20260203.2.tuxprod"
+          "Creating container with image: appsvc/python:3.11_20260203.2.tuxprod from registry: 10.0.0.0:13209 and fully qualified image name: 10.0.0.0:13209/appsvc/python:3.11_20260203.2.tuxprod"
         ],
         [
           "2026-04-04T05:51:37.4643698Z",
@@ -205,7 +205,7 @@
         [
           "2026-04-04T05:51:37.2949898Z",
           "Informational",
-          "Creating container with image: appsvc/kudulite:bullseye_20260204.5.tuxprod from registry: 10.1.0.4:13209 and fully qualified image name: 10.1.0.4:13209/appsvc/kudulite:bullseye_20260204.5.tuxprod"
+          "Creating container with image: appsvc/kudulite:bullseye_20260204.5.tuxprod from registry: 10.0.0.0:13209 and fully qualified image name: 10.0.0.0:13209/appsvc/kudulite:bullseye_20260204.5.tuxprod"
         ],
         [
           "2026-04-04T05:51:37.2927275Z",
@@ -335,7 +335,7 @@
         [
           "2026-04-04T05:51:37.128695Z",
           "Informational",
-          "State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image 10.1.0.6:13209/appsvc/python:3.11_20260203.2.tuxprod for app-labsnat-6kr7mkxulwioo., DetailsLevel: INFO"
+          "State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image 10.0.0.0:13209/appsvc/python:3.11_20260203.2.tuxprod for app-labsnat-6kr7mkxulwioo., DetailsLevel: INFO"
         ],
         [
           "2026-04-04T05:51:37.1286479Z",
@@ -440,7 +440,7 @@
         [
           "2026-04-04T05:05:25.3673763Z",
           "Informational",
-          "Creating container with image: appsvc/python:3.11_20260203.2.tuxprod from registry: 10.1.0.6:13209 and fully qualified image name: 10.1.0.6:13209/appsvc/python:3.11_20260203.2.tuxprod"
+          "Creating container with image: appsvc/python:3.11_20260203.2.tuxprod from registry: 10.0.0.0:13209 and fully qualified image name: 10.0.0.0:13209/appsvc/python:3.11_20260203.2.tuxprod"
         ],
         [
           "2026-04-04T05:05:25.3671574Z",
@@ -560,7 +560,7 @@
         [
           "2026-04-04T05:05:25.1425439Z",
           "Informational",
-          "Image appsvc/python:3.11_20260203.2.tuxprod is pulled from registry 10.1.0.6:13209"
+          "Image appsvc/python:3.11_20260203.2.tuxprod is pulled from registry 10.0.0.0:13209"
         ],
         [
           "2026-04-04T05:05:24.5411102Z",
@@ -575,7 +575,7 @@
         [
           "2026-04-04T05:05:24.5390274Z",
           "Informational",
-          "State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image 10.1.0.6:13209/appsvc/python:3.11_20260203.2.tuxprod for app-labsnat-6kr7mkxulwioo., DetailsLevel: INFO"
+          "State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image 10.0.0.0:13209/appsvc/python:3.11_20260203.2.tuxprod for app-labsnat-6kr7mkxulwioo., DetailsLevel: INFO"
         ],
         [
           "2026-04-04T05:05:24.5356762Z",
@@ -745,7 +745,7 @@
         [
           "2026-04-03T15:31:09.0480086Z",
           "Informational",
-          "Creating container with image: appsvc/python:3.11_20260203.2.tuxprod from registry: 10.1.0.4:13209 and fully qualified image name: 10.1.0.4:13209/appsvc/python:3.11_20260203.2.tuxprod"
+          "Creating container with image: appsvc/python:3.11_20260203.2.tuxprod from registry: 10.0.0.0:13209 and fully qualified image name: 10.0.0.0:13209/appsvc/python:3.11_20260203.2.tuxprod"
         ],
         [
           "2026-04-03T15:31:09.0478079Z",
@@ -875,7 +875,7 @@
         [
           "2026-04-03T15:31:07.6494042Z",
           "Informational",
-          "State: Starting, Action: PullingImage, LastError: ContainerTimeout, LastErrorTimestamp: 04/03/2026 15:27:59, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Pulling image 10.1.0.4:13209/appsvc/python:3.11_20260203.2.tuxprod for app-labsnat-6kr7mkxulwioo., DetailsLevel: INFO"
+          "State: Starting, Action: PullingImage, LastError: ContainerTimeout, LastErrorTimestamp: 04/03/2026 15:27:59, LastErrorDetails: Container did not start within expected time limit of 230s. Please inspect your container logs for more details., Details: Pulling image 10.0.0.0:13209/appsvc/python:3.11_20260203.2.tuxprod for app-labsnat-6kr7mkxulwioo., DetailsLevel: INFO"
         ],
         [
           "2026-04-03T15:31:07.6487517Z",

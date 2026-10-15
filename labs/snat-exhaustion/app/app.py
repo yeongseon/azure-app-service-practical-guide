@@ -2,6 +2,14 @@ import importlib
 import os
 import threading
 import time
+import urllib.error
+import urllib.request
+
+from classification import (
+    classify_status,
+    classify_transport_failure,
+    summarise,
+)
 from datetime import datetime, timezone
 
 flask_module = importlib.import_module("flask")
@@ -14,8 +22,8 @@ PROCESS_START_TIME = time.time()
 REQUEST_COUNT = 0
 ENDPOINT_COUNTERS = {}
 OUTBOUND_CALL_COUNTERS = {
-    "without-pooling": {"successes": 0, "failures": 0},
-    "with-pooling": {"successes": 0, "failures": 0},
+    "without-pooling": {"success": 0, "failure": 0, "transport_failure": 0},
+    "with-pooling": {"success": 0, "failure": 0, "transport_failure": 0},
 }
 _OUTBOUND_COUNTER_LOCK = threading.Lock()
 DEFAULT_TARGET = os.getenv("OUTBOUND_TARGET_URL", "https://httpbin.org/get")
@@ -106,7 +114,8 @@ def index():
 
 @app.get("/health")
 def health():
-    return jsonify({"status": "healthy", "lab": "snat-exhaustion"}), 200
+    return jsonify({"status": "healthy", "lab": "snat-exhaustion",
+                    "outbound_target_url": DEFAULT_TARGET}), 200
 
 
 def _int_arg(name: str, default: int) -> int:
@@ -126,44 +135,48 @@ def outbound_without_pooling():
     calls = _int_arg("calls", 40)
     timeout_seconds = float(os.getenv("OUTBOUND_TIMEOUT_SECONDS", "3"))
 
-    successes = 0
-    failures = 0
+    outcomes = []
     errors = []
     started = time.time()
 
-    # A new connection per call (no Session, Connection: close) is the anti-pattern
-    # under test. `requests` is used so each call appears in AppDependencies.
-    import requests as requests_lib
-
     for _ in range(calls):
+        req = urllib.request.Request(
+            target_url,
+            method="GET",
+            headers={"Connection": "close", "User-Agent": "snat-lab-no-pool"},
+        )
         try:
-            resp = requests_lib.get(
-                target_url,
-                timeout=timeout_seconds,
-                headers={"Connection": "close", "User-Agent": "snat-lab-no-pool"},
-            )
-            if 200 <= resp.status_code < 500:
-                successes += 1
-            else:
-                failures += 1
-            resp.close()
-        except requests_lib.RequestException as exc:
-            failures += 1
+            with urllib.request.urlopen(req, timeout=timeout_seconds) as resp:
+                outcome = classify_status(resp.status)
+        # HTTPError is a completed round trip carrying a status, so it is
+        # classified like any other response. Leaving it to the URLError
+        # handler below is what made a 4xx a failure here and a success on
+        # the pooled path.
+        except urllib.error.HTTPError as exc:
+            outcome = classify_status(exc.code)
+        except (urllib.error.URLError, TimeoutError, OSError) as exc:
+            outcome = classify_transport_failure(exc)
             if len(errors) < 5:
                 errors.append(str(exc))
+        outcomes.append(outcome)
 
     elapsed_ms = int((time.time() - started) * 1000)
+    # Raw counts only. Whether these counts support the hypothesis is
+    # decided by the declared assertions, not by the workload.
+    counts = summarise(outcomes)
     with _OUTBOUND_COUNTER_LOCK:
-        OUTBOUND_CALL_COUNTERS["without-pooling"]["successes"] += successes
-        OUTBOUND_CALL_COUNTERS["without-pooling"]["failures"] += failures
+        for _outcome, _count in counts.items():
+            if _outcome != "total":
+                OUTBOUND_CALL_COUNTERS["without-pooling"][_outcome] += _count
     return (
         jsonify(
             {
                 "mode": "without-pooling",
                 "target": target_url,
                 "calls": calls,
-                "successes": successes,
-                "failures": failures,
+                "success": counts["success"],
+                "failure": counts["failure"],
+                "transportFailure": counts["transport_failure"],
                 "elapsedMs": elapsed_ms,
                 "sampleErrors": errors,
             }
@@ -181,8 +194,7 @@ def outbound_with_pooling():
     calls = _int_arg("calls", 40)
     timeout_seconds = float(os.getenv("OUTBOUND_TIMEOUT_SECONDS", "3"))
 
-    successes = 0
-    failures = 0
+    outcomes = []
     errors = []
     started = time.time()
 
@@ -201,27 +213,30 @@ def outbound_with_pooling():
                         "User-Agent": "snat-lab-pooled",
                     },
                 )
-                if 200 <= response.status_code < 500:
-                    successes += 1
-                else:
-                    failures += 1
+                outcome = classify_status(response.status_code)
             except requests_lib.RequestException as exc:
-                failures += 1
+                outcome = classify_transport_failure(exc)
                 if len(errors) < 5:
                     errors.append(str(exc))
+            outcomes.append(outcome)
 
     elapsed_ms = int((time.time() - started) * 1000)
+    # Raw counts only. Whether these counts support the hypothesis is
+    # decided by the declared assertions, not by the workload.
+    counts = summarise(outcomes)
     with _OUTBOUND_COUNTER_LOCK:
-        OUTBOUND_CALL_COUNTERS["with-pooling"]["successes"] += successes
-        OUTBOUND_CALL_COUNTERS["with-pooling"]["failures"] += failures
+        for _outcome, _count in counts.items():
+            if _outcome != "total":
+                OUTBOUND_CALL_COUNTERS["with-pooling"][_outcome] += _count
     return (
         jsonify(
             {
                 "mode": "with-pooling",
                 "target": target_url,
                 "calls": calls,
-                "successes": successes,
-                "failures": failures,
+                "success": counts["success"],
+                "failure": counts["failure"],
+                "transportFailure": counts["transport_failure"],
                 "elapsedMs": elapsed_ms,
                 "sampleErrors": errors,
             }

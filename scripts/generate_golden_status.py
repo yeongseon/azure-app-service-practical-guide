@@ -48,6 +48,7 @@ import subprocess
 import sys
 import tempfile
 import time
+from ruamel.yaml import YAML
 from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
@@ -384,7 +385,7 @@ GATES: tuple[Gate, ...] = (
         enforces="Lab scripts and templates carry no real UUIDs, emails, hostnames, or public IPs.",
         argv=("{python}", "scripts/scan_lab_pii.py"),
         severity=BLOCKING,
-        covers=("scripts/scan_lab_pii.py",),
+        covers=("scripts/scan_lab_pii.py", "scripts/lab-pii-allowlist.txt"),
         bindings=(Binding("Validate Content Source Metadata", CONTENT_SOURCES_WORKFLOW),),
         verified_in_ci=True,
     ),
@@ -495,6 +496,65 @@ GATES: tuple[Gate, ...] = (
         ),
         bindings=(Binding("Classify App and Infra Changes", APP_INFRA_WORKFLOW),),
         quiet_detail="All impact-selection scenarios passed.",
+        verified_in_ci=True,
+    ),
+    Gate(
+        key="workflow-yaml",
+        name="Workflow YAML duplicate keys",
+        enforces="Every GitHub Actions workflow parses with duplicate mapping keys rejected.",
+        argv=("{python}", "tests/golden/test_workflow_yaml.py"),
+        severity=BLOCKING,
+        bindings=(Binding("Validate Content Source Metadata", CONTENT_SOURCES_WORKFLOW),),
+        requires=("py:ruamel.yaml",),
+        quiet_detail="Every workflow parsed without duplicate keys.",
+    ),
+    Gate(
+        key="retained-golden-packages",
+        name="Retained Golden package immutability",
+        enforces="Existing retained run and lab Golden packages cannot be edited, renamed, or deleted relative to the base ref; new run directories remain allowed.",
+        argv=("{python}", "scripts/golden/check_retained_packages.py"),
+        severity=BLOCKING,
+        covers=("scripts/golden/check_retained_packages.py", "evidence/retained-digests.json"),
+        bindings=(Binding("Validate Golden Contracts", CONTENT_SOURCES_WORKFLOW),),
+        note="On pull requests CI supplies the exact base SHA. Local runs default to origin/main; archive retirement requires a separate reviewed change rather than an in-place rewrite.",
+        summary_keys=("Retained Golden package immutability:",),
+    ),
+    Gate(
+        key="golden-contracts",
+        name="Golden evidence contracts",
+        enforces="Golden schemas, evaluator negative cases, inventory parity, vocabulary, and externally attested reproduction boundaries pass on Python 3.11.",
+        argv=("{python}", "-m", "unittest", "discover", "-s", "tests/golden", "-p", "test_*.py"),
+        severity=BLOCKING,
+        covers=(
+            "scripts/golden/check_reproduction.py",
+            "scripts/golden/evaluate_run.py",
+            "scripts/golden/run_scenario_b.py",
+            "scripts/golden/validate_schemas.py",
+            "tests/golden/test_second_round_adversarial.py",
+        ),
+        bindings=(
+            Binding("Validate Golden Contracts", CONTENT_SOURCES_WORKFLOW),
+            Binding("Lab Evidence Verifiers", APP_INFRA_WORKFLOW),
+        ),
+        note="The workflow executes each suite file separately after installing jsonschema and referencing; the lightweight Golden Status freshness job deliberately does not duplicate those dependencies.",
+        quiet_detail="All Golden evidence contract suites passed.",
+    ),
+    Gate(
+        key="absorbed-predicates",
+        name="Absorbed evidence predicates",
+        enforces="Weak fallback branches cannot bypass required strong evidence predicates in lab verifiers.",
+        argv=(
+            "{python}",
+            "scripts/detect_absorbed_predicates.py",
+            "labs",
+            "--allowlist",
+            "scripts/absorbed-predicate-allowlist.txt",
+            "--repo-root",
+            ".",
+        ),
+        severity=BLOCKING,
+        covers=("scripts/detect_absorbed_predicates.py",),
+        bindings=(Binding("Lab Evidence Verifiers", APP_INFRA_WORKFLOW),),
         verified_in_ci=True,
     ),
     Gate(
@@ -983,6 +1043,17 @@ def registry_problems() -> list[str]:
             if not (ROOT / binding.workflow).exists():
                 problems.append(
                     f"gate {gate.key!r} points at {binding.workflow}, which does not exist"
+                )
+                continue
+            workflow = YAML(typ="safe").load((ROOT / binding.workflow).read_text())
+            job_names = {
+                job.get("name", job_id)
+                for job_id, job in (workflow.get("jobs") or {}).items()
+                if isinstance(job, dict)
+            }
+            if binding.job not in job_names:
+                problems.append(
+                    f"gate {gate.key!r} binds missing job {binding.job!r} in {binding.workflow}"
                 )
         for path in gate.covers:
             if path in owner:
