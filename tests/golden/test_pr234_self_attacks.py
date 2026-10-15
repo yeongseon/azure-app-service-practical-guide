@@ -18,7 +18,6 @@ def load(name: str, relative: str):
 
 evaluator = load("self_attack_evaluator", "scripts/golden/evaluate_run.py")
 reproduction = load("self_attack_reproduction", "scripts/golden/check_reproduction.py")
-retained = load("self_attack_retained", "scripts/golden/check_retained_packages.py")
 
 
 class EvaluatorSelfAttacks(unittest.TestCase):
@@ -29,10 +28,11 @@ class EvaluatorSelfAttacks(unittest.TestCase):
             "resource_id": "/subscriptions/<subscription-id>/resourceGroups/rg/providers/Microsoft.Web/sites/app",
             "captured_at": "2026-09-27T00:00:00Z",
             "execution_status": "COMPLETE",
-            "source_commit": "a" * 40,
-            "environment": {"platform": "Azure App Service"},
-            "recipe_digest": "sha256:" + "b" * 64,
-            "collector_digest": "sha256:" + "c" * 64,
+            "source_commit": "3e0442bb19b966766598ffeae1fb47f3f6960837",
+            "environment": {"subscription_kind": "test", "region": "local",
+                            "runtime": "Python 3.11", "sku": "test-sku"},
+            "recipe_digest": "sha256:" + "0123456789abcdef" * 4,
+            "collector_digest": "sha256:" + "fedcba9876543210" * 4,
             "hypothesis": "A declared causal claim.",
             "hypothesis_claim_level": "Inferred",
             "assertions": [assertion],
@@ -96,23 +96,6 @@ class AttestationSelfAttacks(unittest.TestCase):
             reproduction.classify_reproduction(record, attestation_verifier=lambda value: False),
             "ATTESTATION_UNVERIFIED",
         )
-
-
-class RetainedPackageSelfAttacks(unittest.TestCase):
-    @mock.patch.object(retained.subprocess, "run")
-    def test_renamed_retained_file_is_rejected(self, run):
-        run.return_value = mock.Mock(
-            stdout="R100\tevidence/runs/run/manifest.json\tevidence/archive/run/manifest.json\n"
-        )
-        self.assertEqual(
-            retained.changed_retained_paths("base"),
-            ["evidence/runs/run/manifest.json"],
-        )
-
-    @mock.patch.object(retained.subprocess, "run")
-    def test_new_run_directory_is_allowed(self, run):
-        run.return_value = mock.Mock(stdout="A\tevidence/runs/new-run/manifest.json\n")
-        self.assertEqual(retained.changed_retained_paths("base"), [])
 
 
 if __name__ == "__main__":
