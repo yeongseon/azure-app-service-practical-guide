@@ -36,6 +36,7 @@ import datetime
 import unicodedata
 import re
 import math
+import subprocess
 
 CLAIM_LEVELS = ("Documented", "Observed", "Inferred", "Not Proven")
 HYPOTHESIS_STATUS = ("SUPPORTED", "CONTRADICTED", "INCONCLUSIVE", "NOT_TESTED")
@@ -48,6 +49,10 @@ GENERATED_VERDICT_REJECTED_EXIT = 4
 
 # Observed outranks Inferred, so a claim may only ever move toward weaker.
 _CLAIM_STRENGTH = {"Observed": 3, "Documented": 2, "Inferred": 1, "Not Proven": 0}
+ROOT = pathlib.Path(__file__).resolve().parents[2]
+RETAINED_DIGESTS = ROOT / "evidence/retained-digests.json"
+REQUIRED_ENVIRONMENT_FIELDS = ("subscription_kind", "region", "runtime", "sku")
+PLACEHOLDERS = {"", "unknown", "none", "null", "n/a", "na", "tbd", "placeholder"}
 
 
 class ClaimPromotionError(Exception):
@@ -168,12 +173,26 @@ def evaluate_assertion(assertion: dict, evidence: dict) -> str:
         if (not isinstance(observed, (int, float)) or isinstance(observed, bool)
                 or not math.isfinite(observed)):
             return "CONTRADICTED"
+    def compatible(expected) -> bool:
+        if isinstance(expected, bool) or isinstance(observed, bool):
+            return isinstance(expected, bool) and isinstance(observed, bool)
+        if isinstance(expected, (int, float)) or isinstance(observed, (int, float)):
+            return (isinstance(expected, (int, float)) and not isinstance(expected, bool)
+                    and isinstance(observed, (int, float)) and not isinstance(observed, bool))
+        return type(expected) is type(observed)
     if "equals" in assertion:
-        return "SUPPORTED" if observed == assertion["equals"] else "CONTRADICTED"
+        expected = assertion["equals"]
+        return "SUPPORTED" if compatible(expected) and observed == expected else "CONTRADICTED"
     if "in" in assertion:
-        return "SUPPORTED" if observed in assertion["in"] else "CONTRADICTED"
+        choices = assertion["in"]
+        if not choices or any(not compatible(expected) for expected in choices):
+            return "CONTRADICTED"
+        return "SUPPORTED" if observed in choices else "CONTRADICTED"
     if "not_in" in assertion:
-        return "SUPPORTED" if observed not in assertion["not_in"] else "CONTRADICTED"
+        choices = assertion["not_in"]
+        if not choices or any(not compatible(expected) for expected in choices):
+            return "CONTRADICTED"
+        return "SUPPORTED" if observed not in choices else "CONTRADICTED"
     if "range" in assertion:
         bounds = assertion["range"]
         if (not isinstance(observed, (int, float)) or isinstance(observed, bool)
@@ -212,24 +231,60 @@ def _absorbed(discriminating: dict, other: dict) -> bool:
     return strong_values <= weak_values
 
 
-def _validate_new_run_provenance(manifest: dict) -> None:
+def _historical_run_ids() -> set[str]:
+    try:
+        document = _read_json(RETAINED_DIGESTS)
+    except ModelError:
+        return set()
+    packages = document.get("packages") or {}
+    return {
+        run_id for run_id, package in packages.items()
+        if isinstance(package, dict) and package.get("historical") is True
+    }
+
+
+def _placeholder(value: str) -> bool:
+    normalized = value.strip().casefold()
+    return (normalized in PLACEHOLDERS or normalized.startswith("<")
+            or len(set(normalized.replace("sha256:", ""))) <= 1)
+
+
+def _validate_new_run_provenance(
+        manifest: dict, skip_source_commit_resolution: bool = False) -> str | None:
     if manifest.get("execution_status") != "COMPLETE" or not manifest.get("hypothesis"):
-        return
-    retained_allowance = (manifest.get("resource_id") is None
-                          and manifest.get("evidence_trust") == "unverified")
-    provenance_fields = ("source_commit", "environment", "recipe_digest", "collector_digest")
-    if retained_allowance:
-        return
+        return None
+    if manifest.get("run_id") in _historical_run_ids():
+        return None
     source_commit = manifest.get("source_commit")
-    if not isinstance(source_commit, str) or re.fullmatch(r"[0-9a-f]{40}", source_commit) is None:
+    if (not isinstance(source_commit, str)
+            or re.fullmatch(r"[0-9a-f]{40}", source_commit) is None
+            or _placeholder(source_commit)):
         raise ModelError("source_commit must be a full 40-character lowercase hex commit")
     environment = manifest.get("environment")
-    if not isinstance(environment, dict) or not environment:
-        raise ModelError("environment must be a non-empty object")
+    if not isinstance(environment, dict):
+        raise ModelError("environment must be an object with required provenance fields")
+    for field in REQUIRED_ENVIRONMENT_FIELDS:
+        value = environment.get(field)
+        if not isinstance(value, str) or _placeholder(value):
+            raise ModelError(f"environment.{field} must be a non-placeholder string")
     for field in ("recipe_digest", "collector_digest"):
         value = manifest.get(field)
-        if not isinstance(value, str) or re.fullmatch(r"sha256:[0-9a-f]{64}", value) is None:
+        if (not isinstance(value, str)
+                or re.fullmatch(r"sha256:[0-9a-f]{64}", value) is None
+                or _placeholder(value)):
             raise ModelError(f"{field} must be an exact sha256 digest")
+    if skip_source_commit_resolution:
+        return "SKIPPED_EXPLICITLY"
+    completed = subprocess.run(
+        ["git", "cat-file", "-e", f"{source_commit}^{{commit}}"],
+        cwd=ROOT,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    if completed.returncode != 0:
+        raise ModelError("source_commit does not resolve to a commit in this repository")
+    return "VERIFIED"
 
 
 def _evaluation_time() -> str:
@@ -309,7 +364,7 @@ def _bind_evidence(document: dict, manifest: dict):
     return observations, "BOUND"
 
 
-def evaluate(run_dir) -> dict:
+def evaluate(run_dir, *, skip_source_commit_resolution: bool = False) -> dict:
     """Evaluate one run directory and return a result record."""
     run_dir = pathlib.Path(run_dir)
     manifest = _read_json(run_dir / "manifest.json")
@@ -321,15 +376,13 @@ def evaluate(run_dir) -> dict:
         if not manifest.get(key):
             raise ModelError(f"manifest is missing run identity field: {key}")
     _timestamp(manifest["captured_at"], "manifest captured_at")
-    _validate_new_run_provenance(manifest)
+    source_commit_resolution = _validate_new_run_provenance(
+        manifest, skip_source_commit_resolution)
 
     claim_level = manifest.get("hypothesis_claim_level")
-    retained_allowance = (manifest.get("resource_id") is None
-                          and manifest.get("evidence_trust") == "unverified")
-    new_causal_run = manifest.get("hypothesis") and any(
-        field in manifest for field in
-        ("source_commit", "environment", "recipe_digest", "collector_digest"))
-    if new_causal_run and not retained_allowance and claim_level not in CLAIM_LEVELS:
+    historical_run = manifest.get("run_id") in _historical_run_ids()
+    if (execution_status == "COMPLETE" and manifest.get("hypothesis")
+            and not historical_run and claim_level not in CLAIM_LEVELS):
         raise ModelError("causal hypothesis must declare an allowed hypothesis_claim_level")
 
     assertions = manifest.get("assertions") or []
@@ -383,6 +436,8 @@ def evaluate(run_dir) -> dict:
         "hypothesis_status": hypothesis_status,
         "assertion_outcomes": per_assertion,
     }
+    if source_commit_resolution == "SKIPPED_EXPLICITLY":
+        result["source_commit_resolution"] = source_commit_resolution
     generated = run_dir / "result.json"
     generated_verdict_rejected = False
     generated_claimed = None
@@ -399,12 +454,23 @@ def evaluate(run_dir) -> dict:
 
 
 def main() -> int:
-    if len(sys.argv) != 2:
+    skip_source_commit_resolution = False
+    arguments = sys.argv[1:]
+    if "--skip-source-commit-resolution" in arguments:
+        arguments.remove("--skip-source-commit-resolution")
+        skip_source_commit_resolution = True
+    if len(arguments) != 1:
         print(__doc__.strip().splitlines()[0], file=sys.stderr)
-        print("usage: evaluate_run.py <run-dir>", file=sys.stderr)
+        print(
+            "usage: evaluate_run.py <run-dir> [--skip-source-commit-resolution]",
+            file=sys.stderr,
+        )
         return 2
     try:
-        result = evaluate(sys.argv[1])
+        result = evaluate(
+            arguments[0],
+            skip_source_commit_resolution=skip_source_commit_resolution,
+        )
     except ModelError as exc:
         print(f"model error: {exc}", file=sys.stderr)
         return 2

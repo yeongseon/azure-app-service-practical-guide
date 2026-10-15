@@ -73,6 +73,12 @@
         "ABSENT"
       ],
       "description": "Whether the evidence declared the run it was captured under and that identity matched the manifest. BOUND means a wrong-run substitution was ruled out. UNBOUND means the evidence carried no identity and was accepted without one. ABSENT means there was no evidence document at all."
+    },
+    "source_commit_resolution": {
+      "enum": [
+        "SKIPPED_EXPLICITLY"
+      ],
+      "description": "Present only when the caller explicitly skips local Git commit resolution. Absence means resolution was either verified or not applicable to a historical/non-causal run."
     }
   }
 }

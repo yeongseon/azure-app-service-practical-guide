@@ -17,6 +17,7 @@ SPEC.loader.exec_module(ev)
 RUN_ID = "20260927T000000Z-abc123"
 RESOURCE = "/subscriptions/<subscription-id>/resourceGroups/rg/providers/Microsoft.Web/sites/app"
 CAPTURED = "2026-09-27T00:00:00Z"
+SOURCE_COMMIT = "3e0442bb19b966766598ffeae1fb47f3f6960837"
 
 
 def manifest(assertions=None):
@@ -29,10 +30,15 @@ def manifest(assertions=None):
             "ended_at": "2026-09-27T00:01:00Z",
         },
         "execution_status": "COMPLETE",
-        "source_commit": "a" * 40,
-        "environment": {"platform": "Azure App Service", "os": "Linux"},
-        "recipe_digest": "sha256:" + "b" * 64,
-        "collector_digest": "sha256:" + "c" * 64,
+        "source_commit": SOURCE_COMMIT,
+        "environment": {
+            "subscription_kind": "Visual Studio Enterprise",
+            "region": "koreacentral",
+            "runtime": "Python 3.11",
+            "sku": "B1",
+        },
+        "recipe_digest": "sha256:" + "0123456789abcdef" * 4,
+        "collector_digest": "sha256:" + "fedcba9876543210" * 4,
         "hypothesis": "The declared cause produced the observed symptom.",
         "hypothesis_claim_level": "Inferred",
         "assertions": assertions or [
@@ -106,6 +112,63 @@ class EvidenceBindingMutations(unittest.TestCase):
                 doc[key] = value
                 with self.assertRaises(ev.ModelError):
                     ev.evaluate(write_run(manifest_doc=doc, evidence_doc=evidence()))
+
+    def test_new_run_rejects_placeholder_provenance(self):
+        cases = (
+            ("source_commit", "0" * 40),
+            ("recipe_digest", "sha256:" + "0" * 64),
+            ("collector_digest", "sha256:" + "f" * 64),
+            ("environment", {
+                "subscription_kind": "unknown",
+                "region": "<region>",
+                "runtime": "TBD",
+                "sku": "none",
+            }),
+        )
+        for key, value in cases:
+            with self.subTest(key=key):
+                doc = manifest()
+                doc[key] = value
+                with self.assertRaises(ev.ModelError):
+                    ev.evaluate(write_run(manifest_doc=doc, evidence_doc=evidence()))
+
+    def test_source_commit_must_resolve_unless_explicitly_skipped(self):
+        doc = manifest()
+        doc["source_commit"] = "1234567890abcdef1234567890abcdef12345678"
+        with self.assertRaises(ev.ModelError):
+            ev.evaluate(write_run(manifest_doc=doc, evidence_doc=evidence()))
+
+        result = ev.evaluate(
+            write_run(manifest_doc=doc, evidence_doc=evidence()),
+            skip_source_commit_resolution=True,
+        )
+        self.assertEqual(result["source_commit_resolution"], "SKIPPED_EXPLICITLY")
+
+    def test_cli_records_explicit_source_commit_resolution_skip(self):
+        doc = manifest()
+        doc["source_commit"] = "1234567890abcdef1234567890abcdef12345678"
+        directory = write_run(manifest_doc=doc, evidence_doc=evidence())
+        stdout = io.StringIO()
+        with mock.patch.object(
+                ev.sys,
+                "argv",
+                ["evaluate_run.py", str(directory), "--skip-source-commit-resolution"],
+        ), contextlib.redirect_stdout(stdout):
+            self.assertEqual(ev.main(), 0)
+        self.assertEqual(
+            json.loads(stdout.getvalue())["source_commit_resolution"],
+            "SKIPPED_EXPLICITLY",
+        )
+
+    def test_attacker_selected_historical_shape_does_not_bypass_provenance(self):
+        doc = manifest()
+        doc["resource_id"] = None
+        doc["evidence_trust"] = "unverified"
+        for key in ("source_commit", "environment", "recipe_digest", "collector_digest",
+                    "hypothesis_claim_level"):
+            del doc[key]
+        with self.assertRaises(ev.ModelError):
+            ev.evaluate(write_run(manifest_doc=doc, evidence_doc=evidence(resource_id=None)))
 
 
 class CausalSupportMutations(unittest.TestCase):
@@ -229,6 +292,15 @@ class CausalSupportMutations(unittest.TestCase):
         result = ev.evaluate(write_run(manifest_doc=manifest(assertions),
                                        evidence_doc=evidence(observations={"count": True})))
         self.assertNotEqual(result["assertion_outcomes"]["numeric"], "SUPPORTED")
+
+    def test_numeric_one_does_not_satisfy_boolean_predicates(self):
+        for predicate in ({"equals": True}, {"in": [True]}, {"not_in": [False]}):
+            with self.subTest(predicate=predicate):
+                assertion = {"id": "typed", "role": "discriminating", "field": "value",
+                             "claim_level": "Observed"} | predicate
+                result = ev.evaluate(write_run(manifest_doc=manifest([assertion]),
+                                               evidence_doc=evidence(observations={"value": 1})))
+                self.assertEqual(result["assertion_outcomes"]["typed"], "CONTRADICTED")
 
     def test_non_finite_numeric_observation_is_rejected(self):
         assertions = [{"id": "numeric", "role": "discriminating", "field": "count",
