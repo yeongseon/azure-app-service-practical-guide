@@ -60,6 +60,9 @@ class ReplayTests(unittest.TestCase):
                     recomputed["hypothesis_status"], stored["hypothesis_status"],
                     msg="the stored verdict disagrees with its own evidence")
                 self.assertEqual(recomputed["execution_status"], stored["execution_status"])
+                self.assertFalse(
+                    recomputed["generated_verdict_rejected"],
+                    msg="a retained generated verdict must agree with raw evidence")
 
     def test_each_package_binds_its_evidence(self):
         for directory in packages():
