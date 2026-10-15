@@ -62,7 +62,7 @@ evidence/<run-id>/
 └── result.json       derived, regenerable, never an input
 ```
 
-Run directories are immutable and never overwrite a previous run. A collector re-run creates a new `run-id`.
+Run directories are immutable and never overwrite a previous run. A collector re-run creates a new `run-id`. CI compares existing files under `evidence/runs/<run-id>/` and `labs/*/golden/` with the pull-request base and rejects edits, renames, and deletions while allowing newly added run directories. Retirement is an explicit archive operation in a separately reviewed change; it is never an in-place rewrite or a silent deletion.
 
 ## Evaluator
 
@@ -78,6 +78,7 @@ python3 scripts/golden/evaluate_run.py evidence/<run-id>
 | `1` | `CONTRADICTED` |
 | `2` | `INCONCLUSIVE` |
 | `3` | `NOT_TESTED` — execution did not complete |
+| `4` | Stored `result.json` disagrees with raw evidence and was rejected |
 
 A refutation does not share exit `0` with a confirmation. Exit `0` reads as "the reproduction worked", and a disproof is a different result, not a successful one.
 
@@ -93,8 +94,9 @@ The evaluator does not name a root cause. It reports whether declared assertions
 
 ## Independent reproduction
 
-A scenario is independently reproduced when a second operator reaches the
-same verdict **from the documentation alone**.
+A scenario can be classified as independently reproduced only when a second
+operator reaches the same verdict **from the documentation alone** and an
+external verifier confirms the operator identities.
 
 The reviewer receives the repository, a target commit, the public
 documentation and a working environment. The reviewer does not receive
@@ -119,6 +121,14 @@ A replay is not independent if it reuses the original run identity or is
 performed by the original operator. It would agree by construction,
 because it is the same evidence.
 
+Self-declared `human` strings do not prove identity. A record may cite a
+GitHub pull-request review or approval URL with the reviewer, original
+operator, and PR author logins, but offline checking returns
+`ATTESTATION_UNVERIFIED` unless a verifier hook resolves that reference and
+confirms all three logins are distinct. Existing agent-authored records remain
+`NOT_INDEPENDENT`; this repository does not claim a human reproduction from
+author-controlled metadata.
+
 ```bash
 python3 scripts/golden/check_reproduction.py evidence/reproductions/<scenario>.json
 ```
@@ -126,6 +136,16 @@ python3 scripts/golden/check_reproduction.py evidence/reproductions/<scenario>.j
 Exit `0` requires both results to be `REPRODUCED`. An attempt that never
 happened is recorded as `NOT_ATTEMPTED` on both axes rather than omitted,
 so the gap is visible in the repository instead of inferred from absence.
+
+### Local Golden test dependencies
+
+Create an isolated environment and install the same Python dependencies as CI:
+
+```bash
+python3 -m venv /tmp/azure-app-service-golden-venv
+/tmp/azure-app-service-golden-venv/bin/python -m pip install jsonschema referencing requests pyyaml ruamel.yaml
+/tmp/azure-app-service-golden-venv/bin/python -m unittest discover -s tests/golden -p 'test_*.py'
+```
 
 ## Predicate guidance
 
