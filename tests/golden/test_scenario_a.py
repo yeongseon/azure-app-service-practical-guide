@@ -36,7 +36,10 @@ def run_with(evidence, execution="COMPLETE"):
     manifest.update(run_id="20260927T010203Z-a1b2c3",
                     resource_id="/subscriptions/x/rg/app",
                     captured_at="2026-09-27T01:02:03Z",
-                    execution_status=execution)
+                    execution_status=execution,
+                    source_commit="a" * 40, environment={"platform": "test"},
+                    recipe_digest="sha256:" + "b" * 64,
+                    collector_digest="sha256:" + "c" * 64)
     (d / "manifest.json").write_text(json.dumps(manifest))
     (d / "evidence.json").write_text(json.dumps({
         "run_id": manifest["run_id"],

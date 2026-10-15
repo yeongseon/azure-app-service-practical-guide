@@ -172,9 +172,12 @@ class GoldenContractTests(unittest.TestCase):
         directory.mkdir(parents=True)
         manifest = dict(self.template)
         manifest.update(run_id="20260927T050607Z-b1c2d3",
-                        resource_id="/subscriptions/x/rg/app",
-                        captured_at="2026-09-27T05:06:07Z",
-                        execution_status=execution)
+                         resource_id="/subscriptions/x/rg/app",
+                         captured_at="2026-09-27T05:06:07Z",
+                         execution_status=execution,
+                         source_commit="a" * 40, environment={"platform": "test"},
+                         recipe_digest="sha256:" + "b" * 64,
+                         collector_digest="sha256:" + "c" * 64)
         (directory / "manifest.json").write_text(json.dumps(manifest))
         (directory / "evidence.json").write_text(json.dumps({
             "run_id": manifest["run_id"],
