@@ -170,6 +170,18 @@ class EvidenceBindingMutations(unittest.TestCase):
         with self.assertRaises(ev.ModelError):
             ev.evaluate(write_run(manifest_doc=doc, evidence_doc=evidence(resource_id=None)))
 
+    def test_fabricated_historical_entry_in_head_does_not_bypass_provenance(self):
+        doc = manifest()
+        for key in ("source_commit", "environment", "recipe_digest", "collector_digest",
+                    "hypothesis_claim_level"):
+            del doc[key]
+        with mock.patch.object(ev, "RETAINED_DIGESTS") as digest_path:
+            digest_path.read_text.return_value = json.dumps({
+                "packages": {RUN_ID: {"historical": True, "files": {"x": "0" * 64}}}
+            })
+            with self.assertRaises(ev.ModelError):
+                ev.evaluate(write_run(manifest_doc=doc, evidence_doc=evidence()))
+
 
 class CausalSupportMutations(unittest.TestCase):
     def test_complete_non_historical_run_requires_every_provenance_field(self):
@@ -298,6 +310,15 @@ class CausalSupportMutations(unittest.TestCase):
             with self.subTest(predicate=predicate):
                 assertion = {"id": "typed", "role": "discriminating", "field": "value",
                              "claim_level": "Observed"} | predicate
+                result = ev.evaluate(write_run(manifest_doc=manifest([assertion]),
+                                               evidence_doc=evidence(observations={"value": 1})))
+                self.assertEqual(result["assertion_outcomes"]["typed"], "CONTRADICTED")
+
+    def test_membership_requires_homogeneous_scalar_choices(self):
+        for choices in ([1, True], [[1]], [None], [{"x": 1}]):
+            with self.subTest(choices=choices):
+                assertion = {"id": "typed", "role": "discriminating", "field": "value",
+                             "in": choices, "claim_level": "Observed"}
                 result = ev.evaluate(write_run(manifest_doc=manifest([assertion]),
                                                evidence_doc=evidence(observations={"value": 1})))
                 self.assertEqual(result["assertion_outcomes"]["typed"], "CONTRADICTED")

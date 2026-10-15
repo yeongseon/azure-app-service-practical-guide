@@ -13,6 +13,10 @@ import sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 DIGESTS = pathlib.Path("evidence/retained-digests.json")
+FROZEN_HISTORICAL_RUN_IDS = {
+    "20260927T104304Z-aba0d3a9daa7",
+    "20260927T114621Z-04c6c02c9ae1",
+}
 
 
 def _base_ref(explicit: str | None) -> str:
@@ -79,6 +83,27 @@ def violations(repo: pathlib.Path, base_ref: str) -> list[str]:
     for package_id, entry in base_packages.items():
         if packages.get(package_id) != entry:
             problems.append(f"existing digest entry changed or removed: {package_id}")
+    for package_id, entry in packages.items():
+        frozen_historical = package_id in FROZEN_HISTORICAL_RUN_IDS
+        if (package_id not in base_packages and entry.get("historical") is True
+                and not frozen_historical):
+            problems.append(f"new digest entry cannot be historical: {package_id}")
+        files = entry.get("files") or {}
+        manifests = [path for path in files if path.startswith("evidence/runs/")
+                     and path.endswith("/manifest.json")]
+        for relative in manifests:
+            manifest = json.loads((repo / relative).read_text())
+            if manifest.get("execution_status") == "COMPLETE" and not frozen_historical:
+                source_commit = manifest.get("source_commit")
+                environment = manifest.get("environment")
+                required_env = ("subscription_kind", "region", "runtime", "sku")
+                if (not isinstance(source_commit, str) or len(source_commit) != 40
+                        or not isinstance(environment, dict)
+                        or any(not environment.get(field) for field in required_env)
+                        or not manifest.get("recipe_digest")
+                        or not manifest.get("collector_digest")
+                        or not manifest.get("hypothesis_claim_level")):
+                    problems.append(f"new COMPLETE run lacks full provenance: {package_id}")
 
     base_files = set(_git(repo, "ls-tree", "-r", "--name-only", base_ref).splitlines())
     base_roots = {_package_root(path) for path in base_files if _package_root(path)}

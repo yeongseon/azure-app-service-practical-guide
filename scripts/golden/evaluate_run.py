@@ -36,6 +36,7 @@ import datetime
 import unicodedata
 import re
 import math
+import os
 import subprocess
 
 CLAIM_LEVELS = ("Documented", "Observed", "Inferred", "Not Proven")
@@ -52,7 +53,11 @@ _CLAIM_STRENGTH = {"Observed": 3, "Documented": 2, "Inferred": 1, "Not Proven": 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 RETAINED_DIGESTS = ROOT / "evidence/retained-digests.json"
 REQUIRED_ENVIRONMENT_FIELDS = ("subscription_kind", "region", "runtime", "sku")
-PLACEHOLDERS = {"", "unknown", "none", "null", "n/a", "na", "tbd", "placeholder"}
+PLACEHOLDERS = {"", "unknown", "none", "null", "na", "tbd", "placeholder", "notavailable"}
+FROZEN_HISTORICAL_RUN_IDS = {
+    "20260927T104304Z-aba0d3a9daa7",
+    "20260927T114621Z-04c6c02c9ae1",
+}
 
 
 class ClaimPromotionError(Exception):
@@ -173,6 +178,9 @@ def evaluate_assertion(assertion: dict, evidence: dict) -> str:
         if (not isinstance(observed, (int, float)) or isinstance(observed, bool)
                 or not math.isfinite(observed)):
             return "CONTRADICTED"
+    def scalar(value) -> bool:
+        return value is None or isinstance(value, (str, int, float, bool))
+
     def compatible(expected) -> bool:
         if isinstance(expected, bool) or isinstance(observed, bool):
             return isinstance(expected, bool) and isinstance(observed, bool)
@@ -185,12 +193,18 @@ def evaluate_assertion(assertion: dict, evidence: dict) -> str:
         return "SUPPORTED" if compatible(expected) and observed == expected else "CONTRADICTED"
     if "in" in assertion:
         choices = assertion["in"]
-        if not choices or any(not compatible(expected) for expected in choices):
+        if (not scalar(observed) or observed is None or not isinstance(choices, list)
+                or not choices or any(not scalar(expected) or expected is None for expected in choices)
+                or any(type(expected) is not type(choices[0]) for expected in choices)
+                or any(not compatible(expected) for expected in choices)):
             return "CONTRADICTED"
         return "SUPPORTED" if observed in choices else "CONTRADICTED"
     if "not_in" in assertion:
         choices = assertion["not_in"]
-        if not choices or any(not compatible(expected) for expected in choices):
+        if (not scalar(observed) or observed is None or not isinstance(choices, list)
+                or not choices or any(not scalar(expected) or expected is None for expected in choices)
+                or any(type(expected) is not type(choices[0]) for expected in choices)
+                or any(not compatible(expected) for expected in choices)):
             return "CONTRADICTED"
         return "SUPPORTED" if observed not in choices else "CONTRADICTED"
     if "range" in assertion:
@@ -231,11 +245,18 @@ def _absorbed(discriminating: dict, other: dict) -> bool:
     return strong_values <= weak_values
 
 
-def _historical_run_ids() -> set[str]:
+def _historical_run_ids(base_ref: str | None = None) -> set[str]:
+    base_ref = base_ref or os.environ.get("GOLDEN_BASE_REF")
+    if not base_ref:
+        return set(FROZEN_HISTORICAL_RUN_IDS)
     try:
-        document = _read_json(RETAINED_DIGESTS)
-    except ModelError:
-        return set()
+        text = subprocess.run(
+            ["git", "show", f"{base_ref}:evidence/retained-digests.json"],
+            cwd=ROOT, text=True, capture_output=True, check=True,
+        ).stdout
+        document = json.loads(text, object_pairs_hook=_unique_object)
+    except (subprocess.CalledProcessError, json.JSONDecodeError, ModelError):
+        return set(FROZEN_HISTORICAL_RUN_IDS)
     packages = document.get("packages") or {}
     return {
         run_id for run_id, package in packages.items()
@@ -244,16 +265,17 @@ def _historical_run_ids() -> set[str]:
 
 
 def _placeholder(value: str) -> bool:
-    normalized = value.strip().casefold()
+    normalized = re.sub(r"[\s./\\_-]+", "", value).casefold()
     return (normalized in PLACEHOLDERS or normalized.startswith("<")
             or len(set(normalized.replace("sha256:", ""))) <= 1)
 
 
 def _validate_new_run_provenance(
-        manifest: dict, skip_source_commit_resolution: bool = False) -> str | None:
+        manifest: dict, skip_source_commit_resolution: bool = False,
+        base_ref: str | None = None) -> str | None:
     if manifest.get("execution_status") != "COMPLETE" or not manifest.get("hypothesis"):
         return None
-    if manifest.get("run_id") in _historical_run_ids():
+    if manifest.get("run_id") in _historical_run_ids(base_ref):
         return None
     source_commit = manifest.get("source_commit")
     if (not isinstance(source_commit, str)
@@ -364,7 +386,8 @@ def _bind_evidence(document: dict, manifest: dict):
     return observations, "BOUND"
 
 
-def evaluate(run_dir, *, skip_source_commit_resolution: bool = False) -> dict:
+def evaluate(run_dir, *, skip_source_commit_resolution: bool = False,
+             base_ref: str | None = None) -> dict:
     """Evaluate one run directory and return a result record."""
     run_dir = pathlib.Path(run_dir)
     manifest = _read_json(run_dir / "manifest.json")
@@ -377,10 +400,10 @@ def evaluate(run_dir, *, skip_source_commit_resolution: bool = False) -> dict:
             raise ModelError(f"manifest is missing run identity field: {key}")
     _timestamp(manifest["captured_at"], "manifest captured_at")
     source_commit_resolution = _validate_new_run_provenance(
-        manifest, skip_source_commit_resolution)
+        manifest, skip_source_commit_resolution, base_ref)
 
     claim_level = manifest.get("hypothesis_claim_level")
-    historical_run = manifest.get("run_id") in _historical_run_ids()
+    historical_run = manifest.get("run_id") in _historical_run_ids(base_ref)
     if (execution_status == "COMPLETE" and manifest.get("hypothesis")
             and not historical_run and claim_level not in CLAIM_LEVELS):
         raise ModelError("causal hypothesis must declare an allowed hypothesis_claim_level")

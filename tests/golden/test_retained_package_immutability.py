@@ -97,6 +97,24 @@ class RetainedPackageImmutabilityTests(unittest.TestCase):
         run_git(self.repo, "commit", "-m", "add new run")
         self.assertEqual(self._check(self.base).returncode, 0)
 
+    def test_new_package_cannot_self_declare_historical(self):
+        new_dir = self.repo / "evidence/runs/forged"
+        new_dir.mkdir()
+        (new_dir / "manifest.json").write_text(json.dumps({
+            "run_id": "forged", "execution_status": "COMPLETE", "hypothesis": "forged"
+        }))
+        manifest_path = self.repo / "evidence/retained-digests.json"
+        document = json.loads(manifest_path.read_text())
+        relative = "evidence/runs/forged/manifest.json"
+        document["packages"]["forged"] = {
+            "historical": True,
+            "files": {relative: hashlib.sha256((self.repo / relative).read_bytes()).hexdigest()},
+        }
+        manifest_path.write_text(json.dumps(document))
+        run_git(self.repo, "add", ".")
+        run_git(self.repo, "commit", "-m", "forge historical run")
+        self.assertNotEqual(self._check(self.base).returncode, 0)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
