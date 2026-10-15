@@ -14,99 +14,342 @@
 
 schema_version: 1
 assets:
+    derived_from:
+      path: docs/assets/troubleshooting/networking/01-networking-hub.png
+      sha256: d3f49362ccd38f340dffb4cc62b9a476a770fd80c18c075559b76f05706100f4
+    produced:
+      profile: portal-desktop-v1
+      profile_sha256: 2b558a64d6e69835a933f9c627447132a2f7959c2a58f2f01e7d4affbfa361a5
+      captured_at: 2026-10-15T12:51:50Z
+      browser: Chrome/unknown
+    transform:
+      tool: azure_guide_capture_toolkit.optimize_webp.encode
+      width: 1440
+      height: 900
+      quality: 82
+  01-storage-networking-all-networks:
+    file: platform/storage-connectivity/01-storage-networking-all-networks.webp
+    final_sha256: 4d4424e6e1a3ca95c8346db2672da9e90a53e155f0231e32751fff7bd85b0b7c
+  02-storage-networking-selected-networks:
+    file: platform/storage-connectivity/02-storage-networking-selected-networks.webp
+    final_sha256: fa0106bdaf0c79d81627f8d3b180a63668c58ccf182a96e5ce0b851a8dc13c34
+  03-storage-networking-disabled:
+    file: platform/storage-connectivity/03-storage-networking-disabled.webp
+    final_sha256: bfec0f306e2d79bc4d2e27c252a5621f0bc8bbfa1ea26ccd45763fcac0d01dbe
+  04-appservice-overview-vnet-integration:
+    file: platform/storage-connectivity/04-appservice-overview-vnet-integration.webp
+    final_sha256: 15b5eb5269d6ef901e7496fc5cf1f10c8fbb65d347fceb141b38d3fb8d285598
+  best-practices--common-anti-patterns--01-diagnose-and-solve:
+    file: best-practices/common-anti-patterns/best-practices--common-anti-patterns--01-diagnose-and-solve.webp
+    final_sha256: 4e9eec02fe004bf6a067f13e0edca1ccc1cf73b39117dada11138685949f7aee
+  best-practices--deployment--01-deployment-center:
+    file: best-practices/deployment/best-practices--deployment--01-deployment-center.webp
+    final_sha256: 2128fd545929b1ef9d2fff667093f467159abe84a927488151a64ad86e696c14
+  best-practices--mtls--01-client-cert-config:
+    file: best-practices/mtls/best-practices--mtls--01-client-cert-config.webp
+    final_sha256: 47dfa0c25a73278cd08366029d742394843b1aeb017c894cfc0537784137fdb8
   best-practices--networking--01-access-restrictions:
     kind: legacy_reencode
     file: best-practices/networking/best-practices--networking--01-access-restrictions.webp
     final_sha256: 88b5e2e87ae80a0022033e76865b80757af4af10406ee1367adaa54ef9dec3c4
-    derived_from:
-      path: docs/assets/best-practices/networking/01-access-restrictions.png
-      sha256: e608d81ff74bc4918b49466a9c91b7522a4cf71b52de3151bad0ccd40a12b8d8
-    transform:
-      tool: azure_guide_capture_toolkit.optimize_webp.encode
-      width: 1440
-      height: 900
-      quality: 82
   best-practices--production-baseline--01-configuration-general:
     kind: legacy_reencode
     file: best-practices/production-baseline/best-practices--production-baseline--01-configuration-general.webp
     final_sha256: cdc4e453a1a795d051215701dad05e80f8b449edc4a08c1f99f708a5dc907351
-    derived_from:
-      path: docs/assets/best-practices/production-baseline/01-configuration-general.png
-      sha256: 7180065ca3a928d2fa8af904471973d1b87208d130b70bf8f274c325121c8909
-    transform:
-      tool: azure_guide_capture_toolkit.optimize_webp.encode
-      width: 1440
-      height: 900
-      quality: 82
+  best-practices--reliability--01-health-check:
+    file: best-practices/reliability/best-practices--reliability--01-health-check.webp
+    final_sha256: 2d41dc149181412f8f838bb4942736aec758bbf1e4327b4f4acfcfdd69efbec5
+  best-practices--scaling--01-scale-out:
+    file: best-practices/scaling/best-practices--scaling--01-scale-out.webp
+    final_sha256: ccd46a89f73e683e445a1d99d70d72c28663d6a14f0bea42cd9dd88677f04fa4
   best-practices--security--01-identity-blade:
     kind: legacy_reencode
     file: best-practices/security/best-practices--security--01-identity-blade.webp
     final_sha256: 7bc3c59cf596542bd645784b591e8de5d16ab45fca9e9e6a2d3cc22d351dfaf2
-    derived_from:
-      path: docs/assets/best-practices/security/01-identity-blade.png
-      sha256: 68d510731037c166aeb498e82107ab46dcd831ac3a8eaed137eefdb1c9b4751d
-    transform:
-      tool: azure_guide_capture_toolkit.optimize_webp.encode
-      width: 1440
-      height: 900
-      quality: 82
+  operations--backup-restore--01-backups:
+    file: operations/backup-restore/operations--backup-restore--01-backups.webp
+    final_sha256: f8f865c1a4d9220b8d2f89cc8500ad19a65f798824c0c4ea015a3398ed86bd0a
+  operations--cost-optimization--01-cost-analysis:
+    file: operations/cost-optimization/operations--cost-optimization--01-cost-analysis.webp
+    final_sha256: 1e0630a7ac399a3b452e140d55225989590fb4992deec40486e09f613d77bed3
   operations--deployment--01-create-web-app-container-tab:
     kind: legacy_reencode
     file: operations/deployment/container/operations--deployment--01-create-web-app-container-tab.webp
     final_sha256: 87a2e053ee6087f8965c05bc639757a86b399b315d09fea53a4d768f8eb8d720
-    derived_from:
-      path: docs/assets/operations/deployment/container/01-deployment-center-container.png
-      sha256: 6e700832466bc2cdfd629060085a5cc23bce876e99262b9d2a406aa6ce5074b0
-    transform:
-      tool: azure_guide_capture_toolkit.optimize_webp.encode
-      width: 1440
-      height: 900
-      quality: 82
   operations--deployment--02-deployment-center-github:
     kind: legacy_reencode
     file: operations/deployment/github-actions/operations--deployment--02-deployment-center-github.webp
     final_sha256: a7c338d7a46654a3187e8965e2d9e970d00160baaacd96566023f18167267b03
-    derived_from:
-      path: docs/assets/operations/deployment/github-actions/01-deployment-center-github.png
-      sha256: 79bd8fe511bbcf0dff63e7fd801f3e8df0c99763d36fd66ab4a3a54040c89e8c
-    transform:
-      tool: azure_guide_capture_toolkit.optimize_webp.encode
-      width: 1440
-      height: 900
-      quality: 82
   operations--deployment--03-slot-swap-config-changes:
     kind: legacy_reencode
     file: operations/deployment/slots-and-swap/operations--deployment--03-slot-swap-config-changes.webp
     final_sha256: 817273b73c3fd5c4b2c0ad828477aa6a74502520820fc15edbd20d0a75069208
-    derived_from:
-      path: docs/assets/operations/deployment/slots-and-swap/01-swap-dialog.png
-      sha256: caf53a859b888c3a403124f6f0a635a5a74700b806e30d93d175dd9b29a57170
-    transform:
-      tool: azure_guide_capture_toolkit.optimize_webp.encode
-      width: 1440
-      height: 900
-      quality: 82
   operations--deployment--04-app-settings:
     kind: legacy_reencode
     file: operations/deployment/zip-deploy/operations--deployment--04-app-settings.webp
     final_sha256: fc16fac10881ad24334878b2854d24ff75b3a0fbadbec98d2899b340951080e9
-    derived_from:
-      path: docs/assets/operations/deployment/zip-deploy/01-app-settings-run-from-package.png
-      sha256: 668534ef989cef322ed1145599d87c93701190854a846103086cd34a1ac75398
-    transform:
-      tool: azure_guide_capture_toolkit.optimize_webp.encode
-      width: 1440
-      height: 900
-      quality: 82
+  operations--deployment-slots--01-deployment-slots:
+    file: operations/deployment-slots/operations--deployment-slots--01-deployment-slots.webp
+    final_sha256: af858a4c517aedaeeeef8ff4c1c92e85dfb1cb96991c4e5f1ba0b43444181ae0
+  operations--health-recovery--01-availability-performance:
+    file: operations/health-recovery/operations--health-recovery--01-availability-performance.webp
+    final_sha256: 92c931d825c3c2301ee9a06f06fa87324a555953d195f121e769c2ecff2b3c69
+  operations--incoming-client-certificates--01-tls-ssl-bindings:
+    file: operations/incoming-client-certificates/operations--incoming-client-certificates--01-tls-ssl-bindings.webp
+    final_sha256: 7487f9bcae8694ec5d56c781ddcf475520df449991a0c0d2592d491aee6af72e
   operations--networking--01-networking-hub:
     kind: legacy_reencode
     file: operations/networking/operations--networking--01-networking-hub.webp
     final_sha256: 6d200a0b740403f9f1be3d6b718288371d027ee9a87fc35165ce2d244fee8ffc
-    derived_from:
-      path: docs/assets/troubleshooting/networking/01-networking-hub.png
-      sha256: d3f49362ccd38f340dffb4cc62b9a476a770fd80c18c075559b76f05706100f4
-    transform:
-      tool: azure_guide_capture_toolkit.optimize_webp.encode
-      width: 1440
-      height: 900
-      quality: 82
+  operations--outbound-client-certificates--01-certificates:
+    file: operations/outbound-client-certificates/operations--outbound-client-certificates--01-certificates.webp
+    final_sha256: 452dfea2c085fb3b0abc4490a3db066efaf5e886c5489e8dc85332974bc3dc48
+  operations--scaling--01-autoscale-rules:
+    file: operations/scaling/operations--scaling--01-autoscale-rules.webp
+    final_sha256: e4ae1fe7e2d3e805a44a0ba2d570ee24c466cc482c20d7b9f4ac2d12dab9b863
+  operations--security--01-authentication:
+    file: operations/security/operations--security--01-authentication.webp
+    final_sha256: 02dfd7eecfa00d80122acafbcfd592d45406c005f8bd0a09e73a0e2e6d0f02d7
+  platform--architecture--01-app-service-overview:
+    file: platform/architecture/platform--architecture--01-app-service-overview.webp
+    final_sha256: ed228c86a94cf7de18673adf22ac551f149c1c616a50f9ce3199fb482ff667f4
+  platform--authentication-architecture--01-authentication-blade:
+    file: platform/authentication-architecture/platform--authentication-architecture--01-authentication-blade.webp
+    final_sha256: 02dfd7eecfa00d80122acafbcfd592d45406c005f8bd0a09e73a0e2e6d0f02d7
+  platform--containers--01-deployment-center-containers:
+    file: platform/containers/platform--containers--01-deployment-center-containers.webp
+    final_sha256: 5f84c7e59a5eafda1ebb788e1e5de826affb8fe73d4a0b21cb3afbdc950944cf
+  platform--deployment-options--01-deployment-center:
+    file: platform/deployment-options/platform--deployment-options--01-deployment-center.webp
+    final_sha256: f295b485d1a2083ea63b17c08965b2f7aaf45a0cf4e290aab11ae227e33ca44c
+  platform--deployment-scenarios--01-deployment-slots:
+    file: platform/deployment-scenarios/platform--deployment-scenarios--01-deployment-slots.webp
+    final_sha256: af858a4c517aedaeeeef8ff4c1c92e85dfb1cb96991c4e5f1ba0b43444181ae0
+  platform--hosting-models--01-app-service-plan:
+    file: platform/hosting-models/platform--hosting-models--01-app-service-plan.webp
+    final_sha256: 9857c96998c8e86da7823b8a2fd25b030a7ce7d5966f600f5cb8980a8ec4be85
+  platform--kudu--01-advanced-tools-entry:
+    file: platform/kudu/platform--kudu--01-advanced-tools-entry.webp
+    final_sha256: c4ea9480fc8f1e66d293e90b268293858b4e9609fb9cc36c4cd7de6bd7fcdd47
+  platform--kudu--02-environment-appsettings:
+    file: platform/kudu/platform--kudu--02-environment-appsettings.webp
+    final_sha256: 5144cd6045d4fbd16e3c681f5015b0a0b6d9d7c176be0d8482e76f78d26f8e3b
+  platform--kudu--03-debug-console-cmd:
+    file: platform/kudu/platform--kudu--03-debug-console-cmd.webp
+    final_sha256: acb17fc295149b9f11c56892c889ac1d523f415e537ba23dffe6608b32a08a13
+  platform--kudu--04-debug-console-powershell:
+    file: platform/kudu/platform--kudu--04-debug-console-powershell.webp
+    final_sha256: 9cfeaa2be10f8dee4d5a5c5bc7d7b24139e85d340097e9c1a317bb6a022863d3
+  platform--kudu--05-site-extensions:
+    file: platform/kudu/platform--kudu--05-site-extensions.webp
+    final_sha256: eb8b28960e795411d28d0be91a9efc81ea71ab6588b7a67cbe1915bef97e7c1f
+  platform--kudu--07-diagnostic-dump:
+    file: platform/kudu/platform--kudu--07-diagnostic-dump.webp
+    final_sha256: e13cf651e9bb6c20f560367c9fdf4df87bb029fd1c97422d3b5226d1a4b29862
+  platform--kudu--08-deployments-history:
+    file: platform/kudu/platform--kudu--08-deployments-history.webp
+    final_sha256: ab05e1bd8235ed3043fb503e21a878789ad33efc6cbbc703b977555dfed2aafc
+  platform--kudu--10-linux-modern-dashboard:
+    file: platform/kudu/platform--kudu--10-linux-modern-dashboard.webp
+    final_sha256: 4c4032087fd818eb2eae3a88027ded8fc1076b0205f965f15af9c0056f70a592
+  platform--kudu--11-linux-modern-logs-app:
+    file: platform/kudu/platform--kudu--11-linux-modern-logs-app.webp
+    final_sha256: 60bb8639f936b9f7354c855d9ff1876a96bb416ce7f5753b9ec9b3c2d1dfa537
+  platform--kudu--12-linux-modern-logs-platform:
+    file: platform/kudu/platform--kudu--12-linux-modern-logs-platform.webp
+    final_sha256: 548d3d23812de6ff52679c96dd73ca20c35d57b4089ac9174121090479b6bf09
+  platform--kudu--14-linux-modern-ssh-app:
+    file: platform/kudu/platform--kudu--14-linux-modern-ssh-app.webp
+    final_sha256: 7051701f656648a570add14dfab4d9b1b1d15bc009adf50af85c2e91109270c5
+  platform--kudu--15-linux-modern-ssh-kudu:
+    file: platform/kudu/platform--kudu--15-linux-modern-ssh-kudu.webp
+    final_sha256: a5cce910c32afe509b12e40ce8fa35fd663d9c210c5e65887c4c54d73dd22df1
+  platform--kudu--16-linux-modern-filemanager:
+    file: platform/kudu/platform--kudu--16-linux-modern-filemanager.webp
+    final_sha256: 349552cc85f9eb1c897748fecbdbe07d9f2fb32526d49b0e8b9417b5a394d961
+  platform--kudu--17-linux-modern-filemanager-logs:
+    file: platform/kudu/platform--kudu--17-linux-modern-filemanager-logs.webp
+    final_sha256: 489a7fd96953bfb442023fc53b87983dc9cdb7d8e04f0c12d9ca49abc78ffb17
+  platform--kudu--18-linux-modern-process-explorer:
+    file: platform/kudu/platform--kudu--18-linux-modern-process-explorer.webp
+    final_sha256: 6614db11e24765a07f8529a37c1f5e7372b48ac6582f3415f97350ce90991238
+  platform--kudu--19-linux-modern-environment:
+    file: platform/kudu/platform--kudu--19-linux-modern-environment.webp
+    final_sha256: c0bb0b0f8ac1019a1e9ce85b8dbe9d47dacbd3b608efb8e7189203e425f2d382
+  platform--kudu--20-linux-modern-deployments:
+    file: platform/kudu/platform--kudu--20-linux-modern-deployments.webp
+    final_sha256: aa7b7a2555c2fac81cd539f17a755b68ae728ca7f66ebf24fe3ce4b3fc6c4075
+  platform--kudu--21-linux-modern-ai-playground:
+    file: platform/kudu/platform--kudu--21-linux-modern-ai-playground.webp
+    final_sha256: 11b23a892786a7384de491dea5fabc787ff72478f44e871bfa59a98f9fbc0066
+  platform--kudu--23-linux-classic-environment:
+    file: platform/kudu/platform--kudu--23-linux-classic-environment.webp
+    final_sha256: 8f360ac6c39f7cdb683c733a1da81e21dbbcb27a42eb88b933b9b15f64a36f1e
+  platform--kudu--24-linux-classic-bash:
+    file: platform/kudu/platform--kudu--24-linux-classic-bash.webp
+    final_sha256: d21cfd47ac15f200fb06078372e014bf3580b9938d8e88a5ea40261326bd1738
+  platform--kudu--25-linux-classic-webssh:
+    file: platform/kudu/platform--kudu--25-linux-classic-webssh.webp
+    final_sha256: 14c84a2093e6a8ec5530a81a3f807afdda520488d2e78fd917b1335b659fd6e5
+  platform--kudu--26-linux-classic-process-explorer:
+    file: platform/kudu/platform--kudu--26-linux-classic-process-explorer.webp
+    final_sha256: 0eabcf4dc54a2a7e32477d88cf2beea2fb10c9aad648fc7f75be1f2990713558
+  platform--kudu--27-linux-classic-deployment-logs:
+    file: platform/kudu/platform--kudu--27-linux-classic-deployment-logs.webp
+    final_sha256: d25f9766db558730c1fe5040b1f01301ea13f14714bfaee31ba517ab6d8dfc4d
+  platform--mtls--01-custom-domains-tls:
+    file: platform/mtls/platform--mtls--01-custom-domains-tls.webp
+    final_sha256: 7487f9bcae8694ec5d56c781ddcf475520df449991a0c0d2592d491aee6af72e
+  platform--networking--01-networking-blade:
+    file: platform/networking/platform--networking--01-networking-blade.webp
+    final_sha256: 6d200a0b740403f9f1be3d6b718288371d027ee9a87fc35165ce2d244fee8ffc
+  platform--networking--02-nat-gateway-config:
+    file: platform/networking/platform--networking--02-nat-gateway-config.webp
+    final_sha256: 232478f5e1dd25cab2508e871812e8d3e5229f4397380ad4695f408cf9ab2df3
+  platform--request-lifecycle--01-log-stream:
+    file: platform/request-lifecycle/platform--request-lifecycle--01-log-stream.webp
+    final_sha256: f167f1eac18cccd180140746788dac0d410e95359d2c24053de155d0950429a5
+  platform--resource-relationships--01-resource-group:
+    file: platform/resource-relationships/platform--resource-relationships--01-resource-group.webp
+    final_sha256: bb76ac74b06ca9537ad665ac92ef75c6062483d6d0706286033fe439a0afa076
+  platform--scaling--01-scale-out:
+    file: platform/scaling/platform--scaling--01-scale-out.webp
+    final_sha256: ccd46a89f73e683e445a1d99d70d72c28663d6a14f0bea42cd9dd88677f04fa4
+  platform--scaling--02-scale-up:
+    file: platform/scaling/platform--scaling--02-scale-up.webp
+    final_sha256: 66d6915e2b02c19a0f607cf3fdc4a3e1fa1cbc4f9c7e6ea930a08aa65bfa858d
+  platform--security-architecture--01-identity-blade:
+    file: platform/security-architecture/platform--security-architecture--01-identity-blade.webp
+    final_sha256: 7bc3c59cf596542bd645784b591e8de5d16ab45fca9e9e6a2d3cc22d351dfaf2
+  troubleshooting--activity-log--03-slotswap-swap-operation:
+    file: troubleshooting/activity-log/troubleshooting--activity-log--03-slotswap-swap-operation.webp
+    final_sha256: 1d72ea469529a2189a4af6ffb86adbd0bff2ed688776da615d5e263147de4043
+  troubleshooting--app-service-plan--01-asp-overview:
+    file: troubleshooting/app-service-plan/troubleshooting--app-service-plan--01-asp-overview.webp
+    final_sha256: c4c457dfc481714808e81af74a79a6d4d3525c61aa76f8ee09c2c10fa60d97a4
+  troubleshooting--configuration--01-always-on:
+    file: troubleshooting/configuration/troubleshooting--configuration--01-always-on.webp
+    final_sha256: 800d61199bde47a732c36a54f42008eac7d40721bff832b5065c845b7bf43314
+  troubleshooting--configuration--03-autoheal-m2-rules:
+    file: troubleshooting/configuration/troubleshooting--configuration--03-autoheal-m2-rules.webp
+    final_sha256: f97c29b50caa270fee285000bffbeed296ecd65125d5a3970d9071037a4f4dd2
+  troubleshooting--configuration--04-slotswap-sticky-vs-nonsticky:
+    file: troubleshooting/configuration/troubleshooting--configuration--04-slotswap-sticky-vs-nonsticky.webp
+    final_sha256: f6858a84016fd2b651213de710713129781798647440a4c8f631b9796c95ee7f
+  troubleshooting--configuration--05-slowstart-always-on-off:
+    file: troubleshooting/configuration/troubleshooting--configuration--05-slowstart-always-on-off.webp
+    final_sha256: 3387e23caca3021c851628b100ccb69245340823233e6352d6da6bd8b26c4651
+  troubleshooting--deployment-center--01-deployment-center:
+    file: troubleshooting/deployment-center/troubleshooting--deployment-center--01-deployment-center.webp
+    final_sha256: f295b485d1a2083ea63b17c08965b2f7aaf45a0cf4e290aab11ae227e33ca44c
+  troubleshooting--deployment-center--02-depstart-successful-deploy:
+    file: troubleshooting/deployment-center/troubleshooting--deployment-center--02-depstart-successful-deploy.webp
+    final_sha256: e328f51ad7fead60c5f24ecc6fcea88e232b75755ef5cc4d394b668428eeebd3
+  troubleshooting--deployments--01-cdrecon-role-assignment-conflict:
+    file: troubleshooting/deployments/troubleshooting--deployments--01-cdrecon-role-assignment-conflict.webp
+    final_sha256: 90e07e9ee8d567329f78742ac95e990dd1917203d37e27e6288c9f0e528cc02b
+  troubleshooting--diagnose-and-solve--03-diagnose-hub:
+    file: troubleshooting/diagnose-and-solve/troubleshooting--diagnose-and-solve--03-diagnose-hub.webp
+    final_sha256: d32932f196db8a642674982daac4cfba20e54e7a6edcacd3a6d31bcb74977932
+  troubleshooting--health-check--01-health-check:
+    file: troubleshooting/health-check/troubleshooting--health-check--01-health-check.webp
+    final_sha256: 06dcc44ee4b718f35f3cd55fd2bb0c5ef1c8c987fcb6e8c700c6f6ebefe45c53
+  troubleshooting--health-check--02-httppings-baseline-healthy:
+    file: troubleshooting/health-check/troubleshooting--health-check--02-httppings-baseline-healthy.webp
+    final_sha256: 7f1f5a56127a83b1a5de4c05b1243e82e87dfb04396900236b6825e0d523d690
+  troubleshooting--iam--01-cdrecon-post-recovery-iam:
+    file: troubleshooting/iam/troubleshooting--iam--01-cdrecon-post-recovery-iam.webp
+    final_sha256: 80a3a8c65b41248dfe80af6aae7e65f118a3683c0e651b2c7d0f4f0ea18ab65f
+  troubleshooting--kudu--01-overview:
+    file: troubleshooting/kudu/troubleshooting--kudu--01-overview.webp
+    final_sha256: 1b83d58ca130a9fde73ab7e3ea2f3e98e7760d2884d52283c49198b351ccc52b
+  troubleshooting--kudu--02-kudu-home:
+    file: troubleshooting/kudu/troubleshooting--kudu--02-kudu-home.webp
+    final_sha256: 1a5284630505fea19b09129b4e56afd0e26c67b718d391d1d4d038937bc9750a
+  troubleshooting--kudu--03-process-explorer:
+    file: troubleshooting/kudu/troubleshooting--kudu--03-process-explorer.webp
+    final_sha256: 4e7da3957dd8bbc53947f734699bb41d2ac943377a8144d50cc7b3048faa5694
+  troubleshooting--kudu--04-process-explorer-java:
+    file: troubleshooting/kudu/troubleshooting--kudu--04-process-explorer-java.webp
+    final_sha256: 2ba44e338a53374461661813cca029043697637f20925ff9a766142c18eef3fc
+  troubleshooting--kudu--05-webconfig-verified:
+    file: troubleshooting/kudu/troubleshooting--kudu--05-webconfig-verified.webp
+    final_sha256: 7cf7f182a528a6b59a048657513d7b33388fccd5e6e077f759902bf084493e0e
+  troubleshooting--kudu--06-fwdreq-process-not-listening:
+    file: troubleshooting/kudu/troubleshooting--kudu--06-fwdreq-process-not-listening.webp
+    final_sha256: 59d3968ae654ea993acfbbf0336c0358f5751bb5d3b418f4e6f0a6d10cd10dd5
+  troubleshooting--kudu--07-nolabspace-df-output:
+    file: troubleshooting/kudu/troubleshooting--kudu--07-nolabspace-df-output.webp
+    final_sha256: 896973f698ea30e5143d315ed2640229bafbc181e4f8a471d0cee0c908e63482
+  troubleshooting--log-analytics--02-http-500-121-signature:
+    file: troubleshooting/log-analytics/troubleshooting--log-analytics--02-http-500-121-signature.webp
+    final_sha256: 1f28efb5b386e9d4de11cc05ac541b0a9e62dd9a1e0ef11aacce1188fa22699e
+  troubleshooting--log-analytics--03-httppings-empty-http-window:
+    file: troubleshooting/log-analytics/troubleshooting--log-analytics--03-httppings-empty-http-window.webp
+    final_sha256: e1bdbf00464cfc48198908b47c688acc8ff6dacbf6f53beb23874caa7ea7c36a
+  troubleshooting--log-analytics--04-depstart-startup-failed-kql:
+    file: troubleshooting/log-analytics/troubleshooting--log-analytics--04-depstart-startup-failed-kql.webp
+    final_sha256: d697c4480d1a74871a148cb8282e3c6ce0ed12a4be03a939454cf0f648292c72
+  troubleshooting--log-analytics--05-depstart-runtime-vs-deploy-timeline:
+    file: troubleshooting/log-analytics/troubleshooting--log-analytics--05-depstart-runtime-vs-deploy-timeline.webp
+    final_sha256: 448739cbe8e5b8976fc348bf6288ccc22cd19fc5111fa7b45373385e3144398e
+  troubleshooting--log-analytics--06-fwdreq-bind-line-absent:
+    file: troubleshooting/log-analytics/troubleshooting--log-analytics--06-fwdreq-bind-line-absent.webp
+    final_sha256: d665f2882f025aaa588e6b647b70ad988cb1a779f195ff33de3dc5be999960e1
+  troubleshooting--log-analytics--07-nolabspace-enospc-console-kql:
+    file: troubleshooting/log-analytics/troubleshooting--log-analytics--07-nolabspace-enospc-console-kql.webp
+    final_sha256: e8e0d760242f850dd28ab67cd9972de290a71214db423fcda0ce9b10079e478e
+  troubleshooting--log-analytics--08-mempressure-heavy-latency-kql:
+    file: troubleshooting/log-analytics/troubleshooting--log-analytics--08-mempressure-heavy-latency-kql.webp
+    final_sha256: bd147717f5b8471c3eee2d5d817e6d5b79d4eb63b878090a3ba859026e696157
+  troubleshooting--log-analytics--09-5xx-latency-percentiles-kql:
+    file: troubleshooting/log-analytics/troubleshooting--log-analytics--09-5xx-latency-percentiles-kql.webp
+    final_sha256: df4524bd8203011ea9589013caad813d88fd215f1243a2d583bd1fcbec8d489f
+  troubleshooting--log-analytics--09-5xx-status-by-endpoint-kql:
+    file: troubleshooting/log-analytics/troubleshooting--log-analytics--09-5xx-status-by-endpoint-kql.webp
+    final_sha256: 1aae3e5b1f6baa822759b4e40a507462bf00df9d2adb6b8259ede7d173cf2c92
+  troubleshooting--log-analytics--10-snat-outbound-status-distribution-kql:
+    file: troubleshooting/log-analytics/troubleshooting--log-analytics--10-snat-outbound-status-distribution-kql.webp
+    final_sha256: c37e56b5ce5628319f0731d9a75da0470e3de3aebb4663461fca12f85072cb49
+  troubleshooting--log-analytics--10-snat-outbound-tail-latency-kql:
+    file: troubleshooting/log-analytics/troubleshooting--log-analytics--10-snat-outbound-tail-latency-kql.webp
+    final_sha256: f81b1d35c1e81a9a6be1c678522e0a591deed08cea153a8e73ed2c0d8511d53e
+  troubleshooting--log-analytics--11-dns-vnet-http-status-distribution-kql:
+    file: troubleshooting/log-analytics/troubleshooting--log-analytics--11-dns-vnet-http-status-distribution-kql.webp
+    final_sha256: 30729d244b3d3abb6c383b38dea588d314801de29907bcdd8575e15902421730
+  troubleshooting--log-analytics--11-dns-vnet-platform-startup-kql:
+    file: troubleshooting/log-analytics/troubleshooting--log-analytics--11-dns-vnet-platform-startup-kql.webp
+    final_sha256: e6ea83275c133b44fe1518b4d6fbdbe996946df6324bed212b85442fb1b41b2d
+  troubleshooting--log-analytics--11-slowstart-first-request-slow:
+    file: troubleshooting/log-analytics/troubleshooting--log-analytics--11-slowstart-first-request-slow.webp
+    final_sha256: bec27d09ba37063a88408708645ea00089fd0c6a534a8e68305a38f7f15d0c80
+  troubleshooting--metrics--02-response-time:
+    file: troubleshooting/metrics/troubleshooting--metrics--02-response-time.webp
+    final_sha256: e40e14aad9707a6ca01b1664d6f8faa19a8286059583cf16923215cbec24962f
+  troubleshooting--metrics--06-slowstart-first-vs-warm-response:
+    file: troubleshooting/metrics/troubleshooting--metrics--06-slowstart-first-vs-warm-response.webp
+    final_sha256: e1b81a74c5de042286800f870e6d4a9974e587d309f7386c49ddfef918f3d614
+  troubleshooting--metrics--08-mempressure-memory-working-set:
+    file: troubleshooting/metrics/troubleshooting--metrics--08-mempressure-memory-working-set.webp
+    final_sha256: a60d4d43462381771d3c672eafcc54009ca209dcf5e5a434c7500e2c2779ac4c
+  troubleshooting--networking--02-app-overview:
+    file: troubleshooting/networking/troubleshooting--networking--02-app-overview.webp
+    final_sha256: 7776dd6c081f37c0d2d9b94fa11b2882412cc7d13aec2358b2715cf3109e19dc
+  troubleshooting--networking--03-app-networking-blade:
+    file: troubleshooting/networking/troubleshooting--networking--03-app-networking-blade.webp
+    final_sha256: eaeb7438e839255a513b0d98d03e5bcef2a62d25e2a0f05f667b85ad7bf9efd0
+  troubleshooting--storage-firewall--01-storage-overview:
+    file: troubleshooting/storage-firewall/troubleshooting--storage-firewall--01-storage-overview.webp
+    final_sha256: a6d7fc7f56c153b9ab14bf74e700a3498b2f089549c95b31c424a5d8bad202cb
+  troubleshooting--storage-firewall--02-networking-disabled:
+    file: troubleshooting/storage-firewall/troubleshooting--storage-firewall--02-networking-disabled.webp
+    final_sha256: 46191c0ebb5e4504fc72ad585c07d8804e0275cd4d68e3fa9e1f1fac4b3ac610
+  troubleshooting--storage-iam--01-iam-landing:
+    file: troubleshooting/storage-iam/troubleshooting--storage-iam--01-iam-landing.webp
+    final_sha256: f4db51a36e4338f349bba2a36e292dcafc8a946bff0bf683292b08964bd187f8
+  troubleshooting--storage-iam--02-role-assignments:
+    file: troubleshooting/storage-iam/troubleshooting--storage-iam--02-role-assignments.webp
+    final_sha256: a1c7b87ae345f40d5b04216e81ad2c37a229f806e4546efc181fec1bd0a08b65
+  troubleshooting--vnet-integration--01-vnet-integration:
+    file: troubleshooting/vnet-integration/troubleshooting--vnet-integration--01-vnet-integration.webp
+    final_sha256: 53e354ca78aa0f5b34f24547b33cac43c22ac34049cb9bf49aa5a2a9dac6f3ab
