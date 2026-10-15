@@ -61,6 +61,22 @@ def write(rec):
 
 
 class IndependenceTests(unittest.TestCase):
+    def test_self_declared_human_kinds_cannot_pass_without_external_attestation(self):
+        rec = record(replay_run_id="different-run")
+        self.assertEqual(repro.classify_reproduction(rec), "NOT_INDEPENDENT")
+
+    def test_author_controlled_attestation_is_unverified_offline(self):
+        rec = record(
+            replay_run_id="different-run",
+            attestation={
+                "url": "https://github.com/yeongseon/azure-app-service-practical-guide/pull/234#pullrequestreview-1",
+                "reviewer_login": "second-operator",
+                "original_operator_login": "first-operator",
+                "pr_author_login": "pr-author",
+            },
+        )
+        self.assertEqual(repro.classify_reproduction(rec), "ATTESTATION_UNVERIFIED")
+
     def test_nonexistent_run_ids_are_rejected(self):
         rec = record(replay_run_id="missing-run", reviewer_kind="human",
                      original_operator_kind="human")
@@ -88,6 +104,20 @@ class IndependenceTests(unittest.TestCase):
         rec["replay_run_id"] = "different-run"
         result = repro.classify_reproduction(rec)
         self.assertEqual(result, "FAILED")
+
+    def test_verifier_hook_can_confirm_external_attestation(self):
+        rec = record(
+            replay_run_id="different-run",
+            attestation={
+                "url": "https://github.com/yeongseon/azure-app-service-practical-guide/pull/234#pullrequestreview-1",
+                "reviewer_login": "second-operator",
+                "original_operator_login": "first-operator",
+                "pr_author_login": "pr-author",
+            },
+        )
+        self.assertEqual(
+            repro.classify_reproduction(rec, attestation_verifier=lambda attestation: True),
+            "REPRODUCED")
 
 
 class DocumentationGapTests(unittest.TestCase):

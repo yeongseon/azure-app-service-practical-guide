@@ -37,6 +37,7 @@ import datetime
 import re
 import hashlib
 import importlib.util
+from collections.abc import Callable
 
 import jsonschema
 from referencing import Registry, Resource
@@ -51,7 +52,14 @@ _EVALUATOR_SPEC.loader.exec_module(evaluator)
 
 HYPOTHESIS_STATUS = ("SUPPORTED", "CONTRADICTED", "INCONCLUSIVE", "NOT_TESTED")
 
-REPRODUCTION_RESULT = ("REPRODUCED", "FAILED", "NOT_INDEPENDENT", "NOT_ATTEMPTED")
+REPRODUCTION_RESULT = (
+    "REPRODUCED",
+    "FAILED",
+    "INCONCLUSIVE",
+    "NOT_INDEPENDENT",
+    "ATTESTATION_UNVERIFIED",
+    "NOT_ATTEMPTED",
+)
 DOCUMENTATION_RESULT = ("REPRODUCED", "FAILED", "NOT_ATTEMPTED")
 
 DEVIATION_KINDS = (
@@ -165,7 +173,9 @@ def _validate(record: dict) -> None:
 UNTESTED_STATUS = ("NOT_TESTED", "NOT_RUN")
 
 
-def classify_reproduction(record: dict) -> str:
+def classify_reproduction(
+        record: dict,
+        attestation_verifier: Callable[[dict], bool] | None = None) -> str:
     """Classify the replay attempt itself.
 
     >>> classify_reproduction({"replay_run_id": None, "original_run_id": "a",
@@ -199,6 +209,20 @@ def classify_reproduction(record: dict) -> str:
         return "NOT_INDEPENDENT"
     if record["replay_hypothesis_status"] != record["original_hypothesis_status"]:
         return "FAILED"
+    attestation = record.get("attestation")
+    if not isinstance(attestation, dict):
+        return "NOT_INDEPENDENT"
+    identities = (
+        attestation.get("reviewer_login"),
+        attestation.get("original_operator_login"),
+        attestation.get("pr_author_login"),
+    )
+    if not all(isinstance(value, str) and value for value in identities):
+        return "NOT_INDEPENDENT"
+    if len({value.casefold() for value in identities}) != len(identities):
+        return "NOT_INDEPENDENT"
+    if attestation_verifier is None or not attestation_verifier(attestation):
+        return "ATTESTATION_UNVERIFIED"
     # Equality alone is not reproduction. Two runs that never tested the
     # hypothesis hold equal statuses trivially, so NOT_TESTED on either side
     # would otherwise let a pair of non-runs reproduce each other.
@@ -282,7 +306,15 @@ def check(path) -> dict:
 
     _validate(record)
     reproduction_result = classify_reproduction(record)
-    if reproduction_result in ("REPRODUCED", "FAILED", "INCONCLUSIVE"):
+    replay_id = record.get("replay_run_id")
+    validates_run_packages = (
+        isinstance(replay_id, str)
+        and replay_id != record["original_run_id"]
+        and record["reviewer"] != record["original_operator"]
+        and record["reviewer_kind"] == "human"
+        and record["original_operator_kind"] == "human"
+    )
+    if validates_run_packages:
         original_manifest, original_evidence, original_result = _load_run(record["original_run_id"])
         replay_manifest, replay_evidence, replay_result = _load_run(record["replay_run_id"])
         if original_result["scenario"] != record["scenario"] or replay_result["scenario"] != record["scenario"]:
