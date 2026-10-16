@@ -10,7 +10,7 @@
     "derived_offline": true,
     "raw_input": {
       "run_id": "20261016T124329Z-70fb229a0bd1",
-      "location": "/tmp/opencode/wB-private/runs/20261016T124329Z-70fb229a0bd1 retained until PR merge",
+      "location": "private reviewer-held raw capture for run 20261016T124329Z-70fb229a0bd1",
       "published": false,
       "omission_reason": "Raw captures contain Azure app and destination hostnames. Sanitized rows and phase anchors are retained publicly; private raw bytes remain available for reviewer comparison until merge.",
       "raw_file_set_digest": "sha256:88c079688157abdda6d7eba03da8a392125b0d39f91879b39940982eba2af3eb",

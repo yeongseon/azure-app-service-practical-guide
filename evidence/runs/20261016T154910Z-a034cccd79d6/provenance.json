@@ -13,7 +13,7 @@
     "derived_offline": true,
     "raw_input": {
       "run_id": "20261016T154910Z-a034cccd79d6",
-      "location": "/tmp/opencode/wB-private/20261016T154331Z-pending/runs/20261016T154910Z-a034cccd79d6",
+      "location": "private reviewer-held raw capture for run 20261016T154910Z-a034cccd79d6",
       "published": false,
       "omission_reason": "Raw captures contain Azure app and destination hostnames. The deterministic sanitizer replaces only identifier fields; timestamps, outcomes, counts and anchors are retained.",
       "raw_file_set_digest": "sha256:1147fbf17d562b9b279416f5188985bf63d5b7cc4425ba7f87733c48ca04efe1",
