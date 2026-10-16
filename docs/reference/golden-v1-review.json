@@ -1,7 +1,7 @@
 {
   "review": "Golden Repository v1",
   "epic": 173,
-  "document_updated_at": "2026-09-27",
+  "document_updated_at": "2026-10-16",
   "verdict": "NOT_COMPLETE",
   "verdict_basis": "One Definition-of-Done item is partial and one is unmet. Scenario B has not completed a live run. The three committed replay records were produced by AI-agent sessions, so they demonstrate repeatability and documentation refinement but do not satisfy independent human reproduction.",
   "counts": {
@@ -71,7 +71,7 @@
       "id": 9,
       "requirement": "Golden scenarios A (deterministic), B (comparative), C (configuration/state) completed",
       "status": "PARTIAL",
-      "evidence": "Two of three scenarios have been executed against a live subscription. Scenario A's run 20260927T104304Z evaluates to SUPPORTED under the Golden model. Scenario C's run 20260927T114621Z evaluates to INCONCLUSIVE: five assertions held and two could not be observed, so the model declined a verdict rather than supplying one. All three manifests are satisfiable and every collector is held by a suite proving its evidence can refuse the hypothesis.",
+      "evidence": "Two of three scenarios have been executed against a live subscription. Scenario A has two retained SUPPORTED runs: historical run 20260927T104304Z and current run 20261016T075147Z, whose cleanup was verified separately. Scenario C's run 20260927T114621Z evaluates to INCONCLUSIVE: five assertions held and two could not be observed, so the model declined a verdict rather than supplying one. All three manifests are satisfiable and every collector is held by a suite proving its evidence can refuse the hypothesis.",
       "gap": "Scenario B has not been executed; nothing yet persists its per-phase probe records or probes the destination's own health. Scenario C's run could not observe slot stickiness because the destination worker still predated the swap, and nothing queries deployment error rows. Both gaps are recorded against the runs rather than implied.",
       "verify": "python3 tests/golden/test_contract_collector_alignment.py"
     },
