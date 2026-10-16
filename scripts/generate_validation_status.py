@@ -154,7 +154,7 @@ def generate_dashboard(tutorials: list[dict[str, Any]], today: date) -> str:
     # (e.g. content-validation-status.md) and aligns with sibling repositories.
     #
     # No content_validation block: docs/reference/ is out of scope per
-    # AGENTS.md §Text Content Validation, so tools/validate_frontmatter.py
+    # DOCUMENTATION_CONTRACT.md §Text Content Validation, so tools/validate_frontmatter.py
     # rejects one here. Both reference dashboards omit it for the same reason;
     # do not add one back for "consistency" with content-validation-status.md.
     lines.append("---")

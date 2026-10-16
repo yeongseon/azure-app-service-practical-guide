@@ -11,8 +11,9 @@ Imported by:
 - ``scripts/remove_tautological_validation.py``
 - ``tools/validate_frontmatter.py``
 
-The policy MUST stay in sync with ``AGENTS.md`` §Text Content Validation.
-If you change the rules here, update ``AGENTS.md`` in the same commit.
+The policy MUST stay in sync with ``DOCUMENTATION_CONTRACT.md`` §Text Content
+Validation. If you change the rules here, update that section in the same
+commit.
 """
 
 from __future__ import annotations
