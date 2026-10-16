@@ -50,6 +50,30 @@ This repository is an advanced App Service runtime guide. It uses these approved
 | `Troubleshooting Lab Guides` | Reproducible failure experiments |
 | `KQL Query Packs` | Diagnostic queries for App Service scenarios |
 
+### App Service Lab Contract Reconciliation
+
+The series Lab Contract is applied to the 15 current scenario directories
+through `labs/golden-classification.json`; `labs/_shared` is shared
+infrastructure and is not a scenario. Classification is deliberately separate
+from certification: `golden`, `migration-needed` and `archive-candidate` record
+the migration shape, while retained evidence trust and independent
+reproduction remain separate axes.
+
+App Service has these service-specific exceptions:
+
+| Series expectation | App Service application |
+|---|---|
+| One deployment shape per lab | Labs may target code deployment, custom containers, deployment slots, Windows Java handlers or staged sub-labs. A universal package or deployment model is not assumed. |
+| One storage model | Windows `D:\home`, Linux `/home`, ephemeral filesystems, Run From Package and mounted Azure Storage have different persistence behavior. Each lab declares the applicable model. |
+| One scenario directory | The Windows Java timeout lab keeps three explicit stages because they test different mechanisms; CI checks those stages against the directory inventory. |
+| Evidence implies current validation | Historical captures remain preserved and classified, but do not become trusted-current or independently reproduced merely because a lab is retained. |
+
+Issue and pull-request work uses the local operating format in `CONTRIBUTING.md`
+and the canonical `priority:critical`, `priority:high`, `priority:medium` and
+`priority:low` definitions in `.github/priority-labels.json`, as established by
+#217. All remaining App Service adoption work is closeable in this repository;
+sibling migrations and architecture-wide coordination are references only.
+
 ## Repository Structure
 
 ```text
