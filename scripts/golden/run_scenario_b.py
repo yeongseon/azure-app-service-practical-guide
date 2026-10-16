@@ -108,7 +108,8 @@ def probe(url: str, timeout: int = 30) -> dict:
 
 
 def probe_phase(url: str, count: int = PROBES_PER_PHASE) -> list[dict]:
-    return [probe(url) for _ in range(count)]
+    with concurrent.futures.ThreadPoolExecutor(max_workers=count) as pool:
+        return list(pool.map(probe, [url] * count))
 
 
 def apply_pressure(url: str, seconds: int, workers: int) -> dict:
