@@ -70,6 +70,7 @@ graph TD
 | Playbook | Symptom |
 |----------|---------|
 | [Performance Degradation](performance-degradation.md) | Slow response times, latency spikes, CPU or memory stress |
+| [Tail Latency and Matched Baselines](performance/tail-latency-baseline-comparison.md) | Users report long delays while averages change little; compare matched request populations |
 | [Slow Response but Low CPU](performance/slow-response-but-low-cpu.md) | High latency with CPU below saturation |
 | [Memory Pressure & Worker Degradation](performance/memory-pressure-and-worker-degradation.md) | Gradual slowdown without CPU spikes |
 | [Intermittent 5xx Under Load](performance/intermittent-5xx-under-load.md) | Sporadic server errors during traffic bursts |
@@ -81,6 +82,7 @@ graph TD
 | Playbook | Symptom |
 |----------|---------|
 | [Deployment Failures](deployment-failures.md) | Failed deployments, slot issues, or swap failures |
+| [SCM Client DNS and HTTP Failures](scm-access-dns-and-http-failures.md) | Kudu fails to open from one or several clients; distinguish name resolution, transport, HTTP rules and authentication |
 | [Production ARM Configuration HTTP 400](arm-configuration-http-400.md) | Production configuration update returns ARM HTTP 400 while a comparable staging-slot request succeeds |
 | [Missing wwwroot Files and 404](missing-wwwroot-files-404.md) | Expected static file absent from served content, later 404, actor and loss time unknown |
 | [App Startup Failures](app-startup-failures.md) | Application or container never becomes ready |
