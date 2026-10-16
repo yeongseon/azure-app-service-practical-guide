@@ -9,6 +9,7 @@ param location string = resourceGroup().location
 var uniqueSuffix = uniqueString(resourceGroup().id)
 var serverFarmName = 'asp-${baseName}-${uniqueSuffix}'
 var webAppName = 'app-${baseName}-${uniqueSuffix}'
+var targetWebAppName = 'target-${baseName}-${uniqueSuffix}'
 var workspaceName = 'log-${baseName}-${uniqueSuffix}'
 var diagnosticSettingName = 'diag-${baseName}-${uniqueSuffix}'
 var appInsightsName = 'appi-${baseName}-${uniqueSuffix}'
@@ -66,14 +67,25 @@ resource targetStorage 'Microsoft.Storage/storageAccounts@2023-05-01' = {
   }
 }
 
-resource targetBlobService 'Microsoft.Storage/storageAccounts/blobServices@2023-05-01' = {
-  parent: targetStorage
-  name: 'default'
+resource targetWebApp 'Microsoft.Web/sites@2023-12-01' = {
+  name: targetWebAppName
+  location: location
+  kind: 'app,linux'
   properties: {
-    staticWebsite: {
-      enabled: true
-      indexDocument: 'health.txt'
-      error404Document: 'health.txt'
+    serverFarmId: appServicePlan.id
+    httpsOnly: true
+    siteConfig: {
+      linuxFxVersion: 'PYTHON|3.11'
+      alwaysOn: false
+      appCommandLine: 'python -m http.server 8000'
+      ftpsState: 'Disabled'
+      minTlsVersion: '1.2'
+      appSettings: [
+        {
+          name: 'WEBSITES_PORT'
+          value: '8000'
+        }
+      ]
     }
   }
 }
@@ -146,4 +158,4 @@ output webAppDefaultHostName string = webApp.properties.defaultHostName
 output logAnalyticsWorkspaceName string = logAnalyticsWorkspace.name
 output outboundTargetHost string = replace(replace(targetStorage.properties.primaryEndpoints.blob, 'https://', ''), '/', '')
 output outboundTargetStorageName string = targetStorage.name
-output outboundTargetUrl string = '${targetStorage.properties.primaryEndpoints.web}health.txt'
+output outboundTargetUrl string = 'https://${targetWebApp.properties.defaultHostName}/'
