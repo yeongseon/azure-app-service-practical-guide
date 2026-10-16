@@ -14,7 +14,17 @@
     "sku": "B1 Linux"
   },
   "recipe_digest": "sha256:41cb9e899473adcd2ad12f53fd156b6d8b01dc9490323344604db59df6cc2d40",
-  "collector_digest": "sha256:755bb6d7d24e37511b4f857b46d9f9a8e82ca9e481e642fa10b4f0391fdbdc1d",
+  "collector_digest": "sha256:07490e4cea5d81d7d203732c808692553ae1cc76ca2364e837f3c0dfbde5e3bd",
+  "collector_path": "scripts/golden/collect_scenario_a.py",
+  "recipe_paths": [
+    "labs/deployment-succeeded-startup-failed/app/app.py",
+    "labs/deployment-succeeded-startup-failed/app/requirements.txt",
+    "labs/deployment-succeeded-startup-failed/contract.json",
+    "labs/deployment-succeeded-startup-failed/main.bicep",
+    "labs/deployment-succeeded-startup-failed/run.py",
+    "labs/deployment-succeeded-startup-failed/trigger.sh",
+    "labs/deployment-succeeded-startup-failed/verify.sh"
+  ],
   "capture_window": {
     "started_at": "2026-10-16T07:51:47.555754+00:00",
     "ended_at": "2026-10-16T08:01:33.709704+00:00"
