@@ -109,10 +109,11 @@ def _derivation_problems(repo: pathlib.Path, run_dir: pathlib.Path, manifest: di
 
 
 def _recipe_definition(repo: pathlib.Path, recipe_paths) -> dict:
-    definitions = [
-        json.loads((repo / path).read_text())
-        for path in (SCENARIO_A_RECIPE, SCENARIO_C_RECIPE)
-    ]
+    definitions = []
+    for path in (SCENARIO_A_RECIPE, SCENARIO_C_RECIPE):
+        candidate = repo / path
+        if candidate.is_file():
+            definitions.append(json.loads(candidate.read_text()))
     matches = [definition for definition in definitions
                if definition.get("recipe_paths") == recipe_paths]
     return matches[0] if len(matches) == 1 else {}

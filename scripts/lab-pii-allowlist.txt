@@ -7,6 +7,9 @@
 evidence/runs/20261016T075147Z-6d019de6e2f2/manifest.json|instance-id
 evidence/runs/20261016T075147Z-6d019de6e2f2/evidence.json|instance-id
 evidence/runs/20261016T075147Z-6d019de6e2f2/provenance.json|instance-id
+evidence/runs/20261016T131733Z-ca62fd8ccb42/evidence.json|instance-id
+evidence/runs/20261016T131733Z-ca62fd8ccb42/manifest.json|instance-id
+evidence/runs/20261016T131733Z-ca62fd8ccb42/provenance.json|instance-id
 labs/container-http-pings/artifacts-sanitized/baseline/app-config.json|deployment-resource-path
 labs/container-http-pings/artifacts-sanitized/trigger/webapp-details-20260404T055338Z.json|deployment-resource-path
 labs/dns-vnet-resolution/artifacts-sanitized/baseline/app-config.json|deployment-resource-path
