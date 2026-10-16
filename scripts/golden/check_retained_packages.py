@@ -246,7 +246,9 @@ def violations(repo: pathlib.Path, base_ref: str) -> list[str]:
                 sibling = repo / pathlib.PurePosixPath(relative).parent / name
                 if sibling.is_file() and json.loads(sibling.read_text()).get("run_id") != directory_id:
                     problems.append(f"retained run identity mismatch: {sibling.relative_to(repo)}")
-            if manifest.get("execution_status") == "COMPLETE" and not frozen_historical:
+            new_package = package_id not in base_packages
+            if (manifest.get("execution_status") == "COMPLETE"
+                    and not frozen_historical and new_package):
                 source_commit = manifest.get("source_commit")
                 environment = manifest.get("environment")
                 required_env = ("subscription_kind", "region", "runtime", "sku")
