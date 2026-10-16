@@ -71,6 +71,7 @@ jobs:
 
       - name: Regenerate the dashboard with every gate
         run: |
+          python scripts/generate_validation_status.py
           python scripts/generate_golden_status.py --include-network
 
       # Opens a pull request rather than pushing to main: AGENTS.md routes every
@@ -81,7 +82,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if git diff --quiet -- docs/meta/golden-status.md; then
+          if git diff --quiet -- docs/meta/golden-status.md docs/reference/validation-status.md; then
             echo "Dashboard unchanged; nothing to open."
             exit 0
           fi
@@ -89,7 +90,7 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git switch --create "$BRANCH"
-          git add docs/meta/golden-status.md
+          git add docs/meta/golden-status.md docs/reference/validation-status.md
           git commit --message 'chore: refresh golden status dashboard'
           # Fetching the bare branch name only updates FETCH_HEAD, which leaves
           # --force-with-lease without a baseline and makes every run after the
