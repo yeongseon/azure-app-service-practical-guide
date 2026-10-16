@@ -1,8 +1,9 @@
 {
   "scenario": "deployment-succeeded-startup-failed",
   "collector": "scripts/golden/collect_scenario_a.py",
+  "derivation": "The corrected collector was run offline against the preserved private raw directory for this same run ID; no Azure rerun or synthetic observation was used.",
   "sanitised": true,
-  "sanitisation": "Subscription, tenant, resource-group, app, host, instance, workspace and operator identifiers were omitted from the retained bridge package. Observed status classes, import-error count, startup commands, timestamps and outcomes are unmodified.",
+  "sanitisation": "Subscription, tenant, resource-group, app, host, instance, workspace and operator identifiers were omitted. Exact phase/probe timestamps, status codes, startup commands, and wrong_module console signatures are unmodified from the preserved private run.",
   "replay": "python3 scripts/golden/evaluate_run.py evidence/runs/20261016T075147Z-6d019de6e2f2",
   "execution_status": "COMPLETE",
   "hypothesis_status": "SUPPORTED",
@@ -19,11 +20,11 @@
     "sku": "B1 Linux"
   },
   "recipe_digest": "sha256:41cb9e899473adcd2ad12f53fd156b6d8b01dc9490323344604db59df6cc2d40",
-  "collector_digest": "sha256:07490e4cea5d81d7d203732c808692553ae1cc76ca2364e837f3c0dfbde5e3bd",
+  "collector_digest": "sha256:755bb6d7d24e37511b4f857b46d9f9a8e82ca9e481e642fa10b4f0391fdbdc1d",
   "digests": {
-    "manifest.json": "4f15efa6bdee7d07765dde107944ec0030416e09b34a50b0132f91bd39305c4e",
-    "evidence.json": "51c89ce36d5c7f83999b07794667490dcd1df82b657c8e176dab7296e2e183e5",
-    "result.json": "1e95fd4dfa32c2d31ef1c66911e896ac30208204e9d197759ec749bd9cbc650e",
+    "manifest.json": "3db362f956c58eb26ab6ebcbed7fe27746c3a94353b8449fa4906e99f9acb4bd",
+    "evidence.json": "2373594aa6f3d20f3c5740b375381da208f97208267b0c042f8ab005d651bf52",
+    "result.json": "6c9f0844b151182995bbdeead10d0189df49865304b9bf659541245a3ae2d4b0",
     "cleanup.json": "c851a1d522b09ba9fcb3741e803be60342ead2183a5c5a1ba1935e81dae40407"
   },
   "limitations": [

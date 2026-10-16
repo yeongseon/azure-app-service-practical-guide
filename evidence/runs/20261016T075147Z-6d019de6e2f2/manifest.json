@@ -14,7 +14,7 @@
     "sku": "B1 Linux"
   },
   "recipe_digest": "sha256:41cb9e899473adcd2ad12f53fd156b6d8b01dc9490323344604db59df6cc2d40",
-  "collector_digest": "sha256:07490e4cea5d81d7d203732c808692553ae1cc76ca2364e837f3c0dfbde5e3bd",
+  "collector_digest": "sha256:755bb6d7d24e37511b4f857b46d9f9a8e82ca9e481e642fa10b4f0391fdbdc1d",
   "capture_window": {
     "started_at": "2026-10-16T07:51:47.555754+00:00",
     "ended_at": "2026-10-16T08:01:33.709704+00:00"
@@ -51,28 +51,24 @@
       "claim_level": "Observed"
     },
     {
-      "id": "symptom-runtime-5xx",
+      "id": "symptom-runtime-503",
       "role": "symptom",
-      "field": "fault_status_class",
-      "equals": "5xx",
+      "field": "fault_status",
+      "equals": 503,
       "claim_level": "Observed"
     },
     {
       "id": "discriminating-import-error",
       "role": "discriminating",
-      "field": "fault_import_error_hits",
-      "in": [
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9,
-        10
-      ],
+      "field": "fault_import_error_signature",
+      "equals": "ModuleNotFoundError: No module named 'wrong_module'",
+      "claim_level": "Observed"
+    },
+    {
+      "id": "phases-ordered-in-capture-window",
+      "role": "control",
+      "field": "phase_order_valid",
+      "equals": true,
       "claim_level": "Observed"
     },
     {
@@ -85,6 +81,6 @@
   ],
   "notes": [
     "The resource identity was removed during sanitisation; the private run remains bound to one resource by the runner's raw phase and Log Analytics checks.",
-    "The collector counts four import-error rows because each of two startup attempts emitted both ModuleNotFoundError and No module named rows."
+    "The retained evidence contains both exact fault-window ModuleNotFoundError rows and every timestamped health probe from baseline, fault, and recovery."
   ]
 }

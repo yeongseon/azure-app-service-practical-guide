@@ -1,7 +1,7 @@
 {
   "run_id": "20261016T075147Z-6d019de6e2f2",
   "captured_at": "2026-10-16T07:51:47.555754+00:00",
-  "evaluated_at": "2026-10-16T08:04:10Z",
+  "evaluated_at": "2026-10-16T08:58:48Z",
   "execution_status": "COMPLETE",
   "evidence_identity": "BOUND",
   "hypothesis_status": "SUPPORTED",
@@ -10,8 +10,9 @@
     "deployment-reported-success": "SUPPORTED",
     "fault-config-applied": "SUPPORTED",
     "fault-config-activated": "SUPPORTED",
-    "symptom-runtime-5xx": "SUPPORTED",
+    "symptom-runtime-503": "SUPPORTED",
     "discriminating-import-error": "SUPPORTED",
+    "phases-ordered-in-capture-window": "SUPPORTED",
     "recovery-healthy": "SUPPORTED"
   },
   "generated_verdict_claimed": null,
