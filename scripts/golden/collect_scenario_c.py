@@ -37,6 +37,7 @@ from __future__ import annotations
 
 import argparse
 import datetime
+import hashlib
 import json
 import pathlib
 import sys
@@ -187,6 +188,15 @@ def collect(run_dir) -> dict:
     swap = _read(run_dir / "swap.json")
     rollback = _read(run_dir / "prod-after-rollback.json", required=False)
     console = _read(run_dir / "console-query-0.json", required=False)
+    phase_integrity = {}
+    for phase in ("baseline", "fault", "recovery"):
+        phase_path = run_dir / phase / "phase.json"
+        phase_document = _read(phase_path)
+        probes = phase_document.get("probes")
+        phase_integrity[phase] = {
+            "probe_count": len(probes) if isinstance(probes, list) else 0,
+            "sha256": hashlib.sha256(phase_path.read_bytes()).hexdigest(),
+        }
 
     start_before = prod_before.get("PROCESS_START_UTC")
     start_after = prod_after.get("PROCESS_START_UTC")
@@ -232,7 +242,18 @@ def collect(run_dir) -> dict:
         # otherwise would turn an unperformed step into supporting evidence.
         "post_rollback_matches_pre_swap": (
             None if rollback is None
-            else config_of(rollback) == config_of(prod_before)),
+             else config_of(rollback) == config_of(prod_before)),
+        "raw_snapshots": {
+            "prod_before": prod_before,
+            "staging_before": staging_before,
+            "prod_after": prod_after,
+            "staging_after": staging_after,
+            "prod_after_rollback": rollback,
+            "swap": swap,
+            "deployment_error_rows": (
+                json.loads(console.get("stdout") or "[]") if console is not None else None),
+        },
+        "phase_capture_integrity": phase_integrity,
     }
 
     incomplete = sorted(key for key, value in observations.items() if value is None)
@@ -243,6 +264,7 @@ def collect(run_dir) -> dict:
         "run_id": run["run_id"],
         "resource_id": run.get("resource_id"),
         "captured_at": run["started_at"],
+        "runner_source_commit": run.get("source_sha"),
         "observations": observations,
         "collector": "scripts/golden/collect_scenario_c.py",
         "capture_provenance": "derived",
