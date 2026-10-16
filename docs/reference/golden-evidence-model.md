@@ -54,6 +54,13 @@ those anchors. Updating a phase hash after truncating or swapping rows does not
 restore trust because the authenticated anchors are held separately in the
 derivation provenance.
 
+Scenario B collector output is published through
+`scripts/golden/sanitize_scenario_b.py`. The deterministic transform replaces
+only Azure resource and destination identifiers with documentation-safe values;
+timestamps, statuses, counts, phase structure, and integrity anchors are kept.
+The provenance record binds both the private raw-file hashes and the sanitized
+public rows, so an offline reviewer can replay the same transformation.
+
 ## Timestamps
 
 Three distinct instants, never interchangeable:
