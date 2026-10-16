@@ -68,6 +68,14 @@ This Level 3 lab guide reproduces a slot swap on Azure App Service Linux and pro
     
     This is expected App Service slot behavior, not accidental misconfiguration.
 
+### Golden Scenario C live run (2026-10-16)
+
+Run `20261016T131733Z-ca62fd8ccb42` completed against an S1 Linux App Service in Korea Central and is retained at `evidence/runs/20261016T131733Z-ca62fd8ccb42/`.
+
+The honest Golden-model result is **INCONCLUSIVE**, not Supported. Five assertions were supported: the swap command succeeded, production restarted, production configuration changed, the deployment-error query returned zero rows, and the swap-back restored production configuration. The staging pre-swap `/config` request timed out, so neither cross-slot stickiness assertion could be evaluated. The missing observation was not converted into a refutation or inferred success.
+
+Recovery and cleanup are recorded separately: swap-back restoration is `SUPPORTED`, and the run-owned resource group deletion was verified by `az group exists` returning `false`. This AI-agent run is not an independent human reproduction.
+
 ---
 
 ## 1) Background
@@ -795,7 +803,7 @@ These lines validate that the swap involved observable start/stop/warm-up transi
 | Sticky metadata explicit | Pass | `app-settings-prod`, `app-settings-staging` |
 | Lifecycle around swap observed | Pass | `kql-console`, `kql-platform` |
 
-Final hypothesis verdict: **Supported**.
+Historical artifact-set verdict: **Supported**. The newer Golden run above is a separate completed `INCONCLUSIVE` result and does not replace or re-date these 2026-04-04 captures.
 
 ### 4.14 Key finding (required conclusion)
 
