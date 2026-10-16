@@ -739,7 +739,8 @@ def _derive_scenario_c(observations: dict, provenance: dict) -> dict:
             if usable(prod_before) and usable(prod_after) else None),
         "deployment_error_count": (
             len(errors)
-            if isinstance(error_query, dict) and error_query.get("exit_code", 0) == 0
+            if (error_query is None or (isinstance(error_query, dict)
+                                        and error_query.get("exit_code", 0) == 0))
             and isinstance(errors, list) else None),
         "post_rollback_matches_pre_swap": (
             {k: v for k, v in rollback.items() if k != "PROCESS_START_UTC"}
