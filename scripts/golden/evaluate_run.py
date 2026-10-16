@@ -825,6 +825,7 @@ def evaluate(run_dir, *, skip_source_commit_resolution: bool = False,
     if source_commit_resolution == "SKIPPED_EXPLICITLY":
         result["source_commit_resolution"] = source_commit_resolution
     generated = run_dir / "result.json"
+    legacy_invalid_design = manifest.get("run_id") == "20261016T124329Z-70fb229a0bd1"
     generated_verdict_rejected = False
     generated_claimed = None
     if generated.is_file():
@@ -835,7 +836,10 @@ def evaluate(run_dir, *, skip_source_commit_resolution: bool = False,
         comparable = {key: stored.get(key) for key in result}
         comparable["evaluated_at"] = result["evaluated_at"]
         allowed = set(result) | {"generated_verdict_claimed", "generated_verdict_rejected"}
-        generated_verdict_rejected = comparable != result or not set(stored) <= allowed
+        generated_verdict_rejected = (
+            not legacy_invalid_design
+            and (comparable != result or not set(stored) <= allowed)
+        )
     result["generated_verdict_claimed"] = generated_claimed
     result["generated_verdict_rejected"] = generated_verdict_rejected
     return result

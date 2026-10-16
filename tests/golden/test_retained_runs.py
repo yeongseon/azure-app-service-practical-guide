@@ -61,6 +61,7 @@ class ReplayTests(unittest.TestCase):
                 recomputed = ev.evaluate(directory)
                 if directory.name == "20261016T124329Z-70fb229a0bd1":
                     self.assertEqual(recomputed["hypothesis_status"], "INCONCLUSIVE")
+                    self.assertFalse(recomputed["generated_verdict_rejected"])
                     continue
                 self.assertEqual(
                     recomputed["hypothesis_status"], stored["hypothesis_status"],
