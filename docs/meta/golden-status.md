@@ -25,7 +25,7 @@ Every quality gate in this repository, its most recently recorded result, and th
 
 ## Summary
 
-*Snapshot of `45ebb72 plus uncommitted working-tree changes`, generated 2026-10-16.*
+*Snapshot of `ceb730d plus uncommitted working-tree changes`, generated 2026-10-16.*
 
 | Metric | Count |
 |---|---:|
@@ -76,7 +76,7 @@ These are locally executed results, not GitHub Actions statuses. **Skipped** mea
 | App and Infra impact classifier tests | Blocking | ✅ Pass | OK | < 10s |
 | Workflow YAML duplicate keys | Blocking | ✅ Pass | OK | < 10s |
 | Retained Golden package immutability | Blocking | ✅ Pass | Retained Golden package immutability: PASS | < 10s |
-| Golden evidence contracts | Blocking | ✅ Pass | OK | < 10s |
+| Golden evidence contracts | Blocking | ✅ Pass | OK | 10-120s |
 | Absorbed evidence predicates | Blocking | ✅ Pass | undeclared absorbed predicates: 0 (declared: 0, stale: 0) | < 10s |
 | Shell script syntax | Blocking | ✅ Pass | All shell scripts parse. | < 10s |
 | ShellCheck | Blocking | ➖ Skipped | Executable `shellcheck` is not on PATH. | < 10s |
