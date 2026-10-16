@@ -52,6 +52,11 @@
         "reported"
       ],
       "description": "How the observation was obtained. primary is captured directly from the platform, derived is computed from primary captures, reported is taken from a summary and is weakest because a summary can disagree with the records it describes. This is provenance, not custody: it says where a value came from, never how fresh it is."
+    },
+    "phase_capture_integrity": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Raw phase capture anchors used to verify offline derivation inputs."
     }
   }
 }

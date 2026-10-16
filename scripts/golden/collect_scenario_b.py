@@ -181,6 +181,7 @@ def collect(run_dir) -> dict:
         "destination_health": None if health is None else {
             "captured_at": health.get("at", run["started_at"]),
             "status": health.get("status")},
+        "destination_health_status": None if health is None else health.get("status"),
         "snat_port_pressure": None if pressure is None else pressure.get("status"),
         "destination_binding": (
             None if target is None else target.get("matches_requested_destination")),

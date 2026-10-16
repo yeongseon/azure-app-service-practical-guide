@@ -17,6 +17,14 @@ DIGESTS = pathlib.Path("evidence/retained-digests.json")
 DECLARATIONS = pathlib.Path("evidence/run-declarations.json")
 DECLARATION_FIELDS = {"scenario", "retained_package"}
 SCENARIO_A_RECIPE = pathlib.Path("scripts/golden/scenario-a-recipe.json")
+SCENARIO_B_RECIPE = pathlib.Path("scripts/golden/scenario-b-recipe.json")
+
+
+def recipe_definition(repo: pathlib.Path, scenario: str) -> dict:
+    path = SCENARIO_B_RECIPE if scenario == "snat-exhaustion" else SCENARIO_A_RECIPE
+    return json.loads((repo / path).read_text())
+
+
 FROZEN_HISTORICAL_RUN_IDS = {
     "20260927T104304Z-aba0d3a9daa7",
     "20260927T114621Z-04c6c02c9ae1",
@@ -31,10 +39,11 @@ def _git_bytes(repo: pathlib.Path, commit: str, path: str) -> bytes:
     return completed.stdout
 
 
-def _provenance_digest_problems(repo: pathlib.Path, manifest: dict) -> list[str]:
+def _provenance_digest_problems(
+        repo: pathlib.Path, manifest: dict, scenario: str) -> list[str]:
     source_commit = manifest.get("source_commit")
     recipe_paths = manifest.get("recipe_paths")
-    definition = json.loads((repo / SCENARIO_A_RECIPE).read_text())
+    definition = recipe_definition(repo, scenario)
     if recipe_paths != definition.get("recipe_paths"):
         return ["provenance inputs do not match the versioned recipe definition"]
     if (not isinstance(source_commit, str)
@@ -68,7 +77,7 @@ def _derivation_problems(repo: pathlib.Path, run_dir: pathlib.Path, manifest: di
     derivation = provenance.get("derivation")
     if not isinstance(derivation, dict) or derivation.get("derived_offline") is not True:
         return ["new COMPLETE run lacks offline derivation metadata"]
-    definition = json.loads((repo / SCENARIO_A_RECIPE).read_text())
+    definition = recipe_definition(repo, provenance.get("scenario", ""))
     if (derivation.get("collector_commit") != definition.get("derivation_collector_commit")
             or derivation.get("collector_path") != definition.get("collector_path")):
         return ["derivation collector does not match the versioned recipe definition"]
@@ -98,8 +107,11 @@ def _derivation_problems(repo: pathlib.Path, run_dir: pathlib.Path, manifest: di
         problems.append("derivation predates capture")
     if derived_at > datetime.datetime.now(datetime.timezone.utc):
         problems.append("derivation is in the future")
-    required_shape = {"fault_status", "fault_console_rows", "phase_windows",
-                      "baseline_probes", "fault_probes", "recovery_probes"}
+    required_shape = ({"phase_windows", "phase_probes", "destination_health",
+                       "destination_binding", "snat_port_pressure"}
+                      if provenance.get("scenario") == "snat-exhaustion"
+                      else {"fault_status", "fault_console_rows", "phase_windows",
+                            "baseline_probes", "fault_probes", "recovery_probes"})
     observations = evidence.get("observations") or {}
     if not required_shape <= set(observations):
         problems.append("derivation evidence shape is incomplete")
@@ -246,7 +258,9 @@ def violations(repo: pathlib.Path, base_ref: str) -> list[str]:
                     problems.append(f"new COMPLETE run lacks full provenance: {package_id}")
                 problems.extend(
                     f"{package_id}: {problem}"
-                    for problem in _provenance_digest_problems(repo, manifest)
+                    for problem in _provenance_digest_problems(
+                        repo, manifest,
+                        current_declarations["runs"][package_id]["scenario"])
                 )
                 problems.extend(
                     f"{package_id}: {problem}"

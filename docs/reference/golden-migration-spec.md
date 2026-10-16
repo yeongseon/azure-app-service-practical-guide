@@ -17,7 +17,7 @@ sibling copies them as-is.
 
 | Asset | Change needed |
 |---|---|
-| `scripts/golden/evaluate_run.py` | None |
+| `scripts/golden/evaluate_run.py` | Replace repository-specific recipe definitions and scenario derivations. |
 | `scripts/golden/check_reproduction.py` | None |
 | `tests/golden/test_evaluate_run.py` | None |
 | `tests/golden/test_negative_evidence.py` | None |

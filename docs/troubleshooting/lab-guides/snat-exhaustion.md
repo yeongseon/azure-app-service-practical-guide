@@ -846,6 +846,24 @@ Setup differences from the April run: the outbound target is a storage account d
 
 The rerun meets the [2.4](#24-disproof-criteria) disproof criterion "No worker timeout/SIGKILL events during failure period" for the SNAT chain while still showing that pooling removes the inbound degradation.
 
+### 4.15 Golden Scenario B execution (2026-10-16)
+
+Run `20261016T124329Z-70fb229a0bd1` executed the merged Scenario B runner on a run-owned B1 Linux deployment in Korea Central. The actual capture window was `2026-10-16T12:43:29.917770+00:00` through `2026-10-16T12:49:17.397658+00:00`.
+
+| Assertion | Evaluated result |
+|---|---|
+| Baseline outbound succeeds | `CONTRADICTED` |
+| Transport failures appear under load | `SUPPORTED` |
+| Destination is bound to the workload | `SUPPORTED` |
+| Direct SNAT port pressure | `INCONCLUSIVE` (`unavailable`) |
+| Destination remains healthy | `CONTRADICTED` |
+| HTTP errors are absent under load | `SUPPORTED` |
+| Recovery succeeds | `CONTRADICTED` |
+
+The evaluator reports the hypothesis as `CONTRADICTED`, not reproduced. Baseline and recovery were already unhealthy, the direct destination probe did not return HTTP 200, and the Basic-tier run supplied no direct SNAT port-pressure evidence. The observed worker transport symptoms therefore do not establish SNAT exhaustion. The sanitized immutable package is retained at `evidence/runs/20261016T124329Z-70fb229a0bd1/`; private raw captures remain outside the repository.
+
+[Observed] Cleanup was verified separately: `az group exists` returned `false` for the run-owned resource group. This AI-agent execution is a repeat run and does not satisfy the independent-human reproduction gate. Golden v1 remains `NOT_COMPLETE`.
+
 ---
 
 ## Expected Evidence

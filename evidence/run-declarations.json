@@ -4,6 +4,10 @@
     "20261016T075147Z-6d019de6e2f2": {
       "scenario": "deployment-succeeded-startup-failed",
       "retained_package": "evidence/runs/20261016T075147Z-6d019de6e2f2"
+    },
+    "20261016T124329Z-70fb229a0bd1": {
+      "scenario": "snat-exhaustion",
+      "retained_package": "evidence/runs/20261016T124329Z-70fb229a0bd1"
     }
   }
 }

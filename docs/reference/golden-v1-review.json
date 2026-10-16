@@ -71,8 +71,8 @@
       "id": 9,
       "requirement": "Golden scenarios A (deterministic), B (comparative), C (configuration/state) completed",
       "status": "PARTIAL",
-      "evidence": "Two of three scenarios have been executed against a live subscription. Scenario A has two retained SUPPORTED runs: historical run 20260927T104304Z and current run 20261016T075147Z, whose cleanup was verified separately. Scenario C's run 20260927T114621Z evaluates to INCONCLUSIVE: five assertions held and two could not be observed, so the model declined a verdict rather than supplying one. All three manifests are satisfiable and every collector is held by a suite proving its evidence can refuse the hypothesis.",
-      "gap": "Scenario B has not been executed; nothing yet persists its per-phase probe records or probes the destination's own health. Scenario C's run could not observe slot stickiness because the destination worker still predated the swap, and nothing queries deployment error rows. Both gaps are recorded against the runs rather than implied.",
+      "evidence": "All three scenarios have live retained runs. Scenario A has historical and current SUPPORTED runs. Scenario B run 20261016T124329Z is CONTRADICTED: baseline and recovery were unhealthy, destination health was not established, and direct SNAT pressure was unavailable. Scenario C run 20260927T114621Z is INCONCLUSIVE because two observations were unavailable.",
+      "gap": "Scenario B completed honestly but did not reproduce SNAT exhaustion; a production-tier follow-up would be needed to obtain direct port-pressure telemetry. Scenario C still lacks slot-stickiness and deployment-error observations. Independent human reproduction remains separate and unmet.",
       "verify": "python3 tests/golden/test_contract_collector_alignment.py"
     },
     {
@@ -120,10 +120,9 @@
     }
   ],
   "blocking_for_v1": [
-    "Item 9: Scenario B has not completed a live run.",
     "Item 10: no genuinely different human operator has independently reproduced a scenario."
   ],
-  "notes": "Item 10 needs a genuinely different human operator; AI-agent repeat runs cannot satisfy it. Item 9 needs Scenario B instrumented to persist per-phase probe records and probe the destination's own health, after which it can run. Scenario C's run left two observations absent and returned INCONCLUSIVE, which is the model working rather than failing.",
+  "notes": "Item 10 needs a genuinely different human operator; AI-agent repeat runs cannot satisfy it. Scenario B completed with a CONTRADICTED result and unavailable direct port-pressure telemetry; this is an honest completed experiment, not proof of SNAT exhaustion. Scenario C's run left two observations absent and returned INCONCLUSIVE.",
   "review_history": [
     {
       "reviewer": "oracle",
@@ -164,11 +163,10 @@
     ],
     "scenarios_executed": [
       "deployment-succeeded-startup-failed",
-      "slot-swap-config-drift"
-    ],
-    "scenarios_not_executed": [
+      "slot-swap-config-drift",
       "snat-exhaustion"
     ],
+    "scenarios_not_executed": [],
     "executed_runs": {
       "deployment-succeeded-startup-failed": [
         "20260927T104304Z-aba0d3a9daa7",
@@ -176,6 +174,9 @@
       ],
       "slot-swap-config-drift": [
         "20260927T114621Z-04c6c02c9ae1"
+      ],
+      "snat-exhaustion": [
+        "20261016T124329Z-70fb229a0bd1"
       ]
     }
   }

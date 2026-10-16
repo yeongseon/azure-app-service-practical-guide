@@ -69,7 +69,7 @@ class TransferTableTests(unittest.TestCase):
     def test_the_table_was_parsed(self):
         """Guards every test below from passing on an empty list."""
         self.assertGreaterEqual(len(spec_rows()), 8)
-        self.assertGreaterEqual(len(claimed_unchanged()), 7)
+        self.assertGreaterEqual(len(claimed_unchanged()), 6)
 
     def test_assets_claimed_unchanged_are_free_of_repo_coupling(self):
         for asset in claimed_unchanged():
