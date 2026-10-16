@@ -33,6 +33,7 @@ class RetainedPackageImmutabilityTests(unittest.TestCase):
         }.items():
             (self.run_dir / name).write_text(content)
         self._write_digest_manifest()
+        self._write_declarations({})
         run_git(self.repo, "add", ".")
         run_git(self.repo, "commit", "-m", "base")
         self.base = subprocess.check_output(
@@ -45,6 +46,10 @@ class RetainedPackageImmutabilityTests(unittest.TestCase):
         }
         manifest = {"version": 1, "packages": {"run-one": {"historical": True, "files": files}}}
         (self.repo / "evidence/retained-digests.json").write_text(json.dumps(manifest))
+
+    def _write_declarations(self, runs: dict) -> None:
+        path = self.repo / "evidence/run-declarations.json"
+        path.write_text(json.dumps({"version": 1, "runs": runs}))
 
     def _check(self, base: str) -> subprocess.CompletedProcess[str]:
         return subprocess.run(
@@ -113,6 +118,58 @@ class RetainedPackageImmutabilityTests(unittest.TestCase):
         manifest_path.write_text(json.dumps(document))
         run_git(self.repo, "add", ".")
         run_git(self.repo, "commit", "-m", "forge historical run")
+        self.assertNotEqual(self._check(self.base).returncode, 0)
+
+    def test_existing_declaration_cannot_be_modified(self):
+        self._write_declarations({
+            "run-one": {
+                "scenario": "scenario-a",
+                "retained_package": "evidence/runs/run-one",
+            }
+        })
+        run_git(self.repo, "add", ".")
+        run_git(self.repo, "commit", "-m", "declare run")
+        base = subprocess.check_output(
+            ["git", "rev-parse", "HEAD"], cwd=self.repo, text=True).strip()
+        self._write_declarations({
+            "run-one": {
+                "scenario": "changed",
+                "retained_package": "evidence/runs/run-one",
+            }
+        })
+        self.assertNotEqual(self._check(base).returncode, 0)
+
+    def test_existing_declaration_cannot_be_deleted(self):
+        self._write_declarations({
+            "run-one": {
+                "scenario": "scenario-a",
+                "retained_package": "evidence/runs/run-one",
+            }
+        })
+        run_git(self.repo, "add", ".")
+        run_git(self.repo, "commit", "-m", "declare run")
+        base = subprocess.check_output(
+            ["git", "rev-parse", "HEAD"], cwd=self.repo, text=True).strip()
+        self._write_declarations({})
+        self.assertNotEqual(self._check(base).returncode, 0)
+
+    def test_declaration_cannot_redirect_retained_package(self):
+        self._write_declarations({
+            "run-one": {
+                "scenario": "scenario-a",
+                "retained_package": "evidence/runs/other",
+            }
+        })
+        self.assertNotEqual(self._check(self.base).returncode, 0)
+
+    def test_declaration_rejects_unknown_historical_property(self):
+        self._write_declarations({
+            "run-one": {
+                "scenario": "scenario-a",
+                "retained_package": "evidence/runs/run-one",
+                "historical": True,
+            }
+        })
         self.assertNotEqual(self._check(self.base).returncode, 0)
 
 

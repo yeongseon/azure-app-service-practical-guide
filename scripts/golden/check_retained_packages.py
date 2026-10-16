@@ -13,6 +13,8 @@ import sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 DIGESTS = pathlib.Path("evidence/retained-digests.json")
+DECLARATIONS = pathlib.Path("evidence/run-declarations.json")
+DECLARATION_FIELDS = {"scenario", "retained_package"}
 FROZEN_HISTORICAL_RUN_IDS = {
     "20260927T104304Z-aba0d3a9daa7",
     "20260927T114621Z-04c6c02c9ae1",
@@ -40,6 +42,45 @@ def _document(repo: pathlib.Path, revision: str | None = None) -> dict:
     return json.loads(text)
 
 
+def _declarations(repo: pathlib.Path, revision: str | None = None) -> dict:
+    if revision is None:
+        path = repo / DECLARATIONS
+        if not path.is_file():
+            return {"version": 1, "runs": {}}
+        text = path.read_text()
+    else:
+        try:
+            text = _git(repo, "show", f"{revision}:{DECLARATIONS.as_posix()}")
+        except subprocess.CalledProcessError:
+            return {"version": 1, "runs": {}}
+    return json.loads(text)
+
+
+def _declaration_problems(current: dict, base: dict) -> list[str]:
+    problems: list[str] = []
+    if set(current) != {"version", "runs"} or current.get("version") != 1:
+        problems.append("run declaration registry has an invalid top-level schema")
+        return problems
+    runs = current.get("runs")
+    if not isinstance(runs, dict):
+        return ["run declaration registry runs must be an object"]
+    base_runs = base.get("runs") if isinstance(base.get("runs"), dict) else {}
+    for run_id, declaration in runs.items():
+        if (not isinstance(declaration, dict)
+                or set(declaration) != DECLARATION_FIELDS
+                or not isinstance(declaration.get("scenario"), str)
+                or not declaration["scenario"].strip()):
+            problems.append(f"invalid run declaration schema: {run_id}")
+            continue
+        expected = f"evidence/runs/{run_id}"
+        if declaration.get("retained_package") != expected:
+            problems.append(f"run declaration has non-canonical retained_package: {run_id}")
+    for run_id, declaration in base_runs.items():
+        if runs.get(run_id) != declaration:
+            problems.append(f"existing run declaration changed or removed: {run_id}")
+    return problems
+
+
 def _package_root(path: str) -> str | None:
     parts = pathlib.PurePosixPath(path).parts
     if len(parts) >= 4 and parts[:2] == ("evidence", "runs"):
@@ -52,6 +93,7 @@ def _package_root(path: str) -> str | None:
 def violations(repo: pathlib.Path, base_ref: str) -> list[str]:
     """Return digest, immutability, and append-only registry violations."""
     current = _document(repo)
+    current_declarations = _declarations(repo)
     packages = current.get("packages") or {}
     problems: list[str] = []
     registered: set[str] = set()
@@ -80,6 +122,8 @@ def violations(repo: pathlib.Path, base_ref: str) -> list[str]:
     except subprocess.CalledProcessError:
         base = {"packages": {}}
     base_packages = base.get("packages") or {}
+    problems.extend(_declaration_problems(
+        current_declarations, _declarations(repo, base_ref)))
     for package_id, entry in base_packages.items():
         if packages.get(package_id) != entry:
             problems.append(f"existing digest entry changed or removed: {package_id}")
