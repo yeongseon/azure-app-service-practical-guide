@@ -1,0 +1,14 @@
+{
+  "run_id": "20261016T153835Z-275d216becd8",
+  "started_at": "2026-10-16T15:38:35.163159+00:00",
+  "resource_group": "rg-scenario-c-example",
+  "app": "app-scenario-c-example",
+  "scenario": "slot-swap-config-drift",
+  "source_sha": "f7acab4bca5ea253a36e78fc5c4753b572093693",
+  "ended_at": "2026-10-16T15:50:36.075637+00:00",
+  "phase_capture_integrity": {
+    "baseline": "7bdad3a2c57486b40f64263a3d1586674e753ab53e34cde2bfadc89b110667e2",
+    "fault": "8e641cea06e8036bd8fea510988f061f46e2e23f3229734eed75486ebdf9c756",
+    "recovery": "f39cfd9dabaf9fef05a46636fe79d163ede9f869e8ef83a452db54ea694e5d1c"
+  }
+}

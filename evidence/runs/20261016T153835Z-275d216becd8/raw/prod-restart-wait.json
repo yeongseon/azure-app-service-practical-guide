@@ -1,0 +1,23 @@
+{
+  "url": "https://app-scenario-c-example.azurewebsites.net",
+  "boundary": "2026-10-16T15:39:19.499624+00:00",
+  "restarted": true,
+  "attempts": [
+    {
+      "run_id": "20261016T153835Z-275d216becd8",
+      "app": "app-scenario-c-example",
+      "url": "https://app-scenario-c-example.azurewebsites.net",
+      "slot_role": "production",
+      "captured_at": "2026-10-16T15:41:55.398224+00:00",
+      "http_status": 200,
+      "attempt": 1,
+      "body": {
+        "DB_CONNECTION_STRING": "prod-server..database.windows.net",
+        "FEATURE_FLAG": "v2",
+        "PROCESS_START_UTC": "2026-10-16T15:40:52.279289+00:00",
+        "WEBSITE_SLOT_NAME": "Production"
+      }
+    }
+  ],
+  "timeout_seconds": 240
+}

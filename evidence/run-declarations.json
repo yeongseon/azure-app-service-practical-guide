@@ -8,6 +8,10 @@
     "20261016T131733Z-ca62fd8ccb42": {
       "scenario": "slot-swap-config-drift",
       "retained_package": "evidence/runs/20261016T131733Z-ca62fd8ccb42"
+    },
+    "20261016T153835Z-275d216becd8": {
+      "scenario": "slot-swap-config-drift",
+      "retained_package": "evidence/runs/20261016T153835Z-275d216becd8"
     }
   }
 }

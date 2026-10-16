@@ -1,0 +1,24 @@
+{
+  "argv": [
+    "az",
+    "webapp",
+    "deployment",
+    "slot",
+    "swap",
+    "--resource-group",
+    "rg-scenario-c-example",
+    "--name",
+    "app-scenario-c-example",
+    "--slot",
+    "staging",
+    "--target-slot",
+    "production",
+    "--output",
+    "json"
+  ],
+  "started_at": "2026-10-16T15:39:19.499624+00:00",
+  "ended_at": "2026-10-16T15:41:55.396870+00:00",
+  "exit_code": 0,
+  "stdout": "",
+  "stderr": ""
+}

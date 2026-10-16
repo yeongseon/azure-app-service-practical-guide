@@ -1,0 +1,15 @@
+{
+  "run_id": "20261016T153835Z-275d216becd8",
+  "app": "app-scenario-c-example",
+  "url": "https://app-scenario-c-example-staging.azurewebsites.net",
+  "slot_role": "staging",
+  "captured_at": "2026-10-16T15:44:40.710690+00:00",
+  "http_status": 200,
+  "attempt": 1,
+  "body": {
+    "DB_CONNECTION_STRING": "staging-server..database.windows.net",
+    "FEATURE_FLAG": "v1",
+    "PROCESS_START_UTC": "2026-10-16T15:44:27.189513+00:00",
+    "WEBSITE_SLOT_NAME": "Production"
+  }
+}

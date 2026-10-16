@@ -1,0 +1,58 @@
+{
+  "scenario": "slot-swap-config-drift",
+  "collector": "scripts/golden/collect_scenario_c.py",
+  "derivation": {
+    "collector_commit": "d600026239055f131e2a84429cc5bd6914d6fa60",
+    "collector_path": "scripts/golden/collect_scenario_c.py",
+    "collector_digest": "sha256:5b9e6ac4ca7b37b92e9d052b9377c28db1a07d100ed9719c81369d9d09e12daf",
+    "derived_at": "2026-10-16T22:30:13Z",
+    "derived_offline": true,
+    "raw_input": {
+      "run_id": "20261016T153835Z-275d216becd8",
+      "location": "retained sanitized raw bundle",
+      "files": {
+        "baseline/phase.json": "53df743c9ee44ed8e603cddc2a52c11c7e55add787c306902a9cecc8a51c947a",
+        "cleanup.json": "6a01a22e13bd2fa01319333220049fffa3ab10d20c0dd26d37c88cdbc1fee9bd",
+        "console-query-0.json": "9bd3b92cf71e2a9adc09a6554f8ea498d5f0a4e795998048896fcd4df4becb73",
+        "fault/phase.json": "5c2ca33012ae9cfb9cbf0654c14ee6e300fb7d9d21a5d9bed46ce5c9699fc9f2",
+        "prod-after-rollback.json": "cea1032cd8dded4e0f9b87e9abfa9c79331e939442c188c7f87957f478dab923",
+        "prod-after.json": "1880e1920c3f2703fd348f9bbe1f7c637b60ea01b8d91ab69ffe2a6f8b08dea3",
+        "prod-before.json": "16809d8bcbcc3cab96fcbce3c2ff11a1bcc8f17226eb3a47f6bddd51c57fbcc9",
+        "prod-restart-wait.json": "a59c740c687c4a773221eedc8c574b3378a51471417fd20ffc26769cba7fff71",
+        "recovery/phase.json": "cd7672d2e6bce1a6df26c1cad439e5401470649b0546e78e7e3e57bc2f8e21c1",
+        "rollback-restart-wait.json": "5d30137061908ff27b4d59935790c4f6c1092500e02e025d3dbfce1582a8b973",
+        "run-complete.json": "b4d48537f91c6928d008b56e46fc8499365e7011f1b4a8bd9c64f7c459c14a24",
+        "run.json": "9c7b76718c12bea813dd72ceb7f72dbb0d7309475bc34b3c40937e9f722862a8",
+        "staging-after.json": "5027213f2534d0b5dc607c5cbd560393edee8e8b54b9ed69e27abae80f4a43fc",
+        "staging-before.json": "e9ac428b09fa3ee8b2d18e3830615a2e7d8458205000f01ecae1f3a77ad13c3b",
+        "staging-restart-wait.json": "6c04fad943aaf7c54c60e6a45a035fe3a61e995060ffaaa019189c1f1e9d5056",
+        "swap-back.json": "a6e4f008d6f2f715aa699f7fbfbdb557e8524e3cca893c05a49e1a4f6f16554e",
+        "swap.json": "5813c2dd74be3bd9013ce2bb5dc77e720b78330160790975fd61998067665249",
+        "warmup.json": "c4e32031dae9a7ce4a9bf2160d8438868a2957e0a0c772f55c544e89d87d927f"
+      },
+      "phase_capture_integrity": {
+        "baseline": "53df743c9ee44ed8e603cddc2a52c11c7e55add787c306902a9cecc8a51c947a",
+        "fault": "5c2ca33012ae9cfb9cbf0654c14ee6e300fb7d9d21a5d9bed46ce5c9699fc9f2",
+        "recovery": "cd7672d2e6bce1a6df26c1cad439e5401470649b0546e78e7e3e57bc2f8e21c1"
+      }
+    }
+  },
+  "sanitised": true,
+  "sanitisation": "Subscription, workspace, resource-group, app and operator identifiers were replaced. Azure CLI cryptography warning text was removed from stderr; command exit codes and all task-relevant output were retained.",
+  "author_forging_limit": "The repository can bind bytes, identities and hashes, but cannot cryptographically prove that the declared human or agent author produced them.",
+  "source_commit": "f7acab4bca5ea253a36e78fc5c4753b572093693",
+  "runner_source_commit": "f7acab4bca5ea253a36e78fc5c4753b572093693",
+  "environment": {
+    "subscription_kind": "MSIT",
+    "region": "koreacentral",
+    "runtime": "Python 3.11",
+    "sku": "S1 Linux"
+  },
+  "recipe_digest": "sha256:92c22d7dff6c92c80f076b7ef46dc8baae20ea63c9dd00a505204440afa6c68a",
+  "recipe_paths": [
+    "labs/slot-swap-config-drift/app/app.py",
+    "labs/slot-swap-config-drift/app/requirements.txt",
+    "labs/slot-swap-config-drift/main.bicep",
+    "scripts/golden/run_scenario_c.py"
+  ]
+}
