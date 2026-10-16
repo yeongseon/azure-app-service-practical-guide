@@ -2,6 +2,11 @@
   "run_id": "20261016T124329Z-70fb229a0bd1",
   "status": "VERIFIED",
   "resource_group_exists": false,
-  "verified_at": "2026-10-16T13:05:20Z",
-  "proof": "A separate final az group exists check returned false."
+  "verified_at": "2026-10-16T12:50:39Z",
+  "verification": {
+    "command": "az group exists --name <run-owned-resource-group> --output tsv",
+    "exit_code": 0,
+    "output": "false",
+    "verified_by": "AI-agent repeat-run operator"
+  }
 }
