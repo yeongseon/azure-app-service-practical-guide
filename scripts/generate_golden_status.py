@@ -82,6 +82,8 @@ REPETITION_WORKFLOW = ".github/workflows/validate-repetition.yml"
 VISUAL_WORKFLOW = ".github/workflows/validate-visual-content.yml"
 GOLDEN_STATUS_WORKFLOW = ".github/workflows/validate-golden-status.yml"
 APP_INFRA_WORKFLOW = ".github/workflows/app-infra-ci.yml"
+AZURE_E2E_WORKFLOW = ".github/workflows/e2e-azure.yml"
+FRESHNESS_WORKFLOW = ".github/workflows/validation-freshness.yml"
 
 
 @dataclass(frozen=True)
@@ -507,6 +509,45 @@ GATES: tuple[Gate, ...] = (
         bindings=(Binding("Validate Content Source Metadata", CONTENT_SOURCES_WORKFLOW),),
         requires=("py:ruamel.yaml",),
         quiet_detail="Every workflow parsed without duplicate keys.",
+    ),
+    Gate(
+        key="azure-e2e-guards",
+        name="Guarded Azure E2E contracts",
+        enforces="Immutable target SHAs, required evidence, sanitized artifacts, run-owned cleanup, TTL ownership, and offline claim boundaries fail closed.",
+        argv=(
+            "{python}",
+            "-m",
+            "unittest",
+            "tests/golden/test_azure_e2e_guard.py",
+            "tests/golden/test_azure_cleanup.py",
+            "tests/golden/test_legacy_startup_verifier.py",
+        ),
+        severity=BLOCKING,
+        covers=(
+            "scripts/golden/azure_e2e_guard.py",
+            "scripts/golden/azure_cleanup.py",
+            "labs/deployment-succeeded-startup-failed/verify.sh",
+        ),
+        bindings=(
+            Binding("Validate Golden Contracts", CONTENT_SOURCES_WORKFLOW),
+            Binding("Run Golden Scenario A", AZURE_E2E_WORKFLOW),
+            Binding("Verify run-owned cleanup", AZURE_E2E_WORKFLOW),
+            Binding("Sweep expired Golden E2E groups", AZURE_E2E_WORKFLOW),
+        ),
+        quiet_detail="All guarded Azure execution contract tests passed.",
+    ),
+    Gate(
+        key="validation-freshness",
+        name="Validation freshness calculation",
+        enforces="Tutorial freshness is calculated from existing last_tested metadata without modifying capture or test dates.",
+        argv=("{python}", "tests/golden/test_freshness_report.py"),
+        severity=BLOCKING,
+        covers=("scripts/golden/freshness_report.py",),
+        bindings=(
+            Binding("Validate Golden Contracts", CONTENT_SOURCES_WORKFLOW),
+            Binding("Report Validation Freshness", FRESHNESS_WORKFLOW),
+        ),
+        quiet_detail="Freshness boundary and read-only tests passed.",
     ),
     Gate(
         key="retained-golden-packages",

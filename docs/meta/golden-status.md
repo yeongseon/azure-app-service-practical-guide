@@ -29,52 +29,54 @@ Every quality gate in this repository, its most recently recorded result, and th
 
 | Metric | Count |
 |---|---:|
-| Registered gates | 37 |
-| ✅ Pass | 30 |
+| Registered gates | 39 |
+| ✅ Pass | 31 |
 | ❌ Fail | 0 |
 | ⚠️ Warn | 0 |
-| ➖ Skipped | 7 |
+| ➖ Skipped | 8 |
 
 !!! warning "Blocking gates pass, with gaps"
-    No blocking gate failed in this snapshot, but 7 gate(s) reported findings, are unwired from CI, or could not run on the machine that generated this page. See Known Gaps.
+    No blocking gate failed in this snapshot, but 8 gate(s) reported findings, are unwired from CI, or could not run on the machine that generated this page. See Known Gaps.
 
 <!-- diagram-id: golden-status-gate-outcomes-pie -->
 ```mermaid
 pie title Quality Gate Outcomes
-    "Pass" : 30
-    "Skipped" : 7
+    "Pass" : 31
+    "Skipped" : 8
 ```
 
 ## Gate Results
 
-These are locally executed results, not GitHub Actions statuses. **Skipped** means the machine that generated this page lacked the toolchain the gate needs. **Warn** means the gate reported findings its CI job would not fail on, either because the job is advisory or because the dashboard runs a wider scope than CI does. 22 of 37 gates are re-run and compared by the `Validate Golden Status` job, so a flip to **Fail** cannot sit here unnoticed.
+These are locally executed results, not GitHub Actions statuses. **Skipped** means the machine that generated this page lacked the toolchain the gate needs. **Warn** means the gate reported findings its CI job would not fail on, either because the job is advisory or because the dashboard runs a wider scope than CI does. 22 of 39 gates are re-run and compared by the `Validate Golden Status` job, so a flip to **Fail** cannot sit here unnoticed.
 
 <!-- golden-status:results:start -->
 | Gate | Severity | Status | Detail | Time |
 | --- | --- | --- | --- | --- |
 | Validator doctests | Blocking | ✅ Pass | 11 modules checked, every doctest passed. | < 10s |
 | Capture asset geometry | Blocking | ✅ Pass | Capture assets conform to the capture profile. | < 10s |
-| Mermaid format | Blocking | ✅ Pass | Files checked: 245 · Files with errors: 0 | < 10s |
+| Mermaid format | Blocking | ✅ Pass | Files checked: 246 · Files with errors: 0 | < 10s |
 | Mermaid syntax | Blocking | ✅ Pass | Diagrams checked: 395 · Errors found: 0 | < 10s |
 | Content sources | Blocking | ✅ Pass | Files with mermaid: 241 · Validation errors: 0 | < 10s |
 | Content sources schema | Blocking | ✅ Pass | Files with content_sources schema drift: 0 · Parse errors: 0 | < 10s |
 | Diagram ID parity | Blocking | ✅ Pass | mermaid blocks: 395 · diagram-id comments: 395 | < 10s |
 | CLI explanation tables | Blocking | ✅ Pass | All Azure CLI code fences and Markdown tables are correctly terminated. | < 10s |
 | Documented repository paths | Blocking | ✅ Pass | Documented repository path errors: 0 | < 10s |
-| Document quality | Blocking | ✅ Pass | Documentation quality gate passed for 245 file(s). | < 10s |
+| Document quality | Blocking | ✅ Pass | Documentation quality gate passed for 246 file(s). | < 10s |
 | Frontmatter YAML style | Blocking | ✅ Pass | Files with style drift: 0 · Parse errors: 0 | < 10s |
 | Microsoft Learn locale | Blocking | ✅ Pass | Files with locale drift: 0 | < 10s |
 | Microsoft Learn URL reachability | Advisory | ➖ Skipped | Network gate; re-run with --include-network. | < 10s |
 | Lab artifact PII | Blocking | ✅ Pass | [scan_lab_pii] scanned=618 skipped_binary=0 skipped_decode=0 findings=0 | < 10s |
 | Documentation PII | Blocking | ✅ Pass | No blocking PII patterns detected! | < 10s |
-| Documentation repetition | Blocking | ✅ Pass | Scanned 245 file(s): 0 error(s), 6 warning(s). | < 10s |
+| Documentation repetition | Blocking | ✅ Pass | Scanned 246 file(s): 0 error(s), 6 warning(s). | < 10s |
 | Quick-triage causal claims | Blocking | ✅ Pass | Quick-triage causal-claim contract passed (7 files). · Scope is a phrase denylist only; technical review remains required. | < 10s |
 | Visual content coverage | Advisory | ✅ Pass | full repo: 83/83 in-scope pages carry a visual aid (100.0%). Advisory gate — exit 0 regardless (see issue #388). | < 10s |
 | Windows troubleshooting navigation | Blocking | ✅ Pass | Windows troubleshooting navigation: 2 entry points link all 5 required playbooks. | < 10s |
-| Frontmatter schema | Blocking | ✅ Pass | Checked 245 files · Found 0 errors, 28 warnings: | < 10s |
-| MkDocs strict build | Blocking | ✅ Pass | Site built with no strict-mode warnings. | 10-120s |
+| Frontmatter schema | Blocking | ✅ Pass | Checked 246 files · Found 0 errors, 28 warnings: | < 10s |
+| MkDocs strict build | Blocking | ➖ Skipped | Python module `mkdocs` is not importable. | < 10s |
 | App and Infra impact classifier tests | Blocking | ✅ Pass | OK | < 10s |
 | Workflow YAML duplicate keys | Blocking | ✅ Pass | OK | < 10s |
+| Guarded Azure E2E contracts | Blocking | ✅ Pass | OK | < 10s |
+| Validation freshness calculation | Blocking | ✅ Pass | OK | < 10s |
 | Retained Golden package immutability | Blocking | ✅ Pass | Retained Golden package immutability: PASS | < 10s |
 | Golden evidence contracts | Blocking | ✅ Pass | OK | 10-120s |
 | Absorbed evidence predicates | Blocking | ✅ Pass | undeclared absorbed predicates: 0 (declared: 0, stale: 0) | < 10s |
@@ -122,6 +124,8 @@ Generated from the `GATES` registry in `scripts/generate_golden_status.py`. CI f
 | MkDocs strict build | The site builds with no broken internal links and no navigation warnings. | Blocking | `mkdocs build --strict` | `Build Documentation` — `validate-content-sources.yml` |
 | App and Infra impact classifier tests | PR, push, rename, deletion, executable Markdown, app, lab, shared-helper, workflow, and full-regression changes select the intended jobs. | Blocking | `python3 -m unittest scripts/test_impact_classifier.py scripts/test_impact_ci.py` | `Classify App and Infra Changes` — `app-infra-ci.yml` |
 | Workflow YAML duplicate keys | Every GitHub Actions workflow parses with duplicate mapping keys rejected. | Blocking | `python3 tests/golden/test_workflow_yaml.py` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
+| Guarded Azure E2E contracts | Immutable target SHAs, required evidence, sanitized artifacts, run-owned cleanup, TTL ownership, and offline claim boundaries fail closed. | Blocking | `python3 -m unittest tests/golden/test_azure_e2e_guard.py tests/golden/test_azure_cleanup.py tests/golden/test_legacy_startup_verifier.py` | `Validate Golden Contracts` — `validate-content-sources.yml`<br>`Run Golden Scenario A` — `e2e-azure.yml`<br>`Verify run-owned cleanup` — `e2e-azure.yml`<br>`Sweep expired Golden E2E groups` — `e2e-azure.yml` |
+| Validation freshness calculation | Tutorial freshness is calculated from existing last_tested metadata without modifying capture or test dates. | Blocking | `python3 tests/golden/test_freshness_report.py` | `Validate Golden Contracts` — `validate-content-sources.yml`<br>`Report Validation Freshness` — `validation-freshness.yml` |
 | Retained Golden package immutability | Existing retained run and lab Golden packages cannot be edited, renamed, or deleted relative to the base ref; new run directories remain allowed. | Blocking | `python3 scripts/golden/check_retained_packages.py` | `Validate Golden Contracts` — `validate-content-sources.yml` |
 | Golden evidence contracts | Golden schemas, evaluator negative cases, inventory parity, vocabulary, and externally attested reproduction boundaries pass on Python 3.11. | Blocking | `python3 -m unittest discover -s tests/golden -p test_*.py` | `Validate Golden Contracts` — `validate-content-sources.yml`<br>`Lab Evidence Verifiers` — `app-infra-ci.yml` |
 | Absorbed evidence predicates | Weak fallback branches cannot bypass required strong evidence predicates in lab verifiers. | Blocking | `python3 scripts/detect_absorbed_predicates.py labs --allowlist scripts/absorbed-predicate-allowlist.txt --repo-root .` | `Lab Evidence Verifiers` — `app-infra-ci.yml` |
@@ -166,6 +170,7 @@ Generated from the `GATES` registry in `scripts/generate_golden_status.py`. CI f
 ## Known Gaps
 
 - **Microsoft Learn URL reachability** did not run here: Network gate; re-run with --include-network.
+- **MkDocs strict build** did not run here: Python module `mkdocs` is not importable.
 - **ShellCheck** did not run here: Executable `shellcheck` is not on PATH.
 - **Node.js app tests** did not run here: `apps/nodejs/node_modules` does not exist.
 - **Node.js container smoke** did not run here: Network gate; re-run with --include-network.
