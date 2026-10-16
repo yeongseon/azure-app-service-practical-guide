@@ -89,7 +89,7 @@ class DeletionPolicyTests(unittest.TestCase):
 
 
 class EnforcementInvariantTests(unittest.TestCase):
-    """A rule AGENTS.md says a validator enforces must actually be invoked.
+    """A validator named as an enforcer must actually be invoked by CI.
 
     This class replaced an earlier pair of tests that pinned the transient
     finding itself: that validate_frontmatter.py was orphaned and therefore
@@ -100,26 +100,26 @@ class EnforcementInvariantTests(unittest.TestCase):
     """
 
     def _claimed_enforcers(self):
-        """Validators AGENTS.md names as rejecting something."""
-        agents = (ROOT / "AGENTS.md").read_text()
+        """Validators the retained mechanical contract names as enforcers."""
+        contract = (ROOT / "DOCUMENTATION_CONTRACT.md").read_text()
         found = set()
-        for match in re.finditer(r"`(tools/[\w./-]+\.py|scripts/[\w./-]+\.py)`", agents):
+        for match in re.finditer(r"`(tools/[\w./-]+\.py|scripts/[\w./-]+\.py)`", contract):
             path = match.group(1)
-            window = agents[max(0, match.start() - 220):match.end() + 220].lower()
+            window = contract[max(0, match.start() - 220):match.end() + 220].lower()
             if any(w in window for w in ("will fail", "rejects", "fails with", "blocking")):
                 found.add(path)
         return found
 
-    def test_agents_md_still_names_the_frontmatter_validator_as_an_enforcer(self):
+    def test_contract_still_names_the_frontmatter_validator_as_an_enforcer(self):
         self.assertIn("tools/validate_frontmatter.py", self._claimed_enforcers())
 
-    def test_every_validator_agents_md_calls_an_enforcer_is_invoked_by_ci(self):
+    def test_every_validator_contract_calls_an_enforcer_is_invoked_by_ci(self):
         for path in sorted(self._claimed_enforcers()):
             if not (ROOT / path).is_file():
                 continue
             self.assertTrue(
                 invoked_by_ci(pathlib.Path(path).name),
-                msg=f"AGENTS.md says {path} rejects something, but no workflow runs it, "
+                msg=f"DOCUMENTATION_CONTRACT.md says {path} rejects something, but no workflow runs it, "
                     "so the rule is documented and unenforced")
 
     def test_a_ci_wired_validator_is_correctly_detected(self):

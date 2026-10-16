@@ -86,7 +86,7 @@ def find_unterminated_markdown_tables(lines: list[str]) -> list[int]:
     python-markdown's ``tables`` extension absorbs the first non-blank line after
     a table as a phantom row. The defect is a property of the extension, not of
     the header text, so this recognizes any pipe-led line followed by a delimiter
-    row -- the 18 tables in ``AGENTS.md`` include only 2 explanation tables.
+    row -- the retained documentation contract contains many non-CLI tables.
 
     >>> ok = ["| Severity | Meaning |", "| --- | --- |", "| Blocking | fails |", "", "next"]
     >>> find_unterminated_markdown_tables(ok)
@@ -102,8 +102,8 @@ def find_unterminated_markdown_tables(lines: list[str]) -> list[int]:
     >>> find_unterminated_markdown_tables(["| A | B |", "| :--- | ---: |", "| 1 | 2 |"])
     []
 
-    Fenced regions are skipped, so the deliberately-broken table that AGENTS.md
-    shows as an anti-pattern does not flag the file documenting it. The closing
+    Fenced regions are skipped, so the deliberately-broken table in the
+    documentation contract does not flag the file documenting it. The closing
     fence must be at least as long as the opener, so a four-backtick block that
     contains a three-backtick example stays a single region:
 
@@ -177,8 +177,8 @@ def validate_contract_file(path: Path) -> list[Finding]:
     """Check table termination only.
 
     The CLI explanation-table requirement deliberately does not apply here:
-    ``AGENTS.md`` documents CLI style using ``az`` examples that illustrate the
-    rule rather than instruct a reader to run them.
+    Root contract files document CLI style using ``az`` examples that illustrate
+    the rule rather than instruct a reader to run them.
     """
     lines = path.read_text(encoding="utf-8").splitlines()
     return [
@@ -203,8 +203,8 @@ def bash_fence_blocks(lines: list[str]) -> list[tuple[int, int, list[str]]]:
     inside another block cannot open a phantom region. Only ``bash`` fences
     accumulate a body, because other languages (mermaid, kusto, console
     transcripts) may legitimately contain ``az ...`` text and need no
-    explanation table per AGENTS.md ("Shell: Use ``bash`` for all CLI
-    examples").
+    explanation table per the documentation contract ("Shell: Use ``bash`` for
+    all CLI examples").
 
     >>> [(o, b) for o, _c, b in bash_fence_blocks(["```bash", "az x", "```"])]
     [(1, ['az x'])]
