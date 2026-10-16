@@ -7,6 +7,7 @@
   "execution_status": "COMPLETE",
   "evidence_trust": "trusted-current",
   "source_commit": "af75d0024472edce67401042fdaa97d00dfbe6ac",
+  "runner_source_commit": "af75d0024472edce67401042fdaa97d00dfbe6ac",
   "environment": {
     "subscription_kind": "MSIT",
     "region": "koreacentral",
