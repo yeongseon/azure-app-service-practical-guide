@@ -109,11 +109,8 @@
     },
     "collector_digest": {
       "type": "string",
-      "pattern": "^sha256:[0-9a-f]{64}$"
-    },
-    "collector_path": {
-      "type": "string",
-      "minLength": 1
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "description": "Legacy compatibility field. New offline derivations bind their collector in provenance.json."
     },
     "recipe_paths": {
       "type": "array",
@@ -158,7 +155,7 @@
       "then": {
         "anyOf": [
           {
-            "required": ["source_commit", "environment", "recipe_digest", "collector_digest"]
+            "required": ["source_commit", "environment", "recipe_digest"]
           },
           {
             "description": "Explicit pre-contract retained-run allowance. Historical packages with a sanitized null resource and unverified custody remain schema-valid without rewriting their immutable manifests.",

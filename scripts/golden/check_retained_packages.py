@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import datetime
 import hashlib
 import json
 import os
@@ -32,17 +33,14 @@ def _git_bytes(repo: pathlib.Path, commit: str, path: str) -> bytes:
 
 def _provenance_digest_problems(repo: pathlib.Path, manifest: dict) -> list[str]:
     source_commit = manifest.get("source_commit")
-    collector_path = manifest.get("collector_path")
     recipe_paths = manifest.get("recipe_paths")
     definition = json.loads((repo / SCENARIO_A_RECIPE).read_text())
-    if (collector_path != definition.get("collector_path")
-            or recipe_paths != definition.get("recipe_paths")):
+    if recipe_paths != definition.get("recipe_paths"):
         return ["provenance inputs do not match the versioned recipe definition"]
-    if (not isinstance(source_commit, str) or not isinstance(collector_path, str)
+    if (not isinstance(source_commit, str)
             or not isinstance(recipe_paths, list) or not recipe_paths):
         return ["new COMPLETE run lacks reproducible provenance inputs"]
     try:
-        collector = hashlib.sha256(_git_bytes(repo, source_commit, collector_path)).hexdigest()
         common = pathlib.PurePosixPath(os.path.commonpath(recipe_paths)).as_posix()
         prefix = common.rstrip("/") + "/"
         fingerprints = {
@@ -55,10 +53,49 @@ def _provenance_digest_problems(repo: pathlib.Path, manifest: dict) -> list[str]
     canonical = json.dumps(fingerprints, sort_keys=True, separators=(",", ":")).encode()
     recipe = hashlib.sha256(canonical).hexdigest()
     problems = []
-    if manifest.get("collector_digest") != f"sha256:{collector}":
-        problems.append("collector_digest does not match source_commit bytes")
     if manifest.get("recipe_digest") != f"sha256:{recipe}":
         problems.append("recipe_digest does not match canonical source fingerprints")
+    return problems
+
+
+def _derivation_problems(repo: pathlib.Path, run_dir: pathlib.Path, manifest: dict) -> list[str]:
+    provenance_path = run_dir / "provenance.json"
+    evidence_path = run_dir / "evidence.json"
+    if not provenance_path.is_file() or not evidence_path.is_file():
+        return ["new COMPLETE run lacks derivation provenance"]
+    provenance = json.loads(provenance_path.read_text())
+    evidence = json.loads(evidence_path.read_text())
+    derivation = provenance.get("derivation")
+    if not isinstance(derivation, dict) or derivation.get("derived_offline") is not True:
+        return ["new COMPLETE run lacks offline derivation metadata"]
+    definition = json.loads((repo / SCENARIO_A_RECIPE).read_text())
+    if (derivation.get("collector_commit") != definition.get("derivation_collector_commit")
+            or derivation.get("collector_path") != definition.get("collector_path")):
+        return ["derivation collector does not match the versioned recipe definition"]
+    try:
+        actual = hashlib.sha256(_git_bytes(
+            repo, derivation["collector_commit"], derivation["collector_path"])).hexdigest()
+    except (KeyError, ValueError) as exc:
+        return [f"invalid derivation collector: {exc}"]
+    problems = []
+    if derivation.get("collector_digest") != f"sha256:{actual}":
+        problems.append("derivation collector digest mismatch")
+    try:
+        derived_at = datetime.datetime.fromisoformat(
+            derivation["derived_at"].replace("Z", "+00:00"))
+        captured_at = datetime.datetime.fromisoformat(
+            manifest["captured_at"].replace("Z", "+00:00"))
+    except (KeyError, ValueError, AttributeError) as exc:
+        return [f"invalid derivation timestamp: {exc}"]
+    if derived_at < captured_at:
+        problems.append("derivation predates capture")
+    if derived_at > datetime.datetime.now(datetime.timezone.utc):
+        problems.append("derivation is in the future")
+    required_shape = {"fault_status", "fault_console_rows", "phase_windows",
+                      "baseline_probes", "fault_probes", "recovery_probes"}
+    observations = evidence.get("observations") or {}
+    if not required_shape <= set(observations):
+        problems.append("derivation evidence shape is incomplete")
     return problems
 
 
@@ -198,12 +235,16 @@ def violations(repo: pathlib.Path, base_ref: str) -> list[str]:
                         or not isinstance(environment, dict)
                         or any(not environment.get(field) for field in required_env)
                         or not manifest.get("recipe_digest")
-                        or not manifest.get("collector_digest")
                         or not manifest.get("hypothesis_claim_level")):
                     problems.append(f"new COMPLETE run lacks full provenance: {package_id}")
                 problems.extend(
                     f"{package_id}: {problem}"
                     for problem in _provenance_digest_problems(repo, manifest)
+                )
+                problems.extend(
+                    f"{package_id}: {problem}"
+                    for problem in _derivation_problems(
+                        repo, (repo / relative).parent, manifest)
                 )
 
     base_files = set(_git(repo, "ls-tree", "-r", "--name-only", base_ref).splitlines())
