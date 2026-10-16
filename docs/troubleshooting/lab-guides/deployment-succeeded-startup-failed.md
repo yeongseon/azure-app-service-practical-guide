@@ -413,8 +413,10 @@ Run `20261016T075147Z-6d019de6e2f2` exercised this path in Korea Central on B1
 Linux with Python 3.11. Its capture window was
 `2026-10-16T07:51:47.555754+00:00` through
 `2026-10-16T08:01:33.709704+00:00`. The baseline returned 200, the fault reached
-503, Log Analytics returned four import-error rows across two startup attempts,
-and recovery returned 200. The cleanup record reached `VERIFIED` at
+503, Log Analytics returned two exact fault-window
+`ModuleNotFoundError: No module named 'wrong_module'` rows, and recovery returned
+200. The retained evidence includes every timestamped probe and the three phase
+windows. The cleanup record reached `VERIFIED` at
 `2026-10-16T08:02:54.778086+00:00`, after which the separate group-existence
 check returned `false`. The replayable sanitized package is under
 `evidence/runs/20261016T075147Z-6d019de6e2f2/`.
