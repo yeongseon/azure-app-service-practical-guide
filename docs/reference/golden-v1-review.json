@@ -3,7 +3,7 @@
   "epic": 173,
   "document_updated_at": "2026-10-16",
   "verdict": "NOT_COMPLETE",
-  "verdict_basis": "One Definition-of-Done item is partial and one is unmet. Scenario B has not completed a live run. The three committed replay records were produced by AI-agent sessions, so they demonstrate repeatability and documentation refinement but do not satisfy independent human reproduction.",
+  "verdict_basis": "One Definition-of-Done item is partial and one is unmet. Scenario B has completed live runs, but the first used an invalid self-targeting design and the replacement must be judged only from its retained evidence. The committed replay records were produced by AI-agent sessions, so they demonstrate repeatability and documentation refinement but do not satisfy independent human reproduction.",
   "counts": {
     "MET": 13,
     "PARTIAL": 1,
@@ -71,8 +71,8 @@
       "id": 9,
       "requirement": "Golden scenarios A (deterministic), B (comparative), C (configuration/state) completed",
       "status": "PARTIAL",
-      "evidence": "All three scenarios have live retained runs. Scenario A has historical and current SUPPORTED runs. Scenario B run 20261016T124329Z is CONTRADICTED: baseline and recovery were unhealthy, destination health was not established, and direct SNAT pressure was unavailable. Scenario C run 20260927T114621Z is INCONCLUSIVE because two observations were unavailable.",
-      "gap": "Scenario B completed honestly but did not reproduce SNAT exhaustion; a production-tier follow-up would be needed to obtain direct port-pressure telemetry. Scenario C still lacks slot-stickiness and deployment-error observations. Independent human reproduction remains separate and unmet.",
+      "evidence": "All three scenarios have live retained runs. Scenario A has historical and current SUPPORTED runs. Scenario B's first retained run used the tested app as its own destination, so failed baseline and recovery controls make that experiment INCONCLUSIVE under the role-aware model. Scenario C run 20260927T114621Z is INCONCLUSIVE because two observations were unavailable.",
+      "gap": "Scenario B requires the replacement run against the independently hosted lab endpoint; unavailable direct SNAT pressure must remain INCONCLUSIVE. Scenario C still lacks slot-stickiness and deployment-error observations. Independent human reproduction remains separate and unmet.",
       "verify": "python3 tests/golden/test_contract_collector_alignment.py"
     },
     {
@@ -122,7 +122,7 @@
   "blocking_for_v1": [
     "Item 10: no genuinely different human operator has independently reproduced a scenario."
   ],
-  "notes": "Item 10 needs a genuinely different human operator; AI-agent repeat runs cannot satisfy it. Scenario B completed with a CONTRADICTED result and unavailable direct port-pressure telemetry; this is an honest completed experiment, not proof of SNAT exhaustion. Scenario C's run left two observations absent and returned INCONCLUSIVE.",
+  "notes": "Item 10 needs a genuinely different human operator; AI-agent repeat runs cannot satisfy it. Scenario B's first live run is retained as an invalid-design experiment and must not be interpreted as proof or refutation of SNAT exhaustion. Scenario C's run left two observations absent and returned INCONCLUSIVE.",
   "review_history": [
     {
       "reviewer": "oracle",

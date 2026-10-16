@@ -107,7 +107,10 @@ class JoinTests(unittest.TestCase):
             seen_urls.append(url)
             return {"at": "t", "status": 200}
 
-        with mock.patch.object(runner, "run_id", return_value="run-one"), \
+        with mock.patch.object(runner.socket, "getaddrinfo", side_effect=[
+                    [(None, None, None, None, ("192.0.2.1", 443))],
+                    [(None, None, None, None, ("192.0.2.2", 443))]]), \
+                mock.patch.object(runner, "run_id", return_value="run-one"), \
                 mock.patch.object(runner, "probe_phase", return_value=probes), \
                 mock.patch.object(runner, "probe", side_effect=fake_probe), \
                 mock.patch.object(runner, "apply_pressure",
@@ -127,7 +130,10 @@ class JoinTests(unittest.TestCase):
     def test_execute_records_unavailable_pressure_explicitly(self):
         output = pathlib.Path(tempfile.mkdtemp())
         probes = [{"at": "t", "status": 200}] * runner.PROBES_PER_PHASE
-        with mock.patch.object(runner, "run_id", return_value="run-two"), \
+        with mock.patch.object(runner.socket, "getaddrinfo", side_effect=[
+                    [(None, None, None, None, ("192.0.2.1", 443))],
+                    [(None, None, None, None, ("192.0.2.2", 443))]]), \
+                mock.patch.object(runner, "run_id", return_value="run-two"), \
                 mock.patch.object(runner, "probe_phase", return_value=probes), \
                 mock.patch.object(runner, "probe", return_value={"at": "t", "status": 200}), \
                 mock.patch.object(runner, "apply_pressure", return_value={}), \
@@ -140,17 +146,38 @@ class JoinTests(unittest.TestCase):
 
     def test_execute_rejects_the_tested_apps_own_hostname_as_destination(self):
         output = pathlib.Path(tempfile.mkdtemp())
-        with self.assertRaises(runner.RunConfigurationError):
-            runner.execute(
-                "app-two", "https://APP-TWO.azurewebsites.net/health",
-                output, "a" * 40)
+        with mock.patch.object(runner.socket, "getaddrinfo", return_value=[
+                    (None, None, None, None, ("192.0.2.1", 443))]):
+            with self.assertRaises(runner.RunConfigurationError):
+                runner.execute(
+                    "app-two", "https://APP-TWO.azurewebsites.net/health",
+                    output, "a" * 40)
+        self.assertEqual(list(output.iterdir()), [])
+
+    def test_execute_rejects_a_destination_alias_resolving_to_the_tested_app(self):
+        output = pathlib.Path(tempfile.mkdtemp())
+
+        def addresses(host, port):
+            del port
+            address = "192.0.2.10" if host in {
+                "alias.example", "app-two.azurewebsites.net"} else "192.0.2.11"
+            return [(None, None, None, None, (address, 443))]
+
+        with mock.patch.object(runner.socket, "getaddrinfo", side_effect=addresses):
+            with self.assertRaises(runner.RunConfigurationError):
+                runner.execute(
+                    "app-two", "https://alias.example/health",
+                    output, "a" * 40)
         self.assertEqual(list(output.iterdir()), [])
 
     def test_execute_preflights_the_independent_destination(self):
         output = pathlib.Path(tempfile.mkdtemp())
         probes = [{"at": "t", "status": 200}] * runner.PROBES_PER_PHASE
         destination = "https://destination.example/health"
-        with mock.patch.object(runner, "run_id", return_value="run-three"), \
+        with mock.patch.object(runner.socket, "getaddrinfo", side_effect=[
+                    [(None, None, None, None, ("192.0.2.1", 443))],
+                    [(None, None, None, None, ("192.0.2.2", 443))]]), \
+                mock.patch.object(runner, "run_id", return_value="run-three"), \
                 mock.patch.object(runner, "probe_phase", return_value=probes), \
                 mock.patch.object(runner, "probe", return_value={"at": "t", "status": 503}), \
                 mock.patch.object(runner, "apply_pressure", return_value={}), \

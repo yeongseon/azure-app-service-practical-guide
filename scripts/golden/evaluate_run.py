@@ -792,7 +792,12 @@ def evaluate(run_dir, *, skip_source_commit_resolution: bool = False,
     if execution_status != "COMPLETE":
         hypothesis_status = "NOT_TESTED"
     else:
-        hypothesis_status = combine_by_role(assertions, per_assertion)
+        role_aware = (
+            provenance.get("scenario") == "snat-exhaustion"
+            or any(item.get("field") == "snat_port_pressure" for item in assertions)
+        )
+        hypothesis_status = (combine_by_role(assertions, per_assertion)
+                             if role_aware else combine(per_assertion.values()))
         causal_claim = bool(manifest.get("hypothesis"))
         if hypothesis_status == "SUPPORTED" and causal_claim and (not strong or evidence_identity != "BOUND"):
             hypothesis_status = "INCONCLUSIVE"

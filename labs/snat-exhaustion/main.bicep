@@ -52,8 +52,7 @@ resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
 }
 
 // A public endpoint the lab owns, so the load never lands on a third-party service
-// and the target's own throttling cannot be mistaken for SNAT pressure. Anonymous
-// calls are answered quickly with a 4xx, which the app counts as a completed call.
+// and the target's own throttling cannot be mistaken for SNAT pressure.
 resource targetStorage 'Microsoft.Storage/storageAccounts@2023-05-01' = {
   name: targetStorageName
   location: location
@@ -74,6 +73,7 @@ resource targetBlobService 'Microsoft.Storage/storageAccounts/blobServices@2023-
     staticWebsite: {
       enabled: true
       indexDocument: 'health.txt'
+      error404Document: 'health.txt'
     }
   }
 }

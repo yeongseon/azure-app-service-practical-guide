@@ -846,9 +846,9 @@ Setup differences from the April run: the outbound target is a storage account d
 
 The rerun meets the [2.4](#24-disproof-criteria) disproof criterion "No worker timeout/SIGKILL events during failure period" for the SNAT chain while still showing that pooling removes the inbound degradation.
 
-### 4.15 Golden Scenario B execution (2026-10-16)
+### 4.15 Discarded Golden Scenario B design (2026-10-16)
 
-Run `20261016T124329Z-70fb229a0bd1` executed the merged Scenario B runner on a run-owned B1 Linux deployment in Korea Central. The actual capture window was `2026-10-16T12:43:29.917770+00:00` through `2026-10-16T12:49:17.397658+00:00`.
+Run `20261016T124329Z-70fb229a0bd1` executed on a run-owned B1 Linux deployment in Korea Central. Its workload called the tested app's own public `/health` endpoint while concurrent outer requests occupied more Gunicorn workers than were available. That self-targeting design could deadlock the baseline before any SNAT pressure was established, so the run is retained only as a discarded invalid experiment. Its actual capture window was `2026-10-16T12:43:29.917770+00:00` through `2026-10-16T12:49:17.397658+00:00`.
 
 | Assertion | Evaluated result |
 |---|---|
@@ -860,7 +860,7 @@ Run `20261016T124329Z-70fb229a0bd1` executed the merged Scenario B runner on a r
 | HTTP errors are absent under load | `SUPPORTED` |
 | Recovery succeeds | `CONTRADICTED` |
 
-The evaluator reports the hypothesis as `CONTRADICTED`, not reproduced. Baseline and recovery were already unhealthy, the direct destination probe did not return HTTP 200, and the Basic-tier run supplied no direct SNAT port-pressure evidence. The observed worker transport symptoms therefore do not establish SNAT exhaustion. The sanitized immutable package is retained at `evidence/runs/20261016T124329Z-70fb229a0bd1/`; private raw captures remain outside the repository.
+Under the role-aware model, failed baseline and recovery controls make this run `INCONCLUSIVE`; they do not causally contradict SNAT exhaustion. The Basic-tier run also supplied no direct SNAT port-pressure evidence. The observed worker transport symptoms therefore establish neither exhaustion nor its absence. The sanitized immutable package remains at `evidence/runs/20261016T124329Z-70fb229a0bd1/`; private raw captures remain outside the repository and observations are not relabelled.
 
 [Observed] Cleanup was verified separately: `az group exists` returned `false` for the run-owned resource group. This AI-agent execution is a repeat run and does not satisfy the independent-human reproduction gate. Golden v1 remains `NOT_COMPLETE`.
 

@@ -32,6 +32,7 @@ import datetime
 import json
 import pathlib
 import secrets
+import socket
 import sys
 import time
 import urllib.error
@@ -145,7 +146,17 @@ def execute(app: str, destination: str, output: pathlib.Path,
             source_commit: str | None = None) -> pathlib.Path:
     destination_url = urllib.parse.urlsplit(destination)
     tested_host = f"{app}.azurewebsites.net".casefold()
-    if destination_url.hostname is None or destination_url.hostname.casefold() == tested_host:
+    hostname = destination_url.hostname
+    if hostname is None:
+        raise RunConfigurationError(
+            "destination must be an independently hosted lab-controlled endpoint")
+    destination_addresses = {
+        item[4][0] for item in socket.getaddrinfo(hostname, destination_url.port or 443)
+    }
+    tested_addresses = {
+        item[4][0] for item in socket.getaddrinfo(tested_host, 443)
+    }
+    if hostname.casefold() == tested_host or destination_addresses & tested_addresses:
         raise RunConfigurationError(
             "destination must be an independently hosted lab-controlled endpoint")
     identifier = run_id()
