@@ -89,7 +89,7 @@ class RetainedPackageImmutabilityTests(unittest.TestCase):
     def test_whole_new_run_directory_is_allowed_when_manifested(self):
         new_dir = self.repo / "evidence/runs/run-two"
         new_dir.mkdir()
-        (new_dir / "manifest.json").write_text("{}")
+        (new_dir / "manifest.json").write_text('{"run_id":"run-two"}')
         manifest_path = self.repo / "evidence/retained-digests.json"
         document = json.loads(manifest_path.read_text())
         path = "evidence/runs/run-two/manifest.json"
@@ -208,6 +208,24 @@ class RetainedPackageImmutabilityTests(unittest.TestCase):
         document["packages"]["run-two"] = {
             "historical": False,
             "files": {relative: hashlib.sha256((self.repo / relative).read_bytes()).hexdigest()},
+        }
+        manifest_path.write_text(json.dumps(document))
+        self.assertNotEqual(self._check(self.base).returncode, 0)
+
+    def test_new_directory_cannot_reuse_frozen_historical_identity(self):
+        frozen = "20260927T104304Z-aba0d3a9daa7"
+        new_dir = self.repo / "evidence/runs/forged-directory"
+        new_dir.mkdir()
+        for name in ("manifest.json", "evidence.json", "result.json"):
+            (new_dir / name).write_text(json.dumps({"run_id": frozen}))
+        manifest_path = self.repo / "evidence/retained-digests.json"
+        document = json.loads(manifest_path.read_text())
+        document["packages"][frozen] = {
+            "historical": True,
+            "files": {
+                str(path.relative_to(self.repo)): hashlib.sha256(path.read_bytes()).hexdigest()
+                for path in new_dir.glob("*.json")
+            },
         }
         manifest_path.write_text(json.dumps(document))
         self.assertNotEqual(self._check(self.base).returncode, 0)

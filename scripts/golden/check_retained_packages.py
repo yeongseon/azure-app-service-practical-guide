@@ -15,6 +15,7 @@ ROOT = pathlib.Path(__file__).resolve().parents[2]
 DIGESTS = pathlib.Path("evidence/retained-digests.json")
 DECLARATIONS = pathlib.Path("evidence/run-declarations.json")
 DECLARATION_FIELDS = {"scenario", "retained_package"}
+SCENARIO_A_RECIPE = pathlib.Path("scripts/golden/scenario-a-recipe.json")
 FROZEN_HISTORICAL_RUN_IDS = {
     "20260927T104304Z-aba0d3a9daa7",
     "20260927T114621Z-04c6c02c9ae1",
@@ -33,6 +34,10 @@ def _provenance_digest_problems(repo: pathlib.Path, manifest: dict) -> list[str]
     source_commit = manifest.get("source_commit")
     collector_path = manifest.get("collector_path")
     recipe_paths = manifest.get("recipe_paths")
+    definition = json.loads((repo / SCENARIO_A_RECIPE).read_text())
+    if (collector_path != definition.get("collector_path")
+            or recipe_paths != definition.get("recipe_paths")):
+        return ["provenance inputs do not match the versioned recipe definition"]
     if (not isinstance(source_commit, str) or not isinstance(collector_path, str)
             or not isinstance(recipe_paths, list) or not recipe_paths):
         return ["new COMPLETE run lacks reproducible provenance inputs"]
@@ -147,6 +152,11 @@ def violations(repo: pathlib.Path, base_ref: str) -> list[str]:
             actual = hashlib.sha256(path.read_bytes()).hexdigest()
             if actual != expected:
                 problems.append(f"retained digest mismatch: {relative}")
+            root = _package_root(relative)
+            if root and root.startswith("evidence/runs/"):
+                directory_id = pathlib.PurePosixPath(root).name
+                if package_id != directory_id:
+                    problems.append(f"retained package key does not match directory identity: {relative}")
 
     tracked = _git(repo, "ls-files", "evidence/runs", "labs/*/golden").splitlines()
     for relative in tracked:
@@ -173,6 +183,13 @@ def violations(repo: pathlib.Path, base_ref: str) -> list[str]:
                      and path.endswith("/manifest.json")]
         for relative in manifests:
             manifest = json.loads((repo / relative).read_text())
+            directory_id = pathlib.PurePosixPath(relative).parent.name
+            if manifest.get("run_id") != directory_id or package_id != directory_id:
+                problems.append(f"retained run identity mismatch: {relative}")
+            for name in ("evidence.json", "result.json"):
+                sibling = repo / pathlib.PurePosixPath(relative).parent / name
+                if sibling.is_file() and json.loads(sibling.read_text()).get("run_id") != directory_id:
+                    problems.append(f"retained run identity mismatch: {sibling.relative_to(repo)}")
             if manifest.get("execution_status") == "COMPLETE" and not frozen_historical:
                 source_commit = manifest.get("source_commit")
                 environment = manifest.get("environment")

@@ -95,6 +95,10 @@
       "type": "string",
       "pattern": "^[0-9a-f]{40}$"
     },
+    "runner_source_commit": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
     "environment": {
       "type": "object",
       "minProperties": 1
