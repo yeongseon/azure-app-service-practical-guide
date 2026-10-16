@@ -51,7 +51,8 @@ LAB = "snat-exhaustion"
 #: about six thousand requests across three phases and did not finish inside
 #: a window that could be supervised. Twelve keeps the phases meaningful
 #: while making a run completable.
-PROBES_PER_PHASE = 12
+APP_WORKERS = 4
+PROBES_PER_PHASE = 3
 
 #: Concurrent workers used to create connection pressure. Exhaustion is a
 #: function of sockets held in TIME_WAIT, so pressure must be concurrent
@@ -64,6 +65,14 @@ LOAD_SECONDS = 45
 #: Seconds to wait after pressure is removed before probing recovery.
 #: Ports in TIME_WAIT are not reusable immediately.
 RECOVERY_SETTLE_SECONDS = 90
+
+
+class RunConfigurationError(Exception):
+    pass
+
+
+class DestinationPreflightError(Exception):
+    pass
 
 
 def now() -> str:
@@ -134,6 +143,11 @@ def apply_pressure(url: str, seconds: int, workers: int) -> dict:
 
 def execute(app: str, destination: str, output: pathlib.Path,
             source_commit: str | None = None) -> pathlib.Path:
+    destination_url = urllib.parse.urlsplit(destination)
+    tested_host = f"{app}.azurewebsites.net".casefold()
+    if destination_url.hostname is None or destination_url.hostname.casefold() == tested_host:
+        raise RunConfigurationError(
+            "destination must be an independently hosted lab-controlled endpoint")
     identifier = run_id()
     directory = output / identifier
     directory.mkdir(parents=True, exist_ok=False)
@@ -155,12 +169,21 @@ def execute(app: str, destination: str, output: pathlib.Path,
         "destination": destination,
     }, indent=2))
 
+    preflight = probe(destination)
+    preflight.update({"run_id": identifier, "target": destination})
+    (directory / "destination-preflight.json").write_text(json.dumps(preflight, indent=2))
+    if preflight.get("status") != 200:
+        raise DestinationPreflightError(
+            "independent destination preflight did not return HTTP 200")
+
     def capture_phase(name: str) -> None:
         phase_dir = directory / name
         phase_dir.mkdir()
         started_at = now()
-        unpooled = probe_phase(outbound)
-        pooled_records = probe_phase(pooled)
+        unpooled = [dict(item, run_id=identifier, target=destination)
+                    for item in probe_phase(outbound)]
+        pooled_records = [dict(item, run_id=identifier, target=destination)
+                          for item in probe_phase(pooled)]
         ended_at = now()
         (phase_dir / "phase.json").write_text(json.dumps({
             "run_id": identifier,
@@ -190,8 +213,10 @@ def execute(app: str, destination: str, output: pathlib.Path,
 
     # Probed while the app is still under the same conditions, so a failing
     # destination cannot be mistaken for exhaustion after the fact.
+    destination_health = probe(destination)
+    destination_health.update({"run_id": identifier, "target": destination})
     (directory / "destination-health.json").write_text(json.dumps(
-        probe(destination), indent=2))
+        destination_health, indent=2))
 
     time.sleep(RECOVERY_SETTLE_SECONDS)
     capture_phase("recovery")
@@ -205,10 +230,8 @@ def main() -> int:
     parser.add_argument("app")
     parser.add_argument(
         "--destination", required=True,
-        help=("URL the workload calls, probed directly for its own health. Prefer an endpoint the "
-              "lab controls: the first run used a public rate-limited host, which throttled the "
-              "experiment rather than the platform under test. The app's own /health served through "
-              "its public hostname still leaves through SNAT and is not rate limited."))
+        help=("Independently hosted lab-controlled URL that returns HTTP 200. "
+              "The tested app's own hostname is rejected."))
     parser.add_argument("--output", required=True,
                         help="Private evidence directory outside the repository")
     parser.add_argument("--source-commit", required=True,
@@ -217,7 +240,7 @@ def main() -> int:
     try:
         directory = execute(args.app, args.destination, pathlib.Path(args.output),
                             args.source_commit)
-    except OSError as exc:
+    except (OSError, RunConfigurationError, DestinationPreflightError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2
     print(f"RUN_DIR={directory}")

@@ -62,8 +62,19 @@ resource targetStorage 'Microsoft.Storage/storageAccounts@2023-05-01' = {
   }
   kind: 'StorageV2'
   properties: {
-    allowBlobPublicAccess: false
+    allowBlobPublicAccess: true
     minimumTlsVersion: 'TLS1_2'
+  }
+}
+
+resource targetBlobService 'Microsoft.Storage/storageAccounts/blobServices@2023-05-01' = {
+  parent: targetStorage
+  name: 'default'
+  properties: {
+    staticWebsite: {
+      enabled: true
+      indexDocument: 'health.txt'
+    }
   }
 }
 
@@ -134,3 +145,5 @@ output webAppName string = webApp.name
 output webAppDefaultHostName string = webApp.properties.defaultHostName
 output logAnalyticsWorkspaceName string = logAnalyticsWorkspace.name
 output outboundTargetHost string = replace(replace(targetStorage.properties.primaryEndpoints.blob, 'https://', ''), '/', '')
+output outboundTargetStorageName string = targetStorage.name
+output outboundTargetUrl string = '${targetStorage.properties.primaryEndpoints.web}health.txt'
