@@ -1,4 +1,4 @@
-# AGENTS.md
+# Documentation Contract
 
 Guidance for AI agents working in this repository.
 
@@ -365,22 +365,25 @@ All labs in `docs/troubleshooting/lab-guides/` must follow this 16-section struc
 8. **Measurement**: Quantified metrics (e.g., latency, error rates).
 9. **Analysis**: Interpreting the observations and measurements.
 10. **Conclusion**: Confirming or refuting the hypothesis.
-11. **Falsification**: Proving that the fix works and the original theory was correct.
+11. **Falsification**: Applying predeclared disproof criteria and recording whether the observations contradict the hypothesis; successful recovery is reported separately.
 12. **Evidence**: Compiled logs, screenshots, or KQL results.
 13. **Solution**: The final fix or mitigation.
 14. **Prevention**: How to avoid this issue in the future.
 15. **Takeaway**: The core lesson learned.
 16. **Support Takeaway**: Key points for support engineers or developers.
 
-### Evidence Levels
+### Reader-Facing Evidence Labels
 
-When documenting troubleshooting steps or analysis, use these tags to specify the strength of the evidence:
+When documenting troubleshooting steps or analysis, use these labels to keep
+direct observations separate from interpretation and uncertainty. The
+[Golden Evidence Model](docs/reference/golden-evidence-model.md) is normative
+for machine-evaluated claim levels, roles, trust, and outcomes.
 
 - `[Observed]`: Directly seen in logs, metrics, or UI (e.g., 503 errors in Log Analytics).
-- `[Measured]`: Quantified data (e.g., 99th percentile latency is 4.5s).
-- `[Correlated]`: Two events happening together without proven causation.
+- `[Measured]`: An `Observed` value expressed quantitatively (e.g., 99th percentile latency is 4.5s).
+- `[Correlated]`: An `Inferred` relationship between events that occurred together without proven causation.
 - `[Inferred]`: Conclusion based on logic and multiple pieces of evidence.
-- `[Strongly Suggested]`: High confidence inference but missing the "smoking gun".
+- `[Strongly Suggested]`: A high-confidence `Inferred` explanation that still lacks discriminating evidence.
 - `[Not Proven]`: Hypothesis that has not yet been validated.
 - `[Unknown]`: Missing data or ambiguous behavior.
 

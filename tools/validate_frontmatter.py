@@ -130,7 +130,7 @@ def _validate_content_validation_placement(
                 file_path,
                 "content_validation",
                 "Required content_validation block is missing. This page is "
-                "in scope per AGENTS.md \u00a7Text Content Validation "
+                "in scope per DOCUMENTATION_CONTRACT.md \u00a7Text Content Validation "
                 "(see scripts/lib/content_scope.is_in_scope).",
             )
         )
@@ -141,7 +141,8 @@ def _validate_content_validation_placement(
                 "content_validation",
                 "content_validation block is forbidden on this page type "
                 "(navigation, KQL pack, lab guide, tutorial, or non-factual "
-                "page). Remove the block per AGENTS.md \u00a7Text Content "
+                "page). Remove the block per DOCUMENTATION_CONTRACT.md "
+                "\u00a7Text Content "
                 "Validation.",
             )
         )
