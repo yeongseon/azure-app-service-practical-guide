@@ -153,7 +153,7 @@ def evaluate_assertion(assertion: dict, evidence: dict) -> str:
     if field not in evidence:
         return "INCONCLUSIVE"
     observed = evidence[field]
-    if observed == "unavailable":
+    if observed is None or observed == "unavailable":
         return "INCONCLUSIVE"
     if isinstance(observed, dict) and {"numerator", "denominator", "ratio"} <= set(observed):
         numerator = observed["numerator"]
@@ -356,10 +356,18 @@ def _verify_derivation(provenance: dict, manifest: dict, evidence: dict) -> None
         raise ModelError("derivation derived_at is in the future")
     raw_input = derivation.get("raw_input")
     integrity = evidence.get("phase_capture_integrity")
+    expected_integrity = integrity
+    legacy_scenario_b = (
+        provenance.get("scenario") == "snat-exhaustion"
+        and all(isinstance(anchor, dict) and "sha256" in anchor
+                for anchor in integrity.values())
+    )
+    if provenance.get("scenario") != "snat-exhaustion" or legacy_scenario_b:
+        expected_integrity = {
+            phase: anchor["sha256"] for phase, anchor in integrity.items()
+        }
     if (not isinstance(raw_input, dict) or raw_input.get("run_id") != manifest["run_id"]
-            or raw_input.get("phase_capture_integrity") != {
-                phase: anchor["sha256"] for phase, anchor in integrity.items()
-            }):
+            or raw_input.get("phase_capture_integrity") != expected_integrity):
         raise ModelError("derivation raw_input does not match phase capture anchors")
     required_shape = ({"phase_windows", "phase_probes", "destination_health",
                        "destination_binding", "snat_port_pressure"}
@@ -456,6 +464,27 @@ def combine(outcomes) -> str:
     if "CONTRADICTED" in outcomes:
         return "CONTRADICTED"
     if "INCONCLUSIVE" in outcomes:
+        return "INCONCLUSIVE"
+    return "SUPPORTED"
+
+
+def combine_by_role(assertions: list[dict], outcomes: dict[str, str]) -> str:
+    causal = [item for item in assertions if item.get("role") != "recovery"]
+    if not causal:
+        return "NOT_TESTED"
+    if not any(item.get("role") == "discriminating" for item in causal):
+        return combine(outcomes.values())
+    required_validity = [
+        outcomes[item["id"]] for item in assertions
+        if item.get("role") in {"control", "recovery"}
+    ]
+    if any(outcome != "SUPPORTED" for outcome in required_validity):
+        return "INCONCLUSIVE"
+    discriminating = [outcomes[item["id"]] for item in causal
+                      if item.get("role") == "discriminating"]
+    if "CONTRADICTED" in discriminating:
+        return "CONTRADICTED"
+    if any(outcomes[item["id"]] != "SUPPORTED" for item in causal):
         return "INCONCLUSIVE"
     return "SUPPORTED"
 
@@ -584,8 +613,8 @@ def _derive_scenario_a(observations: dict, manifest: dict, provenance: dict) -> 
 
 
 def _derive_scenario_b(observations: dict, manifest: dict) -> dict:
-    required = {"phase_windows", "phase_probes", "destination_health",
-                "destination_binding", "snat_port_pressure"}
+    required = {"phase_windows", "phase_probes", "pooled_phase_probes", "destination",
+                "destination_health", "destination_binding", "snat_port_pressure"}
     if not required <= set(observations):
         return observations
     capture = manifest.get("capture_window")
@@ -595,26 +624,46 @@ def _derive_scenario_b(observations: dict, manifest: dict) -> dict:
     capture_end = _timestamp(capture.get("ended_at"), "capture_window ended_at")
     windows = observations["phase_windows"]
     probes_by_phase = observations["phase_probes"]
-    if not isinstance(windows, dict) or not isinstance(probes_by_phase, dict):
+    pooled_by_phase = observations["pooled_phase_probes"]
+    destination = observations["destination"]
+    if (not isinstance(windows, dict) or not isinstance(probes_by_phase, dict)
+            or not isinstance(pooled_by_phase, dict) or not isinstance(destination, str)):
         raise ModelError("Scenario B phase windows and probes must be objects")
     parsed = {}
     totals = {}
+    integrity = observations.get("phase_capture_integrity")
+    if not isinstance(integrity, dict):
+        raise ModelError("Scenario B phase capture integrity is missing")
     for phase in ("baseline", "load", "recovery"):
         window = windows.get(phase)
         probes = probes_by_phase.get(phase)
-        if not isinstance(window, dict) or not isinstance(probes, list) or not probes:
+        pooled_probes = pooled_by_phase.get(phase)
+        if (not isinstance(window, dict) or not isinstance(probes, list) or not probes
+                or not isinstance(pooled_probes, list) or not pooled_probes):
             raise ModelError(f"{phase} raw capture is missing")
         start = _timestamp(window.get("started_at"), f"{phase} started_at")
         end = _timestamp(window.get("ended_at"), f"{phase} ended_at")
         if not capture_start <= start <= end <= capture_end:
             raise ModelError(f"{phase} window falls outside the capture window")
         parsed[phase] = (start, end)
+        anchor = integrity.get(phase)
+        if (not isinstance(anchor, dict)
+                or anchor.get("probe_count") != len(probes)
+                or anchor.get("pooled_probe_count") != len(pooled_probes)):
+            raise ModelError(f"{phase} retained row counts do not match capture anchors")
+        retained_digest = hashlib.sha256(json.dumps(
+            {"unpooled": probes, "pooled": pooled_probes},
+            sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+        if anchor.get("retained_rows_sha256") != retained_digest:
+            raise ModelError(f"{phase} retained rows do not match their capture anchor")
         totals[phase] = {"success": 0, "failure": 0, "transport_failure": 0}
-        for probe in probes:
+        for probe in [*probes, *pooled_probes]:
             if not isinstance(probe, dict):
                 raise ModelError(f"{phase} probe must be an object")
-            if probe.get("run_id", manifest["run_id"]) != manifest["run_id"]:
+            if probe.get("run_id") != manifest["run_id"]:
                 raise ModelError(f"{phase} probe belongs to another run")
+            if probe.get("target") != destination:
+                raise ModelError(f"{phase} probe target does not match the declared destination")
             captured = _timestamp(probe.get("captured_at"), f"{phase} probe captured_at")
             if not start <= captured <= end:
                 raise ModelError(f"{phase} probe falls outside its phase window")
@@ -643,6 +692,12 @@ def _derive_scenario_b(observations: dict, manifest: dict) -> dict:
         "load_transport_failure_count": sum(
             1 for probe in probes_by_phase["load"]
             if probe["inner"]["transport_failure"] > 0),
+        "load_unpooled_transport_failure_count": sum(
+            1 for probe in probes_by_phase["load"]
+            if probe["inner"]["transport_failure"] > 0),
+        "load_pooled_transport_failure_count": sum(
+            1 for probe in pooled_by_phase["load"]
+            if probe["inner"]["transport_failure"] > 0),
         "load_http_error_count": sum(
             1 for probe in probes_by_phase["load"] if probe["inner"]["failure"] > 0),
         "recovery_success_count": len(probes_by_phase["recovery"])
@@ -650,6 +705,11 @@ def _derive_scenario_b(observations: dict, manifest: dict) -> dict:
         "destination_health_status": health.get("status"),
         "destination_binding": True,
         "snat_port_pressure": observations["snat_port_pressure"],
+        "pooling_reduces_transport_failures": sum(
+            1 for probe in probes_by_phase["load"]
+            if probe["inner"]["transport_failure"] > 0) > sum(
+                1 for probe in pooled_by_phase["load"]
+                if probe["inner"]["transport_failure"] > 0),
     }
     for field, value in derived.items():
         if field in observations and observations[field] != value:
@@ -726,7 +786,7 @@ def evaluate(run_dir, *, skip_source_commit_resolution: bool = False,
     if execution_status != "COMPLETE":
         hypothesis_status = "NOT_TESTED"
     else:
-        hypothesis_status = combine(per_assertion.values())
+        hypothesis_status = combine_by_role(assertions, per_assertion)
         causal_claim = bool(manifest.get("hypothesis"))
         if hypothesis_status == "SUPPORTED" and causal_claim and (not strong or evidence_identity != "BOUND"):
             hypothesis_status = "INCONCLUSIVE"

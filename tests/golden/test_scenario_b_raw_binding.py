@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 import copy
+import hashlib
 import importlib.util
+import json
 import pathlib
 import unittest
 
@@ -22,31 +24,49 @@ def observations():
         "baseline": {
             "started_at": "2026-10-16T10:01:00Z",
             "ended_at": "2026-10-16T10:02:00Z",
-            "probes": [{"captured_at": "2026-10-16T10:01:30Z", "status": 200,
+            "probes": [{"run_id": RUN_ID, "target": "https://target.example/health",
+                         "captured_at": "2026-10-16T10:01:30Z", "status": 200,
                         "inner": {"success": 40, "failure": 0, "transport_failure": 0}}],
         },
         "load": {
             "started_at": "2026-10-16T10:03:00Z",
             "ended_at": "2026-10-16T10:04:00Z",
-            "probes": [{"captured_at": "2026-10-16T10:03:30Z", "status": 200,
+            "probes": [{"run_id": RUN_ID, "target": "https://target.example/health",
+                         "captured_at": "2026-10-16T10:03:30Z", "status": 200,
                         "inner": {"success": 0, "failure": 0, "transport_failure": 40}}],
         },
         "recovery": {
             "started_at": "2026-10-16T10:10:00Z",
             "ended_at": "2026-10-16T10:11:00Z",
-            "probes": [{"captured_at": "2026-10-16T10:10:30Z", "status": 200,
+            "probes": [{"run_id": RUN_ID, "target": "https://target.example/health",
+                         "captured_at": "2026-10-16T10:10:30Z", "status": 200,
                         "inner": {"success": 40, "failure": 0, "transport_failure": 0}}],
         },
     }
-    return {
+    document = {
         "phase_windows": {name: {"started_at": phase["started_at"],
                                   "ended_at": phase["ended_at"]}
                           for name, phase in phases.items()},
         "phase_probes": {name: phase["probes"] for name, phase in phases.items()},
+        "pooled_phase_probes": {name: copy.deepcopy(phase["probes"])
+                                for name, phase in phases.items()},
+        "destination": "https://target.example/health",
         "destination_health": {"captured_at": "2026-10-16T10:03:45Z", "status": 200},
         "destination_binding": True,
         "snat_port_pressure": "unavailable",
     }
+    document["phase_capture_integrity"] = {
+        name: {
+            "probe_count": len(document["phase_probes"][name]),
+            "pooled_probe_count": len(document["pooled_phase_probes"][name]),
+            "retained_rows_sha256": hashlib.sha256(json.dumps({
+                "unpooled": document["phase_probes"][name],
+                "pooled": document["pooled_phase_probes"][name],
+            }, sort_keys=True, separators=(",", ":")).encode()).hexdigest(),
+        }
+        for name in phases
+    }
+    return document
 
 
 class ScenarioBRawBindingTests(unittest.TestCase):
@@ -68,6 +88,44 @@ class ScenarioBRawBindingTests(unittest.TestCase):
     def test_wrong_run_phase_is_rejected(self):
         document = observations()
         document["phase_probes"]["load"][0]["run_id"] = "other-run"
+        with self.assertRaises(evaluator.ModelError):
+            self.derive(document)
+
+    def test_missing_run_id_is_rejected(self):
+        document = observations()
+        del document["phase_probes"]["load"][0]["run_id"]
+        with self.assertRaises(evaluator.ModelError):
+            self.derive(document)
+
+    def test_swapped_probe_target_is_rejected(self):
+        document = observations()
+        document["phase_probes"]["load"][0]["target"] = "https://other.example/health"
+        with self.assertRaises(evaluator.ModelError):
+            self.derive(document)
+
+    def test_pooled_outcomes_are_retained_and_derived(self):
+        document = observations()
+        document["pooled_phase_probes"]["load"][0]["inner"] = {
+            "success": 40, "failure": 0, "transport_failure": 0}
+        document["phase_capture_integrity"]["load"]["retained_rows_sha256"] = (
+            hashlib.sha256(json.dumps({
+                "unpooled": document["phase_probes"]["load"],
+                "pooled": document["pooled_phase_probes"]["load"],
+            }, sort_keys=True, separators=(",", ":")).encode()).hexdigest())
+        derived = self.derive(document)
+        self.assertEqual(derived["load_pooled_transport_failure_count"], 0)
+        self.assertEqual(derived["load_unpooled_transport_failure_count"], 1)
+
+    def test_truncated_probes_are_rejected_even_if_counts_are_forged(self):
+        document = observations()
+        document["phase_probes"]["load"] = []
+        document["phase_capture_integrity"]["load"]["probe_count"] = 0
+        with self.assertRaises(evaluator.ModelError):
+            self.derive(document)
+
+    def test_mutated_rows_are_rejected_even_when_counts_still_match(self):
+        document = observations()
+        document["phase_probes"]["load"][0]["inner"]["success"] = 1
         with self.assertRaises(evaluator.ModelError):
             self.derive(document)
 

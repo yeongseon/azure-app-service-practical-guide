@@ -146,28 +146,45 @@ def collect(run_dir) -> dict:
             "started_at": phase["started_at"],
             "ended_at": phase["ended_at"],
         }
-        normalized = []
-        for probe in unpooled:
-            inner = probe.get("inner")
-            if not isinstance(inner, dict):
-                outcome = classify_probe(probe, classifier)
-                inner = {item: int(item == outcome) for item in classifier.OUTCOMES}
-            normalized.append({
-                "run_id": run["run_id"],
-                "captured_at": probe.get("at", run["started_at"]),
-                "status": probe.get("status"),
-                "inner": inner,
-                "target": probe.get("target"),
-            })
+        def normalize(probes):
+            normalized = []
+            for probe in probes:
+                if (probe.get("run_id") != run["run_id"]
+                        or probe.get("target") != run.get("destination")):
+                    raise CollectionError(
+                        f"{name} probe identity or destination binding is invalid")
+                inner = probe.get("inner")
+                if not isinstance(inner, dict):
+                    outcome = classify_probe(probe, classifier)
+                    inner = {item: int(item == outcome) for item in classifier.OUTCOMES}
+                normalized.append({
+                    "run_id": probe["run_id"],
+                    "captured_at": probe.get("at", run["started_at"]),
+                    "status": probe.get("status"),
+                    "inner": inner,
+                    "target": probe["target"],
+                })
+            return normalized
+
+        normalized = normalize(unpooled)
+        normalized_pooled = normalize(pooled)
         phase_path = phase_dir / "phase.json"
-        raw = (phase_path.read_bytes() if phase_path.is_file()
-               else json.dumps(phase, sort_keys=True, separators=(",", ":")).encode())
+        raw_files = {
+            "phase.json": hashlib.sha256(phase_path.read_bytes()).hexdigest(),
+            "unpooled-probes.json": hashlib.sha256(
+                (phase_dir / "unpooled-probes.json").read_bytes()).hexdigest(),
+            "pooled-probes.json": hashlib.sha256(
+                (phase_dir / "pooled-probes.json").read_bytes()).hexdigest(),
+        }
         integrity[name] = {
             "probe_count": len(normalized),
-            "pooled_probe_count": len(pooled),
-            "sha256": hashlib.sha256(raw).hexdigest(),
+            "pooled_probe_count": len(normalized_pooled),
+            "files": raw_files,
+            "retained_rows_sha256": hashlib.sha256(json.dumps(
+                {"unpooled": normalized, "pooled": normalized_pooled},
+                sort_keys=True, separators=(",", ":")).encode()).hexdigest(),
         }
-        phases[name] = normalized
+        phases[name] = {"unpooled": normalized, "pooled": normalized_pooled}
 
     health = _read(run_dir / "destination-health.json", required=False)
     pressure = _read(run_dir / "port-pressure.json", required=False)
@@ -175,8 +192,11 @@ def collect(run_dir) -> dict:
 
     observations = {
         "phase_windows": phase_windows,
-        "phase_probes": {name: capture for name, capture in phases.items()
-                         if capture is not None},
+        "phase_probes": {name: capture["unpooled"] for name, capture in phases.items()
+                          if capture is not None},
+        "pooled_phase_probes": {name: capture["pooled"] for name, capture in phases.items()
+                                 if capture is not None},
+        "destination": run.get("destination"),
         "phase_capture_integrity": integrity,
         "destination_health": None if health is None else {
             "captured_at": health.get("at", run["started_at"]),
@@ -194,11 +214,21 @@ def collect(run_dir) -> dict:
         "recovery_success_count": ("recovery", classifier.SUCCESS),
     }
     for field, (phase_name, outcome) in scalar_sources.items():
-        capture = phases[phase_name]
+        phase_capture = phases[phase_name]
+        capture = None if phase_capture is None else phase_capture["unpooled"]
         observations[field] = (None if capture is None else sum(
             1 for probe in capture if probe["inner"][outcome] > 0))
     observations["destination_health_status"] = (
         None if health is None else health.get("status"))
+    if phases["load"] is not None:
+        unpooled_failures = sum(
+            1 for probe in phases["load"]["unpooled"]
+            if probe["inner"][classifier.TRANSPORT_FAILURE] > 0)
+        pooled_failures = sum(
+            1 for probe in phases["load"]["pooled"]
+            if probe["inner"][classifier.TRANSPORT_FAILURE] > 0)
+        observations["pooling_reduces_transport_failures"] = (
+            unpooled_failures > pooled_failures)
 
     incomplete = sorted(key for key, value in observations.items() if value is None)
     for key in incomplete:
