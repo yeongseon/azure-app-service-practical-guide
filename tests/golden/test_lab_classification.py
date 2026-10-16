@@ -19,11 +19,11 @@ import re
 import subprocess
 import unittest
 
+from classification_integrity import ENVIRONMENT_FIELDS, evidence_environment, introducing_commit
+
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 CLASSIFICATION = ROOT / "labs/golden-classification.json"
 DATA = json.loads(CLASSIFICATION.read_text())
-REPOSITORY_SERVICE = "App Service"
-
 VALID = {"golden", "migration-needed", "archive-candidate"}
 EXPECTED_SCENARIO_COUNT = 15
 ARTIFACT_DIRECTORY_NAMES = {"artifacts-sanitized", "results"}
@@ -141,8 +141,12 @@ class ShapeTests(unittest.TestCase):
                 self.assertRegex(revision, FULL_SHA, msg=path)
                 self.assertTrue(git_commit_resolves(revision), msg=f"{path}: run revision does not resolve")
                 self.assertIsInstance(item["run_source_dirty"], bool, msg=path)
-            self.assertIn(REPOSITORY_SERVICE, item["environment"], msg=path)
-            self.assertTrue(item["environment"].strip(), msg=path)
+
+    def test_artifact_commit_is_the_commit_that_introduced_capture_evidence(self):
+        for path, item in classified_artifact_sets():
+            commit, status = introducing_commit(ROOT, item["captured_at_evidence"])
+            self.assertEqual(status, "verified", msg=f"{path}: {status}")
+            self.assertEqual(item["artifact_introduced_commit"], commit, msg=path)
 
     def test_capture_dates_are_derived_from_retained_evidence(self):
         for path, item in classified_artifact_sets():
@@ -156,33 +160,20 @@ class ShapeTests(unittest.TestCase):
             )
             self.assertLessEqual(dt.date.fromisoformat(item["captured_at"]), dt.date.today(), msg=path)
 
-    def test_environment_matches_machine_readable_manifests(self):
-        expected = {
-            "missing-wwwroot-content/artifacts-sanitized": ("B1", "Korea Central", "2.89.0", "NODE|20-lts"),
-            "zipdeploy-file-lock-serialization/artifacts-sanitized": ("B1", "Korea Central", "2.89.0", "Node.js 20 on Windows (iisnode)"),
-        }
-        by_path = dict(classified_artifact_sets())
-        for path, values in expected.items():
-            item = by_path[path]
-            manifest = json.loads((ROOT / "labs" / item["environment_evidence"][0]).read_text())
-            for value in values:
-                self.assertIn(value, item["environment"], msg=path)
-            self.assertEqual(item["run_source_revision"], manifest["sourceRevision"], msg=path)
-            self.assertEqual(item["run_source_dirty"], manifest["sourceDirtyAtRun"], msg=path)
+    def test_environment_is_exactly_derived_from_its_named_evidence(self):
+        for path, item in classified_artifact_sets():
+            self.assertEqual(set(item["environment"]), ENVIRONMENT_FIELDS, msg=path)
+            self.assertEqual(item["environment"], evidence_environment(ROOT, path, item), msg=path)
 
-    def test_declared_environment_evidence_supports_environment(self):
-        expected_tokens = {
-            "windows-java-httpplatformhandler-timeout/stage-0-config-discovery/results": ("Basic", "Korea Central", "17"),
-            "windows-java-httpplatformhandler-timeout/lab-1-baseline-signature/results": ("Basic", "Korea Central", "17"),
-            "windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/results": ("B1", "Korea Central", "17"),
-        }
+    def test_manifest_provenance_is_exactly_derived_from_evidence(self):
         for path, item in classified_artifact_sets():
             evidence_paths = item.get("environment_evidence", [])
-            if path not in expected_tokens:
+            manifests = [json.loads((ROOT / "labs" / value).read_text()) for value in evidence_paths]
+            source_manifests = [value for value in manifests if "sourceRevision" in value]
+            if not source_manifests:
                 continue
-            evidence = "\n".join((ROOT / "labs" / value).read_text() for value in evidence_paths)
-            for token in expected_tokens[path]:
-                self.assertIn(token, evidence, msg=f"{path}: environment token {token!r} lacks evidence")
+            self.assertEqual({value["sourceRevision"] for value in source_manifests}, {item["run_source_revision"]}, msg=path)
+            self.assertEqual({value["sourceDirtyAtRun"] for value in source_manifests}, {item["run_source_dirty"]}, msg=path)
 
 
 class GoldenClaimTests(unittest.TestCase):
