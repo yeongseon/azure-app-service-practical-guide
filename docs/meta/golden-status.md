@@ -25,7 +25,7 @@ Every quality gate in this repository, its most recently recorded result, and th
 
 ## Summary
 
-*Snapshot of `fe2e623 plus uncommitted working-tree changes`, generated 2026-10-16.*
+*Snapshot of `e3428fd plus uncommitted working-tree changes`, generated 2026-10-16.*
 
 | Metric | Count |
 |---|---:|
@@ -200,7 +200,7 @@ python3 scripts/generate_golden_status.py --gate mermaid-syntax
 
 ## Sources
 
-- [AGENTS.md — Quality Gates & Verification](https://github.com/yeongseon/azure-app-service-practical-guide/blob/main/AGENTS.md)
+- [Documentation contract — Quality Gates & Verification](https://github.com/yeongseon/azure-app-service-practical-guide/blob/main/DOCUMENTATION_CONTRACT.md#quality-gates--verification)
 - [Series epic: documentation repetition gate](https://github.com/yeongseon/azure-container-apps-practical-guide/issues/376)
 - [Series epic: PII detection gate](https://github.com/yeongseon/azure-container-apps-practical-guide/issues/384)
 - [Series epic: visual content gate](https://github.com/yeongseon/azure-container-apps-practical-guide/issues/391)

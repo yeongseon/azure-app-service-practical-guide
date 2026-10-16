@@ -1392,7 +1392,7 @@ def render_page(results: list[Result], today: date) -> str:
         "",
         "## Sources",
         "",
-        "- [AGENTS.md — Quality Gates & Verification](https://github.com/yeongseon/azure-app-service-practical-guide/blob/main/AGENTS.md)",
+        "- [Documentation contract — Quality Gates & Verification](https://github.com/yeongseon/azure-app-service-practical-guide/blob/main/DOCUMENTATION_CONTRACT.md#quality-gates--verification)",
         "- [Series epic: documentation repetition gate](https://github.com/yeongseon/azure-container-apps-practical-guide/issues/376)",
         "- [Series epic: PII detection gate](https://github.com/yeongseon/azure-container-apps-practical-guide/issues/384)",
         "- [Series epic: visual content gate](https://github.com/yeongseon/azure-container-apps-practical-guide/issues/391)",
