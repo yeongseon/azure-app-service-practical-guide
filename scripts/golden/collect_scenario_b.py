@@ -44,6 +44,7 @@ from __future__ import annotations
 import argparse
 import importlib.util
 import json
+import hashlib
 import pathlib
 import sys
 
@@ -119,37 +120,84 @@ def collect(run_dir) -> dict:
     run = _read(run_dir / "run.json")
 
     phases = {}
+    phase_windows = {}
+    integrity = {}
     for name in ("baseline", "load", "recovery"):
-        capture = _read(run_dir / name / "probes.json", required=False)
-        if capture is None:
+        phase_dir = run_dir / name
+        phase = _read(phase_dir / "phase.json", required=False)
+        unpooled = _read(phase_dir / "unpooled-probes.json", required=False)
+        pooled = _read(phase_dir / "pooled-probes.json", required=False)
+        legacy = _read(phase_dir / "probes.json", required=False)
+        if unpooled is None and legacy is not None:
+            unpooled = legacy
+            pooled = legacy
+            phase = {
+                "run_id": run["run_id"],
+                "started_at": run["started_at"],
+                "ended_at": run["started_at"],
+            }
+        if phase is None or unpooled is None or pooled is None:
             phases[name] = None
             continue
-        if not isinstance(capture, list):
-            raise CollectionError(f"{name}/probes.json is not a list of probe records")
-        phases[name] = count_outcomes(capture, classifier)
+        if (not isinstance(unpooled, list) or not isinstance(pooled, list)
+                or phase.get("run_id") != run["run_id"]):
+            raise CollectionError(f"{name} capture is malformed or belongs to another run")
+        phase_windows[name] = {
+            "started_at": phase["started_at"],
+            "ended_at": phase["ended_at"],
+        }
+        normalized = []
+        for probe in unpooled:
+            inner = probe.get("inner")
+            if not isinstance(inner, dict):
+                outcome = classify_probe(probe, classifier)
+                inner = {item: int(item == outcome) for item in classifier.OUTCOMES}
+            normalized.append({
+                "run_id": run["run_id"],
+                "captured_at": probe.get("at", run["started_at"]),
+                "status": probe.get("status"),
+                "inner": inner,
+                "target": probe.get("target"),
+            })
+        phase_path = phase_dir / "phase.json"
+        raw = (phase_path.read_bytes() if phase_path.is_file()
+               else json.dumps(phase, sort_keys=True, separators=(",", ":")).encode())
+        integrity[name] = {
+            "probe_count": len(normalized),
+            "pooled_probe_count": len(pooled),
+            "sha256": hashlib.sha256(raw).hexdigest(),
+        }
+        phases[name] = normalized
 
     health = _read(run_dir / "destination-health.json", required=False)
     pressure = _read(run_dir / "port-pressure.json", required=False)
     target = _read(run_dir / "app-target.json", required=False)
 
-    baseline = phases["baseline"]
-    load = phases["load"]
-    recovery = phases["recovery"]
-
     observations = {
-        "baseline_success_count": None if baseline is None else baseline[classifier.SUCCESS],
-        "load_transport_failure_count": (
-            None if load is None else load[classifier.TRANSPORT_FAILURE]),
-        "load_http_error_count": None if load is None else load[classifier.FAILURE],
-        "recovery_success_count": None if recovery is None else recovery[classifier.SUCCESS],
-        # The discriminating observation. Without it, transport failures are
-        # equally consistent with the destination itself being down, and the
-        # hypothesis cannot be separated from that explanation.
-        "destination_health_status": None if health is None else health.get("status"),
+        "phase_windows": phase_windows,
+        "phase_probes": {name: capture for name, capture in phases.items()
+                         if capture is not None},
+        "phase_capture_integrity": integrity,
+        "destination_health": None if health is None else {
+            "captured_at": health.get("at", run["started_at"]),
+            "status": health.get("status")},
         "snat_port_pressure": None if pressure is None else pressure.get("status"),
         "destination_binding": (
             None if target is None else target.get("matches_requested_destination")),
     }
+
+    scalar_sources = {
+        "baseline_success_count": ("baseline", classifier.SUCCESS),
+        "load_transport_failure_count": ("load", classifier.TRANSPORT_FAILURE),
+        "load_http_error_count": ("load", classifier.FAILURE),
+        "recovery_success_count": ("recovery", classifier.SUCCESS),
+    }
+    for field, (phase_name, outcome) in scalar_sources.items():
+        capture = phases[phase_name]
+        observations[field] = (None if capture is None else sum(
+            1 for probe in capture if probe["inner"][outcome] > 0))
+    observations["destination_health_status"] = (
+        None if health is None else health.get("status"))
 
     incomplete = sorted(key for key, value in observations.items() if value is None)
     for key in incomplete:
@@ -162,6 +210,8 @@ def collect(run_dir) -> dict:
         "observations": observations,
         "collector": "scripts/golden/collect_scenario_b.py",
         "capture_provenance": "derived",
+        "runner_source_commit": run.get("runner_source_commit"),
+        "phase_capture_integrity": integrity,
         "incomplete_fields": incomplete,
     }
 

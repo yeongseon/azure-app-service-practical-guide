@@ -87,7 +87,18 @@ def probe(url: str, timeout: int = 30) -> dict:
     started = now()
     try:
         with urllib.request.urlopen(url, timeout=timeout) as response:
-            return {"at": started, "status": response.status}
+            record = {"at": started, "status": response.status}
+            if response.headers.get_content_type() == "application/json":
+                body = json.loads(response.read())
+                required = {"success", "failure", "transportFailure"}
+                if required <= set(body):
+                    record["inner"] = {
+                        "success": body["success"],
+                        "failure": body["failure"],
+                        "transport_failure": body["transportFailure"],
+                    }
+                    record["target"] = body.get("target")
+            return record
     except urllib.error.HTTPError as exc:
         # The server answered. That is an HTTP failure, not a transport one.
         return {"at": started, "status": exc.code}
@@ -120,13 +131,15 @@ def apply_pressure(url: str, seconds: int, workers: int) -> dict:
             "workers": workers, "seconds": seconds}
 
 
-def execute(app: str, destination: str, output: pathlib.Path) -> pathlib.Path:
+def execute(app: str, destination: str, output: pathlib.Path,
+            source_commit: str | None = None) -> pathlib.Path:
     identifier = run_id()
     directory = output / identifier
     directory.mkdir(parents=True, exist_ok=False)
 
-    outbound = (f"https://{app}.azurewebsites.net/outbound?"
-                + urllib.parse.urlencode({"destination": destination}))
+    app_base = f"https://{app}.azurewebsites.net"
+    outbound = app_base + "/outbound?" + urllib.parse.urlencode({"target": destination})
+    pooled = app_base + "/outbound-fixed?" + urllib.parse.urlencode({"target": destination})
 
     (directory / "run.json").write_text(json.dumps({
         "run_id": identifier,
@@ -134,29 +147,44 @@ def execute(app: str, destination: str, output: pathlib.Path) -> pathlib.Path:
         "app": app,
         "resource_id": f"/sites/{app}",
         "scenario": LAB,
+        "runner_source_commit": source_commit,
         "outbound_url": outbound,
+        "pooled_url": pooled,
         "destination": destination,
     }, indent=2))
 
-    for phase, probes in (("baseline", probe_phase(outbound)),):
-        (directory / phase).mkdir()
-        (directory / phase / "probes.json").write_text(json.dumps(probes, indent=2))
+    def capture_phase(name: str) -> None:
+        phase_dir = directory / name
+        phase_dir.mkdir()
+        started_at = now()
+        unpooled = probe_phase(outbound)
+        pooled_records = probe_phase(pooled)
+        ended_at = now()
+        (phase_dir / "phase.json").write_text(json.dumps({
+            "run_id": identifier,
+            "started_at": started_at,
+            "ended_at": ended_at,
+            "unpooled_probe_count": len(unpooled),
+            "pooled_probe_count": len(pooled_records),
+        }, indent=2))
+        (phase_dir / "unpooled-probes.json").write_text(json.dumps(unpooled, indent=2))
+        (phase_dir / "pooled-probes.json").write_text(json.dumps(pooled_records, indent=2))
+
+    capture_phase("baseline")
 
     pressure = apply_pressure(outbound, LOAD_SECONDS, LOAD_WORKERS)
     pressure["status"] = pressure.get("status", "unavailable")
     (directory / "port-pressure.json").write_text(json.dumps(pressure, indent=2))
     requested = urllib.parse.urlsplit(destination)
     outbound_query = urllib.parse.parse_qs(urllib.parse.urlsplit(outbound).query)
-    bound_destination = outbound_query.get("destination", [None])[0]
+    bound_destination = outbound_query.get("target", [None])[0]
     (directory / "app-target.json").write_text(json.dumps({
         "requested_destination": destination,
         "outbound_destination": bound_destination,
         "matches_requested_destination": bound_destination == destination
         and bool(requested.scheme and requested.netloc),
     }, indent=2))
-    (directory / "load").mkdir()
-    (directory / "load" / "probes.json").write_text(
-        json.dumps(probe_phase(outbound), indent=2))
+    capture_phase("load")
 
     # Probed while the app is still under the same conditions, so a failing
     # destination cannot be mistaken for exhaustion after the fact.
@@ -164,9 +192,7 @@ def execute(app: str, destination: str, output: pathlib.Path) -> pathlib.Path:
         probe(destination), indent=2))
 
     time.sleep(RECOVERY_SETTLE_SECONDS)
-    (directory / "recovery").mkdir()
-    (directory / "recovery" / "probes.json").write_text(
-        json.dumps(probe_phase(outbound), indent=2))
+    capture_phase("recovery")
 
     (directory / "run-complete.json").write_text(json.dumps({"ended_at": now()}, indent=2))
     return directory
@@ -183,9 +209,12 @@ def main() -> int:
               "its public hostname still leaves through SNAT and is not rate limited."))
     parser.add_argument("--output", required=True,
                         help="Private evidence directory outside the repository")
+    parser.add_argument("--source-commit", required=True,
+                        help="Full repository commit used for this capture")
     args = parser.parse_args()
     try:
-        directory = execute(args.app, args.destination, pathlib.Path(args.output))
+        directory = execute(args.app, args.destination, pathlib.Path(args.output),
+                            args.source_commit)
     except OSError as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2

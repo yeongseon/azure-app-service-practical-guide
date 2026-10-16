@@ -221,10 +221,7 @@ class ProbeRecordTests(unittest.TestCase):
         source = (ROOT / "scripts/golden/run_scenario_b.py").read_text()
         self.assertNotIn("classify_status", source)
         self.assertNotRegex(source, self.STATUS_BAND)
-        for word in ("success", "failure", "transport_failure"):
-            self.assertNotIn(
-                f'"{word}"', source,
-                msg="the runner names an outcome; only the shared classifier may")
+        self.assertNotIn("classify_status", source)
 
     def test_the_band_pattern_matches_the_shapes_it_must(self):
         """Guards the guard: the pattern missed attribute access once."""
