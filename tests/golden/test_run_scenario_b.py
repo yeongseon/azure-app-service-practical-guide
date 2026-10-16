@@ -16,6 +16,7 @@ first discards the only signal that discriminates the hypothesis.
 import importlib.util
 import json
 import pathlib
+import socket
 import sys
 import tempfile
 import unittest
@@ -25,6 +26,7 @@ from unittest import mock
 sys.dont_write_bytecode = True
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
+PUBLIC_DNS = [(socket.AF_INET, socket.SOCK_STREAM, 6, "", ("93.184.216.34", 443))]
 
 
 def _load(name, relative):
@@ -107,7 +109,8 @@ class JoinTests(unittest.TestCase):
             seen_urls.append(url)
             return {"at": "t", "status": 200}
 
-        with mock.patch.object(runner, "run_id", return_value="run-one"), \
+        with mock.patch.object(runner.socket, "getaddrinfo", return_value=PUBLIC_DNS), \
+                mock.patch.object(runner, "run_id", return_value="run-one"), \
                 mock.patch.object(runner, "probe_phase", return_value=probes), \
                 mock.patch.object(runner, "probe", side_effect=fake_probe), \
                 mock.patch.object(runner, "apply_pressure",
@@ -127,7 +130,8 @@ class JoinTests(unittest.TestCase):
     def test_execute_records_unavailable_pressure_explicitly(self):
         output = pathlib.Path(tempfile.mkdtemp())
         probes = [{"at": "t", "status": 200}] * runner.PROBES_PER_PHASE
-        with mock.patch.object(runner, "run_id", return_value="run-two"), \
+        with mock.patch.object(runner.socket, "getaddrinfo", return_value=PUBLIC_DNS), \
+                mock.patch.object(runner, "run_id", return_value="run-two"), \
                 mock.patch.object(runner, "probe_phase", return_value=probes), \
                 mock.patch.object(runner, "probe", return_value={"at": "t", "status": 200}), \
                 mock.patch.object(runner, "apply_pressure", return_value={}), \
@@ -146,11 +150,38 @@ class JoinTests(unittest.TestCase):
                 output, "a" * 40)
         self.assertEqual(list(output.iterdir()), [])
 
+    def test_execute_rejects_non_https_destination(self):
+        output = pathlib.Path(tempfile.mkdtemp())
+        with self.assertRaises(runner.RunConfigurationError):
+            runner.execute("app-two", "http://destination.example/health", output, "a" * 40)
+
+    def test_execute_rejects_private_and_metadata_destinations(self):
+        for destination in (
+                "https://127.0.0.1/", "https://10.0.0.1/",
+                "https://169.254.169.254/", "https://[::1]/"):
+            with self.subTest(destination=destination):
+                with self.assertRaises(runner.RunConfigurationError):
+                    runner.execute("app-two", destination, pathlib.Path(tempfile.mkdtemp()),
+                                   "a" * 40)
+
+    def test_execute_rejects_hostname_resolving_to_private_address(self):
+        answer = [(socket.AF_INET, socket.SOCK_STREAM, 6, "", ("10.0.0.1", 443))]
+        with mock.patch.object(runner.socket, "getaddrinfo", return_value=answer):
+            with self.assertRaises(runner.RunConfigurationError):
+                runner.execute("app-two", "https://destination.example/health",
+                               pathlib.Path(tempfile.mkdtemp()), "a" * 40)
+
+    def test_execute_rejects_raw_output_inside_repository(self):
+        with self.assertRaises(runner.RunConfigurationError):
+            runner.execute("app-two", "https://destination.example/health",
+                           ROOT / "raw-evidence", "a" * 40)
+
     def test_execute_preflights_the_independent_destination(self):
         output = pathlib.Path(tempfile.mkdtemp())
         probes = [{"at": "t", "status": 200}] * runner.PROBES_PER_PHASE
         destination = "https://destination.example/health"
-        with mock.patch.object(runner, "run_id", return_value="run-three"), \
+        with mock.patch.object(runner.socket, "getaddrinfo", return_value=PUBLIC_DNS), \
+                mock.patch.object(runner, "run_id", return_value="run-three"), \
                 mock.patch.object(runner, "probe_phase", return_value=probes), \
                 mock.patch.object(runner, "probe", return_value={"at": "t", "status": 503}), \
                 mock.patch.object(runner, "apply_pressure", return_value={}), \

@@ -29,9 +29,11 @@ from __future__ import annotations
 import argparse
 import concurrent.futures
 import datetime
+import ipaddress
 import json
 import pathlib
 import secrets
+import socket
 import sys
 import time
 import urllib.error
@@ -41,6 +43,7 @@ import urllib.parse
 sys.dont_write_bytecode = True
 
 LAB = "snat-exhaustion"
+ROOT = pathlib.Path(__file__).resolve().parents[2]
 
 #: Probes per phase. The contract's baseline and recovery assertions expect
 #: every probe in those phases to succeed, and read this constant rather
@@ -146,9 +149,22 @@ def execute(app: str, destination: str, output: pathlib.Path,
     destination_url = urllib.parse.urlsplit(destination)
     tested_host = f"{app}.azurewebsites.net".casefold()
     hostname = destination_url.hostname
-    if hostname is None or hostname.casefold() == tested_host:
+    if (destination_url.scheme != "https" or hostname is None
+            or hostname.casefold() == tested_host):
         raise RunConfigurationError(
-            "destination must be an independently hosted lab-controlled endpoint")
+            "destination must be an independent lab-controlled HTTPS endpoint")
+    try:
+        addresses = {
+            ipaddress.ip_address(answer[4][0])
+            for answer in socket.getaddrinfo(hostname, destination_url.port or 443)
+        }
+    except socket.gaierror as exc:
+        raise RunConfigurationError("destination hostname cannot be resolved") from exc
+    if not addresses or any(not address.is_global for address in addresses):
+        raise RunConfigurationError("destination must resolve only to global addresses")
+    resolved_output = output.resolve()
+    if resolved_output == ROOT or ROOT in resolved_output.parents:
+        raise RunConfigurationError("raw output must be outside the repository")
     identifier = run_id()
     directory = output / identifier
     directory.mkdir(parents=True, exist_ok=False)
