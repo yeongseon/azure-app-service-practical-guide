@@ -127,6 +127,15 @@ class ScenarioARawBindingTests(unittest.TestCase):
         with self.assertRaises(evaluator.ModelError):
             self.evaluate()
 
+    def test_new_directory_cannot_reuse_frozen_historical_run_id(self):
+        frozen = "20260927T104304Z-aba0d3a9daa7"
+        manifest = json.loads(self.manifest_path.read_text())
+        manifest["run_id"] = frozen
+        self.manifest_path.write_text(json.dumps(manifest))
+        self.document["run_id"] = frozen
+        with self.assertRaises(evaluator.ModelError):
+            self.evaluate()
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
