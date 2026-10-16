@@ -66,12 +66,21 @@ def extract_tutorial_info(filepath: Path, docs_dir: Path) -> dict[str, Any]:
     }
 
 
+def validation_identity_is_complete(method_data: dict[str, Any] | None) -> bool:
+    if not method_data or method_data.get("result") == "not_tested":
+        return True
+    return all(method_data.get(field) for field in ("run_id", "evidence"))
+
+
 def get_method_status(
     method_data: dict[str, Any] | None, today: date
 ) -> tuple[str, str | None]:
     """Return (status_icon, last_tested_str) for a validation method."""
     if not method_data or not isinstance(method_data, dict):
         return ICON_NO_DATA, None
+
+    if not validation_identity_is_complete(method_data):
+        return ICON_NO_DATA, str(method_data.get("last_tested")) if method_data.get("last_tested") else None
 
     result = method_data.get("result", "not_tested")
     last_tested = method_data.get("last_tested")
@@ -272,6 +281,8 @@ def generate_dashboard(tutorials: list[dict[str, Any]], today: date) -> str:
     lines.append("    last_tested: 2026-04-09")
     lines.append('    cli_version: "2.83.0"')
     lines.append("    result: pass")
+    lines.append("    run_id: 20261016T075147Z-6d019de6e2f2")
+    lines.append("    evidence: evidence/runs/20261016T075147Z-6d019de6e2f2")
     lines.append("  bicep:")
     lines.append("    last_tested: null")
     lines.append("    result: not_tested")
@@ -288,6 +299,8 @@ def generate_dashboard(tutorials: list[dict[str, Any]], today: date) -> str:
     lines.append("    - `result`: `pass`, `fail`, or `not_tested`")
     lines.append("    - `last_tested`: ISO date (YYYY-MM-DD) or `null`")
     lines.append("    - `cli_version`: Azure CLI version used")
+    lines.append("    - `run_id`: Identity of the actual retained test run")
+    lines.append("    - `evidence`: Repository-relative retained evidence path")
     lines.append(
         f"    - Tutorials older than {STALENESS_DAYS} days are flagged as **stale**"
     )
