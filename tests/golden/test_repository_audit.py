@@ -25,6 +25,8 @@ REQUIRED_PAIRED_RUNBOOKS = {
     "windows-java-httpplatformhandler-timeout",
 }
 REQUIRED_COMPARISONS = {"entrypoint", "package", "build", "prerequisite", "cleanup"}
+ALLOWED_LINK_VALIDATORS = {"scripts/validate_documented_paths.py"}
+SEMANTIC_REVIEW_METHOD = "human-reviewed"
 
 
 def invoked_by_ci(basename):
@@ -99,12 +101,15 @@ class ExistenceTests(unittest.TestCase):
             self.assertEqual(set(record["comparisons"]), REQUIRED_COMPARISONS, msg=record["id"])
             for name, comparison in record["comparisons"].items():
                 self.assertEqual(comparison["result"], "MATCH", msg=f"{record['id']}:{name}")
+                self.assertEqual(comparison["review_method"], SEMANTIC_REVIEW_METHOD, msg=f"{record['id']}:{name}")
                 for evidence_path in comparison["evidence"]:
                     self.assertTrue((ROOT / evidence_path).exists(), msg=evidence_path)
             link_audit = record["link_audit"]
             self.assertEqual(link_audit["repo_local"], "PASS", msg=record["id"])
             self.assertEqual(link_audit["absolute_github"], "PASS", msg=record["id"])
+            self.assertIn(link_audit["validator"], ALLOWED_LINK_VALIDATORS, msg=record["id"])
             self.assertTrue((ROOT / link_audit["validator"]).is_file(), msg=record["id"])
+            self.assertTrue(invoked_by_ci(pathlib.Path(link_audit["validator"]).name), msg=record["id"])
 
 
 class DeletionPolicyTests(unittest.TestCase):

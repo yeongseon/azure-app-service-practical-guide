@@ -18,22 +18,22 @@
     {
       "id": "deployment-succeeded-startup-failed",
       "comparisons": {
-        "entrypoint": {"result": "MATCH", "evidence": ["labs/deployment-succeeded-startup-failed/contract.json", "labs/deployment-succeeded-startup-failed/run.py", "labs/deployment-succeeded-startup-failed/trigger.sh"]},
-        "package": {"result": "MATCH", "evidence": ["labs/deployment-succeeded-startup-failed/app/requirements.txt", "labs/deployment-succeeded-startup-failed/run.py"]},
-        "build": {"result": "MATCH", "evidence": ["labs/deployment-succeeded-startup-failed/run.py", "labs/deployment-succeeded-startup-failed/trigger.sh"]},
-        "prerequisite": {"result": "MATCH", "evidence": ["labs/deployment-succeeded-startup-failed/main.bicep", "labs/deployment-succeeded-startup-failed/contract.json"]},
-        "cleanup": {"result": "MATCH", "evidence": ["labs/deployment-succeeded-startup-failed/cleanup.sh", "labs/deployment-succeeded-startup-failed/contract.json"]}
+        "entrypoint": {"result": "MATCH", "review_method": "human-reviewed", "evidence": ["labs/deployment-succeeded-startup-failed/contract.json", "labs/deployment-succeeded-startup-failed/run.py", "labs/deployment-succeeded-startup-failed/trigger.sh"]},
+        "package": {"result": "MATCH", "review_method": "human-reviewed", "evidence": ["labs/deployment-succeeded-startup-failed/app/requirements.txt", "labs/deployment-succeeded-startup-failed/run.py"]},
+        "build": {"result": "MATCH", "review_method": "human-reviewed", "evidence": ["labs/deployment-succeeded-startup-failed/run.py", "labs/deployment-succeeded-startup-failed/trigger.sh"]},
+        "prerequisite": {"result": "MATCH", "review_method": "human-reviewed", "evidence": ["labs/deployment-succeeded-startup-failed/main.bicep", "labs/deployment-succeeded-startup-failed/contract.json"]},
+        "cleanup": {"result": "MATCH", "review_method": "human-reviewed", "evidence": ["labs/deployment-succeeded-startup-failed/cleanup.sh", "labs/deployment-succeeded-startup-failed/contract.json"]}
       },
       "link_audit": {"repo_local": "PASS", "absolute_github": "PASS", "validator": "scripts/validate_documented_paths.py"}
     },
     {
       "id": "windows-java-httpplatformhandler-timeout",
       "comparisons": {
-        "entrypoint": {"result": "MATCH", "evidence": ["labs/windows-java-httpplatformhandler-timeout/README.md", "labs/windows-java-httpplatformhandler-timeout/stage-0-config-discovery/README.md", "labs/windows-java-httpplatformhandler-timeout/lab-1-baseline-signature/README.md"]},
-        "package": {"result": "MATCH", "evidence": ["labs/windows-java-httpplatformhandler-timeout/stage-0-config-discovery/app/pom.xml", "labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/webconfig/web.config"]},
-        "build": {"result": "MATCH", "evidence": ["labs/windows-java-httpplatformhandler-timeout/stage-0-config-discovery/deploy.sh", "labs/windows-java-httpplatformhandler-timeout/lab-1-baseline-signature/deploy.sh", "labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/deploy.sh"]},
-        "prerequisite": {"result": "MATCH", "evidence": ["labs/windows-java-httpplatformhandler-timeout/stage-0-config-discovery/README.md", "labs/windows-java-httpplatformhandler-timeout/lab-1-baseline-signature/README.md", "labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/design-proposal.md"]},
-        "cleanup": {"result": "MATCH", "evidence": ["labs/windows-java-httpplatformhandler-timeout/stage-0-config-discovery/cleanup.sh", "labs/windows-java-httpplatformhandler-timeout/lab-1-baseline-signature/cleanup.sh", "labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/cleanup.sh"]}
+        "entrypoint": {"result": "MATCH", "review_method": "human-reviewed", "evidence": ["labs/windows-java-httpplatformhandler-timeout/README.md", "labs/windows-java-httpplatformhandler-timeout/stage-0-config-discovery/README.md", "labs/windows-java-httpplatformhandler-timeout/lab-1-baseline-signature/README.md"]},
+        "package": {"result": "MATCH", "review_method": "human-reviewed", "evidence": ["labs/windows-java-httpplatformhandler-timeout/stage-0-config-discovery/app/pom.xml", "labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/webconfig/web.config"]},
+        "build": {"result": "MATCH", "review_method": "human-reviewed", "evidence": ["labs/windows-java-httpplatformhandler-timeout/stage-0-config-discovery/deploy.sh", "labs/windows-java-httpplatformhandler-timeout/lab-1-baseline-signature/deploy.sh", "labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/deploy.sh"]},
+        "prerequisite": {"result": "MATCH", "review_method": "human-reviewed", "evidence": ["labs/windows-java-httpplatformhandler-timeout/stage-0-config-discovery/README.md", "labs/windows-java-httpplatformhandler-timeout/lab-1-baseline-signature/README.md", "labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/design-proposal.md"]},
+        "cleanup": {"result": "MATCH", "review_method": "human-reviewed", "evidence": ["labs/windows-java-httpplatformhandler-timeout/stage-0-config-discovery/cleanup.sh", "labs/windows-java-httpplatformhandler-timeout/lab-1-baseline-signature/cleanup.sh", "labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/cleanup.sh"]}
       },
       "link_audit": {"repo_local": "PASS", "absolute_github": "PASS", "validator": "scripts/validate_documented_paths.py"}
     }
