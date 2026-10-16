@@ -25,7 +25,7 @@ Every quality gate in this repository, its most recently recorded result, and th
 
 ## Summary
 
-*Snapshot of `0ab4f31`, generated 2026-10-16.*
+*Snapshot of `fe2e623 plus uncommitted working-tree changes`, generated 2026-10-16.*
 
 | Metric | Count |
 |---|---:|
