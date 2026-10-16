@@ -172,6 +172,46 @@ class RetainedPackageImmutabilityTests(unittest.TestCase):
         })
         self.assertNotEqual(self._check(self.base).returncode, 0)
 
+    def test_valid_but_unrelated_provenance_digests_fail(self):
+        new_dir = self.repo / "evidence/runs/run-two"
+        new_dir.mkdir()
+        collector = self.repo / "scripts/golden/collect_scenario_a.py"
+        collector.write_text("collector source")
+        recipe = self.repo / "labs/deployment-succeeded-startup-failed/run.py"
+        recipe.parent.mkdir(parents=True)
+        recipe.write_text("recipe source")
+        run_git(self.repo, "add", ".")
+        run_git(self.repo, "commit", "-m", "add provenance sources")
+        source_commit = subprocess.check_output(
+            ["git", "rev-parse", "HEAD"], cwd=self.repo, text=True).strip()
+        manifest = {
+            "run_id": "run-two",
+            "execution_status": "COMPLETE",
+            "hypothesis": "test",
+            "hypothesis_claim_level": "Inferred",
+            "source_commit": source_commit,
+            "environment": {
+                "subscription_kind": "test",
+                "region": "local",
+                "runtime": "Python 3.11",
+                "sku": "test",
+            },
+            "recipe_digest": "sha256:" + "1" * 64,
+            "collector_digest": "sha256:" + "2" * 64,
+            "collector_path": "scripts/golden/collect_scenario_a.py",
+            "recipe_paths": [str(recipe.relative_to(self.repo))],
+        }
+        (new_dir / "manifest.json").write_text(json.dumps(manifest))
+        manifest_path = self.repo / "evidence/retained-digests.json"
+        document = json.loads(manifest_path.read_text())
+        relative = "evidence/runs/run-two/manifest.json"
+        document["packages"]["run-two"] = {
+            "historical": False,
+            "files": {relative: hashlib.sha256((self.repo / relative).read_bytes()).hexdigest()},
+        }
+        manifest_path.write_text(json.dumps(document))
+        self.assertNotEqual(self._check(self.base).returncode, 0)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

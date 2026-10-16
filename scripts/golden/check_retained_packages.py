@@ -21,6 +21,42 @@ FROZEN_HISTORICAL_RUN_IDS = {
 }
 
 
+def _git_bytes(repo: pathlib.Path, commit: str, path: str) -> bytes:
+    completed = subprocess.run(
+        ["git", "show", f"{commit}:{path}"], cwd=repo, capture_output=True, check=False)
+    if completed.returncode != 0:
+        raise ValueError(f"source_commit does not contain provenance input: {path}")
+    return completed.stdout
+
+
+def _provenance_digest_problems(repo: pathlib.Path, manifest: dict) -> list[str]:
+    source_commit = manifest.get("source_commit")
+    collector_path = manifest.get("collector_path")
+    recipe_paths = manifest.get("recipe_paths")
+    if (not isinstance(source_commit, str) or not isinstance(collector_path, str)
+            or not isinstance(recipe_paths, list) or not recipe_paths):
+        return ["new COMPLETE run lacks reproducible provenance inputs"]
+    try:
+        collector = hashlib.sha256(_git_bytes(repo, source_commit, collector_path)).hexdigest()
+        common = pathlib.PurePosixPath(os.path.commonpath(recipe_paths)).as_posix()
+        prefix = common.rstrip("/") + "/"
+        fingerprints = {
+            path.removeprefix(prefix): hashlib.sha256(
+                _git_bytes(repo, source_commit, path)).hexdigest()
+            for path in sorted(recipe_paths)
+        }
+    except ValueError as exc:
+        return [str(exc)]
+    canonical = json.dumps(fingerprints, sort_keys=True, separators=(",", ":")).encode()
+    recipe = hashlib.sha256(canonical).hexdigest()
+    problems = []
+    if manifest.get("collector_digest") != f"sha256:{collector}":
+        problems.append("collector_digest does not match source_commit bytes")
+    if manifest.get("recipe_digest") != f"sha256:{recipe}":
+        problems.append("recipe_digest does not match canonical source fingerprints")
+    return problems
+
+
 def _base_ref(explicit: str | None) -> str:
     if explicit:
         return explicit
@@ -148,6 +184,10 @@ def violations(repo: pathlib.Path, base_ref: str) -> list[str]:
                         or not manifest.get("collector_digest")
                         or not manifest.get("hypothesis_claim_level")):
                     problems.append(f"new COMPLETE run lacks full provenance: {package_id}")
+                problems.extend(
+                    f"{package_id}: {problem}"
+                    for problem in _provenance_digest_problems(repo, manifest)
+                )
 
     base_files = set(_git(repo, "ls-tree", "-r", "--name-only", base_ref).splitlines())
     base_roots = {_package_root(path) for path in base_files if _package_root(path)}
