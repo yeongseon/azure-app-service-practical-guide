@@ -2,10 +2,10 @@
   "scenario": "slot-swap-config-drift",
   "collector": "scripts/golden/collect_scenario_c.py",
   "derivation": {
-    "collector_commit": "d600026239055f131e2a84429cc5bd6914d6fa60",
+    "collector_commit": "44cddf2917b9bea895423010f6b343679cc2ab07",
     "collector_path": "scripts/golden/collect_scenario_c.py",
-    "collector_digest": "sha256:5b9e6ac4ca7b37b92e9d052b9377c28db1a07d100ed9719c81369d9d09e12daf",
-    "derived_at": "2026-10-16T22:30:13Z",
+    "collector_digest": "sha256:a9f316f9aec81061729df0fae2e54914375a0b708c580542573fb3a446c6565f",
+    "derived_at": "2026-10-16T23:20:13Z",
     "derived_offline": true,
     "raw_input": {
       "run_id": "20261016T153835Z-275d216becd8",

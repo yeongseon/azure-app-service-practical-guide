@@ -65,7 +65,26 @@
         "stdout": "",
         "stderr": ""
       },
-      "deployment_error_rows": []
+      "deployment_error_rows": [],
+      "deployment_error_query": {
+        "argv": [
+          "az",
+          "monitor",
+          "log-analytics",
+          "query",
+          "--workspace",
+          "00000000-0000-0000-0000-000000000000\r",
+          "--analytics-query",
+          "AppServicePlatformLogs | where TimeGenerated between(datetime(2026-10-16T15:38:35.163159+00:00) .. datetime(2026-10-16T15:50:32.494779+00:00)) | where _ResourceId has '/sites/app-scenario-c-example' | where Level == 'Error' | project TimeGenerated, Level, Message | limit 100",
+          "--output",
+          "json"
+        ],
+        "started_at": "2026-10-16T15:50:32.495063+00:00",
+        "ended_at": "2026-10-16T15:50:36.074697+00:00",
+        "exit_code": 3,
+        "stdout": "",
+        "stderr": "ERROR: (PathNotFoundError) The requested path does not exist\nCode: PathNotFoundError\nMessage: The requested path does not exist\n"
+      }
     },
     "phase_capture_integrity": {
       "baseline": {
