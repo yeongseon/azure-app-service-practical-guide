@@ -55,6 +55,7 @@ ROOT = pathlib.Path(__file__).resolve().parents[2]
 RETAINED_DIGESTS = ROOT / "evidence/retained-digests.json"
 RUN_DECLARATIONS = ROOT / "evidence/run-declarations.json"
 SCENARIO_A_RECIPE = ROOT / "scripts/golden/scenario-a-recipe.json"
+SCENARIO_C_RECIPE = ROOT / "scripts/golden/scenario-c-recipe.json"
 REQUIRED_ENVIRONMENT_FIELDS = ("subscription_kind", "region", "runtime", "sku")
 PLACEHOLDERS = {"", "unknown", "none", "null", "na", "tbd", "placeholder", "notavailable"}
 FROZEN_HISTORICAL_RUN_IDS = {
@@ -288,7 +289,7 @@ def _verify_provenance_digests(manifest: dict) -> None:
         return
     source_commit = manifest["source_commit"]
     recipe_paths = manifest.get("recipe_paths")
-    definition = _read_json(SCENARIO_A_RECIPE)
+    definition = _recipe_definition(manifest)
     if recipe_paths != definition.get("recipe_paths"):
         raise ModelError("recipe_paths does not match the versioned recipe definition")
     if (not isinstance(recipe_paths, list) or not recipe_paths
@@ -317,7 +318,7 @@ def _verify_derivation(provenance: dict, manifest: dict, evidence: dict) -> None
             or re.fullmatch(r"[0-9a-f]{40}", collector_commit) is None
             or not isinstance(collector_path, str)):
         raise ModelError("derivation collector commit/path is invalid")
-    definition = _read_json(SCENARIO_A_RECIPE)
+    definition = _recipe_definition(manifest)
     if (collector_commit != definition.get("derivation_collector_commit")
             or collector_path != definition.get("collector_path")):
         raise ModelError("derivation collector does not match the versioned recipe definition")
@@ -348,10 +349,21 @@ def _verify_derivation(provenance: dict, manifest: dict, evidence: dict) -> None
                 phase: anchor["sha256"] for phase, anchor in integrity.items()
             }):
         raise ModelError("derivation raw_input does not match phase capture anchors")
-    required_shape = {"fault_status", "fault_console_rows", "phase_windows",
-                      "baseline_probes", "fault_probes", "recovery_probes"}
-    if not required_shape <= set(evidence):
+    scenario_a_shape = {"fault_status", "fault_console_rows", "phase_windows",
+                        "baseline_probes", "fault_probes", "recovery_probes"}
+    scenario_c_shape = {"raw_snapshots", "phase_capture_integrity"}
+    if not (scenario_a_shape <= set(evidence) or scenario_c_shape <= set(evidence)):
         raise ModelError("derivation collector output shape is incomplete")
+
+
+def _recipe_definition(manifest: dict) -> dict:
+    recipe_paths = manifest.get("recipe_paths") or []
+    definitions = (_read_json(SCENARIO_A_RECIPE), _read_json(SCENARIO_C_RECIPE))
+    matches = [definition for definition in definitions
+               if definition.get("recipe_paths") == recipe_paths]
+    if len(matches) != 1:
+        raise ModelError("recipe_paths does not identify one versioned recipe definition")
+    return matches[0]
 
 
 def _verify_source_commit(manifest: dict, evidence: dict) -> None:
@@ -567,6 +579,49 @@ def _derive_scenario_a(observations: dict, manifest: dict, provenance: dict) -> 
     return {**observations, **derived}
 
 
+def _derive_scenario_c(observations: dict, provenance: dict) -> dict:
+    snapshots = observations.get("raw_snapshots")
+    if not isinstance(snapshots, dict):
+        return observations
+    prod_before = snapshots.get("prod_before")
+    staging_before = snapshots.get("staging_before")
+    prod_after = snapshots.get("prod_after")
+    staging_after = snapshots.get("staging_after")
+    rollback = snapshots.get("prod_after_rollback")
+    swap = snapshots.get("swap")
+    errors = snapshots.get("deployment_error_rows")
+    usable = lambda value: isinstance(value, dict) and value and "unreachable" not in value
+    comparable = all(usable(value) for value in (
+        prod_before, staging_before, prod_after, staging_after))
+    derived = {
+        "swap_exit_code": swap.get("exit_code") if isinstance(swap, dict) else None,
+        "production_restart_observed": (
+            prod_before.get("PROCESS_START_UTC") != prod_after.get("PROCESS_START_UTC")
+            if usable(prod_before) and usable(prod_after) else None),
+        "non_sticky_feature_flag_swapped": (
+            prod_after.get("FEATURE_FLAG") == staging_before.get("FEATURE_FLAG")
+            and staging_after.get("FEATURE_FLAG") == prod_before.get("FEATURE_FLAG")
+            if comparable else None),
+        "sticky_db_connection_remained": (
+            prod_after.get("DB_CONNECTION_STRING") == prod_before.get("DB_CONNECTION_STRING")
+            and staging_after.get("DB_CONNECTION_STRING") == staging_before.get("DB_CONNECTION_STRING")
+            if comparable else None),
+        "production_config_changed": (
+            {k: v for k, v in prod_before.items() if k != "PROCESS_START_UTC"}
+            != {k: v for k, v in prod_after.items() if k != "PROCESS_START_UTC"}
+            if usable(prod_before) and usable(prod_after) else None),
+        "deployment_error_count": len(errors) if isinstance(errors, list) else None,
+        "post_rollback_matches_pre_swap": (
+            {k: v for k, v in rollback.items() if k != "PROCESS_START_UTC"}
+            == {k: v for k, v in prod_before.items() if k != "PROCESS_START_UTC"}
+            if usable(rollback) and usable(prod_before) else None),
+    }
+    for field, value in derived.items():
+        if field in observations and observations[field] != value:
+            raise ModelError(f"summary field disagrees with raw evidence: {field}")
+    return {**observations, **{k: v for k, v in derived.items() if v is not None}}
+
+
 def evaluate(run_dir, *, skip_source_commit_resolution: bool = False,
              base_ref: str | None = None) -> dict:
     """Evaluate one run directory and return a result record."""
@@ -606,6 +661,7 @@ def evaluate(run_dir, *, skip_source_commit_resolution: bool = False,
         _verify_source_commit(manifest, evidence_doc)
         _verify_derivation(provenance, manifest, evidence)
         evidence = _derive_scenario_a(evidence, manifest, provenance)
+        evidence = _derive_scenario_c(evidence, provenance)
 
     # Keying outcomes by a caller-supplied id let a later assertion overwrite
     # an earlier one, so a manifest declaring the same id twice could drop a

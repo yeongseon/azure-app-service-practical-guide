@@ -149,6 +149,19 @@ class ProvenanceTests(unittest.TestCase):
         (run / "run.json").write_text(json.dumps(document))
         self.assertEqual(collect_c.collect(run)["runner_source_commit"], "a" * 40)
 
+    def test_evaluator_rederives_claims_from_raw_snapshots(self):
+        evidence = collect_c.collect(build_run())
+        observations = evidence["observations"]
+        observations["non_sticky_feature_flag_swapped"] = False
+        with self.assertRaises(ev.ModelError):
+            ev._derive_scenario_c(observations, {})
+
+    def test_evaluator_does_not_invent_missing_stickiness(self):
+        evidence = collect_c.collect(build_run(staging_before={"unreachable": "timed out"}))
+        derived = ev._derive_scenario_c(evidence["observations"], {})
+        self.assertNotIn("non_sticky_feature_flag_swapped", derived)
+        self.assertNotIn("sticky_db_connection_remained", derived)
+
 
 class UnperformedStepTests(unittest.TestCase):
     """A step that never ran cannot become supporting evidence."""
