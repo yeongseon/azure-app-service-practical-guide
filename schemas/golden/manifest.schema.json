@@ -95,6 +95,10 @@
       "type": "string",
       "pattern": "^[0-9a-f]{40}$"
     },
+    "runner_source_commit": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
     "environment": {
       "type": "object",
       "minProperties": 1
@@ -105,7 +109,17 @@
     },
     "collector_digest": {
       "type": "string",
-      "pattern": "^sha256:[0-9a-f]{64}$"
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "description": "Legacy compatibility field. New offline derivations bind their collector in provenance.json."
+    },
+    "recipe_paths": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
     },
     "hypothesis_claim_level": {
       "enum": ["Documented", "Observed", "Inferred", "Not Proven"]
@@ -141,7 +155,7 @@
       "then": {
         "anyOf": [
           {
-            "required": ["source_commit", "environment", "recipe_digest", "collector_digest"]
+            "required": ["source_commit", "environment", "recipe_digest"]
           },
           {
             "description": "Explicit pre-contract retained-run allowance. Historical packages with a sanitized null resource and unverified custody remain schema-valid without rewriting their immutable manifests.",

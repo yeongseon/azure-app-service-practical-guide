@@ -252,6 +252,14 @@ class DerivedStateTests(unittest.TestCase):
         for path in sorted((ROOT / "labs").glob("*/golden/evidence-classification.json")):
             runs = json.loads(path.read_text()).get("executed_runs") or []
             found[path.parent.parent.name] = runs
+        declaration_path = ROOT / "evidence/run-declarations.json"
+        if declaration_path.is_file():
+            declarations = json.loads(declaration_path.read_text()).get("runs") or {}
+            for run_id, declaration in declarations.items():
+                scenario = declaration["scenario"]
+                found.setdefault(scenario, [])
+                if run_id not in found[scenario]:
+                    found[scenario].append(run_id)
         return found
 
     def test_derived_state_is_present(self):

@@ -1,0 +1,74 @@
+{
+  "scenario": "deployment-succeeded-startup-failed",
+  "collector": "scripts/golden/collect_scenario_a.py",
+  "derivation": {
+    "collector_commit": "dce105c8843bdb8d9c8dc1819f1fe7ecc20d0113",
+    "collector_path": "scripts/golden/collect_scenario_a.py",
+    "collector_digest": "sha256:755bb6d7d24e37511b4f857b46d9f9a8e82ca9e481e642fa10b4f0391fdbdc1d",
+    "derived_at": "2026-10-16T11:19:50Z",
+    "derived_offline": true,
+    "raw_input": {
+      "run_id": "20261016T075147Z-6d019de6e2f2",
+      "location": "private run directory",
+      "phase_capture_integrity": {
+        "baseline": "e31cea6109e0ca11b70f982947fecc8108d91f7c89af63631e81f6d652a8e5d0",
+        "fault": "ca5ace34214df80a73f5dbe69de09f3d83effbbcab0e9cb01b79e9bcd7f76f54",
+        "recovery": "bb9596e5be987086c4b6556701bf5f74f09a1abf0339abf7b636b72d2a8e57d2"
+      }
+    }
+  },
+  "sanitised": true,
+  "sanitisation": "Subscription, tenant, resource-group, app, host, instance, workspace and operator identifiers were omitted. Exact phase/probe timestamps, status codes, startup commands, and wrong_module console signatures are unmodified from the preserved private run.",
+  "replay": "python3 scripts/golden/evaluate_run.py evidence/runs/20261016T075147Z-6d019de6e2f2",
+  "execution_status": "COMPLETE",
+  "hypothesis_status": "SUPPORTED",
+  "cleanup_status": "VERIFIED",
+  "cleanup_verified": true,
+  "cleanup_completed_at": "2026-10-16T08:02:54.778086+00:00",
+  "cleanup_proof": "cleanup.json preserves the runner's VERIFIED cleanup status and the separate final az group exists output of false.",
+  "independent_reproduction": "NOT_RUN",
+  "source_commit": "af75d0024472edce67401042fdaa97d00dfbe6ac",
+  "runner_source_commit": "af75d0024472edce67401042fdaa97d00dfbe6ac",
+  "environment": {
+    "subscription_kind": "MSIT",
+    "region": "koreacentral",
+    "runtime": "Python 3.11",
+    "sku": "B1 Linux"
+  },
+  "recipe_digest": "sha256:41cb9e899473adcd2ad12f53fd156b6d8b01dc9490323344604db59df6cc2d40",
+  "recipe_digest_rule": "SHA-256 of canonical compact key-sorted JSON mapping each recipe path relative to the lab root to the SHA-256 of its bytes at source_commit.",
+  "recipe_paths": [
+    "labs/deployment-succeeded-startup-failed/app/app.py",
+    "labs/deployment-succeeded-startup-failed/app/requirements.txt",
+    "labs/deployment-succeeded-startup-failed/contract.json",
+    "labs/deployment-succeeded-startup-failed/main.bicep",
+    "labs/deployment-succeeded-startup-failed/run.py",
+    "labs/deployment-succeeded-startup-failed/trigger.sh",
+    "labs/deployment-succeeded-startup-failed/verify.sh"
+  ],
+  "phase_capture_integrity": {
+    "baseline": {
+      "probe_count": 1,
+      "sha256": "e31cea6109e0ca11b70f982947fecc8108d91f7c89af63631e81f6d652a8e5d0"
+    },
+    "fault": {
+      "probe_count": 16,
+      "sha256": "ca5ace34214df80a73f5dbe69de09f3d83effbbcab0e9cb01b79e9bcd7f76f54"
+    },
+    "recovery": {
+      "probe_count": 5,
+      "sha256": "bb9596e5be987086c4b6556701bf5f74f09a1abf0339abf7b636b72d2a8e57d2"
+    }
+  },
+  "digests": {
+    "manifest.json": "e17a06ce97c6bd5ab25d964b828769d86cb1d54efddc0f16812231190b829ece",
+    "evidence.json": "62a484a2636c67cd2a29c84553ab060860b1297dd4f67320c49125b724682edb",
+    "result.json": "6c9f0844b151182995bbdeead10d0189df49865304b9bf659541245a3ae2d4b0",
+    "cleanup.json": "c851a1d522b09ba9fcb3741e803be60342ead2183a5c5a1ba1935e81dae40407"
+  },
+  "limitations": [
+    "The retained package is a sanitized bridge derived from private runner captures; it does not retain the Azure resource identity.",
+    "Configuration readback, HTTP 503, matching fault-window import errors and recovery support the scoped intervention, but do not exclude every concurrent platform contribution.",
+    "This AI-agent execution is a repeat run, not a qualifying independent human reproduction."
+  ]
+}

@@ -24,6 +24,11 @@
     "resource_id": {
       "type": ["string", "null"]
     },
+    "runner_source_commit": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$",
+      "description": "Source SHA captured by the runner before Azure execution."
+    },
     "observations": {
       "type": "object",
       "description": "Field name to observed value. Keys are the fields assertions name. Values are raw: a status code, a count, a duration. A verdict is not an observation.",

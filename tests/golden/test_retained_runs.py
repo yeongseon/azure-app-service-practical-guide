@@ -23,6 +23,7 @@ sys.dont_write_bytecode = True
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 RUNS = ROOT / "evidence" / "runs"
+RUN_DECLARATIONS = ROOT / "evidence" / "run-declarations.json"
 
 _spec = importlib.util.spec_from_file_location("ev_r", ROOT / "scripts/golden/evaluate_run.py")
 ev = importlib.util.module_from_spec(_spec)
@@ -42,6 +43,8 @@ def declared_runs():
     found = set()
     for path in (ROOT / "labs").glob("*/golden/evidence-classification.json"):
         found.update(json.loads(path.read_text()).get("executed_runs") or [])
+    if RUN_DECLARATIONS.is_file():
+        found.update((json.loads(RUN_DECLARATIONS.read_text()).get("runs") or {}).keys())
     return found
 
 
@@ -79,6 +82,13 @@ class ReplayTests(unittest.TestCase):
         self.assertEqual(
             {d.name for d in packages()} - declared_runs(), set(),
             msg="a retained package names a run no scenario claims")
+
+    def test_append_only_declarations_match_package_scenarios(self):
+        declarations = json.loads(RUN_DECLARATIONS.read_text()).get("runs") or {}
+        for run_id, declaration in declarations.items():
+            with self.subTest(run=run_id):
+                provenance = json.loads((RUNS / run_id / "provenance.json").read_text())
+                self.assertEqual(declaration["scenario"], provenance["scenario"])
 
 
 class SanitisationTests(unittest.TestCase):

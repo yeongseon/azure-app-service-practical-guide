@@ -27,14 +27,27 @@ ROOT = pathlib.Path(__file__).resolve().parents[2]
 def scenarios():
     """(lab_name, manifest, classification) for every lab with a contract."""
     found = []
+    declaration_path = ROOT / "evidence/run-declarations.json"
+    declarations = (
+        json.loads(declaration_path.read_text()).get("runs") or {}
+        if declaration_path.is_file() else {}
+    )
     for manifest_path in sorted((ROOT / "labs").glob("*/golden/manifest.template.json")):
         lab = manifest_path.parent.parent
         classification_path = lab / "golden" / "evidence-classification.json"
         if not classification_path.is_file():
             continue
+        manifest = json.loads(manifest_path.read_text())
+        declared_runs = [
+            run_id for run_id, declaration in declarations.items()
+            if declaration.get("scenario") == lab.name
+        ]
+        if declared_runs:
+            retained = ROOT / declarations[sorted(declared_runs)[-1]]["retained_package"]
+            manifest = json.loads((retained / "manifest.json").read_text())
         found.append((
             lab.name,
-            json.loads(manifest_path.read_text()),
+            manifest,
             json.loads(classification_path.read_text()),
         ))
     return found

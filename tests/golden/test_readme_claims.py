@@ -101,6 +101,18 @@ class LabCountTests(unittest.TestCase):
 
 
 class ProofClaimTests(unittest.TestCase):
+    def test_docs_cannot_claim_independent_human_reproduction_while_run_is_not_run(self):
+        provenance = json.loads((
+            ROOT / "evidence/runs/20261016T075147Z-6d019de6e2f2/provenance.json"
+        ).read_text())
+        if provenance["independent_reproduction"] != "NOT_RUN":
+            return
+        documents = list((ROOT / "docs/troubleshooting/lab-guides").glob("*.md"))
+        documents.append(ROOT / "docs/reference/golden-v1-review.json")
+        claims = " ".join(path.read_text() for path in documents).lower()
+        self.assertNotIn("independent human reproduction completed", claims)
+        self.assertNotIn("independent reproduction: reproduced", claims)
+
 
     def test_the_legend_tracks_the_reproduction_gate(self):
         """The claim must match what check_reproduction actually reports.

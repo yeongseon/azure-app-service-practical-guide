@@ -69,6 +69,9 @@ def _registry():
 def documents():
     """(document_path, schema_name) pairs this repository must honour."""
     pairs = []
+    declarations = ROOT / "evidence" / "run-declarations.json"
+    if declarations.is_file():
+        pairs.append((declarations, "run-declarations.schema.json"))
     for manifest in sorted((ROOT / "labs").glob("*/golden/manifest.template.json")):
         pairs.append((manifest, "manifest.schema.json"))
     for record in sorted((ROOT / "evidence" / "reproductions").glob("*.json")):

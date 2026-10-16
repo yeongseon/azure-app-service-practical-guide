@@ -178,6 +178,21 @@ result = (a and b) or b
 result = (strong or fallback) and invariant
 ```
 
+## Threat model and residual limits
+
+Offline gates verify internal consistency, source-bound recipes, retained raw-row
+derivations, and append-only package identity. They cannot prove that a pull
+request author did not forge an entirely new run before the package entered the
+repository. Comparison with the privately retained raw capture and the reviewer
+protocol are the control for that residual risk. A passing offline replay must
+not be described as independent proof that Azure execution occurred.
+
+`source_commit` is the runner-captured commit and proves only that the executed
+recipe was not committed after capture. Offline transformation is a separate
+fact: the derivation record identifies the later collector commit, its exact
+bytes, the honest derivation time, and the private raw phase hashes used as
+inputs. Neither timestamp substitutes for the other.
+
 ## Historical evidence policy
 
 A capture is evidence about the moment it was taken, not a standing fact.

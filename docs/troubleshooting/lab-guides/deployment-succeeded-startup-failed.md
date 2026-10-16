@@ -63,11 +63,17 @@ The lab is intentionally designed to prove one specific distinction:
 This guide helps you explain why `az webapp deploy` can succeed while the app still fails at runtime, trace the Linux startup lifecycle, detect `wrong_module:app` failures from logs, validate recovery after correcting the startup command to `app:app`, and produce an artifact-backed incident narrative.
 
 !!! warning "Execution and evidence status"
-    The revised fault-first → deployment → repair procedure has **NOT_RUN** Azure execution and **NOT_RUN** independent reproduction. Local validation does not constitute a cloud run. The retained April 4, 2026 artifacts are historical observations, with **INCONCLUSIVE** causal ordering and unverified cleanup; no new collection time is claimed.
+    The structured healthy → fault → recovery runner completed on Azure on
+    October 16, 2026 as run `20261016T075147Z-6d019de6e2f2`. Execution was
+    **COMPLETE**, the Golden evaluator returned **SUPPORTED**, recovery reached
+    HTTP 200, and cleanup was **VERIFIED** by a final `az group exists` result of
+    `false`. The retained package is a sanitized bridge derived from the private
+    raw runner capture. Independent reproduction remains **NOT_RUN**; this
+    AI-agent execution does not satisfy the human-independence gate.
 
-    This PR also ships a structured healthy → fault → recovery runner. It is
-    separately **NOT_RUN** in Azure. Its offline fixture tests do not constitute
-    a cloud run or independent human reproduction.
+    The separate fault-first `trigger.sh` procedure remains **NOT_RUN** under its
+    documented one-probe sequence. The April 4, 2026 artifacts remain historical
+    observations with **INCONCLUSIVE** causal ordering and unverified cleanup.
 
     Start with the [runbook](#3-runbook). Review the [historical evidence](#4-experiment-log) and its [timeline limitation](#47-hypothesis-verdict). The fixed scope is Linux B1, Python 3.11, a dedicated resource group, one web app, and one Log Analytics workspace. Configuration/API access and public HTTPS reachability are required.
 
@@ -371,7 +377,7 @@ Define the expected fault, repair, and rolling query window before execution. Pr
 
 Use only a dedicated disposable resource group with permission to create App Service and Log Analytics, configure diagnostics, query logs, and delete the group. B1 compute and Log Analytics ingestion incur charges until cleaned up. Run one experiment at a time with no concurrent configuration changes. Read [Clean Up](#clean-up) before deployment; it also applies to failed or interrupted runs. Raw captures contain real resource IDs and configuration: keep them private outside Git, review and sanitize before publication, and retain public transformation records separately.
 
-### 3.0 Structured runner (new, not Azure-executed)
+### 3.0 Structured runner
 
 After deploying the checked-in Bicep template, the new runner can establish its
 own healthy baseline, inject `wrong_module:app`, collect bounded fault-window
@@ -402,6 +408,18 @@ SUPPORTED, `1` CONTRADICTED, `2` INCONCLUSIVE, `3` NOT_TESTED, and `4`
 evidence-invalid. Evidence validity, hypothesis, cleanup, and independent
 reproduction remain separate. Do not edit a deficient run; preserve it and make
 a new run after correcting the procedure.
+
+Run `20261016T075147Z-6d019de6e2f2` exercised this path in Korea Central on B1
+Linux with Python 3.11. Its capture window was
+`2026-10-16T07:51:47.555754+00:00` through
+`2026-10-16T08:01:33.709704+00:00`. The baseline returned 200, the fault reached
+503, Log Analytics returned two exact fault-window
+`ModuleNotFoundError: No module named 'wrong_module'` rows, and recovery returned
+200. The retained evidence includes every timestamped probe and the three phase
+windows. The cleanup record reached `VERIFIED` at
+`2026-10-16T08:02:54.778086+00:00`, after which the separate group-existence
+check returned `false`. The replayable sanitized package is under
+`evidence/runs/20261016T075147Z-6d019de6e2f2/`.
 
 ### 3.1 Prerequisites
 

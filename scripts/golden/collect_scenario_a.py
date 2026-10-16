@@ -13,9 +13,9 @@ the names the Golden manifest declares. It computes nothing about cause and
 decides nothing about the hypothesis -- every value here is read from a
 capture, and the verdict is left to `evaluate_run.py`.
 
-The one derived field is `fault_status_class`, which buckets an observed
-status code into `2xx`/`4xx`/`5xx`. That is a restatement of the observed
-code, not an inference about why it occurred.
+The collector retains exact status codes, probe timestamps, phase windows,
+and exact fault-window rows naming ``wrong_module``. The only derived field is
+``phase_order_valid``, recomputed from the retained phase and capture windows.
 
 Usage:
     python3 scripts/golden/collect_scenario_a.py <run_dir> [--output PATH]
@@ -26,6 +26,7 @@ Exit codes: 0 evidence written, 2 the run directory is unusable.
 from __future__ import annotations
 
 import argparse
+import datetime
 import json
 import pathlib
 import sys
@@ -53,48 +54,62 @@ def _read(path: pathlib.Path) -> dict:
         raise CollectionError(f"malformed capture {path.name}: {exc}") from exc
 
 
-def status_class(status) -> str:
-    """Bucket an observed HTTP status into its class.
-
-    A restatement of what was observed, not a judgement about it.
-
-    >>> status_class(503)
-    '5xx'
-    >>> status_class(200)
-    '2xx'
-    >>> status_class(None) is None
-    True
-    """
-    if not isinstance(status, int):
-        return None
-    return f"{status // 100}xx"
+def _timestamp(value: str) -> datetime.datetime:
+    parsed = datetime.datetime.fromisoformat(value.replace("Z", "+00:00"))
+    if parsed.tzinfo is None:
+        raise CollectionError("capture timestamp requires a timezone")
+    return parsed
 
 
-def import_error_hits(console: dict) -> int:
-    """Count console rows naming a Python import failure.
-
-    Counted from the raw query output rather than from any summary, so a
-    console file that recorded nothing yields 0 and not a missing field.
-
-    >>> import_error_hits({"stdout": "[]"})
-    0
-    >>> import_error_hits({"stdout": '[{"Msg": "ModuleNotFoundError: x"}]'})
-    1
-    """
+def exact_import_error_rows(console: dict, fault: dict) -> list[dict]:
     raw = console.get("stdout") or "[]"
     try:
         rows = json.loads(raw)
     except json.JSONDecodeError:
         rows = []
     if not isinstance(rows, list):
-        return 0
-    needles = ("modulenotfounderror", "importerror", "no module named")
-    count = 0
+        return []
+    signature = "ModuleNotFoundError: No module named 'wrong_module'"
+    started = _timestamp(fault["started_at"])
+    ended = _timestamp(fault["ended_at"])
+    retained = []
     for row in rows:
-        text = json.dumps(row).lower() if not isinstance(row, str) else row.lower()
-        if any(needle in text for needle in needles):
-            count += 1
-    return count
+        if not isinstance(row, dict):
+            continue
+        message = row.get("ResultDescription") or row.get("Msg")
+        captured_at = row.get("TimeGenerated")
+        if message != signature or not isinstance(captured_at, str):
+            continue
+        if started <= _timestamp(captured_at) <= ended:
+            retained.append({"timestamp": captured_at, "signature": signature})
+    return retained
+
+
+def _probes(phase: dict) -> list[dict]:
+    probes = phase.get("probes")
+    if not isinstance(probes, list):
+        return []
+    return [
+        {key: probe.get(key) for key in ("captured_at", "status", "exit_code")}
+        for probe in probes if isinstance(probe, dict)
+    ]
+
+
+def phases_are_ordered(run: dict, phases: dict) -> bool:
+    try:
+        values = [
+            _timestamp(run["started_at"]),
+            _timestamp(phases["baseline"]["started_at"]),
+            _timestamp(phases["baseline"]["ended_at"]),
+            _timestamp(phases["fault"]["started_at"]),
+            _timestamp(phases["fault"]["ended_at"]),
+            _timestamp(phases["recovery"]["started_at"]),
+            _timestamp(phases["recovery"]["ended_at"]),
+            _timestamp(run["ended_at"]),
+        ]
+    except (KeyError, TypeError, ValueError) as exc:
+        raise CollectionError(f"invalid phase window: {exc}") from exc
+    return values == sorted(values)
 
 
 def collect(run_dir) -> dict:
@@ -113,14 +128,25 @@ def collect(run_dir) -> dict:
     console_file = run_dir / "console-query-0.json"
     console = _read(console_file) if console_file.is_file() else {"stdout": "[]"}
 
+    exact_rows = exact_import_error_rows(console, fault)
     observations = {
         "baseline_status": phases["baseline"].get("status"),
         "deploy_exit_code": _read(run_dir / "deploy.json").get("exit_code"),
         "fault_startup_command": fault.get("startup"),
         "fault_config_readback": fault.get("config_readback"),
-        "fault_status_class": status_class(fault.get("status")),
-        "fault_import_error_hits": import_error_hits(console),
+        "fault_status": fault.get("status"),
+        "fault_import_error_signature": (
+            exact_rows[0]["signature"] if exact_rows else None),
+        "phase_order_valid": phases_are_ordered(run, phases),
         "recovery_status": phases["recovery"].get("status"),
+        "phase_windows": {
+            name: {key: phases[name].get(key) for key in ("started_at", "ended_at")}
+            for name in PHASES
+        },
+        "baseline_probes": _probes(phases["baseline"]),
+        "fault_probes": _probes(fault),
+        "recovery_probes": _probes(phases["recovery"]),
+        "fault_console_rows": exact_rows,
     }
 
     # A field the run genuinely failed to capture stays absent rather than

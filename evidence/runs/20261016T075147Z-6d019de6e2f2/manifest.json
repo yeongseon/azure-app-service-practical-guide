@@ -1,0 +1,95 @@
+{
+  "run_id": "20261016T075147Z-6d019de6e2f2",
+  "resource_id": null,
+  "captured_at": "2026-10-16T07:51:47.555754+00:00",
+  "evaluated_at": null,
+  "document_updated_at": "2026-10-16T08:01:33.717578+00:00",
+  "execution_status": "COMPLETE",
+  "evidence_trust": "trusted-current",
+  "source_commit": "af75d0024472edce67401042fdaa97d00dfbe6ac",
+  "runner_source_commit": "af75d0024472edce67401042fdaa97d00dfbe6ac",
+  "environment": {
+    "subscription_kind": "MSIT",
+    "region": "koreacentral",
+    "runtime": "Python 3.11",
+    "sku": "B1 Linux"
+  },
+  "recipe_digest": "sha256:41cb9e899473adcd2ad12f53fd156b6d8b01dc9490323344604db59df6cc2d40",
+  "recipe_paths": [
+    "labs/deployment-succeeded-startup-failed/app/app.py",
+    "labs/deployment-succeeded-startup-failed/app/requirements.txt",
+    "labs/deployment-succeeded-startup-failed/contract.json",
+    "labs/deployment-succeeded-startup-failed/main.bicep",
+    "labs/deployment-succeeded-startup-failed/run.py",
+    "labs/deployment-succeeded-startup-failed/trigger.sh",
+    "labs/deployment-succeeded-startup-failed/verify.sh"
+  ],
+  "capture_window": {
+    "started_at": "2026-10-16T07:51:47.555754+00:00",
+    "ended_at": "2026-10-16T08:01:33.709704+00:00"
+  },
+  "hypothesis": "Deployment success and runtime success are separable: a deployment that reports success can still leave the app failing at runtime, and the discriminating signal is an import error naming the wrong module.",
+  "hypothesis_claim_level": "Inferred",
+  "assertions": [
+    {
+      "id": "baseline-healthy",
+      "role": "control",
+      "field": "baseline_status",
+      "equals": 200,
+      "claim_level": "Observed"
+    },
+    {
+      "id": "deployment-reported-success",
+      "role": "control",
+      "field": "deploy_exit_code",
+      "equals": 0,
+      "claim_level": "Observed"
+    },
+    {
+      "id": "fault-config-applied",
+      "role": "control",
+      "field": "fault_startup_command",
+      "equals": "gunicorn --bind=0.0.0.0:8000 --timeout=120 wrong_module:app",
+      "claim_level": "Observed"
+    },
+    {
+      "id": "fault-config-activated",
+      "role": "control",
+      "field": "fault_config_readback",
+      "equals": "gunicorn --bind=0.0.0.0:8000 --timeout=120 wrong_module:app",
+      "claim_level": "Observed"
+    },
+    {
+      "id": "symptom-runtime-503",
+      "role": "symptom",
+      "field": "fault_status",
+      "equals": 503,
+      "claim_level": "Observed"
+    },
+    {
+      "id": "discriminating-import-error",
+      "role": "discriminating",
+      "field": "fault_import_error_signature",
+      "equals": "ModuleNotFoundError: No module named 'wrong_module'",
+      "claim_level": "Observed"
+    },
+    {
+      "id": "phases-ordered-in-capture-window",
+      "role": "control",
+      "field": "phase_order_valid",
+      "equals": true,
+      "claim_level": "Observed"
+    },
+    {
+      "id": "recovery-healthy",
+      "role": "recovery",
+      "field": "recovery_status",
+      "equals": 200,
+      "claim_level": "Observed"
+    }
+  ],
+  "notes": [
+    "The resource identity was removed during sanitisation; the private run remains bound to one resource by the runner's raw phase and Log Analytics checks.",
+    "The retained evidence contains both exact fault-window ModuleNotFoundError rows and every timestamped health probe from baseline, fault, and recovery."
+  ]
+}

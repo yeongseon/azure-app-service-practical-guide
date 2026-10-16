@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "collector_path": "scripts/golden/collect_scenario_a.py",
+  "derivation_collector_commit": "dce105c8843bdb8d9c8dc1819f1fe7ecc20d0113",
+  "recipe_paths": [
+    "labs/deployment-succeeded-startup-failed/app/app.py",
+    "labs/deployment-succeeded-startup-failed/app/requirements.txt",
+    "labs/deployment-succeeded-startup-failed/contract.json",
+    "labs/deployment-succeeded-startup-failed/main.bicep",
+    "labs/deployment-succeeded-startup-failed/run.py",
+    "labs/deployment-succeeded-startup-failed/trigger.sh",
+    "labs/deployment-succeeded-startup-failed/verify.sh"
+  ]
+}

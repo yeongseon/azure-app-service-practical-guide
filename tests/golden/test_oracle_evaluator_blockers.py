@@ -105,7 +105,6 @@ class EvidenceBindingMutations(unittest.TestCase):
     def test_new_run_rejects_malformed_provenance(self):
         for key, value in (("source_commit", "abc1234"),
                            ("recipe_digest", "sha256:abc"),
-                           ("collector_digest", "b" * 64),
                            ("environment", {})):
             with self.subTest(key=key):
                 doc = manifest()
@@ -117,7 +116,6 @@ class EvidenceBindingMutations(unittest.TestCase):
         cases = (
             ("source_commit", "0" * 40),
             ("recipe_digest", "sha256:" + "0" * 64),
-            ("collector_digest", "sha256:" + "f" * 64),
             ("environment", {
                 "subscription_kind": "unknown",
                 "region": "<region>",
@@ -185,7 +183,7 @@ class EvidenceBindingMutations(unittest.TestCase):
 
 class CausalSupportMutations(unittest.TestCase):
     def test_complete_non_historical_run_requires_every_provenance_field(self):
-        required = ("source_commit", "environment", "recipe_digest", "collector_digest",
+        required = ("source_commit", "environment", "recipe_digest",
                     "hypothesis_claim_level")
         for key in required:
             with self.subTest(key=key):

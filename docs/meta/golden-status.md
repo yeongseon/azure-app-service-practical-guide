@@ -25,7 +25,7 @@ Every quality gate in this repository, its most recently recorded result, and th
 
 ## Summary
 
-*Snapshot of `9dbe844 plus uncommitted working-tree changes`, generated 2026-10-15.*
+*Snapshot of `fe2e623 plus uncommitted working-tree changes`, generated 2026-10-16.*
 
 | Metric | Count |
 |---|---:|
@@ -65,7 +65,7 @@ These are locally executed results, not GitHub Actions statuses. **Skipped** mea
 | Frontmatter YAML style | Blocking | ✅ Pass | Files with style drift: 0 · Parse errors: 0 | < 10s |
 | Microsoft Learn locale | Blocking | ✅ Pass | Files with locale drift: 0 | < 10s |
 | Microsoft Learn URL reachability | Advisory | ➖ Skipped | Network gate; re-run with --include-network. | < 10s |
-| Lab artifact PII | Blocking | ✅ Pass | [scan_lab_pii] scanned=612 skipped_binary=0 skipped_decode=0 findings=0 | < 10s |
+| Lab artifact PII | Blocking | ✅ Pass | [scan_lab_pii] scanned=618 skipped_binary=0 skipped_decode=0 findings=0 | < 10s |
 | Documentation PII | Blocking | ✅ Pass | No blocking PII patterns detected! | < 10s |
 | Documentation repetition | Blocking | ✅ Pass | Scanned 245 file(s): 0 error(s), 6 warning(s). | < 10s |
 | Quick-triage causal claims | Blocking | ✅ Pass | Quick-triage causal-claim contract passed (7 files). · Scope is a phrase denylist only; technical review remains required. | < 10s |
@@ -76,7 +76,7 @@ These are locally executed results, not GitHub Actions statuses. **Skipped** mea
 | App and Infra impact classifier tests | Blocking | ✅ Pass | OK | < 10s |
 | Workflow YAML duplicate keys | Blocking | ✅ Pass | OK | < 10s |
 | Retained Golden package immutability | Blocking | ✅ Pass | Retained Golden package immutability: PASS | < 10s |
-| Golden evidence contracts | Blocking | ✅ Pass | OK | < 10s |
+| Golden evidence contracts | Blocking | ✅ Pass | OK | 10-120s |
 | Absorbed evidence predicates | Blocking | ✅ Pass | undeclared absorbed predicates: 0 (declared: 0, stale: 0) | < 10s |
 | Shell script syntax | Blocking | ✅ Pass | All shell scripts parse. | < 10s |
 | ShellCheck | Blocking | ➖ Skipped | Executable `shellcheck` is not on PATH. | < 10s |

@@ -33,6 +33,7 @@ class RetainedPackageImmutabilityTests(unittest.TestCase):
         }.items():
             (self.run_dir / name).write_text(content)
         self._write_digest_manifest()
+        self._write_declarations({})
         run_git(self.repo, "add", ".")
         run_git(self.repo, "commit", "-m", "base")
         self.base = subprocess.check_output(
@@ -45,6 +46,10 @@ class RetainedPackageImmutabilityTests(unittest.TestCase):
         }
         manifest = {"version": 1, "packages": {"run-one": {"historical": True, "files": files}}}
         (self.repo / "evidence/retained-digests.json").write_text(json.dumps(manifest))
+
+    def _write_declarations(self, runs: dict) -> None:
+        path = self.repo / "evidence/run-declarations.json"
+        path.write_text(json.dumps({"version": 1, "runs": runs}))
 
     def _check(self, base: str) -> subprocess.CompletedProcess[str]:
         return subprocess.run(
@@ -84,7 +89,7 @@ class RetainedPackageImmutabilityTests(unittest.TestCase):
     def test_whole_new_run_directory_is_allowed_when_manifested(self):
         new_dir = self.repo / "evidence/runs/run-two"
         new_dir.mkdir()
-        (new_dir / "manifest.json").write_text("{}")
+        (new_dir / "manifest.json").write_text('{"run_id":"run-two"}')
         manifest_path = self.repo / "evidence/retained-digests.json"
         document = json.loads(manifest_path.read_text())
         path = "evidence/runs/run-two/manifest.json"
@@ -113,6 +118,116 @@ class RetainedPackageImmutabilityTests(unittest.TestCase):
         manifest_path.write_text(json.dumps(document))
         run_git(self.repo, "add", ".")
         run_git(self.repo, "commit", "-m", "forge historical run")
+        self.assertNotEqual(self._check(self.base).returncode, 0)
+
+    def test_existing_declaration_cannot_be_modified(self):
+        self._write_declarations({
+            "run-one": {
+                "scenario": "scenario-a",
+                "retained_package": "evidence/runs/run-one",
+            }
+        })
+        run_git(self.repo, "add", ".")
+        run_git(self.repo, "commit", "-m", "declare run")
+        base = subprocess.check_output(
+            ["git", "rev-parse", "HEAD"], cwd=self.repo, text=True).strip()
+        self._write_declarations({
+            "run-one": {
+                "scenario": "changed",
+                "retained_package": "evidence/runs/run-one",
+            }
+        })
+        self.assertNotEqual(self._check(base).returncode, 0)
+
+    def test_existing_declaration_cannot_be_deleted(self):
+        self._write_declarations({
+            "run-one": {
+                "scenario": "scenario-a",
+                "retained_package": "evidence/runs/run-one",
+            }
+        })
+        run_git(self.repo, "add", ".")
+        run_git(self.repo, "commit", "-m", "declare run")
+        base = subprocess.check_output(
+            ["git", "rev-parse", "HEAD"], cwd=self.repo, text=True).strip()
+        self._write_declarations({})
+        self.assertNotEqual(self._check(base).returncode, 0)
+
+    def test_declaration_cannot_redirect_retained_package(self):
+        self._write_declarations({
+            "run-one": {
+                "scenario": "scenario-a",
+                "retained_package": "evidence/runs/other",
+            }
+        })
+        self.assertNotEqual(self._check(self.base).returncode, 0)
+
+    def test_declaration_rejects_unknown_historical_property(self):
+        self._write_declarations({
+            "run-one": {
+                "scenario": "scenario-a",
+                "retained_package": "evidence/runs/run-one",
+                "historical": True,
+            }
+        })
+        self.assertNotEqual(self._check(self.base).returncode, 0)
+
+    def test_valid_but_unrelated_provenance_digests_fail(self):
+        new_dir = self.repo / "evidence/runs/run-two"
+        new_dir.mkdir()
+        collector = self.repo / "scripts/golden/collect_scenario_a.py"
+        collector.write_text("collector source")
+        recipe = self.repo / "labs/deployment-succeeded-startup-failed/run.py"
+        recipe.parent.mkdir(parents=True)
+        recipe.write_text("recipe source")
+        run_git(self.repo, "add", ".")
+        run_git(self.repo, "commit", "-m", "add provenance sources")
+        source_commit = subprocess.check_output(
+            ["git", "rev-parse", "HEAD"], cwd=self.repo, text=True).strip()
+        manifest = {
+            "run_id": "run-two",
+            "execution_status": "COMPLETE",
+            "hypothesis": "test",
+            "hypothesis_claim_level": "Inferred",
+            "source_commit": source_commit,
+            "environment": {
+                "subscription_kind": "test",
+                "region": "local",
+                "runtime": "Python 3.11",
+                "sku": "test",
+            },
+            "recipe_digest": "sha256:" + "1" * 64,
+            "collector_digest": "sha256:" + "2" * 64,
+            "collector_path": "scripts/golden/collect_scenario_a.py",
+            "recipe_paths": [str(recipe.relative_to(self.repo))],
+        }
+        (new_dir / "manifest.json").write_text(json.dumps(manifest))
+        manifest_path = self.repo / "evidence/retained-digests.json"
+        document = json.loads(manifest_path.read_text())
+        relative = "evidence/runs/run-two/manifest.json"
+        document["packages"]["run-two"] = {
+            "historical": False,
+            "files": {relative: hashlib.sha256((self.repo / relative).read_bytes()).hexdigest()},
+        }
+        manifest_path.write_text(json.dumps(document))
+        self.assertNotEqual(self._check(self.base).returncode, 0)
+
+    def test_new_directory_cannot_reuse_frozen_historical_identity(self):
+        frozen = "20260927T104304Z-aba0d3a9daa7"
+        new_dir = self.repo / "evidence/runs/forged-directory"
+        new_dir.mkdir()
+        for name in ("manifest.json", "evidence.json", "result.json"):
+            (new_dir / name).write_text(json.dumps({"run_id": frozen}))
+        manifest_path = self.repo / "evidence/retained-digests.json"
+        document = json.loads(manifest_path.read_text())
+        document["packages"][frozen] = {
+            "historical": True,
+            "files": {
+                str(path.relative_to(self.repo)): hashlib.sha256(path.read_bytes()).hexdigest()
+                for path in new_dir.glob("*.json")
+            },
+        }
+        manifest_path.write_text(json.dumps(document))
         self.assertNotEqual(self._check(self.base).returncode, 0)
 
 

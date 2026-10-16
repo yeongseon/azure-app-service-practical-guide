@@ -26,6 +26,9 @@ ev = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(ev)
 
 TEMPLATE = json.loads((LAB / "manifest.template.json").read_text())
+EXACT_ASSERTIONS = json.loads(
+    (ROOT / "evidence/runs/20261016T075147Z-6d019de6e2f2/manifest.json").read_text()
+)["assertions"]
 BAD_CMD = "gunicorn --bind=0.0.0.0:8000 --timeout=120 wrong_module:app"
 
 
@@ -33,6 +36,7 @@ def run_with(evidence, execution="COMPLETE"):
     d = pathlib.Path(tempfile.mkdtemp()) / "run"
     d.mkdir(parents=True)
     manifest = dict(TEMPLATE)
+    manifest["assertions"] = EXACT_ASSERTIONS
     manifest.update(run_id="20260927T010203Z-a1b2c3",
                     resource_id="/subscriptions/x/rg/app",
                     captured_at="2026-09-27T01:02:03Z",
@@ -57,8 +61,9 @@ COMPLETE_EVIDENCE = {
     "deploy_exit_code": 0,
     "fault_startup_command": BAD_CMD,
     "fault_config_readback": BAD_CMD,
-    "fault_status_class": "5xx",
-    "fault_import_error_hits": 3,
+    "fault_status": 503,
+    "fault_import_error_signature": "ModuleNotFoundError: No module named 'wrong_module'",
+    "phase_order_valid": True,
     "recovery_status": 200,
 }
 
@@ -110,7 +115,7 @@ class ActivationPreconditionTests(unittest.TestCase):
 
 class ContradictionReachableTests(unittest.TestCase):
     def test_healthy_app_under_an_activated_fault_contradicts(self):
-        evidence = dict(COMPLETE_EVIDENCE, fault_status_class="2xx")
+        evidence = dict(COMPLETE_EVIDENCE, fault_status=200)
         self.assertEqual(
             ev.evaluate(run_with(evidence))["hypothesis_status"], "CONTRADICTED")
 
@@ -122,9 +127,33 @@ class ContradictionReachableTests(unittest.TestCase):
 
     def test_absent_import_error_is_inconclusive_not_contradicted(self):
         evidence = dict(COMPLETE_EVIDENCE)
-        del evidence["fault_import_error_hits"]
+        del evidence["fault_import_error_signature"]
         self.assertEqual(
             ev.evaluate(run_with(evidence))["hypothesis_status"], "INCONCLUSIVE")
+
+    def test_http_500_does_not_satisfy_the_503_assertion(self):
+        evidence = dict(COMPLETE_EVIDENCE, fault_status=500)
+        self.assertEqual(
+            ev.evaluate(run_with(evidence))["hypothesis_status"], "CONTRADICTED")
+
+    def test_unrelated_import_error_does_not_satisfy_the_signature(self):
+        evidence = dict(
+            COMPLETE_EVIDENCE,
+            fault_import_error_signature="ImportError: unrelated_dependency",
+        )
+        self.assertEqual(
+            ev.evaluate(run_with(evidence))["hypothesis_status"], "CONTRADICTED")
+
+    def test_generic_import_error_count_without_signature_does_not_support(self):
+        evidence = dict(COMPLETE_EVIDENCE, fault_import_error_hits=4)
+        del evidence["fault_import_error_signature"]
+        self.assertEqual(
+            ev.evaluate(run_with(evidence))["hypothesis_status"], "INCONCLUSIVE")
+
+    def test_out_of_order_phases_do_not_support(self):
+        evidence = dict(COMPLETE_EVIDENCE, phase_order_valid=False)
+        self.assertEqual(
+            ev.evaluate(run_with(evidence))["hypothesis_status"], "CONTRADICTED")
 
 
 class HistoricalEvidenceTests(unittest.TestCase):

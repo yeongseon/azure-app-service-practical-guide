@@ -1,0 +1,8 @@
+{
+  "run_id": "20261016T075147Z-6d019de6e2f2",
+  "cleanup_started_at": "2026-10-16T08:01:47.520663+00:00",
+  "cleanup_completed_at": "2026-10-16T08:02:54.778086+00:00",
+  "runner_cleanup_status": "VERIFIED",
+  "final_group_exists": false,
+  "cleanup_verified": true
+}
