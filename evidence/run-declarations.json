@@ -7,7 +7,13 @@
     },
     "20261016T124329Z-70fb229a0bd1": {
       "scenario": "snat-exhaustion",
-      "retained_package": "evidence/runs/20261016T124329Z-70fb229a0bd1"
+      "retained_package": "evidence/runs/20261016T124329Z-70fb229a0bd1",
+      "collector_commit": "8523cf93f76c93546d2f156424964db55bfa14a7"
+    },
+    "20261016T154910Z-a034cccd79d6": {
+      "scenario": "snat-exhaustion",
+      "retained_package": "evidence/runs/20261016T154910Z-a034cccd79d6",
+      "collector_commit": "4d74f2a85bfbded24b82810b530f758f1e9344f5"
     }
   }
 }

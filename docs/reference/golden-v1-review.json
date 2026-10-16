@@ -71,8 +71,8 @@
       "id": 9,
       "requirement": "Golden scenarios A (deterministic), B (comparative), C (configuration/state) completed",
       "status": "PARTIAL",
-      "evidence": "All three scenarios have live retained runs. Scenario A has historical and current SUPPORTED runs. Scenario B's first retained run used the tested app as its own destination, so failed baseline and recovery controls make that experiment INCONCLUSIVE under the role-aware model. Scenario C run 20260927T114621Z is INCONCLUSIVE because two observations were unavailable.",
-      "gap": "Scenario B requires the replacement run against the independently hosted lab endpoint; unavailable direct SNAT pressure must remain INCONCLUSIVE. Scenario C still lacks slot-stickiness and deployment-error observations. Independent human reproduction remains separate and unmet.",
+      "evidence": "All three scenarios have live retained runs. Scenario A has historical and current SUPPORTED runs. Scenario B's first retained run used the tested app as its own destination and is retained as an invalid experiment; replacement run 20261016T154910Z used an independent healthy endpoint and is INCONCLUSIVE because direct SNAT pressure was unavailable, pooling did not reduce failures, and recovery failed. Scenario C run 20260927T114621Z is INCONCLUSIVE because two observations were unavailable.",
+      "gap": "Scenario B still lacks direct SNAT port-pressure evidence and a valid recovery. Scenario C still lacks slot-stickiness and deployment-error observations. Independent human reproduction remains separate and unmet.",
       "verify": "python3 tests/golden/test_contract_collector_alignment.py"
     },
     {
@@ -122,7 +122,7 @@
   "blocking_for_v1": [
     "Item 10: no genuinely different human operator has independently reproduced a scenario."
   ],
-  "notes": "Item 10 needs a genuinely different human operator; AI-agent repeat runs cannot satisfy it. Scenario B's first live run is retained as an invalid-design experiment and must not be interpreted as proof or refutation of SNAT exhaustion. Scenario C's run left two observations absent and returned INCONCLUSIVE.",
+  "notes": "Item 10 needs a genuinely different human operator; AI-agent repeat runs cannot satisfy it. Scenario B's first live run is retained as an invalid-design experiment. Its replacement used an independent healthy endpoint and returned INCONCLUSIVE without claiming SNAT exhaustion. Scenario C's run left two observations absent and returned INCONCLUSIVE.",
   "review_history": [
     {
       "reviewer": "oracle",
@@ -176,7 +176,8 @@
         "20260927T114621Z-04c6c02c9ae1"
       ],
       "snat-exhaustion": [
-        "20261016T124329Z-70fb229a0bd1"
+        "20261016T124329Z-70fb229a0bd1",
+        "20261016T154910Z-a034cccd79d6"
       ]
     }
   }

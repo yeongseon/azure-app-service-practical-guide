@@ -1,0 +1,37 @@
+{
+  "run_id": "20261016T154910Z-a034cccd79d6",
+  "resource_id": null,
+  "captured_at": "2026-10-16T15:49:10.528138+00:00",
+  "capture_window": {
+    "started_at": "2026-10-16T15:49:10.528138+00:00",
+    "ended_at": "2026-10-16T15:53:33.414422+00:00"
+  },
+  "evaluated_at": "2026-10-16T15:58:00Z",
+  "document_updated_at": "2026-10-16",
+  "execution_status": "COMPLETE",
+  "hypothesis_claim_level": "Inferred",
+  "evidence_trust": "trusted-current",
+  "hypothesis": "Outbound connections from the app exhaust the SNAT port allocation of its App Service plan, so new outbound connections to the same destination begin failing at the transport layer while the destination itself stays healthy.",
+  "assertions": [
+    {"id": "baseline-outbound-succeeds", "role": "control", "field": "baseline_success_count", "equals": 3, "claim_level": "Observed"},
+    {"id": "symptom-transport-failures-appear", "role": "symptom", "field": "load_transport_failure_count", "in": [1, 2, 3], "claim_level": "Observed"},
+    {"id": "control-destination-bound-to-workload", "role": "control", "field": "destination_binding", "equals": true, "claim_level": "Observed"},
+    {"id": "discriminating-snat-port-pressure", "role": "discriminating", "field": "snat_port_pressure", "equals": "observed", "claim_level": "Observed"},
+    {"id": "discriminating-destination-stays-healthy", "role": "discriminating", "field": "destination_health_status", "equals": 200, "claim_level": "Observed"},
+    {"id": "discriminating-http-errors-absent", "role": "discriminating", "field": "load_http_error_count", "equals": 0, "claim_level": "Observed"},
+    {"id": "discriminating-pooling-reduces-transport-failures", "role": "discriminating", "field": "pooling_reduces_transport_failures", "equals": true, "claim_level": "Observed"},
+    {"id": "recovery-outbound-succeeds-again", "role": "recovery", "field": "recovery_success_count", "equals": 3, "claim_level": "Observed"}
+  ],
+  "source_commit": "4d74f2a85bfbded24b82810b530f758f1e9344f5",
+  "runner_source_commit": "4d74f2a85bfbded24b82810b530f758f1e9344f5",
+  "environment": {"subscription_kind": "MSIT", "region": "koreacentral", "runtime": "Python 3.11", "sku": "B1 Linux"},
+  "recipe_digest": "sha256:b235c44dff0d81ce66117042307c800f94e2cfaa4ea383f07e7a33563266ffa0",
+  "recipe_paths": [
+    "labs/snat-exhaustion/app/app.py",
+    "labs/snat-exhaustion/app/classification.py",
+    "labs/snat-exhaustion/app/requirements.txt",
+    "labs/snat-exhaustion/main.bicep",
+    "scripts/golden/run_scenario_b.py"
+  ],
+  "notes": "The independent destination preflight and baseline succeeded. Direct SNAT port-pressure telemetry was unavailable, pooling did not reduce load transport failures, and recovery failed, so the causal hypothesis is INCONCLUSIVE."
+}

@@ -171,7 +171,8 @@ def _declaration_problems(current: dict, base: dict) -> list[str]:
     base_runs = base.get("runs") if isinstance(base.get("runs"), dict) else {}
     for run_id, declaration in runs.items():
         if (not isinstance(declaration, dict)
-                or set(declaration) != DECLARATION_FIELDS
+                or not DECLARATION_FIELDS <= set(declaration)
+                or set(declaration) - DECLARATION_FIELDS - {"collector_commit"}
                 or not isinstance(declaration.get("scenario"), str)
                 or not declaration["scenario"].strip()):
             problems.append(f"invalid run declaration schema: {run_id}")

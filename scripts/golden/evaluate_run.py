@@ -331,11 +331,19 @@ def _verify_derivation(provenance: dict, manifest: dict, evidence: dict) -> None
     definition_path = (SCENARIO_B_RECIPE if provenance.get("scenario") == "snat-exhaustion"
                        else SCENARIO_A_RECIPE)
     definition = _read_json(definition_path)
-    if (collector_commit != definition.get("derivation_collector_commit")
-            or collector_path != definition.get("collector_path")):
-        raise ModelError("derivation collector does not match the versioned recipe definition")
     expected_digest = definition.get("derivation_collector_digest")
-    if collector_digest != expected_digest:
+    current_collector = (
+        collector_commit == definition.get("derivation_collector_commit")
+        and collector_path == definition.get("collector_path")
+        and collector_digest == expected_digest
+    )
+    if collector_path != definition.get("collector_path"):
+        raise ModelError("derivation collector path does not match the versioned recipe definition")
+    if not current_collector:
+        declared = _read_json(RUN_DECLARATIONS)["runs"].get(manifest.get("run_id"), {})
+        if declared.get("collector_commit") != collector_commit:
+            raise ModelError("derivation collector does not match the versioned recipe definition")
+    if current_collector and collector_digest != expected_digest:
         raise ModelError("derivation collector digest does not match the versioned recipe definition")
     try:
         collector_bytes = _git_bytes(collector_commit, collector_path)
@@ -346,7 +354,7 @@ def _verify_derivation(provenance: dict, manifest: dict, evidence: dict) -> None
                 "derivation collector is unavailable from both Git and the checkout") from None
         collector_bytes = local_collector.read_bytes()
     actual = hashlib.sha256(collector_bytes).hexdigest()
-    if expected_digest != f"sha256:{actual}":
+    if collector_digest != f"sha256:{actual}":
         raise ModelError("derivation collector_digest does not match collector_commit bytes")
     derived_at = _timestamp(derivation.get("derived_at"), "derivation derived_at")
     captured_at = _timestamp(manifest["captured_at"], "manifest captured_at")

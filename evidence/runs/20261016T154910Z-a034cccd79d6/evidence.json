@@ -1,0 +1,316 @@
+{
+  "run_id": "20261016T154910Z-a034cccd79d6",
+  "resource_id": null,
+  "captured_at": "2026-10-16T15:49:10.528138+00:00",
+  "observations": {
+    "phase_windows": {
+      "baseline": {
+        "started_at": "2026-10-16T15:49:10.571080+00:00",
+        "ended_at": "2026-10-16T15:49:16.444149+00:00"
+      },
+      "load": {
+        "started_at": "2026-10-16T15:50:03.058719+00:00",
+        "ended_at": "2026-10-16T15:51:03.215767+00:00"
+      },
+      "recovery": {
+        "started_at": "2026-10-16T15:52:33.275785+00:00",
+        "ended_at": "2026-10-16T15:53:33.413327+00:00"
+      }
+    },
+    "phase_probes": {
+      "baseline": [
+        {
+          "run_id": "20261016T154910Z-a034cccd79d6",
+          "captured_at": "2026-10-16T15:49:10.572527+00:00",
+          "status": 200,
+          "inner": {
+            "success": 5,
+            "failure": 0,
+            "transport_failure": 0
+          },
+          "target": "https://target.example/health"
+        },
+        {
+          "run_id": "20261016T154910Z-a034cccd79d6",
+          "captured_at": "2026-10-16T15:49:10.573038+00:00",
+          "status": 200,
+          "inner": {
+            "success": 5,
+            "failure": 0,
+            "transport_failure": 0
+          },
+          "target": "https://target.example/health"
+        },
+        {
+          "run_id": "20261016T154910Z-a034cccd79d6",
+          "captured_at": "2026-10-16T15:49:10.573491+00:00",
+          "status": 200,
+          "inner": {
+            "success": 5,
+            "failure": 0,
+            "transport_failure": 0
+          },
+          "target": "https://target.example/health"
+        }
+      ],
+      "load": [
+        {
+          "run_id": "20261016T154910Z-a034cccd79d6",
+          "captured_at": "2026-10-16T15:50:03.059697+00:00",
+          "status": null,
+          "inner": {
+            "success": 0,
+            "failure": 0,
+            "transport_failure": 1
+          },
+          "target": "https://target.example/health"
+        },
+        {
+          "run_id": "20261016T154910Z-a034cccd79d6",
+          "captured_at": "2026-10-16T15:50:03.060141+00:00",
+          "status": null,
+          "inner": {
+            "success": 0,
+            "failure": 0,
+            "transport_failure": 1
+          },
+          "target": "https://target.example/health"
+        },
+        {
+          "run_id": "20261016T154910Z-a034cccd79d6",
+          "captured_at": "2026-10-16T15:50:03.060563+00:00",
+          "status": null,
+          "inner": {
+            "success": 0,
+            "failure": 0,
+            "transport_failure": 1
+          },
+          "target": "https://target.example/health"
+        }
+      ],
+      "recovery": [
+        {
+          "run_id": "20261016T154910Z-a034cccd79d6",
+          "captured_at": "2026-10-16T15:52:33.276823+00:00",
+          "status": null,
+          "inner": {
+            "success": 0,
+            "failure": 0,
+            "transport_failure": 1
+          },
+          "target": "https://target.example/health"
+        },
+        {
+          "run_id": "20261016T154910Z-a034cccd79d6",
+          "captured_at": "2026-10-16T15:52:33.277946+00:00",
+          "status": null,
+          "inner": {
+            "success": 0,
+            "failure": 0,
+            "transport_failure": 1
+          },
+          "target": "https://target.example/health"
+        },
+        {
+          "run_id": "20261016T154910Z-a034cccd79d6",
+          "captured_at": "2026-10-16T15:52:33.278593+00:00",
+          "status": null,
+          "inner": {
+            "success": 0,
+            "failure": 0,
+            "transport_failure": 1
+          },
+          "target": "https://target.example/health"
+        }
+      ]
+    },
+    "pooled_phase_probes": {
+      "baseline": [
+        {
+          "run_id": "20261016T154910Z-a034cccd79d6",
+          "captured_at": "2026-10-16T15:49:15.767544+00:00",
+          "status": 200,
+          "inner": {
+            "success": 5,
+            "failure": 0,
+            "transport_failure": 0
+          },
+          "target": "https://target.example/health"
+        },
+        {
+          "run_id": "20261016T154910Z-a034cccd79d6",
+          "captured_at": "2026-10-16T15:49:15.768933+00:00",
+          "status": 200,
+          "inner": {
+            "success": 5,
+            "failure": 0,
+            "transport_failure": 0
+          },
+          "target": "https://target.example/health"
+        },
+        {
+          "run_id": "20261016T154910Z-a034cccd79d6",
+          "captured_at": "2026-10-16T15:49:15.769343+00:00",
+          "status": 200,
+          "inner": {
+            "success": 5,
+            "failure": 0,
+            "transport_failure": 0
+          },
+          "target": "https://target.example/health"
+        }
+      ],
+      "load": [
+        {
+          "run_id": "20261016T154910Z-a034cccd79d6",
+          "captured_at": "2026-10-16T15:50:33.140226+00:00",
+          "status": null,
+          "inner": {
+            "success": 0,
+            "failure": 0,
+            "transport_failure": 1
+          },
+          "target": "https://target.example/health"
+        },
+        {
+          "run_id": "20261016T154910Z-a034cccd79d6",
+          "captured_at": "2026-10-16T15:50:33.141093+00:00",
+          "status": null,
+          "inner": {
+            "success": 0,
+            "failure": 0,
+            "transport_failure": 1
+          },
+          "target": "https://target.example/health"
+        },
+        {
+          "run_id": "20261016T154910Z-a034cccd79d6",
+          "captured_at": "2026-10-16T15:50:33.141548+00:00",
+          "status": null,
+          "inner": {
+            "success": 0,
+            "failure": 0,
+            "transport_failure": 1
+          },
+          "target": "https://target.example/health"
+        }
+      ],
+      "recovery": [
+        {
+          "run_id": "20261016T154910Z-a034cccd79d6",
+          "captured_at": "2026-10-16T15:53:03.347519+00:00",
+          "status": null,
+          "inner": {
+            "success": 0,
+            "failure": 0,
+            "transport_failure": 1
+          },
+          "target": "https://target.example/health"
+        },
+        {
+          "run_id": "20261016T154910Z-a034cccd79d6",
+          "captured_at": "2026-10-16T15:53:03.348157+00:00",
+          "status": null,
+          "inner": {
+            "success": 0,
+            "failure": 0,
+            "transport_failure": 1
+          },
+          "target": "https://target.example/health"
+        },
+        {
+          "run_id": "20261016T154910Z-a034cccd79d6",
+          "captured_at": "2026-10-16T15:53:03.348676+00:00",
+          "status": null,
+          "inner": {
+            "success": 0,
+            "failure": 0,
+            "transport_failure": 1
+          },
+          "target": "https://target.example/health"
+        }
+      ]
+    },
+    "destination": "https://target.example/health",
+    "phase_capture_integrity": {
+      "baseline": {
+        "probe_count": 3,
+        "pooled_probe_count": 3,
+        "files": {
+          "phase.json": "b6c9edff3eeaee65e20305dbc7d30d4771107a757d83d396f5831b5dec62632c",
+          "unpooled-probes.json": "ce06ac5109caf761d79c79b9a89964dad226a837e74f01f5eb68f697459de667",
+          "pooled-probes.json": "bea5a10502d35a563c4bed28f4c057d173045c14aa4a5e46018a453a3b1cc569"
+        },
+      "retained_rows_sha256": "d7885affd97c05d87313184edd8c630d1e8d79b6fae73da3ad2327bf186912e7"
+      },
+      "load": {
+        "probe_count": 3,
+        "pooled_probe_count": 3,
+        "files": {
+          "phase.json": "d23a4868eac05273de008b3123f98bea208f6c5753245ebdf27b9e0c0839ca06",
+          "unpooled-probes.json": "e8e4330000320d70478cd2f63093025f55bc1a2bd2615aa6c08be09958a3e9b5",
+          "pooled-probes.json": "d7570c0f13c088d267a4a18c820022aa1a1902466e318ef02bcf94d036f170ac"
+        },
+      "retained_rows_sha256": "841d43136144add7fc87669ff344e2a48a650a91a7abaa09780bed9e017f486c"
+      },
+      "recovery": {
+        "probe_count": 3,
+        "pooled_probe_count": 3,
+        "files": {
+          "phase.json": "96e1b764b38d88b2ee6177a694346bb4ca6900498086f231f35e13a8d3660408",
+          "unpooled-probes.json": "d4321513dbf716a17a37638a64ec73eb6fbe1efb7eefd82fb8450b417e994a88",
+          "pooled-probes.json": "1daf141dccfcd3db51f75f7840821183935d831b3a6e3d26a8e59944f21bc200"
+        },
+      "retained_rows_sha256": "2ec5ae121dc1e2e417f3018cc4c89616fa5410fe9d4e0a9da30e7d7bf99996a3"
+      }
+    },
+    "destination_health": {
+      "captured_at": "2026-10-16T15:51:03.217268+00:00",
+      "status": 200
+    },
+    "destination_health_status": 200,
+    "snat_port_pressure": "unavailable",
+    "destination_binding": true,
+    "baseline_success_count": 3,
+    "load_transport_failure_count": 3,
+    "load_http_error_count": 0,
+    "recovery_success_count": 0,
+    "pooling_reduces_transport_failures": false
+  },
+  "collector": "scripts/golden/collect_scenario_b.py",
+  "capture_provenance": "derived",
+  "runner_source_commit": "4d74f2a85bfbded24b82810b530f758f1e9344f5",
+  "phase_capture_integrity": {
+    "baseline": {
+      "probe_count": 3,
+      "pooled_probe_count": 3,
+      "files": {
+        "phase.json": "b6c9edff3eeaee65e20305dbc7d30d4771107a757d83d396f5831b5dec62632c",
+        "unpooled-probes.json": "ce06ac5109caf761d79c79b9a89964dad226a837e74f01f5eb68f697459de667",
+        "pooled-probes.json": "bea5a10502d35a563c4bed28f4c057d173045c14aa4a5e46018a453a3b1cc569"
+      },
+      "retained_rows_sha256": "d7885affd97c05d87313184edd8c630d1e8d79b6fae73da3ad2327bf186912e7"
+    },
+    "load": {
+      "probe_count": 3,
+      "pooled_probe_count": 3,
+      "files": {
+        "phase.json": "d23a4868eac05273de008b3123f98bea208f6c5753245ebdf27b9e0c0839ca06",
+        "unpooled-probes.json": "e8e4330000320d70478cd2f63093025f55bc1a2bd2615aa6c08be09958a3e9b5",
+        "pooled-probes.json": "d7570c0f13c088d267a4a18c820022aa1a1902466e318ef02bcf94d036f170ac"
+      },
+      "retained_rows_sha256": "841d43136144add7fc87669ff344e2a48a650a91a7abaa09780bed9e017f486c"
+    },
+    "recovery": {
+      "probe_count": 3,
+      "pooled_probe_count": 3,
+      "files": {
+        "phase.json": "96e1b764b38d88b2ee6177a694346bb4ca6900498086f231f35e13a8d3660408",
+        "unpooled-probes.json": "d4321513dbf716a17a37638a64ec73eb6fbe1efb7eefd82fb8450b417e994a88",
+        "pooled-probes.json": "1daf141dccfcd3db51f75f7840821183935d831b3a6e3d26a8e59944f21bc200"
+      },
+      "retained_rows_sha256": "2ec5ae121dc1e2e417f3018cc4c89616fa5410fe9d4e0a9da30e7d7bf99996a3"
+    }
+  },
+  "incomplete_fields": []
+}
