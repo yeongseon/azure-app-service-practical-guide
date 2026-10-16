@@ -1,0 +1,34 @@
+{
+  "scenario": "deployment-succeeded-startup-failed",
+  "collector": "scripts/golden/collect_scenario_a.py",
+  "sanitised": true,
+  "sanitisation": "Subscription, tenant, resource-group, app, host, instance, workspace and operator identifiers were omitted from the retained bridge package. Observed status classes, import-error count, startup commands, timestamps and outcomes are unmodified.",
+  "replay": "python3 scripts/golden/evaluate_run.py evidence/runs/20261016T075147Z-6d019de6e2f2",
+  "execution_status": "COMPLETE",
+  "hypothesis_status": "SUPPORTED",
+  "cleanup_status": "VERIFIED",
+  "cleanup_verified": true,
+  "cleanup_completed_at": "2026-10-16T08:02:54.778086+00:00",
+  "cleanup_proof": "cleanup.json preserves the runner's VERIFIED cleanup status and the separate final az group exists output of false.",
+  "independent_reproduction": "NOT_RUN",
+  "source_commit": "af75d0024472edce67401042fdaa97d00dfbe6ac",
+  "environment": {
+    "subscription_kind": "MSIT",
+    "region": "koreacentral",
+    "runtime": "Python 3.11",
+    "sku": "B1 Linux"
+  },
+  "recipe_digest": "sha256:41cb9e899473adcd2ad12f53fd156b6d8b01dc9490323344604db59df6cc2d40",
+  "collector_digest": "sha256:07490e4cea5d81d7d203732c808692553ae1cc76ca2364e837f3c0dfbde5e3bd",
+  "digests": {
+    "manifest.json": "4f15efa6bdee7d07765dde107944ec0030416e09b34a50b0132f91bd39305c4e",
+    "evidence.json": "51c89ce36d5c7f83999b07794667490dcd1df82b657c8e176dab7296e2e183e5",
+    "result.json": "1e95fd4dfa32c2d31ef1c66911e896ac30208204e9d197759ec749bd9cbc650e",
+    "cleanup.json": "c851a1d522b09ba9fcb3741e803be60342ead2183a5c5a1ba1935e81dae40407"
+  },
+  "limitations": [
+    "The retained package is a sanitized bridge derived from private runner captures; it does not retain the Azure resource identity.",
+    "Configuration readback, HTTP 503, matching fault-window import errors and recovery support the scoped intervention, but do not exclude every concurrent platform contribution.",
+    "This AI-agent execution is a repeat run, not a qualifying independent human reproduction."
+  ]
+}
