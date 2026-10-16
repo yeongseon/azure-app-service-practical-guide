@@ -115,8 +115,8 @@
       "id": 15,
       "requirement": "Existing documentation quality gates do not regress",
       "status": "MET",
-      "evidence": "PR 234 current-head checks are the evidence source for this item; confirm the final head with the verification command before treating the item as satisfied. The required set includes mkdocs build --strict and the Golden contract suites.",
-      "verify": "gh pr checks 234 --repo yeongseon/azure-app-service-practical-guide"
+      "evidence": "PR 236 final-head checks are the evidence source for this item. The required set includes mkdocs build --strict, the Golden contract suites, retained-package integrity, PII checks, and PR metadata.",
+      "verify": "gh pr checks 236 --repo yeongseon/azure-app-service-practical-guide"
     }
   ],
   "blocking_for_v1": [
@@ -171,7 +171,8 @@
     ],
     "executed_runs": {
       "deployment-succeeded-startup-failed": [
-        "20260927T104304Z-aba0d3a9daa7"
+        "20260927T104304Z-aba0d3a9daa7",
+        "20261016T075147Z-6d019de6e2f2"
       ],
       "slot-swap-config-drift": [
         "20260927T114621Z-04c6c02c9ae1"
