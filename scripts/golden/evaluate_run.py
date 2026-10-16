@@ -280,6 +280,13 @@ def _git_bytes(commit: str, path: str) -> bytes:
     completed = subprocess.run(
         ["git", "show", f"{commit}:{path}"], cwd=ROOT, capture_output=True, check=False)
     if completed.returncode != 0:
+        subprocess.run(
+            ["git", "fetch", "--no-tags", "origin", commit], cwd=ROOT,
+            capture_output=True, check=False)
+        completed = subprocess.run(
+            ["git", "show", f"{commit}:{path}"], cwd=ROOT,
+            capture_output=True, check=False)
+    if completed.returncode != 0:
         raise ModelError(f"source_commit does not contain provenance input: {path}")
     return completed.stdout
 
