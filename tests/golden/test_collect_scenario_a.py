@@ -30,6 +30,16 @@ _spec2.loader.exec_module(ev)
 
 MANIFEST = json.loads(
     (ROOT / "labs/deployment-succeeded-startup-failed/golden/manifest.template.json").read_text())
+EXACT_FIELDS = {
+    "baseline_status",
+    "deploy_exit_code",
+    "fault_startup_command",
+    "fault_config_readback",
+    "fault_status",
+    "fault_import_error_signature",
+    "phase_order_valid",
+    "recovery_status",
+}
 
 
 def build_run(**overrides):
@@ -39,13 +49,23 @@ def build_run(**overrides):
     (directory / "run.json").write_text(json.dumps({
         "run_id": "20260927T000000Z-abcdef123456",
         "started_at": "2026-09-27T00:00:00+00:00",
+        "ended_at": "2026-09-27T00:04:00+00:00",
         "resource_id": "/subscriptions/x/rg/app"}))
     (directory / "deploy.json").write_text(json.dumps(
         {"exit_code": overrides.get("deploy_exit", 0)}))
     (directory / "console-query-0.json").write_text(json.dumps(
-        {"stdout": overrides.get("console", '[{"Msg":"ModuleNotFoundError: wrong_module"}]')}))
+        {"stdout": overrides.get(
+            "console",
+            '[{"TimeGenerated":"2026-09-27T00:02:15+00:00",'
+            '"ResultDescription":"ModuleNotFoundError: No module named \'wrong_module\'"}]')}))
     statuses = {"baseline": 200, "fault": 503, "recovery": 200}
     statuses.update(overrides.get("statuses", {}))
+    windows = {
+        "baseline": ("2026-09-27T00:00:30+00:00", "2026-09-27T00:01:00+00:00"),
+        "fault": ("2026-09-27T00:01:00+00:00", "2026-09-27T00:03:00+00:00"),
+        "recovery": ("2026-09-27T00:03:00+00:00", "2026-09-27T00:03:30+00:00"),
+    }
+    windows.update(overrides.get("windows", {}))
     command = "gunicorn --bind=0.0.0.0:8000 --timeout=120 wrong_module:app"
     for name, status in statuses.items():
         if name in overrides.get("skip_phases", ()):
@@ -54,7 +74,10 @@ def build_run(**overrides):
         phase.mkdir()
         (phase / "phase.json").write_text(json.dumps({
             "run_id": "20260927T000000Z-abcdef123456",
+            "started_at": windows[name][0],
+            "ended_at": windows[name][1],
             "status": status,
+            "probes": [{"captured_at": windows[name][1], "status": status, "exit_code": 0}],
             "startup": command if name == "fault" else "gunicorn app:app",
             "config_readback": command if name == "fault" else "gunicorn app:app",
             "command_exit": 0}))
@@ -65,6 +88,9 @@ def evaluate_with(evidence):
     directory = pathlib.Path(tempfile.mkdtemp()) / "g"
     directory.mkdir(parents=True)
     manifest = dict(MANIFEST)
+    manifest["assertions"] = json.loads(
+        (ROOT / "evidence/runs/20261016T075147Z-6d019de6e2f2/manifest.json").read_text()
+    )["assertions"]
     manifest.update(run_id=evidence["run_id"], captured_at=evidence["captured_at"],
                     resource_id=evidence["resource_id"], execution_status="COMPLETE",
                     source_commit="3e0442bb19b966766598ffeae1fb47f3f6960837",
@@ -81,8 +107,7 @@ class ProvenanceTests(unittest.TestCase):
 
     def test_every_declared_field_is_emitted(self):
         observations = collect_a.collect(build_run())["observations"]
-        declared = {a["field"] for a in MANIFEST["assertions"]}
-        self.assertEqual(declared - set(observations), set())
+        self.assertEqual(EXACT_FIELDS - set(observations), set())
 
     def test_evidence_carries_the_run_identity(self):
         evidence = collect_a.collect(build_run())
@@ -138,31 +163,59 @@ class DiscriminationTests(unittest.TestCase):
         result = evaluate_with(collect_a.collect(build_run(statuses={"recovery": 503})))
         self.assertEqual(result["hypothesis_status"], "CONTRADICTED")
 
-    def test_no_import_error_contradicts(self):
+    def test_no_import_error_is_inconclusive(self):
         result = evaluate_with(collect_a.collect(build_run(console="[]")))
-        self.assertEqual(result["hypothesis_status"], "CONTRADICTED")
+        self.assertEqual(result["hypothesis_status"], "INCONCLUSIVE")
+
+    def test_unrelated_import_error_does_not_support(self):
+        console = ('[{"TimeGenerated":"2026-09-27T00:02:15+00:00",'
+                   '"ResultDescription":"ImportError: unrelated_dependency"}]')
+        result = evaluate_with(collect_a.collect(build_run(console=console)))
+        self.assertNotEqual(result["hypothesis_status"], "SUPPORTED")
+
+    def test_generic_import_error_count_does_not_support(self):
+        console = ('[{"TimeGenerated":"2026-09-27T00:02:15+00:00",'
+                   '"ResultDescription":"ModuleNotFoundError: No module named \'other_module\'"}]')
+        result = evaluate_with(collect_a.collect(build_run(console=console)))
+        self.assertNotEqual(result["hypothesis_status"], "SUPPORTED")
+
+    def test_http_500_does_not_satisfy_exact_503_symptom(self):
+        result = evaluate_with(collect_a.collect(build_run(statuses={"fault": 500})))
+        self.assertNotEqual(result["hypothesis_status"], "SUPPORTED")
+
+    def test_out_of_order_phases_do_not_support(self):
+        windows = {
+            "fault": ("2026-09-27T00:02:00+00:00", "2026-09-27T00:03:00+00:00"),
+            "recovery": ("2026-09-27T00:01:00+00:00", "2026-09-27T00:01:30+00:00"),
+        }
+        result = evaluate_with(collect_a.collect(build_run(windows=windows)))
+        self.assertNotEqual(result["hypothesis_status"], "SUPPORTED")
 
     def test_a_failed_deploy_contradicts(self):
         result = evaluate_with(collect_a.collect(build_run(deploy_exit=1)))
         self.assertEqual(result["hypothesis_status"], "CONTRADICTED")
 
 
-class StatusClassTests(unittest.TestCase):
+class RawObservationTests(unittest.TestCase):
 
-    def test_classes_restate_the_observed_code(self):
-        self.assertEqual(collect_a.status_class(503), "5xx")
-        self.assertEqual(collect_a.status_class(404), "4xx")
-        self.assertEqual(collect_a.status_class(200), "2xx")
+    def test_exact_wrong_module_rows_are_retained(self):
+        observations = collect_a.collect(build_run())["observations"]
+        self.assertEqual(
+            observations["fault_console_rows"][0]["signature"],
+            "ModuleNotFoundError: No module named 'wrong_module'",
+        )
+        self.assertEqual(
+            observations["fault_console_rows"][0]["timestamp"],
+            "2026-09-27T00:02:15+00:00",
+        )
 
-    def test_an_absent_status_has_no_class(self):
-        self.assertIsNone(collect_a.status_class(None))
-        self.assertIsNone(collect_a.status_class("503"))
-
-    def test_import_errors_are_counted_from_raw_rows(self):
-        self.assertEqual(collect_a.import_error_hits({"stdout": "[]"}), 0)
-        self.assertEqual(collect_a.import_error_hits({"stdout": "not json"}), 0)
-        self.assertEqual(collect_a.import_error_hits(
-            {"stdout": '[{"Msg":"ModuleNotFoundError"},{"Msg":"fine"}]'}), 1)
+    def test_timestamped_probe_records_are_retained(self):
+        observations = collect_a.collect(build_run())["observations"]
+        self.assertEqual(observations["fault_probes"][-1]["status"], 503)
+        self.assertEqual(
+            observations["fault_probes"][-1]["captured_at"],
+            "2026-09-27T00:03:00+00:00",
+        )
 
 
 if __name__ == "__main__":
