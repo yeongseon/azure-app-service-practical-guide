@@ -1,7 +1,7 @@
 {
   "version": 1,
   "collector_path": "scripts/golden/collect_scenario_b.py",
-  "derivation_collector_commit": "0000000000000000000000000000000000000000",
+  "derivation_collector_commit": "8523cf92f979ad544ffed165fcdbb16ad4e3bb31",
   "recipe_paths": [
     "labs/snat-exhaustion/app/app.py",
     "labs/snat-exhaustion/app/classification.py",
