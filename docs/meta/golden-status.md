@@ -25,7 +25,7 @@ Every quality gate in this repository, its most recently recorded result, and th
 
 ## Summary
 
-*Snapshot of `57cfd36 plus uncommitted working-tree changes`, generated 2026-10-16.*
+*Snapshot of `cde985c plus uncommitted working-tree changes`, generated 2026-10-16.*
 
 | Metric | Count |
 |---|---:|
@@ -65,7 +65,7 @@ These are locally executed results, not GitHub Actions statuses. **Skipped** mea
 | Frontmatter YAML style | Blocking | ✅ Pass | Files with style drift: 0 · Parse errors: 0 | < 10s |
 | Microsoft Learn locale | Blocking | ✅ Pass | Files with locale drift: 0 | < 10s |
 | Microsoft Learn URL reachability | Advisory | ➖ Skipped | Network gate; re-run with --include-network. | < 10s |
-| Lab artifact PII | Blocking | ✅ Pass | [scan_lab_pii] scanned=623 skipped_binary=0 skipped_decode=0 findings=0 | < 10s |
+| Lab artifact PII | Blocking | ✅ Pass | [scan_lab_pii] scanned=628 skipped_binary=0 skipped_decode=0 findings=0 | < 10s |
 | Documentation PII | Blocking | ✅ Pass | No blocking PII patterns detected! | < 10s |
 | Documentation repetition | Blocking | ✅ Pass | Scanned 245 file(s): 0 error(s), 6 warning(s). | < 10s |
 | Quick-triage causal claims | Blocking | ✅ Pass | Quick-triage causal-claim contract passed (7 files). · Scope is a phrase denylist only; technical review remains required. | < 10s |
