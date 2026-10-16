@@ -365,6 +365,9 @@ class SwapSemanticsTests(unittest.TestCase):
         self.assertIsNone(collect_c.error_row_count(None))
         self.assertEqual(collect_c.error_row_count({"stdout": "[]"}), 0)
 
+    def test_failed_console_query_yields_no_error_count(self):
+        self.assertIsNone(collect_c.error_row_count({"exit_code": 3, "stdout": ""}))
+
 
 class RunnerReadinessTests(unittest.TestCase):
 

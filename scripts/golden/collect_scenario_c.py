@@ -109,6 +109,8 @@ def error_row_count(console) -> int:
     """
     if console is None:
         return None
+    if console.get("exit_code", 0) != 0:
+        return None
     try:
         rows = json.loads(console.get("stdout") or "[]")
     except json.JSONDecodeError:
