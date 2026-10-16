@@ -55,6 +55,7 @@ ROOT = pathlib.Path(__file__).resolve().parents[2]
 RETAINED_DIGESTS = ROOT / "evidence/retained-digests.json"
 RUN_DECLARATIONS = ROOT / "evidence/run-declarations.json"
 SCENARIO_A_RECIPE = ROOT / "scripts/golden/scenario-a-recipe.json"
+SCENARIO_B_RECIPE = ROOT / "scripts/golden/scenario-b-recipe.json"
 REQUIRED_ENVIRONMENT_FIELDS = ("subscription_kind", "region", "runtime", "sku")
 PLACEHOLDERS = {"", "unknown", "none", "null", "na", "tbd", "placeholder", "notavailable"}
 FROZEN_HISTORICAL_RUN_IDS = {
@@ -288,7 +289,10 @@ def _verify_provenance_digests(manifest: dict) -> None:
         return
     source_commit = manifest["source_commit"]
     recipe_paths = manifest.get("recipe_paths")
-    definition = _read_json(SCENARIO_A_RECIPE)
+    declaration = _read_json(RUN_DECLARATIONS)["runs"][manifest["run_id"]]
+    definition_path = (SCENARIO_B_RECIPE if declaration["scenario"] == "snat-exhaustion"
+                       else SCENARIO_A_RECIPE)
+    definition = _read_json(definition_path)
     if recipe_paths != definition.get("recipe_paths"):
         raise ModelError("recipe_paths does not match the versioned recipe definition")
     if (not isinstance(recipe_paths, list) or not recipe_paths
@@ -317,7 +321,9 @@ def _verify_derivation(provenance: dict, manifest: dict, evidence: dict) -> None
             or re.fullmatch(r"[0-9a-f]{40}", collector_commit) is None
             or not isinstance(collector_path, str)):
         raise ModelError("derivation collector commit/path is invalid")
-    definition = _read_json(SCENARIO_A_RECIPE)
+    definition_path = (SCENARIO_B_RECIPE if provenance.get("scenario") == "snat-exhaustion"
+                       else SCENARIO_A_RECIPE)
+    definition = _read_json(definition_path)
     if (collector_commit != definition.get("derivation_collector_commit")
             or collector_path != definition.get("collector_path")):
         raise ModelError("derivation collector does not match the versioned recipe definition")
@@ -348,8 +354,11 @@ def _verify_derivation(provenance: dict, manifest: dict, evidence: dict) -> None
                 phase: anchor["sha256"] for phase, anchor in integrity.items()
             }):
         raise ModelError("derivation raw_input does not match phase capture anchors")
-    required_shape = {"fault_status", "fault_console_rows", "phase_windows",
-                      "baseline_probes", "fault_probes", "recovery_probes"}
+    required_shape = ({"phase_windows", "phase_probes", "destination_health",
+                       "destination_binding", "snat_port_pressure"}
+                      if provenance.get("scenario") == "snat-exhaustion"
+                      else {"fault_status", "fault_console_rows", "phase_windows",
+                            "baseline_probes", "fault_probes", "recovery_probes"})
     if not required_shape <= set(evidence):
         raise ModelError("derivation collector output shape is incomplete")
 
@@ -567,6 +576,80 @@ def _derive_scenario_a(observations: dict, manifest: dict, provenance: dict) -> 
     return {**observations, **derived}
 
 
+def _derive_scenario_b(observations: dict, manifest: dict) -> dict:
+    required = {"phase_windows", "phase_probes", "destination_health",
+                "destination_binding", "snat_port_pressure"}
+    if not required <= set(observations):
+        return observations
+    capture = manifest.get("capture_window")
+    if not isinstance(capture, dict):
+        raise ModelError("raw Scenario B evidence requires a capture_window")
+    capture_start = _timestamp(capture.get("started_at"), "capture_window started_at")
+    capture_end = _timestamp(capture.get("ended_at"), "capture_window ended_at")
+    windows = observations["phase_windows"]
+    probes_by_phase = observations["phase_probes"]
+    if not isinstance(windows, dict) or not isinstance(probes_by_phase, dict):
+        raise ModelError("Scenario B phase windows and probes must be objects")
+    parsed = {}
+    totals = {}
+    for phase in ("baseline", "load", "recovery"):
+        window = windows.get(phase)
+        probes = probes_by_phase.get(phase)
+        if not isinstance(window, dict) or not isinstance(probes, list) or not probes:
+            raise ModelError(f"{phase} raw capture is missing")
+        start = _timestamp(window.get("started_at"), f"{phase} started_at")
+        end = _timestamp(window.get("ended_at"), f"{phase} ended_at")
+        if not capture_start <= start <= end <= capture_end:
+            raise ModelError(f"{phase} window falls outside the capture window")
+        parsed[phase] = (start, end)
+        totals[phase] = {"success": 0, "failure": 0, "transport_failure": 0}
+        for probe in probes:
+            if not isinstance(probe, dict):
+                raise ModelError(f"{phase} probe must be an object")
+            if probe.get("run_id", manifest["run_id"]) != manifest["run_id"]:
+                raise ModelError(f"{phase} probe belongs to another run")
+            captured = _timestamp(probe.get("captured_at"), f"{phase} probe captured_at")
+            if not start <= captured <= end:
+                raise ModelError(f"{phase} probe falls outside its phase window")
+            inner = probe.get("inner")
+            if not isinstance(inner, dict):
+                raise ModelError(f"{phase} probe has no retained inner outcomes")
+            for outcome in totals[phase]:
+                value = inner.get(outcome)
+                if not isinstance(value, int) or value < 0:
+                    raise ModelError(f"{phase} probe has invalid {outcome} count")
+                totals[phase][outcome] += value
+    if not (parsed["baseline"][1] < parsed["load"][0]
+            and parsed["load"][1] < parsed["recovery"][0]):
+        raise ModelError("Scenario B phase windows are not strictly ordered")
+    if observations["destination_binding"] is not True:
+        raise ModelError("Scenario B destination is not bound to the workload target")
+    health = observations["destination_health"]
+    if not isinstance(health, dict):
+        raise ModelError("Scenario B destination health capture is invalid")
+    health_at = _timestamp(health.get("captured_at"), "destination health captured_at")
+    if not parsed["load"][0] <= health_at <= parsed["load"][1]:
+        raise ModelError("destination health falls outside the load window")
+    derived = {
+        "baseline_success_count": len(probes_by_phase["baseline"])
+        if totals["baseline"]["failure"] == totals["baseline"]["transport_failure"] == 0 else 0,
+        "load_transport_failure_count": sum(
+            1 for probe in probes_by_phase["load"]
+            if probe["inner"]["transport_failure"] > 0),
+        "load_http_error_count": sum(
+            1 for probe in probes_by_phase["load"] if probe["inner"]["failure"] > 0),
+        "recovery_success_count": len(probes_by_phase["recovery"])
+        if totals["recovery"]["failure"] == totals["recovery"]["transport_failure"] == 0 else 0,
+        "destination_health_status": health.get("status"),
+        "destination_binding": True,
+        "snat_port_pressure": observations["snat_port_pressure"],
+    }
+    for field, value in derived.items():
+        if field in observations and observations[field] != value:
+            raise ModelError(f"summary field disagrees with raw evidence: {field}")
+    return {**observations, **derived}
+
+
 def evaluate(run_dir, *, skip_source_commit_resolution: bool = False,
              base_ref: str | None = None) -> dict:
     """Evaluate one run directory and return a result record."""
@@ -606,6 +689,8 @@ def evaluate(run_dir, *, skip_source_commit_resolution: bool = False,
         _verify_source_commit(manifest, evidence_doc)
         _verify_derivation(provenance, manifest, evidence)
         evidence = _derive_scenario_a(evidence, manifest, provenance)
+        if provenance.get("scenario") == "snat-exhaustion":
+            evidence = _derive_scenario_b(evidence, manifest)
 
     # Keying outcomes by a caller-supplied id let a later assertion overwrite
     # an earlier one, so a manifest declaring the same id twice could drop a

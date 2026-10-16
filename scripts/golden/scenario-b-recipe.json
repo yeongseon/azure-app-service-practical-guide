@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "collector_path": "scripts/golden/collect_scenario_b.py",
+  "derivation_collector_commit": "0000000000000000000000000000000000000000",
+  "recipe_paths": [
+    "labs/snat-exhaustion/app/app.py",
+    "labs/snat-exhaustion/app/classification.py",
+    "labs/snat-exhaustion/app/requirements.txt",
+    "labs/snat-exhaustion/main.bicep",
+    "scripts/golden/run_scenario_b.py"
+  ]
+}
