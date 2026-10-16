@@ -61,8 +61,8 @@ def build_run(**overrides):
     statuses = {"baseline": 200, "fault": 503, "recovery": 200}
     statuses.update(overrides.get("statuses", {}))
     windows = {
-        "baseline": ("2026-09-27T00:00:30+00:00", "2026-09-27T00:01:00+00:00"),
-        "fault": ("2026-09-27T00:01:00+00:00", "2026-09-27T00:03:00+00:00"),
+        "baseline": ("2026-09-27T00:00:30+00:00", "2026-09-27T00:00:59+00:00"),
+        "fault": ("2026-09-27T00:01:00+00:00", "2026-09-27T00:02:59+00:00"),
         "recovery": ("2026-09-27T00:03:00+00:00", "2026-09-27T00:03:30+00:00"),
     }
     windows.update(overrides.get("windows", {}))
@@ -93,6 +93,10 @@ def evaluate_with(evidence):
     )["assertions"]
     manifest.update(run_id=evidence["run_id"], captured_at=evidence["captured_at"],
                     resource_id=evidence["resource_id"], execution_status="COMPLETE",
+                    capture_window={
+                        "started_at": "2026-09-27T00:00:00+00:00",
+                        "ended_at": "2026-09-27T00:04:00+00:00",
+                    },
                     source_commit="3e0442bb19b966766598ffeae1fb47f3f6960837",
                     environment={"subscription_kind": "test", "region": "local",
                                  "runtime": "Python 3.11", "sku": "test-sku"},
@@ -142,8 +146,8 @@ class HonestAbsenceTests(unittest.TestCase):
         phase = json.loads((run / "recovery" / "phase.json").read_text())
         del phase["status"]
         (run / "recovery" / "phase.json").write_text(json.dumps(phase))
-        self.assertEqual(
-            evaluate_with(collect_a.collect(run))["hypothesis_status"], "INCONCLUSIVE")
+        with self.assertRaises(ev.ModelError):
+            evaluate_with(collect_a.collect(run))
 
     def test_a_malformed_capture_is_refused(self):
         run = build_run()
@@ -156,40 +160,41 @@ class DiscriminationTests(unittest.TestCase):
     """The collected evidence must be able to disappoint the hypothesis."""
 
     def test_a_healthy_fault_phase_contradicts(self):
-        result = evaluate_with(collect_a.collect(build_run(statuses={"fault": 200})))
-        self.assertEqual(result["hypothesis_status"], "CONTRADICTED")
+        with self.assertRaises(ev.ModelError):
+            evaluate_with(collect_a.collect(build_run(statuses={"fault": 200})))
 
     def test_a_failed_recovery_contradicts(self):
-        result = evaluate_with(collect_a.collect(build_run(statuses={"recovery": 503})))
-        self.assertEqual(result["hypothesis_status"], "CONTRADICTED")
+        with self.assertRaises(ev.ModelError):
+            evaluate_with(collect_a.collect(build_run(statuses={"recovery": 503})))
 
     def test_no_import_error_is_inconclusive(self):
-        result = evaluate_with(collect_a.collect(build_run(console="[]")))
-        self.assertEqual(result["hypothesis_status"], "INCONCLUSIVE")
+        with self.assertRaises(ev.ModelError):
+            evaluate_with(collect_a.collect(build_run(console="[]")))
 
     def test_unrelated_import_error_does_not_support(self):
         console = ('[{"TimeGenerated":"2026-09-27T00:02:15+00:00",'
                    '"ResultDescription":"ImportError: unrelated_dependency"}]')
-        result = evaluate_with(collect_a.collect(build_run(console=console)))
-        self.assertNotEqual(result["hypothesis_status"], "SUPPORTED")
+        with self.assertRaises(ev.ModelError):
+            evaluate_with(collect_a.collect(build_run(console=console)))
 
     def test_generic_import_error_count_does_not_support(self):
         console = ('[{"TimeGenerated":"2026-09-27T00:02:15+00:00",'
                    '"ResultDescription":"ModuleNotFoundError: No module named \'other_module\'"}]')
-        result = evaluate_with(collect_a.collect(build_run(console=console)))
-        self.assertNotEqual(result["hypothesis_status"], "SUPPORTED")
+        with self.assertRaises(ev.ModelError):
+            evaluate_with(collect_a.collect(build_run(console=console)))
 
     def test_http_500_does_not_satisfy_exact_503_symptom(self):
-        result = evaluate_with(collect_a.collect(build_run(statuses={"fault": 500})))
-        self.assertNotEqual(result["hypothesis_status"], "SUPPORTED")
+        with self.assertRaises(ev.ModelError):
+            evaluate_with(collect_a.collect(build_run(statuses={"fault": 500})))
 
     def test_out_of_order_phases_do_not_support(self):
         windows = {
             "fault": ("2026-09-27T00:02:00+00:00", "2026-09-27T00:03:00+00:00"),
             "recovery": ("2026-09-27T00:01:00+00:00", "2026-09-27T00:01:30+00:00"),
         }
-        result = evaluate_with(collect_a.collect(build_run(windows=windows)))
-        self.assertNotEqual(result["hypothesis_status"], "SUPPORTED")
+        with self.assertRaises(ev.ModelError):
+            evaluate_with(collect_a.collect(build_run(windows=windows))
+            )
 
     def test_a_failed_deploy_contradicts(self):
         result = evaluate_with(collect_a.collect(build_run(deploy_exit=1)))
@@ -214,7 +219,7 @@ class RawObservationTests(unittest.TestCase):
         self.assertEqual(observations["fault_probes"][-1]["status"], 503)
         self.assertEqual(
             observations["fault_probes"][-1]["captured_at"],
-            "2026-09-27T00:03:00+00:00",
+            "2026-09-27T00:02:59+00:00",
         )
 
 

@@ -1,0 +1,90 @@
+#!/usr/bin/env python3
+import copy
+import importlib.util
+import json
+import pathlib
+import shutil
+import tempfile
+import unittest
+
+ROOT = pathlib.Path(__file__).resolve().parents[2]
+RUN_ID = "20261016T075147Z-6d019de6e2f2"
+SOURCE = ROOT / "evidence/runs" / RUN_ID
+SPEC = importlib.util.spec_from_file_location(
+    "raw_binding_evaluator", ROOT / "scripts/golden/evaluate_run.py")
+evaluator = importlib.util.module_from_spec(SPEC)
+SPEC.loader.exec_module(evaluator)
+
+
+class ScenarioARawBindingTests(unittest.TestCase):
+    def setUp(self):
+        self.directory = pathlib.Path(tempfile.mkdtemp()) / RUN_ID
+        shutil.copytree(SOURCE, self.directory)
+        (self.directory / "result.json").unlink()
+        self.evidence_path = self.directory / "evidence.json"
+        self.manifest_path = self.directory / "manifest.json"
+        self.document = json.loads(self.evidence_path.read_text())
+
+    def evaluate(self):
+        self.evidence_path.write_text(json.dumps(self.document))
+        return evaluator.evaluate(self.directory)
+
+    def test_valid_retained_package_is_supported(self):
+        self.assertEqual(self.evaluate()["hypothesis_status"], "SUPPORTED")
+
+    def test_unrelated_import_error_row_is_rejected(self):
+        self.document["observations"]["fault_console_rows"] = [{
+            "timestamp": "2026-10-16T07:58:00.393401Z",
+            "signature": "ImportError: unrelated_dependency",
+        }]
+        with self.assertRaises(evaluator.ModelError):
+            self.evaluate()
+
+    def test_wrong_module_name_rows_are_rejected(self):
+        self.document["observations"]["fault_console_rows"] = [{
+            "timestamp": "2026-10-16T07:58:00.393401Z",
+            "signature": "ModuleNotFoundError: No module named 'other_module'",
+        }]
+        with self.assertRaises(evaluator.ModelError):
+            self.evaluate()
+
+    def test_fault_probe_500_cannot_hide_behind_503_summary(self):
+        probes = self.document["observations"]["fault_probes"]
+        probes[-1]["status"] = 500
+        with self.assertRaises(evaluator.ModelError):
+            self.evaluate()
+
+    def test_recovery_before_baseline_is_rejected(self):
+        windows = self.document["observations"]["phase_windows"]
+        windows["recovery"] = copy.deepcopy(windows["baseline"])
+        with self.assertRaises(evaluator.ModelError):
+            self.evaluate()
+
+    def test_fault_row_outside_fault_window_is_rejected(self):
+        rows = self.document["observations"]["fault_console_rows"]
+        rows[0]["timestamp"] = "2026-10-16T08:01:30Z"
+        with self.assertRaises(evaluator.ModelError):
+            self.evaluate()
+
+    def test_503_probe_outside_fault_window_is_rejected(self):
+        probes = self.document["observations"]["fault_probes"]
+        probes[-1]["captured_at"] = "2026-10-16T08:01:30Z"
+        with self.assertRaises(evaluator.ModelError):
+            self.evaluate()
+
+    def test_scalar_disagreement_with_raw_rows_is_rejected(self):
+        self.document["observations"]["fault_import_error_signature"] = "ImportError: other"
+        with self.assertRaises(evaluator.ModelError):
+            self.evaluate()
+
+    def test_valid_but_unrelated_provenance_digests_are_rejected(self):
+        manifest = json.loads(self.manifest_path.read_text())
+        manifest["recipe_digest"] = "sha256:" + "1" * 64
+        manifest["collector_digest"] = "sha256:" + "2" * 64
+        self.manifest_path.write_text(json.dumps(manifest))
+        with self.assertRaises(evaluator.ModelError):
+            self.evaluate()
+
+
+if __name__ == "__main__":
+    unittest.main(verbosity=2)
