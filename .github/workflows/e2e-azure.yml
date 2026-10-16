@@ -7,10 +7,6 @@ on:
         description: Reviewed 40-character commit SHA from this repository
         required: true
         type: string
-      resource_group:
-        description: New disposable resource group name for this run
-        required: true
-        type: string
       location:
         description: Azure region
         required: true
@@ -26,8 +22,33 @@ permissions:
   contents: read
 
 jobs:
+  validate-context:
+    name: Validate privileged workflow context
+    if: github.ref == 'refs/heads/main' && endsWith(github.workflow_ref, '@refs/heads/main')
+    runs-on: ubuntu-latest
+    outputs:
+      ttl_hours: ${{ steps.ttl.outputs.hours }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Validate bounded TTL before privileged jobs
+        id: ttl
+        env:
+          EXPECTED_WORKFLOW_REF: ${{ github.repository }}/.github/workflows/e2e-azure.yml@refs/heads/main
+          OBSERVED_REF: ${{ github.ref }}
+          OBSERVED_WORKFLOW_REF: ${{ github.workflow_ref }}
+          TTL_HOURS: ${{ inputs.ttl_hours }}
+        run: |
+          set -euo pipefail
+          test "$OBSERVED_REF" = "refs/heads/main"
+          test "$OBSERVED_WORKFLOW_REF" = "$EXPECTED_WORKFLOW_REF"
+          hours=$(python3 scripts/golden/azure_cleanup.py validate-ttl --hours "$TTL_HOURS")
+          echo "hours=$hours" >> "$GITHUB_OUTPUT"
+
   validate-target:
     name: Validate reviewed target
+    needs: validate-context
     runs-on: ubuntu-latest
     outputs:
       target_commit: ${{ steps.target.outputs.sha }}
@@ -41,7 +62,7 @@ jobs:
           TARGET_COMMIT: ${{ inputs.target_commit }}
         run: |
           set -euo pipefail
-          sha=$(python3 scripts/golden/azure_e2e_guard.py validate-target "$TARGET_COMMIT")
+          sha=$(python3 scripts/golden/azure_e2e_cli.py validate-target "$TARGET_COMMIT")
           git fetch --no-tags origin main
           git cat-file -e "${sha}^{commit}"
           git merge-base --is-ancestor "$sha" origin/main
@@ -49,7 +70,7 @@ jobs:
 
   scenario-a:
     name: Run Golden Scenario A
-    needs: validate-target
+    needs: [validate-context, validate-target]
     runs-on: ubuntu-latest
     timeout-minutes: 90
     environment: azure-e2e
@@ -103,9 +124,9 @@ jobs:
       - name: Create tagged run-owned resource group
         env:
           LOCATION: ${{ inputs.location }}
-          RESOURCE_GROUP: ${{ inputs.resource_group }}
+          RESOURCE_GROUP: rg-golden-e2e-${{ github.run_id }}-${{ github.run_attempt }}
           RUN_ID: ${{ github.run_id }}-${{ github.run_attempt }}
-          TTL_HOURS: ${{ inputs.ttl_hours }}
+          TTL_HOURS: ${{ needs.validate-context.outputs.ttl_hours }}
         run: |
           set -euo pipefail
           if [ "$(az group exists --name "$RESOURCE_GROUP" --output tsv)" != "false" ]; then
@@ -119,7 +140,7 @@ jobs:
       - name: Deploy Scenario A infrastructure
         id: deploy
         env:
-          RESOURCE_GROUP: ${{ inputs.resource_group }}
+          RESOURCE_GROUP: rg-golden-e2e-${{ github.run_id }}-${{ github.run_attempt }}
         run: |
           set -euo pipefail
           outputs=$(az deployment group create --resource-group "$RESOURCE_GROUP" \
@@ -131,7 +152,7 @@ jobs:
         id: execute
         env:
           APP_NAME: ${{ steps.deploy.outputs.app }}
-          RESOURCE_GROUP: ${{ inputs.resource_group }}
+          RESOURCE_GROUP: rg-golden-e2e-${{ github.run_id }}-${{ github.run_attempt }}
         run: |
           set +e
           python3 labs/deployment-succeeded-startup-failed/run.py execute \
@@ -145,7 +166,7 @@ jobs:
           fi
           echo "run_dir=$run_dir" >> "$GITHUB_OUTPUT"
           echo "run_id=$(basename "$run_dir")" >> "$GITHUB_OUTPUT"
-          python3 scripts/golden/azure_e2e_guard.py inspect-run "$run_dir"
+          python3 scripts/golden/azure_e2e_cli.py inspect-run "$run_dir"
           inspect_code=$?
           set -e
           if [ "$runner_code" -ne 0 ] || [ "$inspect_code" -ne 0 ]; then
@@ -156,12 +177,12 @@ jobs:
         if: always()
         run: |
           mkdir -p "$RUNNER_TEMP/golden-private"
-          python3 scripts/golden/azure_e2e_guard.py sanitize \
+          python3 scripts/golden/azure_e2e_cli.py sanitize \
             "$RUNNER_TEMP/golden-private" "$RUNNER_TEMP/sanitized-evidence"
       - name: Fail if sanitized evidence still contains secret-like values
         id: sanitized-scan
         if: always()
-        run: python3 scripts/golden/azure_e2e_guard.py scan-sanitized "$RUNNER_TEMP/sanitized-evidence"
+        run: python3 scripts/golden/azure_e2e_cli.py scan-sanitized "$RUNNER_TEMP/sanitized-evidence"
       - name: Upload sanitized evidence
         if: always() && steps.sanitize.outcome == 'success' && steps.sanitized-scan.outcome == 'success'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
@@ -181,8 +202,10 @@ jobs:
           RUN_DIR: ${{ steps.execute.outputs.run_dir }}
           TARGET_COMMIT: ${{ needs.validate-target.outputs.target_commit }}
         run: |
-          python3 scripts/golden/azure_e2e_guard.py summary "$RUN_DIR" \
-            --target-commit "$TARGET_COMMIT" --environment azure-e2e --mode azure >> "$GITHUB_STEP_SUMMARY"
+          python3 scripts/golden/azure_e2e_cli.py summary "$RUN_DIR" \
+            --target-commit "$TARGET_COMMIT" --environment azure-e2e --mode azure \
+            --github-run-id "$GITHUB_RUN_ID" --github-run-attempt "$GITHUB_RUN_ATTEMPT" \
+            >> "$GITHUB_STEP_SUMMARY"
       - name: Record blocked run summary
         if: always() && steps.execute.outputs.run_dir == ''
         env:
@@ -201,7 +224,7 @@ jobs:
 
   cleanup:
     name: Verify run-owned cleanup
-    needs: [validate-target, scenario-a]
+    needs: [validate-context, validate-target, scenario-a]
     if: always() && needs.scenario-a.result != 'skipped'
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -222,13 +245,54 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       - name: Delete and verify the exact run-owned group
         env:
-          RESOURCE_GROUP: ${{ inputs.resource_group }}
+          RESOURCE_GROUP: rg-golden-e2e-${{ github.run_id }}-${{ github.run_attempt }}
           RUN_ID: ${{ github.run_id }}-${{ github.run_attempt }}
-        run: python3 scripts/golden/azure_cleanup.py run --name "$RESOURCE_GROUP" --run-id "$RUN_ID"
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/cleanup-private"
+          python3 scripts/golden/azure_cleanup.py run --name "$RESOURCE_GROUP" --run-id "$RUN_ID" \
+            --result "$RUNNER_TEMP/cleanup-private/cleanup-result.json"
+      - name: Sanitize and scan cleanup result
+        if: always()
+        run: |
+          if [ ! -f "$RUNNER_TEMP/cleanup-private/cleanup-result.json" ]; then
+            mkdir -p "$RUNNER_TEMP/cleanup-private"
+            python3 - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          path = Path(os.environ["RUNNER_TEMP"]) / "cleanup-private/cleanup-result.json"
+          path.write_text(json.dumps({
+              "github_run_id": os.environ["GITHUB_RUN_ID"],
+              "github_run_attempt": os.environ["GITHUB_RUN_ATTEMPT"],
+              "cleanup_status": "BLOCKED",
+          }, indent=2) + "\n")
+          PY
+          fi
+          python3 scripts/golden/azure_e2e_cli.py sanitize \
+            "$RUNNER_TEMP/cleanup-private" "$RUNNER_TEMP/cleanup-sanitized"
+          python3 scripts/golden/azure_e2e_cli.py scan-sanitized "$RUNNER_TEMP/cleanup-sanitized"
+          python3 - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json
+          import os
+          from pathlib import Path
+          result = json.loads((Path(os.environ["RUNNER_TEMP"]) / "cleanup-sanitized/cleanup-result.json").read_text())
+          print("## Golden Scenario A cleanup")
+          print(f"- GitHub run ID: `{result['github_run_id']}` attempt `{result['github_run_attempt']}`")
+          print(f"- Cleanup status: `{result['cleanup_status']}`")
+          PY
+      - name: Upload sanitized cleanup result
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: cleanup-result-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/cleanup-sanitized/cleanup-result.json
+          if-no-files-found: error
+          retention-days: 30
 
   ttl-sweep:
     name: Sweep expired Golden E2E groups
-    needs: validate-target
+    needs: [validate-context, validate-target, scenario-a]
     if: always() && needs.validate-target.result == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -248,4 +312,6 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       - name: Delete only owner-tagged groups with expired TTL
-        run: python3 scripts/golden/azure_cleanup.py sweep --apply
+        env:
+          ACTIVE_RUN_ID: ${{ github.run_id }}-${{ github.run_attempt }}
+        run: python3 scripts/golden/azure_cleanup.py sweep --apply --active-run-id "$ACTIVE_RUN_ID"
