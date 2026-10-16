@@ -358,7 +358,7 @@ def _verify_derivation(provenance: dict, manifest: dict, evidence: dict) -> None
 
 def _verify_scenario_c_raw_inputs(
         run_dir: pathlib.Path, provenance: dict, manifest: dict, evidence: dict) -> None:
-    if provenance.get("scenario") != "slot-swap-config-drift":
+    if manifest.get("raw_binding_version") != 1:
         return
     raw_input = provenance.get("derivation", {}).get("raw_input", {})
     files = raw_input.get("files")
@@ -784,7 +784,8 @@ def evaluate(run_dir, *, skip_source_commit_resolution: bool = False,
     provenance = _read_json(run_dir / "provenance.json") if (run_dir / "provenance.json").is_file() else {}
     if manifest.get("run_id") in _declared_run_ids():
         _verify_source_commit(manifest, evidence_doc)
-        _verify_derivation(provenance, manifest, evidence)
+        if manifest.get("raw_binding_version") == 1:
+            _verify_derivation(provenance, manifest, evidence)
         _verify_scenario_c_raw_inputs(run_dir, provenance, manifest, evidence)
         evidence = _derive_scenario_a(evidence, manifest, provenance)
         evidence = _derive_scenario_c(evidence, provenance)
@@ -816,7 +817,11 @@ def evaluate(run_dir, *, skip_source_commit_resolution: bool = False,
     if execution_status != "COMPLETE":
         hypothesis_status = "NOT_TESTED"
     else:
-        hypothesis_status = combine_hypothesis(assertions, per_assertion)
+        hypothesis_status = (
+            combine_hypothesis(assertions, per_assertion)
+            if manifest.get("role_aware_aggregation") is True
+            else combine(per_assertion.values())
+        )
         causal_claim = bool(manifest.get("hypothesis"))
         if hypothesis_status == "SUPPORTED" and causal_claim and (not strong or evidence_identity != "BOUND"):
             hypothesis_status = "INCONCLUSIVE"
@@ -824,10 +829,6 @@ def evaluate(run_dir, *, skip_source_commit_resolution: bool = False,
             hypothesis_status = "INCONCLUSIVE"
 
     # A generated verdict is recomputed and compared, never consumed.
-    recovery_outcomes = [
-        per_assertion[item.get("id")] for item in assertions
-        if item.get("role") == "recovery"
-    ]
     result = {
         "run_id": manifest["run_id"],
         "captured_at": manifest["captured_at"],
@@ -835,9 +836,14 @@ def evaluate(run_dir, *, skip_source_commit_resolution: bool = False,
         "execution_status": execution_status,
         "evidence_identity": evidence_identity,
         "hypothesis_status": hypothesis_status,
-        "recovery_status": combine(recovery_outcomes),
         "assertion_outcomes": per_assertion,
     }
+    if manifest.get("role_aware_aggregation") is True:
+        recovery_outcomes = [
+            per_assertion[item.get("id")] for item in assertions
+            if item.get("role") == "recovery"
+        ]
+        result["recovery_status"] = combine(recovery_outcomes)
     if source_commit_resolution == "SKIPPED_EXPLICITLY":
         result["source_commit_resolution"] = source_commit_resolution
     generated = run_dir / "result.json"

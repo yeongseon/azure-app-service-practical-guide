@@ -8,6 +8,8 @@
   "evidence_trust": "unverified",
   "hypothesis": "A slot swap relocates configuration by stickiness rather than by value: a non-sticky app setting travels with the code while a slot setting stays with the slot. The resulting production configuration is therefore a predictable consequence of the swap, not evidence of a failed deployment.",
   "hypothesis_claim_level": "Inferred",
+  "role_aware_aggregation": true,
+  "raw_binding_version": 1,
   "assertions": [
     {
       "id": "swap-succeeded",

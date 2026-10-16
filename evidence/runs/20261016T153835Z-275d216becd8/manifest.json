@@ -83,5 +83,7 @@
   "capture_window": {
     "started_at": "2026-10-16T15:38:35.163159+00:00",
     "ended_at": "2026-10-16T15:50:36.075637+00:00"
-  }
+  },
+  "role_aware_aggregation": true,
+  "raw_binding_version": 1
 }

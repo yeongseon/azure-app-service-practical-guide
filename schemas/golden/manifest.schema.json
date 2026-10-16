@@ -124,6 +124,13 @@
     "hypothesis_claim_level": {
       "enum": ["Documented", "Observed", "Inferred", "Not Proven"]
     },
+    "role_aware_aggregation": {
+      "type": "boolean"
+    },
+    "raw_binding_version": {
+      "type": "integer",
+      "minimum": 1
+    },
     "capture_window": {
       "type": "object",
       "additionalProperties": false,

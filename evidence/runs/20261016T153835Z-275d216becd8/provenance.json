@@ -54,5 +54,6 @@
     "labs/slot-swap-config-drift/app/requirements.txt",
     "labs/slot-swap-config-drift/main.bicep",
     "scripts/golden/run_scenario_c.py"
-  ]
+  ],
+  "replay": "python3 scripts/golden/evaluate_run.py evidence/runs/20261016T153835Z-275d216becd8"
 }
