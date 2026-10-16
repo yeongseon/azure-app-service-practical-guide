@@ -1,7 +1,7 @@
 {
   "version": 1,
   "collector_path": "scripts/golden/collect_scenario_c.py",
-  "derivation_collector_commit": "TEMPLATE_REPLACE_AFTER_COMMIT",
+  "derivation_collector_commit": "4c3db9db136868423642c75cbc70675120a69cb1",
   "recipe_paths": [
     "labs/slot-swap-config-drift/app/app.py",
     "labs/slot-swap-config-drift/app/requirements.txt",
