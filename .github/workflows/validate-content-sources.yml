@@ -264,10 +264,23 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          # The PR checkout is a synthetic merge commit. Depth 2 retains both
+          # parents so the retained-package gate can compute base...HEAD while
+          # the older provenance objects remain exact-SHA shallow fetches.
+          fetch-depth: 2
 
-      - name: Fetch Golden fixture source commit
-        run: git fetch --no-tags --depth=1 origin 3e0442bb19b966766598ffeae1fb47f3f6960837
+      - name: Fetch Golden provenance commits
+        run: |
+          for sha in \
+            3e0442bb19b966766598ffeae1fb47f3f6960837 \
+            af75d0024472edce67401042fdaa97d00dfbe6ac \
+            20969deac4d958fff0c71a6c951573a1b0122a34 \
+            ef78457ae487cdb244808c763ac72a72057ce6a7 \
+            f839d67575fd1e56dd922421e3b10088d470e80e \
+            1204a0956b3e9aca318fd1a172f9cb63620fd78d
+          do
+            git fetch --no-tags --depth=1 origin "$sha:refs/golden-provenance/$sha"
+          done
 
       - name: Set up Python
         uses: actions/setup-python@v5

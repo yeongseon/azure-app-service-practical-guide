@@ -9,6 +9,35 @@
     "ARCHIVE"
   ],
   "delete_count_note": "No path is marked DELETE. Nothing measured in this audit justified destruction over archival. The single REWRITE finding was resolved by wiring the orphaned validator into CI rather than by removing it.",
+  "baseline_findings": {
+    "catalog_drift": "The historical README advertised 10 labs while the then-current catalog contained 13. Current counts are derived from labs/golden-classification.json and checked against the filesystem.",
+    "execution_corrections": ["#202", "#203"],
+    "catalog_corrections": ["#176", "#182"]
+  },
+  "paired_runbooks": [
+    {
+      "id": "deployment-succeeded-startup-failed",
+      "comparisons": {
+        "entrypoint": {"result": "MATCH", "review_method": "human-reviewed", "evidence": ["labs/deployment-succeeded-startup-failed/contract.json", "labs/deployment-succeeded-startup-failed/run.py", "labs/deployment-succeeded-startup-failed/trigger.sh"]},
+        "package": {"result": "MATCH", "review_method": "human-reviewed", "evidence": ["labs/deployment-succeeded-startup-failed/app/requirements.txt", "labs/deployment-succeeded-startup-failed/run.py"]},
+        "build": {"result": "MATCH", "review_method": "human-reviewed", "evidence": ["labs/deployment-succeeded-startup-failed/run.py", "labs/deployment-succeeded-startup-failed/trigger.sh"]},
+        "prerequisite": {"result": "MATCH", "review_method": "human-reviewed", "evidence": ["labs/deployment-succeeded-startup-failed/main.bicep", "labs/deployment-succeeded-startup-failed/contract.json"]},
+        "cleanup": {"result": "MATCH", "review_method": "human-reviewed", "evidence": ["labs/deployment-succeeded-startup-failed/cleanup.sh", "labs/deployment-succeeded-startup-failed/contract.json"]}
+      },
+      "link_audit": {"repo_local": "PASS", "absolute_github": "PASS", "validator": "scripts/validate_documented_paths.py"}
+    },
+    {
+      "id": "windows-java-httpplatformhandler-timeout",
+      "comparisons": {
+        "entrypoint": {"result": "MATCH", "review_method": "human-reviewed", "evidence": ["labs/windows-java-httpplatformhandler-timeout/README.md", "labs/windows-java-httpplatformhandler-timeout/stage-0-config-discovery/README.md", "labs/windows-java-httpplatformhandler-timeout/lab-1-baseline-signature/README.md"]},
+        "package": {"result": "MATCH", "review_method": "human-reviewed", "evidence": ["labs/windows-java-httpplatformhandler-timeout/stage-0-config-discovery/app/pom.xml", "labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/webconfig/web.config"]},
+        "build": {"result": "MATCH", "review_method": "human-reviewed", "evidence": ["labs/windows-java-httpplatformhandler-timeout/stage-0-config-discovery/deploy.sh", "labs/windows-java-httpplatformhandler-timeout/lab-1-baseline-signature/deploy.sh", "labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/deploy.sh"]},
+        "prerequisite": {"result": "MATCH", "review_method": "human-reviewed", "evidence": ["labs/windows-java-httpplatformhandler-timeout/stage-0-config-discovery/README.md", "labs/windows-java-httpplatformhandler-timeout/lab-1-baseline-signature/README.md", "labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/design-proposal.md"]},
+        "cleanup": {"result": "MATCH", "review_method": "human-reviewed", "evidence": ["labs/windows-java-httpplatformhandler-timeout/stage-0-config-discovery/cleanup.sh", "labs/windows-java-httpplatformhandler-timeout/lab-1-baseline-signature/cleanup.sh", "labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/cleanup.sh"]}
+      },
+      "link_audit": {"repo_local": "PASS", "absolute_github": "PASS", "validator": "scripts/validate_documented_paths.py"}
+    }
+  ],
   "paths": [
     {
       "path": "apps/",
@@ -34,6 +63,16 @@
       "path": "labs/",
       "decision": "KEEP",
       "reason": "Per-lab decisions live in labs/golden-classification.json rather than being duplicated here."
+    },
+    {
+      "path": "labs/deployment-succeeded-startup-failed/",
+      "decision": "KEEP",
+      "reason": "PR #234 reconciled the documented contract.json and run.py entrypoints with the checked-in shell runbook; package, prerequisites and cleanup now describe one startup-failure scenario. Execution corrections are tracked by #202."
+    },
+    {
+      "path": "labs/windows-java-httpplatformhandler-timeout/",
+      "decision": "KEEP",
+      "reason": "Three staged experiments use WAR/JAR deployment assets and stage-specific build directories, prerequisites and cleanup. Their retained results remain evidence; structural migration decisions belong to #182 and execution corrections to #203."
     },
     {
       "path": "labs/_shared/",

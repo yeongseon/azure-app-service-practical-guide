@@ -20,6 +20,13 @@ AUDIT = json.loads((ROOT / "docs/reference/golden-repository-audit.json").read_t
 WORKFLOWS = ROOT / ".github/workflows"
 
 VALID = {"KEEP", "REWRITE", "MOVE", "DELETE", "ARCHIVE"}
+REQUIRED_PAIRED_RUNBOOKS = {
+    "deployment-succeeded-startup-failed",
+    "windows-java-httpplatformhandler-timeout",
+}
+REQUIRED_COMPARISONS = {"entrypoint", "package", "build", "prerequisite", "cleanup"}
+ALLOWED_LINK_VALIDATORS = {"scripts/validate_documented_paths.py"}
+SEMANTIC_REVIEW_METHOD = "human-reviewed"
 
 
 def invoked_by_ci(basename):
@@ -73,6 +80,36 @@ class ExistenceTests(unittest.TestCase):
             self.assertTrue(
                 (ROOT / row["path"]).exists(),
                 msg=f"audit decides on {row['path']}, which is not in the repository")
+
+    def test_every_top_level_repository_area_is_audited(self):
+        audited = {row["path"].split("/", 1)[0] for row in AUDIT["paths"]}
+        ignored = {".git", ".codegraph", ".playwright-mcp", ".venv", "site"}
+        actual = {path.name for path in ROOT.iterdir() if path.is_dir() and path.name not in ignored}
+        self.assertTrue(actual <= audited)
+
+    def test_historical_drift_and_issue_links_are_recorded(self):
+        findings = AUDIT["baseline_findings"]
+        self.assertIn("10 labs", findings["catalog_drift"])
+        self.assertIn("13", findings["catalog_drift"])
+        self.assertEqual(findings["execution_corrections"], ["#202", "#203"])
+        self.assertEqual(findings["catalog_corrections"], ["#176", "#182"])
+
+    def test_every_paired_runbook_has_structured_comparisons_and_link_audit(self):
+        records = AUDIT["paired_runbooks"]
+        self.assertEqual({record["id"] for record in records}, REQUIRED_PAIRED_RUNBOOKS)
+        for record in records:
+            self.assertEqual(set(record["comparisons"]), REQUIRED_COMPARISONS, msg=record["id"])
+            for name, comparison in record["comparisons"].items():
+                self.assertEqual(comparison["result"], "MATCH", msg=f"{record['id']}:{name}")
+                self.assertEqual(comparison["review_method"], SEMANTIC_REVIEW_METHOD, msg=f"{record['id']}:{name}")
+                for evidence_path in comparison["evidence"]:
+                    self.assertTrue((ROOT / evidence_path).exists(), msg=evidence_path)
+            link_audit = record["link_audit"]
+            self.assertEqual(link_audit["repo_local"], "PASS", msg=record["id"])
+            self.assertEqual(link_audit["absolute_github"], "PASS", msg=record["id"])
+            self.assertIn(link_audit["validator"], ALLOWED_LINK_VALIDATORS, msg=record["id"])
+            self.assertTrue((ROOT / link_audit["validator"]).is_file(), msg=record["id"])
+            self.assertTrue(invoked_by_ci(pathlib.Path(link_audit["validator"]).name), msg=record["id"])
 
 
 class DeletionPolicyTests(unittest.TestCase):
