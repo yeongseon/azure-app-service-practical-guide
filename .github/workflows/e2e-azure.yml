@@ -1,0 +1,251 @@
+name: Azure Golden E2E
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_commit:
+        description: Reviewed 40-character commit SHA from this repository
+        required: true
+        type: string
+      resource_group:
+        description: New disposable resource group name for this run
+        required: true
+        type: string
+      location:
+        description: Azure region
+        required: true
+        default: koreacentral
+        type: string
+      ttl_hours:
+        description: Resource-group lifetime before TTL sweep eligibility
+        required: true
+        default: '6'
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  validate-target:
+    name: Validate reviewed target
+    runs-on: ubuntu-latest
+    outputs:
+      target_commit: ${{ steps.target.outputs.sha }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Require an immutable commit on this repository main history
+        id: target
+        env:
+          TARGET_COMMIT: ${{ inputs.target_commit }}
+        run: |
+          set -euo pipefail
+          sha=$(python3 scripts/golden/azure_e2e_guard.py validate-target "$TARGET_COMMIT")
+          git fetch --no-tags origin main
+          git cat-file -e "${sha}^{commit}"
+          git merge-base --is-ancestor "$sha" origin/main
+          echo "sha=$sha" >> "$GITHUB_OUTPUT"
+
+  scenario-a:
+    name: Run Golden Scenario A
+    needs: validate-target
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    environment: azure-e2e
+    permissions:
+      contents: read
+      id-token: write
+    outputs:
+      run_dir: ${{ steps.execute.outputs.run_dir }}
+      run_id: ${{ steps.execute.outputs.run_id }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.validate-target.outputs.target_commit }}
+          persist-credentials: false
+      - name: Verify exact checkout
+        env:
+          TARGET_COMMIT: ${{ needs.validate-target.outputs.target_commit }}
+        run: test "$(git rev-parse HEAD)" = "$TARGET_COMMIT"
+      - name: Prepare private evidence workspace
+        env:
+          TARGET_COMMIT: ${{ needs.validate-target.outputs.target_commit }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/golden-private"
+          python3 - <<'PY' > "$RUNNER_TEMP/golden-private/workflow-context.json"
+          import json
+          import os
+          print(json.dumps({
+              "target_commit": os.environ["TARGET_COMMIT"],
+              "github_run_id": os.environ["GITHUB_RUN_ID"],
+              "github_run_attempt": os.environ["GITHUB_RUN_ATTEMPT"],
+              "environment": "azure-e2e",
+              "execution_status": "BLOCKED",
+          }, indent=2))
+          PY
+      - name: Require Azure OIDC configuration
+        env:
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        run: |
+          if [ -z "$AZURE_CLIENT_ID" ] || [ -z "$AZURE_TENANT_ID" ] || [ -z "$AZURE_SUBSCRIPTION_ID" ]; then
+            echo "BLOCKED: the azure-e2e environment is missing OIDC configuration" >&2
+            exit 3
+          fi
+      - name: Azure login with OIDC
+        uses: azure/login@a641126d1b8aa4d1fa005f4f92df94a3a4c4c906 # v3.1.0
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - name: Create tagged run-owned resource group
+        env:
+          LOCATION: ${{ inputs.location }}
+          RESOURCE_GROUP: ${{ inputs.resource_group }}
+          RUN_ID: ${{ github.run_id }}-${{ github.run_attempt }}
+          TTL_HOURS: ${{ inputs.ttl_hours }}
+        run: |
+          set -euo pipefail
+          if [ "$(az group exists --name "$RESOURCE_GROUP" --output tsv)" != "false" ]; then
+            echo "BLOCKED: resource group already exists and cannot be adopted by this run" >&2
+            exit 3
+          fi
+          ttl=$(date -u -d "+${TTL_HOURS} hours" +%Y-%m-%dT%H:%M:%SZ)
+          az group create --name "$RESOURCE_GROUP" --location "$LOCATION" \
+            --tags owner=golden-e2e repository=yeongseon/azure-app-service-practical-guide \
+              run-id="$RUN_ID" ttl="$ttl" --output json >/tmp/resource-group.json
+      - name: Deploy Scenario A infrastructure
+        id: deploy
+        env:
+          RESOURCE_GROUP: ${{ inputs.resource_group }}
+        run: |
+          set -euo pipefail
+          outputs=$(az deployment group create --resource-group "$RESOURCE_GROUP" \
+            --template-file labs/deployment-succeeded-startup-failed/main.bicep \
+            --parameters baseName="golda${GITHUB_RUN_ID}" --query properties.outputs --output json)
+          app=$(python3 -c 'import json,sys; print(json.load(sys.stdin)["webAppName"]["value"])' <<< "$outputs")
+          echo "app=$app" >> "$GITHUB_OUTPUT"
+      - name: Execute Scenario A runner
+        id: execute
+        env:
+          APP_NAME: ${{ steps.deploy.outputs.app }}
+          RESOURCE_GROUP: ${{ inputs.resource_group }}
+        run: |
+          set +e
+          python3 labs/deployment-succeeded-startup-failed/run.py execute \
+            "$RESOURCE_GROUP" "$APP_NAME" --output "$RUNNER_TEMP/golden-private" \
+            2>&1 | tee "$RUNNER_TEMP/golden-private/scenario-a.log"
+          runner_code=${PIPESTATUS[0]}
+          run_dir=$(find "$RUNNER_TEMP/golden-private" -mindepth 1 -maxdepth 1 -type d -print -quit)
+          if [ -z "$run_dir" ]; then
+            echo "BLOCKED: runner produced no run directory" >&2
+            exit 3
+          fi
+          echo "run_dir=$run_dir" >> "$GITHUB_OUTPUT"
+          echo "run_id=$(basename "$run_dir")" >> "$GITHUB_OUTPUT"
+          python3 scripts/golden/azure_e2e_guard.py inspect-run "$run_dir"
+          inspect_code=$?
+          set -e
+          if [ "$runner_code" -ne 0 ] || [ "$inspect_code" -ne 0 ]; then
+            exit 4
+          fi
+      - name: Sanitize evidence for artifact retention
+        id: sanitize
+        if: always()
+        run: |
+          mkdir -p "$RUNNER_TEMP/golden-private"
+          python3 scripts/golden/azure_e2e_guard.py sanitize \
+            "$RUNNER_TEMP/golden-private" "$RUNNER_TEMP/sanitized-evidence"
+      - name: Fail if sanitized evidence still contains secret-like values
+        id: sanitized-scan
+        if: always()
+        run: python3 scripts/golden/azure_e2e_guard.py scan-sanitized "$RUNNER_TEMP/sanitized-evidence"
+      - name: Upload sanitized evidence
+        if: always() && steps.sanitize.outcome == 'success' && steps.sanitized-scan.outcome == 'success'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: scenario-a-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/sanitized-evidence/
+          if-no-files-found: error
+          retention-days: 30
+      - name: Require sanitized failure evidence upload
+        if: always() && (steps.sanitize.outcome != 'success' || steps.sanitized-scan.outcome != 'success')
+        run: |
+          echo "FAILED: private evidence could not be sanitized, so no artifact was uploaded." >&2
+          exit 4
+      - name: Write run summary
+        if: always() && steps.execute.outputs.run_dir != ''
+        env:
+          RUN_DIR: ${{ steps.execute.outputs.run_dir }}
+          TARGET_COMMIT: ${{ needs.validate-target.outputs.target_commit }}
+        run: |
+          python3 scripts/golden/azure_e2e_guard.py summary "$RUN_DIR" \
+            --target-commit "$TARGET_COMMIT" --environment azure-e2e --mode azure >> "$GITHUB_STEP_SUMMARY"
+      - name: Record blocked run summary
+        if: always() && steps.execute.outputs.run_dir == ''
+        env:
+          TARGET_COMMIT: ${{ needs.validate-target.outputs.target_commit }}
+        run: |
+          {
+            echo "## Golden Scenario A"
+            echo "- Mode: Azure execution"
+            echo "- Target commit: \`$TARGET_COMMIT\`"
+            echo "- GitHub run ID: \`$GITHUB_RUN_ID\` attempt \`$GITHUB_RUN_ATTEMPT\`"
+            echo "- Environment: \`azure-e2e\`"
+            echo "- Execution status: \`BLOCKED\`"
+            echo "- Captured at: \`not captured\`"
+            echo "- Evaluated at: \`not evaluated\`"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  cleanup:
+    name: Verify run-owned cleanup
+    needs: [validate-target, scenario-a]
+    if: always() && needs.scenario-a.result != 'skipped'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: azure-e2e
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.validate-target.outputs.target_commit }}
+          persist-credentials: false
+      - name: Azure login with OIDC
+        uses: azure/login@a641126d1b8aa4d1fa005f4f92df94a3a4c4c906 # v3.1.0
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - name: Delete and verify the exact run-owned group
+        env:
+          RESOURCE_GROUP: ${{ inputs.resource_group }}
+          RUN_ID: ${{ github.run_id }}-${{ github.run_attempt }}
+        run: python3 scripts/golden/azure_cleanup.py run --name "$RESOURCE_GROUP" --run-id "$RUN_ID"
+
+  ttl-sweep:
+    name: Sweep expired Golden E2E groups
+    needs: validate-target
+    if: always() && needs.validate-target.result == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: azure-e2e
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.validate-target.outputs.target_commit }}
+          persist-credentials: false
+      - name: Azure login with OIDC
+        uses: azure/login@a641126d1b8aa4d1fa005f4f92df94a3a4c4c906 # v3.1.0
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - name: Delete only owner-tagged groups with expired TTL
+        run: python3 scripts/golden/azure_cleanup.py sweep --apply
