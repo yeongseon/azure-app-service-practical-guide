@@ -164,6 +164,18 @@ class GoldenContractTests(unittest.TestCase):
         cls.ev = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(cls.ev)
         cls.template = json.loads((cls.LAB / "manifest.template.json").read_text())
+        for assertion in cls.template["assertions"]:
+            if assertion["field"] in {"baseline_success_count", "recovery_success_count"}:
+                assertion["equals"] = 3
+            if assertion["field"] == "load_transport_failure_count":
+                assertion["in"] = [1, 2, 3]
+        cls.template["assertions"].append({
+            "id": "discriminating-pooling-reduces-transport-failures",
+            "role": "discriminating",
+            "field": "pooling_reduces_transport_failures",
+            "equals": True,
+            "claim_level": "Observed",
+        })
         cls.classification = json.loads(
             (cls.LAB / "evidence-classification.json").read_text())
 

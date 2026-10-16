@@ -10,6 +10,9 @@ evidence/runs/20261016T075147Z-6d019de6e2f2/provenance.json|instance-id
 evidence/runs/20261016T124329Z-70fb229a0bd1/evidence.json|instance-id
 evidence/runs/20261016T124329Z-70fb229a0bd1/manifest.json|instance-id
 evidence/runs/20261016T124329Z-70fb229a0bd1/provenance.json|instance-id
+evidence/runs/20261016T154910Z-a034cccd79d6/evidence.json|instance-id
+evidence/runs/20261016T154910Z-a034cccd79d6/manifest.json|instance-id
+evidence/runs/20261016T154910Z-a034cccd79d6/provenance.json|instance-id
 labs/container-http-pings/artifacts-sanitized/baseline/app-config.json|deployment-resource-path
 labs/container-http-pings/artifacts-sanitized/trigger/webapp-details-20260404T055338Z.json|deployment-resource-path
 labs/dns-vnet-resolution/artifacts-sanitized/baseline/app-config.json|deployment-resource-path

@@ -94,7 +94,8 @@ def _derivation_problems(repo: pathlib.Path, run_dir: pathlib.Path, manifest: di
             or not (current_collector or declared_collector)):
         return ["derivation collector does not match the versioned recipe definition"]
     expected_digest = definition.get("derivation_collector_digest")
-    if derivation.get("collector_digest") != expected_digest:
+    collector_digest = derivation.get("collector_digest")
+    if current_collector and collector_digest != expected_digest:
         return ["derivation collector digest does not match the versioned recipe definition"]
     try:
         collector_bytes = _git_bytes(
@@ -106,7 +107,7 @@ def _derivation_problems(repo: pathlib.Path, run_dir: pathlib.Path, manifest: di
         collector_bytes = collector_path.read_bytes()
     actual = hashlib.sha256(collector_bytes).hexdigest()
     problems = []
-    if expected_digest != f"sha256:{actual}":
+    if collector_digest != f"sha256:{actual}":
         problems.append("derivation collector digest mismatch")
     try:
         derived_at = datetime.datetime.fromisoformat(

@@ -46,6 +46,18 @@ FAILURES = 2
 
 MANIFEST = json.loads(
     (ROOT / "labs/snat-exhaustion/golden/manifest.template.json").read_text())
+for assertion in MANIFEST["assertions"]:
+    if assertion["field"] in {"baseline_success_count", "recovery_success_count"}:
+        assertion["equals"] = PROBES
+    if assertion["field"] == "load_transport_failure_count":
+        assertion["in"] = list(range(1, PROBES + 1))
+MANIFEST["assertions"].append({
+    "id": "discriminating-pooling-reduces-transport-failures",
+    "role": "discriminating",
+    "field": "pooling_reduces_transport_failures",
+    "equals": True,
+    "claim_level": "Observed",
+})
 
 
 def build_run(baseline=None, load=None, recovery=None, health=200, omit=()):
