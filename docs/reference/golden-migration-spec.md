@@ -45,6 +45,30 @@ A sibling authors, per Golden scenario:
 - A suite whose negative cases fail when the scenario's own classification
   logic is broken.
 
+Collectors are always service-specific. The adopting repository must record
+its authentication boundary, supported operating systems and runtimes,
+required diagnostic tables, resource naming constraints, paid-resource
+assumptions and telemetry delay. Each scenario also needs a bounded recovery
+procedure and cleanup that names every resource it owns. A copied evaluator
+does not make an App Service collector valid for Functions, Container Apps or
+another service.
+
+Reviewed Azure Container Apps work may inform directory layout, schema wiring
+and the separation between collection and evaluation. Its predicates are not
+portable evidence: every comparison, threshold and discriminating observation
+must be re-declared from the destination service's documented behavior and
+mutation-tested there.
+
+## Source revision and prerequisites
+
+This specification was validated against App Service commit
+`e3428fd8d0713d7e881e8a7b3635e1204791e447`, which contains merged PRs #234,
+#235 and #236. Adoption requires Python 3.12+, `jsonschema`, the copied
+stdlib-only evaluator and reproduction gate, and a CI job that runs both the
+portable suites and the destination repository's scenario suites. Copy source
+bytes from that commit or a documented successor; do not combine files from
+different revisions.
+
 ## Vocabulary migration
 
 The frozen hypothesis vocabulary is `SUPPORTED`, `CONTRADICTED`,
@@ -85,6 +109,11 @@ verifiable by running something rather than by reading a page.
 
 Criteria 5 and 6 are the ones most often missed, because both can be
 satisfied in prose without being true.
+
+After reuse, minimum verification is schema conformance, every portable test,
+every destination negative/mutation suite, retained-package integrity, PII
+scanning, the repository's complete existing gate set and a strict site build.
+No sibling repository change is a prerequisite for completing those checks.
 
 ## Order of adoption
 
