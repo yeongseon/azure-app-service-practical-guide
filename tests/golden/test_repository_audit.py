@@ -74,6 +74,19 @@ class ExistenceTests(unittest.TestCase):
                 (ROOT / row["path"]).exists(),
                 msg=f"audit decides on {row['path']}, which is not in the repository")
 
+    def test_every_top_level_repository_area_is_audited(self):
+        audited = {row["path"].split("/", 1)[0] for row in AUDIT["paths"]}
+        ignored = {".git", ".codegraph", ".playwright-mcp", "site"}
+        actual = {path.name for path in ROOT.iterdir() if path.is_dir() and path.name not in ignored}
+        self.assertTrue(actual <= audited)
+
+    def test_historical_drift_and_issue_links_are_recorded(self):
+        findings = AUDIT["baseline_findings"]
+        self.assertIn("10 labs", findings["catalog_drift"])
+        self.assertIn("13", findings["catalog_drift"])
+        self.assertEqual(findings["execution_corrections"], ["#202", "#203"])
+        self.assertEqual(findings["catalog_corrections"], ["#176", "#182"])
+
 
 class DeletionPolicyTests(unittest.TestCase):
     def test_nothing_is_marked_delete_without_separate_review(self):

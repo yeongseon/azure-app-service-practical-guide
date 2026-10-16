@@ -86,6 +86,23 @@ class ShapeTests(unittest.TestCase):
             self.assertIn(item["classification"], VALID)
             self.assertIn(item["artifact_trust"], ev.EVIDENCE_TRUST)
 
+    def test_every_retained_artifact_set_is_classified(self):
+        for row in DATA["labs"]:
+            artifact_dir = ROOT / "labs" / row["lab"] / "artifacts-sanitized"
+            if not artifact_dir.is_dir():
+                continue
+            if row["classification"] == "golden":
+                classification = ROOT / "labs" / row["lab"] / "golden/evidence-classification.json"
+                self.assertTrue(classification.is_file(), msg=row["lab"])
+                continue
+            sets = row.get("artifact_sets", [])
+            self.assertEqual([item["path"] for item in sets], ["artifacts-sanitized"], msg=row["lab"])
+            for item in sets:
+                self.assertIn(item["trust"], ev.EVIDENCE_TRUST)
+                self.assertRegex(item["captured_at"], r"^\d{4}-\d{2}-\d{2}$")
+                self.assertRegex(item["source_commit"], r"^[0-9a-f]{40}$")
+                self.assertTrue(item["environment"].strip())
+
 
 class GoldenClaimTests(unittest.TestCase):
     """A lab may only be called Golden if it actually declares a contract."""
