@@ -3,17 +3,21 @@
 from __future__ import annotations
 
 import argparse
+from collections.abc import Mapping, Sequence
 from datetime import datetime, timezone
 import json
 import re
 import subprocess
 import sys
-from typing import Mapping, Sequence
+import time
+from pathlib import Path
 
 
 OWNER = "golden-e2e"
 REPOSITORY = "yeongseon/azure-app-service-practical-guide"
 RUN_ID_RE = re.compile(r"^[0-9]+-[1-9][0-9]*$")
+TTL_HOURS_RE = re.compile(r"^(?:[1-9]|[1-6][0-9]|7[0-2])$")
+GROUP_PREFIX = "rg-golden-e2e-"
 
 
 class CleanupError(Exception):
@@ -27,7 +31,22 @@ def _timestamp(value: str) -> datetime:
     return parsed
 
 
-def expired_owned_groups(resources: Sequence[Mapping[str, str | Mapping[str, str]]], now: datetime) -> tuple[str, ...]:
+def parse_ttl_hours(value: str) -> int:
+    if not TTL_HOURS_RE.fullmatch(value):
+        raise CleanupError("ttl_hours must be a decimal integer from 1 through 72")
+    return int(value)
+
+
+def require_owned_name(name: str, run_id: str) -> None:
+    if not RUN_ID_RE.fullmatch(run_id) or name != f"{GROUP_PREFIX}{run_id}":
+        raise CleanupError("resource group name is not bound to this Golden E2E run")
+
+
+def expired_owned_groups(
+    resources: Sequence[Mapping[str, str | Mapping[str, str]]],
+    now: datetime,
+    active_run_id: str | None = None,
+) -> tuple[str, ...]:
     selected: list[str] = []
     for resource in resources:
         name = resource.get("name")
@@ -47,10 +66,11 @@ def expired_owned_groups(resources: Sequence[Mapping[str, str | Mapping[str, str
         ):
             continue
         try:
+            require_owned_name(name, run_id)
             expired = _timestamp(ttl) < now
         except (ValueError, CleanupError):
             continue
-        if expired:
+        if expired and run_id != active_run_id:
             selected.append(name)
     return tuple(sorted(selected))
 
@@ -92,12 +112,31 @@ def delete_group(name: str, run_id: str | None) -> None:
             or _timestamp(ttl) >= datetime.now(timezone.utc)
         ):
             raise CleanupError("TTL sweep target is not owned and expired")
+        require_owned_name(name, tag_run_id)
     else:
+        require_owned_name(name, run_id)
         require_run_ownership(tags, run_id)
     _az("group", "delete", "--name", name, "--yes")
-    exists = json.loads(_az("group", "exists", "--name", name))
-    if exists is not False:
-        raise CleanupError("resource group deletion was not verified")
+    for attempt in range(12):
+        exists = json.loads(_az("group", "exists", "--name", name))
+        if exists is False:
+            return
+        if attempt < 11:
+            time.sleep(5)
+    raise CleanupError("resource group deletion was not verified within 60 seconds")
+
+
+def write_cleanup_result(path: Path, run_id: str, status: str, error: str | None = None) -> None:
+    github_run_id, github_run_attempt = run_id.split("-", maxsplit=1)
+    result = {
+        "github_run_id": github_run_id,
+        "github_run_attempt": github_run_attempt,
+        "cleanup_status": status,
+        "verified_at": datetime.now(timezone.utc).isoformat(),
+    }
+    if error is not None:
+        result["error"] = error
+    path.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
 
 
 def main() -> int:
@@ -106,15 +145,30 @@ def main() -> int:
     run = subparsers.add_parser("run")
     run.add_argument("--name", required=True)
     run.add_argument("--run-id", required=True)
+    run.add_argument("--result", type=Path, required=True)
     sweep = subparsers.add_parser("sweep")
     sweep.add_argument("--apply", action="store_true")
+    sweep.add_argument("--active-run-id")
+    ttl = subparsers.add_parser("validate-ttl")
+    ttl.add_argument("--hours", required=True)
     args = parser.parse_args()
     try:
-        if args.action == "run":
-            delete_group(args.name, args.run_id)
+        if args.action == "validate-ttl":
+            print(parse_ttl_hours(args.hours))
+        elif args.action == "run":
+            try:
+                delete_group(args.name, args.run_id)
+            except (CleanupError, json.JSONDecodeError) as exc:
+                write_cleanup_result(args.result, args.run_id, "FAILED", str(exc))
+                raise
+            write_cleanup_result(args.result, args.run_id, "VERIFIED")
         else:
             resources = json.loads(_az("group", "list", "--tag", f"owner={OWNER}"))
-            names = expired_owned_groups(resources, datetime.now(timezone.utc))
+            names = expired_owned_groups(
+                resources,
+                datetime.now(timezone.utc),
+                active_run_id=args.active_run_id,
+            )
             print(json.dumps({"expired_owned_groups": names}, indent=2))
             if args.apply:
                 for name in names:
