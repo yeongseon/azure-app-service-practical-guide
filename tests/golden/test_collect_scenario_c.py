@@ -10,6 +10,7 @@ capable of refusing the hypothesis.
 """
 
 import importlib.util
+import hashlib
 import json
 import pathlib
 import sys
@@ -77,6 +78,27 @@ def build_run(**overrides):
         files.pop(name, None)
     for name, body in files.items():
         (directory / name).write_text(json.dumps(body))
+    phases = {
+        "baseline": {
+            "started_at": "2026-09-27T10:00:00+00:00",
+            "ended_at": "2026-09-27T10:01:00+00:00",
+            "probes": [files["prod-before.json"], files["staging-before.json"]],
+        },
+        "fault": {
+            "started_at": SWAP_STARTED,
+            "ended_at": SWAP_ENDED,
+            "probes": [files.get("prod-after.json"), files.get("staging-after.json")],
+        },
+        "recovery": {
+            "started_at": "2026-09-27T10:06:01+00:00",
+            "ended_at": "2026-09-27T10:09:01+00:00",
+            "probes": [files.get("prod-after-rollback.json")],
+        },
+    }
+    for phase, body in phases.items():
+        target = directory / phase
+        target.mkdir()
+        (target / "phase.json").write_text(json.dumps(body))
     return directory
 
 
@@ -110,6 +132,22 @@ class ProvenanceTests(unittest.TestCase):
     def test_a_faithful_swap_is_supported(self):
         self.assertEqual(
             evaluate_with(collect_c.collect(build_run()))["hypothesis_status"], "SUPPORTED")
+
+    def test_raw_phase_files_anchor_every_retained_probe(self):
+        run = build_run()
+        evidence = collect_c.collect(run)
+        integrity = evidence["observations"]["phase_capture_integrity"]
+        for phase, expected_count in (("baseline", 2), ("fault", 2), ("recovery", 1)):
+            raw = (run / phase / "phase.json").read_bytes()
+            self.assertEqual(integrity[phase]["probe_count"], expected_count)
+            self.assertEqual(integrity[phase]["sha256"], hashlib.sha256(raw).hexdigest())
+
+    def test_runner_source_commit_is_preserved(self):
+        run = build_run()
+        document = json.loads((run / "run.json").read_text())
+        document["source_sha"] = "a" * 40
+        (run / "run.json").write_text(json.dumps(document))
+        self.assertEqual(collect_c.collect(run)["runner_source_commit"], "a" * 40)
 
 
 class UnperformedStepTests(unittest.TestCase):

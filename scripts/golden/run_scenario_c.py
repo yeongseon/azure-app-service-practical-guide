@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import argparse
 import datetime
+import hashlib
 import json
 import pathlib
 import secrets
@@ -169,16 +170,32 @@ def execute(resource_group: str, app: str, output: pathlib.Path,
     production_url = f"https://{app}.azurewebsites.net"
     staging_url = f"https://{app}-{SLOT}.azurewebsites.net"
 
-    (directory / "run.json").write_text(json.dumps({
+    source_sha = subprocess.run(
+        ["git", "rev-parse", "HEAD"], capture_output=True, text=True, check=True
+    ).stdout.strip()
+    run_document = {
         "run_id": identifier,
         "started_at": now(),
         "resource_group": resource_group,
         "app": app,
         "scenario": LAB,
-    }, indent=2))
+        "source_sha": source_sha,
+    }
+    (directory / "run.json").write_text(json.dumps(run_document, indent=2))
 
     (directory / "prod-before.json").write_text(json.dumps(fetch_config(production_url), indent=2))
     (directory / "staging-before.json").write_text(json.dumps(fetch_config(staging_url), indent=2))
+    baseline_dir = directory / "baseline"
+    baseline_dir.mkdir()
+    baseline_started = run_document["started_at"]
+    (baseline_dir / "phase.json").write_text(json.dumps({
+        "started_at": baseline_started,
+        "ended_at": now(),
+        "probes": [
+            json.loads((directory / "prod-before.json").read_text()),
+            json.loads((directory / "staging-before.json").read_text()),
+        ],
+    }, indent=2))
 
     swapped = swap(resource_group, app, directory, "swap", SLOT, "production")
     # The swap CLI returns after the platform has already recycled the
@@ -194,6 +211,13 @@ def execute(resource_group: str, app: str, output: pathlib.Path,
     staging_after = await_restart(staging_url, boundary, directory, "staging-restart-wait")
     (directory / "prod-after.json").write_text(json.dumps(production_after, indent=2))
     (directory / "staging-after.json").write_text(json.dumps(staging_after, indent=2))
+    fault_dir = directory / "fault"
+    fault_dir.mkdir()
+    (fault_dir / "phase.json").write_text(json.dumps({
+        "started_at": swapped["started_at"],
+        "ended_at": now(),
+        "probes": [production_after, staging_after],
+    }, indent=2))
 
     # The step trigger.sh never performed. Without it the rollback
     # assertion cannot be satisfied by any run, only left absent.
@@ -203,11 +227,25 @@ def execute(resource_group: str, app: str, output: pathlib.Path,
             production_url, rolled["started_at"], directory, "rollback-restart-wait")
         (directory / "prod-after-rollback.json").write_text(
             json.dumps(rollback_snapshot, indent=2))
+        recovery_dir = directory / "recovery"
+        recovery_dir.mkdir()
+        (recovery_dir / "phase.json").write_text(json.dumps({
+            "started_at": rolled["started_at"],
+            "ended_at": now(),
+            "probes": [rollback_snapshot],
+        }, indent=2))
 
     if workspace:
         collect_deployment_errors(resource_group, app, workspace, directory)
 
-    (directory / "run-complete.json").write_text(json.dumps({"ended_at": now()}, indent=2))
+    ended_at = now()
+    (directory / "run-complete.json").write_text(json.dumps({"ended_at": ended_at}, indent=2))
+    run_document["ended_at"] = ended_at
+    run_document["phase_capture_integrity"] = {
+        phase: hashlib.sha256((directory / phase / "phase.json").read_bytes()).hexdigest()
+        for phase in ("baseline", "fault", "recovery")
+    }
+    (directory / "run.json").write_text(json.dumps(run_document, indent=2))
     return directory
 
 
