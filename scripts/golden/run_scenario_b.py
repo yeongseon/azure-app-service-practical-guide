@@ -138,8 +138,9 @@ def execute(app: str, destination: str, output: pathlib.Path,
     directory.mkdir(parents=True, exist_ok=False)
 
     app_base = f"https://{app}.azurewebsites.net"
-    outbound = app_base + "/outbound?" + urllib.parse.urlencode({"target": destination})
-    pooled = app_base + "/outbound-fixed?" + urllib.parse.urlencode({"target": destination})
+    query = urllib.parse.urlencode({"target": destination, "calls": 5})
+    outbound = app_base + "/outbound?" + query
+    pooled = app_base + "/outbound-fixed?" + query
 
     (directory / "run.json").write_text(json.dumps({
         "run_id": identifier,
