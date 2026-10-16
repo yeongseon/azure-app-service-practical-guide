@@ -21,8 +21,6 @@ sibling copies them as-is.
 | `scripts/golden/check_reproduction.py` | None |
 | `tests/golden/test_evaluate_run.py` | None |
 | `tests/golden/test_negative_evidence.py` | None |
-| `tests/golden/test_lab_classification.py` | None |
-| `tests/golden/test_repository_audit.py` | None |
 | `tests/golden/test_readme_claims.py` | None |
 | `schemas/golden/*.json` | `$id` host and path only, plus the one `$ref` in `manifest.schema.json` |
 
@@ -44,6 +42,12 @@ A sibling authors, per Golden scenario:
   what it cannot.
 - A suite whose negative cases fail when the scenario's own classification
   logic is broken.
+
+The repository inventory suites are also authored locally:
+`test_lab_classification.py` names the repository's retained artifact roots
+and evidence metadata, while `test_repository_audit.py` names its paired
+runbooks and structured comparison categories. Their invariants transfer,
+but their inventory values do not.
 
 ## Vocabulary migration
 
@@ -73,6 +77,15 @@ verifiable by running something rather than by reading a page.
    suites pass unmodified.
 2. Every lab is classified, and the classification covers exactly the labs
    on disk with no orphan entries in either direction.
+   Every retained `artifacts-sanitized/` or nested `results/` subtree is also
+   classified exactly once. Artifact metadata keeps the revision executed by
+   the run (`run_source_revision` plus `run_source_dirty`) separate from the
+   later commit that introduced the retained bytes
+   (`artifact_introduced_commit`). A missing run revision is `null` with a
+   specific `run_source_unavailable_reason`; it is never replaced by the
+   artifact-introducing commit. `captured_at_evidence` and
+   `environment_evidence` identify retained files from which dates and
+   environments can be re-derived.
 3. At least one scenario ships a manifest template and an
    evidence-classification file.
 4. Every negative suite has been mutation-tested: the code it guards is
