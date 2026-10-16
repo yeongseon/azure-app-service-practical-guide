@@ -521,11 +521,14 @@ GATES: tuple[Gate, ...] = (
             "tests/golden/test_azure_e2e_guard.py",
             "tests/golden/test_azure_cleanup.py",
             "tests/golden/test_legacy_startup_verifier.py",
+            "tests/ci/test_azure_e2e_workflow.py",
         ),
         severity=BLOCKING,
         covers=(
             "scripts/golden/azure_e2e_guard.py",
+            "scripts/golden/azure_e2e_cli.py",
             "scripts/golden/azure_cleanup.py",
+            ".github/workflows/e2e-azure.yml",
             "labs/deployment-succeeded-startup-failed/verify.sh",
         ),
         bindings=(
