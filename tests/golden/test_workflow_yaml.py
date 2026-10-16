@@ -79,6 +79,12 @@ class WorkflowYamlTests(unittest.TestCase):
         # Then: only a lowercase hexadecimal SHA is emitted.
         self.assertEqual(completed.stdout.splitlines(), [valid_lowercase])
 
+    def test_golden_contract_job_fetches_the_derivation_collector(self):
+        workflow = (ROOT / ".github/workflows/validate-content-sources.yml").read_text()
+
+        self.assertIn('"derivation_collector_commit"', workflow)
+        self.assertIn('git fetch --no-tags --depth=1 origin "$collector_commit"', workflow)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
