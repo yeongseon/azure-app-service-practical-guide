@@ -612,7 +612,9 @@ def _derive_scenario_a(observations: dict, manifest: dict, provenance: dict) -> 
     return {**observations, **derived}
 
 
-def _derive_scenario_b(observations: dict, manifest: dict) -> dict:
+def _derive_scenario_b(
+        observations: dict, manifest: dict,
+        authenticated_integrity: dict | None = None) -> dict:
     required = {"phase_windows", "phase_probes", "pooled_phase_probes", "destination",
                 "destination_health", "destination_binding", "snat_port_pressure"}
     if not required <= set(observations):
@@ -634,6 +636,8 @@ def _derive_scenario_b(observations: dict, manifest: dict) -> dict:
     integrity = observations.get("phase_capture_integrity")
     if not isinstance(integrity, dict):
         raise ModelError("Scenario B phase capture integrity is missing")
+    if authenticated_integrity is not None and integrity != authenticated_integrity:
+        raise ModelError("Scenario B phase capture integrity is not authenticated")
     for phase in ("baseline", "load", "recovery"):
         window = windows.get(phase)
         probes = probes_by_phase.get(phase)
@@ -757,7 +761,9 @@ def evaluate(run_dir, *, skip_source_commit_resolution: bool = False,
         _verify_derivation(provenance, manifest, evidence)
         evidence = _derive_scenario_a(evidence, manifest, provenance)
         if provenance.get("scenario") == "snat-exhaustion":
-            evidence = _derive_scenario_b(evidence, manifest)
+            raw_input = provenance["derivation"]["raw_input"]
+            evidence = _derive_scenario_b(
+                evidence, manifest, raw_input["phase_capture_integrity"])
 
     # Keying outcomes by a caller-supplied id let a later assertion overwrite
     # an earlier one, so a manifest declaring the same id twice could drop a

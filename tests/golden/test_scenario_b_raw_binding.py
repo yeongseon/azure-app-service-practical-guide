@@ -70,9 +70,11 @@ def observations():
 
 
 class ScenarioBRawBindingTests(unittest.TestCase):
-    def derive(self, document):
+    def derive(self, document, authenticated=None):
         manifest = {"run_id": RUN_ID, "capture_window": CAPTURE}
-        return evaluator._derive_scenario_b(document, manifest)
+        if authenticated is None:
+            authenticated = copy.deepcopy(document["phase_capture_integrity"])
+        return evaluator._derive_scenario_b(document, manifest, authenticated)
 
     def test_worker_symptom_without_direct_pressure_is_inconclusive_input(self):
         derived = self.derive(observations())
@@ -112,7 +114,8 @@ class ScenarioBRawBindingTests(unittest.TestCase):
                 "unpooled": document["phase_probes"]["load"],
                 "pooled": document["pooled_phase_probes"]["load"],
             }, sort_keys=True, separators=(",", ":")).encode()).hexdigest())
-        derived = self.derive(document)
+        derived = self.derive(
+            document, copy.deepcopy(document["phase_capture_integrity"]))
         self.assertEqual(derived["load_pooled_transport_failure_count"], 0)
         self.assertEqual(derived["load_unpooled_transport_failure_count"], 1)
 
@@ -128,6 +131,18 @@ class ScenarioBRawBindingTests(unittest.TestCase):
         document["phase_probes"]["load"][0]["inner"]["success"] = 1
         with self.assertRaises(evaluator.ModelError):
             self.derive(document)
+
+    def test_synchronised_forged_phase_hash_is_rejected(self):
+        document = observations()
+        authenticated = copy.deepcopy(document["phase_capture_integrity"])
+        document["phase_probes"]["baseline"][0]["inner"]["success"] = 39
+        anchor = document["phase_capture_integrity"]["baseline"]
+        anchor["retained_rows_sha256"] = hashlib.sha256(json.dumps({
+            "unpooled": document["phase_probes"]["baseline"],
+            "pooled": document["pooled_phase_probes"]["baseline"],
+        }, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+        with self.assertRaises(evaluator.ModelError):
+            self.derive(document, authenticated)
 
     def test_out_of_window_probe_is_rejected(self):
         document = observations()
