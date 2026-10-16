@@ -85,6 +85,48 @@ class ScenarioARawBindingTests(unittest.TestCase):
         with self.assertRaises(evaluator.ModelError):
             self.evaluate()
 
+    def test_later_source_commit_with_recomputed_digests_is_rejected(self):
+        manifest = json.loads(self.manifest_path.read_text())
+        manifest["source_commit"] = "ceb730d8b22455c811742d405a99e42f3f996aad"
+        manifest["runner_source_commit"] = manifest["source_commit"]
+        collector = evaluator.hashlib.sha256(evaluator._git_bytes(
+            manifest["source_commit"], manifest["collector_path"])).hexdigest()
+        manifest["collector_digest"] = f"sha256:{collector}"
+        fingerprints = {
+            pathlib.PurePosixPath(path).name: evaluator.hashlib.sha256(
+                evaluator._git_bytes(manifest["source_commit"], path)).hexdigest()
+            for path in manifest["recipe_paths"]
+        }
+        canonical = json.dumps(fingerprints, sort_keys=True, separators=(",", ":")).encode()
+        manifest["recipe_digest"] = "sha256:" + evaluator.hashlib.sha256(canonical).hexdigest()
+        self.manifest_path.write_text(json.dumps(manifest))
+        with self.assertRaises(evaluator.ModelError):
+            self.evaluate()
+
+    def test_dropping_required_recipe_path_is_rejected(self):
+        manifest = json.loads(self.manifest_path.read_text())
+        manifest["recipe_paths"].remove(
+            "labs/deployment-succeeded-startup-failed/app/requirements.txt")
+        self.manifest_path.write_text(json.dumps(manifest))
+        with self.assertRaises(evaluator.ModelError):
+            self.evaluate()
+
+    def test_truncating_probes_to_favorable_rows_is_rejected(self):
+        observations = self.document["observations"]
+        observations["baseline_probes"] = [observations["baseline_probes"][0]]
+        observations["fault_probes"] = [observations["fault_probes"][-1]]
+        observations["recovery_probes"] = [observations["recovery_probes"][-1]]
+        with self.assertRaises(evaluator.ModelError):
+            self.evaluate()
+
+    def test_duplicate_normalized_probe_timestamps_are_rejected(self):
+        probes = self.document["observations"]["fault_probes"]
+        duplicate = copy.deepcopy(probes[-1])
+        duplicate["captured_at"] = duplicate["captured_at"].replace("+00:00", "Z")
+        probes.append(duplicate)
+        with self.assertRaises(evaluator.ModelError):
+            self.evaluate()
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

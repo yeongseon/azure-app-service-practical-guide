@@ -48,22 +48,22 @@ def build_run(**overrides):
     directory.mkdir(parents=True)
     (directory / "run.json").write_text(json.dumps({
         "run_id": "20260927T000000Z-abcdef123456",
-        "started_at": "2026-09-27T00:00:00+00:00",
-        "ended_at": "2026-09-27T00:04:00+00:00",
+        "started_at": "2026-10-16T00:00:00+00:00",
+        "ended_at": "2026-10-16T00:04:00+00:00",
         "resource_id": "/subscriptions/x/rg/app"}))
     (directory / "deploy.json").write_text(json.dumps(
         {"exit_code": overrides.get("deploy_exit", 0)}))
     (directory / "console-query-0.json").write_text(json.dumps(
         {"stdout": overrides.get(
             "console",
-            '[{"TimeGenerated":"2026-09-27T00:02:15+00:00",'
+            '[{"TimeGenerated":"2026-10-16T00:02:15+00:00",'
             '"ResultDescription":"ModuleNotFoundError: No module named \'wrong_module\'"}]')}))
     statuses = {"baseline": 200, "fault": 503, "recovery": 200}
     statuses.update(overrides.get("statuses", {}))
     windows = {
-        "baseline": ("2026-09-27T00:00:30+00:00", "2026-09-27T00:00:59+00:00"),
-        "fault": ("2026-09-27T00:01:00+00:00", "2026-09-27T00:02:59+00:00"),
-        "recovery": ("2026-09-27T00:03:00+00:00", "2026-09-27T00:03:30+00:00"),
+        "baseline": ("2026-10-16T00:00:30+00:00", "2026-10-16T00:00:59+00:00"),
+        "fault": ("2026-10-16T00:01:00+00:00", "2026-10-16T00:02:59+00:00"),
+        "recovery": ("2026-10-16T00:03:00+00:00", "2026-10-16T00:03:30+00:00"),
     }
     windows.update(overrides.get("windows", {}))
     command = "gunicorn --bind=0.0.0.0:8000 --timeout=120 wrong_module:app"
@@ -85,25 +85,46 @@ def build_run(**overrides):
 
 
 def evaluate_with(evidence):
-    directory = pathlib.Path(tempfile.mkdtemp()) / "g"
-    directory.mkdir(parents=True)
+    parent = pathlib.Path(tempfile.mkdtemp())
     manifest = dict(MANIFEST)
     manifest["assertions"] = json.loads(
         (ROOT / "evidence/runs/20261016T075147Z-6d019de6e2f2/manifest.json").read_text()
     )["assertions"]
+    retained_manifest = json.loads(
+        (ROOT / "evidence/runs/20261016T075147Z-6d019de6e2f2/manifest.json").read_text())
     manifest.update(run_id=evidence["run_id"], captured_at=evidence["captured_at"],
                     resource_id=evidence["resource_id"], execution_status="COMPLETE",
                     capture_window={
-                        "started_at": "2026-09-27T00:00:00+00:00",
-                        "ended_at": "2026-09-27T00:04:00+00:00",
+                        "started_at": "2026-10-16T00:00:00+00:00",
+                        "ended_at": "2026-10-16T00:04:00+00:00",
                     },
                     source_commit="3e0442bb19b966766598ffeae1fb47f3f6960837",
                     environment={"subscription_kind": "test", "region": "local",
                                  "runtime": "Python 3.11", "sku": "test-sku"},
                     recipe_digest="sha256:" + "0123456789abcdef" * 4,
                     collector_digest="sha256:" + "fedcba9876543210" * 4)
+    manifest["run_id"] = "20261016T075147Z-6d019de6e2f2"
+    for key in ("collector_path", "recipe_paths", "recipe_digest", "collector_digest"):
+        manifest[key] = retained_manifest[key]
+    evidence["run_id"] = manifest["run_id"]
+    directory = parent / manifest["run_id"]
+    directory.mkdir(parents=True)
     (directory / "manifest.json").write_text(json.dumps(manifest))
     (directory / "evidence.json").write_text(json.dumps(evidence))
+    document = json.loads((directory / "evidence.json").read_text())
+    document["runner_source_commit"] = manifest["source_commit"]
+    integrity = {
+        phase: {
+            "probe_count": len(document["observations"][f"{phase}_probes"]),
+            "sha256": {"baseline": "b", "fault": "f", "recovery": "a"}[phase] * 64,
+        }
+        for phase in ("baseline", "fault", "recovery")
+    }
+    document["observations"]["phase_capture_integrity"] = integrity
+    (directory / "evidence.json").write_text(json.dumps(document))
+    (directory / "provenance.json").write_text(json.dumps({
+        "phase_capture_integrity": integrity,
+    }))
     return ev.evaluate(directory)
 
 
@@ -116,7 +137,7 @@ class ProvenanceTests(unittest.TestCase):
     def test_evidence_carries_the_run_identity(self):
         evidence = collect_a.collect(build_run())
         self.assertEqual(evidence["run_id"], "20260927T000000Z-abcdef123456")
-        self.assertEqual(evidence["captured_at"], "2026-09-27T00:00:00+00:00")
+        self.assertEqual(evidence["captured_at"], "2026-10-16T00:00:00+00:00")
 
     def test_collected_evidence_binds_to_its_manifest(self):
         self.assertEqual(evaluate_with(collect_a.collect(build_run()))["evidence_identity"], "BOUND")
@@ -172,13 +193,13 @@ class DiscriminationTests(unittest.TestCase):
             evaluate_with(collect_a.collect(build_run(console="[]")))
 
     def test_unrelated_import_error_does_not_support(self):
-        console = ('[{"TimeGenerated":"2026-09-27T00:02:15+00:00",'
+        console = ('[{"TimeGenerated":"2026-10-16T00:02:15+00:00",'
                    '"ResultDescription":"ImportError: unrelated_dependency"}]')
         with self.assertRaises(ev.ModelError):
             evaluate_with(collect_a.collect(build_run(console=console)))
 
     def test_generic_import_error_count_does_not_support(self):
-        console = ('[{"TimeGenerated":"2026-09-27T00:02:15+00:00",'
+        console = ('[{"TimeGenerated":"2026-10-16T00:02:15+00:00",'
                    '"ResultDescription":"ModuleNotFoundError: No module named \'other_module\'"}]')
         with self.assertRaises(ev.ModelError):
             evaluate_with(collect_a.collect(build_run(console=console)))
@@ -189,8 +210,8 @@ class DiscriminationTests(unittest.TestCase):
 
     def test_out_of_order_phases_do_not_support(self):
         windows = {
-            "fault": ("2026-09-27T00:02:00+00:00", "2026-09-27T00:03:00+00:00"),
-            "recovery": ("2026-09-27T00:01:00+00:00", "2026-09-27T00:01:30+00:00"),
+            "fault": ("2026-10-16T00:02:00+00:00", "2026-10-16T00:03:00+00:00"),
+            "recovery": ("2026-10-16T00:01:00+00:00", "2026-10-16T00:01:30+00:00"),
         }
         with self.assertRaises(ev.ModelError):
             evaluate_with(collect_a.collect(build_run(windows=windows))
@@ -211,7 +232,7 @@ class RawObservationTests(unittest.TestCase):
         )
         self.assertEqual(
             observations["fault_console_rows"][0]["timestamp"],
-            "2026-09-27T00:02:15+00:00",
+            "2026-10-16T00:02:15+00:00",
         )
 
     def test_timestamped_probe_records_are_retained(self):
@@ -219,7 +240,7 @@ class RawObservationTests(unittest.TestCase):
         self.assertEqual(observations["fault_probes"][-1]["status"], 503)
         self.assertEqual(
             observations["fault_probes"][-1]["captured_at"],
-            "2026-09-27T00:02:59+00:00",
+            "2026-10-16T00:02:59+00:00",
         )
 
 

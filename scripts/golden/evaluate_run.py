@@ -54,6 +54,7 @@ _CLAIM_STRENGTH = {"Observed": 3, "Documented": 2, "Inferred": 1, "Not Proven": 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 RETAINED_DIGESTS = ROOT / "evidence/retained-digests.json"
 RUN_DECLARATIONS = ROOT / "evidence/run-declarations.json"
+SCENARIO_A_RECIPE = ROOT / "scripts/golden/scenario-a-recipe.json"
 REQUIRED_ENVIRONMENT_FIELDS = ("subscription_kind", "region", "runtime", "sku")
 PLACEHOLDERS = {"", "unknown", "none", "null", "na", "tbd", "placeholder", "notavailable"}
 FROZEN_HISTORICAL_RUN_IDS = {
@@ -288,6 +289,11 @@ def _verify_provenance_digests(manifest: dict) -> None:
     source_commit = manifest["source_commit"]
     collector_path = manifest.get("collector_path")
     recipe_paths = manifest.get("recipe_paths")
+    definition = _read_json(SCENARIO_A_RECIPE)
+    if collector_path != definition.get("collector_path"):
+        raise ModelError("collector_path does not match the versioned recipe definition")
+    if recipe_paths != definition.get("recipe_paths"):
+        raise ModelError("recipe_paths does not match the versioned recipe definition")
     if not isinstance(collector_path, str) or not collector_path:
         raise ModelError("collector_path is required for a declared COMPLETE run")
     if (not isinstance(recipe_paths, list) or not recipe_paths
@@ -306,6 +312,21 @@ def _verify_provenance_digests(manifest: dict) -> None:
     recipe = hashlib.sha256(canonical).hexdigest()
     if manifest["recipe_digest"] != f"sha256:{recipe}":
         raise ModelError("recipe_digest does not match canonical source fingerprints")
+
+
+def _verify_source_commit(manifest: dict, evidence: dict) -> None:
+    source_commit = manifest["source_commit"]
+    if evidence.get("runner_source_commit") != source_commit:
+        raise ModelError("source_commit does not match the runner-captured source SHA")
+    completed = subprocess.run(
+        ["git", "show", "-s", "--format=%cI", source_commit],
+        cwd=ROOT, text=True, capture_output=True, check=False)
+    if completed.returncode != 0:
+        raise ModelError("source_commit date cannot be resolved")
+    committed_at = _timestamp(completed.stdout.strip(), "source_commit committed_at")
+    captured_at = _timestamp(manifest["captured_at"], "manifest captured_at")
+    if committed_at > captured_at:
+        raise ModelError("source_commit is later than captured_at")
 
 
 def _placeholder(value: str) -> bool:
@@ -430,7 +451,7 @@ def _bind_evidence(document: dict, manifest: dict):
     return observations, "BOUND"
 
 
-def _derive_scenario_a(observations: dict, manifest: dict) -> dict:
+def _derive_scenario_a(observations: dict, manifest: dict, provenance: dict) -> dict:
     required = {"phase_windows", "baseline_probes", "fault_probes", "recovery_probes",
                 "fault_console_rows"}
     if not required <= set(observations):
@@ -458,15 +479,28 @@ def _derive_scenario_a(observations: dict, manifest: dict) -> dict:
     if not ordered:
         raise ModelError("phase windows are not strictly ordered")
     statuses = {}
+    integrity = observations.get("phase_capture_integrity")
+    provenance_integrity = provenance.get("phase_capture_integrity")
+    if not isinstance(integrity, dict) or integrity != provenance_integrity:
+        raise ModelError("phase capture integrity anchors are missing or disagree")
     for phase in ("baseline", "fault", "recovery"):
         probes = observations[f"{phase}_probes"]
         if not isinstance(probes, list) or not probes:
             raise ModelError(f"{phase}_probes must be a non-empty array")
         statuses[phase] = []
+        anchor = integrity.get(phase)
+        if (not isinstance(anchor, dict) or anchor.get("probe_count") != len(probes)
+                or not re.fullmatch(r"[0-9a-f]{64}", str(anchor.get("sha256", "")))):
+            raise ModelError(f"{phase} probes do not match the raw phase capture anchor")
+        seen = set()
         for probe in probes:
             if not isinstance(probe, dict):
                 raise ModelError(f"{phase} probe must be an object")
             captured = _timestamp(probe.get("captured_at"), f"{phase} probe captured_at")
+            normalized = captured.astimezone(datetime.timezone.utc)
+            if normalized in seen:
+                raise ModelError(f"{phase} probes contain duplicate normalized timestamps")
+            seen.add(normalized)
             if not parsed[phase][0] <= captured <= parsed[phase][1]:
                 raise ModelError(f"{phase} probe falls outside its phase window")
             statuses[phase].append(probe.get("status"))
@@ -498,6 +532,10 @@ def evaluate(run_dir, *, skip_source_commit_resolution: bool = False,
     """Evaluate one run directory and return a result record."""
     run_dir = pathlib.Path(run_dir)
     manifest = _read_json(run_dir / "manifest.json")
+    identity_bound = (manifest.get("run_id") in _declared_run_ids()
+                      or manifest.get("run_id") in _historical_run_ids(base_ref))
+    if identity_bound and run_dir.name != manifest.get("run_id"):
+        raise ModelError("package directory name does not match manifest run_id")
 
     execution_status = manifest.get("execution_status")
     if execution_status not in EXECUTION_STATUS:
@@ -523,8 +561,10 @@ def evaluate(run_dir, *, skip_source_commit_resolution: bool = False,
         if (run_dir / "evidence.json").is_file() else {}
     )
     evidence, evidence_identity = _bind_evidence(evidence_doc, manifest)
-    if not historical_run:
-        evidence = _derive_scenario_a(evidence, manifest)
+    provenance = _read_json(run_dir / "provenance.json") if (run_dir / "provenance.json").is_file() else {}
+    if manifest.get("run_id") in _declared_run_ids():
+        _verify_source_commit(manifest, evidence_doc)
+        evidence = _derive_scenario_a(evidence, manifest, provenance)
 
     # Keying outcomes by a caller-supplied id let a later assertion overwrite
     # an earlier one, so a manifest declaring the same id twice could drop a
@@ -577,6 +617,8 @@ def evaluate(run_dir, *, skip_source_commit_resolution: bool = False,
     generated_claimed = None
     if generated.is_file():
         stored = _read_json(generated)
+        if identity_bound and stored.get("run_id") != run_dir.name:
+            raise ModelError("result run_id does not match package directory")
         generated_claimed = stored.get("hypothesis_status")
         comparable = {key: stored.get(key) for key in result}
         comparable["evaluated_at"] = result["evaluated_at"]
