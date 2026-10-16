@@ -117,15 +117,49 @@ class AbsentVersusContradictoryTests(unittest.TestCase):
             ev.evaluate(make_run(evidence={"status": 200}))["hypothesis_status"],
             "CONTRADICTED")
 
-    def test_one_refutation_outranks_many_confirmations(self):
+    def test_failed_control_invalidates_the_experiment(self):
         run = make_run(
             assertions=[
                 {"id": "a", "role": "symptom", "field": "status", "equals": 503},
                 {"id": "b", "role": "supporting", "field": "phase", "equals": "fault"},
                 {"id": "c", "role": "control", "field": "cmd", "equals": "bad"},
+                {"id": "d", "role": "discriminating", "field": "cause", "equals": "x"},
+                {"id": "e", "role": "discriminating", "field": "snat_port_pressure",
+                 "equals": "observed"},
             ],
-            evidence={"status": 503, "phase": "fault", "cmd": "good"})
+            evidence={"status": 503, "phase": "fault", "cmd": "good", "cause": "x",
+                      "snat_port_pressure": "observed"})
+        self.assertEqual(ev.evaluate(run)["hypothesis_status"], "INCONCLUSIVE")
+
+    def test_failed_discriminating_observation_can_contradict_the_hypothesis(self):
+        run = make_run(
+            assertions=[
+                {"id": "a", "role": "control", "field": "baseline", "equals": 200},
+                {"id": "b", "role": "discriminating", "field": "health", "equals": 200},
+            ],
+            evidence={"baseline": 200, "health": 503})
         self.assertEqual(ev.evaluate(run)["hypothesis_status"], "CONTRADICTED")
+
+    def test_failed_recovery_invalidates_the_experiment(self):
+        run = make_run(
+            assertions=[
+                {"id": "a", "role": "discriminating", "field": "status", "equals": 503},
+                {"id": "b", "role": "recovery", "field": "recovered", "equals": 200},
+                {"id": "c", "role": "discriminating", "field": "snat_port_pressure",
+                 "equals": "observed"},
+            ],
+            evidence={"status": 503, "recovered": 503, "snat_port_pressure": "observed"})
+        result = ev.evaluate(run)
+        self.assertEqual(result["hypothesis_status"], "INCONCLUSIVE")
+        self.assertEqual(result["assertion_outcomes"]["b"], "CONTRADICTED")
+
+    def test_absent_numeric_observation_is_inconclusive(self):
+        assertion = {"id": "health", "role": "discriminating",
+                     "field": "destination_health_status", "equals": 200}
+        self.assertEqual(ev.evaluate_assertion(assertion, {}), "INCONCLUSIVE")
+        self.assertEqual(
+            ev.evaluate_assertion(assertion, {"destination_health_status": None}),
+            "INCONCLUSIVE")
 
     def test_one_unevaluable_assertion_blocks_supported(self):
         run = make_run(

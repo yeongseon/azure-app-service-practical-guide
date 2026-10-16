@@ -1,0 +1,19 @@
+{
+  "run_id": "20261016T124329Z-70fb229a0bd1",
+  "captured_at": "2026-10-16T12:43:29.917770+00:00",
+  "evaluated_at": "2026-10-16T13:06:55Z",
+  "execution_status": "COMPLETE",
+  "evidence_identity": "BOUND",
+  "hypothesis_status": "CONTRADICTED",
+  "assertion_outcomes": {
+    "baseline-outbound-succeeds": "CONTRADICTED",
+    "symptom-transport-failures-appear": "SUPPORTED",
+    "control-destination-bound-to-workload": "SUPPORTED",
+    "discriminating-snat-port-pressure": "INCONCLUSIVE",
+    "discriminating-destination-stays-healthy": "CONTRADICTED",
+    "discriminating-http-errors-absent": "SUPPORTED",
+    "recovery-outbound-succeeds-again": "CONTRADICTED"
+  },
+  "generated_verdict_claimed": null,
+  "generated_verdict_rejected": false
+}

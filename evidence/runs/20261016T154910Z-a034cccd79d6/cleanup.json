@@ -1,0 +1,12 @@
+{
+  "run_id": "20261016T154910Z-a034cccd79d6",
+  "status": "VERIFIED",
+  "resource_group_exists": false,
+  "verified_at": "2026-10-16T15:58:00Z",
+  "verification": {
+    "command": "az group exists --name <run-owned-resource-group>",
+    "exit_code": 0,
+    "output": "false",
+    "verified_by": "AI-agent repeat-run operator"
+  }
+}

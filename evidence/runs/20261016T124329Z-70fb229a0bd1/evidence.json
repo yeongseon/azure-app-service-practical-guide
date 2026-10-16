@@ -1,0 +1,439 @@
+{
+  "run_id": "20261016T124329Z-70fb229a0bd1",
+  "resource_id": null,
+  "captured_at": "2026-10-16T12:43:29.917770+00:00",
+  "observations": {
+    "phase_windows": {
+      "baseline": {
+        "started_at": "2026-10-16T12:43:29.918061+00:00",
+        "ended_at": "2026-10-16T12:44:30.385684+00:00"
+      },
+      "load": {
+        "started_at": "2026-10-16T12:45:16.934815+00:00",
+        "ended_at": "2026-10-16T12:46:17.132439+00:00"
+      },
+      "recovery": {
+        "started_at": "2026-10-16T12:48:17.200875+00:00",
+        "ended_at": "2026-10-16T12:49:17.397658+00:00"
+      }
+    },
+    "phase_probes": {
+      "baseline": [
+        {
+          "run_id": "20261016T124329Z-70fb229a0bd1",
+          "captured_at": "2026-10-16T12:43:29.920106+00:00",
+          "status": null,
+          "inner": {
+            "success": 0,
+            "failure": 0,
+            "transport_failure": 1
+          }
+        },
+        {
+          "run_id": "20261016T124329Z-70fb229a0bd1",
+          "captured_at": "2026-10-16T12:43:29.921394+00:00",
+          "status": null,
+          "inner": {
+            "success": 0,
+            "failure": 0,
+            "transport_failure": 1
+          }
+        },
+        {
+          "run_id": "20261016T124329Z-70fb229a0bd1",
+          "captured_at": "2026-10-16T12:43:29.922068+00:00",
+          "status": 200,
+          "inner": {
+            "success": 0,
+            "failure": 0,
+            "transport_failure": 5
+          }
+        },
+        {
+          "run_id": "20261016T124329Z-70fb229a0bd1",
+          "captured_at": "2026-10-16T12:43:29.923191+00:00",
+          "status": null,
+          "inner": {
+            "success": 0,
+            "failure": 0,
+            "transport_failure": 1
+          }
+        },
+        {
+          "run_id": "20261016T124329Z-70fb229a0bd1",
+          "captured_at": "2026-10-16T12:43:29.925119+00:00",
+          "status": null,
+          "inner": {
+            "success": 0,
+            "failure": 0,
+            "transport_failure": 1
+          }
+        },
+        {
+          "run_id": "20261016T124329Z-70fb229a0bd1",
+          "captured_at": "2026-10-16T12:43:29.926627+00:00",
+          "status": 200,
+          "inner": {
+            "success": 0,
+            "failure": 0,
+            "transport_failure": 5
+          }
+        },
+        {
+          "run_id": "20261016T124329Z-70fb229a0bd1",
+          "captured_at": "2026-10-16T12:43:29.928178+00:00",
+          "status": 200,
+          "inner": {
+            "success": 0,
+            "failure": 0,
+            "transport_failure": 5
+          }
+        },
+        {
+          "run_id": "20261016T124329Z-70fb229a0bd1",
+          "captured_at": "2026-10-16T12:43:29.929788+00:00",
+          "status": 200,
+          "inner": {
+            "success": 0,
+            "failure": 0,
+            "transport_failure": 5
+          }
+        },
+        {
+          "run_id": "20261016T124329Z-70fb229a0bd1",
+          "captured_at": "2026-10-16T12:43:29.930721+00:00",
+          "status": null,
+          "inner": {
+            "success": 0,
+            "failure": 0,
+            "transport_failure": 1
+          }
+        },
+        {
+          "run_id": "20261016T124329Z-70fb229a0bd1",
+          "captured_at": "2026-10-16T12:43:29.931852+00:00",
+          "status": null,
+          "inner": {
+            "success": 0,
+            "failure": 0,
+            "transport_failure": 1
+          }
+        },
+        {
+          "run_id": "20261016T124329Z-70fb229a0bd1",
+          "captured_at": "2026-10-16T12:43:29.932577+00:00",
+          "status": null,
+          "inner": {
+            "success": 0,
+            "failure": 0,
+            "transport_failure": 1
+          }
+        },
+        {
+          "run_id": "20261016T124329Z-70fb229a0bd1",
+          "captured_at": "2026-10-16T12:43:29.933664+00:00",
+          "status": null,
+          "inner": {
+            "success": 0,
+            "failure": 0,
+            "transport_failure": 1
+          }
+        }
+      ],
+      "load": [
+        {
+          "run_id": "20261016T124329Z-70fb229a0bd1",
+          "captured_at": "2026-10-16T12:45:16.935158+00:00",
+          "status": null,
+          "inner": {
+            "success": 0,
+            "failure": 0,
+            "transport_failure": 1
+          }
+        },
+        {
+          "run_id": "20261016T124329Z-70fb229a0bd1",
+          "captured_at": "2026-10-16T12:45:16.935677+00:00",
+          "status": null,
+          "inner": {
+            "success": 0,
+            "failure": 0,
+            "transport_failure": 1
+          }
+        },
+        {
+          "run_id": "20261016T124329Z-70fb229a0bd1",
+          "captured_at": "2026-10-16T12:45:16.936120+00:00",
+          "status": null,
+          "inner": {
+            "success": 0,
+            "failure": 0,
+            "transport_failure": 1
+          }
+        },
+        {
+          "run_id": "20261016T124329Z-70fb229a0bd1",
+          "captured_at": "2026-10-16T12:45:16.936636+00:00",
+          "status": null,
+          "inner": {
+            "success": 0,
+            "failure": 0,
+            "transport_failure": 1
+          }
+        },
+        {
+          "run_id": "20261016T124329Z-70fb229a0bd1",
+          "captured_at": "2026-10-16T12:45:16.937245+00:00",
+          "status": null,
+          "inner": {
+            "success": 0,
+            "failure": 0,
+            "transport_failure": 1
+          }
+        },
+        {
+          "run_id": "20261016T124329Z-70fb229a0bd1",
+          "captured_at": "2026-10-16T12:45:16.937817+00:00",
+          "status": null,
+          "inner": {
+            "success": 0,
+            "failure": 0,
+            "transport_failure": 1
+          }
+        },
+        {
+          "run_id": "20261016T124329Z-70fb229a0bd1",
+          "captured_at": "2026-10-16T12:45:16.938727+00:00",
+          "status": null,
+          "inner": {
+            "success": 0,
+            "failure": 0,
+            "transport_failure": 1
+          }
+        },
+        {
+          "run_id": "20261016T124329Z-70fb229a0bd1",
+          "captured_at": "2026-10-16T12:45:16.939184+00:00",
+          "status": null,
+          "inner": {
+            "success": 0,
+            "failure": 0,
+            "transport_failure": 1
+          }
+        },
+        {
+          "run_id": "20261016T124329Z-70fb229a0bd1",
+          "captured_at": "2026-10-16T12:45:16.939705+00:00",
+          "status": null,
+          "inner": {
+            "success": 0,
+            "failure": 0,
+            "transport_failure": 1
+          }
+        },
+        {
+          "run_id": "20261016T124329Z-70fb229a0bd1",
+          "captured_at": "2026-10-16T12:45:16.940661+00:00",
+          "status": null,
+          "inner": {
+            "success": 0,
+            "failure": 0,
+            "transport_failure": 1
+          }
+        },
+        {
+          "run_id": "20261016T124329Z-70fb229a0bd1",
+          "captured_at": "2026-10-16T12:45:16.941349+00:00",
+          "status": null,
+          "inner": {
+            "success": 0,
+            "failure": 0,
+            "transport_failure": 1
+          }
+        },
+        {
+          "run_id": "20261016T124329Z-70fb229a0bd1",
+          "captured_at": "2026-10-16T12:45:16.942037+00:00",
+          "status": null,
+          "inner": {
+            "success": 0,
+            "failure": 0,
+            "transport_failure": 1
+          }
+        }
+      ],
+      "recovery": [
+        {
+          "run_id": "20261016T124329Z-70fb229a0bd1",
+          "captured_at": "2026-10-16T12:48:17.201986+00:00",
+          "status": null,
+          "inner": {
+            "success": 0,
+            "failure": 0,
+            "transport_failure": 1
+          }
+        },
+        {
+          "run_id": "20261016T124329Z-70fb229a0bd1",
+          "captured_at": "2026-10-16T12:48:17.204330+00:00",
+          "status": null,
+          "inner": {
+            "success": 0,
+            "failure": 0,
+            "transport_failure": 1
+          }
+        },
+        {
+          "run_id": "20261016T124329Z-70fb229a0bd1",
+          "captured_at": "2026-10-16T12:48:17.204891+00:00",
+          "status": null,
+          "inner": {
+            "success": 0,
+            "failure": 0,
+            "transport_failure": 1
+          }
+        },
+        {
+          "run_id": "20261016T124329Z-70fb229a0bd1",
+          "captured_at": "2026-10-16T12:48:17.205411+00:00",
+          "status": null,
+          "inner": {
+            "success": 0,
+            "failure": 0,
+            "transport_failure": 1
+          }
+        },
+        {
+          "run_id": "20261016T124329Z-70fb229a0bd1",
+          "captured_at": "2026-10-16T12:48:17.205906+00:00",
+          "status": null,
+          "inner": {
+            "success": 0,
+            "failure": 0,
+            "transport_failure": 1
+          }
+        },
+        {
+          "run_id": "20261016T124329Z-70fb229a0bd1",
+          "captured_at": "2026-10-16T12:48:17.206532+00:00",
+          "status": null,
+          "inner": {
+            "success": 0,
+            "failure": 0,
+            "transport_failure": 1
+          }
+        },
+        {
+          "run_id": "20261016T124329Z-70fb229a0bd1",
+          "captured_at": "2026-10-16T12:48:17.207040+00:00",
+          "status": null,
+          "inner": {
+            "success": 0,
+            "failure": 0,
+            "transport_failure": 1
+          }
+        },
+        {
+          "run_id": "20261016T124329Z-70fb229a0bd1",
+          "captured_at": "2026-10-16T12:48:17.207472+00:00",
+          "status": null,
+          "inner": {
+            "success": 0,
+            "failure": 0,
+            "transport_failure": 1
+          }
+        },
+        {
+          "run_id": "20261016T124329Z-70fb229a0bd1",
+          "captured_at": "2026-10-16T12:48:17.207888+00:00",
+          "status": null,
+          "inner": {
+            "success": 0,
+            "failure": 0,
+            "transport_failure": 1
+          }
+        },
+        {
+          "run_id": "20261016T124329Z-70fb229a0bd1",
+          "captured_at": "2026-10-16T12:48:17.208372+00:00",
+          "status": null,
+          "inner": {
+            "success": 0,
+            "failure": 0,
+            "transport_failure": 1
+          }
+        },
+        {
+          "run_id": "20261016T124329Z-70fb229a0bd1",
+          "captured_at": "2026-10-16T12:48:17.208807+00:00",
+          "status": null,
+          "inner": {
+            "success": 0,
+            "failure": 0,
+            "transport_failure": 1
+          }
+        },
+        {
+          "run_id": "20261016T124329Z-70fb229a0bd1",
+          "captured_at": "2026-10-16T12:48:17.209252+00:00",
+          "status": null,
+          "inner": {
+            "success": 0,
+            "failure": 0,
+            "transport_failure": 1
+          }
+        }
+      ]
+    },
+    "phase_capture_integrity": {
+      "baseline": {
+        "probe_count": 12,
+        "pooled_probe_count": 12,
+        "sha256": "2b84214a5e44234c6e5b6f8b162f22284e3e171217d383c91ac2b8b185450ef3"
+      },
+      "load": {
+        "probe_count": 12,
+        "pooled_probe_count": 12,
+        "sha256": "70fd394b5c01bd6bb5356a1727055a94947f4d63340fe13da9d6f7a9f58ed208"
+      },
+      "recovery": {
+        "probe_count": 12,
+        "pooled_probe_count": 12,
+        "sha256": "bd9088cf405a2f88c61082f798a51959a1886e01b207e2ff14823efa1c6ed129"
+      }
+    },
+    "destination_health": {
+      "captured_at": "2026-10-16T12:46:17.134128+00:00",
+      "status": null
+    },
+    "snat_port_pressure": "unavailable",
+    "destination_binding": true,
+    "baseline_success_count": 0,
+    "load_transport_failure_count": 12,
+    "load_http_error_count": 0,
+    "recovery_success_count": 0
+  },
+  "collector": "scripts/golden/collect_scenario_b.py",
+  "capture_provenance": "derived",
+  "runner_source_commit": "a6414fde20e746bf0ea275955b3b24d338c73b4e",
+  "phase_capture_integrity": {
+    "baseline": {
+      "probe_count": 12,
+      "pooled_probe_count": 12,
+      "sha256": "2b84214a5e44234c6e5b6f8b162f22284e3e171217d383c91ac2b8b185450ef3"
+    },
+    "load": {
+      "probe_count": 12,
+      "pooled_probe_count": 12,
+      "sha256": "70fd394b5c01bd6bb5356a1727055a94947f4d63340fe13da9d6f7a9f58ed208"
+    },
+    "recovery": {
+      "probe_count": 12,
+      "pooled_probe_count": 12,
+      "sha256": "bd9088cf405a2f88c61082f798a51959a1886e01b207e2ff14823efa1c6ed129"
+    }
+  },
+  "incomplete_fields": [
+    "destination_health_status"
+  ]
+}

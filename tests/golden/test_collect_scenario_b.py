@@ -42,18 +42,33 @@ _runner = _load("run_b_fix", "scripts/golden/run_scenario_b.py")
 #: it. They previously hardcoded 50 and broke the moment the runner
 #: changed, which is the same drift the contract itself had.
 PROBES = _runner.PROBES_PER_PHASE
-FAILURES = 7
+FAILURES = 2
 
 MANIFEST = json.loads(
     (ROOT / "labs/snat-exhaustion/golden/manifest.template.json").read_text())
+for assertion in MANIFEST["assertions"]:
+    if assertion["field"] in {"baseline_success_count", "recovery_success_count"}:
+        assertion["equals"] = PROBES
+    if assertion["field"] == "load_transport_failure_count":
+        assertion["in"] = list(range(1, PROBES + 1))
+MANIFEST["assertions"].append({
+    "id": "discriminating-pooling-reduces-transport-failures",
+    "role": "discriminating",
+    "field": "pooling_reduces_transport_failures",
+    "equals": True,
+    "claim_level": "Observed",
+})
 
 
 def build_run(baseline=None, load=None, recovery=None, health=200, omit=()):
     directory = pathlib.Path(tempfile.mkdtemp()) / "run"
     directory.mkdir(parents=True)
+    run_id = "20260927T110000Z-b0b0b0b0b0b0"
+    destination = "https://destination.example/health"
     (directory / "run.json").write_text(json.dumps({
-        "run_id": "20260927T110000Z-b0b0b0b0b0b0",
-        "started_at": "2026-09-27T11:00:00+00:00"}))
+        "run_id": run_id,
+        "started_at": "2026-09-27T11:00:00+00:00",
+        "destination": destination}))
     phases = {
         "baseline": [{"status": 200}] * PROBES if baseline is None else baseline,
         "load": ([{"transport_error": "EADDRNOTAVAIL"}] * FAILURES + [{"status": 200}] * (PROBES - FAILURES)
@@ -63,8 +78,17 @@ def build_run(baseline=None, load=None, recovery=None, health=200, omit=()):
     for name, probes in phases.items():
         if name in omit:
             continue
-        (directory / name).mkdir()
-        (directory / name / "probes.json").write_text(json.dumps(probes))
+        phase_dir = directory / name
+        phase_dir.mkdir()
+        (phase_dir / "phase.json").write_text(json.dumps({
+            "run_id": run_id,
+            "started_at": "2026-09-27T11:00:00+00:00",
+            "ended_at": "2026-09-27T11:00:01+00:00"}))
+        bound = [dict(probe, run_id=run_id, target=destination) for probe in probes]
+        pooled = ([dict(status=200, run_id=run_id, target=destination)] * PROBES
+                  if name == "load" else bound)
+        (phase_dir / "unpooled-probes.json").write_text(json.dumps(bound))
+        (phase_dir / "pooled-probes.json").write_text(json.dumps(pooled))
     if "destination-health.json" not in omit and health is not None:
         (directory / "destination-health.json").write_text(json.dumps({"status": health}))
     (directory / "port-pressure.json").write_text(json.dumps({"status": "observed"}))
@@ -190,16 +214,18 @@ class DiscriminationTests(unittest.TestCase):
             evaluate_with(collect_b.collect(build_run(load=load)))["hypothesis_status"],
             "CONTRADICTED")
 
-    def test_a_broken_baseline_contradicts(self):
+    def test_a_broken_baseline_invalidates_the_experiment(self):
         self.assertEqual(
             evaluate_with(collect_b.collect(
                 build_run(baseline=[{"status": 500}] * PROBES)))["hypothesis_status"],
-            "CONTRADICTED")
+            "INCONCLUSIVE")
 
-    def test_no_recovery_contradicts(self):
+    def test_no_recovery_invalidates_the_experiment(self):
+        result = evaluate_with(collect_b.collect(
+            build_run(recovery=[{"transport_error": "x"}] * PROBES)))
+        self.assertEqual(result["hypothesis_status"], "INCONCLUSIVE")
         self.assertEqual(
-            evaluate_with(collect_b.collect(
-                build_run(recovery=[{"transport_error": "x"}] * PROBES)))["hypothesis_status"],
+            result["assertion_outcomes"]["recovery-outbound-succeeds-again"],
             "CONTRADICTED")
 
 

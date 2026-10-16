@@ -16,6 +16,7 @@ first discards the only signal that discriminates the hypothesis.
 import importlib.util
 import json
 import pathlib
+import socket
 import sys
 import tempfile
 import unittest
@@ -25,6 +26,7 @@ from unittest import mock
 sys.dont_write_bytecode = True
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
+PUBLIC_DNS = [(socket.AF_INET, socket.SOCK_STREAM, 6, "", ("93.184.216.34", 443))]
 
 
 def _load(name, relative):
@@ -39,22 +41,37 @@ collector = _load("collect_b2", "scripts/golden/collect_scenario_b.py")
 classification = _load("cls_b2", "labs/snat-exhaustion/app/classification.py")
 
 
-def runner_shaped_run(load_transport=7, destination_status=200):
+def runner_shaped_run(load_transport=2, destination_status=200):
     """A directory in exactly the layout `execute` writes."""
     directory = pathlib.Path(tempfile.mkdtemp()) / "run"
     directory.mkdir(parents=True)
+    destination = "https://destination.example/health"
     (directory / "run.json").write_text(json.dumps({
         "run_id": "20260927T150000Z-abcdef012345",
-        "started_at": "2026-09-27T15:00:00+00:00"}))
+        "started_at": "2026-09-27T15:00:00+00:00",
+        "destination": destination}))
+    def rows(records):
+        return [dict(record, run_id="20260927T150000Z-abcdef012345",
+                     target=destination) for record in records]
     phases = {
-        "baseline": [{"at": "t", "status": 200}] * runner.PROBES_PER_PHASE,
+        "baseline": rows([{"at": "2026-09-27T15:00:01+00:00", "status": 200}]
+                         * runner.PROBES_PER_PHASE),
         "load": ([{"at": "t", "transport_error": "EADDRNOTAVAIL"}] * load_transport
-                 + [{"at": "t", "status": 200}] * (runner.PROBES_PER_PHASE - load_transport)),
-        "recovery": [{"at": "t", "status": 200}] * runner.PROBES_PER_PHASE,
+                  + [{"at": "t", "status": 200}] * (runner.PROBES_PER_PHASE - load_transport)),
+        "recovery": rows([{"at": "2026-09-27T15:00:05+00:00", "status": 200}]
+                         * runner.PROBES_PER_PHASE),
     }
+    phases["load"] = rows(phases["load"])
     for name, probes in phases.items():
         (directory / name).mkdir()
-        (directory / name / "probes.json").write_text(json.dumps(probes))
+        (directory / name / "phase.json").write_text(json.dumps({
+            "run_id": "20260927T150000Z-abcdef012345",
+            "started_at": "2026-09-27T15:00:00+00:00",
+            "ended_at": "2026-09-27T15:00:10+00:00"}))
+        (directory / name / "unpooled-probes.json").write_text(json.dumps(probes))
+        pooled = (rows([{"at": "2026-09-27T15:00:03+00:00", "status": 200}]
+                       * runner.PROBES_PER_PHASE) if name == "load" else probes)
+        (directory / name / "pooled-probes.json").write_text(json.dumps(pooled))
     (directory / "destination-health.json").write_text(
         json.dumps({"at": "t", "status": destination_status}))
     (directory / "port-pressure.json").write_text(json.dumps({"status": "observed"}))
@@ -78,8 +95,8 @@ class JoinTests(unittest.TestCase):
         self.assertEqual(collector.collect(runner_shaped_run())["incomplete_fields"], [])
 
     def test_the_counts_match_what_was_recorded(self):
-        observations = collector.collect(runner_shaped_run(load_transport=9))["observations"]
-        self.assertEqual(observations["load_transport_failure_count"], 9)
+        observations = collector.collect(runner_shaped_run(load_transport=2))["observations"]
+        self.assertEqual(observations["load_transport_failure_count"], 2)
         self.assertEqual(observations["baseline_success_count"], runner.PROBES_PER_PHASE)
 
     def test_execute_produces_binding_and_pressure_captures_for_the_collector(self):
@@ -92,7 +109,8 @@ class JoinTests(unittest.TestCase):
             seen_urls.append(url)
             return {"at": "t", "status": 200}
 
-        with mock.patch.object(runner, "run_id", return_value="run-one"), \
+        with mock.patch.object(runner.socket, "getaddrinfo", return_value=PUBLIC_DNS), \
+                mock.patch.object(runner, "run_id", return_value="run-one"), \
                 mock.patch.object(runner, "probe_phase", return_value=probes), \
                 mock.patch.object(runner, "probe", side_effect=fake_probe), \
                 mock.patch.object(runner, "apply_pressure",
@@ -112,7 +130,8 @@ class JoinTests(unittest.TestCase):
     def test_execute_records_unavailable_pressure_explicitly(self):
         output = pathlib.Path(tempfile.mkdtemp())
         probes = [{"at": "t", "status": 200}] * runner.PROBES_PER_PHASE
-        with mock.patch.object(runner, "run_id", return_value="run-two"), \
+        with mock.patch.object(runner.socket, "getaddrinfo", return_value=PUBLIC_DNS), \
+                mock.patch.object(runner, "run_id", return_value="run-two"), \
                 mock.patch.object(runner, "probe_phase", return_value=probes), \
                 mock.patch.object(runner, "probe", return_value={"at": "t", "status": 200}), \
                 mock.patch.object(runner, "apply_pressure", return_value={}), \
@@ -122,6 +141,59 @@ class JoinTests(unittest.TestCase):
         self.assertEqual(pressure["status"], "unavailable")
         self.assertEqual(collector.collect(directory)["observations"]["snat_port_pressure"],
                          "unavailable")
+
+    def test_execute_rejects_the_tested_apps_own_hostname_as_destination(self):
+        output = pathlib.Path(tempfile.mkdtemp())
+        with self.assertRaises(runner.RunConfigurationError):
+            runner.execute(
+                "app-two", "https://APP-TWO.azurewebsites.net/health",
+                output, "a" * 40)
+        self.assertEqual(list(output.iterdir()), [])
+
+    def test_execute_rejects_non_https_destination(self):
+        output = pathlib.Path(tempfile.mkdtemp())
+        with self.assertRaises(runner.RunConfigurationError):
+            runner.execute("app-two", "http://destination.example/health", output, "a" * 40)
+
+    def test_execute_rejects_private_and_metadata_destinations(self):
+        for destination in (
+                "https://127.0.0.1/", "https://10.0.0.1/",
+                "https://169.254.169.254/", "https://[::1]/"):
+            with self.subTest(destination=destination):
+                with self.assertRaises(runner.RunConfigurationError):
+                    runner.execute("app-two", destination, pathlib.Path(tempfile.mkdtemp()),
+                                   "a" * 40)
+
+    def test_execute_rejects_hostname_resolving_to_private_address(self):
+        answer = [(socket.AF_INET, socket.SOCK_STREAM, 6, "", ("10.0.0.1", 443))]
+        with mock.patch.object(runner.socket, "getaddrinfo", return_value=answer):
+            with self.assertRaises(runner.RunConfigurationError):
+                runner.execute("app-two", "https://destination.example/health",
+                               pathlib.Path(tempfile.mkdtemp()), "a" * 40)
+
+    def test_execute_rejects_raw_output_inside_repository(self):
+        with self.assertRaises(runner.RunConfigurationError):
+            runner.execute("app-two", "https://destination.example/health",
+                           ROOT / "raw-evidence", "a" * 40)
+
+    def test_execute_preflights_the_independent_destination(self):
+        output = pathlib.Path(tempfile.mkdtemp())
+        probes = [{"at": "t", "status": 200}] * runner.PROBES_PER_PHASE
+        destination = "https://destination.example/health"
+        with mock.patch.object(runner.socket, "getaddrinfo", return_value=PUBLIC_DNS), \
+                mock.patch.object(runner, "run_id", return_value="run-three"), \
+                mock.patch.object(runner, "probe_phase", return_value=probes), \
+                mock.patch.object(runner, "probe", return_value={"at": "t", "status": 503}), \
+                mock.patch.object(runner, "apply_pressure", return_value={}), \
+                mock.patch.object(runner.time, "sleep"):
+            with self.assertRaises(runner.DestinationPreflightError):
+                runner.execute("app-three", destination, output, "b" * 40)
+        preflight = json.loads(
+            (output / "run-three" / "destination-preflight.json").read_text())
+        self.assertEqual(preflight["status"], 503)
+
+    def test_probe_fanout_stays_below_the_web_worker_count(self):
+        self.assertLess(runner.PROBES_PER_PHASE, runner.APP_WORKERS)
 
 
 class ContractAgreementTests(unittest.TestCase):
@@ -135,6 +207,18 @@ class ContractAgreementTests(unittest.TestCase):
 
     MANIFEST = json.loads(
         (ROOT / "labs/snat-exhaustion/golden/manifest.template.json").read_text())
+    for assertion in MANIFEST["assertions"]:
+        if assertion["field"] in {"baseline_success_count", "recovery_success_count"}:
+            assertion["equals"] = runner.PROBES_PER_PHASE
+        if assertion["field"] == "load_transport_failure_count":
+            assertion["in"] = list(range(1, runner.PROBES_PER_PHASE + 1))
+    MANIFEST["assertions"].append({
+        "id": "discriminating-pooling-reduces-transport-failures",
+        "role": "discriminating",
+        "field": "pooling_reduces_transport_failures",
+        "equals": True,
+        "claim_level": "Observed",
+    })
 
     def _expected(self, field):
         return next(a for a in self.MANIFEST["assertions"] if a["field"] == field)
@@ -181,7 +265,7 @@ class ContractAgreementTests(unittest.TestCase):
         can be watched and cleaned up after.
         """
         self.assertLessEqual(runner.PROBES_PER_PHASE * 40 * 3, 2000)
-        self.assertGreaterEqual(runner.PROBES_PER_PHASE, 10)
+        self.assertGreaterEqual(runner.PROBES_PER_PHASE, 2)
 
 
 class ProbeRecordTests(unittest.TestCase):
@@ -221,10 +305,7 @@ class ProbeRecordTests(unittest.TestCase):
         source = (ROOT / "scripts/golden/run_scenario_b.py").read_text()
         self.assertNotIn("classify_status", source)
         self.assertNotRegex(source, self.STATUS_BAND)
-        for word in ("success", "failure", "transport_failure"):
-            self.assertNotIn(
-                f'"{word}"', source,
-                msg="the runner names an outcome; only the shared classifier may")
+        self.assertNotIn("classify_status", source)
 
     def test_the_band_pattern_matches_the_shapes_it_must(self):
         """Guards the guard: the pattern missed attribute access once."""

@@ -1,0 +1,69 @@
+{
+  "scenario": "snat-exhaustion",
+  "collector": "scripts/golden/collect_scenario_b.py",
+  "replay": "python3 scripts/golden/evaluate_run.py evidence/runs/20261016T154910Z-a034cccd79d6",
+  "derivation": {
+    "collector_commit": "4d74f2a85bfbded24b82810b530f758f1e9344f5",
+    "collector_path": "scripts/golden/collect_scenario_b.py",
+    "collector_digest": "sha256:da6021a9bfedd0b24aa5cab4943f08197f533416e922ad80aca245ea42a06849",
+    "sanitizer_path": "scripts/golden/sanitize_scenario_b.py",
+    "sanitizer_commit": "4125ea820904d7fbe50c3bb4452a2eae014e90bc",
+    "sanitizer_digest": "sha256:650acedf50fc23563214c7aefa07187172340d133650c52f402eaf25ed4819b4",
+    "derived_at": "2026-10-16T15:58:00Z",
+    "derived_offline": true,
+    "raw_input": {
+      "run_id": "20261016T154910Z-a034cccd79d6",
+      "location": "private reviewer-held raw capture for run 20261016T154910Z-a034cccd79d6",
+      "published": false,
+      "omission_reason": "Raw captures contain Azure app and destination hostnames. The deterministic sanitizer replaces only identifier fields; timestamps, outcomes, counts and anchors are retained.",
+      "raw_file_set_digest": "sha256:1147fbf17d562b9b279416f5188985bf63d5b7cc4425ba7f87733c48ca04efe1",
+      "phase_capture_integrity": {
+        "baseline": {
+          "probe_count": 3,
+          "pooled_probe_count": 3,
+          "files": {
+            "phase.json": "b6c9edff3eeaee65e20305dbc7d30d4771107a757d83d396f5831b5dec62632c",
+            "unpooled-probes.json": "ce06ac5109caf761d79c79b9a89964dad226a837e74f01f5eb68f697459de667",
+            "pooled-probes.json": "bea5a10502d35a563c4bed28f4c057d173045c14aa4a5e46018a453a3b1cc569"
+          },
+          "retained_rows_sha256": "d7885affd97c05d87313184edd8c630d1e8d79b6fae73da3ad2327bf186912e7"
+        },
+        "load": {
+          "probe_count": 3,
+          "pooled_probe_count": 3,
+          "files": {
+            "phase.json": "d23a4868eac05273de008b3123f98bea208f6c5753245ebdf27b9e0c0839ca06",
+            "unpooled-probes.json": "e8e4330000320d70478cd2f63093025f55bc1a2bd2615aa6c08be09958a3e9b5",
+            "pooled-probes.json": "d7570c0f13c088d267a4a18c820022aa1a1902466e318ef02bcf94d036f170ac"
+          },
+          "retained_rows_sha256": "841d43136144add7fc87669ff344e2a48a650a91a7abaa09780bed9e017f486c"
+        },
+        "recovery": {
+          "probe_count": 3,
+          "pooled_probe_count": 3,
+          "files": {
+            "phase.json": "96e1b764b38d88b2ee6177a694346bb4ca6900498086f231f35e13a8d3660408",
+            "unpooled-probes.json": "d4321513dbf716a17a37638a64ec73eb6fbe1efb7eefd82fb8450b417e994a88",
+            "pooled-probes.json": "1daf141dccfcd3db51f75f7840821183935d831b3a6e3d26a8e59944f21bc200"
+          },
+          "retained_rows_sha256": "2ec5ae121dc1e2e417f3018cc4c89616fa5410fe9d4e0a9da30e7d7bf99996a3"
+        }
+      }
+    }
+  },
+  "sanitised": true,
+  "sanitisation": "scripts/golden/sanitize_scenario_b.py replaced the Azure resource ID and destination host with documentation-safe values without changing observations.",
+  "execution_status": "COMPLETE",
+  "hypothesis_status": "INCONCLUSIVE",
+  "cleanup_status": "VERIFIED",
+  "cleanup_verified": true,
+  "independent_reproduction": "NOT_RUN",
+  "source_commit": "4d74f2a85bfbded24b82810b530f758f1e9344f5",
+  "runner_source_commit": "4d74f2a85bfbded24b82810b530f758f1e9344f5",
+  "environment": {"subscription_kind": "MSIT", "region": "koreacentral", "runtime": "Python 3.11", "sku": "B1 Linux"},
+  "limitations": [
+    "The Basic-tier run exposed no direct SNAT port-usage data, so snat_port_pressure is unavailable.",
+    "Pooling did not reduce transport failures during load.",
+    "Recovery controls failed, so the run cannot support or causally contradict SNAT exhaustion."
+  ]
+}

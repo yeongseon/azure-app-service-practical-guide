@@ -34,9 +34,32 @@ Evidence that cannot decide an assertion yields `INCONCLUSIVE`. It never yields 
 
 `INCONCLUSIVE` is a normal, publishable result.
 
+Controls and recovery observations establish whether the experiment reached a
+valid baseline and returned to a valid state. If a required `control` or
+`recovery` assertion is anything other than `SUPPORTED`, the hypothesis is
+`INCONCLUSIVE`: the experiment did not create a valid causal comparison. A
+`CONTRADICTED` hypothesis requires a valid control/recovery envelope plus a
+predeclared `discriminating` observation that refutes the cause. Scenario A and
+Scenario C retained packages keep their stored historical verdicts; this
+role-aware rule applies to the revised Scenario B contract and future runs.
+
 ### Raw evidence wins over any generated verdict
 
 A run may carry a `result.json`. The evaluator never reads it as input. It recomputes the outcome from raw evidence, compares, and reports `generated_verdict_rejected` on disagreement. A verdict file that can decide its own outcome is not evidence.
+
+For revised Scenario B runs, each retained probe row explicitly carries its
+`run_id` and exact destination. The derivation authenticates every raw phase
+file, including probe files, and binds the retained row count and digest to
+those anchors. Updating a phase hash after truncating or swapping rows does not
+restore trust because the authenticated anchors are held separately in the
+derivation provenance.
+
+Scenario B collector output is published through
+`scripts/golden/sanitize_scenario_b.py`. The deterministic transform replaces
+only Azure resource and destination identifiers with documentation-safe values;
+timestamps, statuses, counts, phase structure, and integrity anchors are kept.
+The provenance record binds both the private raw-file hashes and the sanitized
+public rows, so an offline reviewer can replay the same transformation.
 
 ## Timestamps
 

@@ -9,6 +9,7 @@ param location string = resourceGroup().location
 var uniqueSuffix = uniqueString(resourceGroup().id)
 var serverFarmName = 'asp-${baseName}-${uniqueSuffix}'
 var webAppName = 'app-${baseName}-${uniqueSuffix}'
+var targetWebAppName = 'target-${baseName}-${uniqueSuffix}'
 var workspaceName = 'log-${baseName}-${uniqueSuffix}'
 var diagnosticSettingName = 'diag-${baseName}-${uniqueSuffix}'
 var appInsightsName = 'appi-${baseName}-${uniqueSuffix}'
@@ -52,8 +53,7 @@ resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
 }
 
 // A public endpoint the lab owns, so the load never lands on a third-party service
-// and the target's own throttling cannot be mistaken for SNAT pressure. Anonymous
-// calls are answered quickly with a 4xx, which the app counts as a completed call.
+// and the target's own throttling cannot be mistaken for SNAT pressure.
 resource targetStorage 'Microsoft.Storage/storageAccounts@2023-05-01' = {
   name: targetStorageName
   location: location
@@ -62,8 +62,31 @@ resource targetStorage 'Microsoft.Storage/storageAccounts@2023-05-01' = {
   }
   kind: 'StorageV2'
   properties: {
-    allowBlobPublicAccess: false
+    allowBlobPublicAccess: true
     minimumTlsVersion: 'TLS1_2'
+  }
+}
+
+resource targetWebApp 'Microsoft.Web/sites@2023-12-01' = {
+  name: targetWebAppName
+  location: location
+  kind: 'app,linux'
+  properties: {
+    serverFarmId: appServicePlan.id
+    httpsOnly: true
+    siteConfig: {
+      linuxFxVersion: 'PYTHON|3.11'
+      alwaysOn: false
+      appCommandLine: 'python -m http.server 8000'
+      ftpsState: 'Disabled'
+      minTlsVersion: '1.2'
+      appSettings: [
+        {
+          name: 'WEBSITES_PORT'
+          value: '8000'
+        }
+      ]
+    }
   }
 }
 
@@ -134,3 +157,5 @@ output webAppName string = webApp.name
 output webAppDefaultHostName string = webApp.properties.defaultHostName
 output logAnalyticsWorkspaceName string = logAnalyticsWorkspace.name
 output outboundTargetHost string = replace(replace(targetStorage.properties.primaryEndpoints.blob, 'https://', ''), '/', '')
+output outboundTargetStorageName string = targetStorage.name
+output outboundTargetUrl string = 'https://${targetWebApp.properties.defaultHostName}/'

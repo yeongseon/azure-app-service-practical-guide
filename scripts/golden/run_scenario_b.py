@@ -29,9 +29,11 @@ from __future__ import annotations
 import argparse
 import concurrent.futures
 import datetime
+import ipaddress
 import json
 import pathlib
 import secrets
+import socket
 import sys
 import time
 import urllib.error
@@ -41,6 +43,7 @@ import urllib.parse
 sys.dont_write_bytecode = True
 
 LAB = "snat-exhaustion"
+ROOT = pathlib.Path(__file__).resolve().parents[2]
 
 #: Probes per phase. The contract's baseline and recovery assertions expect
 #: every probe in those phases to succeed, and read this constant rather
@@ -51,7 +54,8 @@ LAB = "snat-exhaustion"
 #: about six thousand requests across three phases and did not finish inside
 #: a window that could be supervised. Twelve keeps the phases meaningful
 #: while making a run completable.
-PROBES_PER_PHASE = 12
+APP_WORKERS = 4
+PROBES_PER_PHASE = 3
 
 #: Concurrent workers used to create connection pressure. Exhaustion is a
 #: function of sockets held in TIME_WAIT, so pressure must be concurrent
@@ -64,6 +68,14 @@ LOAD_SECONDS = 45
 #: Seconds to wait after pressure is removed before probing recovery.
 #: Ports in TIME_WAIT are not reusable immediately.
 RECOVERY_SETTLE_SECONDS = 90
+
+
+class RunConfigurationError(Exception):
+    pass
+
+
+class DestinationPreflightError(Exception):
+    pass
 
 
 def now() -> str:
@@ -87,7 +99,18 @@ def probe(url: str, timeout: int = 30) -> dict:
     started = now()
     try:
         with urllib.request.urlopen(url, timeout=timeout) as response:
-            return {"at": started, "status": response.status}
+            record = {"at": started, "status": response.status}
+            if response.headers.get_content_type() == "application/json":
+                body = json.loads(response.read())
+                required = {"success", "failure", "transportFailure"}
+                if required <= set(body):
+                    record["inner"] = {
+                        "success": body["success"],
+                        "failure": body["failure"],
+                        "transport_failure": body["transportFailure"],
+                    }
+                    record["target"] = body.get("target")
+            return record
     except urllib.error.HTTPError as exc:
         # The server answered. That is an HTTP failure, not a transport one.
         return {"at": started, "status": exc.code}
@@ -97,7 +120,8 @@ def probe(url: str, timeout: int = 30) -> dict:
 
 
 def probe_phase(url: str, count: int = PROBES_PER_PHASE) -> list[dict]:
-    return [probe(url) for _ in range(count)]
+    with concurrent.futures.ThreadPoolExecutor(max_workers=count) as pool:
+        return list(pool.map(probe, [url] * count))
 
 
 def apply_pressure(url: str, seconds: int, workers: int) -> dict:
@@ -120,13 +144,35 @@ def apply_pressure(url: str, seconds: int, workers: int) -> dict:
             "workers": workers, "seconds": seconds}
 
 
-def execute(app: str, destination: str, output: pathlib.Path) -> pathlib.Path:
+def execute(app: str, destination: str, output: pathlib.Path,
+            source_commit: str | None = None) -> pathlib.Path:
+    destination_url = urllib.parse.urlsplit(destination)
+    tested_host = f"{app}.azurewebsites.net".casefold()
+    hostname = destination_url.hostname
+    if (destination_url.scheme != "https" or hostname is None
+            or hostname.casefold() == tested_host):
+        raise RunConfigurationError(
+            "destination must be an independent lab-controlled HTTPS endpoint")
+    try:
+        addresses = {
+            ipaddress.ip_address(answer[4][0])
+            for answer in socket.getaddrinfo(hostname, destination_url.port or 443)
+        }
+    except socket.gaierror as exc:
+        raise RunConfigurationError("destination hostname cannot be resolved") from exc
+    if not addresses or any(not address.is_global for address in addresses):
+        raise RunConfigurationError("destination must resolve only to global addresses")
+    resolved_output = output.resolve()
+    if resolved_output == ROOT or ROOT in resolved_output.parents:
+        raise RunConfigurationError("raw output must be outside the repository")
     identifier = run_id()
     directory = output / identifier
     directory.mkdir(parents=True, exist_ok=False)
 
-    outbound = (f"https://{app}.azurewebsites.net/outbound?"
-                + urllib.parse.urlencode({"destination": destination}))
+    app_base = f"https://{app}.azurewebsites.net"
+    query = urllib.parse.urlencode({"target": destination, "calls": 5})
+    outbound = app_base + "/outbound?" + query
+    pooled = app_base + "/outbound-fixed?" + query
 
     (directory / "run.json").write_text(json.dumps({
         "run_id": identifier,
@@ -134,39 +180,63 @@ def execute(app: str, destination: str, output: pathlib.Path) -> pathlib.Path:
         "app": app,
         "resource_id": f"/sites/{app}",
         "scenario": LAB,
+        "runner_source_commit": source_commit,
         "outbound_url": outbound,
+        "pooled_url": pooled,
         "destination": destination,
     }, indent=2))
 
-    for phase, probes in (("baseline", probe_phase(outbound)),):
-        (directory / phase).mkdir()
-        (directory / phase / "probes.json").write_text(json.dumps(probes, indent=2))
+    preflight = probe(destination)
+    preflight.update({"run_id": identifier, "target": destination})
+    (directory / "destination-preflight.json").write_text(json.dumps(preflight, indent=2))
+    if preflight.get("status") != 200:
+        raise DestinationPreflightError(
+            "independent destination preflight did not return HTTP 200")
+
+    def capture_phase(name: str) -> None:
+        phase_dir = directory / name
+        phase_dir.mkdir()
+        started_at = now()
+        unpooled = [dict(item, run_id=identifier, target=destination)
+                    for item in probe_phase(outbound)]
+        pooled_records = [dict(item, run_id=identifier, target=destination)
+                          for item in probe_phase(pooled)]
+        ended_at = now()
+        (phase_dir / "phase.json").write_text(json.dumps({
+            "run_id": identifier,
+            "started_at": started_at,
+            "ended_at": ended_at,
+            "unpooled_probe_count": len(unpooled),
+            "pooled_probe_count": len(pooled_records),
+        }, indent=2))
+        (phase_dir / "unpooled-probes.json").write_text(json.dumps(unpooled, indent=2))
+        (phase_dir / "pooled-probes.json").write_text(json.dumps(pooled_records, indent=2))
+
+    capture_phase("baseline")
 
     pressure = apply_pressure(outbound, LOAD_SECONDS, LOAD_WORKERS)
     pressure["status"] = pressure.get("status", "unavailable")
     (directory / "port-pressure.json").write_text(json.dumps(pressure, indent=2))
     requested = urllib.parse.urlsplit(destination)
     outbound_query = urllib.parse.parse_qs(urllib.parse.urlsplit(outbound).query)
-    bound_destination = outbound_query.get("destination", [None])[0]
+    bound_destination = outbound_query.get("target", [None])[0]
     (directory / "app-target.json").write_text(json.dumps({
         "requested_destination": destination,
         "outbound_destination": bound_destination,
         "matches_requested_destination": bound_destination == destination
         and bool(requested.scheme and requested.netloc),
     }, indent=2))
-    (directory / "load").mkdir()
-    (directory / "load" / "probes.json").write_text(
-        json.dumps(probe_phase(outbound), indent=2))
+    capture_phase("load")
 
     # Probed while the app is still under the same conditions, so a failing
     # destination cannot be mistaken for exhaustion after the fact.
+    destination_health = probe(destination)
+    destination_health.update({"run_id": identifier, "target": destination})
     (directory / "destination-health.json").write_text(json.dumps(
-        probe(destination), indent=2))
+        destination_health, indent=2))
 
     time.sleep(RECOVERY_SETTLE_SECONDS)
-    (directory / "recovery").mkdir()
-    (directory / "recovery" / "probes.json").write_text(
-        json.dumps(probe_phase(outbound), indent=2))
+    capture_phase("recovery")
 
     (directory / "run-complete.json").write_text(json.dumps({"ended_at": now()}, indent=2))
     return directory
@@ -177,16 +247,17 @@ def main() -> int:
     parser.add_argument("app")
     parser.add_argument(
         "--destination", required=True,
-        help=("URL the workload calls, probed directly for its own health. Prefer an endpoint the "
-              "lab controls: the first run used a public rate-limited host, which throttled the "
-              "experiment rather than the platform under test. The app's own /health served through "
-              "its public hostname still leaves through SNAT and is not rate limited."))
+        help=("Independently hosted lab-controlled URL that returns HTTP 200. "
+              "The tested app's own hostname is rejected."))
     parser.add_argument("--output", required=True,
                         help="Private evidence directory outside the repository")
+    parser.add_argument("--source-commit", required=True,
+                        help="Full repository commit used for this capture")
     args = parser.parse_args()
     try:
-        directory = execute(args.app, args.destination, pathlib.Path(args.output))
-    except OSError as exc:
+        directory = execute(args.app, args.destination, pathlib.Path(args.output),
+                            args.source_commit)
+    except (OSError, RunConfigurationError, DestinationPreflightError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2
     print(f"RUN_DIR={directory}")

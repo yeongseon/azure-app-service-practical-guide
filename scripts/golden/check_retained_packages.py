@@ -17,6 +17,14 @@ DIGESTS = pathlib.Path("evidence/retained-digests.json")
 DECLARATIONS = pathlib.Path("evidence/run-declarations.json")
 DECLARATION_FIELDS = {"scenario", "retained_package"}
 SCENARIO_A_RECIPE = pathlib.Path("scripts/golden/scenario-a-recipe.json")
+SCENARIO_B_RECIPE = pathlib.Path("scripts/golden/scenario-b-recipe.json")
+
+
+def recipe_definition(repo: pathlib.Path, scenario: str) -> dict:
+    path = SCENARIO_B_RECIPE if scenario == "snat-exhaustion" else SCENARIO_A_RECIPE
+    return json.loads((repo / path).read_text())
+
+
 FROZEN_HISTORICAL_RUN_IDS = {
     "20260927T104304Z-aba0d3a9daa7",
     "20260927T114621Z-04c6c02c9ae1",
@@ -27,14 +35,22 @@ def _git_bytes(repo: pathlib.Path, commit: str, path: str) -> bytes:
     completed = subprocess.run(
         ["git", "show", f"{commit}:{path}"], cwd=repo, capture_output=True, check=False)
     if completed.returncode != 0:
+        subprocess.run(
+            ["git", "fetch", "--no-tags", "origin", commit], cwd=repo,
+            capture_output=True, check=False)
+        completed = subprocess.run(
+            ["git", "show", f"{commit}:{path}"], cwd=repo,
+            capture_output=True, check=False)
+    if completed.returncode != 0:
         raise ValueError(f"source_commit does not contain provenance input: {path}")
     return completed.stdout
 
 
-def _provenance_digest_problems(repo: pathlib.Path, manifest: dict) -> list[str]:
+def _provenance_digest_problems(
+        repo: pathlib.Path, manifest: dict, scenario: str) -> list[str]:
     source_commit = manifest.get("source_commit")
     recipe_paths = manifest.get("recipe_paths")
-    definition = json.loads((repo / SCENARIO_A_RECIPE).read_text())
+    definition = recipe_definition(repo, scenario)
     if recipe_paths != definition.get("recipe_paths"):
         return ["provenance inputs do not match the versioned recipe definition"]
     if (not isinstance(source_commit, str)
@@ -68,12 +84,18 @@ def _derivation_problems(repo: pathlib.Path, run_dir: pathlib.Path, manifest: di
     derivation = provenance.get("derivation")
     if not isinstance(derivation, dict) or derivation.get("derived_offline") is not True:
         return ["new COMPLETE run lacks offline derivation metadata"]
-    definition = json.loads((repo / SCENARIO_A_RECIPE).read_text())
-    if (derivation.get("collector_commit") != definition.get("derivation_collector_commit")
-            or derivation.get("collector_path") != definition.get("collector_path")):
+    definition = recipe_definition(repo, provenance.get("scenario", ""))
+    declaration = json.loads((repo / DECLARATIONS).read_text())["runs"].get(
+        manifest.get("run_id"), {})
+    collector_commit = derivation.get("collector_commit")
+    current_collector = collector_commit == definition.get("derivation_collector_commit")
+    declared_collector = collector_commit == declaration.get("collector_commit")
+    if (derivation.get("collector_path") != definition.get("collector_path")
+            or not (current_collector or declared_collector)):
         return ["derivation collector does not match the versioned recipe definition"]
     expected_digest = definition.get("derivation_collector_digest")
-    if derivation.get("collector_digest") != expected_digest:
+    collector_digest = derivation.get("collector_digest")
+    if current_collector and collector_digest != expected_digest:
         return ["derivation collector digest does not match the versioned recipe definition"]
     try:
         collector_bytes = _git_bytes(
@@ -85,7 +107,7 @@ def _derivation_problems(repo: pathlib.Path, run_dir: pathlib.Path, manifest: di
         collector_bytes = collector_path.read_bytes()
     actual = hashlib.sha256(collector_bytes).hexdigest()
     problems = []
-    if expected_digest != f"sha256:{actual}":
+    if collector_digest != f"sha256:{actual}":
         problems.append("derivation collector digest mismatch")
     try:
         derived_at = datetime.datetime.fromisoformat(
@@ -98,8 +120,11 @@ def _derivation_problems(repo: pathlib.Path, run_dir: pathlib.Path, manifest: di
         problems.append("derivation predates capture")
     if derived_at > datetime.datetime.now(datetime.timezone.utc):
         problems.append("derivation is in the future")
-    required_shape = {"fault_status", "fault_console_rows", "phase_windows",
-                      "baseline_probes", "fault_probes", "recovery_probes"}
+    required_shape = ({"phase_windows", "phase_probes", "destination_health",
+                       "destination_binding", "snat_port_pressure"}
+                      if provenance.get("scenario") == "snat-exhaustion"
+                      else {"fault_status", "fault_console_rows", "phase_windows",
+                            "baseline_probes", "fault_probes", "recovery_probes"})
     observations = evidence.get("observations") or {}
     if not required_shape <= set(observations):
         problems.append("derivation evidence shape is incomplete")
@@ -152,7 +177,8 @@ def _declaration_problems(current: dict, base: dict) -> list[str]:
     base_runs = base.get("runs") if isinstance(base.get("runs"), dict) else {}
     for run_id, declaration in runs.items():
         if (not isinstance(declaration, dict)
-                or set(declaration) != DECLARATION_FIELDS
+                or not DECLARATION_FIELDS <= set(declaration)
+                or set(declaration) - DECLARATION_FIELDS - {"collector_commit"}
                 or not isinstance(declaration.get("scenario"), str)
                 or not declaration["scenario"].strip()):
             problems.append(f"invalid run declaration schema: {run_id}")
@@ -234,7 +260,9 @@ def violations(repo: pathlib.Path, base_ref: str) -> list[str]:
                 sibling = repo / pathlib.PurePosixPath(relative).parent / name
                 if sibling.is_file() and json.loads(sibling.read_text()).get("run_id") != directory_id:
                     problems.append(f"retained run identity mismatch: {sibling.relative_to(repo)}")
-            if manifest.get("execution_status") == "COMPLETE" and not frozen_historical:
+            new_package = package_id not in base_packages
+            if (manifest.get("execution_status") == "COMPLETE"
+                    and not frozen_historical and new_package):
                 source_commit = manifest.get("source_commit")
                 environment = manifest.get("environment")
                 required_env = ("subscription_kind", "region", "runtime", "sku")
@@ -246,7 +274,9 @@ def violations(repo: pathlib.Path, base_ref: str) -> list[str]:
                     problems.append(f"new COMPLETE run lacks full provenance: {package_id}")
                 problems.extend(
                     f"{package_id}: {problem}"
-                    for problem in _provenance_digest_problems(repo, manifest)
+                    for problem in _provenance_digest_problems(
+                        repo, manifest,
+                        current_declarations["runs"][package_id]["scenario"])
                 )
                 problems.extend(
                     f"{package_id}: {problem}"

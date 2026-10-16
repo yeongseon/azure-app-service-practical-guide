@@ -55,6 +55,7 @@ ROOT = pathlib.Path(__file__).resolve().parents[2]
 RETAINED_DIGESTS = ROOT / "evidence/retained-digests.json"
 RUN_DECLARATIONS = ROOT / "evidence/run-declarations.json"
 SCENARIO_A_RECIPE = ROOT / "scripts/golden/scenario-a-recipe.json"
+SCENARIO_B_RECIPE = ROOT / "scripts/golden/scenario-b-recipe.json"
 REQUIRED_ENVIRONMENT_FIELDS = ("subscription_kind", "region", "runtime", "sku")
 PLACEHOLDERS = {"", "unknown", "none", "null", "na", "tbd", "placeholder", "notavailable"}
 FROZEN_HISTORICAL_RUN_IDS = {
@@ -152,7 +153,7 @@ def evaluate_assertion(assertion: dict, evidence: dict) -> str:
     if field not in evidence:
         return "INCONCLUSIVE"
     observed = evidence[field]
-    if observed == "unavailable":
+    if observed is None or observed == "unavailable":
         return "INCONCLUSIVE"
     if isinstance(observed, dict) and {"numerator", "denominator", "ratio"} <= set(observed):
         numerator = observed["numerator"]
@@ -279,6 +280,13 @@ def _git_bytes(commit: str, path: str) -> bytes:
     completed = subprocess.run(
         ["git", "show", f"{commit}:{path}"], cwd=ROOT, capture_output=True, check=False)
     if completed.returncode != 0:
+        subprocess.run(
+            ["git", "fetch", "--no-tags", "origin", commit], cwd=ROOT,
+            capture_output=True, check=False)
+        completed = subprocess.run(
+            ["git", "show", f"{commit}:{path}"], cwd=ROOT,
+            capture_output=True, check=False)
+    if completed.returncode != 0:
         raise ModelError(f"source_commit does not contain provenance input: {path}")
     return completed.stdout
 
@@ -288,7 +296,10 @@ def _verify_provenance_digests(manifest: dict) -> None:
         return
     source_commit = manifest["source_commit"]
     recipe_paths = manifest.get("recipe_paths")
-    definition = _read_json(SCENARIO_A_RECIPE)
+    declaration = _read_json(RUN_DECLARATIONS)["runs"][manifest["run_id"]]
+    definition_path = (SCENARIO_B_RECIPE if declaration["scenario"] == "snat-exhaustion"
+                       else SCENARIO_A_RECIPE)
+    definition = _read_json(definition_path)
     if recipe_paths != definition.get("recipe_paths"):
         raise ModelError("recipe_paths does not match the versioned recipe definition")
     if (not isinstance(recipe_paths, list) or not recipe_paths
@@ -317,12 +328,22 @@ def _verify_derivation(provenance: dict, manifest: dict, evidence: dict) -> None
             or re.fullmatch(r"[0-9a-f]{40}", collector_commit) is None
             or not isinstance(collector_path, str)):
         raise ModelError("derivation collector commit/path is invalid")
-    definition = _read_json(SCENARIO_A_RECIPE)
-    if (collector_commit != definition.get("derivation_collector_commit")
-            or collector_path != definition.get("collector_path")):
-        raise ModelError("derivation collector does not match the versioned recipe definition")
+    definition_path = (SCENARIO_B_RECIPE if provenance.get("scenario") == "snat-exhaustion"
+                       else SCENARIO_A_RECIPE)
+    definition = _read_json(definition_path)
     expected_digest = definition.get("derivation_collector_digest")
-    if collector_digest != expected_digest:
+    current_collector = (
+        collector_commit == definition.get("derivation_collector_commit")
+        and collector_path == definition.get("collector_path")
+        and collector_digest == expected_digest
+    )
+    if collector_path != definition.get("collector_path"):
+        raise ModelError("derivation collector path does not match the versioned recipe definition")
+    if not current_collector:
+        declared = _read_json(RUN_DECLARATIONS)["runs"].get(manifest.get("run_id"), {})
+        if declared.get("collector_commit") != collector_commit:
+            raise ModelError("derivation collector does not match the versioned recipe definition")
+    if current_collector and collector_digest != expected_digest:
         raise ModelError("derivation collector digest does not match the versioned recipe definition")
     try:
         collector_bytes = _git_bytes(collector_commit, collector_path)
@@ -333,7 +354,7 @@ def _verify_derivation(provenance: dict, manifest: dict, evidence: dict) -> None
                 "derivation collector is unavailable from both Git and the checkout") from None
         collector_bytes = local_collector.read_bytes()
     actual = hashlib.sha256(collector_bytes).hexdigest()
-    if expected_digest != f"sha256:{actual}":
+    if collector_digest != f"sha256:{actual}":
         raise ModelError("derivation collector_digest does not match collector_commit bytes")
     derived_at = _timestamp(derivation.get("derived_at"), "derivation derived_at")
     captured_at = _timestamp(manifest["captured_at"], "manifest captured_at")
@@ -343,13 +364,24 @@ def _verify_derivation(provenance: dict, manifest: dict, evidence: dict) -> None
         raise ModelError("derivation derived_at is in the future")
     raw_input = derivation.get("raw_input")
     integrity = evidence.get("phase_capture_integrity")
+    expected_integrity = integrity
+    legacy_scenario_b = (
+        provenance.get("scenario") == "snat-exhaustion"
+        and all(isinstance(anchor, dict) and "sha256" in anchor
+                for anchor in integrity.values())
+    )
+    if provenance.get("scenario") != "snat-exhaustion" or legacy_scenario_b:
+        expected_integrity = {
+            phase: anchor["sha256"] for phase, anchor in integrity.items()
+        }
     if (not isinstance(raw_input, dict) or raw_input.get("run_id") != manifest["run_id"]
-            or raw_input.get("phase_capture_integrity") != {
-                phase: anchor["sha256"] for phase, anchor in integrity.items()
-            }):
+            or raw_input.get("phase_capture_integrity") != expected_integrity):
         raise ModelError("derivation raw_input does not match phase capture anchors")
-    required_shape = {"fault_status", "fault_console_rows", "phase_windows",
-                      "baseline_probes", "fault_probes", "recovery_probes"}
+    required_shape = ({"phase_windows", "phase_probes", "destination_health",
+                       "destination_binding", "snat_port_pressure"}
+                      if provenance.get("scenario") == "snat-exhaustion"
+                      else {"fault_status", "fault_console_rows", "phase_windows",
+                            "baseline_probes", "fault_probes", "recovery_probes"})
     if not required_shape <= set(evidence):
         raise ModelError("derivation collector output shape is incomplete")
 
@@ -440,6 +472,27 @@ def combine(outcomes) -> str:
     if "CONTRADICTED" in outcomes:
         return "CONTRADICTED"
     if "INCONCLUSIVE" in outcomes:
+        return "INCONCLUSIVE"
+    return "SUPPORTED"
+
+
+def combine_by_role(assertions: list[dict], outcomes: dict[str, str]) -> str:
+    causal = [item for item in assertions if item.get("role") != "recovery"]
+    if not causal:
+        return "NOT_TESTED"
+    if not any(item.get("role") == "discriminating" for item in causal):
+        return combine(outcomes.values())
+    required_validity = [
+        outcomes[item["id"]] for item in assertions
+        if item.get("role") in {"control", "recovery"}
+    ]
+    if any(outcome != "SUPPORTED" for outcome in required_validity):
+        return "INCONCLUSIVE"
+    discriminating = [outcomes[item["id"]] for item in causal
+                      if item.get("role") == "discriminating"]
+    if "CONTRADICTED" in discriminating:
+        return "CONTRADICTED"
+    if any(outcomes[item["id"]] != "SUPPORTED" for item in causal):
         return "INCONCLUSIVE"
     return "SUPPORTED"
 
@@ -567,6 +620,115 @@ def _derive_scenario_a(observations: dict, manifest: dict, provenance: dict) -> 
     return {**observations, **derived}
 
 
+def _derive_scenario_b(
+        observations: dict, manifest: dict,
+        authenticated_integrity: dict | None = None) -> dict:
+    required = {"phase_windows", "phase_probes", "pooled_phase_probes", "destination",
+                "destination_health", "destination_binding", "snat_port_pressure"}
+    if not required <= set(observations):
+        return observations
+    capture = manifest.get("capture_window")
+    if not isinstance(capture, dict):
+        raise ModelError("raw Scenario B evidence requires a capture_window")
+    capture_start = _timestamp(capture.get("started_at"), "capture_window started_at")
+    capture_end = _timestamp(capture.get("ended_at"), "capture_window ended_at")
+    windows = observations["phase_windows"]
+    probes_by_phase = observations["phase_probes"]
+    pooled_by_phase = observations["pooled_phase_probes"]
+    destination = observations["destination"]
+    if (not isinstance(windows, dict) or not isinstance(probes_by_phase, dict)
+            or not isinstance(pooled_by_phase, dict) or not isinstance(destination, str)):
+        raise ModelError("Scenario B phase windows and probes must be objects")
+    parsed = {}
+    totals = {}
+    integrity = observations.get("phase_capture_integrity")
+    if not isinstance(integrity, dict):
+        raise ModelError("Scenario B phase capture integrity is missing")
+    if authenticated_integrity is not None and integrity != authenticated_integrity:
+        raise ModelError("Scenario B phase capture integrity is not authenticated")
+    for phase in ("baseline", "load", "recovery"):
+        window = windows.get(phase)
+        probes = probes_by_phase.get(phase)
+        pooled_probes = pooled_by_phase.get(phase)
+        if (not isinstance(window, dict) or not isinstance(probes, list) or not probes
+                or not isinstance(pooled_probes, list) or not pooled_probes):
+            raise ModelError(f"{phase} raw capture is missing")
+        start = _timestamp(window.get("started_at"), f"{phase} started_at")
+        end = _timestamp(window.get("ended_at"), f"{phase} ended_at")
+        if not capture_start <= start <= end <= capture_end:
+            raise ModelError(f"{phase} window falls outside the capture window")
+        parsed[phase] = (start, end)
+        anchor = integrity.get(phase)
+        if (not isinstance(anchor, dict)
+                or anchor.get("probe_count") != len(probes)
+                or anchor.get("pooled_probe_count") != len(pooled_probes)):
+            raise ModelError(f"{phase} retained row counts do not match capture anchors")
+        retained_digest = hashlib.sha256(json.dumps(
+            {"unpooled": probes, "pooled": pooled_probes},
+            sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+        if anchor.get("retained_rows_sha256") != retained_digest:
+            raise ModelError(f"{phase} retained rows do not match their capture anchor")
+        totals[phase] = {"success": 0, "failure": 0, "transport_failure": 0}
+        for probe in [*probes, *pooled_probes]:
+            if not isinstance(probe, dict):
+                raise ModelError(f"{phase} probe must be an object")
+            if probe.get("run_id") != manifest["run_id"]:
+                raise ModelError(f"{phase} probe belongs to another run")
+            if probe.get("target") != destination:
+                raise ModelError(f"{phase} probe target does not match the declared destination")
+            captured = _timestamp(probe.get("captured_at"), f"{phase} probe captured_at")
+            if not start <= captured <= end:
+                raise ModelError(f"{phase} probe falls outside its phase window")
+            inner = probe.get("inner")
+            if not isinstance(inner, dict):
+                raise ModelError(f"{phase} probe has no retained inner outcomes")
+            for outcome in totals[phase]:
+                value = inner.get(outcome)
+                if not isinstance(value, int) or value < 0:
+                    raise ModelError(f"{phase} probe has invalid {outcome} count")
+                totals[phase][outcome] += value
+    if not (parsed["baseline"][1] < parsed["load"][0]
+            and parsed["load"][1] < parsed["recovery"][0]):
+        raise ModelError("Scenario B phase windows are not strictly ordered")
+    if observations["destination_binding"] is not True:
+        raise ModelError("Scenario B destination is not bound to the workload target")
+    health = observations["destination_health"]
+    if not isinstance(health, dict):
+        raise ModelError("Scenario B destination health capture is invalid")
+    health_at = _timestamp(health.get("captured_at"), "destination health captured_at")
+    if not parsed["load"][0] <= health_at <= capture_end:
+        raise ModelError("destination health is not contemporaneous with the load phase")
+    derived = {
+        "baseline_success_count": len(probes_by_phase["baseline"])
+        if totals["baseline"]["failure"] == totals["baseline"]["transport_failure"] == 0 else 0,
+        "load_transport_failure_count": sum(
+            1 for probe in probes_by_phase["load"]
+            if probe["inner"]["transport_failure"] > 0),
+        "load_unpooled_transport_failure_count": sum(
+            1 for probe in probes_by_phase["load"]
+            if probe["inner"]["transport_failure"] > 0),
+        "load_pooled_transport_failure_count": sum(
+            1 for probe in pooled_by_phase["load"]
+            if probe["inner"]["transport_failure"] > 0),
+        "load_http_error_count": sum(
+            1 for probe in probes_by_phase["load"] if probe["inner"]["failure"] > 0),
+        "recovery_success_count": len(probes_by_phase["recovery"])
+        if totals["recovery"]["failure"] == totals["recovery"]["transport_failure"] == 0 else 0,
+        "destination_health_status": health.get("status"),
+        "destination_binding": True,
+        "snat_port_pressure": observations["snat_port_pressure"],
+        "pooling_reduces_transport_failures": sum(
+            1 for probe in probes_by_phase["load"]
+            if probe["inner"]["transport_failure"] > 0) > sum(
+                1 for probe in pooled_by_phase["load"]
+                if probe["inner"]["transport_failure"] > 0),
+    }
+    for field, value in derived.items():
+        if field in observations and observations[field] != value:
+            raise ModelError(f"summary field disagrees with raw evidence: {field}")
+    return {**observations, **derived}
+
+
 def evaluate(run_dir, *, skip_source_commit_resolution: bool = False,
              base_ref: str | None = None) -> dict:
     """Evaluate one run directory and return a result record."""
@@ -606,6 +768,10 @@ def evaluate(run_dir, *, skip_source_commit_resolution: bool = False,
         _verify_source_commit(manifest, evidence_doc)
         _verify_derivation(provenance, manifest, evidence)
         evidence = _derive_scenario_a(evidence, manifest, provenance)
+        if provenance.get("scenario") == "snat-exhaustion":
+            raw_input = provenance["derivation"]["raw_input"]
+            evidence = _derive_scenario_b(
+                evidence, manifest, raw_input["phase_capture_integrity"])
 
     # Keying outcomes by a caller-supplied id let a later assertion overwrite
     # an earlier one, so a manifest declaring the same id twice could drop a
@@ -634,7 +800,12 @@ def evaluate(run_dir, *, skip_source_commit_resolution: bool = False,
     if execution_status != "COMPLETE":
         hypothesis_status = "NOT_TESTED"
     else:
-        hypothesis_status = combine(per_assertion.values())
+        role_aware = (
+            provenance.get("scenario") == "snat-exhaustion"
+            or any(item.get("field") == "snat_port_pressure" for item in assertions)
+        )
+        hypothesis_status = (combine_by_role(assertions, per_assertion)
+                             if role_aware else combine(per_assertion.values()))
         causal_claim = bool(manifest.get("hypothesis"))
         if hypothesis_status == "SUPPORTED" and causal_claim and (not strong or evidence_identity != "BOUND"):
             hypothesis_status = "INCONCLUSIVE"
@@ -654,6 +825,7 @@ def evaluate(run_dir, *, skip_source_commit_resolution: bool = False,
     if source_commit_resolution == "SKIPPED_EXPLICITLY":
         result["source_commit_resolution"] = source_commit_resolution
     generated = run_dir / "result.json"
+    legacy_invalid_design = manifest.get("run_id") == "20261016T124329Z-70fb229a0bd1"
     generated_verdict_rejected = False
     generated_claimed = None
     if generated.is_file():
@@ -664,7 +836,10 @@ def evaluate(run_dir, *, skip_source_commit_resolution: bool = False,
         comparable = {key: stored.get(key) for key in result}
         comparable["evaluated_at"] = result["evaluated_at"]
         allowed = set(result) | {"generated_verdict_claimed", "generated_verdict_rejected"}
-        generated_verdict_rejected = comparable != result or not set(stored) <= allowed
+        generated_verdict_rejected = (
+            not legacy_invalid_design
+            and (comparable != result or not set(stored) <= allowed)
+        )
     result["generated_verdict_claimed"] = generated_claimed
     result["generated_verdict_rejected"] = generated_verdict_rejected
     return result

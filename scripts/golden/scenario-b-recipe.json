@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "collector_path": "scripts/golden/collect_scenario_b.py",
+  "derivation_collector_commit": "cd8134c9e3684983693d88f7dccf9b433a8c58f5",
+  "derivation_collector_digest": "sha256:da6021a9bfedd0b24aa5cab4943f08197f533416e922ad80aca245ea42a06849",
+  "recipe_paths": [
+    "labs/snat-exhaustion/app/app.py",
+    "labs/snat-exhaustion/app/classification.py",
+    "labs/snat-exhaustion/app/requirements.txt",
+    "labs/snat-exhaustion/main.bicep",
+    "scripts/golden/run_scenario_b.py"
+  ]
+}
