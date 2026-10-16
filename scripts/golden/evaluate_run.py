@@ -287,21 +287,13 @@ def _verify_provenance_digests(manifest: dict) -> None:
     if manifest.get("run_id") not in _declared_run_ids():
         return
     source_commit = manifest["source_commit"]
-    collector_path = manifest.get("collector_path")
     recipe_paths = manifest.get("recipe_paths")
     definition = _read_json(SCENARIO_A_RECIPE)
-    if collector_path != definition.get("collector_path"):
-        raise ModelError("collector_path does not match the versioned recipe definition")
     if recipe_paths != definition.get("recipe_paths"):
         raise ModelError("recipe_paths does not match the versioned recipe definition")
-    if not isinstance(collector_path, str) or not collector_path:
-        raise ModelError("collector_path is required for a declared COMPLETE run")
     if (not isinstance(recipe_paths, list) or not recipe_paths
             or any(not isinstance(path, str) or not path for path in recipe_paths)):
         raise ModelError("recipe_paths is required for a declared COMPLETE run")
-    collector = hashlib.sha256(_git_bytes(source_commit, collector_path)).hexdigest()
-    if manifest["collector_digest"] != f"sha256:{collector}":
-        raise ModelError("collector_digest does not match source_commit bytes")
     common = pathlib.PurePosixPath(os.path.commonpath(recipe_paths)).as_posix()
     prefix = common.rstrip("/") + "/"
     fingerprints = {
@@ -312,6 +304,43 @@ def _verify_provenance_digests(manifest: dict) -> None:
     recipe = hashlib.sha256(canonical).hexdigest()
     if manifest["recipe_digest"] != f"sha256:{recipe}":
         raise ModelError("recipe_digest does not match canonical source fingerprints")
+
+
+def _verify_derivation(provenance: dict, manifest: dict, evidence: dict) -> None:
+    derivation = provenance.get("derivation")
+    if not isinstance(derivation, dict) or derivation.get("derived_offline") is not True:
+        raise ModelError("offline derivation metadata is required")
+    collector_commit = derivation.get("collector_commit")
+    collector_path = derivation.get("collector_path")
+    collector_digest = derivation.get("collector_digest")
+    if (not isinstance(collector_commit, str)
+            or re.fullmatch(r"[0-9a-f]{40}", collector_commit) is None
+            or not isinstance(collector_path, str)):
+        raise ModelError("derivation collector commit/path is invalid")
+    definition = _read_json(SCENARIO_A_RECIPE)
+    if (collector_commit != definition.get("derivation_collector_commit")
+            or collector_path != definition.get("collector_path")):
+        raise ModelError("derivation collector does not match the versioned recipe definition")
+    actual = hashlib.sha256(_git_bytes(collector_commit, collector_path)).hexdigest()
+    if collector_digest != f"sha256:{actual}":
+        raise ModelError("derivation collector_digest does not match collector_commit bytes")
+    derived_at = _timestamp(derivation.get("derived_at"), "derivation derived_at")
+    captured_at = _timestamp(manifest["captured_at"], "manifest captured_at")
+    if derived_at < captured_at:
+        raise ModelError("derivation derived_at is earlier than captured_at")
+    if derived_at > datetime.datetime.now(datetime.timezone.utc):
+        raise ModelError("derivation derived_at is in the future")
+    raw_input = derivation.get("raw_input")
+    integrity = evidence.get("phase_capture_integrity")
+    if (not isinstance(raw_input, dict) or raw_input.get("run_id") != manifest["run_id"]
+            or raw_input.get("phase_capture_integrity") != {
+                phase: anchor["sha256"] for phase, anchor in integrity.items()
+            }):
+        raise ModelError("derivation raw_input does not match phase capture anchors")
+    required_shape = {"fault_status", "fault_console_rows", "phase_windows",
+                      "baseline_probes", "fault_probes", "recovery_probes"}
+    if not required_shape <= set(evidence):
+        raise ModelError("derivation collector output shape is incomplete")
 
 
 def _verify_source_commit(manifest: dict, evidence: dict) -> None:
@@ -354,7 +383,7 @@ def _validate_new_run_provenance(
         value = environment.get(field)
         if not isinstance(value, str) or _placeholder(value):
             raise ModelError(f"environment.{field} must be a non-placeholder string")
-    for field in ("recipe_digest", "collector_digest"):
+    for field in ("recipe_digest",):
         value = manifest.get(field)
         if (not isinstance(value, str)
                 or re.fullmatch(r"sha256:[0-9a-f]{64}", value) is None
@@ -564,6 +593,7 @@ def evaluate(run_dir, *, skip_source_commit_resolution: bool = False,
     provenance = _read_json(run_dir / "provenance.json") if (run_dir / "provenance.json").is_file() else {}
     if manifest.get("run_id") in _declared_run_ids():
         _verify_source_commit(manifest, evidence_doc)
+        _verify_derivation(provenance, manifest, evidence)
         evidence = _derive_scenario_a(evidence, manifest, provenance)
 
     # Keying outcomes by a caller-supplied id let a later assertion overwrite

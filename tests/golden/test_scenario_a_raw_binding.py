@@ -78,10 +78,10 @@ class ScenarioARawBindingTests(unittest.TestCase):
             self.evaluate()
 
     def test_valid_but_unrelated_provenance_digests_are_rejected(self):
-        manifest = json.loads(self.manifest_path.read_text())
-        manifest["recipe_digest"] = "sha256:" + "1" * 64
-        manifest["collector_digest"] = "sha256:" + "2" * 64
-        self.manifest_path.write_text(json.dumps(manifest))
+        provenance_path = self.directory / "provenance.json"
+        provenance = json.loads(provenance_path.read_text())
+        provenance["derivation"]["collector_digest"] = "sha256:" + "2" * 64
+        provenance_path.write_text(json.dumps(provenance))
         with self.assertRaises(evaluator.ModelError):
             self.evaluate()
 
@@ -89,9 +89,6 @@ class ScenarioARawBindingTests(unittest.TestCase):
         manifest = json.loads(self.manifest_path.read_text())
         manifest["source_commit"] = "ceb730d8b22455c811742d405a99e42f3f996aad"
         manifest["runner_source_commit"] = manifest["source_commit"]
-        collector = evaluator.hashlib.sha256(evaluator._git_bytes(
-            manifest["source_commit"], manifest["collector_path"])).hexdigest()
-        manifest["collector_digest"] = f"sha256:{collector}"
         fingerprints = {
             pathlib.PurePosixPath(path).name: evaluator.hashlib.sha256(
                 evaluator._git_bytes(manifest["source_commit"], path)).hexdigest()
@@ -100,6 +97,35 @@ class ScenarioARawBindingTests(unittest.TestCase):
         canonical = json.dumps(fingerprints, sort_keys=True, separators=(",", ":")).encode()
         manifest["recipe_digest"] = "sha256:" + evaluator.hashlib.sha256(canonical).hexdigest()
         self.manifest_path.write_text(json.dumps(manifest))
+        with self.assertRaises(evaluator.ModelError):
+            self.evaluate()
+
+    def test_old_collector_digest_with_new_shape_is_rejected(self):
+        provenance_path = self.directory / "provenance.json"
+        provenance = json.loads(provenance_path.read_text())
+        provenance["derivation"]["collector_commit"] = manifest_commit = (
+            "af75d0024472edce67401042fdaa97d00dfbe6ac")
+        collector = evaluator.hashlib.sha256(evaluator._git_bytes(
+            manifest_commit, provenance["derivation"]["collector_path"])).hexdigest()
+        provenance["derivation"]["collector_digest"] = f"sha256:{collector}"
+        provenance_path.write_text(json.dumps(provenance))
+        with self.assertRaises(evaluator.ModelError):
+            self.evaluate()
+
+    def test_wrong_derivation_collector_commit_is_rejected(self):
+        provenance_path = self.directory / "provenance.json"
+        provenance = json.loads(provenance_path.read_text())
+        provenance["derivation"]["collector_commit"] = (
+            "ceb730d8b22455c811742d405a99e42f3f996aad")
+        provenance_path.write_text(json.dumps(provenance))
+        with self.assertRaises(evaluator.ModelError):
+            self.evaluate()
+
+    def test_derivation_before_capture_is_rejected(self):
+        provenance_path = self.directory / "provenance.json"
+        provenance = json.loads(provenance_path.read_text())
+        provenance["derivation"]["derived_at"] = "2026-10-16T07:00:00Z"
+        provenance_path.write_text(json.dumps(provenance))
         with self.assertRaises(evaluator.ModelError):
             self.evaluate()
 

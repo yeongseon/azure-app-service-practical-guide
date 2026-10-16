@@ -104,7 +104,7 @@ def evaluate_with(evidence):
                     recipe_digest="sha256:" + "0123456789abcdef" * 4,
                     collector_digest="sha256:" + "fedcba9876543210" * 4)
     manifest["run_id"] = "20261016T075147Z-6d019de6e2f2"
-    for key in ("collector_path", "recipe_paths", "recipe_digest", "collector_digest"):
+    for key in ("recipe_paths", "recipe_digest"):
         manifest[key] = retained_manifest[key]
     evidence["run_id"] = manifest["run_id"]
     directory = parent / manifest["run_id"]
@@ -122,8 +122,16 @@ def evaluate_with(evidence):
     }
     document["observations"]["phase_capture_integrity"] = integrity
     (directory / "evidence.json").write_text(json.dumps(document))
+    derivation = json.loads((
+        ROOT / "evidence/runs/20261016T075147Z-6d019de6e2f2/provenance.json"
+    ).read_text())["derivation"]
+    derivation["raw_input"]["phase_capture_integrity"] = {
+        phase: anchor["sha256"] for phase, anchor in integrity.items()
+    }
+    derivation["raw_input"]["run_id"] = manifest["run_id"]
     (directory / "provenance.json").write_text(json.dumps({
         "phase_capture_integrity": integrity,
+        "derivation": derivation,
     }))
     return ev.evaluate(directory)
 
