@@ -198,10 +198,11 @@ class GoldenContractTests(unittest.TestCase):
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
         probes = module.PROBES_PER_PHASE
-        return {"baseline_success_count": probes, "load_transport_failure_count": 7,
+        return {"baseline_success_count": probes, "load_transport_failure_count": 2,
                 "destination_health_status": 200, "load_http_error_count": 0,
                 "recovery_success_count": probes, "snat_port_pressure": "observed",
-                "destination_binding": True}
+                "destination_binding": True,
+                "pooling_reduces_transport_failures": True}
 
     def test_the_template_ships_unrun(self):
         self.assertEqual(self.template["execution_status"], "NOT_RUN")
@@ -242,10 +243,13 @@ class GoldenContractTests(unittest.TestCase):
         self.assertEqual(
             self.ev.evaluate(self._run(evidence))["hypothesis_status"], "INCONCLUSIVE")
 
-    def test_no_recovery_prevents_support(self):
+    def test_no_recovery_invalidates_the_hypothesis_test(self):
         evidence = dict(self.COMPLETE, recovery_success_count=0)
+        result = self.ev.evaluate(self._run(evidence))
+        self.assertEqual(result["hypothesis_status"], "INCONCLUSIVE")
         self.assertEqual(
-            self.ev.evaluate(self._run(evidence))["hypothesis_status"], "CONTRADICTED")
+            result["assertion_outcomes"]["recovery-outbound-succeeds-again"],
+            "CONTRADICTED")
 
     def test_every_role_and_claim_level_is_from_the_frozen_vocabulary(self):
         for assertion in self.template["assertions"]:
