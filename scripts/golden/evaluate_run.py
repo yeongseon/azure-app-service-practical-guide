@@ -452,6 +452,7 @@ def _verify_scenario_c_raw_inputs(
         "prod_after_rollback": _read_json(raw_root / "prod-after-rollback.json").get("body"),
         "swap": swap,
         "deployment_error_rows": rows,
+        "deployment_error_query": console,
     }
     if evidence.get("raw_snapshots") != raw_snapshots:
         raise ModelError("Scenario C evidence snapshots disagree with retained raw bytes")
@@ -708,6 +709,7 @@ def _derive_scenario_c(observations: dict, provenance: dict) -> dict:
     rollback = snapshots.get("prod_after_rollback")
     swap = snapshots.get("swap")
     errors = snapshots.get("deployment_error_rows")
+    error_query = snapshots.get("deployment_error_query")
     usable = lambda value: isinstance(value, dict) and value and "unreachable" not in value
     comparable = all(usable(value) for value in (
         prod_before, staging_before, prod_after, staging_after))
@@ -735,7 +737,10 @@ def _derive_scenario_c(observations: dict, provenance: dict) -> dict:
             {k: v for k, v in prod_before.items() if k != "PROCESS_START_UTC"}
             != {k: v for k, v in prod_after.items() if k != "PROCESS_START_UTC"}
             if usable(prod_before) and usable(prod_after) else None),
-        "deployment_error_count": len(errors) if isinstance(errors, list) else None,
+        "deployment_error_count": (
+            len(errors)
+            if isinstance(error_query, dict) and error_query.get("exit_code", 0) == 0
+            and isinstance(errors, list) else None),
         "post_rollback_matches_pre_swap": (
             {k: v for k, v in rollback.items() if k != "PROCESS_START_UTC"}
             == {k: v for k, v in prod_before.items() if k != "PROCESS_START_UTC"}

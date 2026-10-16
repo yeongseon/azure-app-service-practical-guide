@@ -288,6 +288,7 @@ def collect(run_dir) -> dict:
             "swap": swap,
             "deployment_error_rows": (
                 json.loads(console.get("stdout") or "[]") if console is not None else None),
+            "deployment_error_query": console,
         },
         "phase_capture_integrity": phase_integrity,
         "raw_file_digests": {

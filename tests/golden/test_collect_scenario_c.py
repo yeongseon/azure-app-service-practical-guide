@@ -369,6 +369,17 @@ class SwapSemanticsTests(unittest.TestCase):
     def test_failed_console_query_yields_no_error_count(self):
         self.assertIsNone(collect_c.error_row_count({"exit_code": 3, "stdout": ""}))
 
+    def test_evaluator_does_not_turn_a_failed_query_into_zero_errors(self):
+        evidence = collect_c.collect(build_run())
+        observations = evidence["observations"]
+        observations["raw_snapshots"]["deployment_error_query"] = {
+            "exit_code": 3,
+            "stdout": "",
+        }
+        observations.pop("deployment_error_count")
+        derived = ev._derive_scenario_c(observations, {})
+        self.assertNotIn("deployment_error_count", derived)
+
 
 class RunnerReadinessTests(unittest.TestCase):
 
