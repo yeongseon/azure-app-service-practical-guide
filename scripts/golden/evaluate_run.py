@@ -356,6 +356,107 @@ def _verify_derivation(provenance: dict, manifest: dict, evidence: dict) -> None
         raise ModelError("derivation collector output shape is incomplete")
 
 
+def _verify_scenario_c_raw_inputs(
+        run_dir: pathlib.Path, provenance: dict, manifest: dict, evidence: dict) -> None:
+    if provenance.get("scenario") != "slot-swap-config-drift":
+        return
+    raw_input = provenance.get("derivation", {}).get("raw_input", {})
+    files = raw_input.get("files")
+    if not isinstance(files, dict) or not files:
+        raise ModelError("Scenario C retained raw input digests are required")
+    required = {
+        "run.json", "prod-before.json", "staging-before.json", "swap.json",
+        "prod-restart-wait.json", "staging-restart-wait.json",
+        "prod-after.json", "staging-after.json", "swap-back.json",
+        "rollback-restart-wait.json", "prod-after-rollback.json",
+        "baseline/phase.json", "fault/phase.json", "recovery/phase.json",
+        "console-query-0.json", "cleanup.json",
+    }
+    if not required <= set(files):
+        raise ModelError("Scenario C retained raw bundle is incomplete")
+    raw_root = run_dir / "raw"
+    for relative, expected in files.items():
+        path = raw_root / relative
+        if not path.is_file():
+            raise ModelError(f"retained raw input missing: {relative}")
+        actual = hashlib.sha256(path.read_bytes()).hexdigest()
+        if expected != actual:
+            raise ModelError(f"retained raw input digest mismatch: {relative}")
+    run = _read_json(raw_root / "run.json")
+    cleanup = _read_json(raw_root / "cleanup.json")
+    if run.get("run_id") != manifest["run_id"] or cleanup.get("run_id") != manifest["run_id"]:
+        raise ModelError("raw run or cleanup identity does not match manifest")
+    phase_windows = []
+    expected_roles = {
+        "baseline": {"production", "staging"},
+        "fault": {"production", "staging"},
+        "recovery": {"production"},
+    }
+    for phase in ("baseline", "fault", "recovery"):
+        document = _read_json(raw_root / phase / "phase.json")
+        started = _timestamp(document.get("started_at"), f"{phase} started_at")
+        ended = _timestamp(document.get("ended_at"), f"{phase} ended_at")
+        if started > ended:
+            raise ModelError(f"{phase} window ends before it starts")
+        phase_windows.append((started, ended))
+        probes = document.get("probes")
+        if not isinstance(probes, list) or len(probes) != len(expected_roles[phase]):
+            raise ModelError(f"{phase} probe capture is truncated")
+        roles = set()
+        for probe in probes:
+            if not isinstance(probe, dict):
+                raise ModelError(f"{phase} probe must be an envelope")
+            if probe.get("run_id") != manifest["run_id"] or probe.get("app") != run.get("app"):
+                raise ModelError(f"{phase} probe identity is not bound to the run")
+            role = probe.get("slot_role")
+            roles.add(role)
+            expected_url = (f"https://{run['app']}.azurewebsites.net" if role == "production"
+                            else f"https://{run['app']}-staging.azurewebsites.net")
+            if probe.get("url") != expected_url or not isinstance(probe.get("attempt"), int):
+                raise ModelError(f"{phase} probe target binding is invalid")
+            captured = _timestamp(probe.get("captured_at"), f"{phase} probe captured_at")
+            if not started <= captured <= ended:
+                raise ModelError(f"{phase} probe falls outside its phase window")
+        if roles != expected_roles[phase]:
+            raise ModelError(f"{phase} probe slot roles are invalid")
+    if not (phase_windows[0][1] < phase_windows[1][0]
+            and phase_windows[1][1] < phase_windows[2][0]):
+        raise ModelError("Scenario C phase windows are not strictly ordered")
+    swap = _read_json(raw_root / "swap.json")
+    if swap.get("argv", [])[-6:-2] != ["--slot", "staging", "--target-slot", "production"]:
+        raise ModelError("swap direction is not staging to production")
+    console = _read_json(raw_root / "console-query-0.json")
+    argv = console.get("argv", [])
+    query = argv[argv.index("--analytics-query") + 1] if "--analytics-query" in argv else ""
+    if f"/sites/{run.get('app')}" not in query or "between(datetime(" not in query:
+        raise ModelError("deployment query is not bound to the app and run window")
+    try:
+        rows = json.loads(console.get("stdout") or "[]")
+    except json.JSONDecodeError as exc:
+        raise ModelError("deployment query rows are malformed") from exc
+    if not isinstance(rows, list):
+        raise ModelError("deployment query rows must be an array")
+    capture_start = _timestamp(manifest["capture_window"]["started_at"], "capture start")
+    capture_end = _timestamp(manifest["capture_window"]["ended_at"], "capture end")
+    for row in rows:
+        if not isinstance(row, dict):
+            raise ModelError("deployment query row must be an object")
+        captured = _timestamp(row.get("TimeGenerated"), "deployment query TimeGenerated")
+        if not capture_start <= captured <= capture_end:
+            raise ModelError("deployment query row falls outside the run window")
+    raw_snapshots = {
+        "prod_before": _read_json(raw_root / "prod-before.json").get("body"),
+        "staging_before": _read_json(raw_root / "staging-before.json").get("body"),
+        "prod_after": _read_json(raw_root / "prod-after.json").get("body"),
+        "staging_after": _read_json(raw_root / "staging-after.json").get("body"),
+        "prod_after_rollback": _read_json(raw_root / "prod-after-rollback.json").get("body"),
+        "swap": swap,
+        "deployment_error_rows": rows,
+    }
+    if evidence.get("raw_snapshots") != raw_snapshots:
+        raise ModelError("Scenario C evidence snapshots disagree with retained raw bytes")
+
+
 def _recipe_definition(manifest: dict) -> dict:
     recipe_paths = manifest.get("recipe_paths") or []
     definitions = (_read_json(SCENARIO_A_RECIPE), _read_json(SCENARIO_C_RECIPE))
@@ -454,6 +555,23 @@ def combine(outcomes) -> str:
     if "INCONCLUSIVE" in outcomes:
         return "INCONCLUSIVE"
     return "SUPPORTED"
+
+
+def combine_hypothesis(assertions: list[dict], outcomes: dict) -> str:
+    hypothesis_outcomes = []
+    control_failed = False
+    for assertion in assertions:
+        role = assertion.get("role")
+        outcome = outcomes[assertion.get("id")]
+        if role == "recovery":
+            continue
+        if role == "control":
+            control_failed = control_failed or outcome != "SUPPORTED"
+            continue
+        hypothesis_outcomes.append(outcome)
+    if control_failed:
+        return "INCONCLUSIVE"
+    return combine(hypothesis_outcomes)
 
 
 def _bind_evidence(document: dict, manifest: dict):
@@ -593,6 +711,13 @@ def _derive_scenario_c(observations: dict, provenance: dict) -> dict:
     usable = lambda value: isinstance(value, dict) and value and "unreachable" not in value
     comparable = all(usable(value) for value in (
         prod_before, staging_before, prod_after, staging_after))
+    def discriminating(key: str) -> bool:
+        if not comparable:
+            return False
+        values = [value.get(key) for value in (
+            prod_before, staging_before, prod_after, staging_after)]
+        return (all(isinstance(value, str) and bool(value.strip()) for value in values)
+                and values[0] != values[1])
     derived = {
         "swap_exit_code": swap.get("exit_code") if isinstance(swap, dict) else None,
         "production_restart_observed": (
@@ -601,11 +726,11 @@ def _derive_scenario_c(observations: dict, provenance: dict) -> dict:
         "non_sticky_feature_flag_swapped": (
             prod_after.get("FEATURE_FLAG") == staging_before.get("FEATURE_FLAG")
             and staging_after.get("FEATURE_FLAG") == prod_before.get("FEATURE_FLAG")
-            if comparable else None),
+            if discriminating("FEATURE_FLAG") else None),
         "sticky_db_connection_remained": (
             prod_after.get("DB_CONNECTION_STRING") == prod_before.get("DB_CONNECTION_STRING")
             and staging_after.get("DB_CONNECTION_STRING") == staging_before.get("DB_CONNECTION_STRING")
-            if comparable else None),
+            if discriminating("DB_CONNECTION_STRING") else None),
         "production_config_changed": (
             {k: v for k, v in prod_before.items() if k != "PROCESS_START_UTC"}
             != {k: v for k, v in prod_after.items() if k != "PROCESS_START_UTC"}
@@ -660,6 +785,7 @@ def evaluate(run_dir, *, skip_source_commit_resolution: bool = False,
     if manifest.get("run_id") in _declared_run_ids():
         _verify_source_commit(manifest, evidence_doc)
         _verify_derivation(provenance, manifest, evidence)
+        _verify_scenario_c_raw_inputs(run_dir, provenance, manifest, evidence)
         evidence = _derive_scenario_a(evidence, manifest, provenance)
         evidence = _derive_scenario_c(evidence, provenance)
 
@@ -690,7 +816,7 @@ def evaluate(run_dir, *, skip_source_commit_resolution: bool = False,
     if execution_status != "COMPLETE":
         hypothesis_status = "NOT_TESTED"
     else:
-        hypothesis_status = combine(per_assertion.values())
+        hypothesis_status = combine_hypothesis(assertions, per_assertion)
         causal_claim = bool(manifest.get("hypothesis"))
         if hypothesis_status == "SUPPORTED" and causal_claim and (not strong or evidence_identity != "BOUND"):
             hypothesis_status = "INCONCLUSIVE"
@@ -698,6 +824,10 @@ def evaluate(run_dir, *, skip_source_commit_resolution: bool = False,
             hypothesis_status = "INCONCLUSIVE"
 
     # A generated verdict is recomputed and compared, never consumed.
+    recovery_outcomes = [
+        per_assertion[item.get("id")] for item in assertions
+        if item.get("role") == "recovery"
+    ]
     result = {
         "run_id": manifest["run_id"],
         "captured_at": manifest["captured_at"],
@@ -705,6 +835,7 @@ def evaluate(run_dir, *, skip_source_commit_resolution: bool = False,
         "execution_status": execution_status,
         "evidence_identity": evidence_identity,
         "hypothesis_status": hypothesis_status,
+        "recovery_status": combine(recovery_outcomes),
         "assertion_outcomes": per_assertion,
     }
     if source_commit_resolution == "SKIPPED_EXPLICITLY":

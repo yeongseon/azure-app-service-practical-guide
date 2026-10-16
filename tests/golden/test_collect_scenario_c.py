@@ -16,6 +16,7 @@ import pathlib
 import sys
 import tempfile
 import unittest
+from unittest import mock
 
 sys.dont_write_bytecode = True
 
@@ -31,6 +32,7 @@ def _load(name, relative):
 
 collect_c = _load("collect_c", "scripts/golden/collect_scenario_c.py")
 ev = _load("ev_c", "scripts/golden/evaluate_run.py")
+run_c = _load("run_c", "scripts/golden/run_scenario_c.py")
 
 MANIFEST = json.loads(
     (ROOT / "labs/slot-swap-config-drift/golden/manifest.template.json").read_text())
@@ -171,16 +173,16 @@ class UnperformedStepTests(unittest.TestCase):
         self.assertNotIn("post_rollback_matches_pre_swap", evidence["observations"])
         self.assertIn("post_rollback_matches_pre_swap", evidence["incomplete_fields"])
 
-    def test_no_rollback_is_inconclusive_not_contradicted(self):
+    def test_no_rollback_leaves_hypothesis_unchanged(self):
         self.assertEqual(
             evaluate_with(collect_c.collect(build_run(rollback=None)))["hypothesis_status"],
-            "INCONCLUSIVE")
+            "SUPPORTED")
 
-    def test_a_rollback_that_does_not_restore_contradicts(self):
+    def test_a_rollback_that_does_not_restore_is_separate(self):
         drifted = dict(PROD_BEFORE, FEATURE_FLAG="on")
-        self.assertEqual(
-            evaluate_with(collect_c.collect(build_run(rollback=drifted)))["hypothesis_status"],
-            "CONTRADICTED")
+        result = evaluate_with(collect_c.collect(build_run(rollback=drifted)))
+        self.assertEqual(result["hypothesis_status"], "SUPPORTED")
+        self.assertEqual(result["recovery_status"], "CONTRADICTED")
 
     def test_an_absent_restart_timestamp_is_not_a_false_restart(self):
         before = {k: v for k, v in PROD_BEFORE.items() if k != "PROCESS_START_UTC"}
@@ -300,22 +302,52 @@ class DiscriminationTests(unittest.TestCase):
             evaluate_with(collect_c.collect(build_run(prod_after=stayed)))["hypothesis_status"],
             "CONTRADICTED")
 
-    def test_a_failed_swap_contradicts(self):
+    def test_a_failed_swap_is_inconclusive(self):
         self.assertEqual(
             evaluate_with(collect_c.collect(build_run(swap_exit=1)))["hypothesis_status"],
-            "CONTRADICTED")
+            "INCONCLUSIVE")
 
-    def test_deployment_errors_contradict(self):
+    def test_deployment_errors_make_the_control_inconclusive(self):
         self.assertEqual(
             evaluate_with(collect_c.collect(
                 build_run(console='[{"Level":"Error"}]')))["hypothesis_status"],
-            "CONTRADICTED")
+            "INCONCLUSIVE")
 
-    def test_no_restart_contradicts(self):
+    def test_no_restart_makes_the_control_inconclusive(self):
         same = dict(PROD_AFTER, PROCESS_START_UTC=PROD_BEFORE["PROCESS_START_UTC"])
         self.assertEqual(
             evaluate_with(collect_c.collect(build_run(prod_after=same)))["hypothesis_status"],
-            "CONTRADICTED")
+            "INCONCLUSIVE")
+
+    def test_failed_recovery_is_reported_separately(self):
+        drifted = dict(PROD_BEFORE, FEATURE_FLAG="on")
+        result = evaluate_with(collect_c.collect(build_run(rollback=drifted)))
+        self.assertEqual(result["hypothesis_status"], "SUPPORTED")
+        self.assertEqual(result["recovery_status"], "CONTRADICTED")
+
+
+class TargetDiscriminatorTests(unittest.TestCase):
+
+    def test_missing_one_target_key_is_inconclusive(self):
+        missing = {k: v for k, v in PROD_BEFORE.items() if k != "FEATURE_FLAG"}
+        evidence = collect_c.collect(build_run(prod_before=missing))
+        self.assertNotIn("non_sticky_feature_flag_swapped", evidence["observations"])
+
+    def test_missing_all_target_keys_is_inconclusive(self):
+        missing = {"PROCESS_START_UTC": PROD_BEFORE["PROCESS_START_UTC"]}
+        evidence = collect_c.collect(build_run(prod_before=missing, staging_before=missing))
+        self.assertNotIn("non_sticky_feature_flag_swapped", evidence["observations"])
+        self.assertNotIn("sticky_db_connection_remained", evidence["observations"])
+
+    def test_equal_pre_swap_values_are_not_discriminating(self):
+        same = dict(STAGING_BEFORE, FEATURE_FLAG=PROD_BEFORE["FEATURE_FLAG"])
+        evidence = collect_c.collect(build_run(staging_before=same))
+        self.assertNotIn("non_sticky_feature_flag_swapped", evidence["observations"])
+
+    def test_malformed_target_values_are_not_discriminating(self):
+        malformed = dict(PROD_BEFORE, DB_CONNECTION_STRING="")
+        evidence = collect_c.collect(build_run(prod_before=malformed))
+        self.assertNotIn("sticky_db_connection_remained", evidence["observations"])
 
 
 class SwapSemanticsTests(unittest.TestCase):
@@ -332,6 +364,31 @@ class SwapSemanticsTests(unittest.TestCase):
     def test_absent_console_yields_no_error_count(self):
         self.assertIsNone(collect_c.error_row_count(None))
         self.assertEqual(collect_c.error_row_count({"stdout": "[]"}), 0)
+
+
+class RunnerReadinessTests(unittest.TestCase):
+
+    def test_warmup_requires_both_bound_hostnames(self):
+        directory = pathlib.Path(tempfile.mkdtemp())
+        responses = [
+            {"run_id": "run", "app": "app", "url": "prod", "slot_role": "production",
+             "captured_at": SWAP_STARTED, "http_status": 200, "attempt": 1, "body": PROD_BEFORE},
+            {"run_id": "run", "app": "app", "url": "stage", "slot_role": "staging",
+             "captured_at": SWAP_STARTED, "http_status": 200, "attempt": 1, "body": STAGING_BEFORE},
+        ]
+        with mock.patch.object(run_c, "probe", side_effect=responses):
+            result = run_c.warm_up(
+                "run", "app", [("production", "prod"), ("staging", "stage")], directory)
+        self.assertEqual([item["slot_role"] for item in result], ["production", "staging"])
+
+    def test_deployment_query_is_bound_to_app_and_window(self):
+        with mock.patch.object(run_c, "command", return_value={}) as invoked:
+            run_c.collect_deployment_errors(
+                "app-name", "workspace", "2026-01-01T00:00:00Z",
+                "2026-01-01T00:10:00Z", pathlib.Path(tempfile.mkdtemp()))
+        query = invoked.call_args.args[2][7]
+        self.assertIn("between(datetime(2026-01-01T00:00:00Z)", query)
+        self.assertIn("/sites/app-name", query)
 
 
 if __name__ == "__main__":

@@ -134,6 +134,12 @@ def config_of(snapshot: dict) -> dict:
     return {k: v for k, v in snapshot.items() if k not in RUNTIME_KEYS}
 
 
+def body_of(capture):
+    if isinstance(capture, dict) and isinstance(capture.get("body"), dict):
+        return capture["body"]
+    return capture
+
+
 def started_after(process_start, boundary) -> bool:
     """True when a worker demonstrably started after a moment in time.
 
@@ -176,17 +182,31 @@ def is_usable(snapshot) -> bool:
     return bool(snapshot) and "unreachable" not in snapshot
 
 
+def has_distinct_usable_values(first, second, key) -> bool:
+    if not is_usable(first) or not is_usable(second):
+        return False
+    left = first.get(key)
+    right = second.get(key)
+    return (isinstance(left, str) and bool(left.strip())
+            and isinstance(right, str) and bool(right.strip()) and left != right)
+
+
 def collect(run_dir) -> dict:
     """Build a Golden evidence document from one captured swap."""
     run_dir = pathlib.Path(run_dir)
     run = _read(run_dir / "run.json")
 
-    prod_before = _read(run_dir / "prod-before.json")
-    staging_before = _read(run_dir / "staging-before.json")
-    prod_after = _read(run_dir / "prod-after.json")
-    staging_after = _read(run_dir / "staging-after.json")
+    prod_before_capture = _read(run_dir / "prod-before.json")
+    staging_before_capture = _read(run_dir / "staging-before.json")
+    prod_after_capture = _read(run_dir / "prod-after.json")
+    staging_after_capture = _read(run_dir / "staging-after.json")
+    prod_before = body_of(prod_before_capture)
+    staging_before = body_of(staging_before_capture)
+    prod_after = body_of(prod_after_capture)
+    staging_after = body_of(staging_after_capture)
     swap = _read(run_dir / "swap.json")
-    rollback = _read(run_dir / "prod-after-rollback.json", required=False)
+    rollback_capture = _read(run_dir / "prod-after-rollback.json", required=False)
+    rollback = body_of(rollback_capture)
     console = _read(run_dir / "console-query-0.json", required=False)
     phase_integrity = {}
     for phase in ("baseline", "fault", "recovery"):
@@ -223,15 +243,29 @@ def collect(run_dir) -> dict:
     # makes the comparison meaningless, not false.
     comparable = all(is_usable(s) for s in
                      (prod_before, staging_before, prod_after, staging_after))
+    feature_discriminating = (
+        comparable
+        and has_distinct_usable_values(prod_before, staging_before, NON_STICKY)
+        and all(isinstance(snapshot.get(NON_STICKY), str)
+                and bool(snapshot[NON_STICKY].strip())
+                for snapshot in (prod_after, staging_after))
+    )
+    sticky_discriminating = (
+        comparable
+        and has_distinct_usable_values(prod_before, staging_before, STICKY)
+        and all(isinstance(snapshot.get(STICKY), str)
+                and bool(snapshot[STICKY].strip())
+                for snapshot in (prod_after, staging_after))
+    )
 
     observations = {
         "swap_exit_code": swap.get("exit_code"),
         "production_restart_observed": restart_observed,
         "non_sticky_feature_flag_swapped": (
             swapped_with_code(prod_before, staging_before, prod_after, staging_after,
-                              NON_STICKY) if comparable else None),
+                               NON_STICKY) if feature_discriminating else None),
         "sticky_db_connection_remained": (
-            None if not (staging_restarted and comparable)
+            None if not (staging_restarted and sticky_discriminating)
             else remained_with_slot(
                 prod_before, staging_before, prod_after, staging_after, STICKY)),
         "production_config_changed": (
@@ -254,6 +288,11 @@ def collect(run_dir) -> dict:
                 json.loads(console.get("stdout") or "[]") if console is not None else None),
         },
         "phase_capture_integrity": phase_integrity,
+        "raw_file_digests": {
+            path.relative_to(run_dir).as_posix(): hashlib.sha256(path.read_bytes()).hexdigest()
+            for path in sorted(run_dir.rglob("*.json"))
+            if path.name not in {"evidence.json", "manifest.json", "provenance.json", "result.json"}
+        },
     }
 
     incomplete = sorted(key for key, value in observations.items() if value is None)

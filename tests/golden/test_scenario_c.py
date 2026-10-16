@@ -108,18 +108,18 @@ class ActivationPreconditionTests(unittest.TestCase):
         self.assertEqual(
             ev.evaluate(run_with(evidence))["hypothesis_status"], "INCONCLUSIVE")
 
-    def test_swap_that_never_restarted_production_is_contradicted(self):
+    def test_swap_that_never_restarted_production_is_inconclusive(self):
         evidence = dict(COMPLETE_EVIDENCE, production_restart_observed=False)
         self.assertEqual(
-            ev.evaluate(run_with(evidence))["hypothesis_status"], "CONTRADICTED")
+            ev.evaluate(run_with(evidence))["hypothesis_status"], "INCONCLUSIVE")
 
 
 class CompetingHypothesisTests(unittest.TestCase):
-    def test_a_failing_deployment_contradicts_the_drift_hypothesis(self):
+    def test_a_failing_deployment_makes_the_drift_hypothesis_inconclusive(self):
         """Drift and a broken deploy share user-visible symptoms."""
         evidence = dict(COMPLETE_EVIDENCE, deployment_error_count=7)
         self.assertEqual(
-            ev.evaluate(run_with(evidence))["hypothesis_status"], "CONTRADICTED")
+            ev.evaluate(run_with(evidence))["hypothesis_status"], "INCONCLUSIVE")
 
     def test_sticky_setting_that_moved_contradicts_the_mechanism(self):
         evidence = dict(COMPLETE_EVIDENCE, sticky_db_connection_remained=False)
@@ -136,7 +136,13 @@ class CompetingHypothesisTests(unittest.TestCase):
         evidence = dict(COMPLETE_EVIDENCE)
         del evidence["post_rollback_matches_pre_swap"]
         self.assertEqual(
-            ev.evaluate(run_with(evidence))["hypothesis_status"], "INCONCLUSIVE")
+            ev.evaluate(run_with(evidence))["recovery_status"], "INCONCLUSIVE")
+
+    def test_missing_recovery_does_not_change_hypothesis_status(self):
+        evidence = dict(COMPLETE_EVIDENCE)
+        del evidence["post_rollback_matches_pre_swap"]
+        self.assertEqual(
+            ev.evaluate(run_with(evidence))["hypothesis_status"], "SUPPORTED")
 
 
 class HistoricalEvidenceTests(unittest.TestCase):
