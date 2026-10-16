@@ -2,96 +2,147 @@
 
 ## Mission
 
-Maintain an evidence-driven Azure App Service guide. Publish practical conclusions
-with actual verification dates, environment, source commit and evidence. Official
-sources, local tests, Azure execution, causal support, recovery, cleanup and
-independent reproduction are separate claims.
+Maintain a practical Azure App Service guide whose claims are no stronger than
+its evidence. Help readers reproduce behavior, distinguish documentation from
+measurement and inference, and see uncertainty rather than a manufactured
+success. A shorter agent entry point does not weaken the retained authoring or
+merge contract.
 
-## Read First
+## Sources of Truth
 
-- [CONTRIBUTING.md](CONTRIBUTING.md): canonical title, template and priority-label rules.
-- [DOCUMENTATION_CONTRACT.md](DOCUMENTATION_CONTRACT.md): the complete previous
-  authoring contract, retained byte-for-byte, including templates, screenshots,
-  PII, navigation, validators and mandatory merge gates.
-- README.md and the affected playbook, runbook and implementation.
-- [Golden Evidence Model](docs/reference/golden-evidence-model.md): normative
-  vocabulary, run identity, evidence roles, trust levels, and evaluator contract.
+Read these before changing the repository:
 
-The detailed contract is not deleted or weakened. Its older title examples and
-falsification wording are superseded by the explicit rules below.
+1. [Golden Evidence Model](docs/reference/golden-evidence-model.md) — normative
+   experiment, evidence, assertion, hypothesis, status, role, trust, provenance,
+   and evaluator vocabulary.
+2. [DOCUMENTATION_CONTRACT.md](DOCUMENTATION_CONTRACT.md) — complete authoring,
+   PII, screenshot capture, CLI-table, content-validation, Oracle-review, and
+   merge requirements. Its mandatory gates remain intact.
+3. [CONTRIBUTING.md](CONTRIBUTING.md) — sole source for canonical titles,
+   issue/PR sections, branch names, and the one-priority-label convention.
+4. The affected documentation, implementation, lab contract, schemas,
+   validators, and tests. README summaries are not substitutes for them.
 
-Titles and templates must point to the [Title Convention](CONTRIBUTING.md#title-convention),
-the one source of truth for the 11 types, optional scope and breaking marker.
+When these sources describe different concerns, apply all of them. The Golden
+model governs evidentiary meaning; the documentation contract governs
+authoring and merge safety; validators and CI govern mechanical consistency.
+Do not copy mechanical rules into this file when an executable check or the
+detailed contract already owns them.
 
-## Project Operations
+## Evidence-Driven Reasoning
 
-Work issue-first. Search the existing backlog; use the canonical issue/PR
-sections and exactly one priority:critical/high/medium/low label. New reports
-receive needs-triage; maintainers confirm validity, scope, type and priority.
-Preserve unrelated labels. Use local umbrella issues, not milestones, WIP
-labels or trackers that require sibling repository work to finish.
+Use the one-way chain:
 
-Use Closes #N for fully completed scope, or Refs #N with an explicit remainder
-for partial work. Do not auto-close unfinished umbrellas. Preserve concurrent
-edits, original acceptance states and evidence. Formatting is not new
-verification and must not reopen or close work, merge PRs or rewrite commits.
+```text
+Experiment --collects--> Evidence --> Assertion --> Hypothesis
+```
 
-## Evidence and Dates
+- Define the question, hypothesis, assertions, sampling window, expected
+  observations, and observations capable of disproving each assertion before
+  execution. Do not select success criteria after inspecting results.
+- Collectors preserve observations; they do not decide causes. Evaluators
+  derive declared assertions from raw evidence and then derive the hypothesis
+  outcome. Raw evidence outranks generated summaries and verdict files.
+- Keep claim levels distinct: `Documented` comes from an authoritative source,
+  `Observed` records what a named artifact directly shows, `Inferred` explains
+  what multiple observations suggest, and `Not Proven` states what the
+  evidence cannot establish. Never promote `Inferred` to `Observed`.
+- Use `Unknown` in reader-facing evidence notes when data is absent or
+  ambiguous. In machine-evaluated outcomes, undecidable evidence leads to
+  `INCONCLUSIVE`, not `CONTRADICTED`.
+- Record the role of each artifact: `symptom`, `supporting`, `discriminating`,
+  `control`, or `recovery`. Record trust independently as
+  `trusted-current`, `trusted-historical`, `unverified`, or `invalid`.
+  Supporting evidence raises plausibility; only discriminating evidence can
+  separate competing explanations. Recovery proves restored behavior, not a
+  unique cause.
+- A falsification criterion is a predeclared observation that could contradict
+  an assertion or hypothesis. It is not merely a successful recovery step.
+- Report hypothesis status only as `SUPPORTED`, `CONTRADICTED`,
+  `INCONCLUSIVE`, or `NOT_TESTED`. Report execution separately as `COMPLETE`,
+  `PARTIAL`, `BLOCKED`, `FAILED`, or `NOT_RUN`. `COMPLETE` plus
+  `INCONCLUSIVE` is an honest and publishable result.
+- Keep official documentation, local/static checks, live Azure execution,
+  evidence validity, hypothesis outcome, recovery, cleanup, freshness, and
+  independent reproduction as separate claims. None implies another.
 
-- Preserve validation.az_cli.last_tested and validation.bicep.last_tested.
-  Only actual execution updates them. A real failed rerun records fail.
-- captured_at is actual collection; evaluated_at is analysis;
-  document_updated_at is a text change. Replay never refreshes a capture date.
-- Keep source commit, environment, recipe digest and evidence identity with runs.
-- Execution, evidence validity, hypothesis, recovery, cleanup, freshness and
-  independence are separate axes. Missing required evidence cannot pass.
-- Falsification means predeclared observations capable of contradicting a
-  hypothesis. Recovery after a change does not uniquely prove its cause.
-- Missing logs do not prove the app never started. A healthy platform detector
-  alone cannot exclude platform contributions. HTTP 499 does not prove SNAT.
-- A completed experiment may be INCONCLUSIVE. Stale means recheck freshness,
-  not that the historical result is false. Do not force positive lab outcomes.
-- State hosting/runtime/SKU limits. A controlled restart is not a reproduction
-  of a specific ASE maintenance mechanism.
-- Never publish secrets, customer identifiers or unapproved internal telemetry.
-  Synthetic observations must not be relabeled as real customer or Azure runs.
-- Raw evidence outranks generated summaries. Collectors record observations;
-  evaluators derive declared assertions and never invent root cause.
-- Declare hypotheses, assertions, sampling, and disproof criteria before a run.
-  Run directories and captured evidence are immutable; replay creates only a
-  new evaluation record.
-- Hypothesis outcomes are `SUPPORTED`, `CONTRADICTED`, `INCONCLUSIVE`, or
-  `NOT_TESTED`. Execution is separately `COMPLETE`, `PARTIAL`, `BLOCKED`,
-  `FAILED`, or `NOT_RUN`.
+## Judgment Boundaries
+
+- Missing or delayed logs do not prove an event did not happen. Healthy
+  platform KPIs do not exclude a platform contribution. HTTP 499 or 503 alone
+  does not identify a root cause. State the competing explanations and the
+  discriminating evidence still needed.
+- State the tested hosting model, runtime, region, SKU, source commit, recipe,
+  and known limits. Do not generalize a controlled restart into reproduction of
+  a specific maintenance mechanism.
+- Do not force a positive lab outcome. Preserve failed, partial, blocked,
+  contradictory, and inconclusive runs when they are the truthful result.
+- Case-inspired public examples must be anonymized or recreated. Label their
+  content `Observed`, `Inferred`, `Not Proven`, or `Unknown` as appropriate;
+  do not present a synthetic recreation as customer or Azure reproduction
+  evidence.
+- Never publish customer identities, tenant details, secrets, account-scoped
+  identifiers, private customer evidence, or unapproved internal telemetry.
+  Follow the full PII and Portal capture rules in
+  [DOCUMENTATION_CONTRACT.md](DOCUMENTATION_CONTRACT.md#pii-removal-quality-gate)
+  and visually inspect final committed image bytes when applicable.
+- Retain sanitized failure evidence. Clean up only resources owned by the run,
+  verify their absence, and never select subscription-wide resources by a name
+  fragment.
 - Independent reproduction requires a genuinely different human operator and
-  independently collected raw evidence. Automation or another AI-agent replay
-  demonstrates repeatability only and leaves independence `NOT_MET`.
+  separately collected raw evidence. Automation or another AI replay may show
+  repeatability but leaves independence `NOT_MET`.
 
-## Validation and Privilege Boundaries
+## Dates, Provenance, and Replay
 
-Run python -m unittest discover -s tests/ci -v and applicable application,
-lab, documentation and Golden gates. Read-only PR checks receive no cloud
-secrets. Paid Azure runs require a reviewed main commit and an explicitly
-enabled protected azure-e2e environment. Missing prerequisites remain blocked,
-not skipped-as-verified. This adoption does not provision credentials or enable
-paid recurring runs.
+- Preserve `validation.az_cli.last_tested` and
+  `validation.bicep.last_tested`. Only an actual execution of that method may
+  update its date and result; a real failed rerun records `fail`.
+- Keep `captured_at`, `evaluated_at`, and `document_updated_at` separate.
+  Capture time belongs to live collection, evaluation time to derivation, and
+  document time to prose changes.
+- Offline replay, local CI, formatting, dashboard regeneration, or prose edits
+  never refresh Azure verification or capture dates.
+- Bind runs to their source commit, environment, recipe digest, run identity,
+  and evidence identity. Run directories and captured evidence are immutable;
+  a new collection creates a new run, while replay creates only a new
+  evaluation record.
+- Never fabricate a date, result, execution, review, approval, cleanup, or
+  independence claim. If evidence is absent, record the appropriate unknown,
+  blocked, not-run, or not-tested state.
 
-`tools/validate_frontmatter.py` rejects invalid document types, duplicate slugs,
-and required-or-forbidden `content_validation` placement; keep it wired into PR
-CI whenever its contract is cited.
+## Work and Completion Behavior
 
-The priority-label definition is versioned in `.github/priority-labels.json`.
-Its synchronization utility has an explicit read-only `--check` mode and never
-deletes unrelated labels; do not apply it to the live repository for this work.
+- Work issue-first. Preserve acceptance criteria, out-of-scope statements,
+  checked and unchecked states, evidence, and concurrent edits. Use
+  `Closes #N` only for fully completed local scope; use `Refs #N` and state the
+  remainder for partial or umbrella work.
+- Formatting or normalizing an issue/PR body is not new verification. Do not
+  mark checklist, review, or Azure work complete merely to make metadata pass.
+- Read-only PR jobs receive no cloud secrets. Paid Azure execution requires a
+  reviewed main commit and an explicitly enabled protected environment.
+  Missing prerequisites are `BLOCKED` or `NOT_RUN`, never skipped-as-verified.
+- Validate mechanically checkable claims with their owning tools rather than
+  prose review. In particular, use `scripts/validate_documented_paths.py` for
+  repository-local links and executable command paths; use
+  `tools/validate_frontmatter.py` and `scripts/lib/content_scope.py` for
+  frontmatter and content-validation scope; use
+  `scripts/validate_cli_explanations.py` for CLI explanation tables and table
+  termination; and use `scripts/generate_golden_status.py --check` for the gate
+  registry and dashboard contract. CI remains the final mechanical authority.
+- Run the checks selected by the changed scope, including operating-contract
+  and impact-classifier tests when their contracts are affected. Do not claim a
+  check passed unless it ran successfully on the reported head.
 
-Retain sanitized evidence on failure. Cleanup only run-owned resources and
-verify absence; never delete subscription-wide resources by a name fragment.
+## Review and Merge Boundary
 
-## Merge and Review
+All mandatory review and merge gates in
+[DOCUMENTATION_CONTRACT.md](DOCUMENTATION_CONTRACT.md#mandatory-oracle-review-ai-agent-rule)
+remain in force, including Oracle review, fully green CI on the exact head SHA,
+caption-to-image accuracy, and final-image PII verification. The merge procedure
+and stop conditions in that contract are unchanged.
 
-All existing mandatory merge gates in DOCUMENTATION_CONTRACT.md remain in
-force, including Oracle review and applicable final-image checks. Verify
-required checks on the exact head SHA. Do not bypass missing, pending or failing
-checks, claim an Oracle review that did not occur, or change protection settings.
-AI review comments are not human approvals. Package-release automation and the
-reference repository's approval-count decisions are not imported.
+Do not claim an Oracle score or approval that did not occur. Do not bypass
+missing, pending, or failing checks, alter protection settings, or treat AI
+comments as human approval. Package-release automation, package coverage
+targets, and reference-repository approval-count rules are not adopted here.
