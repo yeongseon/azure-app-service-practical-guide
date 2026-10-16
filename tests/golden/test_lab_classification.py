@@ -1,4 +1,4 @@
-"""Legacy lab classification tests (#182).
+"""Azure App Service legacy lab classification tests (#182).
 
 The classification is only useful if it cannot drift away from the
 repository. A lab added later and never classified would otherwise sit
