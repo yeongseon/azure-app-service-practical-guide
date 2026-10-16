@@ -12,16 +12,22 @@ import sys
 sys.dont_write_bytecode = True
 
 import importlib.util
+import datetime as dt
 import json
 import pathlib
+import re
+import subprocess
 import unittest
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 CLASSIFICATION = ROOT / "labs/golden-classification.json"
 DATA = json.loads(CLASSIFICATION.read_text())
+REPOSITORY_SERVICE = "App Service"
 
 VALID = {"golden", "migration-needed", "archive-candidate"}
 EXPECTED_SCENARIO_COUNT = 15
+ARTIFACT_DIRECTORY_NAMES = {"artifacts-sanitized", "results"}
+FULL_SHA = re.compile(r"^[0-9a-f]{40}$")
 
 _spec = importlib.util.spec_from_file_location("ev", ROOT / "scripts/golden/evaluate_run.py")
 ev = importlib.util.module_from_spec(_spec)
@@ -33,6 +39,34 @@ def labs_on_disk():
         p.name for p in (ROOT / "labs").iterdir()
         if p.is_dir() and not p.name.startswith("_")
     }
+
+
+def artifact_directories():
+    return {
+        path.relative_to(ROOT / "labs").as_posix()
+        for path in (ROOT / "labs").rglob("*")
+        if path.is_dir() and path.name in ARTIFACT_DIRECTORY_NAMES
+    }
+
+
+def classified_artifact_sets():
+    classified = []
+    for row in DATA["labs"]:
+        for item in row.get("artifact_sets", []):
+            classified.append((f"{row['lab']}/{item['path']}", item))
+        for stage in row.get("stages", []):
+            for item in stage.get("artifact_sets", []):
+                classified.append((f"{row['lab']}/{stage['stage']}/{item['path']}", item))
+    return classified
+
+
+def git_commit_resolves(commit):
+    return subprocess.run(
+        ["git", "cat-file", "-e", f"{commit}^{{commit}}"],
+        cwd=ROOT,
+        check=False,
+        capture_output=True,
+    ).returncode == 0
 
 
 class CoverageTests(unittest.TestCase):
@@ -86,22 +120,69 @@ class ShapeTests(unittest.TestCase):
             self.assertIn(item["classification"], VALID)
             self.assertIn(item["artifact_trust"], ev.EVIDENCE_TRUST)
 
-    def test_every_retained_artifact_set_is_classified(self):
-        for row in DATA["labs"]:
-            artifact_dir = ROOT / "labs" / row["lab"] / "artifacts-sanitized"
-            if not artifact_dir.is_dir():
+    def test_every_retained_artifact_set_is_classified_exactly_once(self):
+        classified_paths = [path for path, _item in classified_artifact_sets()]
+        self.assertEqual(len(classified_paths), len(set(classified_paths)), msg="duplicate artifact classification")
+        self.assertEqual(set(classified_paths), artifact_directories())
+
+    def test_artifact_metadata_has_split_resolvable_provenance(self):
+        for path, item in classified_artifact_sets():
+            self.assertIn(item["trust"], ev.EVIDENCE_TRUST, msg=path)
+            self.assertRegex(item["captured_at"], r"^\d{4}-\d{2}-\d{2}$", msg=path)
+            self.assertNotIn("source_commit", item, msg=f"{path}: ambiguous source_commit")
+            introduced = item["artifact_introduced_commit"]
+            self.assertRegex(introduced, FULL_SHA, msg=path)
+            self.assertTrue(git_commit_resolves(introduced), msg=f"{path}: artifact commit does not resolve")
+            revision = item["run_source_revision"]
+            if revision is None:
+                self.assertTrue(item["run_source_unavailable_reason"].strip(), msg=path)
+                self.assertIsNone(item["run_source_dirty"], msg=path)
+            else:
+                self.assertRegex(revision, FULL_SHA, msg=path)
+                self.assertTrue(git_commit_resolves(revision), msg=f"{path}: run revision does not resolve")
+                self.assertIsInstance(item["run_source_dirty"], bool, msg=path)
+            self.assertIn(REPOSITORY_SERVICE, item["environment"], msg=path)
+            self.assertTrue(item["environment"].strip(), msg=path)
+
+    def test_capture_dates_are_derived_from_retained_evidence(self):
+        for path, item in classified_artifact_sets():
+            evidence_path = ROOT / "labs" / item["captured_at_evidence"]
+            self.assertTrue(evidence_path.is_file(), msg=path)
+            evidence = evidence_path.read_text()
+            compact_date = item["captured_at"].replace("-", "")
+            self.assertTrue(
+                item["captured_at"] in evidence or compact_date in evidence or compact_date in evidence_path.name,
+                msg=f"{path}: captured_at is not derivable from {item['captured_at_evidence']}",
+            )
+            self.assertLessEqual(dt.date.fromisoformat(item["captured_at"]), dt.date.today(), msg=path)
+
+    def test_environment_matches_machine_readable_manifests(self):
+        expected = {
+            "missing-wwwroot-content/artifacts-sanitized": ("B1", "Korea Central", "2.89.0", "NODE|20-lts"),
+            "zipdeploy-file-lock-serialization/artifacts-sanitized": ("B1", "Korea Central", "2.89.0", "Node.js 20 on Windows (iisnode)"),
+        }
+        by_path = dict(classified_artifact_sets())
+        for path, values in expected.items():
+            item = by_path[path]
+            manifest = json.loads((ROOT / "labs" / item["environment_evidence"][0]).read_text())
+            for value in values:
+                self.assertIn(value, item["environment"], msg=path)
+            self.assertEqual(item["run_source_revision"], manifest["sourceRevision"], msg=path)
+            self.assertEqual(item["run_source_dirty"], manifest["sourceDirtyAtRun"], msg=path)
+
+    def test_declared_environment_evidence_supports_environment(self):
+        expected_tokens = {
+            "windows-java-httpplatformhandler-timeout/stage-0-config-discovery/results": ("Basic", "Korea Central", "17"),
+            "windows-java-httpplatformhandler-timeout/lab-1-baseline-signature/results": ("Basic", "Korea Central", "17"),
+            "windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/results": ("B1", "Korea Central", "17"),
+        }
+        for path, item in classified_artifact_sets():
+            evidence_paths = item.get("environment_evidence", [])
+            if path not in expected_tokens:
                 continue
-            if row["classification"] == "golden":
-                classification = ROOT / "labs" / row["lab"] / "golden/evidence-classification.json"
-                self.assertTrue(classification.is_file(), msg=row["lab"])
-                continue
-            sets = row.get("artifact_sets", [])
-            self.assertEqual([item["path"] for item in sets], ["artifacts-sanitized"], msg=row["lab"])
-            for item in sets:
-                self.assertIn(item["trust"], ev.EVIDENCE_TRUST)
-                self.assertRegex(item["captured_at"], r"^\d{4}-\d{2}-\d{2}$")
-                self.assertRegex(item["source_commit"], r"^[0-9a-f]{40}$")
-                self.assertTrue(item["environment"].strip())
+            evidence = "\n".join((ROOT / "labs" / value).read_text() for value in evidence_paths)
+            for token in expected_tokens[path]:
+                self.assertIn(token, evidence, msg=f"{path}: environment token {token!r} lacks evidence")
 
 
 class GoldenClaimTests(unittest.TestCase):
