@@ -205,6 +205,7 @@ def collect(run_dir) -> dict:
         "snat_port_pressure": None if pressure is None else pressure.get("status"),
         "destination_binding": (
             None if target is None else target.get("matches_requested_destination")),
+        "pooling_reduces_transport_failures": None,
     }
 
     scalar_sources = {
