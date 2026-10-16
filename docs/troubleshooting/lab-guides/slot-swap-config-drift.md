@@ -68,13 +68,15 @@ This Level 3 lab guide reproduces a slot swap on Azure App Service Linux and pro
     
     This is expected App Service slot behavior, not accidental misconfiguration.
 
-### Golden Scenario C live run (2026-10-16)
+### Golden Scenario C live runs (2026-10-16)
 
-Run `20261016T131733Z-ca62fd8ccb42` completed against an S1 Linux App Service in Korea Central and is retained at `evidence/runs/20261016T131733Z-ca62fd8ccb42/`.
+The first attempt, run `20261016T131733Z-ca62fd8ccb42`, was discarded after review because its runner had not retained bound probe envelopes or every raw input consumed by the collector. Its private raw data remains preserved, but the unmerged package is replaced rather than presented as sufficient evidence.
 
-The honest Golden-model result is **INCONCLUSIVE**, not Supported. Five assertions were supported: the swap command succeeded, production restarted, production configuration changed, the deployment-error query returned zero rows, and the swap-back restored production configuration. The staging pre-swap `/config` request timed out, so neither cross-slot stickiness assertion could be evaluated. The missing observation was not converted into a refutation or inferred success.
+Run `20261016T153835Z-275d216becd8` reran the experiment against an S1 Linux App Service in Korea Central with the corrected, committed runner. The retained package includes sanitized copies of every collector-consumed raw file and recomputable digests. Both hostnames were warmed before the baseline window, and the distinct pre-swap target values were confirmed before the swap.
 
-Recovery and cleanup are recorded separately: swap-back restoration is `SUPPORTED`, and the run-owned resource group deletion was verified by `az group exists` returning `false`. This AI-agent run is not an independent human reproduction.
+The honest Golden-model result remains **INCONCLUSIVE**. The swap, restart, both stickiness discriminators, production configuration change, and recovery were supported. The app- and window-scoped deployment-log query returned a nonzero command exit code, so that control is unavailable rather than treated as zero rows. Recovery is reported separately as `SUPPORTED` and does not alter the hypothesis aggregation.
+
+The run-owned resource group deletion was verified by a retained final `az group exists` command envelope returning `false`. Sanitization removed the Azure CLI's environment-specific `cryptography` warning from stderr and replaced identifiers while preserving exit codes and task-relevant output. The package can bind bytes, identities, timestamps, and hashes, but it cannot cryptographically prevent an author from forging authorship metadata. This AI-agent run is not an independent human reproduction.
 
 ---
 
