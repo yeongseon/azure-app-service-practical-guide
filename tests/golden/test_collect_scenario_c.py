@@ -110,6 +110,7 @@ def evaluate_with(evidence):
     manifest = dict(MANIFEST)
     manifest.update(run_id=evidence["run_id"], captured_at=evidence["captured_at"],
                     resource_id=evidence.get("resource_id"), execution_status="COMPLETE",
+                    role_aware_aggregation=True,
                     source_commit="3e0442bb19b966766598ffeae1fb47f3f6960837",
                     environment={"subscription_kind": "test", "region": "local",
                                  "runtime": "Python 3.11", "sku": "test-sku"},

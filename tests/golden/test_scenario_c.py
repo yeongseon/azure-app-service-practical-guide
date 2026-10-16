@@ -48,6 +48,7 @@ def run_with(evidence, execution="COMPLETE"):
                     resource_id="/subscriptions/x/rg/app",
                     captured_at="2026-09-27T02:03:04Z",
                     execution_status=execution,
+                    role_aware_aggregation=True,
                     source_commit="3e0442bb19b966766598ffeae1fb47f3f6960837",
                     environment={"subscription_kind": "test", "region": "local",
                                  "runtime": "Python 3.11", "sku": "test-sku"},
