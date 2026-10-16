@@ -15,7 +15,16 @@
     {
       "lab": "container-http-pings",
       "classification": "migration-needed",
-      "reason": "Has trigger.sh and fix.sh but no verify.sh at all, so there is currently nothing to evaluate. Needs a collector plus a declared contract."
+      "reason": "Has trigger.sh and fix.sh but no verify.sh at all, so there is currently nothing to evaluate. Needs a collector plus a declared contract.",
+      "artifact_sets": [
+        {
+          "path": "artifacts-sanitized",
+          "trust": "trusted-historical",
+          "captured_at": "2026-04-04",
+          "source_commit": "ef78457ae487cdb244808c763ac72a72057ce6a7",
+          "environment": "Azure App Service Linux; pre-Golden sanitized capture"
+        }
+      ]
     },
     {
       "lab": "deployment-succeeded-startup-failed",
@@ -25,32 +34,38 @@
     {
       "lab": "dns-vnet-resolution",
       "classification": "migration-needed",
-      "reason": "Runnable trigger/verify pair with sanitized artifacts, no declared assertions and no run identity."
+      "reason": "Runnable trigger/verify pair with sanitized artifacts, no declared assertions and no run identity.",
+      "artifact_sets": [{"path": "artifacts-sanitized", "trust": "trusted-historical", "captured_at": "2026-04-04", "source_commit": "ef78457ae487cdb244808c763ac72a72057ce6a7", "environment": "Azure App Service Linux; pre-Golden sanitized capture"}]
     },
     {
       "lab": "failed-to-forward-request",
       "classification": "migration-needed",
-      "reason": "Runnable trigger/verify pair with sanitized artifacts, no declared assertions and no run identity."
+      "reason": "Runnable trigger/verify pair with sanitized artifacts, no declared assertions and no run identity.",
+      "artifact_sets": [{"path": "artifacts-sanitized", "trust": "trusted-historical", "captured_at": "2026-04-04", "source_commit": "ef78457ae487cdb244808c763ac72a72057ce6a7", "environment": "Azure App Service Linux; pre-Golden sanitized capture"}]
     },
     {
       "lab": "intermittent-5xx",
       "classification": "migration-needed",
-      "reason": "Runnable trigger/verify pair. Intermittent symptoms make a declared sampling plan and an explicit INCONCLUSIVE outcome mandatory before this can be evaluated."
+      "reason": "Runnable trigger/verify pair. Intermittent symptoms make a declared sampling plan and an explicit INCONCLUSIVE outcome mandatory before this can be evaluated.",
+      "artifact_sets": [{"path": "artifacts-sanitized", "trust": "trusted-historical", "captured_at": "2026-04-04", "source_commit": "ef78457ae487cdb244808c763ac72a72057ce6a7", "environment": "Azure App Service Linux; pre-Golden sanitized capture"}]
     },
     {
       "lab": "memory-pressure",
       "classification": "migration-needed",
-      "reason": "Runnable trigger/verify pair with sanitized artifacts, no declared assertions and no run identity."
+      "reason": "Runnable trigger/verify pair with sanitized artifacts, no declared assertions and no run identity.",
+      "artifact_sets": [{"path": "artifacts-sanitized", "trust": "trusted-historical", "captured_at": "2026-04-04", "source_commit": "ef78457ae487cdb244808c763ac72a72057ce6a7", "environment": "Azure App Service Linux; pre-Golden sanitized capture"}]
     },
     {
       "lab": "missing-wwwroot-content",
       "classification": "migration-needed",
-      "reason": "Ships a deterministic local ZIP-content regression suite and lab scripts, but has no Golden manifest, run identity, or artifact trust declaration yet. Its checked-in test evidence is useful local verification, not a Golden Azure run."
+      "reason": "Ships a deterministic local ZIP-content regression suite and lab scripts, but has no Golden manifest or run identity. Its checked-in test evidence is useful local verification, not a Golden Azure run.",
+      "artifact_sets": [{"path": "artifacts-sanitized", "trust": "trusted-current", "captured_at": "2026-10-13", "source_commit": "e466e157ee50dd0aded731ffc78ef2a7bfa1804e", "environment": "Local deterministic ZIP-content regression; not Azure execution"}]
     },
     {
       "lab": "no-space-left-on-device",
       "classification": "migration-needed",
-      "reason": "Runnable trigger/verify pair with sanitized artifacts, no declared assertions and no run identity."
+      "reason": "Runnable trigger/verify pair with sanitized artifacts, no declared assertions and no run identity.",
+      "artifact_sets": [{"path": "artifacts-sanitized", "trust": "trusted-historical", "captured_at": "2026-04-04", "source_commit": "ef78457ae487cdb244808c763ac72a72057ce6a7", "environment": "Azure App Service Linux; pre-Golden sanitized capture"}]
     },
     {
       "lab": "private-endpoint-route-fault",
@@ -65,7 +80,8 @@
     {
       "lab": "slow-start-cold-start",
       "classification": "migration-needed",
-      "reason": "Runnable trigger/verify pair. A latency claim needs a declared measurement and threshold before a verdict is meaningful."
+      "reason": "Runnable trigger/verify pair. A latency claim needs a declared measurement and threshold before a verdict is meaningful.",
+      "artifact_sets": [{"path": "artifacts-sanitized", "trust": "trusted-historical", "captured_at": "2026-04-04", "source_commit": "ef78457ae487cdb244808c763ac72a72057ce6a7", "environment": "Azure App Service Linux; pre-Golden sanitized capture"}]
     },
     {
       "lab": "snat-exhaustion",
@@ -97,7 +113,8 @@
     {
       "lab": "zipdeploy-file-lock-serialization",
       "classification": "migration-needed",
-      "reason": "Ships a deterministic local serialization regression suite and deployment assets, but no Golden manifest, run identity, or artifact trust declaration. Local test results must not be promoted to live Azure execution evidence."
+      "reason": "Ships a deterministic local serialization regression suite and deployment assets, but no Golden manifest or run identity. Local test results must not be promoted to live Azure execution evidence.",
+      "artifact_sets": [{"path": "artifacts-sanitized", "trust": "trusted-current", "captured_at": "2026-10-13", "source_commit": "e466e157ee50dd0aded731ffc78ef2a7bfa1804e", "environment": "Local deterministic deployment-serialization regression; not Azure execution"}]
     }
   ]
 }
