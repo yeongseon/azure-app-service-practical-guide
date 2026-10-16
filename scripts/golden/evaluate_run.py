@@ -628,8 +628,8 @@ def _derive_scenario_b(observations: dict, manifest: dict) -> dict:
     if not isinstance(health, dict):
         raise ModelError("Scenario B destination health capture is invalid")
     health_at = _timestamp(health.get("captured_at"), "destination health captured_at")
-    if not parsed["load"][0] <= health_at <= parsed["load"][1]:
-        raise ModelError("destination health falls outside the load window")
+    if not parsed["load"][0] <= health_at <= capture_end:
+        raise ModelError("destination health is not contemporaneous with the load phase")
     derived = {
         "baseline_success_count": len(probes_by_phase["baseline"])
         if totals["baseline"]["failure"] == totals["baseline"]["transport_failure"] == 0 else 0,
