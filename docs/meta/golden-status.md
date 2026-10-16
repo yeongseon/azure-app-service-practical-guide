@@ -25,7 +25,7 @@ Every quality gate in this repository, its most recently recorded result, and th
 
 ## Summary
 
-*Snapshot of `ceb730d plus uncommitted working-tree changes`, generated 2026-10-16.*
+*Snapshot of `4ce2862 plus uncommitted working-tree changes`, generated 2026-10-16.*
 
 | Metric | Count |
 |---|---:|
