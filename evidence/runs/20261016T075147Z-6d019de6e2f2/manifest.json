@@ -15,8 +15,6 @@
     "sku": "B1 Linux"
   },
   "recipe_digest": "sha256:41cb9e899473adcd2ad12f53fd156b6d8b01dc9490323344604db59df6cc2d40",
-  "collector_digest": "sha256:07490e4cea5d81d7d203732c808692553ae1cc76ca2364e837f3c0dfbde5e3bd",
-  "collector_path": "scripts/golden/collect_scenario_a.py",
   "recipe_paths": [
     "labs/deployment-succeeded-startup-failed/app/app.py",
     "labs/deployment-succeeded-startup-failed/app/requirements.txt",

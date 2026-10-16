@@ -1,7 +1,22 @@
 {
   "scenario": "deployment-succeeded-startup-failed",
   "collector": "scripts/golden/collect_scenario_a.py",
-  "derivation": "The corrected collector was run offline against the preserved private raw directory for this same run ID; no Azure rerun or synthetic observation was used.",
+  "derivation": {
+    "collector_commit": "dce105c8843bdb8d9c8dc1819f1fe7ecc20d0113",
+    "collector_path": "scripts/golden/collect_scenario_a.py",
+    "collector_digest": "sha256:755bb6d7d24e37511b4f857b46d9f9a8e82ca9e481e642fa10b4f0391fdbdc1d",
+    "derived_at": "2026-10-16T11:19:50Z",
+    "derived_offline": true,
+    "raw_input": {
+      "run_id": "20261016T075147Z-6d019de6e2f2",
+      "location": "private run directory",
+      "phase_capture_integrity": {
+        "baseline": "e31cea6109e0ca11b70f982947fecc8108d91f7c89af63631e81f6d652a8e5d0",
+        "fault": "ca5ace34214df80a73f5dbe69de09f3d83effbbcab0e9cb01b79e9bcd7f76f54",
+        "recovery": "bb9596e5be987086c4b6556701bf5f74f09a1abf0339abf7b636b72d2a8e57d2"
+      }
+    }
+  },
   "sanitised": true,
   "sanitisation": "Subscription, tenant, resource-group, app, host, instance, workspace and operator identifiers were omitted. Exact phase/probe timestamps, status codes, startup commands, and wrong_module console signatures are unmodified from the preserved private run.",
   "replay": "python3 scripts/golden/evaluate_run.py evidence/runs/20261016T075147Z-6d019de6e2f2",
@@ -21,8 +36,6 @@
     "sku": "B1 Linux"
   },
   "recipe_digest": "sha256:41cb9e899473adcd2ad12f53fd156b6d8b01dc9490323344604db59df6cc2d40",
-  "collector_digest": "sha256:07490e4cea5d81d7d203732c808692553ae1cc76ca2364e837f3c0dfbde5e3bd",
-  "collector_path": "scripts/golden/collect_scenario_a.py",
   "recipe_digest_rule": "SHA-256 of canonical compact key-sorted JSON mapping each recipe path relative to the lab root to the SHA-256 of its bytes at source_commit.",
   "recipe_paths": [
     "labs/deployment-succeeded-startup-failed/app/app.py",
@@ -48,7 +61,7 @@
     }
   },
   "digests": {
-    "manifest.json": "70100d94ac7df5ea108860c17009d0a216ebf6d3cfe710caed03381339a934cb",
+    "manifest.json": "e17a06ce97c6bd5ab25d964b828769d86cb1d54efddc0f16812231190b829ece",
     "evidence.json": "62a484a2636c67cd2a29c84553ab060860b1297dd4f67320c49125b724682edb",
     "result.json": "6c9f0844b151182995bbdeead10d0189df49865304b9bf659541245a3ae2d4b0",
     "cleanup.json": "c851a1d522b09ba9fcb3741e803be60342ead2183a5c5a1ba1935e81dae40407"
