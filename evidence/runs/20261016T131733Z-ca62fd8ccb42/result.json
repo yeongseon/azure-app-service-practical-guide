@@ -1,0 +1,19 @@
+{
+  "run_id": "20261016T131733Z-ca62fd8ccb42",
+  "captured_at": "2026-10-16T13:17:33.255168+00:00",
+  "evaluated_at": "2026-10-16T13:32:20Z",
+  "execution_status": "COMPLETE",
+  "evidence_identity": "BOUND",
+  "hypothesis_status": "INCONCLUSIVE",
+  "assertion_outcomes": {
+    "swap-succeeded": "SUPPORTED",
+    "swap-activated": "SUPPORTED",
+    "non-sticky-travelled-with-code": "INCONCLUSIVE",
+    "sticky-remained-with-slot": "INCONCLUSIVE",
+    "symptom-production-config-changed": "SUPPORTED",
+    "deployment-itself-did-not-fail": "SUPPORTED",
+    "recovery-swap-back-restores": "SUPPORTED"
+  },
+  "generated_verdict_claimed": null,
+  "generated_verdict_rejected": false
+}

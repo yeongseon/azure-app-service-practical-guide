@@ -10,11 +10,13 @@ capable of refusing the hypothesis.
 """
 
 import importlib.util
+import hashlib
 import json
 import pathlib
 import sys
 import tempfile
 import unittest
+from unittest import mock
 
 sys.dont_write_bytecode = True
 
@@ -30,6 +32,7 @@ def _load(name, relative):
 
 collect_c = _load("collect_c", "scripts/golden/collect_scenario_c.py")
 ev = _load("ev_c", "scripts/golden/evaluate_run.py")
+run_c = _load("run_c", "scripts/golden/run_scenario_c.py")
 
 MANIFEST = json.loads(
     (ROOT / "labs/slot-swap-config-drift/golden/manifest.template.json").read_text())
@@ -77,6 +80,27 @@ def build_run(**overrides):
         files.pop(name, None)
     for name, body in files.items():
         (directory / name).write_text(json.dumps(body))
+    phases = {
+        "baseline": {
+            "started_at": "2026-09-27T10:00:00+00:00",
+            "ended_at": "2026-09-27T10:01:00+00:00",
+            "probes": [files["prod-before.json"], files["staging-before.json"]],
+        },
+        "fault": {
+            "started_at": SWAP_STARTED,
+            "ended_at": SWAP_ENDED,
+            "probes": [files.get("prod-after.json"), files.get("staging-after.json")],
+        },
+        "recovery": {
+            "started_at": "2026-09-27T10:06:01+00:00",
+            "ended_at": "2026-09-27T10:09:01+00:00",
+            "probes": [files.get("prod-after-rollback.json")],
+        },
+    }
+    for phase, body in phases.items():
+        target = directory / phase
+        target.mkdir()
+        (target / "phase.json").write_text(json.dumps(body))
     return directory
 
 
@@ -86,6 +110,7 @@ def evaluate_with(evidence):
     manifest = dict(MANIFEST)
     manifest.update(run_id=evidence["run_id"], captured_at=evidence["captured_at"],
                     resource_id=evidence.get("resource_id"), execution_status="COMPLETE",
+                    role_aware_aggregation=True,
                     source_commit="3e0442bb19b966766598ffeae1fb47f3f6960837",
                     environment={"subscription_kind": "test", "region": "local",
                                  "runtime": "Python 3.11", "sku": "test-sku"},
@@ -111,6 +136,35 @@ class ProvenanceTests(unittest.TestCase):
         self.assertEqual(
             evaluate_with(collect_c.collect(build_run()))["hypothesis_status"], "SUPPORTED")
 
+    def test_raw_phase_files_anchor_every_retained_probe(self):
+        run = build_run()
+        evidence = collect_c.collect(run)
+        integrity = evidence["observations"]["phase_capture_integrity"]
+        for phase, expected_count in (("baseline", 2), ("fault", 2), ("recovery", 1)):
+            raw = (run / phase / "phase.json").read_bytes()
+            self.assertEqual(integrity[phase]["probe_count"], expected_count)
+            self.assertEqual(integrity[phase]["sha256"], hashlib.sha256(raw).hexdigest())
+
+    def test_runner_source_commit_is_preserved(self):
+        run = build_run()
+        document = json.loads((run / "run.json").read_text())
+        document["source_sha"] = "a" * 40
+        (run / "run.json").write_text(json.dumps(document))
+        self.assertEqual(collect_c.collect(run)["runner_source_commit"], "a" * 40)
+
+    def test_evaluator_rederives_claims_from_raw_snapshots(self):
+        evidence = collect_c.collect(build_run())
+        observations = evidence["observations"]
+        observations["non_sticky_feature_flag_swapped"] = False
+        with self.assertRaises(ev.ModelError):
+            ev._derive_scenario_c(observations, {})
+
+    def test_evaluator_does_not_invent_missing_stickiness(self):
+        evidence = collect_c.collect(build_run(staging_before={"unreachable": "timed out"}))
+        derived = ev._derive_scenario_c(evidence["observations"], {})
+        self.assertNotIn("non_sticky_feature_flag_swapped", derived)
+        self.assertNotIn("sticky_db_connection_remained", derived)
+
 
 class UnperformedStepTests(unittest.TestCase):
     """A step that never ran cannot become supporting evidence."""
@@ -120,16 +174,16 @@ class UnperformedStepTests(unittest.TestCase):
         self.assertNotIn("post_rollback_matches_pre_swap", evidence["observations"])
         self.assertIn("post_rollback_matches_pre_swap", evidence["incomplete_fields"])
 
-    def test_no_rollback_is_inconclusive_not_contradicted(self):
+    def test_no_rollback_leaves_hypothesis_unchanged(self):
         self.assertEqual(
             evaluate_with(collect_c.collect(build_run(rollback=None)))["hypothesis_status"],
-            "INCONCLUSIVE")
+            "SUPPORTED")
 
-    def test_a_rollback_that_does_not_restore_contradicts(self):
+    def test_a_rollback_that_does_not_restore_is_separate(self):
         drifted = dict(PROD_BEFORE, FEATURE_FLAG="on")
-        self.assertEqual(
-            evaluate_with(collect_c.collect(build_run(rollback=drifted)))["hypothesis_status"],
-            "CONTRADICTED")
+        result = evaluate_with(collect_c.collect(build_run(rollback=drifted)))
+        self.assertEqual(result["hypothesis_status"], "SUPPORTED")
+        self.assertEqual(result["recovery_status"], "CONTRADICTED")
 
     def test_an_absent_restart_timestamp_is_not_a_false_restart(self):
         before = {k: v for k, v in PROD_BEFORE.items() if k != "PROCESS_START_UTC"}
@@ -249,22 +303,52 @@ class DiscriminationTests(unittest.TestCase):
             evaluate_with(collect_c.collect(build_run(prod_after=stayed)))["hypothesis_status"],
             "CONTRADICTED")
 
-    def test_a_failed_swap_contradicts(self):
+    def test_a_failed_swap_is_inconclusive(self):
         self.assertEqual(
             evaluate_with(collect_c.collect(build_run(swap_exit=1)))["hypothesis_status"],
-            "CONTRADICTED")
+            "INCONCLUSIVE")
 
-    def test_deployment_errors_contradict(self):
+    def test_deployment_errors_make_the_control_inconclusive(self):
         self.assertEqual(
             evaluate_with(collect_c.collect(
                 build_run(console='[{"Level":"Error"}]')))["hypothesis_status"],
-            "CONTRADICTED")
+            "INCONCLUSIVE")
 
-    def test_no_restart_contradicts(self):
+    def test_no_restart_makes_the_control_inconclusive(self):
         same = dict(PROD_AFTER, PROCESS_START_UTC=PROD_BEFORE["PROCESS_START_UTC"])
         self.assertEqual(
             evaluate_with(collect_c.collect(build_run(prod_after=same)))["hypothesis_status"],
-            "CONTRADICTED")
+            "INCONCLUSIVE")
+
+    def test_failed_recovery_is_reported_separately(self):
+        drifted = dict(PROD_BEFORE, FEATURE_FLAG="on")
+        result = evaluate_with(collect_c.collect(build_run(rollback=drifted)))
+        self.assertEqual(result["hypothesis_status"], "SUPPORTED")
+        self.assertEqual(result["recovery_status"], "CONTRADICTED")
+
+
+class TargetDiscriminatorTests(unittest.TestCase):
+
+    def test_missing_one_target_key_is_inconclusive(self):
+        missing = {k: v for k, v in PROD_BEFORE.items() if k != "FEATURE_FLAG"}
+        evidence = collect_c.collect(build_run(prod_before=missing))
+        self.assertNotIn("non_sticky_feature_flag_swapped", evidence["observations"])
+
+    def test_missing_all_target_keys_is_inconclusive(self):
+        missing = {"PROCESS_START_UTC": PROD_BEFORE["PROCESS_START_UTC"]}
+        evidence = collect_c.collect(build_run(prod_before=missing, staging_before=missing))
+        self.assertNotIn("non_sticky_feature_flag_swapped", evidence["observations"])
+        self.assertNotIn("sticky_db_connection_remained", evidence["observations"])
+
+    def test_equal_pre_swap_values_are_not_discriminating(self):
+        same = dict(STAGING_BEFORE, FEATURE_FLAG=PROD_BEFORE["FEATURE_FLAG"])
+        evidence = collect_c.collect(build_run(staging_before=same))
+        self.assertNotIn("non_sticky_feature_flag_swapped", evidence["observations"])
+
+    def test_malformed_target_values_are_not_discriminating(self):
+        malformed = dict(PROD_BEFORE, DB_CONNECTION_STRING="")
+        evidence = collect_c.collect(build_run(prod_before=malformed))
+        self.assertNotIn("sticky_db_connection_remained", evidence["observations"])
 
 
 class SwapSemanticsTests(unittest.TestCase):
@@ -281,6 +365,45 @@ class SwapSemanticsTests(unittest.TestCase):
     def test_absent_console_yields_no_error_count(self):
         self.assertIsNone(collect_c.error_row_count(None))
         self.assertEqual(collect_c.error_row_count({"stdout": "[]"}), 0)
+
+    def test_failed_console_query_yields_no_error_count(self):
+        self.assertIsNone(collect_c.error_row_count({"exit_code": 3, "stdout": ""}))
+
+    def test_evaluator_does_not_turn_a_failed_query_into_zero_errors(self):
+        evidence = collect_c.collect(build_run())
+        observations = evidence["observations"]
+        observations["raw_snapshots"]["deployment_error_query"] = {
+            "exit_code": 3,
+            "stdout": "",
+        }
+        observations.pop("deployment_error_count")
+        derived = ev._derive_scenario_c(observations, {})
+        self.assertNotIn("deployment_error_count", derived)
+
+
+class RunnerReadinessTests(unittest.TestCase):
+
+    def test_warmup_requires_both_bound_hostnames(self):
+        directory = pathlib.Path(tempfile.mkdtemp())
+        responses = [
+            {"run_id": "run", "app": "app", "url": "prod", "slot_role": "production",
+             "captured_at": SWAP_STARTED, "http_status": 200, "attempt": 1, "body": PROD_BEFORE},
+            {"run_id": "run", "app": "app", "url": "stage", "slot_role": "staging",
+             "captured_at": SWAP_STARTED, "http_status": 200, "attempt": 1, "body": STAGING_BEFORE},
+        ]
+        with mock.patch.object(run_c, "probe", side_effect=responses):
+            result = run_c.warm_up(
+                "run", "app", [("production", "prod"), ("staging", "stage")], directory)
+        self.assertEqual([item["slot_role"] for item in result], ["production", "staging"])
+
+    def test_deployment_query_is_bound_to_app_and_window(self):
+        with mock.patch.object(run_c, "command", return_value={}) as invoked:
+            run_c.collect_deployment_errors(
+                "app-name", "workspace", "2026-01-01T00:00:00Z",
+                "2026-01-01T00:10:00Z", pathlib.Path(tempfile.mkdtemp()))
+        query = invoked.call_args.args[2][7]
+        self.assertIn("between(datetime(2026-01-01T00:00:00Z)", query)
+        self.assertIn("/sites/app-name", query)
 
 
 if __name__ == "__main__":

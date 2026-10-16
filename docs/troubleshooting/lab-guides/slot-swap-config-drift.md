@@ -68,6 +68,16 @@ This Level 3 lab guide reproduces a slot swap on Azure App Service Linux and pro
     
     This is expected App Service slot behavior, not accidental misconfiguration.
 
+### Golden Scenario C live runs (2026-10-16)
+
+The first attempt, run `20261016T131733Z-ca62fd8ccb42`, was discarded after review because its runner had not retained bound probe envelopes or every raw input consumed by the collector. Its private raw data remains preserved, but the unmerged package is replaced rather than presented as sufficient evidence.
+
+Run `20261016T153835Z-275d216becd8` reran the experiment against an S1 Linux App Service in Korea Central with the corrected, committed runner. The retained package includes sanitized copies of every collector-consumed raw file and recomputable digests. Both hostnames were warmed before the baseline window, and the distinct pre-swap target values were confirmed before the swap.
+
+The honest Golden-model result remains **INCONCLUSIVE**. The swap, restart, both stickiness discriminators, production configuration change, and recovery were supported. The app- and window-scoped deployment-log query returned a nonzero command exit code, so that control is unavailable rather than treated as zero rows. Recovery is reported separately as `SUPPORTED` and does not alter the hypothesis aggregation.
+
+The run-owned resource group deletion was verified by a retained final `az group exists` command envelope returning `false`. Sanitization removed the Azure CLI's environment-specific `cryptography` warning from stderr and replaced identifiers while preserving exit codes and task-relevant output. The package can bind bytes, identities, timestamps, and hashes, but it cannot cryptographically prevent an author from forging authorship metadata. This AI-agent run is not an independent human reproduction.
+
 ---
 
 ## 1) Background
@@ -795,7 +805,7 @@ These lines validate that the swap involved observable start/stop/warm-up transi
 | Sticky metadata explicit | Pass | `app-settings-prod`, `app-settings-staging` |
 | Lifecycle around swap observed | Pass | `kql-console`, `kql-platform` |
 
-Final hypothesis verdict: **Supported**.
+Historical artifact-set verdict: **Supported**. The newer Golden run above is a separate completed `INCONCLUSIVE` result and does not replace or re-date these 2026-04-04 captures.
 
 ### 4.14 Key finding (required conclusion)
 

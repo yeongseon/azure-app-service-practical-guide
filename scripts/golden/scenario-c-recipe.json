@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "collector_path": "scripts/golden/collect_scenario_c.py",
+  "derivation_collector_commit": "44cddf2917b9bea895423010f6b343679cc2ab07",
+  "derivation_collector_digest": "sha256:a9f316f9aec81061729df0fae2e54914375a0b708c580542573fb3a446c6565f",
+  "recipe_paths": [
+    "labs/slot-swap-config-drift/app/app.py",
+    "labs/slot-swap-config-drift/app/requirements.txt",
+    "labs/slot-swap-config-drift/main.bicep",
+    "scripts/golden/run_scenario_c.py"
+  ]
+}

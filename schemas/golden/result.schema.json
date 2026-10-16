@@ -47,6 +47,15 @@
       ],
       "description": "Separate axis from execution_status. A run that did not finish is NOT_TESTED regardless of partial evidence."
     },
+    "recovery_status": {
+      "enum": [
+        "SUPPORTED",
+        "CONTRADICTED",
+        "INCONCLUSIVE",
+        "NOT_TESTED"
+      ],
+      "description": "Recovery assertions are reported separately when role-aware aggregation is enabled."
+    },
     "assertion_outcomes": {
       "type": "object",
       "additionalProperties": {

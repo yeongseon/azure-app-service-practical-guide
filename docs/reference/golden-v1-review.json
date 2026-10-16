@@ -71,8 +71,8 @@
       "id": 9,
       "requirement": "Golden scenarios A (deterministic), B (comparative), C (configuration/state) completed",
       "status": "PARTIAL",
-      "evidence": "Two of three scenarios have been executed against a live subscription. Scenario A has two retained SUPPORTED runs: historical run 20260927T104304Z and current run 20261016T075147Z, whose cleanup was verified separately. Scenario C's run 20260927T114621Z evaluates to INCONCLUSIVE: five assertions held and two could not be observed, so the model declined a verdict rather than supplying one. All three manifests are satisfiable and every collector is held by a suite proving its evidence can refuse the hypothesis.",
-      "gap": "Scenario B has not been executed; nothing yet persists its per-phase probe records or probes the destination's own health. Scenario C's run could not observe slot stickiness because the destination worker still predated the swap, and nothing queries deployment error rows. Both gaps are recorded against the runs rather than implied.",
+      "evidence": "Two of three scenarios have been executed against a live subscription. Scenario A has two retained SUPPORTED runs: historical run 20260927T104304Z and current run 20261016T075147Z, whose cleanup was verified separately. Scenario C has two INCONCLUSIVE runs. Current run 20261016T131733Z completed with five supported assertions, separate supported recovery, zero deployment-error rows, and verified cleanup; its staging pre-swap capture timed out, leaving both cross-slot stickiness assertions unobserved. All three manifests are satisfiable and every collector is held by a suite proving its evidence can refuse the hypothesis.",
+      "gap": "Scenario B has not been executed. Scenario C still lacks a current run with all four usable pre/post slot snapshots, so its two discriminating stickiness assertions remain incomplete in the latest run.",
       "verify": "python3 tests/golden/test_contract_collector_alignment.py"
     },
     {
@@ -175,7 +175,9 @@
         "20261016T075147Z-6d019de6e2f2"
       ],
       "slot-swap-config-drift": [
-        "20260927T114621Z-04c6c02c9ae1"
+        "20260927T114621Z-04c6c02c9ae1",
+        "20261016T131733Z-ca62fd8ccb42",
+        "20261016T153835Z-275d216becd8"
       ]
     }
   }

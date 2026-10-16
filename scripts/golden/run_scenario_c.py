@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import argparse
 import datetime
+import hashlib
 import json
 import pathlib
 import secrets
@@ -43,6 +44,9 @@ SLOT = "staging"
 #: Polling for the restart replaces guessing at the settle time.
 RESTART_TIMEOUT_SECONDS = 240
 RESTART_POLL_SECONDS = 10
+WARMUP_TIMEOUT_SECONDS = 240
+WARMUP_POLL_SECONDS = 10
+DEPLOYMENT_LOG_INGESTION_SECONDS = 180
 
 
 class RunError(Exception):
@@ -88,7 +92,48 @@ def fetch_config(url: str) -> dict:
         return {"unreachable": str(exc)}
 
 
-def await_restart(url: str, boundary: str, directory: pathlib.Path, name: str) -> dict:
+def probe(run: str, app: str, url: str, role: str, attempt: int) -> dict:
+    captured_at = now()
+    try:
+        with urllib.request.urlopen(f"{url}/config", timeout=30) as response:
+            body = json.loads(response.read().decode("utf-8"))
+            return {
+                "run_id": run, "app": app, "url": url, "slot_role": role,
+                "captured_at": captured_at, "http_status": response.status,
+                "attempt": attempt, "body": body,
+            }
+    except (urllib.error.URLError, TimeoutError, ValueError) as exc:
+        return {
+            "run_id": run, "app": app, "url": url, "slot_role": role,
+            "captured_at": captured_at, "http_status": None,
+            "attempt": attempt, "body": {"unreachable": str(exc)},
+        }
+
+
+def warm_up(run: str, app: str, targets: list[tuple[str, str]], directory: pathlib.Path) -> list[dict]:
+    deadline = time.monotonic() + WARMUP_TIMEOUT_SECONDS
+    latest: dict[str, dict] = {}
+    attempts: list[dict] = []
+    attempt = 0
+    while time.monotonic() < deadline:
+        attempt += 1
+        for role, url in targets:
+            envelope = probe(run, app, url, role, attempt)
+            attempts.append(envelope)
+            latest[role] = envelope
+        if all(item["http_status"] == 200 for item in latest.values()):
+            break
+        time.sleep(WARMUP_POLL_SECONDS)
+    record = {"run_id": run, "attempts": attempts, "ready": len(latest) == len(targets)
+              and all(item["http_status"] == 200 for item in latest.values())}
+    (directory / "warmup.json").write_text(json.dumps(record, indent=2))
+    if not record["ready"]:
+        raise RunError("both production and staging must be ready before baseline")
+    return [latest[role] for role, _url in targets]
+
+
+def await_restart(run: str, app: str, url: str, role: str, boundary: str,
+                  directory: pathlib.Path, name: str) -> dict:
     """Poll /config until the worker reports starting after `boundary`.
 
     Returns the last snapshot read, and a record of the wait, so a run
@@ -102,9 +147,10 @@ def await_restart(url: str, boundary: str, directory: pathlib.Path, name: str) -
     snapshot = {}
     restarted = False
     while time.monotonic() < deadline:
-        snapshot = fetch_config(url)
+        envelope = probe(run, app, url, role, len(attempts) + 1)
+        snapshot = envelope["body"]
         start = snapshot.get("PROCESS_START_UTC")
-        attempts.append({"at": now(), "process_start_utc": start})
+        attempts.append(envelope)
         if start and boundary:
             try:
                 if (datetime.datetime.fromisoformat(start)
@@ -124,7 +170,7 @@ def await_restart(url: str, boundary: str, directory: pathlib.Path, name: str) -
     return snapshot
 
 
-def collect_deployment_errors(resource_group: str, app: str, workspace: str,
+def collect_deployment_errors(app: str, workspace: str, started_at: str, ended_at: str,
                               directory: pathlib.Path) -> dict:
     """Query deployment error rows so the contract's last field is observable.
 
@@ -133,7 +179,8 @@ def collect_deployment_errors(resource_group: str, app: str, workspace: str,
     """
     query = (
         "AppServicePlatformLogs "
-        "| where TimeGenerated > ago(1h) "
+        f"| where TimeGenerated between(datetime({started_at}) .. datetime({ended_at})) "
+        f"| where _ResourceId has '/sites/{app}' "
         "| where Level == 'Error' "
         "| project TimeGenerated, Level, Message "
         "| limit 100"
@@ -169,16 +216,41 @@ def execute(resource_group: str, app: str, output: pathlib.Path,
     production_url = f"https://{app}.azurewebsites.net"
     staging_url = f"https://{app}-{SLOT}.azurewebsites.net"
 
-    (directory / "run.json").write_text(json.dumps({
+    source_sha = subprocess.run(
+        ["git", "rev-parse", "HEAD"], capture_output=True, text=True, check=True
+    ).stdout.strip()
+    run_document = {
         "run_id": identifier,
         "started_at": now(),
         "resource_group": resource_group,
         "app": app,
         "scenario": LAB,
-    }, indent=2))
+        "source_sha": source_sha,
+    }
+    (directory / "run.json").write_text(json.dumps(run_document, indent=2))
 
-    (directory / "prod-before.json").write_text(json.dumps(fetch_config(production_url), indent=2))
-    (directory / "staging-before.json").write_text(json.dumps(fetch_config(staging_url), indent=2))
+    warm_up(identifier, app, [("production", production_url), ("staging", staging_url)], directory)
+    baseline_started = now()
+    baseline = [probe(identifier, app, production_url, "production", 1),
+                probe(identifier, app, staging_url, "staging", 1)]
+    (directory / "prod-before.json").write_text(json.dumps(baseline[0], indent=2))
+    (directory / "staging-before.json").write_text(json.dumps(baseline[1], indent=2))
+    prod_values = baseline[0]["body"]
+    staging_values = baseline[1]["body"]
+    for key in ("FEATURE_FLAG", "DB_CONNECTION_STRING"):
+        left, right = prod_values.get(key), staging_values.get(key)
+        if (not isinstance(left, str) or not left.strip() or not isinstance(right, str)
+                or not right.strip() or left == right):
+            raise RunError(f"baseline discriminator unavailable: {key}")
+    baseline_dir = directory / "baseline"
+    baseline_dir.mkdir()
+    (baseline_dir / "phase.json").write_text(json.dumps({
+        "started_at": baseline_started,
+        "ended_at": now(),
+        "probes": [
+            baseline[0], baseline[1],
+        ],
+    }, indent=2))
 
     swapped = swap(resource_group, app, directory, "swap", SLOT, "production")
     # The swap CLI returns after the platform has already recycled the
@@ -190,24 +262,49 @@ def execute(resource_group: str, app: str, output: pathlib.Path,
 
     # Both sides must be read after their workers have restarted, or the
     # snapshot describes the slot the process came from.
-    production_after = await_restart(production_url, boundary, directory, "prod-restart-wait")
-    staging_after = await_restart(staging_url, boundary, directory, "staging-restart-wait")
-    (directory / "prod-after.json").write_text(json.dumps(production_after, indent=2))
-    (directory / "staging-after.json").write_text(json.dumps(staging_after, indent=2))
+    await_restart(identifier, app, production_url, "production", boundary, directory, "prod-restart-wait")
+    await_restart(identifier, app, staging_url, "staging", boundary, directory, "staging-restart-wait")
+    production_envelope = probe(identifier, app, production_url, "production", 1)
+    staging_envelope = probe(identifier, app, staging_url, "staging", 1)
+    (directory / "prod-after.json").write_text(json.dumps(production_envelope, indent=2))
+    (directory / "staging-after.json").write_text(json.dumps(staging_envelope, indent=2))
+    fault_dir = directory / "fault"
+    fault_dir.mkdir()
+    (fault_dir / "phase.json").write_text(json.dumps({
+        "started_at": swapped["started_at"],
+        "ended_at": now(),
+        "probes": [production_envelope, staging_envelope],
+    }, indent=2))
 
     # The step trigger.sh never performed. Without it the rollback
     # assertion cannot be satisfied by any run, only left absent.
     if swapped["exit_code"] == 0:
         rolled = swap(resource_group, app, directory, "swap-back", SLOT, "production")
-        rollback_snapshot = await_restart(
-            production_url, rolled["started_at"], directory, "rollback-restart-wait")
+        await_restart(
+            identifier, app, production_url, "production", rolled["started_at"], directory, "rollback-restart-wait")
+        rollback_envelope = probe(identifier, app, production_url, "production", 1)
         (directory / "prod-after-rollback.json").write_text(
-            json.dumps(rollback_snapshot, indent=2))
+            json.dumps(rollback_envelope, indent=2))
+        recovery_dir = directory / "recovery"
+        recovery_dir.mkdir()
+        (recovery_dir / "phase.json").write_text(json.dumps({
+            "started_at": rolled["started_at"],
+            "ended_at": now(),
+            "probes": [rollback_envelope],
+        }, indent=2))
 
     if workspace:
-        collect_deployment_errors(resource_group, app, workspace, directory)
+        time.sleep(DEPLOYMENT_LOG_INGESTION_SECONDS)
+        collect_deployment_errors(app, workspace, run_document["started_at"], now(), directory)
 
-    (directory / "run-complete.json").write_text(json.dumps({"ended_at": now()}, indent=2))
+    ended_at = now()
+    (directory / "run-complete.json").write_text(json.dumps({"ended_at": ended_at}, indent=2))
+    run_document["ended_at"] = ended_at
+    run_document["phase_capture_integrity"] = {
+        phase: hashlib.sha256((directory / phase / "phase.json").read_bytes()).hexdigest()
+        for phase in ("baseline", "fault", "recovery")
+    }
+    (directory / "run.json").write_text(json.dumps(run_document, indent=2))
     return directory
 
 

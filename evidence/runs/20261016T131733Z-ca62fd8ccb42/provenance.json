@@ -1,0 +1,66 @@
+{
+  "scenario": "slot-swap-config-drift",
+  "collector": "scripts/golden/collect_scenario_c.py",
+  "derivation": {
+    "collector_commit": "4c3db9d9d7f20dcf9b3cebb87a1ac27cfaf26d3e",
+    "collector_path": "scripts/golden/collect_scenario_c.py",
+    "collector_digest": "sha256:ce0d8386b32355d6987d6ab879930731a689e7ca65bd8d89e3b49ae8ae0d132e",
+    "derived_at": "2026-10-16T13:32:20Z",
+    "derived_offline": true,
+    "raw_input": {
+      "run_id": "20261016T131733Z-ca62fd8ccb42",
+      "location": "private run directory",
+      "phase_capture_integrity": {
+        "baseline": "06e7d17bb92d782fe0565109dee2e06afd76ff93aa0362cba1c4497579c47526",
+        "fault": "7b74d86a7fed507c1c372cb51f92a82b46ab28c9ccf3d4765ea8814beb1a9332",
+        "recovery": "62db030ed4cd7312d42fadf232a391d8204e4a6f5e2489cfb0a56e0dae7d655d"
+      }
+    }
+  },
+  "sanitised": true,
+  "sanitisation": "Subscription, tenant, workspace, resource-group, app, host and operator identifiers were omitted or replaced. Configuration values, process times, swap times, exit codes, deployment-error rows and raw phase anchors are retained from the private run.",
+  "replay": "python3 scripts/golden/evaluate_run.py evidence/runs/20261016T131733Z-ca62fd8ccb42",
+  "execution_status": "COMPLETE",
+  "hypothesis_status": "INCONCLUSIVE",
+  "recovery_status": "SUPPORTED",
+  "cleanup_status": "VERIFIED",
+  "cleanup_verified": true,
+  "cleanup_completed_at": "2026-10-16T13:30:36Z",
+  "cleanup_proof": "cleanup.json records final_group_exists=false, confirmed by a separate final az group exists call.",
+  "independent_reproduction": "NOT_RUN",
+  "source_commit": "4c3760aa4a71bfe24aa1c51ff708e8701eef5b6f",
+  "runner_source_commit": "4c3760aa4a71bfe24aa1c51ff708e8701eef5b6f",
+  "environment": {
+    "subscription_kind": "MSIT",
+    "region": "koreacentral",
+    "runtime": "Python 3.11",
+    "sku": "S1 Linux"
+  },
+  "recipe_digest": "sha256:9b76f523f0b58bfe8c59ab1310450fdf5120885f77ab4b906c08f7131ce228ca",
+  "recipe_digest_rule": "SHA-256 of canonical compact key-sorted JSON mapping each recipe path to the SHA-256 of its bytes at source_commit.",
+  "recipe_paths": [
+    "labs/slot-swap-config-drift/app/app.py",
+    "labs/slot-swap-config-drift/app/requirements.txt",
+    "labs/slot-swap-config-drift/main.bicep",
+    "scripts/golden/run_scenario_c.py"
+  ],
+  "phase_capture_integrity": {
+    "baseline": {
+      "probe_count": 2,
+      "sha256": "06e7d17bb92d782fe0565109dee2e06afd76ff93aa0362cba1c4497579c47526"
+    },
+    "fault": {
+      "probe_count": 2,
+      "sha256": "7b74d86a7fed507c1c372cb51f92a82b46ab28c9ccf3d4765ea8814beb1a9332"
+    },
+    "recovery": {
+      "probe_count": 1,
+      "sha256": "62db030ed4cd7312d42fadf232a391d8204e4a6f5e2489cfb0a56e0dae7d655d"
+    }
+  },
+  "limitations": [
+    "The staging pre-swap /config request timed out, so the two cross-slot stickiness assertions are absent and the completed experiment is INCONCLUSIVE.",
+    "Production restart, configuration change, zero queried deployment errors and rollback restoration are separate supported assertions; recovery does not convert the hypothesis to SUPPORTED.",
+    "This AI-agent execution is a repeat run, not a qualifying independent human reproduction."
+  ]
+}

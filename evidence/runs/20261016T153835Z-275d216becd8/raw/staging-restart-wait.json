@@ -1,0 +1,263 @@
+{
+  "url": "https://app-scenario-c-example-staging.azurewebsites.net",
+  "boundary": "2026-10-16T15:39:19.499624+00:00",
+  "restarted": true,
+  "attempts": [
+    {
+      "run_id": "20261016T153835Z-275d216becd8",
+      "app": "app-scenario-c-example",
+      "url": "https://app-scenario-c-example-staging.azurewebsites.net",
+      "slot_role": "staging",
+      "captured_at": "2026-10-16T15:41:55.497135+00:00",
+      "http_status": 200,
+      "attempt": 1,
+      "body": {
+        "DB_CONNECTION_STRING": "prod-server..database.windows.net",
+        "FEATURE_FLAG": "v1",
+        "PROCESS_START_UTC": "2026-10-16T15:35:22.938391+00:00",
+        "WEBSITE_SLOT_NAME": "Production"
+      }
+    },
+    {
+      "run_id": "20261016T153835Z-275d216becd8",
+      "app": "app-scenario-c-example",
+      "url": "https://app-scenario-c-example-staging.azurewebsites.net",
+      "slot_role": "staging",
+      "captured_at": "2026-10-16T15:42:05.609650+00:00",
+      "http_status": 200,
+      "attempt": 2,
+      "body": {
+        "DB_CONNECTION_STRING": "prod-server..database.windows.net",
+        "FEATURE_FLAG": "v1",
+        "PROCESS_START_UTC": "2026-10-16T15:35:22.800266+00:00",
+        "WEBSITE_SLOT_NAME": "Production"
+      }
+    },
+    {
+      "run_id": "20261016T153835Z-275d216becd8",
+      "app": "app-scenario-c-example",
+      "url": "https://app-scenario-c-example-staging.azurewebsites.net",
+      "slot_role": "staging",
+      "captured_at": "2026-10-16T15:42:16.307326+00:00",
+      "http_status": 200,
+      "attempt": 3,
+      "body": {
+        "DB_CONNECTION_STRING": "prod-server..database.windows.net",
+        "FEATURE_FLAG": "v1",
+        "PROCESS_START_UTC": "2026-10-16T15:35:22.938391+00:00",
+        "WEBSITE_SLOT_NAME": "Production"
+      }
+    },
+    {
+      "run_id": "20261016T153835Z-275d216becd8",
+      "app": "app-scenario-c-example",
+      "url": "https://app-scenario-c-example-staging.azurewebsites.net",
+      "slot_role": "staging",
+      "captured_at": "2026-10-16T15:42:26.546203+00:00",
+      "http_status": 200,
+      "attempt": 4,
+      "body": {
+        "DB_CONNECTION_STRING": "prod-server..database.windows.net",
+        "FEATURE_FLAG": "v1",
+        "PROCESS_START_UTC": "2026-10-16T15:35:22.938391+00:00",
+        "WEBSITE_SLOT_NAME": "Production"
+      }
+    },
+    {
+      "run_id": "20261016T153835Z-275d216becd8",
+      "app": "app-scenario-c-example",
+      "url": "https://app-scenario-c-example-staging.azurewebsites.net",
+      "slot_role": "staging",
+      "captured_at": "2026-10-16T15:42:36.811458+00:00",
+      "http_status": 200,
+      "attempt": 5,
+      "body": {
+        "DB_CONNECTION_STRING": "prod-server..database.windows.net",
+        "FEATURE_FLAG": "v1",
+        "PROCESS_START_UTC": "2026-10-16T15:35:22.800266+00:00",
+        "WEBSITE_SLOT_NAME": "Production"
+      }
+    },
+    {
+      "run_id": "20261016T153835Z-275d216becd8",
+      "app": "app-scenario-c-example",
+      "url": "https://app-scenario-c-example-staging.azurewebsites.net",
+      "slot_role": "staging",
+      "captured_at": "2026-10-16T15:42:46.962706+00:00",
+      "http_status": 200,
+      "attempt": 6,
+      "body": {
+        "DB_CONNECTION_STRING": "prod-server..database.windows.net",
+        "FEATURE_FLAG": "v1",
+        "PROCESS_START_UTC": "2026-10-16T15:35:22.800266+00:00",
+        "WEBSITE_SLOT_NAME": "Production"
+      }
+    },
+    {
+      "run_id": "20261016T153835Z-275d216becd8",
+      "app": "app-scenario-c-example",
+      "url": "https://app-scenario-c-example-staging.azurewebsites.net",
+      "slot_role": "staging",
+      "captured_at": "2026-10-16T15:42:57.281604+00:00",
+      "http_status": 200,
+      "attempt": 7,
+      "body": {
+        "DB_CONNECTION_STRING": "prod-server..database.windows.net",
+        "FEATURE_FLAG": "v1",
+        "PROCESS_START_UTC": "2026-10-16T15:35:22.800266+00:00",
+        "WEBSITE_SLOT_NAME": "Production"
+      }
+    },
+    {
+      "run_id": "20261016T153835Z-275d216becd8",
+      "app": "app-scenario-c-example",
+      "url": "https://app-scenario-c-example-staging.azurewebsites.net",
+      "slot_role": "staging",
+      "captured_at": "2026-10-16T15:43:07.953701+00:00",
+      "http_status": 200,
+      "attempt": 8,
+      "body": {
+        "DB_CONNECTION_STRING": "prod-server..database.windows.net",
+        "FEATURE_FLAG": "v1",
+        "PROCESS_START_UTC": "2026-10-16T15:35:22.800266+00:00",
+        "WEBSITE_SLOT_NAME": "Production"
+      }
+    },
+    {
+      "run_id": "20261016T153835Z-275d216becd8",
+      "app": "app-scenario-c-example",
+      "url": "https://app-scenario-c-example-staging.azurewebsites.net",
+      "slot_role": "staging",
+      "captured_at": "2026-10-16T15:43:18.113556+00:00",
+      "http_status": 200,
+      "attempt": 9,
+      "body": {
+        "DB_CONNECTION_STRING": "prod-server..database.windows.net",
+        "FEATURE_FLAG": "v1",
+        "PROCESS_START_UTC": "2026-10-16T15:35:22.938391+00:00",
+        "WEBSITE_SLOT_NAME": "Production"
+      }
+    },
+    {
+      "run_id": "20261016T153835Z-275d216becd8",
+      "app": "app-scenario-c-example",
+      "url": "https://app-scenario-c-example-staging.azurewebsites.net",
+      "slot_role": "staging",
+      "captured_at": "2026-10-16T15:43:28.257293+00:00",
+      "http_status": 200,
+      "attempt": 10,
+      "body": {
+        "DB_CONNECTION_STRING": "prod-server..database.windows.net",
+        "FEATURE_FLAG": "v1",
+        "PROCESS_START_UTC": "2026-10-16T15:35:22.938391+00:00",
+        "WEBSITE_SLOT_NAME": "Production"
+      }
+    },
+    {
+      "run_id": "20261016T153835Z-275d216becd8",
+      "app": "app-scenario-c-example",
+      "url": "https://app-scenario-c-example-staging.azurewebsites.net",
+      "slot_role": "staging",
+      "captured_at": "2026-10-16T15:43:38.410604+00:00",
+      "http_status": 200,
+      "attempt": 11,
+      "body": {
+        "DB_CONNECTION_STRING": "prod-server..database.windows.net",
+        "FEATURE_FLAG": "v1",
+        "PROCESS_START_UTC": "2026-10-16T15:35:22.800266+00:00",
+        "WEBSITE_SLOT_NAME": "Production"
+      }
+    },
+    {
+      "run_id": "20261016T153835Z-275d216becd8",
+      "app": "app-scenario-c-example",
+      "url": "https://app-scenario-c-example-staging.azurewebsites.net",
+      "slot_role": "staging",
+      "captured_at": "2026-10-16T15:43:48.872522+00:00",
+      "http_status": 200,
+      "attempt": 12,
+      "body": {
+        "DB_CONNECTION_STRING": "prod-server..database.windows.net",
+        "FEATURE_FLAG": "v1",
+        "PROCESS_START_UTC": "2026-10-16T15:35:22.938391+00:00",
+        "WEBSITE_SLOT_NAME": "Production"
+      }
+    },
+    {
+      "run_id": "20261016T153835Z-275d216becd8",
+      "app": "app-scenario-c-example",
+      "url": "https://app-scenario-c-example-staging.azurewebsites.net",
+      "slot_role": "staging",
+      "captured_at": "2026-10-16T15:43:59.270841+00:00",
+      "http_status": 200,
+      "attempt": 13,
+      "body": {
+        "DB_CONNECTION_STRING": "prod-server..database.windows.net",
+        "FEATURE_FLAG": "v1",
+        "PROCESS_START_UTC": "2026-10-16T15:35:22.800266+00:00",
+        "WEBSITE_SLOT_NAME": "Production"
+      }
+    },
+    {
+      "run_id": "20261016T153835Z-275d216becd8",
+      "app": "app-scenario-c-example",
+      "url": "https://app-scenario-c-example-staging.azurewebsites.net",
+      "slot_role": "staging",
+      "captured_at": "2026-10-16T15:44:10.170908+00:00",
+      "http_status": 200,
+      "attempt": 14,
+      "body": {
+        "DB_CONNECTION_STRING": "prod-server..database.windows.net",
+        "FEATURE_FLAG": "v1",
+        "PROCESS_START_UTC": "2026-10-16T15:35:22.800266+00:00",
+        "WEBSITE_SLOT_NAME": "Production"
+      }
+    },
+    {
+      "run_id": "20261016T153835Z-275d216becd8",
+      "app": "app-scenario-c-example",
+      "url": "https://app-scenario-c-example-staging.azurewebsites.net",
+      "slot_role": "staging",
+      "captured_at": "2026-10-16T15:44:20.258242+00:00",
+      "http_status": 200,
+      "attempt": 15,
+      "body": {
+        "DB_CONNECTION_STRING": "prod-server..database.windows.net",
+        "FEATURE_FLAG": "v1",
+        "PROCESS_START_UTC": "2026-10-16T15:35:22.938391+00:00",
+        "WEBSITE_SLOT_NAME": "Production"
+      }
+    },
+    {
+      "run_id": "20261016T153835Z-275d216becd8",
+      "app": "app-scenario-c-example",
+      "url": "https://app-scenario-c-example-staging.azurewebsites.net",
+      "slot_role": "staging",
+      "captured_at": "2026-10-16T15:44:30.433079+00:00",
+      "http_status": 200,
+      "attempt": 16,
+      "body": {
+        "DB_CONNECTION_STRING": "prod-server..database.windows.net",
+        "FEATURE_FLAG": "v1",
+        "PROCESS_START_UTC": "2026-10-16T15:35:22.938391+00:00",
+        "WEBSITE_SLOT_NAME": "Production"
+      }
+    },
+    {
+      "run_id": "20261016T153835Z-275d216becd8",
+      "app": "app-scenario-c-example",
+      "url": "https://app-scenario-c-example-staging.azurewebsites.net",
+      "slot_role": "staging",
+      "captured_at": "2026-10-16T15:44:40.493505+00:00",
+      "http_status": 200,
+      "attempt": 17,
+      "body": {
+        "DB_CONNECTION_STRING": "staging-server..database.windows.net",
+        "FEATURE_FLAG": "v1",
+        "PROCESS_START_UTC": "2026-10-16T15:44:27.189513+00:00",
+        "WEBSITE_SLOT_NAME": "Production"
+      }
+    }
+  ],
+  "timeout_seconds": 240
+}
