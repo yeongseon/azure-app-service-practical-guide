@@ -141,5 +141,22 @@ class EntryCriteriaTests(unittest.TestCase):
         self.assertIn("invoked by a workflow", section)
 
 
+class AdaptationBoundaryTests(unittest.TestCase):
+    def test_spec_pins_a_reviewed_source_commit(self):
+        self.assertRegex(SPEC, r"`[0-9a-f]{40}`")
+        for pull_request in ("#234", "#235", "#236"):
+            self.assertIn(pull_request, SPEC)
+
+    def test_spec_names_service_specific_operational_constraints(self):
+        for constraint in ("authentication", "operating systems", "telemetry delay", "recovery", "cleanup"):
+            with self.subTest(constraint=constraint):
+                self.assertIn(constraint, SPEC.lower())
+
+    def test_aca_patterns_do_not_authorize_predicate_copying(self):
+        aca = SPEC.split("Reviewed Azure Container Apps", 1)[1]
+        self.assertIn("predicates are not", aca)
+        self.assertIn("mutation-tested", aca)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
