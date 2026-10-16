@@ -40,7 +40,7 @@
       "historical": false,
       "files": {
         "labs/slot-swap-config-drift/golden/evidence-classification.json": "6d639ff197de0e528388853cf8692c83ac1642c013ee0ef675b75f0c948f17b4",
-        "labs/slot-swap-config-drift/golden/manifest.template.json": "e67f23faf300d9e7d128b574bc98799dcd607d14fa54149d88ad2327ecef9cd9"
+        "labs/slot-swap-config-drift/golden/manifest.template.json": "42a33f2ba14af488fdcd26e9cd214c1057bfb981ede4c26fb68cd9e005610007"
       }
     },
     "lab-snat-exhaustion": {

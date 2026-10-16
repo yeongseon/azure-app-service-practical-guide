@@ -784,7 +784,11 @@ def evaluate(run_dir, *, skip_source_commit_resolution: bool = False,
     provenance = _read_json(run_dir / "provenance.json") if (run_dir / "provenance.json").is_file() else {}
     if manifest.get("run_id") in _declared_run_ids():
         _verify_source_commit(manifest, evidence_doc)
-        if manifest.get("raw_binding_version") == 1:
+        scenario_a_shape = {
+            "fault_status", "fault_console_rows", "phase_windows",
+            "baseline_probes", "fault_probes", "recovery_probes",
+        }
+        if manifest.get("raw_binding_version") == 1 or scenario_a_shape <= set(evidence):
             _verify_derivation(provenance, manifest, evidence)
         _verify_scenario_c_raw_inputs(run_dir, provenance, manifest, evidence)
         evidence = _derive_scenario_a(evidence, manifest, provenance)

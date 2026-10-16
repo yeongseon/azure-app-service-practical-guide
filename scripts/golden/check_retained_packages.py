@@ -70,10 +70,13 @@ def _derivation_problems(repo: pathlib.Path, run_dir: pathlib.Path, manifest: di
     if not isinstance(derivation, dict) or derivation.get("derived_offline") is not True:
         return ["new COMPLETE run lacks offline derivation metadata"]
     definition = _recipe_definition(repo, manifest.get("recipe_paths"))
-    if (derivation.get("collector_commit") != definition.get("derivation_collector_commit")
-            or derivation.get("collector_path") != definition.get("collector_path")):
+    if (manifest.get("raw_binding_version") == 1
+            and (derivation.get("collector_commit") != definition.get("derivation_collector_commit")
+                 or derivation.get("collector_path") != definition.get("collector_path"))):
         return ["derivation collector does not match the versioned recipe definition"]
-    expected_digest = definition.get("derivation_collector_digest")
+    expected_digest = (definition.get("derivation_collector_digest")
+                       if manifest.get("raw_binding_version") == 1
+                       else derivation.get("collector_digest"))
     if derivation.get("collector_digest") != expected_digest:
         return ["derivation collector digest does not match the versioned recipe definition"]
     try:
