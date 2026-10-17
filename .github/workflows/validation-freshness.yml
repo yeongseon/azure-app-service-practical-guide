@@ -1,0 +1,21 @@
+name: Validation Freshness
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 4 * * *'
+
+permissions:
+  contents: read
+
+jobs:
+  freshness:
+    name: Report Validation Freshness
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Calculate freshness from existing metadata
+        run: python3 scripts/golden/freshness_report.py >> "$GITHUB_STEP_SUMMARY"
