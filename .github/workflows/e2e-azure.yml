@@ -66,6 +66,15 @@ jobs:
           git fetch --no-tags origin main
           git cat-file -e "${sha}^{commit}"
           git merge-base --is-ancestor "$sha" origin/main
+          for required_path in \
+            scripts/golden/azure_cleanup.py \
+            scripts/golden/azure_e2e_cli.py \
+            scripts/golden/azure_e2e_guard.py \
+            scripts/golden/azure_e2e_sanitize.py \
+            labs/deployment-succeeded-startup-failed/run.py; do
+            git cat-file -e "${sha}:${required_path}"
+          done
+          python3 scripts/golden/azure_e2e_cli.py require-target-paths . "$sha"
           echo "sha=$sha" >> "$GITHUB_OUTPUT"
 
   scenario-a:
@@ -252,7 +261,8 @@ jobs:
           mkdir -p "$RUNNER_TEMP/cleanup-private"
           python3 scripts/golden/azure_cleanup.py run --name "$RESOURCE_GROUP" --run-id "$RUN_ID" \
             --result "$RUNNER_TEMP/cleanup-private/cleanup-result.json"
-      - name: Sanitize and scan cleanup result
+      - name: Sanitize cleanup result
+        id: cleanup-sanitize
         if: always()
         run: |
           if [ ! -f "$RUNNER_TEMP/cleanup-private/cleanup-result.json" ]; then
@@ -271,6 +281,10 @@ jobs:
           fi
           python3 scripts/golden/azure_e2e_cli.py sanitize \
             "$RUNNER_TEMP/cleanup-private" "$RUNNER_TEMP/cleanup-sanitized"
+      - name: Scan sanitized cleanup result
+        id: cleanup-scan
+        if: always()
+        run: |
           python3 scripts/golden/azure_e2e_cli.py scan-sanitized "$RUNNER_TEMP/cleanup-sanitized"
           python3 - <<'PY' >> "$GITHUB_STEP_SUMMARY"
           import json
@@ -282,13 +296,18 @@ jobs:
           print(f"- Cleanup status: `{result['cleanup_status']}`")
           PY
       - name: Upload sanitized cleanup result
-        if: always()
+        if: always() && steps.cleanup-sanitize.outcome == 'success' && steps.cleanup-scan.outcome == 'success'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: cleanup-result-${{ github.run_id }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/cleanup-sanitized/cleanup-result.json
           if-no-files-found: error
           retention-days: 30
+      - name: Require sanitized cleanup artifact
+        if: always() && (steps.cleanup-sanitize.outcome != 'success' || steps.cleanup-scan.outcome != 'success')
+        run: |
+          echo "FAILED: private cleanup evidence could not be sanitized, so no artifact was uploaded." >&2
+          exit 4
 
   ttl-sweep:
     name: Sweep expired Golden E2E groups
@@ -298,6 +317,7 @@ jobs:
     timeout-minutes: 30
     environment: azure-e2e
     permissions:
+      actions: read
       contents: read
       id-token: write
     steps:
@@ -313,5 +333,15 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       - name: Delete only owner-tagged groups with expired TTL
         env:
-          ACTIVE_RUN_ID: ${{ github.run_id }}-${{ github.run_attempt }}
-        run: python3 scripts/golden/azure_cleanup.py sweep --apply --active-run-id "$ACTIVE_RUN_ID"
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          active_runs="$RUNNER_TEMP/active-golden-runs.txt"
+          : > "$active_runs"
+          gh api --paginate "/repos/${GITHUB_REPOSITORY}/actions/workflows/e2e-azure.yml/runs?status=in_progress&per_page=100" \
+            --jq '.workflow_runs[] | "\(.id)-\(.run_attempt)"' >> "$active_runs"
+          gh api --paginate "/repos/${GITHUB_REPOSITORY}/actions/workflows/e2e-azure.yml/runs?status=queued&per_page=100" \
+            --jq '.workflow_runs[] | "\(.id)-\(.run_attempt)"' >> "$active_runs"
+          sort -u -o "$active_runs" "$active_runs"
+          test -s "$active_runs"
+          python3 scripts/golden/azure_cleanup.py sweep --apply --active-run-ids-file "$active_runs"
