@@ -291,6 +291,9 @@ jobs:
             git fetch --no-tags --depth=1 origin "$commit"
           done < /tmp/golden-provenance-commits
 
+      - name: Fetch Golden test fixture commit
+        run: git fetch --no-tags --depth=1 origin 3e0442bb19b966766598ffeae1fb47f3f6960837
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
