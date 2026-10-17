@@ -1,12 +1,11 @@
 from __future__ import annotations
 
-from datetime import datetime, timezone
 import importlib.util
 import json
-from pathlib import Path
 import unittest
+from datetime import UTC, datetime
+from pathlib import Path
 from unittest.mock import patch
-
 
 ROOT = Path(__file__).resolve().parents[2]
 SPEC = importlib.util.spec_from_file_location(
@@ -29,7 +28,7 @@ class AzureCleanupTests(unittest.TestCase):
         ]
 
         selected = cleanup.expired_owned_groups(
-            resources, datetime(2026, 10, 16, tzinfo=timezone.utc)
+            resources, datetime(2026, 10, 16, tzinfo=UTC)
         )
 
         self.assertEqual(selected, ("rg-golden-e2e-12345-1",))
@@ -50,7 +49,7 @@ class AzureCleanupTests(unittest.TestCase):
             "name": "rg-foreign-production",
             "tags": {"owner": cleanup.OWNER, "repository": cleanup.REPOSITORY, "run-id": "12345-1", "ttl": "2026-10-15T00:00:00Z"},
         }]
-        selected = cleanup.expired_owned_groups(resources, datetime(2026, 10, 16, tzinfo=timezone.utc))
+        selected = cleanup.expired_owned_groups(resources, datetime(2026, 10, 16, tzinfo=UTC))
         self.assertEqual(selected, ())
 
     def test_invalid_and_future_ttls_are_not_swept(self) -> None:
@@ -58,8 +57,18 @@ class AzureCleanupTests(unittest.TestCase):
             {"name": "rg-golden-e2e-12345-1", "tags": {"owner": cleanup.OWNER, "repository": cleanup.REPOSITORY, "run-id": "12345-1", "ttl": "not-a-time"}},
             {"name": "rg-golden-e2e-12346-1", "tags": {"owner": cleanup.OWNER, "repository": cleanup.REPOSITORY, "run-id": "12346-1", "ttl": "2026-10-17T00:00:00Z"}},
         ]
-        selected = cleanup.expired_owned_groups(resources, datetime(2026, 10, 16, tzinfo=timezone.utc))
+        selected = cleanup.expired_owned_groups(resources, datetime(2026, 10, 16, tzinfo=UTC))
         self.assertEqual(selected, ())
+
+    def test_utc_z_ttl_is_selected_when_expired(self) -> None:
+        resources = [{
+            "name": "rg-golden-e2e-12345-1",
+            "tags": {"owner": cleanup.OWNER, "repository": cleanup.REPOSITORY, "run-id": "12345-1", "ttl": "2026-10-15T00:00:00Z"},
+        }]
+
+        selected = cleanup.expired_owned_groups(resources, datetime(2026, 10, 16, tzinfo=UTC))
+
+        self.assertEqual(selected, ("rg-golden-e2e-12345-1",))
 
     def test_active_run_is_excluded_from_ttl_sweep(self) -> None:
         resources = [{
@@ -68,15 +77,29 @@ class AzureCleanupTests(unittest.TestCase):
         }]
         selected = cleanup.expired_owned_groups(
             resources,
-            datetime(2026, 10, 16, tzinfo=timezone.utc),
-            active_run_id="12345-1",
+            datetime(2026, 10, 16, tzinfo=UTC),
+            active_run_ids=frozenset({"12345-1"}),
         )
         self.assertEqual(selected, ())
 
+    def test_concurrently_running_workflow_is_excluded_from_ttl_sweep(self) -> None:
+        resources = [{
+            "name": "rg-golden-e2e-67890-2",
+            "tags": {"owner": cleanup.OWNER, "repository": cleanup.REPOSITORY, "run-id": "67890-2", "ttl": "2026-10-15T00:00:00Z"},
+        }]
+
+        selected = cleanup.expired_owned_groups(
+            resources,
+            datetime(2026, 10, 16, tzinfo=UTC),
+            active_run_ids=frozenset({"12345-1", "67890-2"}),
+        )
+
+        self.assertEqual(selected, ())
+
     def test_ttl_hours_accepts_only_safe_decimal_integer(self) -> None:
-        self.assertEqual(cleanup.parse_ttl_hours("1"), 1)
+        self.assertEqual(cleanup.parse_ttl_hours("3"), 3)
         self.assertEqual(cleanup.parse_ttl_hours("72"), 72)
-        for value in ("-1", "0", "73", "999999", "1 day ago", "01", "+1"):
+        for value in ("-1", "0", "1", "2", "73", "999999", "1 day ago", "01", "+1"):
             with self.subTest(value=value), self.assertRaises(cleanup.CleanupError):
                 cleanup.parse_ttl_hours(value)
 

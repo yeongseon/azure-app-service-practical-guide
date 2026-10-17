@@ -3,20 +3,19 @@
 from __future__ import annotations
 
 import argparse
-from collections.abc import Mapping, Sequence
-from datetime import datetime, timezone
 import json
 import re
 import subprocess
 import sys
 import time
+from collections.abc import Mapping, Sequence
+from datetime import UTC, datetime
 from pathlib import Path
-
 
 OWNER = "golden-e2e"
 REPOSITORY = "yeongseon/azure-app-service-practical-guide"
 RUN_ID_RE = re.compile(r"^[0-9]+-[1-9][0-9]*$")
-TTL_HOURS_RE = re.compile(r"^(?:[1-9]|[1-6][0-9]|7[0-2])$")
+TTL_HOURS_RE = re.compile(r"^(?:[3-9]|[1-6][0-9]|7[0-2])$")
 GROUP_PREFIX = "rg-golden-e2e-"
 
 
@@ -25,7 +24,7 @@ class CleanupError(Exception):
 
 
 def _timestamp(value: str) -> datetime:
-    parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    parsed = datetime.fromisoformat(value)
     if parsed.tzinfo is None:
         raise CleanupError("ttl must include a timezone")
     return parsed
@@ -33,7 +32,7 @@ def _timestamp(value: str) -> datetime:
 
 def parse_ttl_hours(value: str) -> int:
     if not TTL_HOURS_RE.fullmatch(value):
-        raise CleanupError("ttl_hours must be a decimal integer from 1 through 72")
+        raise CleanupError("ttl_hours must be a decimal integer from 3 through 72")
     return int(value)
 
 
@@ -45,7 +44,7 @@ def require_owned_name(name: str, run_id: str) -> None:
 def expired_owned_groups(
     resources: Sequence[Mapping[str, str | Mapping[str, str]]],
     now: datetime,
-    active_run_id: str | None = None,
+    active_run_ids: frozenset[str] = frozenset(),
 ) -> tuple[str, ...]:
     selected: list[str] = []
     for resource in resources:
@@ -70,7 +69,7 @@ def expired_owned_groups(
             expired = _timestamp(ttl) < now
         except (ValueError, CleanupError):
             continue
-        if expired and run_id != active_run_id:
+        if expired and run_id not in active_run_ids:
             selected.append(name)
     return tuple(sorted(selected))
 
@@ -109,7 +108,7 @@ def delete_group(name: str, run_id: str | None) -> None:
             or not isinstance(tag_run_id, str)
             or not RUN_ID_RE.fullmatch(tag_run_id)
             or not isinstance(ttl, str)
-            or _timestamp(ttl) >= datetime.now(timezone.utc)
+            or _timestamp(ttl) >= datetime.now(UTC)
         ):
             raise CleanupError("TTL sweep target is not owned and expired")
         require_owned_name(name, tag_run_id)
@@ -132,7 +131,7 @@ def write_cleanup_result(path: Path, run_id: str, status: str, error: str | None
         "github_run_id": github_run_id,
         "github_run_attempt": github_run_attempt,
         "cleanup_status": status,
-        "verified_at": datetime.now(timezone.utc).isoformat(),
+        "verified_at": datetime.now(UTC).isoformat(),
     }
     if error is not None:
         result["error"] = error
@@ -148,7 +147,7 @@ def main() -> int:
     run.add_argument("--result", type=Path, required=True)
     sweep = subparsers.add_parser("sweep")
     sweep.add_argument("--apply", action="store_true")
-    sweep.add_argument("--active-run-id")
+    sweep.add_argument("--active-run-ids-file", type=Path, required=True)
     ttl = subparsers.add_parser("validate-ttl")
     ttl.add_argument("--hours", required=True)
     args = parser.parse_args()
@@ -163,11 +162,16 @@ def main() -> int:
                 raise
             write_cleanup_result(args.result, args.run_id, "VERIFIED")
         else:
+            active_run_ids = frozenset(
+                line.strip() for line in args.active_run_ids_file.read_text(encoding="utf-8").splitlines()
+            )
+            if not active_run_ids or any(not RUN_ID_RE.fullmatch(run_id) for run_id in active_run_ids):
+                raise CleanupError("active workflow run inventory is empty or invalid")
             resources = json.loads(_az("group", "list", "--tag", f"owner={OWNER}"))
             names = expired_owned_groups(
                 resources,
-                datetime.now(timezone.utc),
-                active_run_id=args.active_run_id,
+                datetime.now(UTC),
+                active_run_ids=active_run_ids,
             )
             print(json.dumps({"expired_owned_groups": names}, indent=2))
             if args.apply:
