@@ -50,7 +50,7 @@ Three distinct instants, never interchangeable:
 
 `validation.az_cli.last_tested` and `validation.bicep.last_tested` are intended
 to represent the UTC calendar date on which the corresponding tutorial method
-was last executed. They are not alternate names for `captured_at`,
+was last executed. For multi-phase runs, `last_tested` uses the UTC calendar date on which the final required phase completed (successfully or with failure). They are not alternate names for `captured_at`,
 `evaluated_at`, or `document_updated_at`. Existing validation-date hardening
 tests reject future, malformed, and internally inconsistent values, but this
 repository does not yet bind tutorial-authored `last_tested` metadata to a

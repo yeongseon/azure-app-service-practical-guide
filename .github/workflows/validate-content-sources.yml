@@ -270,19 +270,20 @@ jobs:
         run: |
           python3 - <<'PY' > /tmp/golden-provenance-commits
           import json
+          import re
           from pathlib import Path
 
           commits = set()
           for manifest_path in Path("evidence/runs").glob("*/manifest.json"):
               manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
               source_commit = manifest.get("source_commit")
-              if isinstance(source_commit, str) and len(source_commit) == 40:
+              if isinstance(source_commit, str) and re.fullmatch(r"[0-9a-f]{40}", source_commit):
                   commits.add(source_commit)
 
           for provenance_path in Path("evidence/runs").glob("*/provenance.json"):
               provenance = json.loads(provenance_path.read_text(encoding="utf-8"))
               collector_commit = provenance.get("derivation", {}).get("collector_commit")
-              if isinstance(collector_commit, str) and len(collector_commit) == 40:
+              if isinstance(collector_commit, str) and re.fullmatch(r"[0-9a-f]{40}", collector_commit):
                   commits.add(collector_commit)
 
           print("\n".join(sorted(commits)))
