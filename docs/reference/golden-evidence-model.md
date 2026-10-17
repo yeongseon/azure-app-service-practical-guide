@@ -48,6 +48,20 @@ Three distinct instants, never interchangeable:
 | `evaluated_at` | When the gates were re-derived offline from that evidence |
 | `document_updated_at` | When the prose was last edited |
 
+`validation.az_cli.last_tested` and `validation.bicep.last_tested` are intended
+to represent the UTC calendar date on which the corresponding tutorial method
+was last executed. For multi-phase runs, `last_tested` uses the UTC calendar date on which the final required phase completed (successfully or with failure). They are not alternate names for `captured_at`,
+`evaluated_at`, or `document_updated_at`. Existing validation-date hardening
+tests reject future, malformed, and internally inconsistent values, but this
+repository does not yet bind tutorial-authored `last_tested` metadata to a
+retained run. That stronger tutorial/method binding remains deferred to issue
+#176 and PR #242.
+
+The vocabulary migration from both stacked implementations, PR #186 and PR
+#187, was completed when they were reconciled into PR #234. The exact retired
+to frozen compatibility mapping remains in the
+[migration specification](golden-migration-spec.md#vocabulary-migration).
+
 Re-running an offline evaluator over an older cohort must not restate that evidence as freshly captured. A field named for capture that actually holds evaluation time will silently republish months-old evidence as current on every re-run.
 
 ## Run layout

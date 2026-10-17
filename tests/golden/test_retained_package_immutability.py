@@ -108,6 +108,20 @@ class RetainedPackageImmutabilityTests(unittest.TestCase):
         run_git(self.repo, "commit", "-m", "add new run")
         self.assertEqual(self._check(self.base).returncode, 0)
 
+    def test_disconnected_base_and_head_trees_do_not_require_merge_base(self):
+        base_tree = subprocess.check_output(
+            ["git", "rev-parse", "HEAD^{tree}"], cwd=self.repo, text=True
+        ).strip()
+        run_git(self.repo, "checkout", "--orphan", "shallow-head")
+        run_git(self.repo, "rm", "-rf", ".")
+        run_git(self.repo, "read-tree", base_tree)
+        run_git(self.repo, "checkout-index", "-a")
+        (self.repo / "unrelated.txt").write_text("head-only change")
+        run_git(self.repo, "add", ".")
+        run_git(self.repo, "commit", "-m", "simulate separately fetched head")
+
+        self.assertEqual(self._check(self.base).returncode, 0)
+
     def test_new_package_cannot_self_declare_historical(self):
         new_dir = self.repo / "evidence/runs/forged"
         new_dir.mkdir()
