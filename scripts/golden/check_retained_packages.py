@@ -256,7 +256,9 @@ def violations(repo: pathlib.Path, base_ref: str) -> list[str]:
 
     base_files = set(_git(repo, "ls-tree", "-r", "--name-only", base_ref).splitlines())
     base_roots = {_package_root(path) for path in base_files if _package_root(path)}
-    changes = _git(repo, "diff", "--name-status", "--find-renames", f"{base_ref}...HEAD").splitlines()
+    changes = _git(
+        repo, "diff", "--name-status", "--find-renames", base_ref, "HEAD"
+    ).splitlines()
     for line in changes:
         columns = line.split("\t")
         status, paths = columns[0], columns[1:]
