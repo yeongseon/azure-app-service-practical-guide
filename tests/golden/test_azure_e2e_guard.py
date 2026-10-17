@@ -1,14 +1,16 @@
 from __future__ import annotations
 
-import importlib.util
 import hashlib
+import importlib.util
 import json
-from pathlib import Path
+import subprocess
+import sys
 import tempfile
 import unittest
-
+from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / "scripts/golden"))
 SPEC = importlib.util.spec_from_file_location(
     "azure_e2e_guard", ROOT / "scripts/golden/azure_e2e_guard.py"
 )
@@ -229,6 +231,15 @@ class AzureE2EGuardTests(unittest.TestCase):
             "jwt=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyIn0.c2lnbmF0dXJl",
             "PASSWORD=super-secret-password",
             "client_secret: confidential-value",
+            '{"password":"hunter2"}',
+            '"client_secret": "json-confidential-value"',
+            "AZURE_CLIENT_SECRET=raw-azure-secret",
+            "ARM_CLIENT_SECRET='raw-arm-secret'",
+            'export AZURE_CLIENT_SECRET="quoted-azure-secret"',
+            '"ARM_CLIENT_SECRET"="quoted-prefixed-secret"',
+            'DB_PASSWORD="very secret password with spaces"',
+            "{'client_secret': 'secret value;with=punctuation'}",
+            "ipv6=2603:1030:20e:3::23 link_local=fe80::1",
             '"session": "QWxhZGRpbjpvcGVuIHNlc2FtZTEyMzQ1Njc4OTA="',
         )
         for index, hostile in enumerate(hostile_values):
@@ -242,6 +253,27 @@ class AzureE2EGuardTests(unittest.TestCase):
                 guard.scan_sanitized_tree(destination)
                 self.assertNotIn("super-secret", (destination / f"capture-{index}.txt").read_text())
 
+    def test_sanitizer_preserves_timestamps_and_is_idempotent(self) -> None:
+        raw = (
+            "at 12:34:56 ipv6 2603:1030:20e:3::23 resource "
+            "/subscriptions/12345678-1234-1234-1234-123456789abc/"
+            "resourceGroups/private/providers/Microsoft.Web/sites/private-app"
+        )
+
+        sanitized = guard.sanitize_text(raw)
+
+        self.assertIn("12:34:56", sanitized)
+        self.assertIn("2001:db8::1", sanitized)
+        self.assertIn(guard.RESOURCE_ID_PLACEHOLDER, sanitized)
+        self.assertEqual(guard.sanitize_text(sanitized), sanitized)
+
+    def test_canonical_resource_placeholder_passes_scan(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / "capture.txt").write_text(guard.RESOURCE_ID_PLACEHOLDER, encoding="utf-8")
+
+            guard.scan_sanitized_tree(root)
+
     def test_scan_rejects_each_non_placeholder_sensitive_value(self) -> None:
         hostile_values = (
             "12345678-1234-1234-1234-123456789abc",
@@ -250,6 +282,16 @@ class AzureE2EGuardTests(unittest.TestCase):
             "/subscriptions/12345678-1234-1234-1234-123456789abc/resourceGroups/private/providers/Microsoft.Web/sites/app",
             "sig=abc%2Bdef%3D",
             "DefaultEndpointsProtocol=https;AccountKey=base64secret==",
+            "2603:1030:20e:3::23",
+            "fe80::1",
+            '{"password":"hunter2"}',
+            '"client_secret": "json-confidential-value"',
+            "AZURE_CLIENT_SECRET=raw-azure-secret",
+            "ARM_CLIENT_SECRET='raw-arm-secret'",
+            'export AZURE_CLIENT_SECRET="quoted-azure-secret"',
+            '"ARM_CLIENT_SECRET"="quoted-prefixed-secret"',
+            'DB_PASSWORD="very secret password with spaces"',
+            "{'client_secret': 'secret value;with=punctuation'}",
         )
         for hostile in hostile_values:
             with self.subTest(hostile=hostile), tempfile.TemporaryDirectory() as temporary:
@@ -257,6 +299,35 @@ class AzureE2EGuardTests(unittest.TestCase):
                 (root / "capture.txt").write_text(hostile, encoding="utf-8")
                 with self.assertRaises(guard.GuardError):
                     guard.scan_sanitized_tree(root)
+
+    def test_required_target_paths_reject_historical_commit_missing_helpers(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            repository = Path(temporary)
+            subprocess.run(["git", "init", "--quiet"], cwd=repository, check=True)
+            subprocess.run(["git", "config", "user.email", "test@example.com"], cwd=repository, check=True)
+            subprocess.run(["git", "config", "user.name", "Test"], cwd=repository, check=True)
+            (repository / "README.md").write_text("fixture\n", encoding="utf-8")
+            subprocess.run(["git", "add", "README.md"], cwd=repository, check=True)
+            subprocess.run(["git", "commit", "--quiet", "-m", "fixture"], cwd=repository, check=True)
+            sha = subprocess.run(
+                ["git", "rev-parse", "HEAD"], cwd=repository, check=True, capture_output=True, text=True
+            ).stdout.strip()
+
+            with self.assertRaises(guard.GuardError):
+                guard.require_target_paths(repository, sha)
+
+    def test_utc_z_timestamps_remain_accepted(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            run_dir = self._complete_run(Path(temporary), {
+                "run_id": "20261016T075147Z-fixture",
+                "evaluated_at": "2026-10-16T00:11:00Z",
+                "evidence_validation": "PASS",
+                "hypothesis_evaluation": "SUPPORTED",
+            })
+
+            outcome = guard.inspect_run(run_dir)
+
+        self.assertEqual(outcome.execution_status, "COMPLETE")
 
     def test_success_summary_includes_github_run_identity(self) -> None:
         summary = guard.render_summary(guard.RunSummary(

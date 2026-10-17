@@ -4,14 +4,16 @@ from __future__ import annotations
 
 import argparse
 import json
-from pathlib import Path
 import sys
+from pathlib import Path
 
 from azure_e2e_guard import (
     GuardError,
+    SanitizationError,
     inspect_run,
     parse_target_sha,
     render_summary,
+    require_target_paths,
     sanitize_tree,
     scan_sanitized_tree,
     summary_from_run,
@@ -23,6 +25,9 @@ def main() -> int:
     subparsers = parser.add_subparsers(dest="action", required=True)
     target = subparsers.add_parser("validate-target")
     target.add_argument("sha")
+    target_paths = subparsers.add_parser("require-target-paths")
+    target_paths.add_argument("repository", type=Path)
+    target_paths.add_argument("sha")
     inspect = subparsers.add_parser("inspect-run")
     inspect.add_argument("run_dir", type=Path)
     sanitize = subparsers.add_parser("sanitize")
@@ -45,6 +50,13 @@ def main() -> int:
             print(f"BLOCKED: {exc}", file=sys.stderr)
             return 3
         return 0
+    if args.action == "require-target-paths":
+        try:
+            require_target_paths(args.repository, args.sha)
+        except GuardError as exc:
+            print(f"BLOCKED: {exc}", file=sys.stderr)
+            return 3
+        return 0
     if args.action == "inspect-run":
         outcome = inspect_run(args.run_dir)
         print(json.dumps(outcome._asdict(), indent=2))
@@ -52,14 +64,14 @@ def main() -> int:
     if args.action == "sanitize":
         try:
             sanitize_tree(args.source, args.destination)
-        except (GuardError, OSError) as exc:
+        except (GuardError, SanitizationError, OSError) as exc:
             print(f"FAILED: {exc}", file=sys.stderr)
             return 4
         return 0
     if args.action == "scan-sanitized":
         try:
             scan_sanitized_tree(args.root)
-        except (GuardError, OSError, UnicodeDecodeError) as exc:
+        except (GuardError, SanitizationError, OSError, UnicodeDecodeError) as exc:
             print(f"FAILED: {exc}", file=sys.stderr)
             return 4
         return 0
