@@ -52,7 +52,11 @@ class AzureE2ESanitizeTests(unittest.TestCase):
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text(content, encoding="utf-8")
         destination = root / "sanitized"
-        guard.sanitize_tree(source, destination)
+        try:
+            guard.sanitize_tree(source, destination)
+        except guard.GuardError:
+            temporary.cleanup()
+            raise
         return destination, temporary
 
     def test_structured_json_keeps_only_typed_allowlisted_evidence(self) -> None:

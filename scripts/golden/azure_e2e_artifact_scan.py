@@ -4,72 +4,117 @@ from __future__ import annotations
 
 import json
 import re
+from collections.abc import Callable
+from datetime import datetime
 from pathlib import Path
-from typing import Final
+from typing import Final, TypeAlias
 
 FILE_RE: Final = re.compile(r"^(?:run\.json|evaluation\.json|cleanup-result\.json|log-[0-9]{4}\.txt)$")
 LOG_HEADER_RE: Final = re.compile(r"source_lines: [0-9]+\nexit_code: -?[0-9]+\n")
 LOG_LINE_RE: Final = re.compile(r"line [1-9][0-9]*: (?:<line dropped: unsafe>|[A-Za-z0-9._:/ -]{1,240})")
-TIMESTAMP_RE: Final = re.compile(r"[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9:.+-]+Z?")
 RUN_ID_RE: Final = re.compile(r"(?:[0-9]{8}T[0-9]{6}Z-[0-9a-f]{12}|[0-9]+-[1-9][0-9]*)")
 SHA_RE: Final = re.compile(r"[0-9a-f]{40}")
 GROUP_RE: Final = re.compile(r"rg-golden-e2e-[0-9]+-[1-9][0-9]*")
+GITHUB_ID_RE: Final = re.compile(r"[0-9]{1,20}")
+GITHUB_ATTEMPT_RE: Final = re.compile(r"[1-9][0-9]{0,5}")
 RESOURCE: Final = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-golden-e2e/providers/Microsoft.Web/sites/app-golden-e2e"
-SHORT_RE: Final = re.compile(r"[A-Za-z0-9._:/ -]{1,160}")
 ENUMS: Final = frozenset({
     "BLOCKED", "COMPLETE", "FAIL", "FAILED", "INCONCLUSIVE", "NOT_RUN", "PASS", "PENDING",
     "SUPPORTED", "CONTRADICTED", "VERIFIED",
 })
-SCHEMAS: Final = {
-    "run.json": frozenset({
-        "run_id", "execution_status", "hypothesis_status", "cleanup_status", "started_at", "ended_at",
-        "captured_at", "source_commit", "target_commit", "scenario", "resource_id", "exit_code",
-        "command_exit", "assertion_count", "assertions_passed", "assertions_failed",
-    }),
-    "evaluation.json": frozenset({
-        "run_id", "evaluated_at", "evidence_validation", "hypothesis_evaluation",
-        "independent_reproduction", "matching_import_errors", "assertion_count", "assertions_passed",
-        "assertions_failed",
-    }),
-    "cleanup-result.json": frozenset({
-        "github_run_id", "github_run_attempt", "run_id", "group_name", "cleanup_status", "exists",
-        "started_at", "ended_at", "verified_at", "exit_code",
-    }),
-}
+SCENARIOS: Final = frozenset({"deployment-succeeded-startup-failed"})
+JsonScalar: TypeAlias = None | bool | int | float | str
+Validator: TypeAlias = Callable[[JsonScalar], bool]
 
 
 class ArtifactValidationError(Exception):
     """An upload artifact violates the closed structural contract."""
 
 
-def _valid_value(key: str, value: bool | int | float | str | None) -> bool:
-    if isinstance(value, bool | int | float) or value is None:
-        return True
-    if not isinstance(value, str):
+def _string_matches(value: JsonScalar, pattern: re.Pattern[str]) -> bool:
+    return isinstance(value, str) and pattern.fullmatch(value) is not None
+
+
+def _timestamp(value: JsonScalar) -> bool:
+    if not isinstance(value, str) or len(value) > 40:
         return False
-    if key.endswith("_at"):
-        return bool(TIMESTAMP_RE.fullmatch(value))
-    if key in {"source_commit", "target_commit"}:
-        return bool(SHA_RE.fullmatch(value))
-    if key == "run_id":
-        return bool(RUN_ID_RE.fullmatch(value))
-    if key == "group_name":
-        return bool(GROUP_RE.fullmatch(value))
-    if key == "resource_id":
-        return value == RESOURCE
-    if key.endswith("_status") or key in {"evidence_validation", "hypothesis_evaluation", "independent_reproduction"}:
-        return value in ENUMS
-    return bool(SHORT_RE.fullmatch(value))
+    try:
+        parsed = datetime.fromisoformat(value)
+    except ValueError:
+        return False
+    return parsed.tzinfo is not None and 2000 <= parsed.year <= 2100
+
+
+def _bounded_int(value: JsonScalar, minimum: int, maximum: int) -> bool:
+    return isinstance(value, int) and not isinstance(value, bool) and minimum <= value <= maximum
+
+
+def _reject_constant(value: str) -> None:
+    raise ArtifactValidationError(f"non-finite JSON number is forbidden: {value}")
+
+
+def _unique_object(pairs: list[tuple[str, JsonScalar]]) -> dict[str, JsonScalar]:
+    result: dict[str, JsonScalar] = {}
+    for key, value in pairs:
+        if key in result:
+            raise ArtifactValidationError(f"duplicate JSON key is forbidden: {key}")
+        result[key] = value
+    return result
+
+
+def _status(value: JsonScalar) -> bool:
+    return isinstance(value, str) and value in ENUMS
+
+
+SCHEMAS: Final[dict[str, dict[str, Validator]]] = {
+    "run.json": {
+        "run_id": lambda value: _string_matches(value, RUN_ID_RE),
+        "execution_status": _status, "hypothesis_status": _status, "cleanup_status": _status,
+        "started_at": _timestamp, "ended_at": _timestamp, "captured_at": _timestamp,
+        "source_commit": lambda value: _string_matches(value, SHA_RE),
+        "target_commit": lambda value: _string_matches(value, SHA_RE),
+        "scenario": lambda value: isinstance(value, str) and value in SCENARIOS,
+        "resource_id": lambda value: value == RESOURCE,
+        "exit_code": lambda value: _bounded_int(value, -255, 255),
+        "command_exit": lambda value: _bounded_int(value, -255, 255),
+        "assertion_count": lambda value: _bounded_int(value, 0, 1_000_000),
+        "assertions_passed": lambda value: _bounded_int(value, 0, 1_000_000),
+        "assertions_failed": lambda value: _bounded_int(value, 0, 1_000_000),
+    },
+    "evaluation.json": {
+        "run_id": lambda value: _string_matches(value, RUN_ID_RE), "evaluated_at": _timestamp,
+        "evidence_validation": _status, "hypothesis_evaluation": _status,
+        "independent_reproduction": _status,
+        "matching_import_errors": lambda value: _bounded_int(value, 0, 1_000_000),
+        "assertion_count": lambda value: _bounded_int(value, 0, 1_000_000),
+        "assertions_passed": lambda value: _bounded_int(value, 0, 1_000_000),
+        "assertions_failed": lambda value: _bounded_int(value, 0, 1_000_000),
+    },
+    "cleanup-result.json": {
+        "github_run_id": lambda value: _string_matches(value, GITHUB_ID_RE),
+        "github_run_attempt": lambda value: _string_matches(value, GITHUB_ATTEMPT_RE),
+        "run_id": lambda value: _string_matches(value, RUN_ID_RE),
+        "group_name": lambda value: _string_matches(value, GROUP_RE), "cleanup_status": _status,
+        "exists": lambda value: isinstance(value, bool), "started_at": _timestamp,
+        "ended_at": _timestamp, "verified_at": _timestamp,
+        "exit_code": lambda value: _bounded_int(value, -255, 255),
+    },
+}
 
 
 def _validate_json(path: Path) -> None:
     try:
-        document = json.loads(path.read_text(encoding="utf-8"))
-    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        document = json.loads(
+            path.read_text(encoding="utf-8"),
+            object_pairs_hook=_unique_object,
+            parse_constant=_reject_constant,
+        )
+    except (UnicodeDecodeError, json.JSONDecodeError, ArtifactValidationError) as exc:
         raise ArtifactValidationError(f"invalid JSON artifact: {path.name}") from exc
-    if not isinstance(document, dict) or not document or not set(document).issubset(SCHEMAS[path.name]):
+    schema = SCHEMAS[path.name]
+    if not isinstance(document, dict) or not document or not set(document).issubset(schema):
         raise ArtifactValidationError(f"JSON artifact violates key allowlist: {path.name}")
-    if not all(_valid_value(key, value) for key, value in document.items()):
+    if not all(schema[key](value) for key, value in document.items()):
         raise ArtifactValidationError(f"JSON artifact violates value constraints: {path.name}")
 
 
