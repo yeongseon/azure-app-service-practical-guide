@@ -25,7 +25,7 @@ Every quality gate in this repository, its most recently recorded result, and th
 
 ## Summary
 
-*Snapshot of `a49d857 plus uncommitted working-tree changes`, generated 2026-10-18.*
+*Snapshot of `76fa86e plus uncommitted working-tree changes`, generated 2026-10-18.*
 
 | Metric | Count |
 |---|---:|
