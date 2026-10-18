@@ -382,6 +382,7 @@ nav:
       - Content Validation: reference/content-validation-status.md
       - Validation Status: reference/validation-status.md
     - Golden Evidence Model: reference/golden-evidence-model.md
+    - Guarded Azure E2E Operations: reference/azure-e2e-operations.md
     - Golden Migration Specification: reference/golden-migration-spec.md
     - CLI Cheatsheet: reference/cli-cheatsheet.md
     - Queries:

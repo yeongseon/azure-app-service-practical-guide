@@ -55,4 +55,5 @@ if [ "$startup_failure_hits" -gt 0 ]; then
 else
     echo "⚠️ No startup-failure evidence found yet."
     echo "Run trigger.sh first, then wait 2-5 minutes and re-run verify.sh."
+    exit 2
 fi
