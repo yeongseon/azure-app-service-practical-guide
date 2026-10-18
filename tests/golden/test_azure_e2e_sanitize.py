@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import random
+import string
 import sys
 import tempfile
 import unittest
@@ -16,130 +18,177 @@ assert SPEC is not None and SPEC.loader is not None
 guard = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(guard)
 
+LEAK_FORMS = (
+    "accessToken=plain-secret",
+    r'payload={"\u0061ccessToken":"escaped-secret"}',
+    r'payload={"pass\u0077ord":"escaped-secret"}',
+    'password="first line\nsecond line"',
+    "Authorization: Basic dXNlcjpwYXNz",
+    "Authorization: Bearer bearer-secret",
+    "https://user:password@example.test/path",
+    "QWxhZGRpbjpvcGVuIHNlc2FtZQ==",
+    "VGhpc0lzQUxvbmdPcGFxdWVCbG9iV2l0aG91dERpZ2l0cw==",
+    "/x?sig=S&token=T&ok=1 status=200",
+    "x-api-key: short-secret",
+    "client_secret=short-secret",
+    "DefaultEndpointsProtocol=https;AccountKey=secret",
+    "public=203.0.113.9 private=10.1.2.3 ipv6=2603:1030:20e:3::23",
+    "owner=user@contoso.com",
+    "tenant=12345678-1234-1234-1234-123456789abc",
+    "sv=2026-01-01&sig=secret",
+    '{"outer":{"password":"nested-secret"}}',
+    '[{"token":"array-secret"}]',
+)
+
 
 class AzureE2ESanitizeTests(unittest.TestCase):
-    def test_embedded_credential_assignments_are_redacted_and_scan_safe(self) -> None:
-        hostile_lines = (
-            "INFO payload accessToken=LOGLEAK request=42",
-            'INFO payload={"accessToken":"EMBEDDEDLEAK"} request=42',
-            r'INFO payload={"pass\u0077ord":"ESCAPELEAK"} request=42',
-            '"accessToken":"QUOTEDLEAK"',
-            'nested={"outer":{"clientSecret":"NESTED LEAK"}} done=true',
-            'items=[{"api_key":"ARRAYLEAK"},{"password":"SECOND LEAK"}], status=done',
-            'token="value with spaces", password=last-value.',
-            "access-key='first value'; account_key=second-value, request=42",
-        )
-        with tempfile.TemporaryDirectory() as temporary:
-            root = Path(temporary)
-            artifact = root / "capture.log"
-            artifact.write_text("\n".join(hostile_lines), encoding="utf-8")
+    def _sanitize(self, files: dict[str, str]) -> tuple[Path, tempfile.TemporaryDirectory[str]]:
+        temporary = tempfile.TemporaryDirectory()
+        root = Path(temporary.name)
+        source = root / "source"
+        source.mkdir()
+        for name, content in files.items():
+            path = source / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(content, encoding="utf-8")
+        destination = root / "sanitized"
+        guard.sanitize_tree(source, destination)
+        return destination, temporary
 
-            sanitized = guard.sanitize_text(artifact.read_text(encoding="utf-8"))
-            artifact.write_text(sanitized, encoding="utf-8")
+    def test_structured_json_keeps_only_typed_allowlisted_evidence(self) -> None:
+        run = {
+            "run_id": "20261018T010203Z-abcdef123456",
+            "started_at": "2026-10-18T01:02:03+00:00",
+            "ended_at": "2026-10-18T01:12:03+00:00",
+            "execution_status": "FAILED",
+            "cleanup_status": "PENDING",
+            "source_sha": "a" * 40,
+            "resource_id": "/subscriptions/12345678-1234-1234-1234-123456789abc/resourceGroups/private/providers/Microsoft.Web/sites/private",
+            "error": "accessToken=must-drop",
+            "artifacts": {"secret.json": {"sha256": "b" * 64}},
+        }
+        evaluation = {
+            "run_id": run["run_id"],
+            "evaluated_at": "2026-10-18T01:13:03Z",
+            "evidence_validation": "FAIL",
+            "hypothesis_evaluation": "INCONCLUSIVE",
+            "matching_import_errors": 0,
+            "errors": ["password=must-drop"],
+        }
 
-            self.assertNotIn("LEAK", sanitized)
-            self.assertEqual(sanitized.count("<REDACTED>"), 11)
-            self.assertEqual(guard.sanitize_text(sanitized), sanitized)
-            guard.scan_sanitized_tree(root)
-
-    def test_scan_independently_rejects_embedded_credential_assignments(self) -> None:
-        hostile_lines = (
-            "INFO payload accessToken=LOGLEAK request=42",
-            'INFO payload={"accessToken":"EMBEDDEDLEAK"} request=42',
-            r'INFO payload={"pass\u0077ord":"ESCAPELEAK"} request=42',
-            '"accessToken":"QUOTEDLEAK"',
-            'nested=[{"clientSecret":"NESTED LEAK"}]',
-            'token="value with spaces", password=last-value.',
-        )
-        for line in hostile_lines:
-            with self.subTest(line=line), tempfile.TemporaryDirectory() as temporary:
-                root = Path(temporary)
-                (root / "capture.log").write_text(line, encoding="utf-8")
-
-                with self.assertRaises(guard.GuardError):
-                    guard.scan_sanitized_tree(root)
-
-    def test_json_credential_keys_are_redacted_after_normalization(self) -> None:
-        raw = r'{"pass\u0077ord":"LEAKED","accessToken":"short-opaque-secret","client-secret":"opaque"}'
-
-        sanitized = guard.sanitize_text(raw)
-
-        self.assertEqual(json.loads(sanitized), {
-            "password": "<REDACTED>",
-            "accessToken": "<REDACTED>",
-            "client-secret": "<REDACTED>",
+        destination, temporary = self._sanitize({
+            "private/run.json": json.dumps(run),
+            "private/evaluation-deadbeef.json": json.dumps(evaluation),
         })
-        self.assertEqual(guard.sanitize_text(sanitized), sanitized)
+        self.addCleanup(temporary.cleanup)
 
-    def test_scan_independently_rejects_json_credential_keys(self) -> None:
-        for document in (
-            r'{"pass\u0077ord":"LEAKED"}',
-            '{"accessToken":"short-opaque-secret"}',
-            '{"api_key":"tiny"}',
-        ):
-            with self.subTest(document=document), tempfile.TemporaryDirectory() as temporary:
-                root = Path(temporary)
-                (root / "capture.json").write_text(document, encoding="utf-8")
-                with self.assertRaises(guard.GuardError):
-                    guard.scan_sanitized_tree(root)
+        retained_run = json.loads((destination / "run.json").read_text(encoding="utf-8"))
+        retained_evaluation = json.loads((destination / "evaluation.json").read_text(encoding="utf-8"))
+        self.assertEqual(retained_run["resource_id"], guard.RESOURCE_ID_PLACEHOLDER)
+        self.assertEqual(retained_run["started_at"], run["started_at"])
+        self.assertEqual(retained_run["source_commit"], run["source_sha"])
+        self.assertNotIn("error", retained_run)
+        self.assertNotIn("artifacts", retained_run)
+        self.assertEqual(retained_evaluation["evidence_validation"], "FAIL")
+        self.assertNotIn("errors", retained_evaluation)
+        guard.scan_sanitized_tree(destination)
 
-    def test_scan_requires_existing_nonempty_artifact_directory(self) -> None:
-        with tempfile.TemporaryDirectory() as temporary:
-            root = Path(temporary)
-            for artifact_root in (root / "missing", root / "empty"):
-                with self.subTest(artifact_root=artifact_root):
-                    if artifact_root.name == "empty":
-                        artifact_root.mkdir()
-                    with self.assertRaises(guard.GuardError):
-                        guard.scan_sanitized_tree(artifact_root)
+    def test_cleanup_record_keeps_owned_group_and_timestamps_only(self) -> None:
+        raw = {
+            "github_run_id": "12345",
+            "github_run_attempt": "2",
+            "cleanup_status": "VERIFIED",
+            "verified_at": "2026-10-18T01:13:03+00:00",
+            "group_name": "rg-golden-e2e-12345-2",
+            "exists": False,
+            "error": "client_secret=must-drop",
+        }
 
-    def test_scan_rejects_dotfile_only_and_placeholder_only_artifact_directories(self) -> None:
-        fixtures = ((".gitkeep", ""), ("placeholder.txt", "placeholder\n"))
-        for name, content in fixtures:
+        destination, temporary = self._sanitize({"cleanup-result.json": json.dumps(raw)})
+        self.addCleanup(temporary.cleanup)
+
+        retained = json.loads((destination / "cleanup-result.json").read_text(encoding="utf-8"))
+        self.assertEqual(retained["group_name"], "rg-golden-e2e-12345-2")
+        self.assertIs(retained["exists"], False)
+        self.assertNotIn("error", retained)
+        guard.scan_sanitized_tree(destination)
+
+    def test_every_reviewed_leak_form_is_dropped_from_log_summary(self) -> None:
+        source = "safe runner status 200\n" + "\n".join(LEAK_FORMS)
+
+        destination, temporary = self._sanitize({"scenario-a.log": source})
+        self.addCleanup(temporary.cleanup)
+        retained = (destination / "log-0001.txt").read_text(encoding="utf-8")
+
+        self.assertIn("line 1: safe runner status 200", retained)
+        self.assertEqual(retained.count("<line dropped: unsafe>"), len(LEAK_FORMS) + 1)
+        for leak in LEAK_FORMS:
+            self.assertNotIn(leak, retained)
+        guard.scan_sanitized_tree(destination)
+
+    def test_query_filter_drops_whole_line_without_collapsing_neighboring_evidence(self) -> None:
+        source = "before status 201\n/x?sig=S&token=T&ok=1 status=200\nafter status 202\n"
+
+        destination, temporary = self._sanitize({"scenario-a.log": source})
+        self.addCleanup(temporary.cleanup)
+        retained = (destination / "log-0001.txt").read_text(encoding="utf-8")
+
+        self.assertIn("line 1: before status 201", retained)
+        self.assertIn("line 2: <line dropped: unsafe>", retained)
+        self.assertIn("line 3: after status 202", retained)
+
+    def test_sanitizing_an_allowlist_artifact_is_idempotent(self) -> None:
+        first, temporary = self._sanitize({
+            "run.json": json.dumps({
+                "run_id": "20261018T010203Z-abcdef123456",
+                "execution_status": "FAILED",
+                "started_at": "2026-10-18T01:02:03Z",
+                "ended_at": "2026-10-18T01:03:03Z",
+            }),
+            "scenario-a.log": "safe status 200\npassword=drop-me\n",
+        })
+        self.addCleanup(temporary.cleanup)
+        second = Path(temporary.name) / "sanitized-again"
+
+        guard.sanitize_tree(first, second)
+
+        first_files = {path.name: path.read_bytes() for path in first.iterdir()}
+        second_files = {path.name: path.read_bytes() for path in second.iterdir()}
+        self.assertEqual(second_files, first_files)
+
+    def test_deterministic_fuzz_never_retains_credential_like_strings(self) -> None:
+        randomizer = random.Random(218)
+        alphabet = string.ascii_letters + string.digits
+        lines: list[str] = []
+        secrets: list[str] = []
+        keys = ("accessToken", "password", "client_secret", "x-api-key", "sig")
+        for _ in range(600):
+            secret = "".join(randomizer.choice(alphabet) for _ in range(randomizer.randint(20, 60)))
+            key = randomizer.choice(keys)
+            prefix = "".join(randomizer.choice(alphabet + " .-/") for _ in range(randomizer.randint(0, 20)))
+            suffix = "".join(randomizer.choice(alphabet + " .-/") for _ in range(randomizer.randint(0, 20)))
+            lines.append(f"{prefix}{key}={secret}{suffix}")
+            secrets.append(secret)
+
+        destination, temporary = self._sanitize({"fuzz.log": "\n".join(lines)})
+        self.addCleanup(temporary.cleanup)
+        retained = (destination / "log-0001.txt").read_text(encoding="utf-8")
+
+        self.assertTrue(all(secret not in retained for secret in secrets))
+        guard.scan_sanitized_tree(destination)
+
+    def test_independent_scanner_rejects_non_allowlisted_shapes(self) -> None:
+        fixtures = {
+            "unexpected.json": "{}\n",
+            "run.json": '{"run_id":"valid","password":"leak"}\n',
+            "log-0001.txt": "source_lines: 1\nline 1: Authorization Basic leak\n",
+        }
+        for name, content in fixtures.items():
             with self.subTest(name=name), tempfile.TemporaryDirectory() as temporary:
                 root = Path(temporary)
                 (root / name).write_text(content, encoding="utf-8")
-
                 with self.assertRaises(guard.GuardError):
                     guard.scan_sanitized_tree(root)
-
-    def test_hostile_secrets_are_sanitized_end_to_end(self) -> None:
-        hostile_values = (
-            "https://example.invalid/blob?sv=2024-11-04&se=2026-10-17&sig=abc%2Bdef%3D",
-            "DefaultEndpointsProtocol=https;AccountName=private;AccountKey=base64secret==;EndpointSuffix=core.windows.net",
-            "Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyIn0.signature",
-            "PASSWORD=super-secret-password",
-            "client_secret: confidential-value",
-            '{"password":"hunter2"}',
-            "AZURE_CLIENT_SECRET=raw-azure-secret",
-            "ARM_CLIENT_SECRET='raw-arm-secret'",
-            'DB_PASSWORD="very secret password with spaces"',
-            "{'client_secret': 'secret value;with=punctuation'}",
-            "ipv6=2603:1030:20e:3::23 link_local=fe80::1",
-        )
-        for index, hostile in enumerate(hostile_values):
-            with self.subTest(hostile=hostile), tempfile.TemporaryDirectory() as temporary:
-                root = Path(temporary)
-                source = root / "source"
-                source.mkdir()
-                (source / f"capture-{index}.txt").write_text(hostile, encoding="utf-8")
-                destination = root / "sanitized"
-                guard.sanitize_tree(source, destination)
-                guard.scan_sanitized_tree(destination)
-
-    def test_sanitizer_preserves_timestamps_and_is_idempotent(self) -> None:
-        raw = (
-            "at 12:34:56 ipv6 2603:1030:20e:3::23 resource "
-            "/subscriptions/12345678-1234-1234-1234-123456789abc/"
-            "resourceGroups/private/providers/Microsoft.Web/sites/private-app"
-        )
-
-        sanitized = guard.sanitize_text(raw)
-
-        self.assertIn("12:34:56", sanitized)
-        self.assertIn("2001:db8::1", sanitized)
-        self.assertIn(guard.RESOURCE_ID_PLACEHOLDER, sanitized)
-        self.assertEqual(guard.sanitize_text(sanitized), sanitized)
 
 
 if __name__ == "__main__":

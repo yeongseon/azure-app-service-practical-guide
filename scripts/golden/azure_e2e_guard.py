@@ -10,7 +10,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import NamedTuple
 
-from azure_e2e_sanitize import (
+from scripts.golden.azure_e2e_sanitize import (
     RESOURCE_ID_PLACEHOLDER,
     SanitizationError,
     sanitize_text,
@@ -29,6 +29,7 @@ REQUIRED_TARGET_PATHS = (
     "scripts/golden/azure_cleanup.py",
     "scripts/golden/azure_e2e_cli.py",
     "scripts/golden/azure_e2e_guard.py",
+    "scripts/golden/azure_e2e_artifact_scan.py",
     "scripts/golden/azure_e2e_sanitize.py",
     "labs/deployment-succeeded-startup-failed/run.py",
 )
