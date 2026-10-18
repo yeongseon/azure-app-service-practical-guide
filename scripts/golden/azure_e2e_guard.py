@@ -65,14 +65,15 @@ def require_target_paths(repository: Path, target_sha: str) -> None:
     sha = parse_target_sha(target_sha)
     for path in REQUIRED_TARGET_PATHS:
         result = subprocess.run(
-            ["git", "cat-file", "-e", f"{sha}:{path}"],
+            ["git", "ls-tree", sha, "--", path],
             cwd=repository,
             capture_output=True,
             text=True,
             check=False,
         )
-        if result.returncode != 0:
-            raise GuardError(f"target commit is missing required path: {path}")
+        fields = result.stdout.split(maxsplit=3)
+        if result.returncode != 0 or len(fields) != 4 or fields[0] not in {"100644", "100755"} or fields[1] != "blob":
+            raise GuardError(f"target commit lacks a regular helper blob: {path}")
 
 
 def inspect_run(run_dir: Path) -> RunOutcome:

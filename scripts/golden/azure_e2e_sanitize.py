@@ -2,9 +2,10 @@
 from __future__ import annotations
 
 import ipaddress
+import json
 import re
 from pathlib import Path
-from typing import Final
+from typing import Final, assert_never
 
 GUID_RE: Final = re.compile(r"\b[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}\b")
 EMAIL_RE: Final = re.compile(r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b")
@@ -37,6 +38,12 @@ SAS_RE: Final = re.compile(r"(?i)((?:^|[?&;])(?:sig|sv|se)=)([^&;\s]+)")
 CONNECTION_STRING_RE: Final = re.compile(r"(?i)DefaultEndpointsProtocol=[^;\s]+(?:;[^;\s=]+=[^;\s]*)+")
 LONG_HEX_RE: Final = re.compile(r"(?<![0-9a-fA-F])[0-9a-fA-F]{32,}(?![0-9a-fA-F])")
 SECRET_NAME_RE: Final = re.compile(r"(?i)(^id_(?:rsa|dsa|ecdsa|ed25519)$|\.(?:pem|pfx|p12|key)$|credential|secret)")
+CREDENTIAL_KEY_SUFFIXES: Final = (
+    "password", "passwd", "secret", "token", "apikey", "accountkey", "clientsecret",
+    "accesskey", "credential", "credentials", "connectionstring", "sig",
+)
+CREDENTIAL_KEY_EXACT: Final = frozenset({"key"})
+JsonValue = None | bool | int | float | str | list["JsonValue"] | dict[str, "JsonValue"]
 
 
 class SanitizationError(Exception):
@@ -70,7 +77,7 @@ def _replace_secret_assignment(match: re.Match[str]) -> str:
         f"{match.group('separator')}{quote}<REDACTED>{quote}"
 
 
-def sanitize_text(value: str) -> str:
+def _sanitize_non_json_text(value: str) -> str:
     sanitized = CONNECTION_STRING_RE.sub("DefaultEndpointsProtocol=<REDACTED>;AccountKey=<REDACTED>", value)
     sanitized = SAS_RE.sub(r"\1<REDACTED>", sanitized)
     sanitized = GUID_RE.sub("00000000-0000-0000-0000-000000000000", sanitized)
@@ -85,6 +92,51 @@ def sanitize_text(value: str) -> str:
     sanitized = IPV4_RE.sub(_replace_ipv4, sanitized)
     sanitized = IPV6_CANDIDATE_RE.sub(_replace_ipv6, sanitized)
     return sanitized.replace(RESOURCE_ID_SENTINEL, RESOURCE_ID_PLACEHOLDER)
+
+
+def _is_credential_key(key: str) -> bool:
+    normalized = re.sub(r"[^a-z0-9]", "", key.casefold())
+    return normalized in CREDENTIAL_KEY_EXACT or normalized.endswith(CREDENTIAL_KEY_SUFFIXES)
+
+
+def _sanitize_json(value: JsonValue) -> JsonValue:
+    match value:
+        case dict() as mapping:
+            return {
+                key: "<REDACTED>" if _is_credential_key(key) else _sanitize_json(item)
+                for key, item in mapping.items()
+            }
+        case list() as items:
+            return [_sanitize_json(item) for item in items]
+        case str() as text:
+            return _sanitize_non_json_text(text)
+        case None | bool() | int() | float():
+            return value
+        case unreachable:
+            assert_never(unreachable)
+
+
+def _unsafe_json_credential(value: JsonValue) -> bool:
+    match value:
+        case dict() as mapping:
+            return any(
+                (_is_credential_key(key) and item != "<REDACTED>") or _unsafe_json_credential(item)
+                for key, item in mapping.items()
+            )
+        case list() as items:
+            return any(_unsafe_json_credential(item) for item in items)
+        case None | bool() | int() | float() | str():
+            return False
+        case unreachable:
+            assert_never(unreachable)
+
+
+def sanitize_text(value: str) -> str:
+    try:
+        decoded: JsonValue = json.loads(value)
+    except json.JSONDecodeError:
+        return _sanitize_non_json_text(value)
+    return json.dumps(_sanitize_json(decoded), ensure_ascii=False, separators=(",", ":"))
 
 
 def sanitize_tree(source: Path, destination: Path) -> None:
@@ -109,10 +161,19 @@ def sanitize_tree(source: Path, destination: Path) -> None:
 
 
 def scan_sanitized_tree(root: Path) -> None:
-    for path in sorted(root.rglob("*")):
-        if not path.is_file():
-            continue
+    if not root.is_dir():
+        raise SanitizationError("sanitized artifact root is not an existing directory")
+    artifacts = tuple(path for path in sorted(root.rglob("*")) if path.is_file() and not path.is_symlink())
+    if not artifacts:
+        raise SanitizationError("sanitized artifact root contains no regular artifacts")
+    for path in artifacts:
         text = path.read_text(encoding="utf-8")
+        try:
+            decoded: JsonValue = json.loads(text)
+        except json.JSONDecodeError:
+            unsafe_json_credential = False
+        else:
+            unsafe_json_credential = _unsafe_json_credential(decoded)
         scrubbed = re.sub(
             r"([\"']?)<REDACTED>(?:_HEX_TOKEN)?\1",
             "",
@@ -136,5 +197,6 @@ def scan_sanitized_tree(root: Path) -> None:
             or SECRET_ASSIGNMENT_RE.search(scrubbed) or SAS_RE.search(scrubbed)
             or CONNECTION_STRING_RE.search(scrubbed) or LONG_HEX_RE.search(scrubbed)
             or unsafe_guid or unsafe_email or unsafe_ip or unsafe_ipv6 or unsafe_resource
+            or unsafe_json_credential
         ):
             raise SanitizationError(f"sanitized artifact still contains a secret-like value: {path.relative_to(root)}")
