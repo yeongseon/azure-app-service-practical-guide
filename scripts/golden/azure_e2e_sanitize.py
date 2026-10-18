@@ -32,6 +32,11 @@ STATUS_VALUES: Final = frozenset({
     "BLOCKED", "COMPLETE", "FAIL", "FAILED", "INCONCLUSIVE", "NOT_RUN", "PASS", "PENDING",
     "SUPPORTED", "CONTRADICTED", "VERIFIED",
 })
+FAILURE_STATUS_VALUES: Final = frozenset({"BLOCKED", "FAILED"})
+FAILURE_STAGE_VALUES: Final = frozenset({
+    "target-validation", "oidc-config", "oidc-login", "provisioning", "deployment",
+    "runner-start", "runner-crash", "evaluation", "sanitize",
+})
 SCENARIO_VALUES: Final = frozenset({"deployment-succeeded-startup-failed"})
 JsonScalar = None | bool | int | float | str
 JsonValue = JsonScalar | list["JsonValue"] | dict[str, "JsonValue"]
@@ -62,7 +67,7 @@ def _load_json(path: Path) -> dict[str, JsonValue] | None:
             object_pairs_hook=_unique_object,
             parse_constant=_reject_constant,
         )
-    except (UnicodeDecodeError, json.JSONDecodeError):
+    except (UnicodeDecodeError, json.JSONDecodeError, ValueError):
         return None
     return value if isinstance(value, dict) else None
 
@@ -132,6 +137,22 @@ SCHEMAS: Final[dict[str, dict[str, Recognizer]]] = {
         "started_at": _timestamp, "ended_at": _timestamp, "verified_at": _timestamp,
         "exit_code": lambda value: _bounded_int(value, -255, 255),
     },
+    "failure-record.json": {
+        "status": lambda value: _enum(value, FAILURE_STATUS_VALUES),
+        "failure_stage": lambda value: _enum(value, FAILURE_STAGE_VALUES),
+        "github_run_id": lambda value: _matching_string(value, GITHUB_ID_RE),
+        "github_run_attempt": lambda value: _matching_string(value, GITHUB_ATTEMPT_RE),
+        "evidence_run_id": lambda value: _matching_string(value, RUN_ID_RE),
+        "exit_code": lambda value: _bounded_int(value, -255, 255),
+        "started_at": _timestamp,
+        "ended_at": _timestamp,
+    },
+    "raw-log.json": {
+        "role": lambda value: _enum(value, frozenset({"scenario-runner", "runner-log"})),
+        "byte_length": lambda value: _bounded_int(value, 0, 10_000_000_000),
+        "line_count": lambda value: _bounded_int(value, 0, 100_000_000),
+        "sha256": lambda value: _matching_string(value, re.compile(r"^[0-9a-f]{64}$")),
+    },
 }
 
 
@@ -187,6 +208,16 @@ def sanitize_tree(source: Path, destination: Path) -> None:
                 continue
             if path.name == "cleanup-result.json":
                 retained = _copy_fields(document, path.name)
+                if retained:
+                    _write_json(destination / path.name, retained)
+                continue
+            if path.name == "failure-record.json":
+                retained = _copy_fields(document, path.name)
+                if retained:
+                    _write_json(destination / path.name, retained)
+                continue
+            if re.fullmatch(r"raw-log-[0-9]{4}\.json", path.name):
+                retained = _copy_fields(document, "raw-log.json")
                 if retained:
                     _write_json(destination / path.name, retained)
                 continue

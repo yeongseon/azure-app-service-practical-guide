@@ -279,6 +279,5 @@ class AzureE2EGuardTests(unittest.TestCase):
         ))
         self.assertIn("GitHub run ID: `12345` attempt `2`", summary)
 
-
 if __name__ == "__main__":
     unittest.main()

@@ -9,7 +9,7 @@ import subprocess
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import NamedTuple
+from typing import Literal, NamedTuple
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
@@ -58,6 +58,33 @@ class RunSummary(NamedTuple):
     captured_at: str
     evaluated_at: str
     mode: str
+
+
+FailureStatus = Literal["BLOCKED", "FAILED"]
+FailureStage = Literal[
+    "target-validation", "oidc-config", "oidc-login", "provisioning", "deployment",
+    "runner-start", "runner-crash", "evaluation", "sanitize"
+]
+
+
+class FailureRecord(NamedTuple):
+    status: FailureStatus
+    failure_stage: FailureStage
+    github_run_id: str
+    github_run_attempt: str
+    evidence_run_id: str | None
+    exit_code: int
+    started_at: str
+    ended_at: str
+
+
+def write_failure_record(path: Path, record: FailureRecord) -> None:
+    document = {key: value for key, value in record._asdict().items() if value is not None}
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
+        json.dumps(document, sort_keys=True, separators=(",", ":"), ensure_ascii=True) + "\n",
+        encoding="utf-8",
+    )
 
 
 def parse_target_sha(value: str) -> str:

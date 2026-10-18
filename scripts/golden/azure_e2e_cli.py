@@ -10,6 +10,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from scripts.golden.azure_e2e_guard import (
+    FailureRecord,
     GuardError,
     SanitizationError,
     inspect_run,
@@ -19,6 +20,7 @@ from scripts.golden.azure_e2e_guard import (
     sanitize_tree,
     scan_sanitized_tree,
     summary_from_run,
+    write_failure_record,
 )
 
 
@@ -44,6 +46,19 @@ def main() -> int:
     summary.add_argument("--github-run-attempt", required=True)
     scan = subparsers.add_parser("scan-sanitized")
     scan.add_argument("root", type=Path)
+    failure = subparsers.add_parser("write-failure")
+    failure.add_argument("path", type=Path)
+    failure.add_argument("--status", choices=("BLOCKED", "FAILED"), required=True)
+    failure.add_argument("--stage", choices=(
+        "target-validation", "oidc-config", "oidc-login", "provisioning", "deployment",
+        "runner-start", "runner-crash", "evaluation", "sanitize"
+    ), required=True)
+    failure.add_argument("--github-run-id", required=True)
+    failure.add_argument("--github-run-attempt", required=True)
+    failure.add_argument("--evidence-run-id")
+    failure.add_argument("--exit-code", type=int, required=True)
+    failure.add_argument("--started-at", required=True)
+    failure.add_argument("--ended-at", required=True)
     args = parser.parse_args()
     if args.action == "validate-target":
         try:
@@ -76,6 +91,18 @@ def main() -> int:
         except (GuardError, SanitizationError, OSError, UnicodeDecodeError) as exc:
             print(f"FAILED: {exc}", file=sys.stderr)
             return 4
+        return 0
+    if args.action == "write-failure":
+        write_failure_record(args.path, FailureRecord(
+            status=args.status,
+            failure_stage=args.stage,
+            github_run_id=args.github_run_id,
+            github_run_attempt=args.github_run_attempt,
+            evidence_run_id=args.evidence_run_id,
+            exit_code=args.exit_code,
+            started_at=args.started_at,
+            ended_at=args.ended_at,
+        ))
         return 0
     try:
         print(render_summary(summary_from_run(

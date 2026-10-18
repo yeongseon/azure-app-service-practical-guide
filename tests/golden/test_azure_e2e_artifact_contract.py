@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import json
+import random
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -40,6 +42,116 @@ class AzureE2EArtifactContractTests(unittest.TestCase):
             '"started_at":"2026-10-18T01:02:03Z"}\n'
         )
         self.assertEqual((destination / "run.json").read_text(encoding="utf-8"), expected)
+
+    def test_validator_accepted_trees_are_sanitizer_fixed_points(self) -> None:
+        randomizer = random.Random(218)
+        documents = {
+            "run.json": {
+                "run_id": "20261018T010203Z-abcdef123456",
+                "execution_status": "FAILED",
+                "started_at": "2026-10-18T01:02:03Z",
+                "assertion_count": 7,
+            },
+            "evaluation.json": {
+                "run_id": "20261018T010203Z-abcdef123456",
+                "evaluated_at": "2026-10-18T01:03:03Z",
+                "evidence_validation": "FAIL",
+            },
+            "cleanup-result.json": {
+                "github_run_id": "12345",
+                "github_run_attempt": "2",
+                "cleanup_status": "VERIFIED",
+                "exists": False,
+            },
+            "raw-log-0001.json": {
+                "role": "runner-log",
+                "byte_length": 123,
+                "line_count": 4,
+                "sha256": "a" * 64,
+            },
+            "failure-record.json": {
+                "status": "FAILED",
+                "failure_stage": "runner-crash",
+                "github_run_id": "12345",
+                "github_run_attempt": "2",
+                "evidence_run_id": "20261018T010203Z-abcdef123456",
+                "exit_code": 4,
+                "started_at": "2026-10-18T01:02:03Z",
+                "ended_at": "2026-10-18T01:03:03Z",
+            },
+        }
+        names = tuple(documents)
+
+        for case_index in range(2_048):
+            with self.subTest(case_index=case_index), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary)
+                source = root / "accepted"
+                source.mkdir()
+                selected = randomizer.sample(names, randomizer.randint(1, len(names)))
+                for name in selected:
+                    document = documents[name]
+                    keys = randomizer.sample(tuple(document), randomizer.randint(1, len(document)))
+                    canonical = {key: document[key] for key in keys}
+                    (source / name).write_text(
+                        json.dumps(canonical, sort_keys=True, separators=(",", ":")) + "\n",
+                        encoding="utf-8",
+                    )
+                before = {path.name: path.read_bytes() for path in source.iterdir()}
+
+                scan_sanitized_tree(source)
+                destination = root / "resanitized"
+                sanitize_tree(source, destination)
+
+                self.assertEqual(
+                    {path.name: path.read_bytes() for path in destination.iterdir()},
+                    before,
+                )
+
+    def test_raw_inputs_always_produce_validator_accepted_output(self) -> None:
+        randomizer = random.Random(248)
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            for case_index in range(64):
+                source = root / f"raw-{case_index}"
+                source.mkdir()
+                payload = bytes(randomizer.randrange(256) for _ in range(randomizer.randrange(1, 512)))
+                (source / "runner.log").write_bytes(payload)
+                destination = root / f"sanitized-{case_index}"
+
+                sanitize_tree(source, destination)
+
+                scan_sanitized_tree(destination)
+
+    def test_validator_rejects_noncanonical_json_bytes(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / "run.json").write_text('{ "run_id": "20261018T010203Z-abcdef123456" }\n')
+
+            with self.assertRaises(SanitizationError):
+                scan_sanitized_tree(root)
+
+    def test_cli_reports_huge_integer_as_controlled_failure(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            source = root / "source"
+            source.mkdir()
+            (source / "run.json").write_text('{"assertion_count":' + "9" * 10_000 + "}\n")
+
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    str(ROOT / "scripts/golden/azure_e2e_cli.py"),
+                    "sanitize",
+                    str(source),
+                    str(root / "output"),
+                ],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+            self.assertEqual(result.returncode, 4)
+            self.assertIn("FAILED:", result.stderr)
 
     def test_duplicate_json_keys_are_rejected_regardless_of_secret_position(self) -> None:
         fixtures = (

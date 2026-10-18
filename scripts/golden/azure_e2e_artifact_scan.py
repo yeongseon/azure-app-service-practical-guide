@@ -9,7 +9,9 @@ from datetime import datetime
 from pathlib import Path
 from typing import Final, TypeAlias
 
-FILE_RE: Final = re.compile(r"^(?:run\.json|evaluation\.json|cleanup-result\.json|raw-log-[0-9]{4}\.json)$")
+FILE_RE: Final = re.compile(
+    r"^(?:run\.json|evaluation\.json|cleanup-result\.json|failure-record\.json|raw-log-[0-9]{4}\.json)$"
+)
 RAW_LOG_FILE_RE: Final = re.compile(r"raw-log-[0-9]{4}\.json")
 RUN_ID_RE: Final = re.compile(r"(?:[0-9]{8}T[0-9]{6}Z-[0-9a-f]{12}|[0-9]+-[1-9][0-9]*)")
 SHA_RE: Final = re.compile(r"[0-9a-f]{40}")
@@ -24,6 +26,11 @@ TIMESTAMP_RE: Final = re.compile(
 ENUMS: Final = frozenset({
     "BLOCKED", "COMPLETE", "FAIL", "FAILED", "INCONCLUSIVE", "NOT_RUN", "PASS", "PENDING",
     "SUPPORTED", "CONTRADICTED", "VERIFIED",
+})
+FAILURE_STATUSES: Final = frozenset({"BLOCKED", "FAILED"})
+FAILURE_STAGES: Final = frozenset({
+    "target-validation", "oidc-config", "oidc-login", "provisioning", "deployment",
+    "runner-start", "runner-crash", "evaluation", "sanitize",
 })
 SCENARIOS: Final = frozenset({"deployment-succeeded-startup-failed"})
 JsonScalar: TypeAlias = None | bool | int | float | str
@@ -108,6 +115,16 @@ SCHEMAS: Final[dict[str, dict[str, Validator]]] = {
         "line_count": lambda value: _bounded_int(value, 0, 100_000_000),
         "sha256": lambda value: _string_matches(value, re.compile(r"[0-9a-f]{64}")),
     },
+    "failure-record.json": {
+        "status": lambda value: isinstance(value, str) and value in FAILURE_STATUSES,
+        "failure_stage": lambda value: isinstance(value, str) and value in FAILURE_STAGES,
+        "github_run_id": lambda value: _string_matches(value, GITHUB_ID_RE),
+        "github_run_attempt": lambda value: _string_matches(value, GITHUB_ATTEMPT_RE),
+        "evidence_run_id": lambda value: _string_matches(value, RUN_ID_RE),
+        "exit_code": lambda value: _bounded_int(value, -255, 255),
+        "started_at": _timestamp,
+        "ended_at": _timestamp,
+    },
 }
 
 
@@ -118,13 +135,16 @@ def _validate_json(path: Path) -> None:
             object_pairs_hook=_unique_object,
             parse_constant=_reject_constant,
         )
-    except (UnicodeDecodeError, json.JSONDecodeError, ArtifactValidationError) as exc:
+    except (UnicodeDecodeError, json.JSONDecodeError, ArtifactValidationError, ValueError) as exc:
         raise ArtifactValidationError(f"invalid JSON artifact: {path.name}") from exc
     schema = SCHEMAS["raw-log.json"] if RAW_LOG_FILE_RE.fullmatch(path.name) else SCHEMAS[path.name]
     if not isinstance(document, dict) or not document or not set(document).issubset(schema):
         raise ArtifactValidationError(f"JSON artifact violates key allowlist: {path.name}")
     if not all(schema[key](value) for key, value in document.items()):
         raise ArtifactValidationError(f"JSON artifact violates value constraints: {path.name}")
+    canonical = json.dumps(document, sort_keys=True, separators=(",", ":"), ensure_ascii=True) + "\n"
+    if path.read_text(encoding="utf-8") != canonical:
+        raise ArtifactValidationError(f"JSON artifact is not canonical: {path.name}")
 
 
 def validate_artifact_tree(root: Path) -> None:
