@@ -9,15 +9,18 @@ from datetime import datetime
 from pathlib import Path
 from typing import Final, TypeAlias
 
-FILE_RE: Final = re.compile(r"^(?:run\.json|evaluation\.json|cleanup-result\.json|log-[0-9]{4}\.txt)$")
-LOG_HEADER_RE: Final = re.compile(r"source_lines: [0-9]+\nexit_code: -?[0-9]+\n")
-LOG_LINE_RE: Final = re.compile(r"line [1-9][0-9]*: (?:<line dropped: unsafe>|[A-Za-z0-9._:/ -]{1,240})")
+FILE_RE: Final = re.compile(r"^(?:run\.json|evaluation\.json|cleanup-result\.json|raw-log-[0-9]{4}\.json)$")
+RAW_LOG_FILE_RE: Final = re.compile(r"raw-log-[0-9]{4}\.json")
 RUN_ID_RE: Final = re.compile(r"(?:[0-9]{8}T[0-9]{6}Z-[0-9a-f]{12}|[0-9]+-[1-9][0-9]*)")
 SHA_RE: Final = re.compile(r"[0-9a-f]{40}")
 GROUP_RE: Final = re.compile(r"rg-golden-e2e-[0-9]+-[1-9][0-9]*")
 GITHUB_ID_RE: Final = re.compile(r"[0-9]{1,20}")
 GITHUB_ATTEMPT_RE: Final = re.compile(r"[1-9][0-9]{0,5}")
 RESOURCE: Final = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-golden-e2e/providers/Microsoft.Web/sites/app-golden-e2e"
+TIMESTAMP_RE: Final = re.compile(
+    r"[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}"
+    r"(?:\.[0-9]{1,6})?(?:Z|[+-][0-9]{2}:[0-9]{2})"
+)
 ENUMS: Final = frozenset({
     "BLOCKED", "COMPLETE", "FAIL", "FAILED", "INCONCLUSIVE", "NOT_RUN", "PASS", "PENDING",
     "SUPPORTED", "CONTRADICTED", "VERIFIED",
@@ -36,7 +39,7 @@ def _string_matches(value: JsonScalar, pattern: re.Pattern[str]) -> bool:
 
 
 def _timestamp(value: JsonScalar) -> bool:
-    if not isinstance(value, str) or len(value) > 40:
+    if not isinstance(value, str) or TIMESTAMP_RE.fullmatch(value) is None:
         return False
     try:
         parsed = datetime.fromisoformat(value)
@@ -99,6 +102,12 @@ SCHEMAS: Final[dict[str, dict[str, Validator]]] = {
         "ended_at": _timestamp, "verified_at": _timestamp,
         "exit_code": lambda value: _bounded_int(value, -255, 255),
     },
+    "raw-log.json": {
+        "role": lambda value: isinstance(value, str) and value in {"scenario-runner", "runner-log"},
+        "byte_length": lambda value: _bounded_int(value, 0, 10_000_000_000),
+        "line_count": lambda value: _bounded_int(value, 0, 100_000_000),
+        "sha256": lambda value: _string_matches(value, re.compile(r"[0-9a-f]{64}")),
+    },
 }
 
 
@@ -111,27 +120,11 @@ def _validate_json(path: Path) -> None:
         )
     except (UnicodeDecodeError, json.JSONDecodeError, ArtifactValidationError) as exc:
         raise ArtifactValidationError(f"invalid JSON artifact: {path.name}") from exc
-    schema = SCHEMAS[path.name]
+    schema = SCHEMAS["raw-log.json"] if RAW_LOG_FILE_RE.fullmatch(path.name) else SCHEMAS[path.name]
     if not isinstance(document, dict) or not document or not set(document).issubset(schema):
         raise ArtifactValidationError(f"JSON artifact violates key allowlist: {path.name}")
     if not all(schema[key](value) for key, value in document.items()):
         raise ArtifactValidationError(f"JSON artifact violates value constraints: {path.name}")
-
-
-def _validate_log(path: Path) -> None:
-    try:
-        text = path.read_text(encoding="utf-8")
-    except UnicodeDecodeError as exc:
-        raise ArtifactValidationError(f"log is not UTF-8: {path.name}") from exc
-    header = LOG_HEADER_RE.match(text)
-    if header is None:
-        raise ArtifactValidationError(f"log summary header is invalid: {path.name}")
-    lines = text[header.end():].splitlines()
-    if not lines or any(LOG_LINE_RE.fullmatch(line) is None for line in lines):
-        raise ArtifactValidationError(f"log summary body is invalid: {path.name}")
-    numbers = [int(line.split(":", maxsplit=1)[0].split()[1]) for line in lines]
-    if numbers != sorted(set(numbers)):
-        raise ArtifactValidationError(f"log summary line numbers are invalid: {path.name}")
 
 
 def validate_artifact_tree(root: Path) -> None:
@@ -144,7 +137,4 @@ def validate_artifact_tree(root: Path) -> None:
     for path in paths:
         if not path.is_file() or path.is_symlink() or FILE_RE.fullmatch(path.name) is None:
             raise ArtifactValidationError(f"artifact path is not allowlisted: {path.name}")
-        if path.suffix == ".json":
-            _validate_json(path)
-        else:
-            _validate_log(path)
+        _validate_json(path)

@@ -16,10 +16,11 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from scripts.golden.azure_e2e_sanitize import (
     RESOURCE_ID_PLACEHOLDER,
     SanitizationError,
-    sanitize_text,
     sanitize_tree,
     scan_sanitized_tree,
 )
+
+__all__ = ("RESOURCE_ID_PLACEHOLDER", "sanitize_tree", "scan_sanitized_tree")
 
 SHA_RE = re.compile(r"^[0-9a-f]{40}$")
 REQUIRED_EVIDENCE = (

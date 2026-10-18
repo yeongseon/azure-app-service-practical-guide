@@ -18,29 +18,6 @@ assert SPEC is not None and SPEC.loader is not None
 guard = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(guard)
 
-LEAK_FORMS = (
-    "accessToken=plain-secret",
-    r'payload={"\u0061ccessToken":"escaped-secret"}',
-    r'payload={"pass\u0077ord":"escaped-secret"}',
-    'password="first line\nsecond line"',
-    "Authorization: Basic dXNlcjpwYXNz",
-    "Authorization: Bearer bearer-secret",
-    "https://user:password@example.test/path",
-    "QWxhZGRpbjpvcGVuIHNlc2FtZQ==",
-    "VGhpc0lzQUxvbmdPcGFxdWVCbG9iV2l0aG91dERpZ2l0cw==",
-    "/x?sig=S&token=T&ok=1 status=200",
-    "x-api-key: short-secret",
-    "client_secret=short-secret",
-    "DefaultEndpointsProtocol=https;AccountKey=secret",
-    "public=203.0.113.9 private=10.1.2.3 ipv6=2603:1030:20e:3::23",
-    "owner=user@contoso.com",
-    "tenant=12345678-1234-1234-1234-123456789abc",
-    "sv=2026-01-01&sig=secret",
-    '{"outer":{"password":"nested-secret"}}',
-    '[{"token":"array-secret"}]',
-)
-
-
 class AzureE2ESanitizeTests(unittest.TestCase):
     def _sanitize(self, files: dict[str, str]) -> tuple[Path, tempfile.TemporaryDirectory[str]]:
         temporary = tempfile.TemporaryDirectory()
@@ -117,75 +94,47 @@ class AzureE2ESanitizeTests(unittest.TestCase):
         self.assertNotIn("error", retained)
         guard.scan_sanitized_tree(destination)
 
-    def test_every_reviewed_leak_form_is_dropped_from_log_summary(self) -> None:
-        source = "safe runner status 200\n" + "\n".join(LEAK_FORMS)
+    def test_raw_log_retains_only_typed_metadata(self) -> None:
+        source = "safe runner status 200\r\npassword=\r\nhunter2\r\n"
 
         destination, temporary = self._sanitize({"scenario-a.log": source})
         self.addCleanup(temporary.cleanup)
-        retained = (destination / "log-0001.txt").read_text(encoding="utf-8")
+        retained = json.loads((destination / "raw-log-0001.json").read_text(encoding="utf-8"))
 
-        self.assertIn("line 1: safe runner status 200", retained)
-        self.assertEqual(retained.count("<line dropped: unsafe>"), len(LEAK_FORMS) + 1)
-        for leak in LEAK_FORMS:
-            self.assertNotIn(leak, retained)
+        self.assertEqual(retained["role"], "scenario-runner")
+        self.assertEqual(retained["byte_length"], len(source.encode("utf-8")))
+        self.assertEqual(retained["line_count"], 3)
+        self.assertRegex(retained["sha256"], r"^[0-9a-f]{64}$")
+        self.assertNotIn("safe runner status", json.dumps(retained))
+        self.assertNotIn("hunter2", json.dumps(retained))
         guard.scan_sanitized_tree(destination)
 
-    def test_query_filter_drops_whole_line_without_collapsing_neighboring_evidence(self) -> None:
-        source = "before status 201\n/x?sig=S&token=T&ok=1 status=200\nafter status 202\n"
+    def test_deterministic_property_no_free_text_appears_in_output_tree(self) -> None:
+        randomizer = random.Random(218)
+        alphabet = string.ascii_letters + string.digits + " .-/:=_?@[]{}'\""
+        separators = ("\n", "\r\n", "\r")
+        records: list[str] = []
+        for index in range(600):
+            secret = "".join(randomizer.choice(string.ascii_letters + string.digits) for _ in range(32))
+            key = randomizer.choice(("accessToken", "password", "client_secret", "Authorization Basic", "public"))
+            prefix = "".join(randomizer.choice(alphabet) for _ in range(randomizer.randint(0, 24)))
+            suffix = "".join(randomizer.choice(alphabet) for _ in range(randomizer.randint(0, 24)))
+            records.append(f"case-{index}-{prefix}{key}={secret}{suffix}")
+        source = "".join(record + separators[index % len(separators)] for index, record in enumerate(records))
 
         destination, temporary = self._sanitize({"scenario-a.log": source})
         self.addCleanup(temporary.cleanup)
-        retained = (destination / "log-0001.txt").read_text(encoding="utf-8")
+        output = b"".join(path.read_bytes() for path in destination.iterdir())
 
-        self.assertIn("line 1: before status 201", retained)
-        self.assertIn("line 2: <line dropped: unsafe>", retained)
-        self.assertIn("line 3: after status 202", retained)
-
-    def test_sanitizing_an_allowlist_artifact_is_idempotent(self) -> None:
-        first, temporary = self._sanitize({
-            "run.json": json.dumps({
-                "run_id": "20261018T010203Z-abcdef123456",
-                "execution_status": "FAILED",
-                "started_at": "2026-10-18T01:02:03Z",
-                "ended_at": "2026-10-18T01:03:03Z",
-            }),
-            "scenario-a.log": "safe status 200\npassword=drop-me\n",
-        })
-        self.addCleanup(temporary.cleanup)
-        second = Path(temporary.name) / "sanitized-again"
-
-        guard.sanitize_tree(first, second)
-
-        first_files = {path.name: path.read_bytes() for path in first.iterdir()}
-        second_files = {path.name: path.read_bytes() for path in second.iterdir()}
-        self.assertEqual(second_files, first_files)
-
-    def test_deterministic_fuzz_never_retains_credential_like_strings(self) -> None:
-        randomizer = random.Random(218)
-        alphabet = string.ascii_letters + string.digits
-        lines: list[str] = []
-        secrets: list[str] = []
-        keys = ("accessToken", "password", "client_secret", "x-api-key", "sig")
-        for _ in range(600):
-            secret = "".join(randomizer.choice(alphabet) for _ in range(randomizer.randint(20, 60)))
-            key = randomizer.choice(keys)
-            prefix = "".join(randomizer.choice(alphabet + " .-/") for _ in range(randomizer.randint(0, 20)))
-            suffix = "".join(randomizer.choice(alphabet + " .-/") for _ in range(randomizer.randint(0, 20)))
-            lines.append(f"{prefix}{key}={secret}{suffix}")
-            secrets.append(secret)
-
-        destination, temporary = self._sanitize({"fuzz.log": "\n".join(lines)})
-        self.addCleanup(temporary.cleanup)
-        retained = (destination / "log-0001.txt").read_text(encoding="utf-8")
-
-        self.assertTrue(all(secret not in retained for secret in secrets))
+        self.assertTrue(all(record.encode("utf-8") not in output for record in records))
         guard.scan_sanitized_tree(destination)
 
     def test_independent_scanner_rejects_non_allowlisted_shapes(self) -> None:
         fixtures = {
             "unexpected.json": "{}\n",
             "run.json": '{"run_id":"valid","password":"leak"}\n',
-            "log-0001.txt": "source_lines: 1\nline 1: Authorization Basic leak\n",
+            "notes.txt": "password secret\n",
+            "runner.log": "Authorization Basic leak\n",
         }
         for name, content in fixtures.items():
             with self.subTest(name=name), tempfile.TemporaryDirectory() as temporary:

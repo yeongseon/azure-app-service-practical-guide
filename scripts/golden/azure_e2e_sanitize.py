@@ -2,6 +2,7 @@
 """Build a minimal, allowlisted diagnostic artifact from private Azure evidence."""
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 from collections.abc import Callable
@@ -23,17 +24,9 @@ SHA_RE: Final = re.compile(r"^[0-9a-f]{40}$")
 GROUP_RE: Final = re.compile(r"^rg-golden-e2e-[0-9]+-[1-9][0-9]*$")
 GITHUB_ID_RE: Final = re.compile(r"^[0-9]{1,20}$")
 GITHUB_ATTEMPT_RE: Final = re.compile(r"^[1-9][0-9]{0,5}$")
-SAFE_LINE_RE: Final = re.compile(r"^[A-Za-z0-9._:/ -]{1,240}$")
-IP_RE: Final = re.compile(r"(?:\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b|[0-9A-Fa-f]*:[0-9A-Fa-f:]+)")
-GUID_RE: Final = re.compile(r"\b[0-9A-Fa-f]{8}(?:-[0-9A-Fa-f]{4}){3}-[0-9A-Fa-f]{12}\b")
-OPAQUE_RE: Final = re.compile(r"[A-Za-z0-9+/_-]{20,}={0,2}")
-SHORT_OPAQUE_LINE_RE: Final = re.compile(r"[A-Za-z0-9+/_-]{12,19}")
-SUMMARY_HEADER_RE: Final = re.compile(r"source_lines: ([0-9]+)\nexit_code: (-?[0-9]+)\n")
-SUMMARY_LINE_RE: Final = re.compile(r"line ([1-9][0-9]*): (.*)")
-UNSAFE_MARKERS: Final = (
-    "authorization", "basic ", "bearer ", "x-api-key", "client-secret", "client_secret",
-    "password", "passwd", "token", "secret", "sig:", "?", "@", "=", "\\", "{", "}",
-    "[", "]", '"', "'",
+TIMESTAMP_RE: Final = re.compile(
+    r"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}"
+    r"(?:\.[0-9]{1,6})?(?:Z|[+-][0-9]{2}:[0-9]{2})$"
 )
 STATUS_VALUES: Final = frozenset({
     "BLOCKED", "COMPLETE", "FAIL", "FAILED", "INCONCLUSIVE", "NOT_RUN", "PASS", "PENDING",
@@ -79,7 +72,7 @@ def _matching_string(value: JsonValue, pattern: re.Pattern[str]) -> str | None:
 
 
 def _timestamp(value: JsonValue) -> str | None:
-    if not isinstance(value, str) or len(value) > 40:
+    if not isinstance(value, str) or TIMESTAMP_RE.fullmatch(value) is None:
         return None
     try:
         parsed = datetime.fromisoformat(value)
@@ -162,65 +155,19 @@ def _write_json(path: Path, document: dict[str, JsonScalar]) -> None:
     )
 
 
-def _safe_line(line: str) -> bool:
-    lowered = line.casefold()
-    return bool(
-        SAFE_LINE_RE.fullmatch(line)
-        and not any(marker in lowered for marker in UNSAFE_MARKERS)
-        and not OPAQUE_RE.search(line)
-        and SHORT_OPAQUE_LINE_RE.fullmatch(line) is None
-        and not IP_RE.search(line)
-        and not GUID_RE.search(line)
-    )
-
-
-def _log_summary(text: str, exit_code: int | None = None, last_lines: int = 40) -> str:
-    lines = text.splitlines()
-    start = max(0, len(lines) - last_lines)
-    output = [f"source_lines: {len(lines)}", f"exit_code: {exit_code if exit_code is not None else -1}"]
-    for index, line in enumerate(lines[start:], start=start + 1):
-        output.append(f"line {index}: {line}" if _safe_line(line) else f"line {index}: <line dropped: unsafe>")
-    return "\n".join(output) + "\n"
-
-
-def _canonical_log_summary(text: str) -> str:
-    header = SUMMARY_HEADER_RE.match(text)
-    if header is None:
-        return _log_summary(text)
-    output = [f"source_lines: {header.group(1)}", f"exit_code: {header.group(2)}"]
-    for line in text[header.end():].splitlines():
-        match = SUMMARY_LINE_RE.fullmatch(line)
-        if match is None:
-            return _log_summary(text)
-        payload = match.group(2)
-        retained = payload if payload == "<line dropped: unsafe>" or _safe_line(payload) else "<line dropped: unsafe>"
-        output.append(f"line {match.group(1)}: {retained}")
-    return "\n".join(output) + "\n"
-
-
-def _command_summary(document: dict[str, JsonValue]) -> str | None:
-    exit_code = document.get("exit_code")
-    stdout = document.get("stdout")
-    stderr = document.get("stderr")
-    if not isinstance(exit_code, int) or not isinstance(stdout, str) or not isinstance(stderr, str):
-        return None
-    combined = stdout + (("\n" if stdout and stderr else "") + stderr)
-    return _log_summary(combined, exit_code)
-
-
-def sanitize_text(value: str) -> str:
-    """Return the fixed log-summary form used for unstructured input."""
-    return _log_summary(value)
+def _raw_log_metadata(path: Path) -> dict[str, JsonScalar]:
+    data = path.read_bytes()
+    return {
+        "role": "scenario-runner" if path.name == "scenario-a.log" else "runner-log",
+        "byte_length": len(data),
+        "line_count": len(data.splitlines()),
+        "sha256": hashlib.sha256(data).hexdigest(),
+    }
 
 
 def sanitize_tree(source: Path, destination: Path) -> None:
-    """Drop all private input except explicitly allowlisted structured fields and log summaries."""
+    """Drop all private input except typed fields and content-free raw-log metadata."""
     destination.mkdir(parents=True, exist_ok=False)
-    source_is_valid = True
-    try:
-        validate_artifact_tree(source)
-    except ArtifactValidationError:
-        source_is_valid = False
     log_index = 0
     run_candidates: list[dict[str, JsonValue]] = []
     for path in sorted(source.rglob("*")):
@@ -243,18 +190,11 @@ def sanitize_tree(source: Path, destination: Path) -> None:
                 if retained:
                     _write_json(destination / path.name, retained)
                 continue
-            summary = _command_summary(document)
-            if summary is not None:
-                log_index += 1
-                (destination / f"log-{log_index:04d}.txt").write_text(summary, encoding="utf-8")
             continue
-        try:
-            text = path.read_text(encoding="utf-8")
-        except UnicodeDecodeError:
+        if path.suffix != ".log":
             continue
         log_index += 1
-        summary = _canonical_log_summary(text) if source_is_valid else _log_summary(text)
-        (destination / f"log-{log_index:04d}.txt").write_text(summary, encoding="utf-8")
+        _write_json(destination / f"raw-log-{log_index:04d}.json", _raw_log_metadata(path))
     if run_candidates:
         source_run = max(run_candidates, key=lambda item: int("resource_id" in item))
         retained = _copy_fields(source_run, "run.json")

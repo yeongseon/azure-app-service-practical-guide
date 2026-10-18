@@ -41,21 +41,6 @@ class AzureE2EArtifactContractTests(unittest.TestCase):
         )
         self.assertEqual((destination / "run.json").read_text(encoding="utf-8"), expected)
 
-    def test_allowlisted_log_is_rechecked_and_canonicalized(self) -> None:
-        source = (
-            "source_lines: 2\n"
-            "exit_code: 0\n"
-            "line 1: safe status 200\n"
-            "line 2: abcd1234efgh5678\n"
-        )
-        destination, temporary = self._sanitize({"log-0001.txt": source})
-        self.addCleanup(temporary.cleanup)
-
-        retained = (destination / "log-0001.txt").read_text(encoding="utf-8")
-        self.assertIn("line 1: safe status 200", retained)
-        self.assertIn("line 2: <line dropped: unsafe>", retained)
-        self.assertNotIn("abcd1234efgh5678", retained)
-
     def test_duplicate_json_keys_are_rejected_regardless_of_secret_position(self) -> None:
         fixtures = (
             '{"scenario":"Bearer EXFILTRATED-SECRET","scenario":"deployment-succeeded-startup-failed"}',
@@ -87,6 +72,25 @@ class AzureE2EArtifactContractTests(unittest.TestCase):
         self.addCleanup(temporary.cleanup)
         retained = json.loads((destination / "run.json").read_text(encoding="utf-8"))
         self.assertEqual(retained, {"run_id": raw["run_id"]})
+
+    def test_timestamp_with_non_ascii_format_character_is_dropped(self) -> None:
+        raw = {
+            "run_id": "20261018T010203Z-abcdef123456",
+            "started_at": "2026-10-18T01:02:03\u200b+00:00",
+        }
+        destination, temporary = self._sanitize({"run.json": json.dumps(raw)})
+        self.addCleanup(temporary.cleanup)
+
+        retained = json.loads((destination / "run.json").read_text(encoding="utf-8"))
+        self.assertEqual(retained, {"run_id": raw["run_id"]})
+
+    def test_independent_scanner_rejects_all_free_text_files(self) -> None:
+        for name in ("notes.txt", "runner.log", "log-0001.txt"):
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary)
+                (root / name).write_text("public 203.0.113.9\n", encoding="utf-8")
+                with self.assertRaises(SanitizationError):
+                    scan_sanitized_tree(root)
 
     def test_secret_bearing_values_are_rejected_in_all_string_fields(self) -> None:
         fixtures = {
