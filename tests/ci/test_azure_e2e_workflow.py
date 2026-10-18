@@ -12,6 +12,8 @@ WORKFLOW_PATH = ROOT / ".github/workflows/e2e-azure.yml"
 
 
 class AzureE2EWorkflowTests(unittest.TestCase):
+    workflow_text: str = ""
+
     def setUp(self) -> None:
         self.workflow_text = WORKFLOW_PATH.read_text(encoding="utf-8")
 
@@ -111,7 +113,26 @@ class AzureE2EWorkflowTests(unittest.TestCase):
         )
 
         self.assertTrue(validation.startswith("        id: target\n"))
-        self.assertTrue(validation.endswith('          echo "sha=$sha" >> "$GITHUB_OUTPUT"\n\n'))
+        self.assertIn('echo "sha=$sha" >> "$GITHUB_OUTPUT"', validation)
+
+    def test_every_failure_stage_writes_an_allowlisted_record(self) -> None:
+        for stage in (
+            "oidc-config",
+            "oidc-login",
+            "target-validation",
+            "provisioning",
+            "deployment",
+            "runner-start",
+            "runner-crash",
+            "evaluation",
+            "sanitize",
+        ):
+            with self.subTest(stage=stage):
+                self.assertIn(stage, self.workflow_text)
+        self.assertIn("write-failure", self.workflow_text)
+        self.assertIn("failure-record.json", self.workflow_text)
+        self.assertIn("target-failure-${{ github.run_id }}-${{ github.run_attempt }}", self.workflow_text)
+        self.assertIn("sanitizer-failure-${{ github.run_id }}-${{ github.run_attempt }}", self.workflow_text)
 
     def test_ttl_sweep_rechecks_transitioned_run_before_deletion(self) -> None:
         gh_program = """#!/usr/bin/env bash
