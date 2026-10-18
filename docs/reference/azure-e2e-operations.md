@@ -37,7 +37,13 @@ The run summary records the target commit, GitHub run identity, protected enviro
 
 ## Evidence Retention
 
-The workflow sanitizes the private run directory before upload and retains the GitHub Actions artifact for 30 days, including failed runs. The artifact is temporary diagnostic evidence, not persistent publication.
+The workflow converts the private run directory into a closed, allowlisted artifact before upload and retains that GitHub Actions artifact for 30 days, including failed runs. It does not redact arbitrary private files in place.
+
+Structured output is limited to `run.json`, `evaluation.json`, and `cleanup-result.json`. Each file has its own key allowlist and value constraints. The retained fields cover run and GitHub identities, execution/evaluation/cleanup statuses, assertion counts, exit codes, ISO timestamps, the reviewed source commit, and the owned resource-group name. A resource ID may be retained only as the fixed documentation placeholder. Unknown keys, nested objects, arrays, command arguments, errors, raw responses, and other strings are dropped.
+
+Free-text input is reduced to numbered `log-NNNN.txt` summaries containing the source line count, exit code when available, and only the last bounded set of lines. A line is retained only when it satisfies the conservative character and length rules and contains no credential assignment, authorization header, URL user information, secret query, address, identifier, or long opaque token. An unsafe line becomes `<line dropped: unsafe>` at the same source line number; the workflow never attempts partial redaction.
+
+A separate structural validator accepts only those filenames and shapes. It checks JSON key subsets and constrained scalar values, and it accepts logs only in the fixed summary grammar. It does not import or reuse the sanitizer's credential recognizers. If validation fails, the existing upload gate prevents artifact upload. The artifact is temporary diagnostic evidence, not persistent publication.
 
 To publish evidence permanently, a separate reviewed pull request must transform the private capture into the Golden evidence schema, run the evaluator and PII gates, add append-only retained digests and run declarations, and document the exact capture provenance. Expiry of the workflow artifact does not rewrite or invalidate an already retained package.
 
