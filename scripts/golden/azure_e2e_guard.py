@@ -6,9 +6,12 @@ import hashlib
 import json
 import re
 import subprocess
+import sys
 from datetime import datetime
 from pathlib import Path
 from typing import NamedTuple
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from scripts.golden.azure_e2e_sanitize import (
     RESOURCE_ID_PLACEHOLDER,
