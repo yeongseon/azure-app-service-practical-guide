@@ -66,14 +66,6 @@ jobs:
           git fetch --no-tags origin main
           git cat-file -e "${sha}^{commit}"
           git merge-base --is-ancestor "$sha" origin/main
-          for required_path in \
-            scripts/golden/azure_cleanup.py \
-            scripts/golden/azure_e2e_cli.py \
-            scripts/golden/azure_e2e_guard.py \
-            scripts/golden/azure_e2e_sanitize.py \
-            labs/deployment-succeeded-startup-failed/run.py; do
-            git cat-file -e "${sha}:${required_path}"
-          done
           python3 scripts/golden/azure_e2e_cli.py require-target-paths . "$sha"
           echo "sha=$sha" >> "$GITHUB_OUTPUT"
 
@@ -337,11 +329,18 @@ jobs:
         run: |
           set -euo pipefail
           active_runs="$RUNNER_TEMP/active-golden-runs.txt"
+          candidates="$RUNNER_TEMP/expired-golden-groups.txt"
           : > "$active_runs"
-          gh api --paginate "/repos/${GITHUB_REPOSITORY}/actions/workflows/e2e-azure.yml/runs?status=in_progress&per_page=100" \
-            --jq '.workflow_runs[] | "\(.id)-\(.run_attempt)"' >> "$active_runs"
-          gh api --paginate "/repos/${GITHUB_REPOSITORY}/actions/workflows/e2e-azure.yml/runs?status=queued&per_page=100" \
-            --jq '.workflow_runs[] | "\(.id)-\(.run_attempt)"' >> "$active_runs"
+          gh api --paginate "/repos/${GITHUB_REPOSITORY}/actions/workflows/e2e-azure.yml/runs?per_page=100" \
+            --jq '.workflow_runs[] | select(.status != "completed") | "\(.id)-\(.run_attempt)"' >> "$active_runs"
           sort -u -o "$active_runs" "$active_runs"
-          test -s "$active_runs"
-          python3 scripts/golden/azure_cleanup.py sweep --apply --active-run-ids-file "$active_runs"
+          python3 scripts/golden/azure_cleanup.py sweep --active-run-ids-file "$active_runs" \
+            --candidates-file "$candidates"
+          while IFS= read -r group; do
+            run_attempt=${group#rg-golden-e2e-}
+            run_id=${run_attempt%-*}
+            attempt=${run_attempt##*-}
+            status=$(gh api "/repos/${GITHUB_REPOSITORY}/actions/runs/${run_id}/attempts/${attempt}" --jq '.status')
+            test "$status" = "completed"
+            python3 scripts/golden/azure_cleanup.py delete-expired --name "$group"
+          done < "$candidates"

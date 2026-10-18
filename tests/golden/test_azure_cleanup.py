@@ -82,6 +82,12 @@ class AzureCleanupTests(unittest.TestCase):
         )
         self.assertEqual(selected, ())
 
+    def test_empty_active_run_inventory_is_valid(self) -> None:
+        self.assertEqual(
+            cleanup.expired_owned_groups([], datetime(2026, 10, 16, tzinfo=UTC), frozenset()),
+            (),
+        )
+
     def test_concurrently_running_workflow_is_excluded_from_ttl_sweep(self) -> None:
         resources = [{
             "name": "rg-golden-e2e-67890-2",

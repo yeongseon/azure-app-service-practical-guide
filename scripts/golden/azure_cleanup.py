@@ -148,35 +148,44 @@ def main() -> int:
     sweep = subparsers.add_parser("sweep")
     sweep.add_argument("--apply", action="store_true")
     sweep.add_argument("--active-run-ids-file", type=Path, required=True)
+    sweep.add_argument("--candidates-file", type=Path)
+    expired = subparsers.add_parser("delete-expired")
+    expired.add_argument("--name", required=True)
     ttl = subparsers.add_parser("validate-ttl")
     ttl.add_argument("--hours", required=True)
     args = parser.parse_args()
     try:
         if args.action == "validate-ttl":
             print(parse_ttl_hours(args.hours))
-        elif args.action == "run":
+            return 0
+        if args.action == "run":
             try:
                 delete_group(args.name, args.run_id)
             except (CleanupError, json.JSONDecodeError) as exc:
                 write_cleanup_result(args.result, args.run_id, "FAILED", str(exc))
                 raise
             write_cleanup_result(args.result, args.run_id, "VERIFIED")
-        else:
-            active_run_ids = frozenset(
-                line.strip() for line in args.active_run_ids_file.read_text(encoding="utf-8").splitlines()
-            )
-            if not active_run_ids or any(not RUN_ID_RE.fullmatch(run_id) for run_id in active_run_ids):
-                raise CleanupError("active workflow run inventory is empty or invalid")
-            resources = json.loads(_az("group", "list", "--tag", f"owner={OWNER}"))
-            names = expired_owned_groups(
-                resources,
-                datetime.now(UTC),
-                active_run_ids=active_run_ids,
-            )
-            print(json.dumps({"expired_owned_groups": names}, indent=2))
-            if args.apply:
-                for name in names:
-                    delete_group(name, None)
+            return 0
+        if args.action == "delete-expired":
+            delete_group(args.name, None)
+            return 0
+        active_run_ids = frozenset(
+            line.strip() for line in args.active_run_ids_file.read_text(encoding="utf-8").splitlines()
+        )
+        if any(not RUN_ID_RE.fullmatch(run_id) for run_id in active_run_ids):
+            raise CleanupError("active workflow run inventory is invalid")
+        resources = json.loads(_az("group", "list", "--tag", f"owner={OWNER}"))
+        names = expired_owned_groups(
+            resources,
+            datetime.now(UTC),
+            active_run_ids=active_run_ids,
+        )
+        print(json.dumps({"expired_owned_groups": names}, indent=2))
+        if args.candidates_file is not None:
+            args.candidates_file.write_text("".join(f"{name}\n" for name in names), encoding="utf-8")
+        if args.apply:
+            for name in names:
+                delete_group(name, None)
     except (CleanupError, json.JSONDecodeError) as exc:
         print(f"FAILED: {exc}", file=sys.stderr)
         return 4
