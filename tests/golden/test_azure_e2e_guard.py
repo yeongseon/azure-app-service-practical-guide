@@ -34,9 +34,17 @@ class AzureE2EGuardTests(unittest.TestCase):
                 (target / "nested.py").write_text("fixture\n", encoding="utf-8")
             elif relative == hostile_path and hostile_kind == "symlink":
                 target.symlink_to("/tmp/not-a-helper")
+            elif relative == hostile_path and hostile_kind == "gitlink":
+                target.write_text("fixture\n", encoding="utf-8")
             else:
                 target.write_text("fixture\n", encoding="utf-8")
         subprocess.run(["git", "add", "."], cwd=repository, check=True)
+        if hostile_kind == "gitlink":
+            subprocess.run(
+                ["git", "update-index", "--add", "--cacheinfo", "160000," + "a" * 40 + "," + hostile_path],
+                cwd=repository,
+                check=True,
+            )
         subprocess.run(["git", "commit", "--quiet", "-m", "fixture"], cwd=repository, check=True)
         sha = subprocess.run(
             ["git", "rev-parse", "HEAD"], cwd=repository, check=True, capture_output=True, text=True
@@ -222,6 +230,27 @@ class AzureE2EGuardTests(unittest.TestCase):
 
             with self.assertRaises(guard.GuardError):
                 guard.require_target_paths(repository, sha)
+
+    def test_required_target_paths_reject_gitlink_instead_of_helper_blob(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            hostile_path = guard.REQUIRED_TARGET_PATHS[0]
+            repository, sha = self._target_repository(Path(temporary), hostile_path, "gitlink")
+
+            with self.assertRaises(guard.GuardError):
+                guard.require_target_paths(repository, sha)
+
+    def test_required_target_paths_accept_regular_and_executable_blobs(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            repository, _ = self._target_repository(Path(temporary), "", "")
+            executable = repository / guard.REQUIRED_TARGET_PATHS[0]
+            executable.chmod(0o755)
+            subprocess.run(["git", "add", str(executable)], cwd=repository, check=True)
+            subprocess.run(["git", "commit", "--quiet", "-m", "executable fixture"], cwd=repository, check=True)
+            sha = subprocess.run(
+                ["git", "rev-parse", "HEAD"], cwd=repository, check=True, capture_output=True, text=True
+            ).stdout.strip()
+
+            guard.require_target_paths(repository, sha)
 
     def test_utc_z_timestamps_remain_accepted(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

@@ -168,6 +168,41 @@ diff -u <(printf '101-1\\n102-1\\n103-1\\n104-1\\n105-1\\n') "$active"
 
         self.assertEqual(result.returncode, 0, result.stderr)
 
+    def test_ttl_sweep_inventory_reads_successive_pages(self) -> None:
+        gh_program = """#!/usr/bin/env bash
+set -euo pipefail
+test "$1" = api
+test "$2" = --paginate
+test "$3" = "/repos/example/repository/actions/workflows/e2e-azure.yml/runs?per_page=100"
+test "$4" = --jq
+for page in 1 2; do
+  printf 'page=%s\n' "$page" >> "$RUNNER_TEMP/gh-pages.log"
+  if [[ "$page" = 1 ]]; then
+    printf '101-1\n'
+  else
+    printf '202-2\n'
+  fi
+done
+"""
+        python_program = """#!/usr/bin/env bash
+set -euo pipefail
+active=''
+candidates=''
+while (($#)); do
+  case "$1" in
+    --active-run-ids-file) active="$2"; shift 2 ;;
+    --candidates-file) candidates="$2"; shift 2 ;;
+    *) shift ;;
+  esac
+done
+diff -u <(printf '101-1\n202-2\n') "$active"
+: > "$candidates"
+"""
+
+        result = self._run_ttl_sweep(gh_program, python_program)
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+
 
 if __name__ == "__main__":
     unittest.main()
