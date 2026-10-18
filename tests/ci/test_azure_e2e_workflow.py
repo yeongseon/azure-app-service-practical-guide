@@ -3,10 +3,9 @@ from __future__ import annotations
 import os
 import subprocess
 import tempfile
+import textwrap
 import unittest
 from pathlib import Path
-
-import yaml
 
 ROOT = Path(__file__).resolve().parents[2]
 WORKFLOW_PATH = ROOT / ".github/workflows/e2e-azure.yml"
@@ -34,9 +33,8 @@ class AzureE2EWorkflowTests(unittest.TestCase):
         return job[start:].split("      - name:", maxsplit=1)[0]
 
     def _run_ttl_sweep(self, gh_program: str, python_program: str) -> subprocess.CompletedProcess[str]:
-        workflow = yaml.safe_load(WORKFLOW_PATH.read_text(encoding="utf-8"))
-        steps = workflow["jobs"]["ttl-sweep"]["steps"]
-        command = next(step["run"] for step in steps if step.get("name") == "Delete only owner-tagged groups with expired TTL")
+        step = self._step("ttl-sweep", "Delete only owner-tagged groups with expired TTL")
+        command = textwrap.dedent(step.split("        run: |\n", maxsplit=1)[1])
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             bin_dir = root / "bin"
@@ -108,15 +106,12 @@ class AzureE2EWorkflowTests(unittest.TestCase):
         )
 
     def test_target_validation_requires_helpers_before_oidc_jobs(self) -> None:
-        workflow = yaml.safe_load(WORKFLOW_PATH.read_text(encoding="utf-8"))
-        target_steps = workflow["jobs"]["validate-target"]["steps"]
-        validation = next(
-            step for step in target_steps
-            if step.get("name") == "Require an immutable commit on this repository main history"
+        validation = self._step(
+            "validate-target", "Require an immutable commit on this repository main history"
         )
 
-        self.assertEqual(validation["id"], "target")
-        self.assertTrue(validation["run"].endswith('echo "sha=$sha" >> "$GITHUB_OUTPUT"\n'))
+        self.assertTrue(validation.startswith("        id: target\n"))
+        self.assertTrue(validation.endswith('          echo "sha=$sha" >> "$GITHUB_OUTPUT"\n\n'))
 
     def test_ttl_sweep_rechecks_transitioned_run_before_deletion(self) -> None:
         gh_program = """#!/usr/bin/env bash
