@@ -18,6 +18,47 @@ SPEC.loader.exec_module(guard)
 
 
 class AzureE2ESanitizeTests(unittest.TestCase):
+    def test_embedded_credential_assignments_are_redacted_and_scan_safe(self) -> None:
+        hostile_lines = (
+            "INFO payload accessToken=LOGLEAK request=42",
+            'INFO payload={"accessToken":"EMBEDDEDLEAK"} request=42',
+            r'INFO payload={"pass\u0077ord":"ESCAPELEAK"} request=42',
+            '"accessToken":"QUOTEDLEAK"',
+            'nested={"outer":{"clientSecret":"NESTED LEAK"}} done=true',
+            'items=[{"api_key":"ARRAYLEAK"},{"password":"SECOND LEAK"}], status=done',
+            'token="value with spaces", password=last-value.',
+            "access-key='first value'; account_key=second-value, request=42",
+        )
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            artifact = root / "capture.log"
+            artifact.write_text("\n".join(hostile_lines), encoding="utf-8")
+
+            sanitized = guard.sanitize_text(artifact.read_text(encoding="utf-8"))
+            artifact.write_text(sanitized, encoding="utf-8")
+
+            self.assertNotIn("LEAK", sanitized)
+            self.assertEqual(sanitized.count("<REDACTED>"), 11)
+            self.assertEqual(guard.sanitize_text(sanitized), sanitized)
+            guard.scan_sanitized_tree(root)
+
+    def test_scan_independently_rejects_embedded_credential_assignments(self) -> None:
+        hostile_lines = (
+            "INFO payload accessToken=LOGLEAK request=42",
+            'INFO payload={"accessToken":"EMBEDDEDLEAK"} request=42',
+            r'INFO payload={"pass\u0077ord":"ESCAPELEAK"} request=42',
+            '"accessToken":"QUOTEDLEAK"',
+            'nested=[{"clientSecret":"NESTED LEAK"}]',
+            'token="value with spaces", password=last-value.',
+        )
+        for line in hostile_lines:
+            with self.subTest(line=line), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary)
+                (root / "capture.log").write_text(line, encoding="utf-8")
+
+                with self.assertRaises(guard.GuardError):
+                    guard.scan_sanitized_tree(root)
+
     def test_json_credential_keys_are_redacted_after_normalization(self) -> None:
         raw = r'{"pass\u0077ord":"LEAKED","accessToken":"short-opaque-secret","client-secret":"opaque"}'
 
@@ -51,6 +92,16 @@ class AzureE2ESanitizeTests(unittest.TestCase):
                         artifact_root.mkdir()
                     with self.assertRaises(guard.GuardError):
                         guard.scan_sanitized_tree(artifact_root)
+
+    def test_scan_rejects_dotfile_only_and_placeholder_only_artifact_directories(self) -> None:
+        fixtures = ((".gitkeep", ""), ("placeholder.txt", "placeholder\n"))
+        for name, content in fixtures:
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary)
+                (root / name).write_text(content, encoding="utf-8")
+
+                with self.assertRaises(guard.GuardError):
+                    guard.scan_sanitized_tree(root)
 
     def test_hostile_secrets_are_sanitized_end_to_end(self) -> None:
         hostile_values = (

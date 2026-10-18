@@ -27,13 +27,14 @@ BASE64_TOKEN_RE: Final = re.compile(
     r"(?=[A-Za-z0-9+/=_-]*[A-Z])(?=[A-Za-z0-9+/=_-]*[a-z])(?=[A-Za-z0-9+/=_-]*\d)"
     r"[A-Za-z0-9+/=_-]{32,}(?![A-Za-z0-9+/=_-])"
 )
-SECRET_ASSIGNMENT_RE: Final = re.compile(
-    r"(?i)(?P<key_quote>[\"']?)(?P<key>\b(?:[A-Z][A-Z0-9_]*_)?(?:password|passwd|secret|token|"
-    r"api[_-]?key|account[_-]?key|client[_-]?secret|access[_-]?key|credential|"
-    r"connection[_-]?string)\b)(?P=key_quote)(?P<separator>\s*[:=]\s*)"
-    r"(?P<value>\"(?=[^\"\r\n]*[^\"\s\r\n])[^\"\r\n]+\"|"
-    r"'(?=[^'\r\n]*[^'\s\r\n])[^'\r\n]+'|[^\s,;}]+)"
+ASSIGNMENT_PATTERN: Final = (
+    r"(?P<key_quote>[\"']?)(?P<key>[A-Za-z_][A-Za-z0-9_\-]*(?:\\u[0-9A-Fa-f]{4}[A-Za-z0-9_\-]*)*)"
+    r"(?P=key_quote)(?P<separator>\s*[:=]\s*)"
+    r"(?P<value>\"(?:\\.|[^\"\r\n])*\"|'(?:\\.|[^'\r\n])*'|"
+    r"[^\s,;}\]]+?)(?=[,;}\]\s]|[.!?](?:\s|$)|$)"
 )
+SECRET_ASSIGNMENT_RE: Final = re.compile(f"(?=({ASSIGNMENT_PATTERN}))")
+UNSANITIZED_ASSIGNMENT_RE: Final = re.compile(f"(?=({ASSIGNMENT_PATTERN}))")
 SAS_RE: Final = re.compile(r"(?i)((?:^|[?&;])(?:sig|sv|se)=)([^&;\s]+)")
 CONNECTION_STRING_RE: Final = re.compile(r"(?i)DefaultEndpointsProtocol=[^;\s]+(?:;[^;\s=]+=[^;\s]*)+")
 LONG_HEX_RE: Final = re.compile(r"(?<![0-9a-fA-F])[0-9a-fA-F]{32,}(?![0-9a-fA-F])")
@@ -70,11 +71,18 @@ def _replace_ipv6(match: re.Match[str]) -> str:
     return "fd00::1" if parsed.is_private else "2001:db8::1"
 
 
-def _replace_secret_assignment(match: re.Match[str]) -> str:
-    value = match.group("value")
-    quote = value[0] if value[0] in {"'", '"'} else ""
-    return f"{match.group('key_quote')}{match.group('key')}{match.group('key_quote')}" \
-        f"{match.group('separator')}{quote}<REDACTED>{quote}"
+def _sanitize_assignments(value: str) -> str:
+    replacements: dict[tuple[int, int], str] = {}
+    for match in SECRET_ASSIGNMENT_RE.finditer(value):
+        if not _is_credential_key(_decode_assignment_key(match.group("key"))):
+            continue
+        raw = match.group("value")
+        quote = raw[0] if raw[0] in {"'", '"'} else ""
+        replacements[match.span("value")] = f"{quote}<REDACTED>{quote}"
+    sanitized = value
+    for (start, end), replacement in reversed(replacements.items()):
+        sanitized = sanitized[:start] + replacement + sanitized[end:]
+    return sanitized
 
 
 def _sanitize_non_json_text(value: str) -> str:
@@ -87,7 +95,7 @@ def _sanitize_non_json_text(value: str) -> str:
     sanitized = BEARER_RE.sub(r"\1<REDACTED>", sanitized)
     sanitized = JWT_RE.sub("<REDACTED>", sanitized)
     sanitized = BASE64_TOKEN_RE.sub("<REDACTED>", sanitized)
-    sanitized = SECRET_ASSIGNMENT_RE.sub(_replace_secret_assignment, sanitized)
+    sanitized = _sanitize_assignments(sanitized)
     sanitized = LONG_HEX_RE.sub("<REDACTED_HEX_TOKEN>", sanitized)
     sanitized = IPV4_RE.sub(_replace_ipv4, sanitized)
     sanitized = IPV6_CANDIDATE_RE.sub(_replace_ipv6, sanitized)
@@ -97,6 +105,25 @@ def _sanitize_non_json_text(value: str) -> str:
 def _is_credential_key(key: str) -> bool:
     normalized = re.sub(r"[^a-z0-9]", "", key.casefold())
     return normalized in CREDENTIAL_KEY_EXACT or normalized.endswith(CREDENTIAL_KEY_SUFFIXES)
+
+
+def _decode_assignment_key(key: str) -> str:
+    if "\\" not in key:
+        return key
+    try:
+        decoded = json.loads(f'"{key}"')
+    except json.JSONDecodeError:
+        return key
+    return decoded if isinstance(decoded, str) else key
+
+
+def _contains_unredacted_assignment(value: str) -> bool:
+    for match in UNSANITIZED_ASSIGNMENT_RE.finditer(value):
+        if _is_credential_key(_decode_assignment_key(match.group("key"))):
+            raw = match.group("value")
+            if raw.strip("\"'") not in {"<REDACTED>", "<REDACTED_HEX_TOKEN>"}:
+                return True
+    return False
 
 
 def _sanitize_json(value: JsonValue) -> JsonValue:
@@ -163,10 +190,19 @@ def sanitize_tree(source: Path, destination: Path) -> None:
 def scan_sanitized_tree(root: Path) -> None:
     if not root.is_dir():
         raise SanitizationError("sanitized artifact root is not an existing directory")
-    artifacts = tuple(path for path in sorted(root.rglob("*")) if path.is_file() and not path.is_symlink())
+    artifacts = tuple(
+        path for path in sorted(root.rglob("*"))
+        if path.is_file() and not path.is_symlink() and not any(part.startswith(".") for part in path.relative_to(root).parts)
+    )
     if not artifacts:
         raise SanitizationError("sanitized artifact root contains no regular artifacts")
-    for path in artifacts:
+    meaningful_artifacts = tuple(
+        path for path in artifacts
+        if path.read_text(encoding="utf-8").strip().casefold() not in {"", "placeholder"}
+    )
+    if not meaningful_artifacts:
+        raise SanitizationError("sanitized artifact root contains only placeholder artifacts")
+    for path in meaningful_artifacts:
         text = path.read_text(encoding="utf-8")
         try:
             decoded: JsonValue = json.loads(text)
@@ -194,7 +230,7 @@ def scan_sanitized_tree(root: Path) -> None:
         )
         if (
             BEARER_RE.search(scrubbed) or JWT_RE.search(scrubbed) or BASE64_TOKEN_RE.search(token_scrubbed)
-            or SECRET_ASSIGNMENT_RE.search(scrubbed) or SAS_RE.search(scrubbed)
+            or _contains_unredacted_assignment(text) or SAS_RE.search(scrubbed)
             or CONNECTION_STRING_RE.search(scrubbed) or LONG_HEX_RE.search(scrubbed)
             or unsafe_guid or unsafe_email or unsafe_ip or unsafe_ipv6 or unsafe_resource
             or unsafe_json_credential
