@@ -2,7 +2,11 @@ from __future__ import annotations
 
 import tempfile
 import unittest
+import sys
 from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT))
 
 from scripts.golden.azure_e2e_guard import FailureRecord, write_failure_record
 from scripts.golden.azure_e2e_sanitize import scan_sanitized_tree
