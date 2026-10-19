@@ -79,6 +79,17 @@ class WorkflowYamlTests(unittest.TestCase):
         # Then: only a lowercase hexadecimal SHA is emitted.
         self.assertEqual(completed.stdout.splitlines(), [valid_lowercase])
 
+    def test_content_validation_filters_cover_all_gate_inputs(self):
+        yaml = YAML(typ="safe")
+        workflow_path = ROOT / ".github/workflows/validate-content-sources.yml"
+        with workflow_path.open(encoding="utf-8") as stream:
+            workflow = yaml.load(stream)
+        required = {"evidence/**", "schemas/**", "tests/**", "scripts/**"}
+
+        for event in ("pull_request", "push"):
+            with self.subTest(event=event):
+                self.assertTrue(required <= set(workflow["on"][event]["paths"]))
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
