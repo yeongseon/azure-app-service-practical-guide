@@ -64,6 +64,54 @@ def _base_documents(
     return documents, []
 
 
+def _validate_run_id(run_id: str) -> str | None:
+    """Validate run_id is safe and canonical. Return error message or None."""
+    if not run_id:
+        return "run_id must be non-empty"
+    if "/" in run_id or "\\" in run_id:
+        return "run_id must be a single path component (no separators)"
+    if run_id in (".", ".."):
+        return f"run_id cannot be {run_id}"
+    if not re.match(r"^[a-zA-Z0-9._-]+$", run_id):
+        return "run_id contains invalid characters"
+    return None
+
+
+def _validate_retained_package(root: Path, run_id: str, evidence: str) -> str | None:
+    """Validate retained package reference is safe and points to canonical location.
+    
+    Returns error message or None if valid.
+    """
+    expected_evidence = f"evidence/runs/{run_id}"
+    if evidence != expected_evidence:
+        return f"evidence field must equal '{expected_evidence}' (got '{evidence}')"
+    
+    package_path = root / expected_evidence
+    try:
+        package_resolved = package_path.resolve()
+        root_resolved = root.resolve()
+        evidence_runs_resolved = (root_resolved / "evidence" / "runs").resolve()
+    except (OSError, RuntimeError) as exc:
+        return f"cannot resolve package path: {exc}"
+    
+    if package_resolved.parent != evidence_runs_resolved:
+        return "resolved package parent must exactly equal <repo>/evidence/runs"
+    
+    try:
+        if package_resolved.is_symlink():
+            return "symlink not allowed in package directory"
+        for component in [root_resolved / "evidence", evidence_runs_resolved]:
+            if component.is_symlink():
+                return f"symlink not allowed in path to runs directory"
+    except (OSError, ValueError):
+        return f"cannot check symlink status of package path"
+    
+    if not package_resolved.is_dir():
+        return "retained package directory does not exist or is not a directory"
+    
+    return None
+
+
 def _method_problems(
     root: Path,
     key: str,
@@ -100,10 +148,18 @@ def _method_problems(
         problems.append(f"{key}: future last_tested date")
     references_complete = isinstance(run_id, str) and isinstance(evidence, str)
     if run_id is not None or evidence is not None:
-        canonical = f"evidence/runs/{run_id}" if isinstance(run_id, str) else None
-        package = root / canonical if canonical is not None else None
-        if evidence != canonical or package is None or not package.is_dir():
-            problems.append(f"{key}: reference must name an existing canonical retained package directory")
+        if not isinstance(run_id, str):
+            problems.append(f"{key}: run_id must be a string")
+        if not isinstance(evidence, str):
+            problems.append(f"{key}: evidence must be a string")
+        if isinstance(run_id, str):
+            run_id_error = _validate_run_id(run_id)
+            if run_id_error:
+                problems.append(f"{key}: {run_id_error}")
+            elif isinstance(evidence, str):
+                package_error = _validate_retained_package(root, run_id, evidence)
+                if package_error:
+                    problems.append(f"{key}: {package_error}")
     changed_pass = result == "pass" and method_data != base_method
     if changed_pass and not references_complete:
         problems.append(f"{key}: new or changed pass requires run_id and evidence")

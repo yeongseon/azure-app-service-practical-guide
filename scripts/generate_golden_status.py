@@ -555,12 +555,12 @@ GATES: tuple[Gate, ...] = (
     Gate(
         key="tutorial-validation-evidence",
         name="Tutorial validation contract",
-        enforces="Tutorial validation frontmatter uses a closed schema, retained references resolve canonically, and every new or changed pass adds a retained package reference.",
+        enforces="Tutorial validation frontmatter uses a closed schema, retained references resolve canonically and securely (no traversal, symlinks, or path injection), and every new or changed pass adds a retained package reference.",
         argv=("{python}", "scripts/golden/validate_tutorial_validation.py"),
         severity=BLOCKING,
         covers=(
             "scripts/golden/validate_tutorial_validation.py",
-            "tests/golden/test_tutorial_validation_binding.py",
+            "tests/golden/test_tutorial_validation_reference.py",
         ),
         bindings=(Binding("Validate Golden Contracts", CONTENT_SOURCES_WORKFLOW),),
         note="CI compares pass entries with the exact pull-request base SHA. A retained package reference proves only canonical directory existence, not that the package executed the named tutorial or method.",
