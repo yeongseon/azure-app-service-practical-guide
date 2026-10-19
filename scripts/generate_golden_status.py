@@ -553,6 +553,20 @@ GATES: tuple[Gate, ...] = (
         quiet_detail="Freshness boundary and read-only tests passed.",
     ),
     Gate(
+        key="tutorial-validation-evidence",
+        name="Tutorial validation contract",
+        enforces="Tutorial validation frontmatter uses a closed schema, retained references resolve canonically, and every new or changed pass adds a retained package reference.",
+        argv=("{python}", "scripts/golden/validate_tutorial_validation.py"),
+        severity=BLOCKING,
+        covers=(
+            "scripts/golden/validate_tutorial_validation.py",
+            "tests/golden/test_tutorial_validation_binding.py",
+        ),
+        bindings=(Binding("Validate Golden Contracts", CONTENT_SOURCES_WORKFLOW),),
+        note="CI compares pass entries with the exact pull-request base SHA. A retained package reference proves only canonical directory existence, not that the package executed the named tutorial or method.",
+        summary_keys=("Tutorial validation contract:",),
+    ),
+    Gate(
         key="retained-golden-packages",
         name="Retained Golden package immutability",
         enforces="Existing retained run and lab Golden packages cannot be edited, renamed, or deleted relative to the base ref; new run directories remain allowed.",
