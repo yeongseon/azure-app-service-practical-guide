@@ -86,7 +86,18 @@ def _validate_retained_package(root: Path, run_id: str, evidence: str) -> str | 
     if evidence != expected_evidence:
         return f"evidence field must equal '{expected_evidence}' (got '{evidence}')"
     
-    package_path = root / expected_evidence
+    evidence_path = root / "evidence"
+    runs_path = evidence_path / "runs"
+    package_path = runs_path / run_id
+    try:
+        if package_path.is_symlink():
+            return "symlink not allowed in package directory"
+        for component in (evidence_path, runs_path):
+            if component.is_symlink():
+                return "symlink not allowed in path to runs directory"
+    except (OSError, ValueError):
+        return "cannot check symlink status of package path"
+
     try:
         package_resolved = package_path.resolve()
         root_resolved = root.resolve()
@@ -96,15 +107,6 @@ def _validate_retained_package(root: Path, run_id: str, evidence: str) -> str | 
     
     if package_resolved.parent != evidence_runs_resolved:
         return "resolved package parent must exactly equal <repo>/evidence/runs"
-    
-    try:
-        if package_resolved.is_symlink():
-            return "symlink not allowed in package directory"
-        for component in [root_resolved / "evidence", evidence_runs_resolved]:
-            if component.is_symlink():
-                return f"symlink not allowed in path to runs directory"
-    except (OSError, ValueError):
-        return f"cannot check symlink status of package path"
     
     if not package_resolved.is_dir():
         return "retained package directory does not exist or is not a directory"

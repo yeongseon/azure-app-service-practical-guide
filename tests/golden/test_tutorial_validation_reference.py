@@ -141,7 +141,34 @@ class TutorialValidationReferenceTests(unittest.TestCase):
             "    run_id: run-link\n    evidence: evidence/runs/run-link\n"
         )
         problems = self.problems()
-        self.assertTrue(any("resolved package parent" in p for p in problems))
+        self.assertTrue(any("symlink not allowed in package directory" in p for p in problems))
+
+    def test_in_tree_symlink_package_is_rejected_as_symlink(self) -> None:
+        runs = self.root / "evidence" / "runs"
+        (runs / "actual").mkdir(parents=True)
+        (runs / "link").symlink_to(runs / "actual")
+        self.write_validation(
+            "  az_cli:\n    result: fail\n    last_tested: 2026-10-18\n"
+            "    run_id: link\n    evidence: evidence/runs/link\n"
+        )
+
+        problems = self.problems()
+
+        self.assertTrue(any("symlink not allowed in package directory" in p for p in problems))
+
+    def test_symlinked_runs_directory_is_rejected_as_symlink(self) -> None:
+        external_runs = self.root / "external-runs"
+        (external_runs / "run-1").mkdir(parents=True)
+        (self.root / "evidence").mkdir()
+        (self.root / "evidence" / "runs").symlink_to(external_runs)
+        self.write_validation(
+            "  az_cli:\n    result: fail\n    last_tested: 2026-10-18\n"
+            "    run_id: run-1\n    evidence: evidence/runs/run-1\n"
+        )
+
+        problems = self.problems()
+
+        self.assertTrue(any("symlink not allowed in path to runs directory" in p for p in problems))
 
     def test_empty_run_id_is_rejected(self) -> None:
         """Attack: empty run_id bypasses validation."""
