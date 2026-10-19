@@ -13,7 +13,7 @@ This page tracks which tutorials have been validated against real Azure deployme
 
 ## Summary
 
-*Generated: 2026-10-14*
+*Generated: 2026-10-19*
 
 | Metric | Count |
 |---|---:|
@@ -92,6 +92,8 @@ validation:
     last_tested: 2026-04-09
     cli_version: "2.83.0"
     result: pass
+    run_id: <retained-run-id>
+    evidence: evidence/runs/<retained-run-id>
   bicep:
     last_tested: null
     result: not_tested
@@ -108,6 +110,9 @@ python3 scripts/generate_validation_status.py
     - `result`: `pass`, `fail`, or `not_tested`
     - `last_tested`: ISO date (YYYY-MM-DD) or `null`
     - `cli_version`: Azure CLI version used
+    - `run_id`: Retained package directory name
+    - `evidence`: Canonical repository-relative retained package path
+    - The reference gate checks package existence only; it does not prove that the package executed this tutorial or method
     - Tutorials older than 90 days are flagged as **stale**
 
 ## See Also

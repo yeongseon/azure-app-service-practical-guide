@@ -10,6 +10,9 @@ on:
       # under those paths bypass the MSLearn locale check entirely.
       - 'docs/**'
       - 'scripts/**'
+      - 'evidence/**'
+      - 'schemas/**'
+      - 'tests/**'
       - 'apps/**'
       - 'labs/**'
       - 'tools/**'
@@ -26,6 +29,9 @@ on:
     paths:
       - 'docs/**'
       - 'scripts/**'
+      - 'evidence/**'
+      - 'schemas/**'
+      - 'tests/**'
       - 'apps/**'
       - 'labs/**'
       - 'tools/**'
@@ -317,7 +323,9 @@ jobs:
       - name: Protect retained Golden packages
         env:
           GOLDEN_BASE_REF: ${{ github.event.pull_request.base.sha || github.event.before || 'HEAD' }}
-        run: python3 scripts/golden/check_retained_packages.py --base-ref "$GOLDEN_BASE_REF"
+        run: |
+          python3 scripts/golden/check_retained_packages.py --base-ref "$GOLDEN_BASE_REF"
+          python3 scripts/golden/validate_tutorial_validation.py --base-ref "$GOLDEN_BASE_REF"
 
       - name: Run Golden test suites
         # These suites encode the evidence model's negative cases. Review

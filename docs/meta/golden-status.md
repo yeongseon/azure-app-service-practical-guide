@@ -25,12 +25,12 @@ Every quality gate in this repository, its most recently recorded result, and th
 
 ## Summary
 
-*Snapshot of `506c836 plus uncommitted working-tree changes`, generated 2026-10-18.*
+*Snapshot of `1327bae`, generated 2026-10-19.*
 
 | Metric | Count |
 |---|---:|
-| Registered gates | 39 |
-| ✅ Pass | 32 |
+| Registered gates | 40 |
+| ✅ Pass | 33 |
 | ❌ Fail | 0 |
 | ⚠️ Warn | 0 |
 | ➖ Skipped | 7 |
@@ -41,13 +41,13 @@ Every quality gate in this repository, its most recently recorded result, and th
 <!-- diagram-id: golden-status-gate-outcomes-pie -->
 ```mermaid
 pie title Quality Gate Outcomes
-    "Pass" : 32
+    "Pass" : 33
     "Skipped" : 7
 ```
 
 ## Gate Results
 
-These are locally executed results, not GitHub Actions statuses. **Skipped** means the machine that generated this page lacked the toolchain the gate needs. **Warn** means the gate reported findings its CI job would not fail on, either because the job is advisory or because the dashboard runs a wider scope than CI does. 22 of 39 gates are re-run and compared by the `Validate Golden Status` job, so a flip to **Fail** cannot sit here unnoticed.
+These are locally executed results, not GitHub Actions statuses. **Skipped** means the machine that generated this page lacked the toolchain the gate needs. **Warn** means the gate reported findings its CI job would not fail on, either because the job is advisory or because the dashboard runs a wider scope than CI does. 22 of 40 gates are re-run and compared by the `Validate Golden Status` job, so a flip to **Fail** cannot sit here unnoticed.
 
 <!-- golden-status:results:start -->
 | Gate | Severity | Status | Detail | Time |
@@ -77,6 +77,7 @@ These are locally executed results, not GitHub Actions statuses. **Skipped** mea
 | Workflow YAML duplicate keys | Blocking | ✅ Pass | OK | < 10s |
 | Guarded Azure E2E contracts | Blocking | ✅ Pass | OK | < 10s |
 | Validation freshness calculation | Blocking | ✅ Pass | OK | < 10s |
+| Tutorial validation contract | Blocking | ✅ Pass | Tutorial validation contract: PASS | < 10s |
 | Retained Golden package immutability | Blocking | ✅ Pass | Retained Golden package immutability: PASS | < 10s |
 | Golden evidence contracts | Blocking | ✅ Pass | OK | 10-120s |
 | Absorbed evidence predicates | Blocking | ✅ Pass | undeclared absorbed predicates: 0 (declared: 0, stale: 0) | < 10s |
@@ -126,6 +127,7 @@ Generated from the `GATES` registry in `scripts/generate_golden_status.py`. CI f
 | Workflow YAML duplicate keys | Every GitHub Actions workflow parses with duplicate mapping keys rejected. | Blocking | `python3 tests/golden/test_workflow_yaml.py` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
 | Guarded Azure E2E contracts | Immutable target SHAs, required evidence, sanitized artifacts, run-owned cleanup, TTL ownership, and offline claim boundaries fail closed. | Blocking | `python3 -m unittest tests/golden/test_azure_e2e_guard.py tests/golden/test_azure_cleanup.py tests/golden/test_legacy_startup_verifier.py tests/ci/test_azure_e2e_workflow.py` | `Validate Golden Contracts` — `validate-content-sources.yml`<br>`Run Golden Scenario A` — `e2e-azure.yml`<br>`Verify run-owned cleanup` — `e2e-azure.yml`<br>`Sweep expired Golden E2E groups` — `e2e-azure.yml` |
 | Validation freshness calculation | Tutorial freshness is calculated from existing last_tested metadata without modifying capture or test dates. | Blocking | `python3 tests/golden/test_freshness_report.py` | `Validate Golden Contracts` — `validate-content-sources.yml`<br>`Report Validation Freshness` — `validation-freshness.yml` |
+| Tutorial validation contract | Tutorial validation frontmatter uses a closed schema, retained references resolve canonically and securely (no traversal, symlinks, or path injection), and every new or changed pass adds a retained package reference. | Blocking | `python3 scripts/golden/validate_tutorial_validation.py` | `Validate Golden Contracts` — `validate-content-sources.yml` |
 | Retained Golden package immutability | Existing retained run and lab Golden packages cannot be edited, renamed, or deleted relative to the base ref; new run directories remain allowed. | Blocking | `python3 scripts/golden/check_retained_packages.py` | `Validate Golden Contracts` — `validate-content-sources.yml` |
 | Golden evidence contracts | Golden schemas, evaluator negative cases, inventory parity, vocabulary, and externally attested reproduction boundaries pass on Python 3.11. | Blocking | `python3 -m unittest discover -s tests/golden -p test_*.py` | `Validate Golden Contracts` — `validate-content-sources.yml`<br>`Lab Evidence Verifiers` — `app-infra-ci.yml` |
 | Absorbed evidence predicates | Weak fallback branches cannot bypass required strong evidence predicates in lab verifiers. | Blocking | `python3 scripts/detect_absorbed_predicates.py labs --allowlist scripts/absorbed-predicate-allowlist.txt --repo-root .` | `Lab Evidence Verifiers` — `app-infra-ci.yml` |
@@ -158,6 +160,7 @@ Generated from the `GATES` registry in `scripts/generate_golden_status.py`. CI f
 | Visual content coverage | Advisory by design; it always exits 0 and reports coverage as a tracked metric. |
 | Frontmatter schema | Unresolved relationship slugs are warnings, so only hard schema errors fail the job. |
 | MkDocs strict build | Builds into a temporary directory so a local `mkdocs serve` is left alone. Needs the full docs toolchain, so the Validate Golden Status job does not re-verify it. |
+| Tutorial validation contract | CI compares pass entries with the exact pull-request base SHA. A retained package reference proves only canonical directory existence, not that the package executed the named tutorial or method. |
 | Retained Golden package immutability | On pull requests CI supplies the exact base SHA. Local runs default to origin/main; archive retirement requires a separate reviewed change rather than an in-place rewrite. |
 | Golden evidence contracts | The workflow executes each suite file separately after installing jsonschema and referencing; the lightweight Golden Status freshness job deliberately does not duplicate those dependencies. |
 | Node.js dependency audit | --package-lock-only audits the lockfile, so the result cannot be skewed by a stale node_modules. CI audits the tree it just installed, which is equivalent. |

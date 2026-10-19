@@ -51,11 +51,13 @@ Three distinct instants, never interchangeable:
 `validation.az_cli.last_tested` and `validation.bicep.last_tested` are intended
 to represent the UTC calendar date on which the corresponding tutorial method
 was last executed. For multi-phase runs, `last_tested` uses the UTC calendar date on which the final required phase completed (successfully or with failure). They are not alternate names for `captured_at`,
-`evaluated_at`, or `document_updated_at`. Existing validation-date hardening
-tests reject future, malformed, and internally inconsistent values, but this
-repository does not yet bind tutorial-authored `last_tested` metadata to a
-retained run. That stronger tutorial/method binding remains deferred to issue
-#176 and PR #242.
+`evaluated_at`, or `document_updated_at`. Validation frontmatter uses a closed
+schema: only `az_cli` and `bicep` methods, the documented result vocabulary,
+valid non-future dates, and a consistent `not_tested` state are accepted. A new
+or changed `pass` entry must name an existing retained package through canonical
+`run_id` and `evidence` fields. This existence check does **not** prove that the
+retained package executed the named tutorial or method. Binding retained
+evidence to an actual tutorial execution remains open in issue #176.
 
 The vocabulary migration from both stacked implementations, PR #186 and PR
 #187, was completed when they were reconciled into PR #234. The exact retired
@@ -200,6 +202,11 @@ request author did not forge an entirely new run before the package entered the
 repository. Comparison with the privately retained raw capture and the reviewer
 protocol are the control for that residual risk. A passing offline replay must
 not be described as independent proof that Azure execution occurred.
+
+Tutorial frontmatter may refer to a retained package, but the offline gate checks
+only that the path is canonical and the directory exists. It does not enforce a
+tutorial/method binding and must not be presented as proof that the package is
+the tutorial's execution record.
 
 `source_commit` is the runner-captured commit and proves only that the executed
 recipe was not committed after capture. Offline transformation is a separate
