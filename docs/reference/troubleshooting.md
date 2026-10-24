@@ -155,6 +155,8 @@ az webapp config appsettings list \
 | `--name $APP_NAME` | Selects the web app whose route-all setting you want to inspect. |
 | `--query "[?name=='WEBSITE_VNET_ROUTE_ALL']"` | Filters the result to the `WEBSITE_VNET_ROUTE_ALL` setting entry only. |
 
+This reads only the legacy app setting. A site can declare routing through the `outboundVnetRouting` properties instead, so an empty result here does not mean route-all is off; see [Outbound VNet routing properties](../platform/networking.md#outbound-vnet-routing-properties) for how to inspect them.
+
 Set route-all when required:
 
 ```bash
@@ -169,6 +171,8 @@ az webapp config appsettings set \
 | `--resource-group $RG` | Targets the resource group that contains the app. |
 | `--name $APP_NAME` | Selects the app whose settings will be updated. |
 | `--settings WEBSITE_VNET_ROUTE_ALL=1` | Writes the setting that forces outbound app traffic through the VNet path. |
+
+The legacy setting is still supported. Microsoft Learn recommends the `outboundVnetRouting.allTraffic` property; see [Outbound VNet routing properties](../platform/networking.md#outbound-vnet-routing-properties).
 
 ### Outbound IP allowlist checks
 

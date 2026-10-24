@@ -111,7 +111,7 @@ Routing decides which path a request takes out of the app:
 
 - **No VNet Integration**: traffic leaves over the internet from the app's platform outbound IPs.
 - **VNet Integration, private traffic only** (Route All disabled): only RFC1918 traffic and service-endpoint traffic enter the VNet; internet-destined traffic (including public Storage endpoints) still exits directly.
-- **VNet Integration + Route All** (`WEBSITE_VNET_ROUTE_ALL=1`): traffic is routed into the integration subnet and subject to its NSGs and route tables.
+- **VNet Integration + routing of all outbound internet traffic** (application routing: `outboundVnetRouting.applicationTraffic` or the legacy `WEBSITE_VNET_ROUTE_ALL=1`, which Learn still supports; "Route All"): traffic is routed into the integration subnet and subject to its NSGs and route tables. Content share access over the VNet is separate configuration routing, `outboundVnetRouting.contentShareTraffic`, which `outboundVnetRouting.allTraffic` also covers and the legacy route-all flag alone does not. See [Outbound VNet routing properties](networking.md#outbound-vnet-routing-properties).
 
 !!! danger "Route All + firewalled global Storage is a common outage"
     Per Microsoft Learn, connectivity to global Azure Storage can fail for VNet-integrated apps when Route All is enabled and the app does **not** use service endpoints, private endpoints, or UDRs — the traffic is expected to route via the default internet route, which a Storage firewall then blocks. This is especially common when the storage account is in a **different region** than the virtual network. Fix it by adding a service endpoint (`Microsoft.Storage.Global` for cross-region), a private endpoint, or a UDR — not by widening the firewall.
