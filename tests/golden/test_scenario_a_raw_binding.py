@@ -4,6 +4,7 @@ import importlib.util
 import json
 import pathlib
 import shutil
+import subprocess
 import tempfile
 import unittest
 
@@ -87,7 +88,8 @@ class ScenarioARawBindingTests(unittest.TestCase):
 
     def test_later_source_commit_with_recomputed_digests_is_rejected(self):
         manifest = json.loads(self.manifest_path.read_text())
-        manifest["source_commit"] = "ceb730d8b22455c811742d405a99e42f3f996aad"
+        manifest["source_commit"] = subprocess.check_output(
+            ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
         manifest["runner_source_commit"] = manifest["source_commit"]
         fingerprints = {
             pathlib.PurePosixPath(path).name: evaluator.hashlib.sha256(

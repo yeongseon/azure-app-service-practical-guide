@@ -160,7 +160,7 @@ def _scope_summary_lines() -> list[str]:
         f"({nav_examples}), reference-lookup KQL packs and lab guides "
         f"({excluded}), tutorials, language guides, and start-here "
         "landing pages — intentionally omit the metadata and are not "
-        "counted here. See `AGENTS.md` §Text Content Validation for the "
+        "counted here. See `DOCUMENTATION_CONTRACT.md` §Text Content Validation for the "
         "full policy and `scripts/lib/content_scope.py` for the "
         "executable scope definition.",
     ]
@@ -405,7 +405,8 @@ def main() -> None:
             file=sys.stderr,
         )
         print(
-            "Tautological claims are forbidden by AGENTS.md \u00a7Text Content "
+            "Tautological claims are forbidden by DOCUMENTATION_CONTRACT.md "
+            "\u00a7Text Content "
             "Validation. Replace them with verifiable factual assertions or "
             "remove the content_validation block via:",
             file=sys.stderr,

@@ -65,6 +65,22 @@ class MethodStatusTests(unittest.TestCase):
         self.assertEqual(status, validation_status.ICON_NO_DATA)
         self.assertEqual(tested, "2026-10-01")
 
+    def test_non_string_result_is_invalid_not_pass(self) -> None:
+        result = {"result": True, "last_tested": "2026-10-01"}
+
+        status, tested = validation_status.get_method_status(result, self.today)
+
+        self.assertEqual(status, validation_status.ICON_NO_DATA)
+        self.assertEqual(tested, "2026-10-01")
+
+    def test_pass_without_test_date_is_invalid_not_pass(self) -> None:
+        result = {"result": "pass", "last_tested": None}
+
+        status, tested = validation_status.get_method_status(result, self.today)
+
+        self.assertEqual(status, validation_status.ICON_NO_DATA)
+        self.assertIsNone(tested)
+
     def test_not_tested_with_date_is_invalid(self) -> None:
         result = {"result": "not_tested", "last_tested": "2026-10-01"}
 

@@ -295,6 +295,7 @@ nav:
     - Playbooks:
       - troubleshooting/playbooks/index.md
       - troubleshooting/playbooks/deployment-failures.md
+      - SCM Client Access Failures: troubleshooting/playbooks/scm-access-dns-and-http-failures.md
       - ARM Configuration HTTP 400: troubleshooting/playbooks/arm-configuration-http-400.md
       - troubleshooting/playbooks/missing-wwwroot-files-404.md
       - troubleshooting/playbooks/app-startup-failures.md
@@ -382,6 +383,7 @@ nav:
       - Content Validation: reference/content-validation-status.md
       - Validation Status: reference/validation-status.md
     - Golden Evidence Model: reference/golden-evidence-model.md
+    - Guarded Azure E2E Operations: reference/azure-e2e-operations.md
     - Golden Migration Specification: reference/golden-migration-spec.md
     - CLI Cheatsheet: reference/cli-cheatsheet.md
     - Queries:

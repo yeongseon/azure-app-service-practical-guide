@@ -2,6 +2,7 @@
   "version": 1,
   "collector_path": "scripts/golden/collect_scenario_a.py",
   "derivation_collector_commit": "dce105c8843bdb8d9c8dc1819f1fe7ecc20d0113",
+  "derivation_collector_digest": "sha256:755bb6d7d24e37511b4f857b46d9f9a8e82ca9e481e642fa10b4f0391fdbdc1d",
   "recipe_paths": [
     "labs/deployment-succeeded-startup-failed/app/app.py",
     "labs/deployment-succeeded-startup-failed/app/requirements.txt",

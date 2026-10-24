@@ -124,6 +124,7 @@ class TransportParityTests(unittest.TestCase):
         self.assertEqual(
             urllib_outcome, requests_outcome,
             msg="a 404 must not be a failure on one transport and a success on the other")
+        self.assertEqual(urllib_outcome, classification.FAILURE)
 
     def test_200_classifies_identically(self):
         self.assertEqual(*self._both(200))

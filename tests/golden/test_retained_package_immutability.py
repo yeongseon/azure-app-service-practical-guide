@@ -7,9 +7,15 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest import mock
+
+import importlib.util
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 SCRIPT = ROOT / "scripts/golden/check_retained_packages.py"
+SPEC = importlib.util.spec_from_file_location("retained", SCRIPT)
+retained = importlib.util.module_from_spec(SPEC)
+SPEC.loader.exec_module(retained)
 
 
 def run_git(repo: pathlib.Path, *args: str) -> None:
@@ -100,6 +106,20 @@ class RetainedPackageImmutabilityTests(unittest.TestCase):
         manifest_path.write_text(json.dumps(document))
         run_git(self.repo, "add", ".")
         run_git(self.repo, "commit", "-m", "add new run")
+        self.assertEqual(self._check(self.base).returncode, 0)
+
+    def test_disconnected_base_and_head_trees_do_not_require_merge_base(self):
+        base_tree = subprocess.check_output(
+            ["git", "rev-parse", "HEAD^{tree}"], cwd=self.repo, text=True
+        ).strip()
+        run_git(self.repo, "checkout", "--orphan", "shallow-head")
+        run_git(self.repo, "rm", "-rf", ".")
+        run_git(self.repo, "read-tree", base_tree)
+        run_git(self.repo, "checkout-index", "-a")
+        (self.repo / "unrelated.txt").write_text("head-only change")
+        run_git(self.repo, "add", ".")
+        run_git(self.repo, "commit", "-m", "simulate separately fetched head")
+
         self.assertEqual(self._check(self.base).returncode, 0)
 
     def test_new_package_cannot_self_declare_historical(self):
@@ -211,6 +231,68 @@ class RetainedPackageImmutabilityTests(unittest.TestCase):
         }
         manifest_path.write_text(json.dumps(document))
         self.assertNotEqual(self._check(self.base).returncode, 0)
+
+    def test_unreachable_derivation_commit_uses_recipe_pinned_checkout_bytes(self):
+        run_dir = self.repo / "evidence/runs/run-two"
+        run_dir.mkdir()
+        collector = self.repo / "scripts/golden/collect_scenario_a.py"
+        collector.write_text("collector source")
+        digest = "sha256:" + hashlib.sha256(collector.read_bytes()).hexdigest()
+        (self.repo / "scripts/golden/scenario-a-recipe.json").write_text(json.dumps({
+            "collector_path": "scripts/golden/collect_scenario_a.py",
+            "derivation_collector_commit": "1" * 40,
+            "derivation_collector_digest": digest,
+        }))
+        (run_dir / "provenance.json").write_text(json.dumps({
+            "derivation": {
+                "collector_commit": "1" * 40,
+                "collector_path": "scripts/golden/collect_scenario_a.py",
+                "collector_digest": digest,
+                "derived_at": "2026-01-01T00:00:01Z",
+                "derived_offline": True,
+            }
+        }))
+        (run_dir / "evidence.json").write_text(json.dumps({
+            "observations": {
+                "fault_status": 503,
+                "fault_console_rows": [],
+                "phase_windows": {},
+                "baseline_probes": [],
+                "fault_probes": [],
+                "recovery_probes": [],
+            }
+        }))
+        manifest = {"captured_at": "2026-01-01T00:00:00Z"}
+        with mock.patch.object(retained, "_git_bytes", side_effect=ValueError("missing")):
+            self.assertEqual(retained._derivation_problems(self.repo, run_dir, manifest), [])
+
+    def test_unreachable_derivation_commit_rejects_unpinned_checkout_bytes(self):
+        run_dir = self.repo / "evidence/runs/run-two"
+        run_dir.mkdir()
+        collector = self.repo / "scripts/golden/collect_scenario_a.py"
+        collector.write_text("changed collector")
+        pinned_digest = "sha256:" + hashlib.sha256(b"expected collector").hexdigest()
+        (self.repo / "scripts/golden/scenario-a-recipe.json").write_text(json.dumps({
+            "collector_path": "scripts/golden/collect_scenario_a.py",
+            "derivation_collector_commit": "1" * 40,
+            "derivation_collector_digest": pinned_digest,
+        }))
+        (run_dir / "provenance.json").write_text(json.dumps({
+            "derivation": {
+                "collector_commit": "1" * 40,
+                "collector_path": "scripts/golden/collect_scenario_a.py",
+                "collector_digest": pinned_digest,
+                "derived_at": "2026-01-01T00:00:01Z",
+                "derived_offline": True,
+            }
+        }))
+        (run_dir / "evidence.json").write_text(json.dumps({"observations": {}}))
+        manifest = {"captured_at": "2026-01-01T00:00:00Z"}
+        with mock.patch.object(retained, "_git_bytes", side_effect=ValueError("missing")):
+            self.assertIn(
+                "derivation collector digest mismatch",
+                retained._derivation_problems(self.repo, run_dir, manifest),
+            )
 
     def test_new_directory_cannot_reuse_frozen_historical_identity(self):
         frozen = "20260927T104304Z-aba0d3a9daa7"

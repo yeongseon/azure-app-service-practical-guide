@@ -154,7 +154,7 @@ def generate_dashboard(tutorials: list[dict[str, Any]], today: date) -> str:
     # (e.g. content-validation-status.md) and aligns with sibling repositories.
     #
     # No content_validation block: docs/reference/ is out of scope per
-    # AGENTS.md §Text Content Validation, so tools/validate_frontmatter.py
+    # DOCUMENTATION_CONTRACT.md §Text Content Validation, so tools/validate_frontmatter.py
     # rejects one here. Both reference dashboards omit it for the same reason;
     # do not add one back for "consistency" with content-validation-status.md.
     lines.append("---")
@@ -272,6 +272,8 @@ def generate_dashboard(tutorials: list[dict[str, Any]], today: date) -> str:
     lines.append("    last_tested: 2026-04-09")
     lines.append('    cli_version: "2.83.0"')
     lines.append("    result: pass")
+    lines.append("    run_id: <retained-run-id>")
+    lines.append("    evidence: evidence/runs/<retained-run-id>")
     lines.append("  bicep:")
     lines.append("    last_tested: null")
     lines.append("    result: not_tested")
@@ -288,6 +290,9 @@ def generate_dashboard(tutorials: list[dict[str, Any]], today: date) -> str:
     lines.append("    - `result`: `pass`, `fail`, or `not_tested`")
     lines.append("    - `last_tested`: ISO date (YYYY-MM-DD) or `null`")
     lines.append("    - `cli_version`: Azure CLI version used")
+    lines.append("    - `run_id`: Retained package directory name")
+    lines.append("    - `evidence`: Canonical repository-relative retained package path")
+    lines.append("    - The reference gate checks package existence only; it does not prove that the package executed this tutorial or method")
     lines.append(
         f"    - Tutorials older than {STALENESS_DAYS} days are flagged as **stale**"
     )

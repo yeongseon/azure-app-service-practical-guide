@@ -7,16 +7,16 @@ content_sources:
 
 # Content Validation Status
 
-This page tracks `content_validation` metadata for **in-scope factual-claim documents** under `docs/best-practices/`, `docs/operations/`, `docs/platform/`, `docs/troubleshooting/`. Pages outside this scope — navigation indexes (`docs/best-practices/index.md`, `docs/operations/deployment/index.md`, `docs/operations/index.md`, `docs/platform/index.md`, `docs/troubleshooting/first-10-minutes/index.md`, `docs/troubleshooting/index.md`, `docs/troubleshooting/playbooks/index.md`), reference-lookup KQL packs and lab guides (`docs/troubleshooting/kql/`, `docs/troubleshooting/lab-guides/`), tutorials, language guides, and start-here landing pages — intentionally omit the metadata and are not counted here. See `AGENTS.md` §Text Content Validation for the full policy and `scripts/lib/content_scope.py` for the executable scope definition.
+This page tracks `content_validation` metadata for **in-scope factual-claim documents** under `docs/best-practices/`, `docs/operations/`, `docs/platform/`, `docs/troubleshooting/`. Pages outside this scope — navigation indexes (`docs/best-practices/index.md`, `docs/operations/deployment/index.md`, `docs/operations/index.md`, `docs/platform/index.md`, `docs/troubleshooting/first-10-minutes/index.md`, `docs/troubleshooting/index.md`, `docs/troubleshooting/playbooks/index.md`), reference-lookup KQL packs and lab guides (`docs/troubleshooting/kql/`, `docs/troubleshooting/lab-guides/`), tutorials, language guides, and start-here landing pages — intentionally omit the metadata and are not counted here. See `DOCUMENTATION_CONTRACT.md` §Text Content Validation for the full policy and `scripts/lib/content_scope.py` for the executable scope definition.
 
 ## Summary
 
-*Generated: 2026-10-14*
+*Generated: 2026-10-24*
 
 | Content Type | Total | Verified | Pending | Unverified | No Metadata |
 |---|---:|---:|---:|---:|---:|
-| Mermaid Diagrams | 395 | 395 | 0 | 0 | 0 |
-| In-Scope Factual-Claim Documents | 83 | 83 | 0 | 0 | 0 |
+| Mermaid Diagrams | 396 | 396 | 0 | 0 | 0 |
+| In-Scope Factual-Claim Documents | 84 | 84 | 0 | 0 | 0 |
 
 !!! success "All In-Scope Documents Verified"
     Every in-scope factual-claim document has verified Microsoft Learn sources for its core claims.
@@ -24,7 +24,7 @@ This page tracks `content_validation` metadata for **in-scope factual-claim docu
 <!-- diagram-id: content-validation-status-pie -->
 ```mermaid
 pie title In-Scope Document Validation Status
-    "Verified" : 83
+    "Verified" : 84
 ```
 
 ## By Section
@@ -80,7 +80,7 @@ pie title In-Scope Document Validation Status
 | [Outbound Client Certificates](../operations/outbound-client-certificates.md) | ✅ | ✅ Verified | 4/4 | 2026-09-11 |
 | [Scaling](../operations/scaling.md) | ✅ | ✅ Verified | 4/4 | 2026-09-11 |
 | [Security](../operations/security.md) | ✅ | ✅ Verified | 5/5 | 2026-09-11 |
-| [Slots And Swap](../operations/deployment/slots-and-swap.md) | ✅ | ✅ Verified | 4/4 | 2026-04-12 |
+| [Slots And Swap](../operations/deployment/slots-and-swap.md) | ✅ | ✅ Verified | 5/5 | 2026-10-24 |
 | [Zip Deploy](../operations/deployment/zip-deploy.md) | ✅ | ✅ Verified | 4/4 | 2026-04-12 |
 
 ### Troubleshooting
@@ -113,6 +113,7 @@ pie title In-Scope Document Validation Status
 | [Performance Degradation](../troubleshooting/playbooks/performance-degradation.md) | ✅ | ✅ Verified | 5/5 | 2026-09-11 |
 | [Private Endpoint Custom Dns Route Confusion](../troubleshooting/playbooks/outbound-network/private-endpoint-custom-dns-route-confusion.md) | ✅ | ✅ Verified | 3/3 | 2026-10-02 |
 | [Quick Diagnosis Cards](../troubleshooting/quick-diagnosis-cards.md) | ✅ | ✅ Verified | 2/2 | 2026-10-14 |
+| [Scm Access Dns And Http Failures](../troubleshooting/playbooks/scm-access-dns-and-http-failures.md) | ✅ | ✅ Verified | 4/4 | 2026-10-24 |
 | [Slot Swap Config Drift](../troubleshooting/playbooks/startup-availability/slot-swap-config-drift.md) | ✅ | ✅ Verified | 3/3 | 2026-09-11 |
 | [Slot Swap Failed During Warmup](../troubleshooting/playbooks/startup-availability/slot-swap-failed-during-warmup.md) | ✅ | ✅ Verified | 3/3 | 2026-09-11 |
 | [Slow Response But Low Cpu](../troubleshooting/playbooks/performance/slow-response-but-low-cpu.md) | ✅ | ✅ Verified | 2/2 | 2026-09-11 |
