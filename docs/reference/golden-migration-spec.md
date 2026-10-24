@@ -27,15 +27,21 @@ for its own scenarios, and supplies its own recipe and registries.
 | `scripts/golden/check_reproduction.py` | None |
 | `tests/golden/test_evaluate_run.py` | None |
 | `tests/golden/test_negative_evidence.py` | None |
-| `tests/golden/test_lab_classification.py` | None |
-| `tests/golden/test_repository_audit.py` | None |
-| `tests/golden/test_readme_claims.py` | None |
+| `tests/golden/test_lab_classification.py` | Replace the hardcoded scenario count, lab names and Windows Java stage inventory with the destination's own; keep the structural assertions |
+| `tests/golden/test_repository_audit.py` | Replace the audit data and the contract, validator and workflow conventions it reads with the destination's |
+| `tests/golden/test_readme_claims.py` | Replace the retained-package reference, the review file and the README expectations with the destination's |
 | `schemas/golden/*.json` | `$id` host and path only, plus the one `$ref` in `manifest.schema.json` |
 
-The four schemas carry this repository's Pages host in their `$id`. Nothing
-resolves those URLs at runtime, so a stale `$id` will not fail a run; it
-will quietly assert that two different repositories publish the same
-schema. Rewrite the host and path on adoption.
+The six schemas under `schemas/golden/` carry this repository's Pages host in
+their `$id`. Nothing fetches those URLs: the reproduction gate registers each
+schema's `$id` as a local resource and resolves references locally, so a stale
+`$id` will not fail a run; it will quietly assert that two different
+repositories publish the same schema. Rewrite the host and path on adoption.
+
+Three of the suites above are tests of this repository's own data rather than
+of the machinery: they read its lab inventory, retained packages, audit file,
+contract text and README. Adopt their structure, but they pass only against the
+destination's own data, never "unmodified".
 
 ## What each repository authors itself
 
@@ -100,8 +106,10 @@ the two report missing data as disproof.
 A repository claims Golden status when all of the following hold, each
 verifiable by running something rather than by reading a page.
 
-1. The evaluator and reproduction gate are present and their portable
-   suites pass unmodified.
+1. The evaluator (adapted as described above) and reproduction gate are
+   present, the generic suites `test_evaluate_run.py` and
+   `test_negative_evidence.py` pass unmodified, and the adapted suites pass
+   against the destination's own data.
 2. Every lab is classified, and the classification covers exactly the labs
    on disk with no orphan entries in either direction.
 3. At least one scenario ships a manifest template and an
@@ -125,21 +133,28 @@ No sibling repository change is a prerequisite for completing those checks.
 ## Preserving evidence on adoption
 
 Copying the machinery never moves evidence. An adopting repository preserves
-each artifact's original capture date, its `validation.az_cli.last_tested` and
-`validation.bicep.last_tested` dates and results, and its run and evidence
-identity; run directories and captured evidence stay immutable, and each
-artifact keeps its evidence role and trust level. Independent reproduction
-still requires a genuinely different human operator and separately collected
-raw evidence, as the [Golden evidence model](golden-evidence-model.md)
-defines. Copying the evaluator, replaying an evaluation or running static
-checks creates neither a fresh capture date nor an independent reproduction: a
-new collection creates a new run, and a replay creates only a new evaluation
+each artifact's captured bytes and original capture date, its
+`validation.az_cli.last_tested` and `validation.bicep.last_tested` dates and
+results, its run and evidence identity, and its source commit, environment and
+recipe digest; run directories and captured evidence stay immutable, and the
+capture, evaluation and document timestamps stay separate. Original
+classifications are preserved as provenance, not as a verdict under the
+destination's contract: a capture that predates that contract is at most
+`trusted-historical`, and one that no longer satisfies it is reclassified with
+its shortfall recorded in `known_gaps` rather than being silently accepted or
+promoted. Independent reproduction still requires a genuinely different human
+operator and separately collected raw evidence, as the
+[Golden evidence model](golden-evidence-model.md) defines. Copying the
+evaluator, replaying an evaluation or running static checks creates neither a
+fresh capture date, a higher trust level nor an independent reproduction: a new
+collection creates a new run, and a replay creates only a new evaluation
 record.
 
 ## Order of adoption
 
-Take the evaluator and its portable suites first and confirm they pass
-before authoring any scenario. A suite that passes on first import against
+Take the evaluator and the generic suites (`test_evaluate_run.py` and
+`test_negative_evidence.py`) first and confirm they pass before authoring any
+scenario. A suite that passes on first import against
 an empty repository is measuring nothing, and the portable suites are the
 cheapest place to discover that.
 

@@ -49,7 +49,10 @@ def claimed_unchanged():
 
 def named_repo_specific():
     """Suites the specification names as not transferring."""
-    return re.findall(r"`(test_\w+\.py)`", SPEC.split("authors itself")[1])
+    # Only the "What each repository authors itself" section names them; later sections
+    # mention the generic suites too (entry criteria, order of adoption).
+    section = SPEC.split("authors itself")[1].split("\n## ")[0]
+    return re.findall(r"`(test_\w+\.py)`", section)
 
 
 def coupling_in(rel_path):
@@ -80,14 +83,43 @@ class EvaluatorBoundaryTests(unittest.TestCase):
                 self.assertIn(f"`{module}`", SPEC)
 
 
+class AdaptedSuiteTests(unittest.TestCase):
+    """Suites that read this repository's own data must not be listed as portable."""
+
+    COUPLED = {
+        "tests/golden/test_lab_classification.py": ("EXPECTED_SCENARIO_COUNT = 15", "windows-java-httpplatformhandler-timeout"),
+        "tests/golden/test_readme_claims.py": ("20261016T075147Z-6d019de6e2f2",),
+        "tests/golden/test_repository_audit.py": ("docs/reference/golden-repository-audit.json", "DOCUMENTATION_CONTRACT.md"),
+    }
+
+    def test_coupled_suites_are_not_claimed_unchanged(self):
+        for asset, markers in self.COUPLED.items():
+            with self.subTest(asset=asset):
+                text = (ROOT / asset).read_text()
+                for marker in markers:
+                    self.assertIn(marker, text, msg=f"{asset} no longer carries {marker!r}; re-derive the claim")
+                self.assertNotIn(asset, claimed_unchanged())
+                self.assertIn(asset, [row[0] for row in spec_rows()])
+
+    def test_the_schema_count_in_the_text_is_the_real_count(self):
+        count = len(list((ROOT / "schemas/golden").glob("*.json")))
+        words = {3: "three", 4: "four", 5: "five", 6: "six", 7: "seven", 8: "eight"}
+        self.assertIn(f"The {words[count]} schemas under `schemas/golden/`", SPEC)
+
+    def test_preservation_never_promotes_trust_by_copying(self):
+        section = SPEC.split("## Preserving evidence on adoption")[1].split("\n## ")[0]
+        for phrase in ("`trusted-historical`", "`known_gaps`", "source commit", "recipe digest"):
+            self.assertIn(phrase, section)
+
+
 class TransferTableTests(unittest.TestCase):
 
     def test_the_table_was_parsed(self):
         """Guards every test below from passing on an empty list."""
         self.assertGreaterEqual(len(spec_rows()), 8)
-        # Six assets: the evaluator row is no longer "None" because it carries the
-        # Scenario A derivation (see the evaluator tests below).
-        self.assertGreaterEqual(len(claimed_unchanged()), 6)
+        # Three assets: the evaluator and three suites are no longer "None" because they
+        # carry Scenario A or read this repository's own data (measured by the tests below).
+        self.assertGreaterEqual(len(claimed_unchanged()), 3)
 
     def test_assets_claimed_unchanged_are_free_of_repo_coupling(self):
         for asset in claimed_unchanged():
