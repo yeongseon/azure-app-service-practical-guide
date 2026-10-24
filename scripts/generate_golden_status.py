@@ -82,6 +82,8 @@ REPETITION_WORKFLOW = ".github/workflows/validate-repetition.yml"
 VISUAL_WORKFLOW = ".github/workflows/validate-visual-content.yml"
 GOLDEN_STATUS_WORKFLOW = ".github/workflows/validate-golden-status.yml"
 APP_INFRA_WORKFLOW = ".github/workflows/app-infra-ci.yml"
+AZURE_E2E_WORKFLOW = ".github/workflows/e2e-azure.yml"
+FRESHNESS_WORKFLOW = ".github/workflows/validation-freshness.yml"
 
 
 @dataclass(frozen=True)
@@ -507,6 +509,62 @@ GATES: tuple[Gate, ...] = (
         bindings=(Binding("Validate Content Source Metadata", CONTENT_SOURCES_WORKFLOW),),
         requires=("py:ruamel.yaml",),
         quiet_detail="Every workflow parsed without duplicate keys.",
+    ),
+    Gate(
+        key="azure-e2e-guards",
+        name="Guarded Azure E2E contracts",
+        enforces="Immutable target SHAs, required evidence, sanitized artifacts, run-owned cleanup, TTL ownership, and offline claim boundaries fail closed.",
+        argv=(
+            "{python}",
+            "-m",
+            "unittest",
+            "tests/golden/test_azure_e2e_guard.py",
+            "tests/golden/test_azure_cleanup.py",
+            "tests/golden/test_legacy_startup_verifier.py",
+            "tests/ci/test_azure_e2e_workflow.py",
+        ),
+        severity=BLOCKING,
+        covers=(
+            "scripts/golden/azure_e2e_guard.py",
+            "scripts/golden/azure_e2e_cli.py",
+            "scripts/golden/azure_cleanup.py",
+            ".github/workflows/e2e-azure.yml",
+            "labs/deployment-succeeded-startup-failed/verify.sh",
+        ),
+        bindings=(
+            Binding("Validate Golden Contracts", CONTENT_SOURCES_WORKFLOW),
+            Binding("Run Golden Scenario A", AZURE_E2E_WORKFLOW),
+            Binding("Verify run-owned cleanup", AZURE_E2E_WORKFLOW),
+            Binding("Sweep expired Golden E2E groups", AZURE_E2E_WORKFLOW),
+        ),
+        quiet_detail="All guarded Azure execution contract tests passed.",
+    ),
+    Gate(
+        key="validation-freshness",
+        name="Validation freshness calculation",
+        enforces="Tutorial freshness is calculated from existing last_tested metadata without modifying capture or test dates.",
+        argv=("{python}", "tests/golden/test_freshness_report.py"),
+        severity=BLOCKING,
+        covers=("scripts/golden/freshness_report.py",),
+        bindings=(
+            Binding("Validate Golden Contracts", CONTENT_SOURCES_WORKFLOW),
+            Binding("Report Validation Freshness", FRESHNESS_WORKFLOW),
+        ),
+        quiet_detail="Freshness boundary and read-only tests passed.",
+    ),
+    Gate(
+        key="tutorial-validation-evidence",
+        name="Tutorial validation contract",
+        enforces="Tutorial validation frontmatter uses a closed schema, retained references resolve canonically and securely (no traversal, symlinks, or path injection), and every new or changed pass adds a retained package reference.",
+        argv=("{python}", "scripts/golden/validate_tutorial_validation.py"),
+        severity=BLOCKING,
+        covers=(
+            "scripts/golden/validate_tutorial_validation.py",
+            "tests/golden/test_tutorial_validation_reference.py",
+        ),
+        bindings=(Binding("Validate Golden Contracts", CONTENT_SOURCES_WORKFLOW),),
+        note="CI compares pass entries with the exact pull-request base SHA. A retained package reference proves only canonical directory existence, not that the package executed the named tutorial or method.",
+        summary_keys=("Tutorial validation contract:",),
     ),
     Gate(
         key="retained-golden-packages",
@@ -1392,7 +1450,7 @@ def render_page(results: list[Result], today: date) -> str:
         "",
         "## Sources",
         "",
-        "- [AGENTS.md — Quality Gates & Verification](https://github.com/yeongseon/azure-app-service-practical-guide/blob/main/AGENTS.md)",
+        "- [Documentation contract — Quality Gates & Verification](https://github.com/yeongseon/azure-app-service-practical-guide/blob/main/DOCUMENTATION_CONTRACT.md#quality-gates--verification)",
         "- [Series epic: documentation repetition gate](https://github.com/yeongseon/azure-container-apps-practical-guide/issues/376)",
         "- [Series epic: PII detection gate](https://github.com/yeongseon/azure-container-apps-practical-guide/issues/384)",
         "- [Series epic: visual content gate](https://github.com/yeongseon/azure-container-apps-practical-guide/issues/391)",

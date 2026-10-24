@@ -62,6 +62,23 @@ Every playbook follows this flow:
 | Need KQL queries to investigate | [KQL Query Library](kql/index.md) |
 | Want hands-on practice | [Labs](#hands-on-labs) below |
 
+### Inbound Access Symptom Routes
+
+Choose the observed symptom rather than a presumed cause. These links lead to
+investigation steps, evidence collection, competing hypotheses, mitigation and
+prevention. They are not customer RCA records or new lab execution results;
+check each destination's verification boundary before treating an example as evidence.
+
+| Observed symptom | First discriminating check | Investigation |
+|---|---|---|
+| Browser cannot resolve the app or SCM name | Record the same client's target, resolver/proxy path and final DNS answer; keep separate attempts separate. | [SCM Client DNS and HTTP Failures](playbooks/scm-access-dns-and-http-failures.md) |
+| Main app works, but Kudu or deployment fails | Test the actual operator/agent SCM path and its DNS, rule inheritance and authentication separately. | [SCM Client DNS and HTTP Failures](playbooks/scm-access-dns-and-http-failures.md) |
+
+For **app-to-dependency** failures, use [Outbound / Network](#outbound-network)
+instead. The client-to-app/SCM path is a different investigation. Unavailable
+observations leave the cause inconclusive; a configuration screenshot alone
+cannot complete the diagnostic steps.
+
 ## Quick Decision Tree
 
 Use this to route to the right playbook in under 60 seconds:
@@ -168,6 +185,9 @@ Quick reference for recognizing common failure signatures:
 - [Slow Start / Cold Start](playbooks/performance/slow-start-cold-start.md)
 - [CORS and Token Errors](playbooks/performance/cors-and-token-errors.md)
 
+### Inbound Access / SCM
+- [SCM Client DNS and HTTP Failures](playbooks/scm-access-dns-and-http-failures.md)
+
 ### Outbound / Network
 - [SNAT or Application Issue?](playbooks/outbound-network/snat-or-application-issue.md)
 - [DNS Resolution (VNet-Integrated)](playbooks/outbound-network/dns-resolution-vnet-integrated-app-service.md)
@@ -187,7 +207,8 @@ Quick reference for recognizing common failure signatures:
 | Need | Start Here |
 |------|-----------|
 | First 10 minutes of a performance issue | [Performance Checklist](first-10-minutes/performance.md) |
-| First 10 minutes of a network issue | [Network Checklist](first-10-minutes/outbound-network.md) |
+| Browser or deployment-agent inbound access issue | [Inbound symptom routes](#inbound-access-symptom-routes) |
+| First 10 minutes of an app-to-dependency outbound issue | [Network Checklist](first-10-minutes/outbound-network.md) |
 | First 10 minutes of a startup failure | [Startup Checklist](first-10-minutes/startup-availability.md) |
 | Reusable KQL queries | [Query Library](kql/index.md) |
 

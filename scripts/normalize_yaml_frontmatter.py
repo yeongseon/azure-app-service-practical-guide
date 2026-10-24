@@ -32,7 +32,8 @@ invariant are handled defensively rather than transparently:
   the line-ending policy first or extend this script to preserve the
   original line ending.
 
-The repo invariant is documented in ``AGENTS.md`` Frontmatter YAML Style.
+The repo invariant is documented in ``DOCUMENTATION_CONTRACT.md`` Frontmatter
+YAML Style.
 """
 
 from __future__ import annotations
