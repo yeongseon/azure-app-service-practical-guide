@@ -39,9 +39,11 @@ graph TD
 | Tier | Max Instances (Typical) | Deployment Slots (Typical) | Always On | Source |
 | :--- | :--- | :--- | :--- | :--- |
 | **Free (F1)** | 1 | 0 | No | [Azure App Service limits](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/azure-subscription-service-limits#app-service-limits) |
-| **Basic (B1)** | 3 | 0 | No | [Azure App Service limits](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/azure-subscription-service-limits#app-service-limits) |
+| **Basic (B1)** | 3 | 0 | Yes | [Azure App Service limits](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/azure-subscription-service-limits#app-service-limits) |
 | **Standard (S1)** | 10 | 5 | Yes | [Azure App Service limits](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/azure-subscription-service-limits#app-service-limits) |
 | **Premium (P1V3 and above)** | 30+ | 20 | Yes | [Azure App Service limits](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/azure-subscription-service-limits#app-service-limits) |
+
+**Always On.** The Microsoft Learn limits table marks Always On as supported on Basic, Standard, Premium, and Isolated plans, and not on Free or Shared. Basic therefore supports Always On even though it does not support deployment slots; the two columns above are independent capabilities. **[Documented]** from the source linked in each row, reviewed 2026-10-24. **[Not Proven]** by a run on each SKU: this page's values are source-reviewed and were not exercised against Azure.
 
 !!! note "Regional and SKU variation"
     Effective limits can vary by region, subscription, and SKU generation.

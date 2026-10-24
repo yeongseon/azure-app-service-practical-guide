@@ -10,6 +10,9 @@ on:
       # under those paths bypass the MSLearn locale check entirely.
       - 'docs/**'
       - 'scripts/**'
+      - 'evidence/**'
+      - 'schemas/**'
+      - 'tests/**'
       - 'apps/**'
       - 'labs/**'
       - 'tools/**'
@@ -26,6 +29,9 @@ on:
     paths:
       - 'docs/**'
       - 'scripts/**'
+      - 'evidence/**'
+      - 'schemas/**'
+      - 'tests/**'
       - 'apps/**'
       - 'labs/**'
       - 'tools/**'
@@ -264,23 +270,36 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          # The PR checkout is a synthetic merge commit. Depth 2 retains both
-          # parents so the retained-package gate can compute base...HEAD while
-          # the older provenance objects remain exact-SHA shallow fetches.
-          fetch-depth: 2
+          fetch-depth: 0
 
-      - name: Fetch Golden provenance commits
+      - name: Fetch retained Golden provenance commits
         run: |
-          for sha in \
-            3e0442bb19b966766598ffeae1fb47f3f6960837 \
-            af75d0024472edce67401042fdaa97d00dfbe6ac \
-            20969deac4d958fff0c71a6c951573a1b0122a34 \
-            ef78457ae487cdb244808c763ac72a72057ce6a7 \
-            f839d67575fd1e56dd922421e3b10088d470e80e \
-            1204a0956b3e9aca318fd1a172f9cb63620fd78d
-          do
-            git fetch --no-tags --depth=1 origin "$sha:refs/golden-provenance/$sha"
-          done
+          python3 - <<'PY' > /tmp/golden-provenance-commits
+          import json
+          import re
+          from pathlib import Path
+
+          commits = set()
+          for manifest_path in Path("evidence/runs").glob("*/manifest.json"):
+              manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+              source_commit = manifest.get("source_commit")
+              if isinstance(source_commit, str) and re.fullmatch(r"[0-9a-f]{40}", source_commit):
+                  commits.add(source_commit)
+
+          for provenance_path in Path("evidence/runs").glob("*/provenance.json"):
+              provenance = json.loads(provenance_path.read_text(encoding="utf-8"))
+              collector_commit = provenance.get("derivation", {}).get("collector_commit")
+              if isinstance(collector_commit, str) and re.fullmatch(r"[0-9a-f]{40}", collector_commit):
+                  commits.add(collector_commit)
+
+          print("\n".join(sorted(commits)))
+          PY
+          while IFS= read -r commit; do
+            git fetch --no-tags --depth=1 origin "$commit"
+          done < /tmp/golden-provenance-commits
+
+      - name: Fetch Golden test fixture commit
+        run: git fetch --no-tags --depth=1 origin 3e0442bb19b966766598ffeae1fb47f3f6960837
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -304,7 +323,9 @@ jobs:
       - name: Protect retained Golden packages
         env:
           GOLDEN_BASE_REF: ${{ github.event.pull_request.base.sha || github.event.before || 'HEAD' }}
-        run: python3 scripts/golden/check_retained_packages.py --base-ref "$GOLDEN_BASE_REF"
+        run: |
+          python3 scripts/golden/check_retained_packages.py --base-ref "$GOLDEN_BASE_REF"
+          python3 scripts/golden/validate_tutorial_validation.py --base-ref "$GOLDEN_BASE_REF"
 
       - name: Run Golden test suites
         # These suites encode the evidence model's negative cases. Review
