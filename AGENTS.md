@@ -19,7 +19,7 @@ Read these before changing the repository:
    PII, screenshot capture, CLI-table, content-validation, Oracle-review, and
    merge requirements. Its mandatory gates remain intact.
 3. [CONTRIBUTING.md](CONTRIBUTING.md) — sole source for canonical titles,
-   issue/PR sections, branch names, and the one-priority-label convention.
+   issue/PR sections, branch names, and the triage, priority/size, minimal-development and PR conventions.
 4. The affected documentation, implementation, lab contract, schemas,
    validators, and tests. README summaries are not substitutes for them.
 
@@ -134,15 +134,12 @@ Experiment --collects--> Evidence --> Assertion --> Hypothesis
   and impact-classifier tests when their contracts are affected. Do not claim a
   check passed unless it ran successfully on the reported head.
 
+## Lean Development and Agent Compatibility
+
+Follow [CONTRIBUTING.md](CONTRIBUTING.md#issue-workflow) for triage, exactly one priority and one size label, post-triage implementation, and anti-overengineering decisions. Confirm label application before removing `needs-triage`. Re-evaluate urgency across the open backlog whenever scope or impact changes.
+
+This `AGENTS.md` is shared by Codex and OpenCode. Claude Code can read it directly on supported versions; the thin `CLAUDE.md` import supports other versions. GitHub Copilot references the same sources. Never maintain separate copies of these rules, invent a mandatory AI reviewer, or allow an agent to treat a green CI badge as permission to merge.
+
 ## Review and Merge Boundary
 
-All mandatory review and merge gates in
-[DOCUMENTATION_CONTRACT.md](DOCUMENTATION_CONTRACT.md#mandatory-oracle-review-ai-agent-rule)
-remain in force, including Oracle review, fully green CI on the exact head SHA,
-caption-to-image accuracy, and final-image PII verification. The merge procedure
-and stop conditions in that contract are unchanged.
-
-Do not claim an Oracle score or approval that did not occur. Do not bypass
-missing, pending, or failing checks, alter protection settings, or treat AI
-comments as human approval. Package-release automation, package coverage
-targets, and reference-repository approval-count rules are not adopted here.
+The [DOCUMENTATION_CONTRACT.md](DOCUMENTATION_CONTRACT.md#tool-neutral-pr-review-and-merge) governs review and merge safety: current-head required GitHub CI, evidence accuracy, correct screenshot/caption content, final-image PII checks and a responsible maintainer decision. AI/Oracle reviews are optional advice. Preserve existing GitHub approval and branch-protection settings; no admin override or false approval. Existing current-head reviewer work tracked in #247 must be reconciled before declaring review automation complete.

@@ -14,7 +14,7 @@ body:
     id: acceptance
     attributes:
       label: Acceptance Checklist
-      description: State verifiable corrections. Do not claim Azure testing that was not performed.
+      description: State verifiable corrections and minimal scope; maintainers select priority and size. Do not claim Azure testing that was not performed.
       placeholder: '- [ ] Correct the scoped claim and verify the instructions'
     validations:
       required: true

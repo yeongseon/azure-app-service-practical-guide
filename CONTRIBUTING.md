@@ -23,25 +23,42 @@ it uses only read permissions and treats the event payload as data.
 
 ## Issue Workflow
 
-Search for an existing tracking issue before coding. Use these sections in order:
-Context / Acceptance Checklist / Out of scope / References. GitHub Issue Forms
-render the same field names as third-level headings. Preserve concrete acceptance
-criteria, exclusions, evidence and checked/unchecked states.
+Every change starts from a repository-specific issue unless it is a trivial typo or an urgent, documented safety fix. Search for duplicates first. Use **Context / Acceptance Checklist / Out of scope / References** in that order, with observable completion criteria and real (sanitized) evidence; never copy another repository's tracking context.
 
-Apply a type label: bug, enhancement, documentation, chore, ci or test. New reports
-receive needs-triage; a maintainer confirms scope and selects exactly one priority:
+### Triage
+
+New issues start with `needs-triage`. A maintainer:
+
+1. Checks the problem and evidence, validity, duplicates, scope and the smallest useful result. Close duplicates with a link instead of opening a second tracker.
+2. Selects one existing type label (`bug`, `enhancement`, `documentation`, `chore`, `ci` or `test`), exactly one priority label and exactly one size label.
+3. Compares the impact and urgency with **all currently open issues**, not just the newest issue. Re-evaluate other priorities if that comparison changes their relative urgency.
+4. Verifies in the saved GitHub issue that both labels are present, then removes `needs-triage`. If evidence, scope or a label is still missing, leave it in triage and record the missing decision.
 
 | Label | Meaning |
 |---|---|
 | `priority:critical` | Immediate security/data loss or blocked publication pipeline |
-| `priority:high` | Serious correctness/reliability issue; before next planned publication |
+| `priority:high` | Serious correctness/reliability; fix before the next planned publication |
 | `priority:medium` | Normal planned work or limited impact with a workaround |
 | `priority:low` | Non-urgent polish or optional expansion |
 
-Priority lives in labels, not title prefixes or another status field. Preserve
-unrelated labels. An umbrella tracks only local issues; sibling links are
-references. Do not introduce milestones, WIP labels or release grouping labels.
-Use blocker only for an actual publication blocker.
+| Size label | Expected scope |
+|---|---|
+| `size: XS` | Very small, isolated correction |
+| `size: S` | Small, independently reviewable change |
+| `size: M` | Several related files or a moderate reproducible scenario |
+| `size: L` | Cross-cutting work; split into independently useful issues where possible |
+| `size: XL` | Too broad to implement as one PR; define a local tracker and split |
+
+Priority describes impact, not work effort; size describes scope, not importance. Do not infer either from a title, age, lane or PR count. Re-triage if new evidence materially changes scope or priority. Priority and size belong in labels, not titles. Keep tracking local to this repository; sibling references are technical context, not cross-repository umbrella work. Do not invent milestones, release lanes, WIP statuses or labels that duplicate GitHub's native issue/PR state.
+
+### After triage: develop the smallest useful change
+
+1. Reproduce/locate the issue and read the relevant source, current implementation, docs and tests; identify one observable outcome and one simpler alternative.
+2. Prefer a direct correction or existing pattern over new abstractions, wrappers, feature flags, duplicate guides or validators. Do not build for hypothetical future use. Ask what can be **removed or reused** before adding files.
+3. Work in one focused branch and PR. Split `L`/`XL` work before implementation; every child issue must be independently useful. Do not expand an issue silently to justify a larger redesign.
+4. Validate only what the change affects: executable examples, relevant app/lab tests, source claims, docs rendering and PII/image checks. A static pass never certifies live Azure execution or the Golden evidence outcome.
+5. Review the final PR head, resolve real findings, obtain the responsible maintainer's decision, then squash merge without bypassing GitHub requirements. Close only fully finished issue scope; use `Refs #N` for partial work.
+6. After resolving an issue, revisit the remaining open backlog for changed urgency and update priority labels where justified. Do not automatically reprioritize by issue age or size.
 
 ## Pull Request Workflow
 
@@ -50,6 +67,8 @@ Summary / Changes / Type of Change / Validation / Checklist / Related Issues.
 Link fully resolved issues with Closes #N. Partial work uses Refs #N with the
 remaining scope stated explicitly; do not auto-close an unfinished umbrella.
 Use Draft PRs for unfinished implementation. Never mark unrun checks complete.
+
+Use the same current-head GitHub CI, factual review, security, image/PII and maintainer-decision process for Codex, Claude, OpenCode, Copilot and human contributions. AI review is advisory, never a required vendor score or substitute for actual tests. Keep a PR small enough to review meaningfully and describe why a simpler option was not enough if new structure was added.
 
 The `PR metadata` gate requires exactly these ordered level-two headings:
 Summary / Changes / Type of Change / Validation / Checklist / Related Issues.
