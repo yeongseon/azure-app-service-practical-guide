@@ -165,10 +165,11 @@ az webapp vnet-integration add \
   --subnet "$INTEGRATION_SUBNET_NAME" \
   --output json
 
-az webapp config appsettings set \
+az resource update \
   --resource-group "$RG" \
   --name "$APP_NAME" \
-  --settings "WEBSITE_VNET_ROUTE_ALL=1" \
+  --resource-type "Microsoft.Web/sites" \
+  --set properties.outboundVnetRouting.allTraffic=true \
   --output json
 
 az webapp vnet-integration list \
@@ -181,8 +182,13 @@ az webapp vnet-integration list \
 |---|---|
 | `az webapp vnet-integration add` | Connects the app to the delegated subnet for outbound private connectivity. |
 | `--subnet "$INTEGRATION_SUBNET_NAME"` | Uses the integration subnet only; do not reuse the private endpoint subnet. |
-| `WEBSITE_VNET_ROUTE_ALL=1` | Forces all outbound app traffic into the VNet integration path. |
+| `az resource update` | Updates the site resource's routing property. |
+| `--resource-type "Microsoft.Web/sites"` | Targets the web app resource type. |
+| `--set properties.outboundVnetRouting.allTraffic=true` | Routes all outbound traffic (application and configuration) through the VNet integration. Microsoft Learn recommends this property; the legacy `WEBSITE_VNET_ROUTE_ALL=1` app setting is still supported. |
 | `az webapp vnet-integration list` | Confirms the app is attached to the expected VNet and subnet. |
+
+!!! note "Which routing setting"
+    The property is a configured intent, not proof of the path. Whether DNS, the integration subnet's routes and policies, and the destination agree is verified separately; see [Outbound VNet routing properties](../platform/networking.md#outbound-vnet-routing-properties) for the full property list, the legacy equivalents and what still needs DNS and network evidence.
 
 !!! note "Subnet sizing"
     Microsoft Learn recommends planning enough IP space for scale operations and platform upgrades. For a single multitenant App Service plan, `/26` gives the safest headroom; `/28` is the minimum supported size when the subnet already exists.
