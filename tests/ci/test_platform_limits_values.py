@@ -52,6 +52,22 @@ class PlatformLimitsValueTests(unittest.TestCase):
                     self.assertIn(row[column], CLASSES)
         self.assertGreaterEqual(seen, 10)
 
+    def test_value_tables_keep_their_class_column(self):
+        # Dropping the Class column must not let a table escape the row checks.
+        classed = [header for header, _rows in tables(PAGE) if "Class" in header]
+        self.assertGreaterEqual(len(classed), 5)
+        for heading in ("## Request Limits", "## Scale and Plan Limits", "## Deployment and Configuration Limits",
+                        "## Networking and Connections", "## Diagnostics and Retention"):
+            section = PAGE.split(heading)[1].split("\n## ")[0]
+            with self.subTest(section=heading):
+                self.assertTrue(any("Class" in header for header, _rows in tables(section)))
+
+    def test_log_and_snat_and_ip_rows_carry_their_scope_qualifiers(self):
+        text = PAGE
+        for needle in ("Windows apps", "App Service Environments", "Premium v4", "NAT"):
+            with self.subTest(needle=needle):
+                self.assertIn(needle, text)
+
     def test_every_documented_row_cites_microsoft_learn(self):
         for header, rows in tables(PAGE):
             if "Class" not in header:
@@ -65,9 +81,9 @@ class PlatformLimitsValueTests(unittest.TestCase):
     def test_tier_maxima_match_the_documented_table(self):
         plan = next(rows for header, rows in tables(PAGE) if "Max instances" in header)
         by_tier = {re.sub(r"[*_`]", "", row[0]).split()[0]: row for row in plan}
-        self.assertTrue(by_tier["Free"][1].startswith("1"))
-        self.assertTrue(by_tier["Basic"][1].startswith("3"))
-        self.assertTrue(by_tier["Standard"][1].startswith("10"))
+        self.assertRegex(by_tier["Free"][1], r"^1\b")
+        self.assertRegex(by_tier["Basic"][1], r"^3\b")
+        self.assertRegex(by_tier["Standard"][1], r"^10\b")
         # Premium: 30 for v2/v3/v4 and 20 for v1 (not "30+").
         self.assertIn("30", by_tier["Premium"][1])
         self.assertIn("20 for Premium v1", by_tier["Premium"][1])

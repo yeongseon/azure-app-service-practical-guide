@@ -42,12 +42,12 @@ Each figure carries one of three classes, because they do not carry the same aut
 
 ## Values this guide does not publish
 
-Microsoft Learn does not document an App Service-wide value for these, so a number here would be an invention. They are [Application or framework] concerns and depend on the runtime, web server and request path.
+The sources reviewed for this page do not document an App Service-wide value for the first three, so a number here would be an invention. They are [Application or framework] concerns and depend on the runtime, web server and request path.
 
 - **Maximum request body size.** Request-body limits vary by runtime and web server (for example IIS request filtering on Windows); see [Request Limits `requestLimits` (IIS)](https://learn.microsoft.com/en-us/iis/configuration/system.webserver/security/requestfiltering/requestlimits/) for the IIS behavior.
 - **Maximum URL length.** URL limits vary by stack and by front-end and server behavior; the same IIS reference covers the Windows web server.
 - **Maximum number of app settings.** No hard App Service limit is documented; environment-block and runtime constraints can be stack-specific. See [Configure an App Service app](https://learn.microsoft.com/en-us/azure/app-service/configure-common).
-- **Filesystem log retention.** Retention is a setting you choose, not a platform default (see [Diagnostics and Retention](#diagnostics-and-retention)).
+- **Filesystem log retention.** This one is an App Service logging setting, not an application or framework concern: you choose the number of days, so there is no platform default to publish (see [Diagnostics and Retention](#diagnostics-and-retention)).
 
 Earlier revisions of this page showed 128 MB, 8192 characters, 10,000 settings and 30-90 days as "typical" values. They were removed because no primary source supports them as App Service limits.
 
@@ -86,17 +86,17 @@ The number of app settings is not listed here; see [Values this guide does not p
 
 | Limit/Behavior | Value / Pattern | Class | Notes | Source |
 | :--- | :--- | :--- | :--- | :--- |
-| **SNAT ports per instance** | **128 preallocated** | [Documented] | Each instance starts with 128 preallocated SNAT ports; more can be allocated dynamically or freed by connection reuse. The limit applies to connections to the same address and port combination. Outbound-heavy apps can exhaust the preallocated ports. | [Troubleshoot intermittent outbound connection errors](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-intermittent-outbound-connection-errors) |
-| **Outbound IPs** | Multiple, can change | [Documented] | Use `possibleOutboundIpAddresses` for allowlists. | [Azure App Service limits](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/azure-subscription-service-limits#app-service-limits) |
+| **SNAT ports per instance (multitenant App Service, platform public outbound)** | **128 preallocated** | [Documented] | Each instance starts with 128 preallocated SNAT ports; more can be allocated dynamically or freed by connection reuse. The limit applies to connections to the same address and port combination. It does not describe App Service Environments, which allocate differently, nor traffic that avoids platform SNAT (a NAT gateway provides its own port pool; services reached over private endpoints or service endpoints are not subject to the restriction). See the source for those exceptions. | [Troubleshoot intermittent outbound connection errors](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-intermittent-outbound-connection-errors) |
+| **Outbound IPs** | Multiple, can change | [Documented] | Use `possibleOutboundIpAddresses` for allowlists on plans that return it. Premium v4 returns empty strings for `outboundIpAddresses` and `possibleOutboundIpAddresses`; use a solution such as Azure NAT Gateway when you need a predictable outbound address. | [Inbound and outbound IP addresses in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/overview-inbound-outbound-ips) |
 | **WebSocket and long-lived connections** | Tier-dependent | [Documented] | Per-instance WebSocket limits differ by tier and by Windows or Linux; see the WebSockets rows of the limits table. | [Azure App Service limits](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/azure-subscription-service-limits#app-service-limits) |
 
 ## Diagnostics and Retention
 
 | Area | Value | Class | Notes | Source |
 | :--- | :--- | :--- | :--- | :--- |
-| **Application logging (Filesystem)** | Turns itself off after **12 hours** | [Documented] | Intended for temporary debugging; use the Blob option for long-term logging. | [Enable diagnostic logging for apps in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs) |
-| **Filesystem log retention** | Configurable (days) | [Documented] | The portal exposes a Retention Period (Days) setting for the file system option. No platform default range is documented, so none is shown here. | [Enable diagnostic logging for apps in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs) |
-| **Live log streaming session** | Time-limited | [Documented] | Streams may disconnect on inactivity. | [Enable diagnostic logging for apps in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs) |
+| **Application logging (Filesystem), Windows apps** | Turns itself off after **12 hours** | [Documented] | Documented for the Windows application-logging setting and intended for temporary debugging. The long-term option, Application logging (Blob), needs a blob storage container; the article supports it without code changes for .NET only. | [Enable diagnostic logging for apps in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs) |
+| **Filesystem log retention** | Configurable (days) | [Documented] | The portal exposes a Retention Period (Days) setting for web server logging on Windows apps and for application logging on Linux and container apps (the latter also has a Quota (MB) setting). No platform default range is documented, so none is shown here. | [Enable diagnostic logging for apps in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs) |
+| **Live log streaming inactivity timeout, Windows apps** | **1800 seconds** default | [Documented] | The `SCM_LOGSTREAM_TIMEOUT` app setting is the inactivity timeout, in seconds, before log streaming stops. | [Environment variables and app settings reference](https://learn.microsoft.com/en-us/azure/app-service/reference-app-settings) |
 | **Application Insights retention** | Configurable | [Documented] | Affects cost and forensic depth. | [Manage usage and costs for Application Insights](https://learn.microsoft.com/en-us/azure/azure-monitor/app/pricing) |
 
 ## Limit-Driven Symptoms
