@@ -272,11 +272,11 @@ app.run(host="0.0.0.0", port=port)
 
 ### /home Is Persistent, App Root Is Not
 
-On Linux App Service:
+On Linux App Service with a built-in Python runtime (a custom container differs: `/home` is durable only when `WEBSITES_ENABLE_APP_SERVICE_STORAGE` is `true`; see [Platform Limits: Storage and File System](../../reference/platform-limits.md#storage-and-file-system)):
 
-- `/home` persists across restarts and deployments.
-- App content under runtime extraction path can be replaced on redeploy.
-- Local temporary paths are ephemeral.
+- Files under `/home` persist across restarts.
+- App content under the runtime extraction path can be replaced on redeploy; with build automation the app is served from `/tmp/<uid>`, not `/home/site/wwwroot`.
+- Changes outside `/home` are stored in the container and do not persist beyond a restart.
 
 Use `/home` for:
 

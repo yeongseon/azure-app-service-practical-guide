@@ -67,11 +67,42 @@ Earlier revisions of this page showed 128 MB, 8192 characters, 10,000 settings a
 
 ## Storage and File System
 
-| Area | Behavior | Notes |
-| :--- | :--- | :--- |
-| **`/home`** | Persistent | Survives restarts and redeployments |
-| **`/tmp`** | Ephemeral | Reclaimed across restarts/reimages |
-| **Logs (`/home/LogFiles`)** | Persistent and quota-counted | Large log volume can consume storage quota |
+There is no single persistence rule for `/home`. What survives a restart depends on the hosting model, so read the row for your model. Each row is **[Documented]** from the source shown; this guide did not exercise these behaviors against Azure.
+
+| Hosting model | Durable location | Temporary or not durable | Notes | Source |
+| :--- | :--- | :--- | :--- | :--- |
+| **Windows, code (built-in)** | `%HOME%` (`D:\home`) maps to an Azure Storage content share dedicated to the app; its size is set by the pricing tier. Files persist across restarts and are shared by all instances. | `%SystemDrive%\local` is app-specific temporary local storage; changes are not persistent across restarts. | Not intended for direct use by application code. | [Operating system functionality on App Service](https://learn.microsoft.com/en-us/azure/app-service/operating-system-functionality) |
+| **Linux, built-in runtime** | Files under `/home`. | Changes made outside `/home` are stored in the container itself and do not persist beyond an app restart. | For Python apps deployed with build automation, content is served from `/tmp/<uid>`, not `/home/site/wwwroot`, so write runtime-created files under `/home` or to Bring Your Own Storage. | [Configure a Python app](https://learn.microsoft.com/en-us/azure/app-service/configure-language-python) |
+| **Windows custom container** | `C:\home` is persistent storage and is enabled by default. | The container writable layer. | Set `WEBSITES_ENABLE_APP_SERVICE_STORAGE` to `false` to disable the persistent share. | [Configure a custom container](https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container#use-persistent-shared-storage) |
+| **Linux custom container** | `/home` only when `WEBSITES_ENABLE_APP_SERVICE_STORAGE` is `true`; persistence is **disabled by default**. When enabled, files persist across restarts, are shared across instances and count toward the plan's storage quota. | With the setting unspecified or `false`, `/home` is not shared across scale instances and written files do not persist across restarts. | The setting changes whether the mount exists, so check it before relying on `/home`. | [Configure a custom container](https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container#use-persistent-shared-storage), [Linux FAQ](https://learn.microsoft.com/en-us/azure/app-service/faq-app-service-linux) |
+| **Run From Package** | Not applicable: `WEBSITE_RUN_FROM_PACKAGE` mounts the ZIP as the **read-only** `wwwroot`. | Writes to `wwwroot` fail with an error. | A read-only content mount, not a place for application state and not a durability guarantee. See [Run From Package](../platform/run-from-package.md). | [Run your app from a ZIP package](https://learn.microsoft.com/en-us/azure/app-service/deploy-run-package) |
+| **Mounted Azure Storage (BYOS)** | The Azure Files or Blob share you mount at a path you choose. It is separate storage with its own retention. | Not applicable. | Do not mount at `/` or `/home`. Storage mounts are not backed up with the app, and FTP/FTPS access to them is not supported. See the [Python](../language-guides/python/recipes/bring-your-own-storage.md) and [Node.js](../language-guides/nodejs/recipes/bring-your-own-storage.md) recipes. | [Mount Azure Storage as a local share](https://learn.microsoft.com/en-us/azure/app-service/configure-connect-to-azure-storage) |
+
+**Restarts and redeployments are not a retention guarantee.** The rows above describe what survives a *restart* (and, for shared storage, what instances share). They do not promise backup, retention, recovery or an uptime SLA for the files, and this page makes no such claim. Keep application state in a service built for it and do not rely on temporary paths or the container layer.
+
+`/home/LogFiles` sits on the same durable storage where `/home` is persistent, so large log volume counts against the plan's storage quota; on a Linux custom container without persistent storage there is no durable `/home/LogFiles` to fill.
+
+### Proof condition for your own app
+
+Treat the table as the documented expectation, not as proof for a particular app. To confirm, check the one setting that decides the Linux custom-container case:
+
+```bash
+az webapp config appsettings list \
+  --resource-group $RG \
+  --name $APP_NAME \
+  --query "[?name=='WEBSITES_ENABLE_APP_SERVICE_STORAGE'].{name:name,value:value}" \
+  --output table
+```
+
+| Command/Parameter | Purpose |
+|---|---|
+| `az webapp config appsettings list` | Reads the app settings of the selected app without changing them. |
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Selects the web app to inspect. |
+| `--query "[?name=='WEBSITES_ENABLE_APP_SERVICE_STORAGE'].{name:name,value:value}"` | Keeps only this setting's name and value; an empty result means the setting is unspecified, which is not the same as `true`. |
+| `--output table` | Prints the result as a short table. |
+
+Then verify behavior with an operator-approved test: write a marker file under the path you care about, restart the app, confirm the marker is still there, and, if you run several instances, confirm that a different instance sees it. **[Not Proven]**: this guide has not run that test for this page, so no observed result is claimed. Record the date, hosting model, runtime, region, SKU and the exact path if you do run it, and keep the observation separate from the documented rows above.
 
 ## Deployment and Configuration Limits
 
