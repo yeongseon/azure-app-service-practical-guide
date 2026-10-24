@@ -54,6 +54,28 @@ class StoragePersistenceDocsTests(unittest.TestCase):
         self.assertIn("`/home`", " ".join(table["Mounted Azure Storage (BYOS)"]))
         self.assertIn("not backed up", " ".join(table["Mounted Azure Storage (BYOS)"]))
 
+    def test_logfiles_is_the_documented_exception_for_custom_containers(self):
+        self.assertNotIn("there is no durable `/home/LogFiles`", SECTION)
+        self.assertIn("`/home/LogFiles` is the documented exception", SECTION)
+        self.assertIn("whether or not persistent storage is enabled", SECTION)
+        self.assertIn("not a retention or backup guarantee", SECTION)
+
+    def test_blob_mounts_and_windows_mount_paths_are_qualified(self):
+        row = " ".join(rows(SECTION)["Mounted Azure Storage (BYOS)"])
+        self.assertIn("Azure Blob mounts are read-only", row)
+        self.assertIn("/mounts/<pathname>", row)
+        self.assertIn("Azure Files (read/write) only", row)
+
+    def test_the_container_guide_no_longer_calls_home_unconditionally_persistent(self):
+        text = (ROOT / "docs/platform/containers/index.md").read_text(encoding="utf-8")
+        self.assertNotIn("| Persistent storage | `/home` directory, Azure Files mount |", text)
+        self.assertNotIn("use the `/home` directory or Azure Files |", text)
+        self.assertIn("WEBSITES_ENABLE_APP_SERVICE_STORAGE", text)
+        self.assertIn("platform-limits.md#storage-and-file-system", text)
+        for model in ("Linux custom container", "Windows custom container"):
+            row = " ".join(rows(SECTION)[model])
+            self.assertIn("containers/index.md", row)
+
     def test_restart_persistence_is_not_presented_as_a_retention_guarantee(self):
         self.assertIn("not a retention guarantee", SECTION)
         self.assertIn("[Not Proven]", SECTION)
