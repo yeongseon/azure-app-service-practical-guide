@@ -110,7 +110,7 @@ In the 2026-10-02 reproduction below, the Linux web app exposed no socket, conne
 
 #### Portal view
 
-The App Service **Networking** blade is the single source of truth for whether the app uses the SNAT-mitigation mechanisms — a NAT Gateway (dedicated, expanded SNAT port pool) or Private Endpoints to dependencies (which bypass SNAT entirely) — that this playbook recommends as the durable fix for H1. Rather than read it as one screenshot, walk it as an ordered trail. See [Section 10 — Portal Evidence](#10-portal-evidence) for the step-by-step diagnostic walk of this blade, keyed to each card in the order you should verify it.
+The App Service **Networking** blade is the primary place to read whether the SNAT-mitigation mechanisms are configured — a NAT Gateway (dedicated, expanded SNAT port pool) or Private Endpoints to dependencies (which bypass SNAT entirely) — that this playbook recommends as the durable fix for H1. Rather than read it as one screenshot, walk it as an ordered trail. See [Section 10 — Portal Evidence](#10-portal-evidence) for the step-by-step diagnostic walk of this blade, keyed to each card in the order you should verify it.
 
 ### Investigation Notes
 - SNAT applies only to outbound connections to PUBLIC IP addresses. Private Endpoint and Service Endpoint traffic does NOT consume SNAT ports.
@@ -467,7 +467,7 @@ The [SNAT exhaustion lab](../../lab-guides/snat-exhaustion.md#414-matched-rerun-
 
 ## 10. Portal Evidence
 
-This section walks the App Service **Networking** blade **in diagnostic order**, as a *step-by-step* trail rather than a single blade read. All four steps below read different cards of the **same** capture — the blade is one screen, but the diagnostic value comes from reading its cards in the order that establishes whether the app is on the constrained default SNAT pool (supports H1) or has a SNAT-mitigation topology in place — an expanded NAT Gateway pool or a dependency-side Private Endpoint bypass, which weakens H1 and shifts focus to H2/H3/H4. The capture is a real, PII-cleaned Azure Portal screenshot from a Linux App Service; the inbound/outbound IP values shown are RFC-5737 (`192.0.2.x`) and RFC-3849 (`2001:db8::`) documentation ranges, not real addresses.
+This section walks the App Service **Networking** blade **in diagnostic order**, as a *step-by-step* trail rather than a single blade read. All four steps below read different cards of the **same** capture — the blade is one screen, but the diagnostic value comes from reading its cards in the order that shows whether the configuration is consistent with the constrained default SNAT pool (supports H1) or a SNAT-mitigation topology (not proof of the effective path) — an expanded NAT Gateway pool or a dependency-side Private Endpoint bypass, which weakens H1 and shifts focus to H2/H3/H4. The capture is a real, PII-cleaned Azure Portal screenshot from a Linux App Service; the inbound/outbound IP values shown are RFC-5737 (`192.0.2.x`) and RFC-3849 (`2001:db8::`) documentation ranges, not real addresses.
 
 [[[ shot("operations--networking--01-networking-hub") ]]]
 
@@ -481,7 +481,7 @@ Expected result: This capture shows the displayed configuration of a public app 
 
 Purpose: A NAT Gateway (expanded port pool) and dependency-side Private Endpoints (true SNAT bypass) — the two durable SNAT-mitigation paths — both require VNet integration first. Confirm whether the prerequisite exists before interpreting SNAT pressure.
 Look for: The **Outbound traffic configuration** column, **Virtual network integration** row.
-Expected result: A subnet ID here means the app *can* route outbound through a NAT Gateway or reach dependencies over Private Endpoints. The captured `Not configured` state means no mitigation is possible — every outbound call to a **public** IP shares the default per-instance pool of 128 preallocated SNAT ports.
+Expected result: A subnet ID here means the app *can* route outbound through a NAT Gateway or reach dependencies over Private Endpoints. The captured `Not configured` state means these mitigations are not configured, so outbound calls to **public** IPs would be expected to share the default per-instance pool of 128 preallocated SNAT ports [Inferred from displayed configuration]; observed connection behavior is not measured by this capture.
 Abnormal: `Not configured` combined with the timeout-cluster signature in Section 5 supports **H1** (SNAT exhaustion) — the app is on the constrained default pool. Fix requires VNet integration first.
 Next step: Read the **Integration subnet configuration** card to check for a NAT Gateway.
 
@@ -489,7 +489,7 @@ Next step: Read the **Integration subnet configuration** card to check for a NAT
 
 Purpose: A NAT Gateway replaces the 128-port per-instance default with a much larger shared pool (~64,000 ports per public IP), which is the primary platform-level fix for H1.
 Look for: The **Integration subnet configuration** card, **NAT gateway** row.
-Expected result: A NAT Gateway name here means SNAT is served from the NAT Gateway's dedicated port pool (~64,000 ports per public IP) rather than the constrained default pool — H1 is unlikely and you should pivot to H2 (app connection management). The captured `N/A` confirms no NAT Gateway, so the constrained default pool is still in force (consistent with the `Not configured` integration state from Step 1).
+Expected result: A NAT Gateway name here means a dedicated port pool (~64,000 ports per public IP) is configured for the integration subnet. Whether the affected traffic actually uses it depends on the app's outbound VNet routing settings and the destination, so confirm routing and observe the connection's source address before weakening H1; once confirmed, pivot to H2 (app connection management). The captured `N/A` shows no NAT Gateway configured, which is consistent with the constrained default pool still applying (consistent with the `Not configured` integration state from Step 1).
 Abnormal: `N/A` while the app makes high volumes of short-lived outbound connections to public endpoints strengthens **H1**. Note `Network security group` and `User defined route` in the same card also read `N/A` — no route/NSG interference to consider here.
 Next step: Read the **Outbound IPv4 addresses** list to understand the shared source-IP baseline the default pool draws from.
 

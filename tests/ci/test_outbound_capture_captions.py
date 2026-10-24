@@ -24,6 +24,15 @@ class OutboundCaptureCaptionTests(unittest.TestCase):
         self.assertIn("Configuration alone does not establish which path a particular request actually used", text)
         self.assertIn("rather than a measured egress address", text)
 
+    def test_snat_pages_do_not_treat_configuration_as_established_path(self) -> None:
+        lab = (DOCS / "troubleshooting/lab-guides/snat-exhaustion.md").read_text(encoding="utf-8")
+        self.assertNotIn("This establishes the constrained default egress capacity", lab)
+        self.assertIn("[Inferred from displayed configuration]", lab)
+        play = (DOCS / "troubleshooting/playbooks/outbound-network/snat-or-application-issue.md").read_text(encoding="utf-8")
+        self.assertNotIn("single source of truth", play)
+        self.assertNotIn("H1 is unlikely and you should pivot", play)
+        self.assertIn("confirm routing and observe the connection's source address before weakening H1", play)
+
 
 if __name__ == "__main__":
     unittest.main()
