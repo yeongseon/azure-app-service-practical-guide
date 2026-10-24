@@ -158,7 +158,7 @@ az webapp config access-restriction show \
 
 | Command or parameter | Purpose |
 |---|---|
-| `az resource show` | Read the unprojected site resource, including `properties.publicNetworkAccess` when the property is present, without changing it. `az webapp show` is not used here because it also calls the publishing-profile API to fill an FTP URL field (Azure CLI 2.83.0), which is broader than this snapshot needs. |
+| `az resource show` | Read the unprojected site resource, including `properties.publicNetworkAccess` when the property is present, without changing it. `az webapp show` is not used here because, for ordinary Web Apps, that CLI implementation (2.83.0) also retrieves publishing profiles to populate `ftpPublishingUrl`, which is broader than this snapshot needs. |
 | `--ids` | Select the exact production site or slot resource. |
 | `--api-version` | Pin the Microsoft.Web API version so the returned property surface is recorded; note it with the result. |
 | `az webapp config access-restriction show` | Read main/SCM restrictions, defaults and inheritance without filtering away rule details. |
@@ -206,7 +206,7 @@ A policy snapshot taken later is not automatically the policy at incident time. 
 
 | Established evidence | Scoped conclusion |
 |---|---|
-| Wrong final DNS answer corrected with a matched client retest | That DNS configuration explains the tested path failure, not every reported HTTP rejection. |
+| Wrong final DNS answer; the intended answer and connection recover after that change alone, with a matched client retest | **[Inferred]** The DNS defect is supported as an explanation for the tested path failure, not for every reported HTTP rejection. Recovery alone does not uniquely establish causation; retain resolver evidence and controls that distinguish route, proxy, policy or service-change alternatives. |
 | Disabled default endpoint with an unused Allow rule | The Allow rule cannot override app access; choose the intended topology rather than adding wider rules. |
 | First rule added while unmatched action was unset | Unmatched clients are implicitly denied under that effective configuration. |
 | Main accessible while SCM follows a different effective policy or DNS path | Investigate SCM independently; do not call the whole app unavailable. |

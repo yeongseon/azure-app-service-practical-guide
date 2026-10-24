@@ -22,8 +22,8 @@ content_validation:
     - claim: "Enabling VNet Integration with route-all routes all outbound traffic through the VNet. The source IP remains one of the app's standard outbound IPs unless the integration subnet uses a NAT Gateway or routes traffic through a firewall or NVA."
       source: "https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration"
       verified: true
-    - claim: "Creating a Private Endpoint does not automatically block the public endpoint. To achieve private-only inbound access, disable public network access on the app or configure access restrictions as appropriate."
-      source: "https://learn.microsoft.com/en-us/azure/app-service/networking/private-endpoint"
+    - claim: "When publicNetworkAccess is unset (null), default-endpoint access is enabled unless a private endpoint exists, which disables it; an explicit Enabled value keeps default-endpoint access on."
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-access-restrictions"
       verified: true
     - claim: "Azure Storage firewall grants access from a virtual network through service endpoints or private endpoints; when a service endpoint is used, the source address is the private subnet address, so public IP allowlist rules no longer apply to that traffic."
       source: "https://learn.microsoft.com/en-us/azure/storage/common/storage-network-security"
@@ -493,7 +493,7 @@ WEBSITE_VNET_ROUTE_ALL  1        False
 
 #### Inbound IP and Private Endpoint behavior
 
-Creating a Private Endpoint assigns a private IP from the endpoint subnet. The public inbound endpoint is not automatically disabled. For private-only inbound access, disable public network access on the app or apply access restrictions that enforce the intended exposure model.
+Creating a Private Endpoint assigns a private IP from the endpoint subnet. Whether the default (public) inbound endpoint stays reachable depends on the raw `publicNetworkAccess` value, whether a private endpoint exists, and the main and SCM access restrictions: when the property is unset and a private endpoint exists the documented default is disabled, while an explicit `Enabled` value keeps it on. For private-only inbound access, set and verify `publicNetworkAccess` deliberately. Site access restrictions are not evaluated for private endpoint traffic, so they constrain only the default endpoint while it stays enabled. See [Private Endpoint and Access Restriction Decisions](../troubleshooting/playbooks/private-endpoint-access-restrictions.md).
 
 Query the current inbound IP:
 

@@ -23,40 +23,48 @@ SECTIONS = (
     "6. Validation and Disproof by Hypothesis", "7. Likely Root Cause Patterns",
     "8. Immediate Mitigations", "9. Prevention", "See Also", "Sources",
 )
-SHELL_CONTROL = {";", "&&", "||", "|", "&", ">", ">>", "<", "<<", "<<<"}
-ALLOWED = {
-    ("az", "resource", "show"): {"--ids", "--api-version", "--output"},
-    ("az", "webapp", "config", "access-restriction", "show"): {
-        "--resource-group", "--name", "--slot", "--output",
-    },
-}
+# The ONLY shell on the page: two read-only reads, compared as exact logical lines.
+# Slot variation is described in prose, so the fence itself never needs to change.
+APPROVED_COMMANDS = (
+    'az resource show --ids "$APP_RESOURCE_ID" --api-version 2024-11-01 --output json',
+    'az webapp config access-restriction show --resource-group "$RG" --name "$APP_NAME" --output json',
+)
+# The retired rule of thumb "a private endpoint never closes default-endpoint access".
+NEVER_CLOSES = re.compile(
+    r"(?:\*{0,2}not\*{0,2}|n't|never)\s+automatically\s+(?:disabl\w*|block\w*)[^.\n]{0,40}public(?:\s+inbound)?\s+endpoint"
+    r"|public(?:\s+inbound)?\s+endpoint\s+(?:is|are)\s+not\s+automatically\s+disabled",
+    re.IGNORECASE,
+)
+FENCE = re.compile(r"```bash\n(.*?)\n```", re.DOTALL)
 
 
 def first_bash_fence(text: str) -> str:
-    match = re.search(r"```bash\n(.*?)\n```", text, re.DOTALL)
+    match = FENCE.search(text)
     assert match is not None, "no bash fence"
     return match.group(1)
 
 
-def disallowed_in(script: str) -> list[str]:
-    """Return reasons a configuration script is not on the read-only allowlist."""
-    problems: list[str] = []
-    commands = [part for part in script.replace("\\\n", " ").split("\n\n") if part.strip()]
-    for command in commands:
-        if "$(" in command or "`" in command:
-            problems.append(f"command substitution: {command[:50]}")
-        tokens = shlex.split(command, comments=False, posix=True)
-        for key, flags in ALLOWED.items():
-            if tuple(tokens[: len(key)]) == key:
-                used = {token for token in tokens[len(key):] if token.startswith("--")}
-                if not used <= flags:
-                    problems.append(f"unexpected flags {sorted(used - flags)} for {' '.join(key)}")
-                break
-        else:
-            problems.append(f"command not allowlisted: {' '.join(tokens[:4])}")
-        if any(token in SHELL_CONTROL for token in tokens):
-            problems.append(f"shell control operator in: {' '.join(tokens[:4])}")
-    return problems
+def logical_lines(script: str) -> list[str]:
+    """Join backslash continuations and collapse whitespace; drop blank lines."""
+    joined = script.replace("\\\n", " ")
+    return [" ".join(line.split()) for line in joined.split("\n") if line.strip()]
+
+
+def unapproved_configuration(page: str) -> list[str]:
+    """Explain every way the page's shell differs from the two approved commands.
+
+    Deliberately not a shell parser: any extra fence, line, operator, redirect,
+    positional argument or missing flag changes a logical line and is reported.
+    """
+    fences = FENCE.findall(page)
+    if len(fences) != 1:
+        return [f"expected exactly one bash fence, found {len(fences)}"]
+    actual = tuple(logical_lines(fences[0]))
+    if actual == APPROVED_COMMANDS:
+        return []
+    return [f"unapproved shell line: {line!r}" for line in actual if line not in APPROVED_COMMANDS] or [
+        f"approved commands missing or reordered: {actual!r}"
+    ]
 
 
 class PrivateEndpointPlaybookTests(unittest.TestCase):
@@ -130,20 +138,36 @@ class PrivateEndpointPlaybookTests(unittest.TestCase):
             self.assertIn(token, text)
         self.assertNotIn("ScSubStatus", text)
 
-    def test_configuration_commands_are_on_the_read_only_allowlist(self) -> None:
-        script = first_bash_fence(PE.read_text())
-        self.assertEqual(disallowed_in(script), [])
-        commands = [p for p in script.replace("\\\n", " ").split("\n\n") if p.strip()]
-        self.assertEqual(len(commands), 2)
+    def test_configuration_shell_is_exactly_the_two_approved_read_only_commands(self) -> None:
+        self.assertEqual(unapproved_configuration(PE.read_text()), [])
 
-    def test_allowlist_rejects_the_mutations_the_old_check_missed(self) -> None:
-        # Given: the real script with an appended mutating command, and a changed verb.
-        script = first_bash_fence(PE.read_text())
+    def test_exact_form_check_rejects_every_known_bypass(self) -> None:
+        # Given: the real page and its single fence body.
+        page = PE.read_text()
+        body = first_bash_fence(page)
+        mutations = {
+            "semicolon append": body + "; az webapp stop",
+            "single newline append": body + "\naz webapp stop",
+            "blank-line append": body + "\n\naz webapp stop --name x",
+            "adjacent and-and": body + "&&az webapp stop",
+            "attached redirect": body.replace("--output json", "--output json>out.txt", 1),
+            "pipe": body + " | tee out.txt",
+            "command substitution": body.replace("$RG", "$(az account show)", 1),
+            "extra positional": body.replace("az resource show", "az resource show extra", 1),
+            "missing api-version": body.replace("  --api-version 2024-11-01 \\\n", "", 1),
+            "changed verb": body.replace("resource show", "resource delete", 1),
+            "dropped command": body.split("\n\n")[0],
+        }
 
-        # When / Then: both are rejected.
-        self.assertTrue(disallowed_in(script + "\n\naz webapp stop --name x --resource-group y"))
-        self.assertTrue(disallowed_in(script.replace(" show", " update", 1)))
-        self.assertTrue(disallowed_in(script.replace("--output json", "--output json > out.txt", 1)))
+        for name, mutated in mutations.items():
+            with self.subTest(mutation=name):
+                self.assertNotEqual(mutated, body)
+                # When / Then: the exact-form check reports a difference.
+                self.assertTrue(unapproved_configuration(page.replace(body, mutated, 1)), name)
+
+        # And: an extra fence, or a missing fence, is rejected too.
+        self.assertTrue(unapproved_configuration(page + "\n```bash\naz webapp stop\n```\n"))
+        self.assertTrue(unapproved_configuration(page.replace(body, "", 1).replace("```bash\n\n```", "")))
 
     @unittest.skipUnless(shutil.which("bash"), "bash required for syntax checks")
     def test_configuration_script_parses(self) -> None:
@@ -152,6 +176,27 @@ class PrivateEndpointPlaybookTests(unittest.TestCase):
     def test_pages_link_in_both_directions(self) -> None:
         self.assertIn(f"]({SCM.name})", PE.read_text())
         self.assertIn(f"]({PE.name})", SCM.read_text())
+
+    def test_no_page_says_a_private_endpoint_never_closes_default_access(self) -> None:
+        # Given: the sentences that previously shipped on three pages.
+        for old in (
+            "Creating a Private Endpoint does not automatically block the public endpoint.",
+            "The public inbound endpoint is not automatically disabled.",
+            "Adding a private endpoint does not automatically disable the public endpoint;",
+            "Creating a Private Endpoint assigns a private IP but does **not** automatically disable the public endpoint.",
+        ):
+            self.assertTrue(NEVER_CLOSES.search(old), old)
+
+        # When: every page under docs/ is scanned.
+        offenders = [
+            f"{path.relative_to(ROOT)}:{number}"
+            for path in sorted((ROOT / "docs").rglob("*.md"))
+            for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1)
+            if NEVER_CLOSES.search(line)
+        ]
+
+        # Then: none remains; raw publicNetworkAccess plus PE existence decides.
+        self.assertEqual(offenders, [])
 
     def test_networking_page_no_longer_treats_configuration_as_reachability(self) -> None:
         text = NETWORKING.read_text()

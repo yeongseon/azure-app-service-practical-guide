@@ -438,7 +438,7 @@ flowchart TD
     TCP -->|Timeout| RouteFix[Check NSG, UDR, firewall, peering, or VPN path]
     TCP -->|Port reachable| HTTP[3. Validate application response]
     HTTP -->|403 or 5xx| AppFix[Check app auth, access policy, or app health]
-    HTTP -->|200| Done[Connection verified]
+    HTTP -->|Predeclared expected response| Done[Expected response observed on this path]
 ```
 
 Layered checks:
@@ -512,7 +512,7 @@ For larger estates:
 - keep a repeatable in-network test path for post-change verification
 
 !!! info "Operational reality"
-    Most App Service networking incidents are caused by DNS, route ownership, or subnet design drift rather than by the App Service resource itself.
+    DNS, route ownership and subnet design drift are frequently worth checking before assuming the App Service resource itself is at fault; confirm with evidence from the actual client path.
 
 ## Language-Specific Details
 

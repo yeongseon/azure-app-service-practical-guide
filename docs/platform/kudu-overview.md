@@ -360,7 +360,7 @@ For full request/response examples, see [Kudu API Reference](../reference/kudu-q
 Kudu is a powerful management surface—exposed to the public internet by default. Lock it down systematically:
 
 1. **Disable basic authentication.** Use the CLI commands in [Authentication and RBAC](#authentication-and-rbac). After this change, only Microsoft Entra-authenticated callers can use Kudu.
-2. **Apply IP access restrictions on the SCM site separately from the main site.** The `Access Restrictions` blade has two tabs—`Main site` and `Advanced tool site`. Hardening the main site without also hardening the SCM site leaves Kudu publicly reachable.
+2. **Apply IP access restrictions on the SCM site separately from the main site.** The `Access Restrictions` blade has two tabs—`Main site` and `Advanced tool site`. Hardening the main site does not by itself determine SCM exposure: SCM can inherit the main-site rules (`Use main site rules`) or use its own, and default-endpoint access is also gated by `publicNetworkAccess`. Review the SCM rules and their inheritance explicitly.
 3. **Audit Kudu access.** Enable `AppServiceAuditLogs` shipping to Log Analytics or storage; every successful and failed Kudu/FTP login is recorded with timestamp, user, source IP, and protocol.
 4. **Use Azure Policy to enforce.** The built-in audit policies for FTP and SCM basic auth flag any app where basic auth is still enabled; pair them with remediation policies to auto-disable.
 5. **Scope RBAC narrowly.** Use `Website Contributor` (not `Contributor`/`Owner`) and assign at the Web App level, not the resource group or subscription level, for routine operator access.
