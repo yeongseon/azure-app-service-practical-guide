@@ -11,13 +11,19 @@ repository meets before it claims Golden status.
 
 ## What transfers unchanged
 
-The evaluator and the reproduction gate contain no App Service references.
-They operate on the manifest and result contracts, not on any service, so a
-sibling copies them as-is.
+The reproduction gate and the evaluator's manifest, result and evidence
+contract checks contain no App Service names, so a sibling copies them. At the
+reviewed commit the evaluator is not service-neutral, however: it also carries
+the Scenario A derivation (`_derive_scenario_a`, which matches an exact
+`wrong_module` console-row signature) and reads this repository's registry and
+recipe files (`evidence/retained-digests.json`,
+`evidence/run-declarations.json` and `scripts/golden/scenario-a-recipe.json`).
+A sibling keeps the contract checks, replaces that derivation with derivations
+for its own scenarios, and supplies its own recipe and registries.
 
 | Asset | Change needed |
 |---|---|
-| `scripts/golden/evaluate_run.py` | None |
+| `scripts/golden/evaluate_run.py` | Replace the Scenario A derivation and its recipe and registry inputs; keep the contract checks |
 | `scripts/golden/check_reproduction.py` | None |
 | `tests/golden/test_evaluate_run.py` | None |
 | `tests/golden/test_negative_evidence.py` | None |
@@ -63,11 +69,12 @@ mutation-tested there.
 
 This specification was validated against App Service commit
 `e3428fd8d0713d7e881e8a7b3635e1204791e447`, which contains merged PRs #234,
-#235 and #236. Adoption requires Python 3.12+, `jsonschema`, the copied
-stdlib-only evaluator and reproduction gate, and a CI job that runs both the
-portable suites and the destination repository's scenario suites. Copy source
-bytes from that commit or a documented successor; do not combine files from
-different revisions.
+#235 and #236. Adoption requires a Python version that revision supports (its
+workflow runs 3.11), the evaluator (standard library plus the `git`
+executable), the reproduction gate (which also imports `jsonschema` and
+`referencing`), and a CI job that runs both the portable suites and the
+destination repository's scenario suites. Copy source bytes from that commit
+or a documented successor; do not combine files from different revisions.
 
 ## Vocabulary migration
 
@@ -114,6 +121,20 @@ After reuse, minimum verification is schema conformance, every portable test,
 every destination negative/mutation suite, retained-package integrity, PII
 scanning, the repository's complete existing gate set and a strict site build.
 No sibling repository change is a prerequisite for completing those checks.
+
+## Preserving evidence on adoption
+
+Copying the machinery never moves evidence. An adopting repository preserves
+each artifact's original capture date, its `validation.az_cli.last_tested` and
+`validation.bicep.last_tested` dates and results, and its run and evidence
+identity; run directories and captured evidence stay immutable, and each
+artifact keeps its evidence role and trust level. Independent reproduction
+still requires a genuinely different human operator and separately collected
+raw evidence, as the [Golden evidence model](golden-evidence-model.md)
+defines. Copying the evaluator, replaying an evaluation or running static
+checks creates neither a fresh capture date nor an independent reproduction: a
+new collection creates a new run, and a replay creates only a new evaluation
+record.
 
 ## Order of adoption
 

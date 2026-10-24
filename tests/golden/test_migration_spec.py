@@ -64,12 +64,30 @@ def coupling_in(rel_path):
     ]
 
 
+class EvaluatorBoundaryTests(unittest.TestCase):
+    """The table must not call the evaluator portable while it carries Scenario A."""
+
+    def test_the_evaluator_is_not_claimed_unchanged_while_it_carries_scenario_a(self):
+        evaluator = (ROOT / "scripts/golden/evaluate_run.py").read_text()
+        self.assertIn("def _derive_scenario_a(", evaluator)
+        self.assertNotIn("scripts/golden/evaluate_run.py", claimed_unchanged())
+        self.assertIn("_derive_scenario_a", SPEC)
+
+    def test_prerequisites_name_the_gates_third_party_imports(self):
+        gate = (ROOT / "scripts/golden/check_reproduction.py").read_text()
+        for module in re.findall(r"^(?:import|from) (jsonschema|referencing)\b", gate, re.MULTILINE):
+            with self.subTest(module=module):
+                self.assertIn(f"`{module}`", SPEC)
+
+
 class TransferTableTests(unittest.TestCase):
 
     def test_the_table_was_parsed(self):
         """Guards every test below from passing on an empty list."""
         self.assertGreaterEqual(len(spec_rows()), 8)
-        self.assertGreaterEqual(len(claimed_unchanged()), 7)
+        # Six assets: the evaluator row is no longer "None" because it carries the
+        # Scenario A derivation (see the evaluator tests below).
+        self.assertGreaterEqual(len(claimed_unchanged()), 6)
 
     def test_assets_claimed_unchanged_are_free_of_repo_coupling(self):
         for asset in claimed_unchanged():
