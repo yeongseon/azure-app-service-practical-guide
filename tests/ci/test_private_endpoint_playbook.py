@@ -102,10 +102,36 @@ def hidden_code_blocks(page: str) -> list[str]:
             continue
         if not any(shape.match(line) for _, shape in BODY_LINE_SHAPES):
             problems.append(f"body line {number}: unexpected line shape {line[:40]!r}")
-        elif re.search(r"<\s*pre\b", line, re.IGNORECASE):
-            # A preformatted block can hide inside an otherwise allowed shape, such as a table cell.
-            problems.append(f"body line {number}: raw <pre> inside an allowed line")
+        elif not line.startswith("<!-- diagram-id") and raw_html_in_text(line):
+            # Raw HTML (pre, a display:block code element, ...) can hide inside an otherwise
+            # allowed shape such as a paragraph, list item or table cell.
+            problems.append(f"body line {number}: raw HTML tag in an allowed line")
     return problems
+
+
+KUSTO_LINE = re.compile(r"^(?:let |AppServiceIPSecAuditLogs\b|\||//|\s*$)")
+AZ_COMMAND = re.compile(r"\baz\s+(?:webapp|resource|group|network|account|functionapp|appservice|monitor|rest)\b")
+
+
+def non_shell_fence_problems(blocks: list[tuple[str, str]]) -> list[str]:
+    """A fence label alone must not make executable text acceptable.
+
+    The kusto fence may contain only query lines, and neither it nor the diagram
+    may carry an Azure CLI command; both still render as highlighted, copyable text.
+    """
+    problems: list[str] = []
+    for language, body in blocks:
+        if language == "kusto":
+            problems += [f"kusto fence line is not a query line: {line[:40]!r}"
+                         for line in body.split("\n") if not KUSTO_LINE.match(line)]
+        if language in {"kusto", "mermaid"} and AZ_COMMAND.search(body):
+            problems.append(f"{language} fence contains an Azure CLI command")
+    return problems
+
+
+def raw_html_in_text(line: str) -> bool:
+    """True when a body line carries an HTML tag outside inline code spans."""
+    return bool(re.search(r"<\s*[A-Za-z/!]", re.sub(r"`[^`]*`", "", line)))
 
 
 def logical_lines(script: str) -> list[str]:
@@ -127,6 +153,9 @@ def unapproved_configuration(page: str) -> list[str]:
     other = sorted({language for language, _ in blocks} - ALLOWED_FENCE_LANGUAGES)
     if other:
         return [f"unexpected fenced code languages: {other}"]
+    content = non_shell_fence_problems(blocks)
+    if content:
+        return content
     shell = [body for language, body in blocks if language == "bash"]
     if len(shell) != 1:
         return [f"expected exactly one bash fence, found {len(shell)}"]
@@ -249,6 +278,12 @@ class PrivateEndpointPlaybookTests(unittest.TestCase):
             "nested blockquote fence": "\n>> ```bash\n>> az webapp stop\n>> ```\n",
             "raw script": "\n<script>alert(1)</script>\n",
             "pre inside a table cell": "\n| a | <pre>az webapp stop</pre> |\n",
+            "kusto-labelled shell": "\n```kusto\naz webapp stop --resource-group demo --name demo\n```\n",
+            "kusto-labelled shell after a query line": "\n```kusto\nlet X = 1;\naz webapp delete --name demo\n```\n",
+            "mermaid-labelled shell": "\n```mermaid\nflowchart TD\naz webapp stop --name demo\n```\n",
+            "display:block code in a paragraph": '\nExample: <code style="display:block;white-space:pre">az webapp stop --name demo<br>az webapp delete --name demo</code>\n',
+            "span in a list item": "\n- step <span style=\"display:block\">az webapp stop</span>\n",
+            "div in a table cell": "\n| a | <div>az webapp stop</div> |\n",
             "pre inside a list item": "\n- step <pre>az webapp stop</pre>\n",
             "admonition": '\n!!! note "x"\n    text\n',
         }.items():
