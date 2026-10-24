@@ -17,6 +17,13 @@ class SeriesLabContractTests(unittest.TestCase):
             with self.subTest(model=model):
                 self.assertIn(model, CONTRACT)
 
+    def test_contract_names_the_published_series_contract_without_inventing_requirements(self):
+        self.assertIn("azure-architecture-practical-guide/contributing/series-lab-contract/", CONTRACT)
+        self.assertIn("**Variant A**", CONTRACT)
+        self.assertIn("The contract does not prescribe a deployment shape or a storage model.", CONTRACT)
+        # The reconciliation must not present local App Service choices as series expectations.
+        self.assertNotIn("Series expectation", CONTRACT)
+
     def test_contract_keeps_work_local_and_uses_priority_labels(self):
         self.assertIn("closeable in this repository", CONTRACT)
         self.assertIn(".github/priority-labels.json", CONTRACT)

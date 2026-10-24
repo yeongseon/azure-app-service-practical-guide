@@ -52,21 +52,30 @@ This repository is an advanced App Service runtime guide. It uses these approved
 
 ### App Service Lab Contract Reconciliation
 
-The series Lab Contract is applied to the 15 current scenario directories
-through `labs/golden-classification.json`; `labs/_shared` is shared
-infrastructure and is not a scenario. Classification is deliberately separate
-from certification: `golden`, `migration-needed` and `archive-candidate` record
-the migration shape, while retained evidence trust and independent
-reproduction remain separate axes.
+The [Series Lab Contract v1](https://yeongseon.github.io/azure-architecture-practical-guide/contributing/series-lab-contract/)
+applies to App Service reproduction labs as **Variant A**; Variant B design labs
+are not used in this repository. Its MUST tier (purpose, testable claim,
+procedure, evidence method, closing validation and cleanup) applies to each lab
+document. A `labs/<name>/` companion directory, hypothesis and falsification
+language and a paired playbook are Variant A SHOULD elements, not requirements.
+The contract does not prescribe a deployment shape or a storage model.
 
-App Service has these service-specific exceptions:
+The 15 current scenario directories are recorded in
+`labs/golden-classification.json`; `labs/_shared` is shared infrastructure and
+is not a scenario. That classification (`golden`, `migration-needed`,
+`archive-candidate`) records the Golden migration shape. It is not Series Lab
+Contract conformance, certification, current validation or independent
+reproduction, and retained evidence trust remains a separate axis.
 
-| Series expectation | App Service application |
+App Service concerns that its labs address locally, without being series
+requirements:
+
+| App Service concern | Local application |
 |---|---|
-| One deployment shape per lab | Labs may target code deployment, custom containers, deployment slots, Windows Java handlers or staged sub-labs. A universal package or deployment model is not assumed. |
-| One storage model | Windows `D:\home`, Linux `/home`, ephemeral filesystems, Run From Package and mounted Azure Storage have different persistence behavior. Each lab declares the applicable model. |
-| One scenario directory | The Windows Java timeout lab keeps three explicit stages because they test different mechanisms; CI checks those stages against the directory inventory. |
-| Evidence implies current validation | Historical captures remain preserved and classified, but do not become trusted-current or independently reproduced merely because a lab is retained. |
+| Deployment shape | Labs may target code deployment, custom containers, deployment slots, Windows Java handlers or staged sub-labs. A universal package or deployment model is not assumed. |
+| Storage assumptions | Windows `D:\home`, Linux `/home`, ephemeral filesystems, Run From Package and mounted Azure Storage behave differently, and `/home` persistence depends on the hosting configuration. Run From Package is a read-only content mount, not a separate durability guarantee. A lab whose result depends on storage should document the relevant assumptions; labs are not yet uniformly explicit about this. |
+| Scenario directory | The Windows Java timeout lab keeps three explicit stages that ask different experimental questions; CI checks those stages against the directory inventory. |
+| Evidence trust | Historical captures remain preserved and classified, but do not become trusted-current or independently reproduced merely because a lab is retained. |
 
 Issue and pull-request work uses the local operating format in `CONTRIBUTING.md`
 and the canonical `priority:critical`, `priority:high`, `priority:medium` and
