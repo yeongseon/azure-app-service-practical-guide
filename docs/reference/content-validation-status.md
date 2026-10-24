@@ -11,7 +11,7 @@ This page tracks `content_validation` metadata for **in-scope factual-claim docu
 
 ## Summary
 
-*Generated: 2026-10-16*
+*Generated: 2026-10-24*
 
 | Content Type | Total | Verified | Pending | Unverified | No Metadata |
 |---|---:|---:|---:|---:|---:|
@@ -80,7 +80,7 @@ pie title In-Scope Document Validation Status
 | [Outbound Client Certificates](../operations/outbound-client-certificates.md) | ✅ | ✅ Verified | 4/4 | 2026-09-11 |
 | [Scaling](../operations/scaling.md) | ✅ | ✅ Verified | 4/4 | 2026-09-11 |
 | [Security](../operations/security.md) | ✅ | ✅ Verified | 5/5 | 2026-09-11 |
-| [Slots And Swap](../operations/deployment/slots-and-swap.md) | ✅ | ✅ Verified | 4/4 | 2026-04-12 |
+| [Slots And Swap](../operations/deployment/slots-and-swap.md) | ✅ | ✅ Verified | 5/5 | 2026-10-24 |
 | [Zip Deploy](../operations/deployment/zip-deploy.md) | ✅ | ✅ Verified | 4/4 | 2026-04-12 |
 
 ### Troubleshooting

@@ -162,7 +162,7 @@ az webapp config appsettings set \
   --slot-settings \
     APP_ENVIRONMENT=staging \
     FEATURE_FLAG_NEW_CHECKOUT=true \
-  --output json
+  --output none
 ```
 
 | Flag | Description |
@@ -170,8 +170,32 @@ az webapp config appsettings set \
 | `--resource-group $RG` | Targets the resource group that contains the app. |
 | `--name $APP_NAME` | Selects the app whose slot-specific settings you want to update. |
 | `--slot staging` | Applies the change to the `staging` slot instead of production. |
-| `--slot-settings APP_ENVIRONMENT=staging FEATURE_FLAG_NEW_CHECKOUT=true` | Creates slot-sticky app settings that stay with the staging slot during swaps. |
-| `--output json` | Returns the updated app settings payload as JSON. |
+| `--slot-settings APP_ENVIRONMENT=staging FEATURE_FLAG_NEW_CHECKOUT=true` | Takes space-separated `NAME=VALUE` pairs, writes each one to the slot, and marks it as a deployment slot setting so it stays with the slot during swaps. A bare name without `=VALUE` is not valid. |
+| `--output none` | Suppresses the command output so setting values are not echoed to the terminal or a pipeline log. |
+
+`--slot-settings` both sets the value and marks it sticky; do not repeat the same names under `--settings`.
+
+To confirm the flag, read back only the names and the `slotSetting` value. The `--query` projection leaves `value` out so no secret appears in the output:
+
+```bash
+az webapp config appsettings list \
+  --resource-group $RG \
+  --name $APP_NAME \
+  --slot staging \
+  --query "[?contains(['APP_ENVIRONMENT','FEATURE_FLAG_NEW_CHECKOUT'], name)].{name:name,slotSetting:slotSetting}" \
+  --output table
+```
+
+| Flag | Description |
+|---|---|
+| `az webapp config appsettings list` | Reads the settings configured on the selected slot. |
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Selects the app to inspect. |
+| `--slot staging` | Reads the `staging` slot instead of production. |
+| `--query "[?contains(['APP_ENVIRONMENT','FEATURE_FLAG_NEW_CHECKOUT'], name)].{name:name,slotSetting:slotSetting}"` | Keeps only the two names and their `slotSetting` flag; `value` is deliberately not projected. |
+| `--output table` | Prints one row per setting for a quick visual check. |
+
+Each listed setting should show `slotSetting` as `True`; a `False` row will still swap with the code. This is the documented command shape (see [Slots and Swap](./deployment/slots-and-swap.md#configure-slot-specific-settings), which carries the compact version of this procedure); it was not executed against Azure for this page.
 
 Commonly slot-pinned categories:
 
@@ -548,6 +572,7 @@ For language-specific operational guidance, see:
 ## See Also
 
 - [Operations Index](./index.md)
+- [Slots and Swap](./deployment/slots-and-swap.md)
 - [Health and Recovery](./health-recovery.md)
 - [Security](./security.md)
 - [Windows slot-swap first-request latency playbook](../troubleshooting/playbooks/startup-availability/windows-slot-swap-first-request-latency.md)

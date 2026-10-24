@@ -9,7 +9,7 @@ content_sources:
         - https://learn.microsoft.com/en-us/azure/app-service/deploy-best-practices
 content_validation:
   status: verified
-  last_reviewed: "2026-04-12"
+  last_reviewed: "2026-10-24"
   reviewer: agent
   core_claims:
     - claim: "Deployment slots require an App Service Plan tier that supports slots, such as Standard, Premium, or Isolated."
@@ -23,6 +23,9 @@ content_validation:
       verified: true
     - claim: "Auto-swap is not supported for web apps on Linux and Web App for Containers."
       source: "https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots"
+      verified: true
+    - claim: "az webapp config appsettings set --slot-settings takes space-separated KEY=VALUE pairs and marks the settings it writes as deployment slot settings by default."
+      source: "https://learn.microsoft.com/en-us/cli/azure/webapp/config/appsettings#az-webapp-config-appsettings-set"
       verified: true
 ---
 
@@ -88,9 +91,8 @@ az webapp config appsettings set \
   --resource-group $RG \
   --name $APP_NAME \
   --slot staging \
-  --settings APP_ENVIRONMENT=staging API_BASE_URL=https://api-staging.contoso.example \
-  --slot-settings APP_ENVIRONMENT API_BASE_URL \
-  --output json
+  --slot-settings APP_ENVIRONMENT=staging API_BASE_URL=https://api-staging.contoso.example \
+  --output none
 ```
 
 | Command/Parameter | Purpose |
@@ -99,14 +101,38 @@ az webapp config appsettings set \
 | `--resource-group $RG` | Targets the resource group that contains the app. |
 | `--name $APP_NAME` | Selects the web app to configure. |
 | `--slot staging` | Applies the settings to the `staging` slot. |
-| `--settings` | Supplies app setting key-value pairs to update. |
-| `APP_ENVIRONMENT=staging` | Marks the slot as a staging environment. |
-| `API_BASE_URL=https://api-staging.contoso.example` | Points the slot at the staging API endpoint. |
-| `--slot-settings APP_ENVIRONMENT API_BASE_URL` | Makes those settings sticky so they do not swap into production. |
-| `--output json` | Returns structured output after the update. |
+| `--slot-settings APP_ENVIRONMENT=staging API_BASE_URL=https://api-staging.contoso.example` | Takes space-separated `NAME=VALUE` pairs, writes each one to the slot, and marks it as a deployment slot setting so it stays with the slot during a swap. A bare name without `=VALUE` is not valid. |
+| `--output none` | Suppresses the command output so setting values are not echoed to the terminal or a pipeline log. |
+
+`--slot-settings` both sets the value and marks it sticky, so the same names do not need a separate `--settings` argument. Use `--settings` only for values that should keep swapping with the code.
+
+Confirm the sticky flag by reading back only the names and the `slotSetting` flag. The `--query` projection leaves `value` out so no secret appears in the output:
+
+```bash
+az webapp config appsettings list \
+  --resource-group $RG \
+  --name $APP_NAME \
+  --slot staging \
+  --query "[?contains(['APP_ENVIRONMENT','API_BASE_URL'], name)].{name:name,slotSetting:slotSetting}" \
+  --output table
+```
+
+| Command/Parameter | Purpose |
+|---|---|
+| `az webapp config appsettings list` | Reads the settings configured on the selected slot. |
+| `--resource-group $RG` | Targets the resource group that contains the app. |
+| `--name $APP_NAME` | Selects the web app to inspect. |
+| `--slot staging` | Reads the `staging` slot instead of production. |
+| `--query "[?contains(['APP_ENVIRONMENT','API_BASE_URL'], name)].{name:name,slotSetting:slotSetting}"` | Keeps only the two names and their `slotSetting` flag; `value` is deliberately not projected. |
+| `--output table` | Prints one row per setting for a quick visual check. |
+
+Each listed setting should show `slotSetting` as `True`. A `False` row means that setting will still swap with the code. The same procedure, with additional guidance on which settings are sticky by default, is maintained in [Configure Slot-Specific Settings](../deployment-slots.md#configure-slot-specific-settings).
 
 !!! warning "Do not forget sticky settings"
     If environment-dependent values are not marked as slot settings, they can move during the swap and cause production to point to the wrong backend or use the wrong secrets.
+
+!!! note "Verification status"
+    **Documented:** the `NAME=VALUE` syntax and the sticky behavior of `--slot-settings` come from the [`az webapp config appsettings set` reference](https://learn.microsoft.com/en-us/cli/azure/webapp/config/appsettings#az-webapp-config-appsettings-set) and `az webapp config appsettings set --help` (Azure CLI 2.83.0). **Not run:** these commands were not executed against an Azure subscription for this page, so the printed `slotSetting` result is the documented shape, not a captured observation.
 
 ### Manual Swap
 
