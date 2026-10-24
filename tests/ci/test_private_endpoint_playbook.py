@@ -31,17 +31,39 @@ APPROVED_COMMANDS = (
 )
 # The retired rule of thumb "a private endpoint never closes default-endpoint access".
 NEVER_CLOSES = re.compile(
-    r"(?:\*{0,2}not\*{0,2}|n't|never)\s+automatically\s+(?:disabl\w*|block\w*)[^.\n]{0,40}public(?:\s+inbound)?\s+endpoint"
-    r"|public(?:\s+inbound)?\s+endpoint\s+(?:is|are)\s+not\s+automatically\s+disabled",
+    r"(?:\*{0,2}not\*{0,2}|n't|never)\s+automatically\s+(?:disabl\w*|block\w*)[^.\n]{0,40}public(?:\s+inbound)?\s+(?:endpoint|access)"
+    r"|public(?:\s+inbound)?\s+endpoint\s+(?:is|are)\s+not\s+automatically\s+disabled"
+    r"|public\s+endpoint\s+remains\s+reachable\s+until",
     re.IGNORECASE,
 )
-FENCE = re.compile(r"```bash\n(.*?)\n```", re.DOTALL)
+FENCE_OPEN = re.compile(r"^ {0,3}(`{3,}|~{3,})\s*([^\s`]*)")
+ALLOWED_FENCE_LANGUAGES = {"mermaid", "kusto", "bash"}
+
+
+def fences(text: str) -> list[tuple[str, str]]:
+    """Return (language, body) for every fenced block, backtick or tilde, any info string."""
+    found: list[tuple[str, str]] = []
+    lines = text.split("\n")
+    index = 0
+    while index < len(lines):
+        opening = FENCE_OPEN.match(lines[index])
+        if opening:
+            marker, language = opening.group(1), opening.group(2).lower()
+            body: list[str] = []
+            index += 1
+            while index < len(lines) and not re.match(rf"^ {{0,3}}{re.escape(marker[0])}{{{len(marker)},}}\s*$", lines[index]):
+                body.append(lines[index])
+                index += 1
+            found.append((language, "\n".join(body)))
+        index += 1
+    return found
 
 
 def first_bash_fence(text: str) -> str:
-    match = FENCE.search(text)
-    assert match is not None, "no bash fence"
-    return match.group(1)
+    for language, body in fences(text):
+        if language == "bash":
+            return body
+    raise AssertionError("no bash fence")
 
 
 def logical_lines(script: str) -> list[str]:
@@ -56,10 +78,14 @@ def unapproved_configuration(page: str) -> list[str]:
     Deliberately not a shell parser: any extra fence, line, operator, redirect,
     positional argument or missing flag changes a logical line and is reported.
     """
-    fences = FENCE.findall(page)
-    if len(fences) != 1:
-        return [f"expected exactly one bash fence, found {len(fences)}"]
-    actual = tuple(logical_lines(fences[0]))
+    blocks = fences(page)
+    other = sorted({language for language, _ in blocks} - ALLOWED_FENCE_LANGUAGES)
+    if other:
+        return [f"unexpected fenced code languages: {other}"]
+    shell = [body for language, body in blocks if language == "bash"]
+    if len(shell) != 1:
+        return [f"expected exactly one bash fence, found {len(shell)}"]
+    actual = tuple(logical_lines(shell[0]))
     if actual == APPROVED_COMMANDS:
         return []
     return [f"unapproved shell line: {line!r}" for line in actual if line not in APPROVED_COMMANDS] or [
@@ -165,8 +191,17 @@ class PrivateEndpointPlaybookTests(unittest.TestCase):
                 # When / Then: the exact-form check reports a difference.
                 self.assertTrue(unapproved_configuration(page.replace(body, mutated, 1)), name)
 
-        # And: an extra fence, or a missing fence, is rejected too.
-        self.assertTrue(unapproved_configuration(page + "\n```bash\naz webapp stop\n```\n"))
+        # And: an extra fence in ANY syntax Python-Markdown renders as code is rejected.
+        for name, extra in {
+            "second bash fence": "\n```bash\naz webapp stop\n```\n",
+            "trailing-space info string": "\n```bash \naz webapp stop\n```\n",
+            "tilde fence": "\n~~~bash\naz webapp stop\n~~~\n",
+            "sh fence": "\n```sh\naz webapp stop\n```\n",
+            "untagged fence": "\n```\naz webapp stop\n```\n",
+            "longer backtick fence": "\n````bash\naz webapp stop\n````\n",
+        }.items():
+            with self.subTest(extra_fence=name):
+                self.assertTrue(unapproved_configuration(page + extra), name)
         self.assertTrue(unapproved_configuration(page.replace(body, "", 1).replace("```bash\n\n```", "")))
 
     @unittest.skipUnless(shutil.which("bash"), "bash required for syntax checks")
@@ -184,6 +219,8 @@ class PrivateEndpointPlaybookTests(unittest.TestCase):
             "The public inbound endpoint is not automatically disabled.",
             "Adding a private endpoint does not automatically disable the public endpoint;",
             "Creating a Private Endpoint assigns a private IP but does **not** automatically disable the public endpoint.",
+            "!!! warning \"Private Endpoint does not automatically block public access\"",
+            "After creating a Private Endpoint, the public endpoint remains reachable until you disable public network access",
         ):
             self.assertTrue(NEVER_CLOSES.search(old), old)
 
