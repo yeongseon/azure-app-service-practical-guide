@@ -258,6 +258,57 @@ class OtherCaptureTests(unittest.TestCase):
                 with self.subTest(artifact_set=path):
                     self.assertEqual(captures["excluded"]["trust"], "invalid")
 
+    def test_a_set_with_other_captures_carries_its_own_limitation(self):
+        for path, item in classified_artifact_sets():
+            if item.get("other_captures"):
+                with self.subTest(artifact_set=path):
+                    self.assertTrue(item.get("limitation", "").strip())
+
+    def test_other_capture_dates_are_derivable_from_files_inside_them(self):
+        for path, item in classified_artifact_sets():
+            for capture in item.get("other_captures", []):
+                date = capture.get("captured_at")
+                if date is None:
+                    continue
+                compact = date.replace("-", "")
+                root = ROOT / "labs" / path / capture["path"]
+                found = any(
+                    date in file.name or compact in file.name or date in file.read_text(errors="ignore")
+                    for file in root.rglob("*") if file.is_file()
+                )
+                with self.subTest(capture=f"{path}/{capture['path']}"):
+                    self.assertTrue(found, msg=f"{date} is not derivable from files under {capture['path']}")
+
+    def test_a_set_referencing_several_deployments_declares_all_of_them(self):
+        deployment = re.compile(r"\brg-lab-[a-z0-9]+(?:-[a-z0-9]+)*")
+        for path, item in classified_artifact_sets():
+            found = set()
+            for file in (ROOT / "labs" / path).rglob("*"):
+                if file.is_file() and file.suffix in {".json", ".log", ".txt", ".md", ".csv"}:
+                    found |= {re.sub(r"-[A-Za-z]+webspace$", "", name) for name in deployment.findall(file.read_text(errors="ignore"))}
+            declared = set(item.get("deployments", []))
+            for capture in item.get("other_captures", []):
+                declared |= set(capture.get("deployments", []))
+            with self.subTest(artifact_set=path):
+                if len(found) > 1:
+                    self.assertEqual(declared, found, msg="a multi-deployment set must declare every deployment it contains")
+                self.assertEqual(sorted(declared - found), [], msg="declared a deployment the set does not contain")
+
+    def test_the_invalidated_plan_change_capture_records_its_in_run_transition(self):
+        item = dict(classified_artifact_sets())["missing-wwwroot-content/artifacts-sanitized"]
+        capture = next(c for c in item["other_captures"] if c["path"] == "f1-plan-run")
+        self.assertEqual(capture["trust"], "invalid")
+        transition = capture["plan_transition"]
+        settle = "missing-wwwroot-content/artifacts-sanitized/f1-plan-run/manifest-arm-b-settle.json"
+        manifest = json.loads((ROOT / "labs" / settle).read_text())
+        started, finished = manifest["armStartedAt"][:19], manifest["armFinishedAt"][:19]
+        self.assertLess(started, transition["at"][:19])
+        self.assertLess(transition["at"][:19], finished)
+        activity = (ROOT / "labs" / transition["evidence"]).read_text()
+        self.assertIn(transition["at"][:19], activity)
+        self.assertEqual(transition["recorded_sku_scope"], "end of run")
+        self.assertIn("does not describe the whole arm", capture["limitation"])
+
     def test_the_f1_capture_is_not_folded_into_the_b1_environment(self):
         by_path = dict(classified_artifact_sets())
         item = by_path["missing-wwwroot-content/artifacts-sanitized"]

@@ -86,7 +86,7 @@
     {
       "path": "labs/windows-java-httpplatformhandler-timeout/",
       "decision": "KEEP",
-      "reason": "Three staged experiments use WAR/JAR deployment assets and stage-specific build directories, prerequisites and cleanup. Their retained results remain evidence; structural migration decisions belong to #182 and execution corrections to #203."
+      "reason": "Three staged experiments use Java SE JAR deployment assets (WAR, EAR and Tomcat or JBoss are out of scope) and stage-specific build directories, prerequisites and cleanup. Their retained results remain evidence; structural migration decisions belong to #182 and execution corrections to #203."
     },
     {
       "path": "labs/_shared/",
