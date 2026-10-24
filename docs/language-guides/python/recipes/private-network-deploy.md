@@ -218,7 +218,7 @@ az network private-endpoint list --resource-group $RG --output table
 
 ## Run It in the Portal
 
-#### Portal view: Access Restrictions blade (public reachability before separate inbound hardening)
+#### Portal view: Access Restrictions blade (before-state inbound access configuration)
 
 [[[ shot("best-practices--networking--01-access-restrictions") ]]]
 
@@ -226,9 +226,9 @@ Purpose: Show the inbound access state before any access restriction is added.
 
 Look for: `Public network access` shows `Enabled (using default behavior)`, `Unmatched rule action` is `Allow`, and the only rule is `Allow all` with priority `2147483647`.
 
-Expected result: With no custom rules, the app is reachable from any source until you add rules or disable public network access.
+Expected result: With no custom rules, the displayed default-endpoint policy admits any source until you add rules or disable public network access. This is a configuration reading, not a measured reachability test.
 
-The `Access Restrictions` blade is the Portal surface that shows whether this app is still publicly reachable while you work through the recipe's VNet integration, managed identity, and storage private endpoint steps. In the visible default state, `Public network access` is open and the rules table contains only `Allow all`, so this screenshot works as a before-state reminder that those outbound/private-connectivity steps do not automatically change inbound access. Use this blade only as a public-reachability check around the recipe, not as evidence that the recipe itself has already added access-restriction rules.
+The `Access Restrictions` blade is the Portal surface that displays the access configuration of this app while you work through the recipe's VNet integration, managed identity, and storage private endpoint steps. In the visible default state, `Public network access` is enabled with default behavior and the rules table contains only `Allow all`, so this screenshot works as a before-state reminder that those outbound/private-connectivity steps do not by themselves change the displayed inbound configuration. The blade shows configuration, not whether any client can reach the app: a private endpoint, DNS, routing and the applicable main-site or SCM policy (depending on the target and ingress path) also decide that, and the effective-policy reading is in [Private Endpoint and Access Restriction Decisions](../../../troubleshooting/playbooks/private-endpoint-access-restrictions.md). Use it only as a before-state configuration reference, not as evidence that the recipe itself has already added access-restriction rules.
 
 ## See Also
 
