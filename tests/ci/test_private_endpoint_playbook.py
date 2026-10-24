@@ -66,6 +66,34 @@ def first_bash_fence(text: str) -> str:
     raise AssertionError("no bash fence")
 
 
+def hidden_code_blocks(page: str) -> list[str]:
+    """Fail closed on block-code forms the fence parser cannot see.
+
+    Python-Markdown renders four-space-indented text, fences nested in an
+    admonition or list, and raw <pre> as copyable code. This page has no
+    admonitions and no legitimate indented block in its body, so any such line
+    is reported. Inline code is untouched. Frontmatter (YAML) is excluded.
+    """
+    body = page.split("\n---\n", 1)[1] if page.startswith("---\n") else page
+    problems: list[str] = []
+    marker: str | None = None
+    for number, line in enumerate(body.split("\n"), 1):
+        if marker is None:
+            opening = FENCE_OPEN.match(line)
+            if opening:
+                marker = opening.group(1)
+                continue
+            if re.match(r"^(?: {4,}|\t)\S", line):
+                problems.append(f"body line {number}: indented block (renders as code)")
+            elif re.match(r"^\s*(`{3,}|~{3,})", line):
+                problems.append(f"body line {number}: nested fence")
+            if re.search(r"<pre\b", line, re.IGNORECASE):
+                problems.append(f"body line {number}: raw <pre> block")
+        elif re.match(rf"^ {{0,3}}{re.escape(marker[0])}{{{len(marker)},}}\s*$", line):
+            marker = None
+    return problems
+
+
 def logical_lines(script: str) -> list[str]:
     """Join backslash continuations and collapse whitespace; drop blank lines."""
     joined = script.replace("\\\n", " ")
@@ -78,6 +106,9 @@ def unapproved_configuration(page: str) -> list[str]:
     Deliberately not a shell parser: any extra fence, line, operator, redirect,
     positional argument or missing flag changes a logical line and is reported.
     """
+    hidden = hidden_code_blocks(page)
+    if hidden:
+        return hidden
     blocks = fences(page)
     other = sorted({language for language, _ in blocks} - ALLOWED_FENCE_LANGUAGES)
     if other:
@@ -190,6 +221,20 @@ class PrivateEndpointPlaybookTests(unittest.TestCase):
                 self.assertNotEqual(mutated, body)
                 # When / Then: the exact-form check reports a difference.
                 self.assertTrue(unapproved_configuration(page.replace(body, mutated, 1)), name)
+
+        # And: code forms the fence parser cannot see are rejected (fail closed).
+        for name, extra in {
+            "admonition-nested fence": '\n!!! warning "Extra"\n\n    ```bash\n    az webapp stop\n    ```\n',
+            "list-nested fence": "\n1. Step\n\n    ```bash\n    az webapp stop\n    ```\n",
+            "indented code block": "\n\n    az webapp stop\n",
+            "tab-indented code block": "\n\n\taz webapp stop\n",
+            "raw pre block": "\n<pre><code>az webapp stop</code></pre>\n",
+        }.items():
+            with self.subTest(hidden=name):
+                self.assertTrue(unapproved_configuration(page + extra), name)
+
+        # Inline code is legitimate and must not trip the guard.
+        self.assertEqual(unapproved_configuration(page + "\nUse `az webapp stop` only as a quoted example.\n"), [])
 
         # And: an extra fence in ANY syntax Python-Markdown renders as code is rejected.
         for name, extra in {
