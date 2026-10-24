@@ -49,7 +49,10 @@ def claimed_unchanged():
 
 def named_repo_specific():
     """Suites the specification names as not transferring."""
-    return re.findall(r"`(test_\w+\.py)`", SPEC.split("authors itself")[1])
+    # Only the "What each repository authors itself" section names them; later sections
+    # mention the generic suites too (entry criteria, order of adoption).
+    section = SPEC.split("authors itself")[1].split("\n## ")[0]
+    return re.findall(r"`(test_\w+\.py)`", section)
 
 
 def coupling_in(rel_path):
@@ -64,12 +67,59 @@ def coupling_in(rel_path):
     ]
 
 
+class EvaluatorBoundaryTests(unittest.TestCase):
+    """The table must not call the evaluator portable while it carries Scenario A."""
+
+    def test_the_evaluator_is_not_claimed_unchanged_while_it_carries_scenario_a(self):
+        evaluator = (ROOT / "scripts/golden/evaluate_run.py").read_text()
+        self.assertIn("def _derive_scenario_a(", evaluator)
+        self.assertNotIn("scripts/golden/evaluate_run.py", claimed_unchanged())
+        self.assertIn("_derive_scenario_a", SPEC)
+
+    def test_prerequisites_name_the_gates_third_party_imports(self):
+        gate = (ROOT / "scripts/golden/check_reproduction.py").read_text()
+        for module in re.findall(r"^(?:import|from) (jsonschema|referencing)\b", gate, re.MULTILINE):
+            with self.subTest(module=module):
+                self.assertIn(f"`{module}`", SPEC)
+
+
+class AdaptedSuiteTests(unittest.TestCase):
+    """Suites that read this repository's own data must not be listed as portable."""
+
+    COUPLED = {
+        "tests/golden/test_lab_classification.py": ("EXPECTED_SCENARIO_COUNT = 15", "windows-java-httpplatformhandler-timeout"),
+        "tests/golden/test_readme_claims.py": ("20261016T075147Z-6d019de6e2f2",),
+        "tests/golden/test_repository_audit.py": ("docs/reference/golden-repository-audit.json", "DOCUMENTATION_CONTRACT.md"),
+    }
+
+    def test_coupled_suites_are_not_claimed_unchanged(self):
+        for asset, markers in self.COUPLED.items():
+            with self.subTest(asset=asset):
+                text = (ROOT / asset).read_text()
+                for marker in markers:
+                    self.assertIn(marker, text, msg=f"{asset} no longer carries {marker!r}; re-derive the claim")
+                self.assertNotIn(asset, claimed_unchanged())
+                self.assertIn(asset, [row[0] for row in spec_rows()])
+
+    def test_the_schema_count_in_the_text_is_the_real_count(self):
+        count = len(list((ROOT / "schemas/golden").glob("*.json")))
+        words = {3: "three", 4: "four", 5: "five", 6: "six", 7: "seven", 8: "eight"}
+        self.assertIn(f"The {words[count]} schemas under `schemas/golden/`", SPEC)
+
+    def test_preservation_never_promotes_trust_by_copying(self):
+        section = SPEC.split("## Preserving evidence on adoption")[1].split("\n## ")[0]
+        for phrase in ("`trusted-historical`", "`known_gaps`", "source commit", "recipe digest"):
+            self.assertIn(phrase, section)
+
+
 class TransferTableTests(unittest.TestCase):
 
     def test_the_table_was_parsed(self):
         """Guards every test below from passing on an empty list."""
-        self.assertGreaterEqual(len(spec_rows()), 6)
-        self.assertGreaterEqual(len(claimed_unchanged()), 5)
+        self.assertGreaterEqual(len(spec_rows()), 8)
+        # Three assets: the evaluator and three suites are no longer "None" because they
+        # carry Scenario A or read this repository's own data (measured by the tests below).
+        self.assertGreaterEqual(len(claimed_unchanged()), 3)
 
     def test_assets_claimed_unchanged_are_free_of_repo_coupling(self):
         for asset in claimed_unchanged():
@@ -139,6 +189,23 @@ class EntryCriteriaTests(unittest.TestCase):
         section = SPEC.split("## Entry criteria")[1].lower()
         self.assertIn("independent reproduction", section)
         self.assertIn("invoked by a workflow", section)
+
+
+class AdaptationBoundaryTests(unittest.TestCase):
+    def test_spec_pins_a_reviewed_source_commit(self):
+        self.assertRegex(SPEC, r"`[0-9a-f]{40}`")
+        for pull_request in ("#234", "#235", "#236"):
+            self.assertIn(pull_request, SPEC)
+
+    def test_spec_names_service_specific_operational_constraints(self):
+        for constraint in ("authentication", "operating systems", "telemetry delay", "recovery", "cleanup"):
+            with self.subTest(constraint=constraint):
+                self.assertIn(constraint, SPEC.lower())
+
+    def test_aca_patterns_do_not_authorize_predicate_copying(self):
+        aca = SPEC.split("Reviewed Azure Container Apps", 1)[1]
+        self.assertIn("predicates are not", aca)
+        self.assertIn("mutation-tested", aca)
 
 
 if __name__ == "__main__":
