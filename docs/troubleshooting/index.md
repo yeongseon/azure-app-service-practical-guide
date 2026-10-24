@@ -62,7 +62,7 @@ Every playbook follows this flow:
 | Need KQL queries to investigate | [KQL Query Library](kql/index.md) |
 | Want hands-on practice | [Labs](#hands-on-labs) below |
 
-### Inbound Access Symptom Routes
+### Inbound Access and Slow-Request Symptom Routes
 
 Choose the observed symptom rather than a presumed cause. These links lead to
 investigation steps, evidence collection, competing hypotheses, mitigation and
@@ -77,6 +77,7 @@ check each destination's verification boundary before treating an example as evi
 | HTTP 403 despite an Allow rule | Identify the response origin, actual ingress path and applicable app/main/SCM policy before assigning a cause. | [Private Endpoint and Access Restriction Decisions](playbooks/private-endpoint-access-restrictions.md) |
 | Adding one Allow rule excludes other clients | Compare the effective unmatched action and ordered rules before/after the change. | [Private Endpoint and Access Restriction Decisions](playbooks/private-endpoint-access-restrictions.md) |
 | Private-only cutover breaks operator access | Check the intended private operator/agent path and approved rollback criteria; do not broadly reopen SCM to test a theory. | [Private Endpoint and Access Restriction Decisions](playbooks/private-endpoint-access-restrictions.md) |
+| Users report long delays while the average changes little | Compare matched windows, retained counts, tail percentiles and slow-request share before investigating cause. | [Tail Latency and Matched Baselines](playbooks/performance/tail-latency-baseline-comparison.md) |
 
 For **app-to-dependency** failures, use [Outbound / Network](#outbound-network)
 instead. The client-to-app/SCM path is a different investigation. Unavailable
@@ -182,6 +183,7 @@ Quick reference for recognizing common failure signatures:
 ## Topics
 
 ### Performance
+- [Tail Latency and Matched Baselines](playbooks/performance/tail-latency-baseline-comparison.md)
 - [Slow Response but Low CPU](playbooks/performance/slow-response-but-low-cpu.md)
 - [Memory Pressure & Worker Degradation](playbooks/performance/memory-pressure-and-worker-degradation.md)
 - [Intermittent 5xx Under Load](playbooks/performance/intermittent-5xx-under-load.md)
@@ -212,7 +214,7 @@ Quick reference for recognizing common failure signatures:
 | Need | Start Here |
 |------|-----------|
 | First 10 minutes of a performance issue | [Performance Checklist](first-10-minutes/performance.md) |
-| Browser or deployment-agent inbound access issue | [Inbound symptom routes](#inbound-access-symptom-routes) |
+| Browser or deployment-agent inbound access issue | [Inbound symptom routes](#inbound-access-and-slow-request-symptom-routes) |
 | First 10 minutes of an app-to-dependency outbound issue | [Network Checklist](first-10-minutes/outbound-network.md) |
 | First 10 minutes of a startup failure | [Startup Checklist](first-10-minutes/startup-availability.md) |
 | Reusable KQL queries | [Query Library](kql/index.md) |
