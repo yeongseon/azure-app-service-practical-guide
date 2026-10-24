@@ -70,6 +70,7 @@ graph TD
 | Playbook | Symptom |
 |----------|---------|
 | [Performance Degradation](performance-degradation.md) | Slow response times, latency spikes, CPU or memory stress |
+| [Tail Latency and Matched Baselines](performance/tail-latency-baseline-comparison.md) | Users report long delays while averages change little; compare matched request populations |
 | [Slow Response but Low CPU](performance/slow-response-but-low-cpu.md) | High latency with CPU below saturation |
 | [Memory Pressure & Worker Degradation](performance/memory-pressure-and-worker-degradation.md) | Gradual slowdown without CPU spikes |
 | [Intermittent 5xx Under Load](performance/intermittent-5xx-under-load.md) | Sporadic server errors during traffic bursts |
