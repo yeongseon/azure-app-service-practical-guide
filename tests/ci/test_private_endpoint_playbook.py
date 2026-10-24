@@ -187,6 +187,13 @@ def frontmatter_problems(page: str) -> list[str]:
         problems.append("frontmatter contains a raw HTML tag")
     if EXPANSION_SYNTAX.search(frontmatter):
         problems.append("frontmatter contains expansion syntax")
+    # YAML decodes escapes only inside double-quoted scalars, and the decoded value (for example
+    # a title written as \x3cpre\x3e) reaches the theme as raw HTML after the source checks above.
+    # The repository's CI installs no YAML parser, so fail closed instead of decoding.
+    if re.search(r'[\\"]', frontmatter):
+        problems.append("frontmatter uses a backslash or a double-quoted scalar, which can decode to HTML")
+    if re.search(r"(?m)(?:^|[:\s\-\[,])[!&*]\S", frontmatter):
+        problems.append("frontmatter uses a YAML tag, anchor or alias")
     return problems
 
 
@@ -370,6 +377,11 @@ class PrivateEndpointPlaybookTests(unittest.TestCase):
             "trailing-space opener": page.replace("```bash\n", "```bash \n", 1),
             "html in the frontmatter title": page.replace("title: Private Endpoint and Access Restriction Decisions", "title: '<pre><code>az webapp stop --name demo</code></pre>'", 1),
             "macro in the frontmatter": page.replace("slug: private-endpoint-access-restrictions", 'slug: [[[ "x" ]]]', 1),
+            "yaml hex escapes decoding to html": page.replace("title: Private Endpoint and Access Restriction Decisions", 'title: "\\x3c/title\\x3e\\x3cpre\\x3e\\x3ccode\\x3eaz webapp stop --name demo\\naz webapp delete --name demo\\x3c/code\\x3e\\x3c/pre\\x3e"', 1),
+            "yaml unicode escape": page.replace("title: Private Endpoint and Access Restriction Decisions", 'title: "\\u003cpre\\u003eaz webapp stop\\u003c/pre\\u003e"', 1),
+            "double-quoted title": page.replace("title: Private Endpoint and Access Restriction Decisions", 'title: "Private Endpoint"', 1),
+            "yaml tag": page.replace("slug: private-endpoint-access-restrictions", "slug: !!str x", 1),
+            "yaml anchor": page.replace("slug: private-endpoint-access-restrictions", "slug: &a x", 1),
         }.items():
             with self.subTest(surface=name):
                 self.assertNotEqual(mutated, page, name)
