@@ -93,7 +93,7 @@ class PrivateEndpointPlaybookTests(unittest.TestCase):
                 self.assertNotIn(key, rows, f"duplicate matrix row {key}")
                 rows[key] = cells[3]
         expected = {
-            ("Private endpoint", "Any publicNetworkAccess value", "Any main/SCM site rules"): "NOT_EVALUATED",
+            ("Private endpoint", "Any publicNetworkAccess value", "Any main/SCM site rules"): "not evaluated for this traffic",
             ("Default endpoint", "Disabled", "Even a matching Allow"): "BLOCKED at app access",
             ("Default endpoint", "Enabled", "No match; default unset; zero configured rules"): "Implicit ALLOW",
             ("Default endpoint", "Enabled", "No match; default unset; one or more configured rules"): "Implicit DENY",

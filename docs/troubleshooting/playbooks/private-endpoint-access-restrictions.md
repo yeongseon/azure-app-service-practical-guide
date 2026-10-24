@@ -103,7 +103,7 @@ The following is an **expected policy matrix**, not measured HTTP results. Assum
 
 | Actual inbound path | App access | Site rule state | Policy interpretation |
 |---|---|---|---|
-| Private endpoint | Any publicNetworkAccess value | Any main/SCM site rules | Site rules NOT_EVALUATED; private transport, applicable network policies and application identity still matter. |
+| Private endpoint | Any publicNetworkAccess value | Any main/SCM site rules | Site rules are not evaluated for this traffic; private transport, applicable network policies and application identity still matter. |
 | Default endpoint | Disabled | Even a matching Allow | BLOCKED at app access; the site Allow cannot reopen it. |
 | Default endpoint | Enabled | Matching Allow | ADMITTED by the matching site rule only. |
 | Default endpoint | Enabled | Matching Deny | BLOCKED by the matching site rule. |
