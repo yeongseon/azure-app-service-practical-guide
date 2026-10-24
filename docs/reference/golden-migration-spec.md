@@ -11,25 +11,37 @@ repository meets before it claims Golden status.
 
 ## What transfers unchanged
 
-The evaluator and the reproduction gate contain no App Service references.
-They operate on the manifest and result contracts, not on any service, so a
-sibling copies them as-is.
+The reproduction gate and the evaluator's manifest, result and evidence
+contract checks contain no App Service names, so a sibling copies them. At the
+reviewed commit the evaluator is not service-neutral, however: it also carries
+the Scenario A derivation (`_derive_scenario_a`, which matches an exact
+`wrong_module` console-row signature) and reads this repository's registry and
+recipe files (`evidence/retained-digests.json`,
+`evidence/run-declarations.json` and `scripts/golden/scenario-a-recipe.json`).
+A sibling keeps the contract checks, replaces that derivation with derivations
+for its own scenarios, and supplies its own recipe and registries.
 
 | Asset | Change needed |
 |---|---|
-| `scripts/golden/evaluate_run.py` | None |
+| `scripts/golden/evaluate_run.py` | Replace the Scenario A derivation and its recipe and registry inputs; keep the contract checks |
 | `scripts/golden/check_reproduction.py` | None |
 | `tests/golden/test_evaluate_run.py` | None |
 | `tests/golden/test_negative_evidence.py` | None |
-| `tests/golden/test_lab_classification.py` | None |
-| `tests/golden/test_repository_audit.py` | None |
-| `tests/golden/test_readme_claims.py` | None |
+| `tests/golden/test_lab_classification.py` | Replace the hardcoded scenario count, lab names and Windows Java stage inventory with the destination's own; keep the structural assertions |
+| `tests/golden/test_repository_audit.py` | Replace the audit data and the contract, validator and workflow conventions it reads with the destination's |
+| `tests/golden/test_readme_claims.py` | Replace the retained-package reference, the review file and the README expectations with the destination's |
 | `schemas/golden/*.json` | `$id` host and path only, plus the one `$ref` in `manifest.schema.json` |
 
-The four schemas carry this repository's Pages host in their `$id`. Nothing
-resolves those URLs at runtime, so a stale `$id` will not fail a run; it
-will quietly assert that two different repositories publish the same
-schema. Rewrite the host and path on adoption.
+The six schemas under `schemas/golden/` carry this repository's Pages host in
+their `$id`. Nothing fetches those URLs: the reproduction gate registers each
+schema's `$id` as a local resource and resolves references locally, so a stale
+`$id` will not fail a run; it will quietly assert that two different
+repositories publish the same schema. Rewrite the host and path on adoption.
+
+Three of the suites above are tests of this repository's own data rather than
+of the machinery: they read its lab inventory, retained packages, audit file,
+contract text and README. Adopt their structure, but they pass only against the
+destination's own data, never "unmodified".
 
 ## What each repository authors itself
 
@@ -44,6 +56,31 @@ A sibling authors, per Golden scenario:
   what it cannot.
 - A suite whose negative cases fail when the scenario's own classification
   logic is broken.
+
+Collectors are always service-specific. The adopting repository must record
+its authentication boundary, supported operating systems and runtimes,
+required diagnostic tables, resource naming constraints, paid-resource
+assumptions and telemetry delay. Each scenario also needs a bounded recovery
+procedure and cleanup that names every resource it owns. A copied evaluator
+does not make an App Service collector valid for Functions, Container Apps or
+another service.
+
+Reviewed Azure Container Apps work may inform directory layout, schema wiring
+and the separation between collection and evaluation. Its predicates are not
+portable evidence: every comparison, threshold and discriminating observation
+must be re-declared from the destination service's documented behavior and
+mutation-tested there.
+
+## Source revision and prerequisites
+
+This specification was validated against App Service commit
+`e3428fd8d0713d7e881e8a7b3635e1204791e447`, which contains merged PRs #234,
+#235 and #236. Adoption requires a Python version that revision supports (its
+workflow runs 3.11), the evaluator (standard library plus the `git`
+executable), the reproduction gate (which also imports `jsonschema` and
+`referencing`), and a CI job that runs both the portable suites and the
+destination repository's scenario suites. Copy source bytes from that commit
+or a documented successor; do not combine files from different revisions.
 
 ## Vocabulary migration
 
@@ -69,8 +106,10 @@ the two report missing data as disproof.
 A repository claims Golden status when all of the following hold, each
 verifiable by running something rather than by reading a page.
 
-1. The evaluator and reproduction gate are present and their portable
-   suites pass unmodified.
+1. The evaluator (adapted as described above) and reproduction gate are
+   present, the generic suites `test_evaluate_run.py` and
+   `test_negative_evidence.py` pass unmodified, and the adapted suites pass
+   against the destination's own data.
 2. Every lab is classified, and the classification covers exactly the labs
    on disk with no orphan entries in either direction.
 3. At least one scenario ships a manifest template and an
@@ -86,10 +125,36 @@ verifiable by running something rather than by reading a page.
 Criteria 5 and 6 are the ones most often missed, because both can be
 satisfied in prose without being true.
 
+After reuse, minimum verification is schema conformance, every portable test,
+every destination negative/mutation suite, retained-package integrity, PII
+scanning, the repository's complete existing gate set and a strict site build.
+No sibling repository change is a prerequisite for completing those checks.
+
+## Preserving evidence on adoption
+
+Copying the machinery never moves evidence. An adopting repository preserves
+each artifact's captured bytes and original capture date, its
+`validation.az_cli.last_tested` and `validation.bicep.last_tested` dates and
+results, its run and evidence identity, and its source commit, environment and
+recipe digest; run directories and captured evidence stay immutable, and the
+capture, evaluation and document timestamps stay separate. Original
+classifications are preserved as provenance, not as a verdict under the
+destination's contract: a capture that predates that contract is at most
+`trusted-historical`, and one that no longer satisfies it is reclassified with
+its shortfall recorded in `known_gaps` rather than being silently accepted or
+promoted. Independent reproduction still requires a genuinely different human
+operator and separately collected raw evidence, as the
+[Golden evidence model](golden-evidence-model.md) defines. Copying the
+evaluator, replaying an evaluation or running static checks creates neither a
+fresh capture date, a higher trust level nor an independent reproduction: a new
+collection creates a new run, and a replay creates only a new evaluation
+record.
+
 ## Order of adoption
 
-Take the evaluator and its portable suites first and confirm they pass
-before authoring any scenario. A suite that passes on first import against
+Take the evaluator and the generic suites (`test_evaluate_run.py` and
+`test_negative_evidence.py`) first and confirm they pass before authoring any
+scenario. A suite that passes on first import against
 an empty repository is measuring nothing, and the portable suites are the
 cheapest place to discover that.
 
