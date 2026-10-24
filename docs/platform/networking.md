@@ -75,8 +75,8 @@ content_validation:
     - claim: "Outbound IPs change when scaling the App Service Plan, migrating to a different scale unit, or enabling VNet Integration."
       source: "https://learn.microsoft.com/en-us/azure/app-service/overview-inbound-outbound-ips"
       verified: true
-    - claim: "Creating a Private Endpoint assigns a private IP but does not automatically disable the public endpoint."
-      source: "https://learn.microsoft.com/en-us/azure/app-service/networking/private-endpoint"
+    - claim: "When publicNetworkAccess is unset (null), default-endpoint access is enabled unless a private endpoint exists, which disables it; an explicit Enabled value keeps default-endpoint access on."
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-access-restrictions"
       verified: true
     - claim: "With Route All enabled, the source IP of outbound traffic is still one of the app's listed outbound IPs unless a NAT gateway or firewall performs SNAT in the path."
       source: "https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration"
@@ -507,14 +507,14 @@ Example output:
 ]
 ```
 
-!!! warning "Private Endpoint does not remove the public IP"
-    Creating a Private Endpoint assigns a private IP but does **not** automatically disable the public endpoint. To fully restrict inbound access to private clients only:
+!!! warning "A Private Endpoint and public access are separate settings"
+    A Private Endpoint adds a private inbound path. Whether the default endpoint is still reachable depends on the raw `publicNetworkAccess` value, whether a private endpoint exists, and the main and SCM access restrictions. When the property is unset and a private endpoint exists, the documented default is disabled; an explicit `Enabled` value keeps default-endpoint access on. To intend private-only access:
 
-    1. Create the Private Endpoint.
-    2. Add an access restriction to deny all public traffic (set a `Deny All` rule with lowest priority).
-    3. Validate resolution from inside the VNet returns the private IP.
+    1. Create the Private Endpoint and validate DNS, route and TLS from the actual private clients.
+    2. Record the raw `publicNetworkAccess` value, then set it deliberately through your change process. A `Deny All` access restriction rule is a different mechanism: it applies only to default-endpoint traffic, because site rules are not evaluated for private endpoint traffic.
+    3. Verify main and SCM separately, including a negative control against the default endpoint.
 
-    Skipping step 2 leaves the app reachable from the public internet even with a Private Endpoint active.
+    See [Private Endpoint and Access Restriction Decisions](../troubleshooting/playbooks/private-endpoint-access-restrictions.md) for the decision matrix and a staged cutover.
 
 ### Troubleshooting matrix
 

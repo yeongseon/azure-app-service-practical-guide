@@ -296,6 +296,7 @@ nav:
       - troubleshooting/playbooks/index.md
       - troubleshooting/playbooks/deployment-failures.md
       - SCM Client Access Failures: troubleshooting/playbooks/scm-access-dns-and-http-failures.md
+      - Private Endpoint and Access Restrictions: troubleshooting/playbooks/private-endpoint-access-restrictions.md
       - ARM Configuration HTTP 400: troubleshooting/playbooks/arm-configuration-http-400.md
       - troubleshooting/playbooks/missing-wwwroot-files-404.md
       - troubleshooting/playbooks/app-startup-failures.md

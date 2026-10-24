@@ -15,8 +15,8 @@ This page tracks `content_validation` metadata for **in-scope factual-claim docu
 
 | Content Type | Total | Verified | Pending | Unverified | No Metadata |
 |---|---:|---:|---:|---:|---:|
-| Mermaid Diagrams | 396 | 396 | 0 | 0 | 0 |
-| In-Scope Factual-Claim Documents | 84 | 84 | 0 | 0 | 0 |
+| Mermaid Diagrams | 397 | 397 | 0 | 0 | 0 |
+| In-Scope Factual-Claim Documents | 85 | 85 | 0 | 0 | 0 |
 
 !!! success "All In-Scope Documents Verified"
     Every in-scope factual-claim document has verified Microsoft Learn sources for its core claims.
@@ -24,7 +24,7 @@ This page tracks `content_validation` metadata for **in-scope factual-claim docu
 <!-- diagram-id: content-validation-status-pie -->
 ```mermaid
 pie title In-Scope Document Validation Status
-    "Verified" : 84
+    "Verified" : 85
 ```
 
 ## By Section
@@ -111,6 +111,7 @@ pie title In-Scope Document Validation Status
 | [Outbound Network](../troubleshooting/first-10-minutes/outbound-network.md) | ✅ | ✅ Verified | 2/2 | 2026-10-14 |
 | [Performance](../troubleshooting/first-10-minutes/performance.md) | ✅ | ✅ Verified | 2/2 | 2026-10-14 |
 | [Performance Degradation](../troubleshooting/playbooks/performance-degradation.md) | ✅ | ✅ Verified | 5/5 | 2026-09-11 |
+| [Private Endpoint Access Restrictions](../troubleshooting/playbooks/private-endpoint-access-restrictions.md) | ✅ | ✅ Verified | 5/5 | 2026-10-24 |
 | [Private Endpoint Custom Dns Route Confusion](../troubleshooting/playbooks/outbound-network/private-endpoint-custom-dns-route-confusion.md) | ✅ | ✅ Verified | 3/3 | 2026-10-02 |
 | [Quick Diagnosis Cards](../troubleshooting/quick-diagnosis-cards.md) | ✅ | ✅ Verified | 2/2 | 2026-10-14 |
 | [Scm Access Dns And Http Failures](../troubleshooting/playbooks/scm-access-dns-and-http-failures.md) | ✅ | ✅ Verified | 4/4 | 2026-10-24 |

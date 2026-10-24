@@ -112,9 +112,9 @@ Purpose: Show the app's inbound and outbound network configuration on one page.
 
 Look for: `Public network access` and `Private endpoints` under inbound traffic, and `Virtual network integration`, `Outbound DNS`, and the outbound address lists under outbound traffic.
 
-Expected result: This capture shows a public app without VNet integration, so outbound traffic uses the listed platform outbound addresses and the integration subnet settings show `N/A`.
+Expected result: The capture records public network access enabled without site restrictions and VNet integration not configured at capture time. It does not measure client reachability or actual outbound egress.
 
-The Networking blade is the single Portal surface that ties together every operation in this guide. Reading top to bottom against the inbound/outbound flowchart above: `Public network access: Enabled with no access restrictions` proves the app is reachable from the entire internet and is exactly the gap the access-restriction rules in step 1 below close; `Private endpoints: 0` is the surface step 3 changes; and `Virtual network integration: Not configured` is what step 2 connects. The `Outbound DNS: Default (Azure-provided)` row controls the resolver the App Service worker uses for its own outbound calls — separately, step 4 below configures the `privatelink.azurewebsites.net` private DNS zone so **clients in your network** resolve `app-name.azurewebsites.net` to the private endpoint IP instead of the public hostname. The long `Outbound IPv4 addresses` list is the pool of platform-assigned egress IPs the app can use before VNet integration takes over — these are documented but not guaranteed stable, which is why step 5 covers NAT gateway egress for deterministic outbound paths. Return to this blade after each step to confirm the corresponding row no longer reads "Not configured" or "default behavior".
+The Networking blade summarizes configuration, not end-to-end connectivity. `Public network access: Enabled with no access restrictions` records the displayed default-endpoint policy; it does not prove that any particular internet client resolves, connects, authenticates or completes a request. `Private endpoints: 0` and `Virtual network integration: Not configured` describe separate inbound and outbound configuration. Worker outbound DNS is distinct from the client resolver used for app and SCM access. Listed outbound addresses are potential platform egress addresses, not measurements of a particular connection. After each approved change, inspect configuration and separately repeat scoped client DNS, TCP/TLS and application checks. See [Private Endpoint and Access Restriction Decisions](../troubleshooting/playbooks/private-endpoint-access-restrictions.md).
 
 ### 1. Configure Inbound Access Restrictions
 
@@ -151,7 +151,7 @@ az webapp config access-restriction show \
 | `az webapp config access-restriction add` | Adds ordered allow or deny rules on the App Service front end. |
 | `--ip-address "203.0.113.0/24"` | Uses a documentation-only example CIDR for allowed corporate ingress. |
 | `--priority 2147483647` | Places the deny rule at the lowest precedence so explicit allows are evaluated first. |
-| `az webapp config access-restriction show` | Verifies effective rule order and rule values. |
+| `az webapp config access-restriction show` | Displays selected main-site rule values. This projection omits unmatched defaults, SCM policy and inheritance; it is not a complete effective-policy or request-admission check. |
 
 ### 2. Enable VNet Integration for Outbound Traffic
 
@@ -260,7 +260,7 @@ az network private-endpoint dns-zone-group create \
 | `--registration-enabled false` | Prevents VM autoregistration, which isn't needed for this zone. |
 
 !!! warning "DNS is the usual failure point"
-    A private endpoint deployment isn't operational until clients in the linked network resolve the app hostname to the private endpoint address path instead of the public internet path.
+    Resolve the bound app and SCM hostnames from each intended client to the expected PE address. Correct DNS is necessary but insufficient: separately validate route, TCP/TLS, response origin and authorized application/deployment behavior.
 
 ### 5. Review Outbound Egress Expectations
 
@@ -303,10 +303,7 @@ curl --silent --output /dev/null --write-out "%{http_code}" \
 | `curl --write-out "%{http_code}"` | Confirms whether the app returns the expected status code without printing the full body. |
 | `https://$APP_NAME.azurewebsites.net/health` | Uses a simple health endpoint for reachability validation. |
 
-Expected results:
-
-- allowed public source: `200`
-- blocked public source: `403`
+Expected policy results: an approved default-path source is admitted by the applicable rule; an unapproved source is rejected when the effective policy denies it. An admitted request returns `200` only if this app implements `/health` and its authentication and application behavior permit that response. Attribute a `403` to access restrictions only with correlated policy and response-origin evidence.
 
 ### Verify Private Endpoint Reachability from a Connected Network
 
@@ -392,13 +389,10 @@ curl --silent --output /dev/null --write-out "%{http_code}" \
 
 | Command/Parameter | Purpose |
 |---|---|
-| `nslookup "$APP_NAME.azurewebsites.net"` | Confirms the hostname resolves through the private endpoint DNS chain from the client network. |
-| `curl --write-out "%{http_code}"` | Confirms the private endpoint can serve the app successfully. |
+| `nslookup "$APP_NAME.azurewebsites.net"` | Records this client's DNS chain and final address for comparison with the intended PE. |
+| `curl --write-out "%{http_code}"` | Records an HTTP status on this client path; status alone does not establish PE routing or business success. |
 
-Expected results:
-
-- DNS answer includes the `privatelink.azurewebsites.net` path.
-- HTTP response is `200` from the in-network client.
+Expected results: the final DNS address matches the intended PE, connection/TLS evidence establishes the intended endpoint, and the application returns its predeclared expected response. A privatelink CNAME alone is insufficient; HTTP 200 is not a generic PE requirement.
 
 #### Option B: Use an Existing Connected Client Instead of Creating a VM
 
@@ -444,7 +438,7 @@ flowchart TD
     TCP -->|Timeout| RouteFix[Check NSG, UDR, firewall, peering, or VPN path]
     TCP -->|Port reachable| HTTP[3. Validate application response]
     HTTP -->|403 or 5xx| AppFix[Check app auth, access policy, or app health]
-    HTTP -->|200| Done[Connection verified]
+    HTTP -->|Predeclared expected response| Done[Expected response observed on this path]
 ```
 
 Layered checks:
@@ -458,12 +452,14 @@ Layered checks:
 | Symptom | Likely Cause | Fix |
 |---|---|---|
 | `NXDOMAIN` or public resolution path | Private DNS zone missing, unlinked, or not forwarded | Link the VNet to `privatelink.azurewebsites.net` and validate DNS forwarding. |
-| `403` from a public client after private endpoint rollout | Public network access still enabled but caller isn't allowed by access restrictions | Decide whether the app should stay public, then update restriction rules or disable public access. |
+| HTTP 403 from a public client after PE rollout | Default-endpoint app access, site rules, Microsoft.Web service-endpoint incompatibility, proxy, authentication or application rejection remain alternatives | Establish the actual path and response origin; inspect raw publicNetworkAccess, applicable main/SCM policy and source context before changing configuration. |
 | Private endpoint works but app can't reach backend | VNet integration missing or routed incorrectly | Validate integration subnet, route-all setting, and NSG or UDR behavior. |
 | Intermittent outbound failures | NAT/SNAT assumptions don't match actual egress path | Validate NAT gateway or firewall path on the integration subnet. |
 | Kudu or SCM hostname doesn't resolve privately | DNS zone group or SCM record missing | Recreate or validate the private endpoint DNS zone group. |
 
 ## Rollback / Troubleshooting
+
+Removing a PE is an approved topology change, not a neutral connectivity test. First record app access, DNS and operator access dependencies; a null `publicNetworkAccess` setting defaults to enabled when no PE exists. Validate the resulting main/SCM positive and negative controls after removal.
 
 To remove private inbound access:
 
@@ -516,7 +512,7 @@ For larger estates:
 - keep a repeatable in-network test path for post-change verification
 
 !!! info "Operational reality"
-    Most App Service networking incidents are caused by DNS, route ownership, or subnet design drift rather than by the App Service resource itself.
+    DNS, route ownership and subnet design drift are frequently worth checking before assuming the App Service resource itself is at fault; confirm with evidence from the actual client path.
 
 ## Language-Specific Details
 
