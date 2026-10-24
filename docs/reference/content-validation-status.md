@@ -15,8 +15,8 @@ This page tracks `content_validation` metadata for **in-scope factual-claim docu
 
 | Content Type | Total | Verified | Pending | Unverified | No Metadata |
 |---|---:|---:|---:|---:|---:|
-| Mermaid Diagrams | 395 | 395 | 0 | 0 | 0 |
-| In-Scope Factual-Claim Documents | 83 | 83 | 0 | 0 | 0 |
+| Mermaid Diagrams | 396 | 396 | 0 | 0 | 0 |
+| In-Scope Factual-Claim Documents | 84 | 84 | 0 | 0 | 0 |
 
 !!! success "All In-Scope Documents Verified"
     Every in-scope factual-claim document has verified Microsoft Learn sources for its core claims.
@@ -24,7 +24,7 @@ This page tracks `content_validation` metadata for **in-scope factual-claim docu
 <!-- diagram-id: content-validation-status-pie -->
 ```mermaid
 pie title In-Scope Document Validation Status
-    "Verified" : 83
+    "Verified" : 84
 ```
 
 ## By Section
@@ -113,6 +113,7 @@ pie title In-Scope Document Validation Status
 | [Performance Degradation](../troubleshooting/playbooks/performance-degradation.md) | ✅ | ✅ Verified | 5/5 | 2026-09-11 |
 | [Private Endpoint Custom Dns Route Confusion](../troubleshooting/playbooks/outbound-network/private-endpoint-custom-dns-route-confusion.md) | ✅ | ✅ Verified | 3/3 | 2026-10-02 |
 | [Quick Diagnosis Cards](../troubleshooting/quick-diagnosis-cards.md) | ✅ | ✅ Verified | 2/2 | 2026-10-14 |
+| [Scm Access Dns And Http Failures](../troubleshooting/playbooks/scm-access-dns-and-http-failures.md) | ✅ | ✅ Verified | 4/4 | 2026-10-24 |
 | [Slot Swap Config Drift](../troubleshooting/playbooks/startup-availability/slot-swap-config-drift.md) | ✅ | ✅ Verified | 3/3 | 2026-09-11 |
 | [Slot Swap Failed During Warmup](../troubleshooting/playbooks/startup-availability/slot-swap-failed-during-warmup.md) | ✅ | ✅ Verified | 3/3 | 2026-09-11 |
 | [Slow Response But Low Cpu](../troubleshooting/playbooks/performance/slow-response-but-low-cpu.md) | ✅ | ✅ Verified | 2/2 | 2026-09-11 |
