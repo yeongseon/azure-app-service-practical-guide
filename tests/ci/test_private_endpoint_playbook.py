@@ -102,6 +102,8 @@ def hidden_code_blocks(page: str) -> list[str]:
             continue
         if not any(shape.match(line) for _, shape in BODY_LINE_SHAPES):
             problems.append(f"body line {number}: unexpected line shape {line[:40]!r}")
+        elif EXPANSION_SYNTAX.search(line):
+            problems.append(f"body line {number}: expansion syntax or escaped backtick")
         elif not line.startswith("<!-- diagram-id") and raw_html_in_text(line):
             # Raw HTML (pre, a display:block code element, ...) can hide inside an otherwise
             # allowed shape such as a paragraph, list item or table cell.
@@ -109,23 +111,51 @@ def hidden_code_blocks(page: str) -> list[str]:
     return problems
 
 
-KUSTO_LINE = re.compile(r"^(?:let |AppServiceIPSecAuditLogs\b|\||//|\s*$)")
-AZ_COMMAND = re.compile(r"\baz\s+(?:webapp|resource|group|network|account|functionapp|appservice|monitor|rest)\b")
+#: Exact approved bodies of the page's non-shell fences. Anything else, including a
+#: fence whose label is right but whose content is not, is rejected: the stack renders
+#: every fence as copyable text, and snippet or macro directives expand inside them.
+APPROVED_FENCE_BODIES = {
+    "mermaid": (
+        "flowchart TD",
+        "A[Identify client, hostname, app or slot and attempt] --> B{Actual path established?}",
+        "B -->|No| C[Collect client DNS, route and connection evidence]",
+        "B -->|Yes| D{Private endpoint or default endpoint?}",
+        "D -->|Private endpoint| E[Check approval, DNS, route and applicable network policies]",
+        "E --> F[Site access restrictions are not evaluated]",
+        "D -->|Default endpoint| G{Effective publicNetworkAccess permits this path?}",
+        "G -->|No| H[App access denied; an Allow rule cannot override it]",
+        "G -->|Yes| I[Evaluate main or SCM rules and unmatched action]",
+        "F --> J[Check TLS, identity and application response separately]",
+        "I --> J",
+    ),
+    "kusto": (
+        "let TargetResourceId = '<resource-id>';",
+        "let TargetHost = '<app-or-scm-hostname>';",
+        "let StartUtc = datetime(2026-01-20T09:00:00Z);",
+        "let EndUtc = datetime(2026-01-20T10:00:00Z);",
+        "AppServiceIPSecAuditLogs",
+        "| where _ResourceId =~ TargetResourceId",
+        "| where TimeGenerated >= StartUtc and TimeGenerated < EndUtc",
+        "| where CsHost =~ TargetHost",
+        "| project TimeGenerated, CsHost, CIp, Result, Details, ServiceEndpoint",
+        "| order by TimeGenerated asc",
+    ),
+}
+
+#: Expansion syntaxes of the configured stack (macros plugin delimiters, Jinja, snippets,
+#: attr_list braces) and escaped backticks, which defeat inline-code detection. The page
+#: uses none of them outside its fences, so any occurrence is reported instead of parsed.
+EXPANSION_SYNTAX = re.compile(r"\[\[|\]\]|%\]|\{|\}|--8<--|\\`")
 
 
-def non_shell_fence_problems(blocks: list[tuple[str, str]]) -> list[str]:
-    """A fence label alone must not make executable text acceptable.
-
-    The kusto fence may contain only query lines, and neither it nor the diagram
-    may carry an Azure CLI command; both still render as highlighted, copyable text.
-    """
+def fence_body_problems(blocks: list[tuple[str, str]]) -> list[str]:
     problems: list[str] = []
-    for language, body in blocks:
-        if language == "kusto":
-            problems += [f"kusto fence line is not a query line: {line[:40]!r}"
-                         for line in body.split("\n") if not KUSTO_LINE.match(line)]
-        if language in {"kusto", "mermaid"} and AZ_COMMAND.search(body):
-            problems.append(f"{language} fence contains an Azure CLI command")
+    for language in APPROVED_FENCE_BODIES:
+        bodies = [body for lang, body in blocks if lang == language]
+        if len(bodies) != 1:
+            problems.append(f"expected exactly one {language} fence, found {len(bodies)}")
+        elif tuple(logical_lines(bodies[0])) != APPROVED_FENCE_BODIES[language]:
+            problems.append(f"the {language} fence differs from its approved body")
     return problems
 
 
@@ -153,7 +183,7 @@ def unapproved_configuration(page: str) -> list[str]:
     other = sorted({language for language, _ in blocks} - ALLOWED_FENCE_LANGUAGES)
     if other:
         return [f"unexpected fenced code languages: {other}"]
-    content = non_shell_fence_problems(blocks)
+    content = fence_body_problems(blocks)
     if content:
         return content
     shell = [body for language, body in blocks if language == "bash"]
@@ -279,6 +309,15 @@ class PrivateEndpointPlaybookTests(unittest.TestCase):
             "raw script": "\n<script>alert(1)</script>\n",
             "pre inside a table cell": "\n| a | <pre>az webapp stop</pre> |\n",
             "kusto-labelled shell": "\n```kusto\naz webapp stop --resource-group demo --name demo\n```\n",
+            "second kusto fence": "\n```kusto\nlet x = 1;\n```\n",
+            "kusto curl after a let": "\n```kusto\nlet x = 1; curl -X DELETE https://example.com\n```\n",
+            "mermaid bare rm": "\n```mermaid\nrm -rf /tmp/demo\n```\n",
+            "macro fence expression": '\n[[[ "\\n```sh\\nrm -rf /tmp/demo\\n```\\n" ]]]\n',
+            "jinja statement": "\n{% include 'x' %}\n",
+            "snippet outside a fence": '\n--8<-- "labs/snat-exhaustion/cleanup.sh"\n',
+            "attr_list display:block": '\n- `az webapp stop --name demo`{: style="display:block;white-space:pre"}\n',
+            "attr_list in a table cell": '\n| a | `az webapp stop`{: style="display:block" } |\n',
+            "escaped backticks around html": "\nExample: \\`<pre><code>az webapp stop --name demo</code></pre>\\`\n",
             "kusto-labelled shell after a query line": "\n```kusto\nlet X = 1;\naz webapp delete --name demo\n```\n",
             "mermaid-labelled shell": "\n```mermaid\nflowchart TD\naz webapp stop --name demo\n```\n",
             "display:block code in a paragraph": '\nExample: <code style="display:block;white-space:pre">az webapp stop --name demo<br>az webapp delete --name demo</code>\n',
