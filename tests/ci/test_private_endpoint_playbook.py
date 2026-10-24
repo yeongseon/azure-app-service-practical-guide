@@ -518,7 +518,7 @@ class PrivateEndpointPlaybookTests(unittest.TestCase):
 
     def test_no_page_treats_the_access_restrictions_blade_as_a_reachability_check(self) -> None:
         # The blade displays configuration; it does not measure whether any client can reach the app.
-        pattern = re.compile(r"still publicly reachable|public-reachability check|reachable from any source", re.IGNORECASE)
+        pattern = re.compile(r"still publicly reachable|public-reachability check|reachable from any source|public reachability before|means the app is publicly reachable", re.IGNORECASE)
         offenders = [
             f"{path.relative_to(ROOT)}:{number}"
             for path in sorted((ROOT / "docs").rglob("*.md"))
@@ -529,7 +529,7 @@ class PrivateEndpointPlaybookTests(unittest.TestCase):
         for language in ("python", "nodejs", "java", "dotnet"):
             recipe = ROOT / f"docs/language-guides/{language}/recipes/private-network-deploy.md"
             with self.subTest(recipe=recipe.name, language=language):
-                self.assertIn("private-endpoint-access-restrictions.md", recipe.read_text(encoding="utf-8"))
+                self.assertIn("](../../../troubleshooting/playbooks/private-endpoint-access-restrictions.md)", recipe.read_text(encoding="utf-8"))
 
     def test_networking_page_no_longer_treats_configuration_as_reachability(self) -> None:
         text = NETWORKING.read_text()
