@@ -99,8 +99,16 @@ def hidden_code_blocks(page: str) -> list[str]:
         opening = FENCE_OPEN.match(line)
         if opening:
             marker = opening.group(1)
+            if line not in EXACT_FENCE_OPENERS:
+                # An info string after the language is expanded by the macros plugin and
+                # Markdown extensions, so a body comparison cannot protect what it injects.
+                problems.append(f"body line {number}: fence opener must be exactly one of {sorted(EXACT_FENCE_OPENERS)}")
             continue
-        if not any(shape.match(line) for _, shape in BODY_LINE_SHAPES):
+        runs = re.findall(r"`+", line)
+        if any(len(run) != 1 for run in runs) or len(runs) % 2:
+            # Only balanced single backticks are accepted, so the code-span stripping below is sound.
+            problems.append(f"body line {number}: ambiguous backtick structure")
+        elif not any(shape.match(line) for _, shape in BODY_LINE_SHAPES):
             problems.append(f"body line {number}: unexpected line shape {line[:40]!r}")
         elif EXPANSION_SYNTAX.search(line):
             problems.append(f"body line {number}: expansion syntax or escaped backtick")
@@ -145,6 +153,7 @@ APPROVED_FENCE_BODIES = {
 #: Expansion syntaxes of the configured stack (macros plugin delimiters, Jinja, snippets,
 #: attr_list braces) and escaped backticks, which defeat inline-code detection. The page
 #: uses none of them outside its fences, so any occurrence is reported instead of parsed.
+EXACT_FENCE_OPENERS = {"```mermaid", "```bash", "```kusto"}
 EXPANSION_SYNTAX = re.compile(r"\[\[|\]\]|%\]|\{|\}|--8<--|\\`")
 
 
@@ -164,6 +173,23 @@ def raw_html_in_text(line: str) -> bool:
     return bool(re.search(r"<\s*[A-Za-z/!]", re.sub(r"`[^`]*`", "", line)))
 
 
+def frontmatter_problems(page: str) -> list[str]:
+    """The theme renders some frontmatter (the title) as raw HTML, so it is not outside the surface.
+
+    Plain text only: reject raw HTML tags and the stack's expansion syntax anywhere in it.
+    """
+    lines = page.split("\n")
+    if not lines or lines[0] != "---" or "---" not in lines[1:]:
+        return ["page has no closed YAML frontmatter"]
+    frontmatter = "\n".join(lines[1:lines.index("---", 1)])
+    problems = []
+    if re.search(r"<\s*[A-Za-z/!]", frontmatter):
+        problems.append("frontmatter contains a raw HTML tag")
+    if EXPANSION_SYNTAX.search(frontmatter):
+        problems.append("frontmatter contains expansion syntax")
+    return problems
+
+
 def logical_lines(script: str) -> list[str]:
     """Join backslash continuations and collapse whitespace; drop blank lines."""
     joined = script.replace("\\\n", " ")
@@ -176,6 +202,9 @@ def unapproved_configuration(page: str) -> list[str]:
     Deliberately not a shell parser: any extra fence, line, operator, redirect,
     positional argument or missing flag changes a logical line and is reported.
     """
+    front = frontmatter_problems(page)
+    if front:
+        return front
     hidden = hidden_code_blocks(page)
     if hidden:
         return hidden
@@ -309,6 +338,9 @@ class PrivateEndpointPlaybookTests(unittest.TestCase):
             "raw script": "\n<script>alert(1)</script>\n",
             "pre inside a table cell": "\n| a | <pre>az webapp stop</pre> |\n",
             "kusto-labelled shell": "\n```kusto\naz webapp stop --resource-group demo --name demo\n```\n",
+            "unequal backtick runs hiding pre": "\nExample: ``x`<pre>az webapp stop --name demo</pre>`\n",
+            "double-backtick span": "\nExample: ``az webapp stop``\n",
+            "odd backtick count": "\nExample: `az webapp stop\n",
             "second kusto fence": "\n```kusto\nlet x = 1;\n```\n",
             "kusto curl after a let": "\n```kusto\nlet x = 1; curl -X DELETE https://example.com\n```\n",
             "mermaid bare rm": "\n```mermaid\nrm -rf /tmp/demo\n```\n",
@@ -328,6 +360,20 @@ class PrivateEndpointPlaybookTests(unittest.TestCase):
         }.items():
             with self.subTest(hidden=name):
                 self.assertTrue(unapproved_configuration(page + extra), name)
+
+        # Opener lines and frontmatter are part of the rendered surface (macros expand in
+        # an opener's info string; the theme renders the title as raw HTML).
+        bash_opener = page.replace("```bash\n", '```bash [[[ "\\naz webapp stop --name demo\\n" ]]]\n', 1)
+        for name, mutated in {
+            "macro in the bash opener": bash_opener,
+            "info string on the mermaid opener": page.replace("```mermaid\n", "```mermaid title=x\n", 1),
+            "trailing-space opener": page.replace("```bash\n", "```bash \n", 1),
+            "html in the frontmatter title": page.replace("title: Private Endpoint and Access Restriction Decisions", "title: '<pre><code>az webapp stop --name demo</code></pre>'", 1),
+            "macro in the frontmatter": page.replace("slug: private-endpoint-access-restrictions", 'slug: [[[ "x" ]]]', 1),
+        }.items():
+            with self.subTest(surface=name):
+                self.assertNotEqual(mutated, page, name)
+                self.assertTrue(unapproved_configuration(mutated), name)
 
         # Inline code is legitimate and must not trip the guard.
         self.assertEqual(unapproved_configuration(page + "\nUse `az webapp stop` only as a quoted example.\n"), [])
