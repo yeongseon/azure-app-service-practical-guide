@@ -170,6 +170,7 @@ az resource update \
   --name "$APP_NAME" \
   --resource-type "Microsoft.Web/sites" \
   --set properties.outboundVnetRouting.allTraffic=true \
+  --query "properties.outboundVnetRouting" \
   --output json
 
 az webapp vnet-integration list \
@@ -181,14 +182,19 @@ az webapp vnet-integration list \
 | Command/Parameter | Purpose |
 |---|---|
 | `az webapp vnet-integration add` | Connects the app to the delegated subnet for outbound private connectivity. |
+| `--resource-group "$RG"` | Targets the resource group that contains the app, for each command in this block. |
+| `--name "$APP_NAME"` | Selects the web app, for each command in this block. |
+| `--vnet "$VNET_NAME"` | Names the virtual network that contains the integration subnet. |
 | `--subnet "$INTEGRATION_SUBNET_NAME"` | Uses the integration subnet only; do not reuse the private endpoint subnet. |
 | `az resource update` | Updates the site resource's routing property. |
 | `--resource-type "Microsoft.Web/sites"` | Targets the web app resource type. |
-| `--set properties.outboundVnetRouting.allTraffic=true` | Routes all outbound traffic (application and configuration) through the VNet integration. Microsoft Learn recommends this property; the legacy `WEBSITE_VNET_ROUTE_ALL=1` app setting is still supported. |
+| `--set properties.outboundVnetRouting.allTraffic=true` | Routes all outbound traffic (application and configuration) through the VNet integration. Microsoft Learn recommends this property; the legacy `WEBSITE_VNET_ROUTE_ALL=1` app setting, which configures application routing only, is still supported. |
+| `--query "properties.outboundVnetRouting"` | Shows only the routing object, so the command does not print the whole site resource (which can contain resource IDs, hostnames and outbound addresses). |
+| `--output` | Selects the output format: `json` for the routing object, `table` for the integration list. |
 | `az webapp vnet-integration list` | Confirms the app is attached to the expected VNet and subnet. |
 
 !!! note "Which routing setting"
-    The property is a configured intent, not proof of the path. Whether DNS, the integration subnet's routes and policies, and the destination agree is verified separately; see [Outbound VNet routing properties](../platform/networking.md#outbound-vnet-routing-properties) for the full property list, the legacy equivalents and what still needs DNS and network evidence.
+    The property is a configured intent, not proof of the path. It is broader than the legacy route-all app setting: `allTraffic` also moves configuration traffic (image pulls, content share, backups, managed identity token acquisition) into the VNet, so make sure the integration subnet's NSGs, routes and DNS allow those dependencies first. When a site property and an app setting both exist, the site property wins. Whether DNS, the integration subnet's routes and policies, and the destination agree is verified separately; see [Outbound VNet routing properties](../platform/networking.md#outbound-vnet-routing-properties) for the full property list, the legacy equivalents and what still needs DNS and network evidence.
 
 !!! note "Subnet sizing"
     Microsoft Learn recommends planning enough IP space for scale operations and platform upgrades. For a single multitenant App Service plan, `/26` gives the safest headroom; `/28` is the minimum supported size when the subnet already exists.

@@ -39,6 +39,19 @@ class OutboundVnetRoutingDocsTests(unittest.TestCase):
             with self.subTest(word=word):
                 self.assertNotRegex(SECTION, rf"\b{word}\b")
 
+    def test_legacy_route_all_flags_map_to_application_routing_not_all_traffic(self):
+        rows = {}
+        for line in SECTION.splitlines():
+            cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
+            if line.startswith("|") and len(cells) == 3 and cells[0].startswith("`"):
+                rows[re.match(r"`([A-Za-z]+)`", cells[0]).group(1)] = cells[2]
+        for legacy in ("vnetRouteAllEnabled", "WEBSITE_VNET_ROUTE_ALL"):
+            with self.subTest(legacy=legacy):
+                self.assertIn(legacy, rows["applicationTraffic"])
+                self.assertNotIn(legacy, rows["allTraffic"])
+        self.assertIn("The legacy route-all flags alone do not route configuration traffic", SECTION)
+        self.assertIn("the site property overrides the app setting", SECTION)
+
     def test_application_and_configuration_routing_are_distinguished(self):
         self.assertIn("configuration traffic keeps using the public route", SECTION)
         self.assertIn("`allTraffic=true` already routes all configuration traffic", SECTION)
@@ -79,7 +92,13 @@ class OutboundVnetRoutingDocsTests(unittest.TestCase):
         text = (DOCS / "operations/networking.md").read_text(encoding="utf-8")
         self.assertIn("--set properties.outboundVnetRouting.allTraffic=true", text)
         self.assertNotIn('--settings "WEBSITE_VNET_ROUTE_ALL=1"', text)
-        self.assertIn("legacy `WEBSITE_VNET_ROUTE_ALL=1` app setting is still supported", text)
+        self.assertIn("legacy `WEBSITE_VNET_ROUTE_ALL=1` app setting, which configures application routing only, is still supported", text)
+        # Every long flag in the modified block is explained (the validator only checks presence).
+        block = text.split("### 2. Enable VNet Integration for Outbound Traffic")[1].split("### 3.")[0]
+        fence = re.search(r"```bash\n(.*?)\n```", block, re.DOTALL).group(1)
+        for flag in sorted(set(re.findall(r"(--[a-z][a-z-]*)", fence))):
+            with self.subTest(flag=flag):
+                self.assertIn(f"`{flag}", block.split("```", 2)[2])
 
     def test_the_legacy_check_page_says_an_empty_result_is_not_proof(self):
         text = (DOCS / "reference/troubleshooting.md").read_text(encoding="utf-8")
