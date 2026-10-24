@@ -119,7 +119,7 @@ graph TD
 
 [[[ shot("platform--networking--01-networking-blade") ]]]
 
-The Networking blade separates App Service networking into the two planes operators actually manage: ingress and egress. On the inbound side, `Public network access`, `Access restriction status`, and `Private endpoints` tell you whether requests arrive over an open public edge, rule-filtered access path, or Private Link. On the outbound side, `Virtual network integration` and the listed `Outbound addresses` show how the app reaches downstream resources, which is the core distinction behind VNet integration versus private inbound publishing.
+The Networking blade separates App Service networking into the two planes operators actually manage: ingress and egress. On the inbound side, `Public network access`, `Access restriction status`, and `Private endpoints` display the configured inbound posture: an open public edge, a rule-filtered access path, or Private Link. Configuration alone does not establish which path a particular request actually used. On the outbound side, `Virtual network integration` shows whether outbound VNet routing is configured, and the listed `Outbound addresses` are the platform's potential outbound address pool rather than a measured egress address; an observed egress address needs evidence from the app itself. This is the core distinction behind VNet integration versus private inbound publishing.
 
 ### Inbound traffic controls
 
