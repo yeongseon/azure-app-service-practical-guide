@@ -516,6 +516,21 @@ class PrivateEndpointPlaybookTests(unittest.TestCase):
         # Then: none remains; raw publicNetworkAccess plus PE existence decides.
         self.assertEqual(offenders, [])
 
+    def test_no_page_treats_the_access_restrictions_blade_as_a_reachability_check(self) -> None:
+        # The blade displays configuration; it does not measure whether any client can reach the app.
+        pattern = re.compile(r"still publicly reachable|public-reachability check|reachable from any source", re.IGNORECASE)
+        offenders = [
+            f"{path.relative_to(ROOT)}:{number}"
+            for path in sorted((ROOT / "docs").rglob("*.md"))
+            for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1)
+            if pattern.search(line)
+        ]
+        self.assertEqual(offenders, [])
+        for language in ("python", "nodejs", "java", "dotnet"):
+            recipe = ROOT / f"docs/language-guides/{language}/recipes/private-network-deploy.md"
+            with self.subTest(recipe=recipe.name, language=language):
+                self.assertIn("private-endpoint-access-restrictions.md", recipe.read_text(encoding="utf-8"))
+
     def test_networking_page_no_longer_treats_configuration_as_reachability(self) -> None:
         text = NETWORKING.read_text()
         self.assertNotIn("proves the app is reachable from the entire internet", text)

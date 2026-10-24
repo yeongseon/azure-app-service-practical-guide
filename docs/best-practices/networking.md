@@ -365,7 +365,7 @@ Purpose: Show the inbound access state before any access restriction is added.
 
 Look for: `Public network access` shows `Enabled (using default behavior)`, `Unmatched rule action` is `Allow`, and the only rule is `Allow all` with priority `2147483647`.
 
-Expected result: With no custom rules, the app is reachable from any source until you add rules or disable public network access.
+Expected result: With no custom rules, the displayed default-endpoint policy admits any source until you add rules or disable public network access. This is a configuration reading, not a measured reachability test.
 
 The Access Restrictions blade is where the layered inbound model described above is enforced. The visible default state shows the two most important behaviors this guide warns against assuming away: `Public network access` is `Enabled (using default behavior)` meaning the app is publicly reachable, and the implicit `Allow all` rule at priority `2147483647` with `Unmatched rule action: Allow` means that without any explicit rules, every source is permitted. The `Main site` and `Advanced tool site` tabs separate runtime traffic from SCM/Kudu management traffic — both must be hardened. After running the `az webapp config access-restriction add` command above with priority 100, the new `AllowCorp` rule should appear above the default `Allow all` row, and the `Unmatched rule action` should be flipped to `Deny` to convert the implicit allow-by-default posture into an explicit deny-by-default posture.
 
