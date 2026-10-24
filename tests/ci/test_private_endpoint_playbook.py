@@ -77,6 +77,28 @@ BODY_LINE_SHAPES = (
 )
 
 
+#: MkDocs' own frontmatter rule (mkdocs.utils.meta.YAML_RE): the first ---/... line after the
+#: opening one ends it, and either delimiter may carry trailing spaces or tabs. CI installs no
+#: MkDocs, so mirror it here; both guards must use the SAME boundary or a block placed after a
+#: non-canonical terminator renders while still being scanned as YAML.
+MKDOCS_FRONTMATTER = re.compile(r"\A-{3}[ \t]*\n(.*?\n)(?:\.{3}|-{3})[ \t]*\n", re.DOTALL)
+
+
+def split_frontmatter(page: str) -> tuple[str, str, list[str]]:
+    """Return (frontmatter, body, problems) using MkDocs' boundary; require canonical delimiters."""
+    match = MKDOCS_FRONTMATTER.match(page)
+    if match is None:
+        return "", page, ["page has no frontmatter that MkDocs recognizes"]
+    lines = match.group(0).rstrip("\n").split("\n")
+    problems = []
+    if lines[0] != "---" or lines[-1] != "---":
+        problems.append(
+            "non-canonical frontmatter delimiter: MkDocs also accepts trailing spaces, tabs and '...', "
+            "so only an exact '---' is allowed"
+        )
+    return match.group(1), page[match.end():], problems
+
+
 def hidden_code_blocks(page: str) -> list[str]:
     """Fail closed on any body line that is not one of the allowed plain shapes.
 
@@ -88,7 +110,7 @@ def hidden_code_blocks(page: str) -> list[str]:
     paragraph text and is untouched. Frontmatter (YAML) is excluded. This is a
     deliberately page-specific restriction, not a general Markdown linter.
     """
-    body = page.split("\n---\n", 1)[1] if page.startswith("---\n") else page
+    _front, body, _problems = split_frontmatter(page)
     problems: list[str] = []
     marker: str | None = None
     for number, line in enumerate(body.split("\n"), 1):
@@ -178,11 +200,9 @@ def frontmatter_problems(page: str) -> list[str]:
 
     Plain text only: reject raw HTML tags and the stack's expansion syntax anywhere in it.
     """
-    lines = page.split("\n")
-    if not lines or lines[0] != "---" or "---" not in lines[1:]:
-        return ["page has no closed YAML frontmatter"]
-    frontmatter = "\n".join(lines[1:lines.index("---", 1)])
-    problems = []
+    frontmatter, _body, problems = split_frontmatter(page)
+    if problems:
+        return problems
     if re.search(r"<\s*[A-Za-z/!]", frontmatter):
         problems.append("frontmatter contains a raw HTML tag")
     if EXPANSION_SYNTAX.search(frontmatter):
@@ -387,6 +407,18 @@ class PrivateEndpointPlaybookTests(unittest.TestCase):
                 self.assertNotEqual(mutated, page, name)
                 self.assertTrue(unapproved_configuration(mutated), name)
 
+        # MkDocs ends the frontmatter at the first ---/... line (spaces or tabs allowed), so a block
+        # after a non-canonical terminator renders while a later exact --- fools a naive scan.
+        lines = page.split("\n")
+        end = lines.index("---", 1)
+        for name, terminator in {"trailing space": "--- ", "trailing tab": "---\t", "three dots": "...", "dots with space": "... "}.items():
+            mutated = "\n".join(lines[:end] + [terminator, "", "    az webapp stop --name demo", "    az webapp delete --name demo", "", "---"] + lines[end + 1:])
+            with self.subTest(terminator=name):
+                self.assertTrue(unapproved_configuration(mutated), name)
+        opening_variant = page.replace("---\n", "--- \n", 1)
+        self.assertTrue(unapproved_configuration(opening_variant), "opening delimiter with trailing space")
+        self.assertTrue(unapproved_configuration("title: x\n" + page), "no frontmatter at the start")
+
         # Inline code is legitimate and must not trip the guard.
         self.assertEqual(unapproved_configuration(page + "\nUse `az webapp stop` only as a quoted example.\n"), [])
 
@@ -406,6 +438,23 @@ class PrivateEndpointPlaybookTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("bash"), "bash required for syntax checks")
     def test_configuration_script_parses(self) -> None:
         subprocess.run(["bash", "-n"], input=first_bash_fence(PE.read_text()), text=True, check=True, capture_output=True)
+
+    def test_frontmatter_boundary_mirrors_mkdocs_when_it_is_installed(self) -> None:
+        # The lean tests/ci job installs no MkDocs, so this runs only where the docs
+        # toolchain exists; it keeps the mirrored regex from drifting from the real one.
+        try:
+            from mkdocs.utils.meta import YAML_RE
+        except ImportError:
+            self.skipTest("mkdocs is not installed in this job")
+        self.assertEqual(MKDOCS_FRONTMATTER.pattern.replace(r"\A", "^"), YAML_RE.pattern)
+        self.assertTrue(YAML_RE.flags & re.DOTALL)
+        page = PE.read_text()
+        self.assertEqual(MKDOCS_FRONTMATTER.match(page).end(), YAML_RE.match(page).end())
+        for terminator in ("--- ", "---\t", "...", "... "):
+            lines = page.split("\n")
+            end = lines.index("---", 1)
+            mutated = "\n".join(lines[:end] + [terminator, "x", "---"] + lines[end + 1:])
+            self.assertEqual(MKDOCS_FRONTMATTER.match(mutated).end(), YAML_RE.match(mutated).end(), terminator)
 
     def test_pages_link_in_both_directions(self) -> None:
         self.assertIn(f"]({SCM.name})", PE.read_text())
