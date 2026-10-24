@@ -217,6 +217,20 @@ def frontmatter_problems(page: str) -> list[str]:
     return problems
 
 
+#: Characters the Markdown pipeline drops or re-interprets before parsing: python-markdown's
+#: NormalizeWhitespace removes STX/ETX, so "<\x02pre>" is invisible to a scan of the raw text
+#: yet renders as <pre>. The page has no control character, Unicode line separator or BOM and
+#: no tab, so any occurrence is reported instead of reasoned about.
+INVISIBLE_OR_LINE_BREAKING = re.compile("[\x00-\x08\x0b-\x1f\x7f\u0085\u2028\u2029\ufeff\t]")
+
+
+def invisible_character_problems(page: str) -> list[str]:
+    return [
+        f"page contains U+{ord(match.group()):04X} at offset {match.start()}"
+        for match in INVISIBLE_OR_LINE_BREAKING.finditer(page)
+    ][:3]
+
+
 def logical_lines(script: str) -> list[str]:
     """Join backslash continuations and collapse whitespace; drop blank lines."""
     joined = script.replace("\\\n", " ")
@@ -229,6 +243,9 @@ def unapproved_configuration(page: str) -> list[str]:
     Deliberately not a shell parser: any extra fence, line, operator, redirect,
     positional argument or missing flag changes a logical line and is reported.
     """
+    invisible = invisible_character_problems(page)
+    if invisible:
+        return invisible
     front = frontmatter_problems(page)
     if front:
         return front
@@ -418,6 +435,22 @@ class PrivateEndpointPlaybookTests(unittest.TestCase):
         opening_variant = page.replace("---\n", "--- \n", 1)
         self.assertTrue(unapproved_configuration(opening_variant), "opening delimiter with trailing space")
         self.assertTrue(unapproved_configuration("title: x\n" + page), "no frontmatter at the start")
+
+        # Characters python-markdown strips or re-interprets before parsing hide a tag from a text scan.
+        for name, extra in {
+            "STX inside tags": "\nExample: <\x02pre><\x02code>az webapp stop --name demo\naz webapp delete --name demo<\x02/code><\x02/pre>\n",
+            "ETX inside tags": "\nExample: <\x03pre>az webapp stop --name demo<\x03/pre>\n",
+            "NUL": "\nExample: <\x00pre>x</pre>\n",
+            "vertical tab": "\nExample\x0b text\n",
+            "form feed": "\nExample\x0c text\n",
+            "unicode line separator": "\nExample\u2028text\n",
+            "next line": "\nExample\u0085text\n",
+            "byte order mark": "\n\ufeffExample\n",
+            "mid-line tab": "\nExample\ttext\n",
+        }.items():
+            with self.subTest(invisible=name):
+                self.assertTrue(unapproved_configuration(page + extra), name)
+        self.assertTrue(unapproved_configuration("\ufeff" + page), "leading BOM")
 
         # Inline code is legitimate and must not trip the guard.
         self.assertEqual(unapproved_configuration(page + "\nUse `az webapp stop` only as a quoted example.\n"), [])
