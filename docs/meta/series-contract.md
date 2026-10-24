@@ -50,6 +50,39 @@ This repository is an advanced App Service runtime guide. It uses these approved
 | `Troubleshooting Lab Guides` | Reproducible failure experiments |
 | `KQL Query Packs` | Diagnostic queries for App Service scenarios |
 
+### App Service Lab Contract Reconciliation
+
+The [Series Lab Contract v1](https://yeongseon.github.io/azure-architecture-practical-guide/contributing/series-lab-contract/)
+applies to App Service reproduction labs as **Variant A**; Variant B design labs
+are not used in this repository. Its MUST tier (purpose, testable claim,
+procedure, evidence method, closing validation and cleanup) applies to each lab
+document. A `labs/<name>/` companion directory, hypothesis and falsification
+language and a paired playbook are Variant A SHOULD elements, not requirements.
+The contract does not prescribe a deployment shape or a storage model.
+
+The 15 current scenario directories are recorded in
+`labs/golden-classification.json`; `labs/_shared` is shared infrastructure and
+is not a scenario. That classification (`golden`, `migration-needed`,
+`archive-candidate`) records the Golden migration shape. It is not Series Lab
+Contract conformance, certification, current validation or independent
+reproduction, and retained evidence trust remains a separate axis.
+
+App Service concerns that its labs address locally, without being series
+requirements:
+
+| App Service concern | Local application |
+|---|---|
+| Deployment shape | Labs may target code deployment, custom containers, deployment slots, Windows Java handlers or staged sub-labs. A universal package or deployment model is not assumed. |
+| Storage assumptions | Windows `D:\home`, Linux `/home`, ephemeral filesystems, Run From Package and mounted Azure Storage behave differently, and `/home` persistence depends on the hosting configuration. Run From Package is a read-only content mount, not a separate durability guarantee. A lab whose result depends on storage should document the relevant assumptions; labs are not yet uniformly explicit about this. |
+| Scenario directory | The Windows Java timeout lab keeps three explicit stages that ask different experimental questions; CI checks those stages against the directory inventory. |
+| Evidence trust | Historical captures remain preserved and classified, but do not become trusted-current or independently reproduced merely because a lab is retained. |
+
+Issue and pull-request work uses the local operating format in `CONTRIBUTING.md`
+and the canonical `priority:critical`, `priority:high`, `priority:medium` and
+`priority:low` definitions in `.github/priority-labels.json`, as established by
+#217. All remaining App Service adoption work is closeable in this repository;
+sibling migrations and architecture-wide coordination are references only.
+
 ## Repository Structure
 
 ```text
