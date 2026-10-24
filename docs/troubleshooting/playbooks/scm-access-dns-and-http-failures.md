@@ -46,7 +46,7 @@ content_validation:
 
 Use this playbook when a browser cannot open Kudu/SCM for one or several apps. Start at the **affected client**, not inside the application. App-to-dependency DNS failures belong in [DNS Resolution in VNet-Integrated Apps](outbound-network/dns-resolution-vnet-integrated-app-service.md).
 
-Private-only cutover, `publicNetworkAccess` defaults, rule priority and unmatched actions are policy questions covered by the Microsoft Learn access-restriction and private-endpoint overviews listed under Sources; this page owns per-client connection evidence and probes.
+For `publicNetworkAccess` defaults, main/SCM policy evaluation and approved private-only cutover, use [Private Endpoint and Access Restriction Decisions](private-endpoint-access-restrictions.md). This page owns per-client connection evidence and probes.
 
 Separate a browser name-resolution failure from an HTTP rejection on a different attempt. Neither observation supplies the missing evidence for the other. Multiple affected apps suggest checking shared paths; membership in one subscription does not establish a subscription-wide platform failure.
 
@@ -189,6 +189,7 @@ Maintain separate main/SCM reachability checks from intended client networks, wi
 ## See Also
 
 - [Playbooks](index.md)
+- [Private Endpoint and Access Restriction Decisions](private-endpoint-access-restrictions.md)
 - [Kudu Overview](../../platform/kudu-overview.md)
 - [Networking Operations](../../operations/networking.md)
 - [Windows Kudu Diagnostics](startup-availability/windows-kudu-diagnostics.md)

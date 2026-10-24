@@ -73,6 +73,10 @@ check each destination's verification boundary before treating an example as evi
 |---|---|---|
 | Browser cannot resolve the app or SCM name | Record the same client's target, resolver/proxy path and final DNS answer; keep separate attempts separate. | [SCM Client DNS and HTTP Failures](playbooks/scm-access-dns-and-http-failures.md) |
 | Main app works, but Kudu or deployment fails | Test the actual operator/agent SCM path and its DNS, rule inheritance and authentication separately. | [SCM Client DNS and HTTP Failures](playbooks/scm-access-dns-and-http-failures.md) |
+| Private endpoint is Approved, but the intended client cannot connect | Compare approval with actual client DNS, route and TCP/TLS observations. | [Private Endpoint and Access Restriction Decisions](playbooks/private-endpoint-access-restrictions.md) |
+| HTTP 403 despite an Allow rule | Identify the response origin, actual ingress path and applicable app/main/SCM policy before assigning a cause. | [Private Endpoint and Access Restriction Decisions](playbooks/private-endpoint-access-restrictions.md) |
+| Adding one Allow rule excludes other clients | Compare the effective unmatched action and ordered rules before/after the change. | [Private Endpoint and Access Restriction Decisions](playbooks/private-endpoint-access-restrictions.md) |
+| Private-only cutover breaks operator access | Check the intended private operator/agent path and approved rollback criteria; do not broadly reopen SCM to test a theory. | [Private Endpoint and Access Restriction Decisions](playbooks/private-endpoint-access-restrictions.md) |
 
 For **app-to-dependency** failures, use [Outbound / Network](#outbound-network)
 instead. The client-to-app/SCM path is a different investigation. Unavailable
@@ -187,6 +191,7 @@ Quick reference for recognizing common failure signatures:
 
 ### Inbound Access / SCM
 - [SCM Client DNS and HTTP Failures](playbooks/scm-access-dns-and-http-failures.md)
+- [Private Endpoint and Access Restriction Decisions](playbooks/private-endpoint-access-restrictions.md)
 
 ### Outbound / Network
 - [SNAT or Application Issue?](playbooks/outbound-network/snat-or-application-issue.md)
