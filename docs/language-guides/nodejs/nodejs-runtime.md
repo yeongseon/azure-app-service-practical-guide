@@ -203,7 +203,7 @@ az webapp config set \
 
 Cold starts occur when an app scales out or starts after being idle.
 
-*   **Always On:** Enable "Always On" (Standard tier and above) to keep the container loaded.
+*   **Always On:** Enable "Always On" (Basic tier and above) to keep the container loaded.
 *   **Dependency Management:** Minimize the number of dependencies. Large `node_modules` increase container startup time.
 *   **Lazy Loading:** Use dynamic `import()` for heavy modules that aren't needed during initial startup.
 *   **Pre-warming:** Use health checks to ensure the instance is fully initialized before receiving traffic.
