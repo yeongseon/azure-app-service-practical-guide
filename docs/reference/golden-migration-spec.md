@@ -112,6 +112,19 @@ verifiable by running something rather than by reading a page.
    against the destination's own data.
 2. Every lab is classified, and the classification covers exactly the labs
    on disk with no orphan entries in either direction.
+   Every retained `artifacts-sanitized/` or nested `results/` subtree is also
+   classified exactly once. Artifact metadata keeps the revision executed by
+   the run (`run_source_revision` plus `run_source_dirty`) separate from the
+   later commit that introduced the retained bytes
+   (`artifact_introduced_commit`). A missing run revision is `null` with a
+   specific `run_source_unavailable_reason`; it is never replaced by the
+   artifact-introducing commit. `captured_at_evidence` and
+   `environment_evidence` identify retained files from which dates and
+   environments can be re-derived. A sub-capture whose environment or trust
+   differs from its artifact set, such as a run on a different plan or an
+   explicitly excluded control, is recorded as an `other_captures` entry with
+   its own derived environment and a limitation, so no manifest escapes
+   classification.
 3. At least one scenario ships a manifest template and an
    evidence-classification file.
 4. Every negative suite has been mutation-tested: the code it guards is
