@@ -53,7 +53,10 @@ def set_options(command):
         return None
     options, current = {}, None
     for token in tokens[5:]:
-        if token.startswith("-") and not token.startswith("-@"):
+        if token.startswith("--") and "=" in token and token.split("=", 1)[0] in ("--settings", "--slot-settings"):
+            current, first = token.split("=", 1)
+            options.setdefault(current, []).append(first)
+        elif token.startswith("-") and not token.startswith("-@"):
             current = token
             options.setdefault(current, [])
         elif current is not None:
@@ -101,8 +104,17 @@ class SlotSettingsDocumentationTests(unittest.TestCase):
         # When: the checker inspects it.
         problems = invalid_slot_settings(broken)
 
-        # Then: both the bare keys and the redundant --settings names are reported.
+        # Then: the bare keys are reported.
         self.assertTrue(any("bare names" in problem for problem in problems), problems)
+
+    def test_checker_flags_equals_form_and_duplicate_names(self):
+        # Given: --slot-settings=NAME with no value, and a name repeated under --settings.
+        bare = "```bash\naz webapp config appsettings set --slot-settings=APP_ENV\n```\n"
+        dup = "```bash\naz webapp config appsettings set --settings A=1 --slot-settings A=1\n```\n"
+
+        # When / Then: both are reported.
+        self.assertTrue(invalid_slot_settings(bare))
+        self.assertTrue(any("same name" in p for p in invalid_slot_settings(dup)))
 
     def test_checker_accepts_name_value_pairs_and_file_references(self):
         # Given: supported forms, including a quoted value and an @file reference.

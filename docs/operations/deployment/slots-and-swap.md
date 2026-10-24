@@ -102,11 +102,11 @@ az webapp config appsettings set \
 | `--name $APP_NAME` | Selects the web app to configure. |
 | `--slot staging` | Applies the settings to the `staging` slot. |
 | `--slot-settings APP_ENVIRONMENT=staging API_BASE_URL=https://api-staging.contoso.example` | Takes space-separated `NAME=VALUE` pairs, writes each one to the slot, and marks it as a deployment slot setting so it stays with the slot during a swap. A bare name without `=VALUE` is not valid. |
-| `--output none` | Suppresses the command output so setting values are not echoed to the terminal or a pipeline log. |
+| `--output none` | Suppresses the command output so setting values are not printed in the command's result output. |
 
-`--slot-settings` both sets the value and marks it sticky, so the same names do not need a separate `--settings` argument. Use `--settings` only for values that should keep swapping with the code.
+`--slot-settings` both sets the value and marks it sticky, so the same names do not need a separate `--settings` argument. Use `--settings` only for application-defined values that should keep swapping with the code; updating an already-sticky setting through `--settings` does not remove its sticky designation.
 
-Confirm the sticky flag by reading back only the names and the `slotSetting` flag. The `--query` projection leaves `value` out so no secret appears in the output:
+Confirm the sticky flag by reading back only the names and the `slotSetting` flag. The `--query` projection leaves `value` out of the formatted output (shell tracing, command history and debug logging can still expose values):
 
 ```bash
 az webapp config appsettings list \
@@ -126,7 +126,7 @@ az webapp config appsettings list \
 | `--query "[?contains(['APP_ENVIRONMENT','API_BASE_URL'], name)].{name:name,slotSetting:slotSetting}"` | Keeps only the two names and their `slotSetting` flag; `value` is deliberately not projected. |
 | `--output table` | Prints one row per setting for a quick visual check. |
 
-Each listed setting should show `slotSetting` as `True`. A `False` row means that setting will still swap with the code. The same procedure, with additional guidance on which settings are sticky by default, is maintained in [Configure Slot-Specific Settings](../deployment-slots.md#configure-slot-specific-settings).
+Each listed setting should show `slotSetting` as `True`. For an application-defined setting like these, a `False` row means it will still swap with the code; some platform settings are never swapped even without this flag (see Microsoft Learn). The same procedure, with additional guidance on which settings are sticky by default, is maintained in [Configure Slot-Specific Settings](../deployment-slots.md#configure-slot-specific-settings).
 
 !!! warning "Do not forget sticky settings"
     If environment-dependent values are not marked as slot settings, they can move during the swap and cause production to point to the wrong backend or use the wrong secrets.
