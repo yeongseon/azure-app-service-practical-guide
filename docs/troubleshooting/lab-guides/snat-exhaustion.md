@@ -438,7 +438,7 @@ Purpose: Show the app's inbound and outbound network configuration on one page.
 
 Look for: `Public network access` and `Private endpoints` under inbound traffic, and `Virtual network integration`, `Outbound DNS`, and the outbound address lists under outbound traffic.
 
-Expected result: This capture shows a public app without VNet integration, so outbound traffic uses the listed platform outbound addresses and the integration subnet settings show `N/A`.
+Expected result: This capture shows the displayed configuration of a public app without VNet integration: the listed outbound addresses are the platform's potential outbound address pool (not a measured egress address for any connection), and the integration subnet settings show `N/A`.
 
 The `Networking` blade is the Portal counterpart to the SNAT KQL queries below. The `Outbound traffic configuration` column confirms `Virtual network integration` is `Not configured` and shows the ~30 shared platform-pool `Outbound IPv4 addresses` (`<ip-redacted>`, `<ip-redacted>`, ...) that this app shares with other tenants. `NAT gateway`, `Network security group`, and `User defined route` all show `N/A` under `Integration subnet configuration`, so outbound traffic uses the default platform SNAT allocation rather than a dedicated pool. This establishes the constrained default egress capacity the hypothesis depends on; it does not by itself show that the ports were exhausted. After confirming this state, run the queries below to quantify the resulting `499`/`503` errors.
 

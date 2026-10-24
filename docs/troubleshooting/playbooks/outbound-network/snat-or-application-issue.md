@@ -475,7 +475,7 @@ Purpose: Show the app's inbound and outbound network configuration on one page.
 
 Look for: `Public network access` and `Private endpoints` under inbound traffic, and `Virtual network integration`, `Outbound DNS`, and the outbound address lists under outbound traffic.
 
-Expected result: This capture shows a public app without VNet integration, so outbound traffic uses the listed platform outbound addresses and the integration subnet settings show `N/A`.
+Expected result: This capture shows the displayed configuration of a public app without VNet integration: the listed outbound addresses are the platform's potential outbound address pool (not a measured egress address for any connection), and the integration subnet settings show `N/A`.
 
 ### Step 1 — Establish the SNAT-mitigation prerequisite: `Outbound traffic configuration > Virtual network integration`
 
