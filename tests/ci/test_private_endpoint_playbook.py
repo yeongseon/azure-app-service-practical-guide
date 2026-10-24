@@ -66,31 +66,45 @@ def first_bash_fence(text: str) -> str:
     raise AssertionError("no bash fence")
 
 
-def hidden_code_blocks(page: str) -> list[str]:
-    """Fail closed on block-code forms the fence parser cannot see.
+#: Line shapes this page's body is allowed to contain outside its fences.
+BODY_LINE_SHAPES = (
+    ("blank", re.compile(r"^\s*$")),
+    ("heading", re.compile(r"^#{1,6} \S")),
+    ("table row", re.compile(r"^\|")),
+    ("list item", re.compile(r"^(?:[-*] |\d+\. )\S")),
+    ("diagram comment", re.compile(r"^<!-- diagram-id: [a-z0-9-]+ -->\s*$")),
+    ("paragraph", re.compile(r"^[A-Za-z0-9*`\[(\"'_]")),
+)
 
-    Python-Markdown renders four-space-indented text, fences nested in an
-    admonition or list, and raw <pre> as copyable code. This page has no
-    admonitions and no legitimate indented block in its body, so any such line
-    is reported. Inline code is untouched. Frontmatter (YAML) is excluded.
+
+def hidden_code_blocks(page: str) -> list[str]:
+    """Fail closed on any body line that is not one of the allowed plain shapes.
+
+    Python-Markdown renders indented text, fences nested in an admonition, list
+    or blockquote, and raw <pre> as copyable code, and new forms keep turning
+    up. Rather than enumerate them, accept only the six shapes this body
+    actually uses; anything else (blockquote, raw HTML, indentation, an
+    admonition, a Setext underline) is reported. Inline code is ordinary
+    paragraph text and is untouched. Frontmatter (YAML) is excluded. This is a
+    deliberately page-specific restriction, not a general Markdown linter.
     """
     body = page.split("\n---\n", 1)[1] if page.startswith("---\n") else page
     problems: list[str] = []
     marker: str | None = None
     for number, line in enumerate(body.split("\n"), 1):
-        if marker is None:
-            opening = FENCE_OPEN.match(line)
-            if opening:
-                marker = opening.group(1)
-                continue
-            if re.match(r"^(?: {4,}|\t)\S", line):
-                problems.append(f"body line {number}: indented block (renders as code)")
-            elif re.match(r"^\s*(`{3,}|~{3,})", line):
-                problems.append(f"body line {number}: nested fence")
-            if re.search(r"<pre\b", line, re.IGNORECASE):
-                problems.append(f"body line {number}: raw <pre> block")
-        elif re.match(rf"^ {{0,3}}{re.escape(marker[0])}{{{len(marker)},}}\s*$", line):
-            marker = None
+        if marker is not None:
+            if re.match(rf"^ {{0,3}}{re.escape(marker[0])}{{{len(marker)},}}\s*$", line):
+                marker = None
+            continue
+        opening = FENCE_OPEN.match(line)
+        if opening:
+            marker = opening.group(1)
+            continue
+        if not any(shape.match(line) for _, shape in BODY_LINE_SHAPES):
+            problems.append(f"body line {number}: unexpected line shape {line[:40]!r}")
+        elif re.search(r"<\s*pre\b", line, re.IGNORECASE):
+            # A preformatted block can hide inside an otherwise allowed shape, such as a table cell.
+            problems.append(f"body line {number}: raw <pre> inside an allowed line")
     return problems
 
 
@@ -229,6 +243,14 @@ class PrivateEndpointPlaybookTests(unittest.TestCase):
             "indented code block": "\n\n    az webapp stop\n",
             "tab-indented code block": "\n\n\taz webapp stop\n",
             "raw pre block": "\n<pre><code>az webapp stop</code></pre>\n",
+            "blockquote fence": "\n> ```bash\n> az webapp stop\n> ```\n",
+            "blockquote tilde fence": "\n> ~~~bash\n> az webapp stop\n> ~~~\n",
+            "blockquote indented code": "\n>     az webapp stop\n",
+            "nested blockquote fence": "\n>> ```bash\n>> az webapp stop\n>> ```\n",
+            "raw script": "\n<script>alert(1)</script>\n",
+            "pre inside a table cell": "\n| a | <pre>az webapp stop</pre> |\n",
+            "pre inside a list item": "\n- step <pre>az webapp stop</pre>\n",
+            "admonition": '\n!!! note "x"\n    text\n',
         }.items():
             with self.subTest(hidden=name):
                 self.assertTrue(unapproved_configuration(page + extra), name)
