@@ -26,28 +26,44 @@ graph TD
     C --> G[Request Limits]
 ```
 
+## How to Read This Page
+
+Each figure carries one of three classes, because they do not carry the same authority.
+
+- **[Documented]**: stated by Microsoft Learn for App Service, with the source in the row. Still source-reviewed only (see the review note at the end), not tested against Azure by this guide.
+- **[Application or framework]**: set by your runtime, web server or framework, not by an App Service platform limit. This page publishes no number for these; see [Values this guide does not publish](#values-this-guide-does-not-publish).
+- **[Measured]**: a value observed in a lab. Lab measurements live with their lab and evidence, never in this table.
+
 ## Request Limits
 
-| Limit | Typical Value | Notes | Source |
-| :--- | :--- | :--- | :--- |
-| **Frontend HTTP timeout** | **230 seconds** | Enforced by the App Service frontend for synchronous HTTP requests on Windows apps; Linux apps are documented as approximately 240 seconds. | [Web request times out in App Service](https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/web-request-times-out-app-service) |
-| **Max request body** | **128 MB** | [Requires verification] This guide does not currently have an App Service-specific Microsoft Learn source for a platform-wide 128 MB limit. Request body limits vary by runtime and web server. | [Request Limits &lt;requestLimits&gt; (IIS)](https://learn.microsoft.com/en-us/iis/configuration/system.webserver/security/requestfiltering/requestlimits/) [Stack-specific] |
-| **URL length** | **8192 characters** | [Requires verification] No App Service-specific Microsoft Learn source was found for a universal 8192-character limit. URL limits vary by stack and front-end/server behavior. | [Request Limits &lt;requestLimits&gt; (IIS)](https://learn.microsoft.com/en-us/iis/configuration/system.webserver/security/requestfiltering/requestlimits/) [Stack-specific] |
+| Limit | Value | Class | Notes | Source |
+| :--- | :--- | :--- | :--- | :--- |
+| **Frontend HTTP timeout** | **230 seconds** on Windows apps; approximately **240 seconds** on Linux apps | [Documented] | App Service returns a timeout to the client when the application does not respond within this window. Use background processing (for example WebJobs) for longer work. | [Web request times out in App Service](https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/web-request-times-out-app-service) |
+
+## Values this guide does not publish
+
+Microsoft Learn does not document an App Service-wide value for these, so a number here would be an invention. They are [Application or framework] concerns and depend on the runtime, web server and request path.
+
+- **Maximum request body size.** Request-body limits vary by runtime and web server (for example IIS request filtering on Windows); see [Request Limits `requestLimits` (IIS)](https://learn.microsoft.com/en-us/iis/configuration/system.webserver/security/requestfiltering/requestlimits/) for the IIS behavior.
+- **Maximum URL length.** URL limits vary by stack and by front-end and server behavior; the same IIS reference covers the Windows web server.
+- **Maximum number of app settings.** No hard App Service limit is documented; environment-block and runtime constraints can be stack-specific. See [Configure an App Service app](https://learn.microsoft.com/en-us/azure/app-service/configure-common).
+- **Filesystem log retention.** Retention is a setting you choose, not a platform default (see [Diagnostics and Retention](#diagnostics-and-retention)).
+
+Earlier revisions of this page showed 128 MB, 8192 characters, 10,000 settings and 30-90 days as "typical" values. They were removed because no primary source supports them as App Service limits.
 
 ## Scale and Plan Limits
 
-| Tier | Max Instances (Typical) | Deployment Slots (Typical) | Always On | Source |
-| :--- | :--- | :--- | :--- | :--- |
-| **Free (F1)** | 1 | 0 | No | [Azure App Service limits](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/azure-subscription-service-limits#app-service-limits) |
-| **Basic (B1)** | 3 | 0 | Yes | [Azure App Service limits](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/azure-subscription-service-limits#app-service-limits) |
-| **Standard (S1)** | 10 | 5 | Yes | [Azure App Service limits](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/azure-subscription-service-limits#app-service-limits) |
-| **Premium (P1V3 and above)** | 30+ | 20 | Yes | [Azure App Service limits](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/azure-subscription-service-limits#app-service-limits) |
+| Tier | Max instances | Staging slots per app | Always On | Class | Source |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Free (F1)** | 1 (shared) | 0 | No | [Documented] | [Azure App Service limits](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/azure-subscription-service-limits#app-service-limits) |
+| **Basic (B1)** | 3 (dedicated) | 0 | Yes | [Documented] | [Azure App Service limits](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/azure-subscription-service-limits#app-service-limits) |
+| **Standard (S1)** | 10 (dedicated) | 5 | Yes | [Documented] | [Azure App Service limits](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/azure-subscription-service-limits#app-service-limits) |
+| **Premium v2, v3 and v4** | 30 (dedicated; 20 for Premium v1) | 20 | Yes | [Documented] | [Azure App Service limits](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/azure-subscription-service-limits#app-service-limits) |
 
 **Always On.** The Microsoft Learn limits table marks Always On as supported on Basic, Standard, Premium, and Isolated plans, and not on Free or Shared. Basic therefore supports Always On even though it does not support deployment slots; the two columns above are independent capabilities. **[Documented]** from the source linked in each row, reviewed 2026-10-24. **[Not Proven]** by a run on each SKU: this page's values are source-reviewed and were not exercised against Azure.
 
 !!! note "Regional and SKU variation"
-    Effective limits can vary by region, subscription, and SKU generation.
-    Validate current values in Microsoft Learn and in your subscription quotas.
+    The values above are the maxima Microsoft Learn documents per tier. The effective limit for your subscription can be lower because of region, subscription quota and SKU generation. Validate current values in Microsoft Learn and in your subscription quotas.
 
 ## Storage and File System
 
@@ -59,27 +75,29 @@ graph TD
 
 ## Deployment and Configuration Limits
 
-| Limit | Value | Notes | Source |
-| :--- | :--- | :--- | :--- |
-| **Max app settings** | **10,000** | [Requires verification] This guide does not currently have a Microsoft Learn source that documents a hard App Service limit of 10,000 settings. Environment block and runtime constraints can be stack-specific. | [Configure an App Service app](https://learn.microsoft.com/en-us/azure/app-service/configure-common) [Requires verification] |
-| **ZIP deploy upload size** | **2048 MB** | CLI/Kudu ZIP deploy package limit. | [Deploy files to Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/deploy-zip) |
-| **Slot settings scope** | Per-slot | Mark sensitive values as slot settings. | [Configure an App Service app](https://learn.microsoft.com/en-us/azure/app-service/configure-common#configure-app-settings) |
+| Limit | Value | Class | Notes | Source |
+| :--- | :--- | :--- | :--- | :--- |
+| **ZIP deploy package size** | **2,048 MB** | [Documented] | Package size limit for ZIP deploy. | [Deploy files to Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/deploy-zip) |
+| **Slot settings scope** | Per-slot | [Documented] | A setting marked as a deployment slot setting stays with its slot during a swap. Mark sensitive values accordingly. | [Configure an App Service app](https://learn.microsoft.com/en-us/azure/app-service/configure-common#configure-app-settings) |
+
+The number of app settings is not listed here; see [Values this guide does not publish](#values-this-guide-does-not-publish).
 
 ## Networking and Connections
 
-| Limit/Behavior | Value / Pattern | Notes | Source |
-| :--- | :--- | :--- | :--- |
-| **SNAT ports per instance (common)** | **128** | Outbound-heavy apps can exhaust ports. | [Troubleshoot intermittent outbound connection errors](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-intermittent-outbound-connection-errors) |
-| **Outbound IPs** | Multiple, can change | Use `possibleOutboundIpAddresses` for allowlists. | [Azure App Service limits](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/azure-subscription-service-limits#app-service-limits) |
-| **WebSocket and long-lived connections** | Tier-dependent | Higher tiers support greater concurrency. | [Azure App Service limits](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/azure-subscription-service-limits#app-service-limits) |
+| Limit/Behavior | Value / Pattern | Class | Notes | Source |
+| :--- | :--- | :--- | :--- | :--- |
+| **SNAT ports per instance** | **128 preallocated** | [Documented] | Each instance starts with 128 preallocated SNAT ports; more can be allocated dynamically or freed by connection reuse. The limit applies to connections to the same address and port combination. Outbound-heavy apps can exhaust the preallocated ports. | [Troubleshoot intermittent outbound connection errors](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-intermittent-outbound-connection-errors) |
+| **Outbound IPs** | Multiple, can change | [Documented] | Use `possibleOutboundIpAddresses` for allowlists. | [Azure App Service limits](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/azure-subscription-service-limits#app-service-limits) |
+| **WebSocket and long-lived connections** | Tier-dependent | [Documented] | Per-instance WebSocket limits differ by tier and by Windows or Linux; see the WebSockets rows of the limits table. | [Azure App Service limits](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/azure-subscription-service-limits#app-service-limits) |
 
 ## Diagnostics and Retention
 
-| Area | Typical Range | Notes | Source |
-| :--- | :--- | :--- | :--- |
-| **Filesystem log retention** | 30–90 days | [Requires verification] Retention depends on storage usage and log configuration; no single App Service platform default was verified for this range. | [Enable diagnostic logging for apps in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs) [Requires verification] |
-| **Live log streaming session** | Time-limited | Streams may disconnect on inactivity. | [Enable diagnostic logging for apps in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs) |
-| **Application Insights retention** | Configurable | Affects cost and forensic depth. | [Manage usage and costs for Application Insights](https://learn.microsoft.com/en-us/azure/azure-monitor/app/pricing) |
+| Area | Value | Class | Notes | Source |
+| :--- | :--- | :--- | :--- | :--- |
+| **Application logging (Filesystem)** | Turns itself off after **12 hours** | [Documented] | Intended for temporary debugging; use the Blob option for long-term logging. | [Enable diagnostic logging for apps in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs) |
+| **Filesystem log retention** | Configurable (days) | [Documented] | The portal exposes a Retention Period (Days) setting for the file system option. No platform default range is documented, so none is shown here. | [Enable diagnostic logging for apps in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs) |
+| **Live log streaming session** | Time-limited | [Documented] | Streams may disconnect on inactivity. | [Enable diagnostic logging for apps in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs) |
+| **Application Insights retention** | Configurable | [Documented] | Affects cost and forensic depth. | [Manage usage and costs for Application Insights](https://learn.microsoft.com/en-us/azure/azure-monitor/app/pricing) |
 
 ## Limit-Driven Symptoms
 
@@ -96,6 +114,10 @@ graph TD
 [[[ shot("platform--scaling--02-scale-up") ]]]
 
 The `Scale up (App Service plan)` blade is where you compare the plan SKUs that drive most of the limits in the Scale and Plan Limits table above. This capture shows the `Hardware view` table grouped into `Dev/Test`, `Production`, and `Legacy`, with the selected `Premium v3 P0V3` row exposing the per-plan fields that matter operationally: `vCPU`, `Memory (GB)`, `Remote Storage (GB)`, `Scale (instance)`, and SLA. Because the blade is scoped to the App Service plan rather than the individual web app, it is the right place to confirm whether plan tier and per-instance capacity are part of a saturation or quota problem. Use this view to verify the current plan family and worker size before concluding that a symptom is application-only.
+
+## Review Status
+
+**[Documented]** figures were checked against the Microsoft Learn sources in each row on 2026-10-24. That is a source review: this guide did not run these limits against Azure, and a lab measurement would be a separate **[Measured]** claim recorded with its own evidence. **[Not Proven]**: any figure not listed here.
 
 ## See Also
 
