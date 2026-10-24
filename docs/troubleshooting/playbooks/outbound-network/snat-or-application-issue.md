@@ -482,7 +482,7 @@ Expected result: This capture shows the displayed configuration of a public app 
 Purpose: A NAT Gateway (expanded port pool) and dependency-side Private Endpoints (true SNAT bypass) — the two durable SNAT-mitigation paths — both require VNet integration first. Confirm whether the prerequisite exists before interpreting SNAT pressure.
 Look for: The **Outbound traffic configuration** column, **Virtual network integration** row.
 Expected result: A subnet ID here means the app *can* route outbound through a NAT Gateway or reach dependencies over Private Endpoints. The captured `Not configured` state means these mitigations are not configured, so outbound calls to **public** IPs would be expected to share the default per-instance pool of 128 preallocated SNAT ports [Inferred from displayed configuration]; observed connection behavior is not measured by this capture.
-Abnormal: `Not configured` combined with the timeout-cluster signature in Section 5 supports **H1** (SNAT exhaustion) — the app is on the constrained default pool. Fix requires VNet integration first.
+Abnormal: `Not configured` combined with the timeout-cluster signature in Section 5 keeps **H1** (SNAT exhaustion) open: the configuration is consistent with the constrained default pool [Inferred from displayed configuration], but H1 still needs connection-level failures and SNAT detector evidence, since the timeout pattern also occurs without SNAT exhaustion. Connection reuse and reduced churn do not require VNet integration; a NAT Gateway or dependency-side Private Endpoints do.
 Next step: Read the **Integration subnet configuration** card to check for a NAT Gateway.
 
 ### Step 2 — Check for a dedicated SNAT port pool: `Integration subnet configuration > NAT gateway`
@@ -497,7 +497,7 @@ Next step: Read the **Outbound IPv4 addresses** list to understand the shared so
 
 Purpose: On the default (non-NAT-Gateway) path, all instances share this set of platform outbound IPs, and the per-instance 128-port SNAT allocation is drawn against them — this is the resource H1 exhausts.
 Look for: The **Outbound IPv4 addresses** (and **Outbound IPv6 addresses**) list.
-Expected result: A fixed set of platform-assigned addresses. On the default path these are shared and cannot be expanded without a NAT Gateway or scale-out (which adds per-instance pools but does not fix a bad connection pattern — see Section 7, Pattern D).
+Expected result: A set of platform-assigned addresses. On the default path these are shared; the address inventory is not the same as SNAT capacity. A NAT Gateway adds a dedicated pool, and scale-out adds per-instance allocations without necessarily adding addresses (neither fixes a bad connection pattern — see Section 7, Pattern D).
 Abnormal: Nothing abnormal is visible here directly; this step establishes *why* the port pool is finite. Correlate with the **SNAT Port Exhaustion** detector in App Service Diagnostics (Section 4) to quantify saturation during incident windows.
 Next step: Disambiguate the inbound `Private endpoints` red herring (Step 4).
 

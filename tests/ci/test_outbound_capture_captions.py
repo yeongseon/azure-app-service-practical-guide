@@ -31,6 +31,8 @@ class OutboundCaptureCaptionTests(unittest.TestCase):
         play = (DOCS / "troubleshooting/playbooks/outbound-network/snat-or-application-issue.md").read_text(encoding="utf-8")
         self.assertNotIn("single source of truth", play)
         self.assertNotIn("H1 is unlikely and you should pivot", play)
+        self.assertNotIn("the app is on the constrained default pool. Fix requires VNet integration first", play)
+        self.assertIn("Connection reuse and reduced churn do not require VNet integration", play)
         self.assertIn("confirm routing and observe the connection's source address before weakening H1", play)
 
 
