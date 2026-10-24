@@ -1,6 +1,10 @@
 {
   "policy": "Decision record only. Nothing here deletes or moves anything; ARCHIVE marks a path retained for provenance rather than routine use, and no evidence is deleted without a separate review.",
   "evaluated_at": "2026-09-27T00:00:00Z",
+  "review_methods": {
+    "static-review": "The comparison was read from the cited files by the reviewing agent. It is neither mechanically enforced nor attributed to a human reviewer; only the path and link properties of a paired runbook are checked by a validator."
+  },
+  "coverage_note": "Coverage is by top-level repository area plus the specific paths listed below. Additions or renames beneath a broad entry such as docs/ are governed by the existing content gates and are not individually re-audited here, so this inventory is partial below the top level.",
   "decisions": [
     "KEEP",
     "REWRITE",
@@ -18,22 +22,22 @@
     {
       "id": "deployment-succeeded-startup-failed",
       "comparisons": {
-        "entrypoint": {"result": "MATCH", "review_method": "human-reviewed", "evidence": ["labs/deployment-succeeded-startup-failed/contract.json", "labs/deployment-succeeded-startup-failed/run.py", "labs/deployment-succeeded-startup-failed/trigger.sh"]},
-        "package": {"result": "MATCH", "review_method": "human-reviewed", "evidence": ["labs/deployment-succeeded-startup-failed/app/requirements.txt", "labs/deployment-succeeded-startup-failed/run.py"]},
-        "build": {"result": "MATCH", "review_method": "human-reviewed", "evidence": ["labs/deployment-succeeded-startup-failed/run.py", "labs/deployment-succeeded-startup-failed/trigger.sh"]},
-        "prerequisite": {"result": "MATCH", "review_method": "human-reviewed", "evidence": ["labs/deployment-succeeded-startup-failed/main.bicep", "labs/deployment-succeeded-startup-failed/contract.json"]},
-        "cleanup": {"result": "MATCH", "review_method": "human-reviewed", "evidence": ["labs/deployment-succeeded-startup-failed/cleanup.sh", "labs/deployment-succeeded-startup-failed/contract.json"]}
+        "entrypoint": {"result": "MATCH", "review_method": "static-review", "evidence": ["labs/deployment-succeeded-startup-failed/contract.json", "labs/deployment-succeeded-startup-failed/run.py", "labs/deployment-succeeded-startup-failed/trigger.sh"]},
+        "package": {"result": "MATCH", "review_method": "static-review", "evidence": ["labs/deployment-succeeded-startup-failed/app/requirements.txt", "labs/deployment-succeeded-startup-failed/run.py"]},
+        "build": {"result": "MATCH", "review_method": "static-review", "evidence": ["labs/deployment-succeeded-startup-failed/run.py", "labs/deployment-succeeded-startup-failed/trigger.sh"]},
+        "prerequisite": {"result": "MATCH", "review_method": "static-review", "evidence": ["labs/deployment-succeeded-startup-failed/main.bicep", "labs/deployment-succeeded-startup-failed/contract.json"]},
+        "cleanup": {"result": "MATCH", "review_method": "static-review", "evidence": ["labs/deployment-succeeded-startup-failed/cleanup.sh", "labs/deployment-succeeded-startup-failed/contract.json"]}
       },
       "link_audit": {"repo_local": "PASS", "absolute_github": "PASS", "validator": "scripts/validate_documented_paths.py"}
     },
     {
       "id": "windows-java-httpplatformhandler-timeout",
       "comparisons": {
-        "entrypoint": {"result": "MATCH", "review_method": "human-reviewed", "evidence": ["labs/windows-java-httpplatformhandler-timeout/README.md", "labs/windows-java-httpplatformhandler-timeout/stage-0-config-discovery/README.md", "labs/windows-java-httpplatformhandler-timeout/lab-1-baseline-signature/README.md"]},
-        "package": {"result": "MATCH", "review_method": "human-reviewed", "evidence": ["labs/windows-java-httpplatformhandler-timeout/stage-0-config-discovery/app/pom.xml", "labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/webconfig/web.config"]},
-        "build": {"result": "MATCH", "review_method": "human-reviewed", "evidence": ["labs/windows-java-httpplatformhandler-timeout/stage-0-config-discovery/deploy.sh", "labs/windows-java-httpplatformhandler-timeout/lab-1-baseline-signature/deploy.sh", "labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/deploy.sh"]},
-        "prerequisite": {"result": "MATCH", "review_method": "human-reviewed", "evidence": ["labs/windows-java-httpplatformhandler-timeout/stage-0-config-discovery/README.md", "labs/windows-java-httpplatformhandler-timeout/lab-1-baseline-signature/README.md", "labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/design-proposal.md"]},
-        "cleanup": {"result": "MATCH", "review_method": "human-reviewed", "evidence": ["labs/windows-java-httpplatformhandler-timeout/stage-0-config-discovery/cleanup.sh", "labs/windows-java-httpplatformhandler-timeout/lab-1-baseline-signature/cleanup.sh", "labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/cleanup.sh"]}
+        "entrypoint": {"result": "MATCH", "review_method": "static-review", "evidence": ["labs/windows-java-httpplatformhandler-timeout/README.md", "labs/windows-java-httpplatformhandler-timeout/stage-0-config-discovery/README.md", "labs/windows-java-httpplatformhandler-timeout/lab-1-baseline-signature/README.md"]},
+        "package": {"result": "MATCH", "review_method": "static-review", "evidence": ["labs/windows-java-httpplatformhandler-timeout/stage-0-config-discovery/app/pom.xml", "labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/webconfig/web.config"]},
+        "build": {"result": "MATCH", "review_method": "static-review", "evidence": ["labs/windows-java-httpplatformhandler-timeout/stage-0-config-discovery/deploy.sh", "labs/windows-java-httpplatformhandler-timeout/lab-1-baseline-signature/deploy.sh", "labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/deploy.sh"]},
+        "prerequisite": {"result": "MATCH", "review_method": "static-review", "evidence": ["labs/windows-java-httpplatformhandler-timeout/stage-0-config-discovery/README.md", "labs/windows-java-httpplatformhandler-timeout/lab-1-baseline-signature/README.md", "labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/design-proposal.md"]},
+        "cleanup": {"result": "MATCH", "review_method": "static-review", "evidence": ["labs/windows-java-httpplatformhandler-timeout/stage-0-config-discovery/cleanup.sh", "labs/windows-java-httpplatformhandler-timeout/lab-1-baseline-signature/cleanup.sh", "labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/cleanup.sh"]}
       },
       "link_audit": {"repo_local": "PASS", "absolute_github": "PASS", "validator": "scripts/validate_documented_paths.py"}
     }
@@ -48,6 +52,16 @@
       "path": "docs/",
       "decision": "KEEP",
       "reason": "The published guide. Individual pages are governed by the existing content gates, not by this audit."
+    },
+    {
+      "path": "docs/operations/deployment-slots.md",
+      "decision": "KEEP",
+      "reason": "Canonical operational slot procedure, including the sticky-setting command and its slotSetting read-back. It is the authoritative executable procedure; docs/operations/deployment/slots-and-swap.md carries the compact deployment-execution version and links to it."
+    },
+    {
+      "path": "docs/operations/deployment/slots-and-swap.md",
+      "decision": "KEEP",
+      "reason": "Compact slot creation and promotion page. It links to the canonical operations page for the sticky-setting procedure instead of maintaining a divergent copy, and the two pages are linked both ways."
     },
     {
       "path": "docs/reference/content-validation-status.md",

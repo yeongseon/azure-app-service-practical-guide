@@ -301,6 +301,21 @@ jobs:
       - name: Fetch Golden test fixture commit
         run: git fetch --no-tags --depth=1 origin 3e0442bb19b966766598ffeae1fb47f3f6960837
 
+      - name: Fetch Golden classification provenance commits
+        # The lab classification tests resolve each artifact_introduced_commit and
+        # run_source_revision and read `git log --all` to find where a capture was
+        # introduced, so these commits must exist as named refs; an object fetched
+        # only into FETCH_HEAD is not visible to `--all`.
+        run: |
+          for sha in \
+            ef78457ae487cdb244808c763ac72a72057ce6a7 \
+            f839d67575fd1e56dd922421e3b10088d470e80e \
+            1204a0956b3e9aca318fd1a172f9cb63620fd78d \
+            20969deac4d958fff0c71a6c951573a1b0122a34
+          do
+            git fetch --no-tags --depth=1 origin "$sha:refs/golden-provenance/$sha"
+          done
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:

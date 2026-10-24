@@ -26,7 +26,7 @@ REQUIRED_PAIRED_RUNBOOKS = {
 }
 REQUIRED_COMPARISONS = {"entrypoint", "package", "build", "prerequisite", "cleanup"}
 ALLOWED_LINK_VALIDATORS = {"scripts/validate_documented_paths.py"}
-SEMANTIC_REVIEW_METHOD = "human-reviewed"
+SEMANTIC_REVIEW_METHOD = "static-review"
 
 
 def invoked_by_ci(basename):
@@ -110,6 +110,27 @@ class ExistenceTests(unittest.TestCase):
             self.assertIn(link_audit["validator"], ALLOWED_LINK_VALIDATORS, msg=record["id"])
             self.assertTrue((ROOT / link_audit["validator"]).is_file(), msg=record["id"])
             self.assertTrue(invoked_by_ci(pathlib.Path(link_audit["validator"]).name), msg=record["id"])
+
+
+class ReviewHonestyTests(unittest.TestCase):
+    def test_no_comparison_claims_an_unattributed_human_review(self):
+        methods = {
+            comparison["review_method"]
+            for record in AUDIT["paired_runbooks"] for comparison in record["comparisons"].values()
+        }
+        self.assertEqual(methods, {SEMANTIC_REVIEW_METHOD})
+        self.assertIn(SEMANTIC_REVIEW_METHOD, AUDIT["review_methods"])
+        self.assertIn("nor attributed to a human reviewer", AUDIT["review_methods"][SEMANTIC_REVIEW_METHOD])
+
+    def test_the_inventory_states_that_it_is_partial_below_the_top_level(self):
+        self.assertIn("partial below the top level", AUDIT["coverage_note"])
+
+    def test_the_slot_procedure_pages_are_dispositioned_with_a_canonical_choice(self):
+        by_path = {entry["path"]: entry for entry in AUDIT["paths"]}
+        canonical = by_path["docs/operations/deployment-slots.md"]
+        compact = by_path["docs/operations/deployment/slots-and-swap.md"]
+        self.assertIn("authoritative executable procedure", canonical["reason"])
+        self.assertIn("links to the canonical", compact["reason"])
 
 
 class DeletionPolicyTests(unittest.TestCase):

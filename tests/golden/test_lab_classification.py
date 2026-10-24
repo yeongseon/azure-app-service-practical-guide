@@ -176,6 +176,95 @@ class ShapeTests(unittest.TestCase):
             self.assertEqual({value["sourceDirtyAtRun"] for value in source_manifests}, {item["run_source_dirty"]}, msg=path)
 
 
+def environment_bearing_manifests(set_path):
+    """Retained manifests under an artifact set that record a SKU and a CLI version."""
+    found = []
+    for path in sorted((ROOT / "labs" / set_path).rglob("*.json")):
+        try:
+            document = json.loads(path.read_text())
+        except ValueError:
+            continue
+        if isinstance(document, dict) and "azureCliVersion" in document and any(
+                key in document for key in ("sku", "skuAtStart", "skuAtEnd")):
+            found.append(path.relative_to(ROOT / "labs").as_posix())
+    return found
+
+
+class ProvenanceFetchTests(unittest.TestCase):
+    """CI clones shallowly, so every commit the classification names must be fetched."""
+
+    def test_every_classified_commit_is_fetched_by_the_workflow(self):
+        needed = set()
+        for _path, item in classified_artifact_sets():
+            needed.add(item["artifact_introduced_commit"])
+            if item["run_source_revision"]:
+                needed.add(item["run_source_revision"])
+        workflow = (ROOT / ".github/workflows/validate-content-sources.yml").read_text()
+        literal = set(re.findall(r"\b[0-9a-f]{40}\b", workflow))
+        dynamic = set()
+        for run in (ROOT / "evidence/runs").glob("*"):
+            for name, getter in (
+                ("manifest.json", lambda d: d.get("source_commit")),
+                ("provenance.json", lambda d: d.get("derivation", {}).get("collector_commit")),
+            ):
+                if (run / name).is_file():
+                    value = getter(json.loads((run / name).read_text()))
+                    if isinstance(value, str):
+                        dynamic.add(value)
+        self.assertEqual(sorted(needed - literal - dynamic), [], msg="commits the workflow never fetches")
+
+    def test_classification_commits_are_fetched_into_named_refs(self):
+        workflow = (ROOT / ".github/workflows/validate-content-sources.yml").read_text()
+        # `git log --all` only sees refs, so a bare `git fetch origin <sha>` is not enough.
+        self.assertIn('"$sha:refs/golden-provenance/$sha"', workflow)
+
+
+class OtherCaptureTests(unittest.TestCase):
+    """A set-level record must not hide sub-captures whose environment or trust differs."""
+
+    def test_no_environment_bearing_manifest_escapes_classification(self):
+        for path, item in classified_artifact_sets():
+            accounted = set(item.get("environment_evidence", []))
+            for capture in item.get("other_captures", []):
+                accounted |= set(capture.get("environment_evidence", []))
+            with self.subTest(artifact_set=path):
+                self.assertEqual(
+                    sorted(set(environment_bearing_manifests(path)) - accounted), [],
+                    msg=f"{path}: retained manifests are not named by the set or an other_capture")
+
+    def test_other_captures_are_well_formed_and_exactly_derived(self):
+        for path, item in classified_artifact_sets():
+            seen = []
+            for capture in item.get("other_captures", []):
+                capture_path = f"{path}/{capture['path']}"
+                with self.subTest(capture=capture_path):
+                    seen.append(capture["path"])
+                    self.assertTrue((ROOT / "labs" / capture_path).is_dir())
+                    self.assertIn(capture["trust"], ev.EVIDENCE_TRUST)
+                    self.assertTrue(capture["limitation"].strip(), msg="a limitation is required")
+                    self.assertEqual(set(capture["environment"]), ENVIRONMENT_FIELDS)
+                    self.assertEqual(capture["environment"], evidence_environment(ROOT, capture_path, capture))
+            self.assertEqual(len(seen), len(set(seen)), msg=f"{path}: duplicate other_capture")
+
+    def test_the_explicitly_excluded_control_is_classified_invalid(self):
+        excluded = {
+            path for path, _item in classified_artifact_sets()
+            for child in (ROOT / "labs" / path).iterdir() if child.is_dir() and child.name == "excluded"
+        }
+        self.assertTrue(excluded, msg="expected at least one retained excluded/ directory")
+        for path, item in classified_artifact_sets():
+            if path in excluded:
+                captures = {capture["path"]: capture for capture in item.get("other_captures", [])}
+                with self.subTest(artifact_set=path):
+                    self.assertEqual(captures["excluded"]["trust"], "invalid")
+
+    def test_the_f1_capture_is_not_folded_into_the_b1_environment(self):
+        by_path = dict(classified_artifact_sets())
+        item = by_path["missing-wwwroot-content/artifacts-sanitized"]
+        self.assertEqual(item["environment"]["sku"], "B1")
+        self.assertEqual({c["path"]: c["environment"]["sku"] for c in item["other_captures"]}, {"f1-plan-run": "F1"})
+
+
 class GoldenClaimTests(unittest.TestCase):
     """A lab may only be called Golden if it actually declares a contract."""
 
