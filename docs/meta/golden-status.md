@@ -25,24 +25,24 @@ Every quality gate in this repository, its most recently recorded result, and th
 
 ## Summary
 
-*Snapshot of `1327bae`, generated 2026-10-19.*
+*Snapshot of `60898ef`, generated 2026-10-26.*
 
 | Metric | Count |
 |---|---:|
 | Registered gates | 40 |
-| ✅ Pass | 33 |
-| ❌ Fail | 0 |
+| ✅ Pass | 38 |
+| ❌ Fail | 2 |
 | ⚠️ Warn | 0 |
-| ➖ Skipped | 7 |
+| ➖ Skipped | 0 |
 
-!!! warning "Blocking gates pass, with gaps"
-    No blocking gate failed in this snapshot, but 7 gate(s) reported findings, are unwired from CI, or could not run on the machine that generated this page. See Known Gaps.
+!!! failure "Not golden"
+    2 blocking gate(s) failed in this snapshot. Review the Gate Results table before merging anything.
 
 <!-- diagram-id: golden-status-gate-outcomes-pie -->
 ```mermaid
 pie title Quality Gate Outcomes
-    "Pass" : 33
-    "Skipped" : 7
+    "Pass" : 38
+    "Fail" : 2
 ```
 
 ## Gate Results
@@ -54,44 +54,44 @@ These are locally executed results, not GitHub Actions statuses. **Skipped** mea
 | --- | --- | --- | --- | --- |
 | Validator doctests | Blocking | ✅ Pass | 11 modules checked, every doctest passed. | < 10s |
 | Capture asset geometry | Blocking | ✅ Pass | Capture assets conform to the capture profile. | < 10s |
-| Mermaid format | Blocking | ✅ Pass | Files checked: 246 · Files with errors: 0 | < 10s |
-| Mermaid syntax | Blocking | ✅ Pass | Diagrams checked: 395 · Errors found: 0 | < 10s |
-| Content sources | Blocking | ✅ Pass | Files with mermaid: 241 · Validation errors: 0 | < 10s |
+| Mermaid format | Blocking | ✅ Pass | Files checked: 249 · Files with errors: 0 | < 10s |
+| Mermaid syntax | Blocking | ✅ Pass | Diagrams checked: 398 · Errors found: 0 | < 10s |
+| Content sources | Blocking | ✅ Pass | Files with mermaid: 244 · Validation errors: 0 | < 10s |
 | Content sources schema | Blocking | ✅ Pass | Files with content_sources schema drift: 0 · Parse errors: 0 | < 10s |
-| Diagram ID parity | Blocking | ✅ Pass | mermaid blocks: 395 · diagram-id comments: 395 | < 10s |
+| Diagram ID parity | Blocking | ✅ Pass | mermaid blocks: 398 · diagram-id comments: 398 | < 10s |
 | CLI explanation tables | Blocking | ✅ Pass | All Azure CLI code fences and Markdown tables are correctly terminated. | < 10s |
 | Documented repository paths | Blocking | ✅ Pass | Documented repository path errors: 0 | < 10s |
-| Document quality | Blocking | ✅ Pass | Documentation quality gate passed for 246 file(s). | < 10s |
+| Document quality | Blocking | ✅ Pass | Documentation quality gate passed for 249 file(s). | < 10s |
 | Frontmatter YAML style | Blocking | ✅ Pass | Files with style drift: 0 · Parse errors: 0 | < 10s |
 | Microsoft Learn locale | Blocking | ✅ Pass | Files with locale drift: 0 | < 10s |
-| Microsoft Learn URL reachability | Advisory | ➖ Skipped | Network gate; re-run with --include-network. | < 10s |
+| Microsoft Learn URL reachability | Advisory | ✅ Pass | Redirected URLs should be updated to canonical versions. | 10-120s |
 | Lab artifact PII | Blocking | ✅ Pass | [scan_lab_pii] scanned=618 skipped_binary=0 skipped_decode=0 findings=0 | < 10s |
 | Documentation PII | Blocking | ✅ Pass | No blocking PII patterns detected! | < 10s |
-| Documentation repetition | Blocking | ✅ Pass | Scanned 246 file(s): 0 error(s), 6 warning(s). | < 10s |
+| Documentation repetition | Blocking | ✅ Pass | Scanned 249 file(s): 0 error(s), 6 warning(s). | < 10s |
 | Quick-triage causal claims | Blocking | ✅ Pass | Quick-triage causal-claim contract passed (7 files). · Scope is a phrase denylist only; technical review remains required. | < 10s |
-| Visual content coverage | Advisory | ✅ Pass | full repo: 83/83 in-scope pages carry a visual aid (100.0%). Advisory gate — exit 0 regardless (see issue #388). | < 10s |
+| Visual content coverage | Advisory | ✅ Pass | full repo: 86/86 in-scope pages carry a visual aid (100.0%). Advisory gate — exit 0 regardless (see issue #388). | < 10s |
 | Windows troubleshooting navigation | Blocking | ✅ Pass | Windows troubleshooting navigation: 2 entry points link all 5 required playbooks. | < 10s |
-| Frontmatter schema | Blocking | ✅ Pass | Checked 246 files · Found 0 errors, 28 warnings: | < 10s |
-| MkDocs strict build | Blocking | ✅ Pass | Site built with no strict-mode warnings. | 10-120s |
+| Frontmatter schema | Blocking | ✅ Pass | Checked 249 files · Found 0 errors, 28 warnings: | < 10s |
+| MkDocs strict build | Blocking | ✅ Pass | [90m To disable this warning, set NO_MKDOCS_2_WARNING=1.[0m | 10-120s |
 | App and Infra impact classifier tests | Blocking | ✅ Pass | OK | < 10s |
 | Workflow YAML duplicate keys | Blocking | ✅ Pass | OK | < 10s |
 | Guarded Azure E2E contracts | Blocking | ✅ Pass | OK | < 10s |
 | Validation freshness calculation | Blocking | ✅ Pass | OK | < 10s |
 | Tutorial validation contract | Blocking | ✅ Pass | Tutorial validation contract: PASS | < 10s |
-| Retained Golden package immutability | Blocking | ✅ Pass | Retained Golden package immutability: PASS | < 10s |
-| Golden evidence contracts | Blocking | ✅ Pass | OK | 10-120s |
+| Retained Golden package immutability | Blocking | ❌ Fail | Exit code 0, no output. | < 10s |
+| Golden evidence contracts | Blocking | ❌ Fail | FAILED (errors=93) | 10-120s |
 | Absorbed evidence predicates | Blocking | ✅ Pass | undeclared absorbed predicates: 0 (declared: 0, stale: 0) | < 10s |
 | Shell script syntax | Blocking | ✅ Pass | All shell scripts parse. | < 10s |
-| ShellCheck | Blocking | ➖ Skipped | Executable `shellcheck` is not on PATH. | < 10s |
+| ShellCheck | Blocking | ✅ Pass | ShellCheck reported no findings. | < 10s |
 | Node.js dependency audit | Blocking | ✅ Pass | found 0 vulnerabilities | < 10s |
-| Node.js app tests | Blocking | ➖ Skipped | `apps/nodejs/node_modules` does not exist. | < 10s |
+| Node.js app tests | Blocking | ✅ Pass | ℹ tests 3 · ℹ pass 3 · ℹ fail 0 | < 10s |
 | Node.js production install | Blocking | ✅ Pass | Production tree resolved from the lockfile. | < 10s |
-| Node.js container smoke | Blocking | ➖ Skipped | Network gate; re-run with --include-network. | < 10s |
+| Node.js container smoke | Blocking | ✅ Pass | Container smoke passed: /health returned 200 and sshd is running. | 10-120s |
 | Python app compile | Blocking | ✅ Pass | All modules compiled. | < 10s |
-| Python app tests | Blocking | ➖ Skipped | Python module `pytest` is not importable; Python module `flask` is not importable. | < 10s |
-| .NET app build | Blocking | ➖ Skipped | Executable `dotnet` is not on PATH. | < 10s |
-| Java app tests | Blocking | ➖ Skipped | Executable `mvn` is not on PATH. | < 10s |
-| Bicep template build | Blocking | ✅ Pass | Bicep templates built: 40 · Bicep parameter files built: 9 | > 120s |
+| Python app tests | Blocking | ✅ Pass | collected 4 items | < 10s |
+| .NET app build | Blocking | ✅ Pass | Time Elapsed 00:00:10.31 | 10-120s |
+| Java app tests | Blocking | ✅ Pass | WARNING: Dynamic loading of agents will be disallowed by default in a future release | < 10s |
+| Bicep template build | Blocking | ✅ Pass | Bicep templates built: 40 · Bicep parameter files built: 9 | 10-120s |
 
 <!-- golden-status:results:end -->
 
@@ -172,13 +172,8 @@ Generated from the `GATES` registry in `scripts/generate_golden_status.py`. CI f
 
 ## Known Gaps
 
-- **Microsoft Learn URL reachability** did not run here: Network gate; re-run with --include-network.
-- **ShellCheck** did not run here: Executable `shellcheck` is not on PATH.
-- **Node.js app tests** did not run here: `apps/nodejs/node_modules` does not exist.
-- **Node.js container smoke** did not run here: Network gate; re-run with --include-network.
-- **Python app tests** did not run here: Python module `pytest` is not importable; Python module `flask` is not importable.
-- **.NET app build** did not run here: Executable `dotnet` is not on PATH.
-- **Java app tests** did not run here: Executable `mvn` is not on PATH.
+- **Retained Golden package immutability** is blocking and failed in this snapshot: Exit code 0, no output.
+- **Golden evidence contracts** is blocking and failed in this snapshot: FAILED (errors=93)
 
 ## How to Regenerate
 
