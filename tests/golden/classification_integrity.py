@@ -32,10 +32,11 @@ def _environment_keys(value) -> set[str]:
 
 
 def _configuration_environment(documents: list[dict]) -> dict:
-    """Read configuration fields verbatim; linuxFxVersion is populated only for Linux apps.
+    """Read configuration fields verbatim and infer the operating system from their signals.
 
-    Linux is recorded by reserved=true, kind containing linux, or nonempty
-    linuxFxVersion. Absent OS signals do not establish Windows.
+    Linux is inferred, not read, from reserved=true, a kind containing linux,
+    or a nonempty linuxFxVersion (Microsoft Learn defines linuxFxVersion as the
+    Linux app framework and version). Absent signals do not establish Windows.
     """
     documents = [part for doc in documents for part in (doc, doc.get("siteConfig", {}))]
     keys = {"sku": ("sku", "skuAtStart", "skuAtEnd"), "runtime": ("linuxFxVersion",),
