@@ -111,6 +111,12 @@ Experiment --collects--> Evidence --> Assertion --> Hypothesis
   independence claim. If evidence is absent, record the appropriate unknown,
   blocked, not-run, or not-tested state.
 
+## Pull Request Descriptions
+
+Follow [CONTRIBUTING.md](CONTRIBUTING.md#writing-pr-descriptions) when drafting PRs.
+Write concise summaries and actual validation, while preserving Golden evidence,
+mandatory metadata headings, and independent review and image/PII requirements.
+
 ## Work and Completion Behavior
 
 - Work issue-first. Preserve acceptance criteria, out-of-scope statements,
