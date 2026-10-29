@@ -168,6 +168,27 @@ Exit `0` requires both results to be `REPRODUCED`. An attempt that never
 happened is recorded as `NOT_ATTEMPTED` on both axes rather than omitted,
 so the gap is visible in the repository instead of inferred from absence.
 
+### Refusals and limits
+
+For retained human run packages, the checker refuses:
+
+- Identical `observations` re-wrapped with different run, resource, capture-time,
+  or provenance metadata. Nested probe timestamps remain observations.
+- Missing `cleanup.json`, a mismatched cleanup `run_id`, or cleanup that does
+  not declare `cleanup_verified: true` and `final_group_exists: false`, consistent
+  with `provenance.cleanup_verified: true`.
+- A replay whose manifest `captured_at` predates or equals the original's instant,
+  or whose capture time is not a valid timezone-aware date-time.
+- Operator display names or attestation logins that collide after trimming
+  surrounding whitespace and case-folding.
+
+These are consistency checks, not proof of independent collection. They cannot
+detect fabricated-but-distinct evidence. Identity is only as reliable as the
+external attestation verifier; the CLI supplies none, so otherwise valid human
+records remain `ATTESTATION_UNVERIFIED` there. A clean record cannot prove that
+no hidden guidance was given. A genuinely different human and separately
+collected raw evidence remain required.
+
 ### Local Golden test dependencies
 
 Create an isolated environment and install the same Python dependencies as CI:
