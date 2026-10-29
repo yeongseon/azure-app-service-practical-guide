@@ -514,7 +514,7 @@ Inspect:
 
 ### 3.8 Query HTTP logs in Log Analytics
 
-The `Networking` blade is the Portal anchor for DNS-resolution failures. `Outbound DNS` shows whether the app resolves through the Azure-provided resolver or a custom resolver, and `Virtual network integration` shows whether outbound traffic traverses a VNet at all. Without VNet integration and a linked private DNS zone, a private endpoint name resolves to its public address, so check this blade before changing application code. The toolbar `Troubleshoot` button opens the networking detector that walks the same diagnosis.
+The `Networking` blade is the Portal configuration anchor for DNS-resolution failures: `Outbound DNS` and `Virtual network integration` display configured settings. The blade displays configuration, not the observed resolution path [Not Proven by the blade]. [Documented] Without VNet integration and custom DNS configuration, App Service uses Azure DNS; with integration it inherits VNet DNS unless app-level `dnsConfiguration.dnsServers` or DNS app settings override or append to that list ([App Service name resolution](https://learn.microsoft.com/en-us/azure/app-service/overview-name-resolution)). On the direct Azure-provided path, private-zone resolution depends on matching records and a link to the query-origin VNet; custom DNS can instead supply records or use forwarding/Azure DNS Private Resolver ([private endpoint DNS](https://learn.microsoft.com/en-us/azure/private-link/private-endpoint-dns)). [Observed] In the retained 2026-10-02 run (Section 4.13), the VNet-integrated app using the default resolver path returned a public address while the zone was unlinked, then the private endpoint address after linking. That result is scoped to that run, not every resolver/topology. Check configuration before changing code, but establish lookup results with `/resolve` or `nslookup`/`dig` from the app container, correlate resolver configuration and query logs or a trace to identify upstream forwarding, and test connectivity separately with `/connect`. The toolbar `Troubleshoot` button opens the networking detector that walks the same diagnosis.
 
 ```kusto
 AppServiceHTTPLogs
@@ -1070,6 +1070,7 @@ az group delete --name "$RG" --yes --no-wait
 
 ## Sources
 
+- [Name resolution in App Service](https://learn.microsoft.com/en-us/azure/app-service/overview-name-resolution)
 - [Integrate your app with an Azure virtual network](https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration)
 - [Azure App Service networking features](https://learn.microsoft.com/en-us/azure/app-service/networking-features)
 - [Name resolution for resources in Azure virtual networks](https://learn.microsoft.com/en-us/azure/virtual-network/virtual-networks-name-resolution-for-vms-and-role-instances)
