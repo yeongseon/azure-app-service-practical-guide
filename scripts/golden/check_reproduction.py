@@ -203,7 +203,7 @@ def classify_reproduction(
         return "NOT_ATTEMPTED"
     if record["replay_run_id"] == record["original_run_id"]:
         return "NOT_INDEPENDENT"
-    if record["reviewer"] == record["original_operator"]:
+    if record["reviewer"].strip().casefold() == record["original_operator"].strip().casefold():
         return "NOT_INDEPENDENT"
     if record["reviewer_kind"] != "human" or record["original_operator_kind"] != "human":
         return "NOT_INDEPENDENT"
@@ -217,9 +217,9 @@ def classify_reproduction(
         attestation.get("original_operator_login"),
         attestation.get("pr_author_login"),
     )
-    if not all(isinstance(value, str) and value for value in identities):
+    if not all(isinstance(value, str) and value.strip() for value in identities):
         return "NOT_INDEPENDENT"
-    if len({value.casefold() for value in identities}) != len(identities):
+    if len({value.strip().casefold() for value in identities}) != len(identities):
         return "NOT_INDEPENDENT"
     if attestation_verifier is None or not attestation_verifier(attestation):
         return "ATTESTATION_UNVERIFIED"
@@ -259,6 +259,12 @@ def _load_run(run_id: str) -> tuple[dict, dict, dict]:
         raise ReproductionError(f"retained run has no verified recovery: {run_id}")
     if provenance.get("scenario") is None or provenance.get("cleanup_verified") is not True:
         raise ReproductionError(f"retained run lacks cleanup provenance: {run_id}")
+    cleanup = _read_json(directory / "cleanup.json")
+    if (not isinstance(cleanup, dict)
+            or cleanup.get("run_id") != run_id
+            or cleanup.get("cleanup_verified") is not True
+            or cleanup.get("final_group_exists") is not False):
+        raise ReproductionError(f"retained run lacks verified cleanup record: {run_id}")
     digests = provenance.get("digests")
     if not isinstance(digests, dict):
         raise ReproductionError(f"retained run lacks artifact digests: {run_id}")
@@ -298,6 +304,16 @@ def classify_documentation(record: dict) -> str:
     return "REPRODUCED"
 
 
+def _capture_time(value: str) -> datetime.datetime:
+    try:
+        captured = datetime.datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError as exc:
+        raise ReproductionError("captured_at must be a timezone-aware date-time") from exc
+    if captured.tzinfo is None or captured.utcoffset() is None:
+        raise ReproductionError("captured_at must be a timezone-aware date-time")
+    return captured
+
+
 def check(path, attestation_verifier: Callable[[dict], bool] | None = None) -> dict:
     """Read and check one reproduction record."""
     path = pathlib.Path(path)
@@ -321,8 +337,10 @@ def check(path, attestation_verifier: Callable[[dict], bool] | None = None) -> d
             raise ReproductionError("reproduction scenario disagrees with retained run provenance")
         if not resources_are_independent(original_manifest, replay_manifest):
             raise ReproductionError("runs are not resource-independent")
-        if original_evidence == replay_evidence:
+        if original_evidence["observations"] == replay_evidence["observations"]:
             raise ReproductionError("replay reuses the original raw evidence")
+        if _capture_time(replay_manifest["captured_at"]) <= _capture_time(original_manifest["captured_at"]):
+            raise ReproductionError("replay captured_at must be later than original captured_at")
         if replay_result.get("hypothesis_status") != record["replay_hypothesis_status"]:
             raise ReproductionError("replay status disagrees with the retained result")
         if original_result.get("hypothesis_status") != record["original_hypothesis_status"]:

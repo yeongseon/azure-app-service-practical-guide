@@ -272,7 +272,8 @@ class RunPackageMutationTests(unittest.TestCase):
              cleanup_verified=True):
         directory = self.runs / run_id
         directory.mkdir()
-        captured = "2026-09-27T03:00:00Z"
+        captured = ("2026-09-27T04:00:00Z" if run_id == "replay"
+                    else "2026-09-27T03:00:00Z")
         manifest = {
             "run_id": run_id,
             "resource_id": f"/subscriptions/<subscription-id>/resourceGroups/{resource_group}/providers/Microsoft.Web/sites/{app_name}",
@@ -294,7 +295,8 @@ class RunPackageMutationTests(unittest.TestCase):
         }
         evidence = {"run_id": run_id, "resource_id": manifest["resource_id"],
                     "captured_at": captured,
-                    "observations": {"status": status, "cause": True, "recovery": 200}}
+                    "observations": {"status": status, "cause": True, "recovery": 200,
+                                     "probe_captured_at": captured}}
         (directory / "manifest.json").write_text(json.dumps(manifest))
         (directory / "evidence.json").write_text(json.dumps(evidence))
         result = repro.evaluator.evaluate(directory)
@@ -308,6 +310,14 @@ class RunPackageMutationTests(unittest.TestCase):
             },
         }
         (directory / "provenance.json").write_text(json.dumps(provenance))
+        (directory / "cleanup.json").write_text(json.dumps({
+            "run_id": run_id,
+            "cleanup_started_at": captured,
+            "cleanup_completed_at": captured,
+            "runner_cleanup_status": "VERIFIED" if cleanup_verified else "FAILED",
+            "final_group_exists": not cleanup_verified,
+            "cleanup_verified": cleanup_verified,
+        }))
 
     def _record(self, **overrides):
         value = record(original_run_id="original", replay_run_id="replay")
