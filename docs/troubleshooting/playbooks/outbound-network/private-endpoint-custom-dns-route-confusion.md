@@ -91,7 +91,7 @@ For this incident class, prove DNS answer, route path, and policy allowance inde
 
 #### Portal view
 
-The App Service **Networking** blade is the single control panel that separates the three layers this playbook keeps apart — DNS answer, route path, and policy allowance. Rather than read it as one screenshot, walk it as an ordered trail. See [Section 10 — Portal Evidence](#10-portal-evidence) for the step-by-step diagnostic walk of this blade, keyed to each card in the order you should verify it.
+The App Service **Networking** blade provides configuration context for the three layers this playbook keeps apart: DNS answer, route path, and policy allowance. It does not measure those layers for an app request. See [Section 10 — Portal Evidence](#10-portal-evidence) for the ordered configuration checks and the separate runtime evidence needed.
 
 ### Investigation Notes
 - Always validate from inside Linux App Service runtime; external resolver behavior is not authoritative.
@@ -514,7 +514,7 @@ AppServiceConsoleLogs
 
 ## 10. Portal Evidence
 
-This section walks the App Service **Networking** blade **in diagnostic order**, as a *step-by-step* trail rather than a single blade read. All four steps below read different cards of the **same** capture — the blade is one screen, but the diagnostic value comes from reading its cards in the order that separates a DNS problem (H1/H2) from a route problem (H3) from a policy/stale-state problem (H4). The capture is a real, PII-cleaned Azure Portal screenshot from a Linux App Service; the inbound/outbound IP values shown are RFC-5737 (`192.0.2.x`) and RFC-3849 (`2001:db8::`) documentation ranges, not real addresses.
+This section walks the App Service **Networking** blade **in diagnostic order**. All four steps read different cards of the **same** capture from a Linux public app without VNet integration. The blade displays configuration, not the observed resolution path [Not Proven by this capture]. Use the cards to form DNS (H1/H2), route (H3), or policy/stale-state (H4) hypotheses. Establish lookup results with the app's `/resolve` payload or `nslookup`/`dig` from its container; identifying an upstream resolver behind a local listener also needs resolver configuration and query logs or a trace. Use separate `/connect` or TCP/HTTP evidence for reachability (Sections 5–6). The capture is PII-cleaned; its inbound/outbound IP values are RFC-5737 (`192.0.2.x`) and RFC-3849 (`2001:db8::`) documentation ranges, not real addresses.
 
 [[[ shot("operations--networking--01-networking-hub") ]]]
 
@@ -526,25 +526,25 @@ Expected result: This capture shows the displayed configuration of a public app 
 
 ### Step 1 — Confirm the integration prerequisite: `Outbound traffic configuration > Virtual network integration`
 
-Purpose: Before DNS or routes can matter, the app must actually egress *through* the integration VNet — otherwise private DNS zones linked to that VNet are never consulted and the private endpoint is unreachable by design.
+Purpose: Check integration for the intended VNet-based private path, without conflating DNS answers with connectivity. [Documented] App Service inherits VNet DNS configuration when integrated; direct Azure-provided private-zone resolution depends on a zone link to the query-origin VNet. Custom resolvers can change that DNS topology ([App Service name resolution](https://learn.microsoft.com/en-us/azure/app-service/overview-name-resolution), [private endpoint DNS](https://learn.microsoft.com/en-us/azure/private-link/private-endpoint-dns)).
 Look for: The **Outbound traffic configuration** column, **Virtual network integration** row.
-Expected result: For any private-endpoint dependency, this must name an integration subnet. The captured `Not configured` state means the app egresses over the **public** path by default — without VNet integration the app does not use Private DNS zones linked to the integration VNet, so the `privatelink.*` private-IP answer is not returned and the private endpoint path stays unreachable regardless of zone or route configuration.
-Abnormal: `Not configured` while the dependency is expected over a private endpoint supports an H1/H2 finding at the routing prerequisite level — fix VNet integration first, then re-verify DNS. Only once integration is configured should you read Step 2.
-Next step: Read the **Outbound DNS** row to establish which resolver answers the app's lookups.
+Expected result: A design that relies on the integration subnet should display its binding. [Observed] This capture instead displays `Not configured`. [Documented] Without integration and custom DNS configuration, App Service uses Azure DNS ([name resolution guidance](https://learn.microsoft.com/en-us/azure/app-service/overview-name-resolution)). This is not a measured DNS answer or connectivity result: a custom resolver may return a private address, but that answer alone does not establish a usable network path.
+Abnormal: `Not configured` conflicts with an intended integration-subnet path; check the intended topology and integration binding. Do not assign H1/H2 or declare connectivity impossible from this row alone; inspect DNS configuration even before integration is configured.
+Next step: Read the **Outbound DNS** row as resolver configuration context, then collect in-app lookup evidence.
 
 ### Step 2 — Establish the resolver path: `Outbound traffic configuration > Outbound DNS`
 
-Purpose: Decide whether the app resolves through Azure-provided DNS (which returns private zone records only when zones are linked to the integration VNet) or a custom resolver (which bypasses Azure DNS and must forward `privatelink.*` itself).
+Purpose: Distinguish the configured Azure-provided DNS context from custom-resolver and app-override possibilities; confirm the actual answer from the app rather than the label.
 Look for: The **Outbound DNS** row.
-Expected result: `Default (Azure-provided)` — the value shown in this capture — returns the private endpoint's private IP **only if** the matching `privatelink.*` Private DNS zone is linked to the integration VNet; a custom-resolver value means an enterprise resolver decides the answer and must conditionally forward the `privatelink.*` zones to Azure DNS `168.63.129.16`. Confirm the live value on your own blade rather than assuming a specific label string.
-Abnormal: The captured `Default (Azure-provided)` state combined with a public-IP resolution result (see Section 5, `/resolve`) points to a missing zone link — an **H1** finding. A custom-resolver value that cannot resolve the `privatelink.*` chain is an **H2** finding.
-Next step: Read the **Integration subnet configuration** card to rule out a route or policy block on the path to the private IP.
+Expected result: [Observed] This capture displays `Default (Azure-provided)`. [Documented] Direct Azure-provided resolution needs the matching private-zone record and a link to the VNet the queries come from (the integration VNet when DNS is inherited directly). A custom resolver can forward the relevant zones through Azure DNS with the appropriate VNet links, use Azure DNS Private Resolver, or host the records itself. Follow the service's **Public DNS zone forwarders** column rather than requiring `privatelink.*` forwarding to `168.63.129.16` in every topology ([private endpoint DNS](https://learn.microsoft.com/en-us/azure/private-link/private-endpoint-dns)). Also inspect `dnsConfiguration.dnsServers`, `WEBSITE_DNS_SERVER`, and `WEBSITE_DNS_ALT_SERVER`: site properties override app settings, and the alternative server appends to explicit or inherited servers ([App Service name resolution](https://learn.microsoft.com/en-us/azure/app-service/overview-name-resolution)). The row does not establish those settings or which resolver answered.
+Abnormal: An in-app public-IP answer keeps **H1** open if direct Azure-provided private resolution is intended; check zone links and records. Wrong custom-resolver answers or unintended overrides keep **H2** open. [Documented] DNS resolution and access control are independent: a public lookup neither proves private-endpoint attachment nor grants access, and disabled public network access rejects the connection regardless of DNS ([private endpoint DNS](https://learn.microsoft.com/en-us/azure/private-link/private-endpoint-dns)).
+Next step: Read the **Integration subnet configuration** card for policy context, then test the private-IP connection from the app.
 
 ### Step 3 — Rule out route/policy interference: `Integration subnet configuration` (NSG / User defined route)
 
 Purpose: Even with a correct private IP answer, a route table or NSG on the integration subnet can steer or block traffic to the dependency's private IP — this is the H3 (route confusion) / H4 (blocked path) layer.
 Look for: The **Integration subnet configuration** card — the **Network security group** and **User defined route** rows (and **NAT gateway**, which affects public egress).
-Expected result: For a direct private path, no UDR should redirect the dependency's private IP to an NVA/firewall that denies it, and no NSG rule should block the destination port. The captured `N/A` values indicate no route table or NSG is attached (consistent with the `Not configured` integration state from Step 1).
+Expected result: For the intended private path through an integration subnet, routes and policy need to permit the dependency's IP/port. [Observed] The captured **User defined route** and **Network security group** rows display `N/A`, alongside `Not configured` integration. [Not Proven] These placeholders neither inventory subnet attachments elsewhere nor identify the route table/NSG governing traffic. Inspect the actual subnet attachments and effective routes/rules, then test connectivity from the app.
 Abnormal: A UDR whose next hop is a firewall that denies the private IP/port, or an NSG deny rule, supports an **H3/H4** finding — validate with effective routes and `nc`/`curl` from inside the app (Section 6, H3/H4).
 Next step: Confirm you are not misreading an inbound control as an outbound one (Step 4).
 
@@ -569,6 +569,7 @@ Abnormal: Concluding "outbound is broken because inbound private endpoints is 0"
 - [DNS Resolution (VNet-integrated App Service)](dns-resolution-vnet-integrated-app-service.md)
 
 ## Sources
+- [Name resolution in App Service](https://learn.microsoft.com/en-us/azure/app-service/overview-name-resolution)
 - [Azure Private Endpoint DNS configuration](https://learn.microsoft.com/en-us/azure/private-link/private-endpoint-dns)
 - [Integrate your app with an Azure virtual network](https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration)
 - [Azure App Service networking features](https://learn.microsoft.com/en-us/azure/app-service/networking-features)
