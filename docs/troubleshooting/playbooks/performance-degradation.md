@@ -177,7 +177,7 @@ AppServiceHTTPLogs
 | `Requests` | `6200` | Shows whether demand increased materially. |
 | `Errors` | `180` | Rising errors with rising latency suggest saturation or dependency failure. |
 | `P95` | `2800` | Main symptom metric for user pain. |
-| `P99` | `9200` | Tail latency helps isolate queueing and severe outliers. |
+| `P99` | `9200` | Tail latency characterizes severe outliers; it does not by itself prove queueing or any other cause. See [Tail Latency and Matched Baselines](performance/tail-latency-baseline-comparison.md). |
 
 !!! tip "How to Read This"
     If request volume is flat but latency jumps, suspect regression, resource contention, or dependency delays before assuming traffic surge.

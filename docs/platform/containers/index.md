@@ -69,7 +69,7 @@ App Service supports custom containers on both Linux and Windows. The two hostin
 | Image format | OCI / Docker Linux | Windows Server Core / Nano Server |
 | Sidecar support | Up to 9 sidecar containers per app | Not supported |
 | Registry auth | Managed identity (recommended), credentials | Managed identity (recommended); service principal no longer supported |
-| Persistent storage | `/home` directory, Azure Files mount | `C:\home` directory |
+| Persistent storage | `/home` directory only when `WEBSITES_ENABLE_APP_SERVICE_STORAGE` is `true` (disabled by default), or an Azure Files mount | `C:\home` directory (enabled by default) |
 | SSH access | Built-in SSH support available | Not available |
 
 !!! warning "Service principal auth for Windows containers is retired"
@@ -374,7 +374,7 @@ az webapp config appsettings set \
 | Non-ACR registry credentials | Store as app settings; never hardcode in Dockerfile or application code |
 | Network-protected registry | Use VNet integration + `vnetImagePullEnabled` instead of exposing registry to the public internet |
 | Windows containers | Service principal auth is retired; migrate to managed identity |
-| Persistent storage | Do not write persistent data to the container filesystem; use the `/home` directory or Azure Files |
+| Persistent storage | Do not write persistent data to the container filesystem; use an Azure Files mount, or `/home` only after confirming `WEBSITES_ENABLE_APP_SERVICE_STORAGE` is `true` for a Linux container (see [Platform Limits: Storage and File System](../../reference/platform-limits.md#storage-and-file-system)) |
 
 ## See Also
 

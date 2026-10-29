@@ -75,11 +75,14 @@ content_validation:
     - claim: "Outbound IPs change when scaling the App Service Plan, migrating to a different scale unit, or enabling VNet Integration."
       source: "https://learn.microsoft.com/en-us/azure/app-service/overview-inbound-outbound-ips"
       verified: true
-    - claim: "Creating a Private Endpoint assigns a private IP but does not automatically disable the public endpoint."
-      source: "https://learn.microsoft.com/en-us/azure/app-service/networking/private-endpoint"
+    - claim: "When publicNetworkAccess is unset (null), default-endpoint access is enabled unless a private endpoint exists, which disables it; an explicit Enabled value keeps default-endpoint access on."
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-access-restrictions"
       verified: true
     - claim: "With Route All enabled, the source IP of outbound traffic is still one of the app's listed outbound IPs unless a NAT gateway or firewall performs SNAT in the path."
       source: "https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration"
+      verified: true
+    - claim: "Microsoft Learn recommends the outboundVnetRouting.allTraffic site property to route all outbound traffic through the virtual network integration, and the legacy vnetRouteAllEnabled site setting and WEBSITE_VNET_ROUTE_ALL app setting are still supported for backward compatibility."
+      source: "https://learn.microsoft.com/en-us/azure/app-service/configure-vnet-integration-routing"
       verified: true
     - claim: "Connectivity to global Azure Storage can fail for VNet-integrated apps when Route All is enabled and the app does not use service endpoints, private endpoints, or UDRs, because traffic falls back to the default internet route."
       source: "https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration"
@@ -116,7 +119,7 @@ graph TD
 
 [[[ shot("platform--networking--01-networking-blade") ]]]
 
-The Networking blade separates App Service networking into the two planes operators actually manage: ingress and egress. On the inbound side, `Public network access`, `Access restriction status`, and `Private endpoints` tell you whether requests arrive over an open public edge, rule-filtered access path, or Private Link. On the outbound side, `Virtual network integration` and the listed `Outbound addresses` show how the app reaches downstream resources, which is the core distinction behind VNet integration versus private inbound publishing.
+The Networking blade separates App Service networking into the two planes operators actually manage: ingress and egress. On the inbound side, `Public network access`, `Access restriction status`, and `Private endpoints` display the configured inbound posture: an open public edge, a rule-filtered access path, or Private Link. Configuration alone does not establish which path a particular request actually used. On the outbound side, `Virtual network integration` shows whether outbound VNet routing is configured, and the listed `Outbound addresses` are the platform's potential outbound address pool rather than a measured egress address; an observed egress address needs evidence from the app itself. This is the core distinction behind VNet integration versus private inbound publishing.
 
 ### Inbound traffic controls
 
@@ -409,9 +412,46 @@ Example output (PII masked):
 
     Always allowlist all addresses from `possibleOutboundIpAddresses`, not just the currently active set.
 
+#### Outbound VNet routing properties
+
+Which outbound traffic enters the integration subnet is controlled by routing properties on the site resource, not only by an app setting. **[Documented]** Microsoft Learn recommends `outboundVnetRouting.allTraffic` for routing all traffic, because it can be audited with a built-in policy. The legacy `vnetRouteAllEnabled` site setting and the `WEBSITE_VNET_ROUTE_ALL` app setting (which configure application routing) are **still supported** for backward compatibility, so existing configurations that use them are not wrong.
+
+| Property (`properties.outboundVnetRouting.*`) | Routes through the integration | Legacy equivalent that is still supported |
+| :--- | :--- | :--- |
+| `allTraffic` (recommended) | All outbound traffic: application traffic and configuration traffic (image pulls, content share, backups, managed identity token acquisition). | none as a single setting: the legacy route-all flags configure application routing only, and configuration routing had its own legacy settings (rows below) |
+| `applicationTraffic` | Only traffic your app generates after it starts; configuration traffic keeps using the public route unless set individually. The portal's **Outbound internet traffic** checkbox sets this property. | `vnetRouteAllEnabled`, `WEBSITE_VNET_ROUTE_ALL` (Learn describes the app setting as the way to configure application routing; the ARM reference says the property was previously called `VnetRouteAllEnabled`) |
+| `imagePullTraffic` | Container image pulls. | `vnetImagePullEnabled`, `WEBSITE_PULL_IMAGE_OVER_VNET=true` |
+| `contentShareTraffic` | Content share access. Firewalls and NSGs on the subnet must allow ports 443 and 445. | `vnetContentShareEnabled`, `WEBSITE_CONTENTOVERVNET=1` |
+| `backupRestoreTraffic` | Backup and restore traffic. Database backup is not supported over the integration. | `vnetBackupRestoreEnabled` |
+| `managedIdentityTraffic` | Requests to acquire Microsoft Entra tokens for managed identities. | none documented |
+
+`allTraffic=true` already routes all configuration traffic, so the individual configuration properties are needed only when you want application traffic plus selected configuration components. The legacy route-all flags alone do not route configuration traffic. When both a site property and an app setting exist, the site property overrides the app setting. The portal cannot set `allTraffic`; use the Azure CLI or an ARM/Bicep template. For a Linux app that pulls its image or reads its content share over the VNet, set the matching property or `allTraffic`; the storage-specific consequences are in [Storage connectivity](storage-connectivity.md#layer-2-routing), and the operational procedure is in [Networking operations](../operations/networking.md).
+
+To inspect what a site declares, read the unprojected resource at an API version that includes the properties (the ARM reference lists them under `2025-03-01`) and look at `properties.outboundVnetRouting` and the legacy `vnetRouteAllEnabled`:
+
+```bash
+az resource show \
+  --ids "$APP_RESOURCE_ID" \
+  --api-version 2025-03-01 \
+  --output json
+```
+
+| Command/Parameter | Purpose |
+|---|---|
+| `az resource show` | Reads the site resource without changing it. |
+| `--ids "$APP_RESOURCE_ID"` | Selects the exact production site or slot resource ID. |
+| `--api-version 2025-03-01` | Pins an API version that defines `outboundVnetRouting`, and records which version produced the answer. |
+| `--output json` | Returns the full structure so an absent property is visible as absent. |
+
+An absent property is **UNKNOWN**, not `false`: an older API version, or a property that was never set, returns no value, and a projection can invent a null.
+
+**What the property proves.** It states the routing the site is *configured* to apply. It does not prove that a name resolves to the expected address, that a Network Security Group, route table or firewall allows the destination, which source IP a destination sees (see below), or that a private endpoint is reachable. Prove those separately: the DNS answer as the app resolves it, the effective routes and policies on the integration subnet, and a connection test from the app. The existing playbooks cover them: [SNAT or application issue](../troubleshooting/playbooks/outbound-network/snat-or-application-issue.md), [DNS resolution for VNet-integrated apps](../troubleshooting/playbooks/outbound-network/dns-resolution-vnet-integrated-app-service.md) and [private endpoint custom DNS and route confusion](../troubleshooting/playbooks/outbound-network/private-endpoint-custom-dns-route-confusion.md).
+
+**Evidence that contradicts a naive reading.** With all-traffic routing off, private (RFC 1918) traffic and traffic to service endpoints configured on the integration subnet still enter the virtual network, so a private destination can work while the property is `false`. With it on, traffic is subject to network routing only if it is actually sent through the integration, and for public internet egress the source IP does not change unless a NAT gateway or firewall performs it (next section). Inbound private endpoints, VNet egress, a NAT gateway or firewall path and service endpoints are four different mechanisms: enabling one does not establish another.
+
 #### Outbound IP behavior with VNet Integration
 
-When VNet Integration is enabled with `WEBSITE_VNET_ROUTE_ALL=1` (Route All), outbound traffic is **routed** into the delegated integration subnet, where it becomes subject to the subnet's NSGs and route tables. Routing alone does **not** change your app's source IP. Per Microsoft Learn, when outbound internet traffic routing is enabled, the source address of outbound traffic is still one of the IPs listed in the app's properties (`possibleOutboundIpAddresses`) — unless a service that performs SNAT sits in the path:
+When routing of all outbound internet traffic is enabled (application routing: `outboundVnetRouting.applicationTraffic` or the legacy `WEBSITE_VNET_ROUTE_ALL=1` that Learn still supports, or `outboundVnetRouting.allTraffic`, which also routes configuration traffic; "Route All"), outbound traffic is **routed** into the delegated integration subnet, where it becomes subject to the subnet's NSGs and route tables. Routing alone does **not** change your app's source IP for public internet egress (a private destination can see an integration-subnet address). Per Microsoft Learn, when outbound internet traffic routing is enabled, the source address of outbound traffic is still one of the IPs listed in the app's properties (`possibleOutboundIpAddresses`) — unless a service that performs SNAT sits in the path:
 
 | Egress configuration | Effective source IP seen by the destination |
 |---|---|
@@ -507,14 +547,14 @@ Example output:
 ]
 ```
 
-!!! warning "Private Endpoint does not remove the public IP"
-    Creating a Private Endpoint assigns a private IP but does **not** automatically disable the public endpoint. To fully restrict inbound access to private clients only:
+!!! warning "A Private Endpoint and public access are separate settings"
+    A Private Endpoint adds a private inbound path. Whether the default endpoint is still reachable depends on the raw `publicNetworkAccess` value, whether a private endpoint exists, and the main and SCM access restrictions. When the property is unset and a private endpoint exists, the documented default is disabled; an explicit `Enabled` value keeps default-endpoint access on. To intend private-only access:
 
-    1. Create the Private Endpoint.
-    2. Add an access restriction to deny all public traffic (set a `Deny All` rule with lowest priority).
-    3. Validate resolution from inside the VNet returns the private IP.
+    1. Create the Private Endpoint and validate DNS, route and TLS from the actual private clients.
+    2. Record the raw `publicNetworkAccess` value, then set it deliberately through your change process. A `Deny All` access restriction rule is a different mechanism: it applies only to default-endpoint traffic, because site rules are not evaluated for private endpoint traffic.
+    3. Verify main and SCM separately, including a negative control against the default endpoint.
 
-    Skipping step 2 leaves the app reachable from the public internet even with a Private Endpoint active.
+    See [Private Endpoint and Access Restriction Decisions](../troubleshooting/playbooks/private-endpoint-access-restrictions.md) for the decision matrix and a staged cutover.
 
 ### Troubleshooting matrix
 

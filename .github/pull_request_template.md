@@ -3,11 +3,11 @@
 
 ## Summary
 
-<!-- What changes and why? -->
+<!-- Explain what changed and why in plain English. Avoid agent transcripts. -->
 
 ## Changes
 
-<!-- Concrete implementation and remaining scope. -->
+<!-- Focus on meaningful implementation, compatibility, and remaining work. -->
 
 ## Type of Change
 

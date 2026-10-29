@@ -235,7 +235,7 @@ Purpose: Show the app's inbound and outbound network configuration on one page.
 
 Look for: `Public network access` and `Private endpoints` under inbound traffic, and `Virtual network integration`, `Outbound DNS`, and the outbound address lists under outbound traffic.
 
-Expected result: This capture shows a public app without VNet integration, so outbound traffic uses the listed platform outbound addresses and the integration subnet settings show `N/A`.
+Expected result: This capture shows the displayed configuration of a public app without VNet integration: the listed outbound addresses are the platform's potential outbound address pool (not a measured egress address for any connection), and the integration subnet settings show `N/A`.
 
 This web-app `Networking` blade is a supporting before-state for the recipe rather than the place where the SQL, Redis, and Key Vault private endpoints themselves are listed. The visible `Virtual network integration: Not configured` row is the app-side prerequisite the recipe changes before private DNS for those backend services can work, while `Private endpoints: 0 private endpoints` also makes clear the screenshot is not showing downstream private endpoints attached to other resources. Use this capture as the pre-integration checkpoint before running the recipe's VNet and backend private-endpoint steps for the Node.js app.
 

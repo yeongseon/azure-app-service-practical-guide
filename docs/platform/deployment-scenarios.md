@@ -52,8 +52,8 @@ content_validation:
     - claim: "A VNet-integrated App Service app can access resources inside a virtual network and support private ingress by using private endpoints."
       source: "https://learn.microsoft.com/en-us/azure/app-service/networking-features"
       verified: true
-    - claim: "Adding a private endpoint does not automatically disable the public endpoint; you must explicitly disable public network access in the Networking settings to achieve full isolation."
-      source: "https://learn.microsoft.com/en-us/azure/app-service/networking-features"
+    - claim: "When publicNetworkAccess is unset (null), default-endpoint access is enabled unless a private endpoint exists, which disables it; an explicit Enabled value keeps default-endpoint access on."
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-access-restrictions"
       verified: true
     - claim: "The integration subnet must be delegated to `Microsoft.Web/serverFarms` and must be empty before configuration."
       source: "https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration"
@@ -174,7 +174,7 @@ graph TD
 
 ### Key Characteristics
 - **Regional VNet Integration:** Allows the app to access resources in a VNet (like SQL databases or Key Vaults with private endpoints).
-- **Private Endpoints:** Provides a private IP for ingress. **Note:** Adding a private endpoint does not automatically disable the public endpoint; you must explicitly disable public network access in the Networking settings to achieve full isolation.
+- **Private Endpoints:** Provides a private IP for ingress. **Note:** Whether the default endpoint stays reachable depends on `publicNetworkAccess`: when it is unset and a private endpoint exists the documented default is disabled, while an explicit `Enabled` value keeps it on. Set and verify it deliberately for the isolation you intend (see [Private Endpoint and Access Restriction Decisions](../troubleshooting/playbooks/private-endpoint-access-restrictions.md)).
 - **Outbound Traffic:** Can be routed through a NAT Gateway or Firewall for fixed outbound IPs (requires NAT Gateway on the integration subnet).
 
 ### Enabling VNet Integration

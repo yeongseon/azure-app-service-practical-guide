@@ -15,8 +15,8 @@ This page tracks `content_validation` metadata for **in-scope factual-claim docu
 
 | Content Type | Total | Verified | Pending | Unverified | No Metadata |
 |---|---:|---:|---:|---:|---:|
-| Mermaid Diagrams | 396 | 396 | 0 | 0 | 0 |
-| In-Scope Factual-Claim Documents | 84 | 84 | 0 | 0 | 0 |
+| Mermaid Diagrams | 398 | 398 | 0 | 0 | 0 |
+| In-Scope Factual-Claim Documents | 86 | 86 | 0 | 0 | 0 |
 
 !!! success "All In-Scope Documents Verified"
     Every in-scope factual-claim document has verified Microsoft Learn sources for its core claims.
@@ -24,7 +24,7 @@ This page tracks `content_validation` metadata for **in-scope factual-claim docu
 <!-- diagram-id: content-validation-status-pie -->
 ```mermaid
 pie title In-Scope Document Validation Status
-    "Verified" : 84
+    "Verified" : 86
 ```
 
 ## By Section
@@ -43,7 +43,7 @@ pie title In-Scope Document Validation Status
 | [Kudu Overview](../platform/kudu-overview.md) | ✅ | ✅ Verified | 5/5 | 2026-07-01 |
 | [Kudu Windows](../platform/kudu-windows.md) | ✅ | ✅ Verified | 4/4 | 2026-07-01 |
 | [Mtls](../platform/mtls.md) | ✅ | ✅ Verified | 4/4 | 2026-09-11 |
-| [Networking](../platform/networking.md) | ✅ | ✅ Verified | 10/10 | 2026-07-16 |
+| [Networking](../platform/networking.md) | ✅ | ✅ Verified | 11/11 | 2026-07-16 |
 | [Process Lifecycle And In Flight Work](../platform/process-lifecycle-and-in-flight-work.md) | ✅ | ✅ Verified | 5/5 | 2026-10-14 |
 | [Request Lifecycle](../platform/request-lifecycle.md) | ✅ | ✅ Verified | 5/5 | 2026-09-11 |
 | [Resource Relationships](../platform/resource-relationships.md) | ✅ | ✅ Verified | 5/5 | 2026-09-11 |
@@ -111,6 +111,7 @@ pie title In-Scope Document Validation Status
 | [Outbound Network](../troubleshooting/first-10-minutes/outbound-network.md) | ✅ | ✅ Verified | 2/2 | 2026-10-14 |
 | [Performance](../troubleshooting/first-10-minutes/performance.md) | ✅ | ✅ Verified | 2/2 | 2026-10-14 |
 | [Performance Degradation](../troubleshooting/playbooks/performance-degradation.md) | ✅ | ✅ Verified | 5/5 | 2026-09-11 |
+| [Private Endpoint Access Restrictions](../troubleshooting/playbooks/private-endpoint-access-restrictions.md) | ✅ | ✅ Verified | 5/5 | 2026-10-24 |
 | [Private Endpoint Custom Dns Route Confusion](../troubleshooting/playbooks/outbound-network/private-endpoint-custom-dns-route-confusion.md) | ✅ | ✅ Verified | 3/3 | 2026-10-02 |
 | [Quick Diagnosis Cards](../troubleshooting/quick-diagnosis-cards.md) | ✅ | ✅ Verified | 2/2 | 2026-10-14 |
 | [Scm Access Dns And Http Failures](../troubleshooting/playbooks/scm-access-dns-and-http-failures.md) | ✅ | ✅ Verified | 4/4 | 2026-10-24 |
@@ -122,6 +123,7 @@ pie title In-Scope Document Validation Status
 | [Ssl Certificate Issues](../troubleshooting/playbooks/ssl-certificate-issues.md) | ✅ | ✅ Verified | 5/5 | 2026-09-11 |
 | [Startup Availability](../troubleshooting/first-10-minutes/startup-availability.md) | ✅ | ✅ Verified | 2/2 | 2026-10-14 |
 | [Storage Connectivity Firewall Authorization](../troubleshooting/playbooks/outbound-network/storage-connectivity-firewall-authorization.md) | ✅ | ✅ Verified | 4/4 | 2026-07-16 |
+| [Tail Latency Baseline Comparison](../troubleshooting/playbooks/performance/tail-latency-baseline-comparison.md) | ✅ | ✅ Verified | 3/3 | 2026-10-16 |
 | [Troubleshooting Method](../troubleshooting/methodology/troubleshooting-method.md) | ✅ | ✅ Verified | 2/2 | 2026-09-11 |
 | [Warmup Vs Health Check](../troubleshooting/playbooks/startup-availability/warmup-vs-health-check.md) | ✅ | ✅ Verified | 3/3 | 2026-09-11 |
 | [Windows Container Health Probes](../troubleshooting/playbooks/startup-availability/windows-container-health-probes.md) | ✅ | ✅ Verified | 3/3 | 2026-09-11 |

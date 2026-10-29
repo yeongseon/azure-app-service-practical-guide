@@ -22,8 +22,8 @@ content_validation:
     - claim: "Enabling VNet Integration with route-all routes all outbound traffic through the VNet. The source IP remains one of the app's standard outbound IPs unless the integration subnet uses a NAT Gateway or routes traffic through a firewall or NVA."
       source: "https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration"
       verified: true
-    - claim: "Creating a Private Endpoint does not automatically block the public endpoint. To achieve private-only inbound access, disable public network access on the app or configure access restrictions as appropriate."
-      source: "https://learn.microsoft.com/en-us/azure/app-service/networking/private-endpoint"
+    - claim: "When publicNetworkAccess is unset (null), default-endpoint access is enabled unless a private endpoint exists, which disables it; an explicit Enabled value keeps default-endpoint access on."
+      source: "https://learn.microsoft.com/en-us/azure/app-service/overview-access-restrictions"
       verified: true
     - claim: "Azure Storage firewall grants access from a virtual network through service endpoints or private endpoints; when a service endpoint is used, the source address is the private subnet address, so public IP allowlist rules no longer apply to that traffic."
       source: "https://learn.microsoft.com/en-us/azure/storage/common/storage-network-security"
@@ -365,9 +365,9 @@ Purpose: Show the inbound access state before any access restriction is added.
 
 Look for: `Public network access` shows `Enabled (using default behavior)`, `Unmatched rule action` is `Allow`, and the only rule is `Allow all` with priority `2147483647`.
 
-Expected result: With no custom rules, the app is reachable from any source until you add rules or disable public network access.
+Expected result: With no custom rules, the displayed default-endpoint policy admits any source until you add rules or disable public network access. This is a configuration reading, not a measured reachability test.
 
-The Access Restrictions blade is where the layered inbound model described above is enforced. The visible default state shows the two most important behaviors this guide warns against assuming away: `Public network access` is `Enabled (using default behavior)` meaning the app is publicly reachable, and the implicit `Allow all` rule at priority `2147483647` with `Unmatched rule action: Allow` means that without any explicit rules, every source is permitted. The `Main site` and `Advanced tool site` tabs separate runtime traffic from SCM/Kudu management traffic — both must be hardened. After running the `az webapp config access-restriction add` command above with priority 100, the new `AllowCorp` rule should appear above the default `Allow all` row, and the `Unmatched rule action` should be flipped to `Deny` to convert the implicit allow-by-default posture into an explicit deny-by-default posture.
+The Access Restrictions blade is where the layered inbound model described above is enforced. The visible default state shows the two most important behaviors this guide warns against assuming away: `Public network access` is `Enabled (using default behavior)`, which is the portal wording for an unset property whose documented default is enabled when no private endpoint exists, and the implicit `Allow all` rule at priority `2147483647` with `Unmatched rule action: Allow` means that without any explicit rules the main-site policy admits every source on the default endpoint. This displays configuration; it does not show whether any client can reach the app. The `Main site` and `Advanced tool site` tabs separate runtime traffic from SCM/Kudu management traffic — both must be hardened. After running the `az webapp config access-restriction add` command above with priority 100, the new `AllowCorp` rule should appear above the default `Allow all` row, and the `Unmatched rule action` should be flipped to `Deny` to convert the implicit allow-by-default posture into an explicit deny-by-default posture.
 
 ### 7) Troubleshooting patterns to pre-plan
 
@@ -493,7 +493,7 @@ WEBSITE_VNET_ROUTE_ALL  1        False
 
 #### Inbound IP and Private Endpoint behavior
 
-Creating a Private Endpoint assigns a private IP from the endpoint subnet. The public inbound endpoint is not automatically disabled. For private-only inbound access, disable public network access on the app or apply access restrictions that enforce the intended exposure model.
+Creating a Private Endpoint assigns a private IP from the endpoint subnet. Whether the default (public) inbound endpoint stays reachable depends on the raw `publicNetworkAccess` value, whether a private endpoint exists, and the main and SCM access restrictions: when the property is unset and a private endpoint exists the documented default is disabled, while an explicit `Enabled` value keeps it on. For private-only inbound access, set and verify `publicNetworkAccess` deliberately. Site access restrictions are not evaluated for private endpoint traffic, so they constrain only the default endpoint while it stays enabled. See [Private Endpoint and Access Restriction Decisions](../troubleshooting/playbooks/private-endpoint-access-restrictions.md).
 
 Query the current inbound IP:
 
@@ -546,13 +546,15 @@ nslookup "$APP_NAME.azurewebsites.net"
 
 When run from a VM inside the VNet with the private DNS zone configured, the response resolves to the Private Endpoint IP (for example, `192.0.2.4`) instead of the public IP. The Private Endpoint IP was confirmed via `az network private-endpoint show` (koreacentral, 2026-05-01) and sanitized for publication.
 
-!!! warning "Private Endpoint does not automatically block public access"
-    After creating a Private Endpoint, the public endpoint remains reachable until you disable public network access on the app or apply access restrictions that enforce private-only inbound access. Complete the sequence:
+!!! warning "A Private Endpoint does not by itself prove public access is closed"
+    A Private Endpoint adds a private inbound path. Default-endpoint access depends on the raw `publicNetworkAccess` value, whether a private endpoint exists, and the main and SCM access restrictions: when the property is unset and a private endpoint exists the documented default is disabled, while an explicit `Enabled` value keeps it on. Complete the sequence:
 
     1. Create the Private Endpoint.
     2. Verify DNS resolves to the private IP from the target VNet.
-    3. Disable public network access on the app or add access restrictions that block unintended public inbound traffic.
-    4. Validate from public internet that access is denied according to the control you applied.
+    3. Record the raw `publicNetworkAccess` value and set it deliberately (Disabled for private-only access). If the default endpoint must stay enabled, add access restrictions that constrain it.
+    4. Validate main and SCM separately, with a negative control against the default endpoint.
+
+    If the default endpoint stays enabled, a rule like the following constrains only default-endpoint traffic; site rules are not evaluated for private endpoint traffic.
 
     ```bash
     az webapp config access-restriction add \
@@ -571,8 +573,8 @@ When run from a VM inside the VNet with the private DNS zone configured, the res
     | `--name "$APP_NAME"` | Applies the deny rule to this web app. |
     | `--rule-name "DenyPublic"` | Names the rule that blocks public sources. |
     | `--action Deny` | Rejects traffic that matches the specified source range. |
-    | `--ip-address 0.0.0.0/0` | Matches all IPv4 public sources, creating a deny-all public inbound rule. |
-    | `--priority 65000` | Places the deny rule late in the list so more specific allow rules can be evaluated first. |
+    | `--ip-address 0.0.0.0/0` | Matches all IPv4 sources on the default endpoint. IPv6 and the separate SCM site policy need their own rules or inheritance. |
+    | `--priority 65000` | Places the deny rule late in the list, so earlier rules (including Allow rules) are evaluated first and a matching earlier Allow still admits the request. |
     | `--output json` | Returns the created restriction rule in JSON. |
 
 ### 9) Choose the right outbound path to Azure Storage

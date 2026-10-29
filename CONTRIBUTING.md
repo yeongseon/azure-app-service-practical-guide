@@ -65,6 +65,21 @@ Verify checks on the exact head SHA. No missing, pending or failing check may be
 bypassed. This adoption does not change approval counts, branch protection or
 release behavior. AI comments are review input, not human approval.
 
+### Writing PR Descriptions
+
+Use the existing ordered headings required by the PR metadata workflow. In
+`Summary`, explain what changed and why; in `Changes`, keep the scope and
+important compatibility or evidence details; in `Validation`, report only
+checks actually run, with relevant source commit, run identity and evidence.
+Keep the required checklist and issue references.
+
+Avoid agent transcripts, canceled review attempts, copied audit jargon, empty
+risk-level fields and redundant policy explanations. Do not remove required
+Golden evidence, independent review, Oracle review, screenshot/PII checks, or
+other security/merge information. Verify the final saved PR body for clarity.
+These writing rules apply to all coding agents and human contributors without
+altering any CI, approval or merge gate.
+
 ## Actions and Verification Dates
 
 Pin new/changed external actions to a verified 40-character SHA with a source or
