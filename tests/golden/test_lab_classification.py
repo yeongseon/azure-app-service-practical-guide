@@ -18,8 +18,10 @@ import pathlib
 import re
 import subprocess
 import unittest
+import copy
+import tempfile
 
-from classification_integrity import ENVIRONMENT_FIELDS, evidence_environment, introducing_commit
+from classification_integrity import ENVIRONMENT_FIELDS, capture_files, evidence_environment, introducing_commit
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 CLASSIFICATION = ROOT / "labs/golden-classification.json"
@@ -28,6 +30,7 @@ VALID = {"golden", "migration-needed", "archive-candidate"}
 EXPECTED_SCENARIO_COUNT = 15
 ARTIFACT_DIRECTORY_NAMES = {"artifacts-sanitized", "results"}
 FULL_SHA = re.compile(r"^[0-9a-f]{40}$")
+LAB2 = "windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/results"
 
 _spec = importlib.util.spec_from_file_location("ev", ROOT / "scripts/golden/evaluate_run.py")
 ev = importlib.util.module_from_spec(_spec)
@@ -236,14 +239,23 @@ class OtherCaptureTests(unittest.TestCase):
         for path, item in classified_artifact_sets():
             seen = []
             for capture in item.get("other_captures", []):
-                capture_path = f"{path}/{capture['path']}"
+                capture_path = f"{path}/{capture.get('path', capture.get('files'))}"
                 with self.subTest(capture=capture_path):
-                    seen.append(capture["path"])
-                    self.assertTrue((ROOT / "labs" / capture_path).is_dir())
+                    self.assertNotEqual("path" in capture, "files" in capture)
+                    if "path" in capture:
+                        self.assertTrue((ROOT / "labs" / path / capture["path"]).is_dir())
+                    else:
+                        self.assertIsInstance(capture["files"], list)
+                    files = capture_files(ROOT / "labs" / path, capture)
+                    self.assertTrue(files)
+                    for file in files:
+                        self.assertTrue(file.is_file())
+                        self.assertTrue(file.is_relative_to(ROOT / "labs" / path))
+                        seen.append(file)
                     self.assertIn(capture["trust"], ev.EVIDENCE_TRUST)
                     self.assertTrue(capture["limitation"].strip(), msg="a limitation is required")
                     self.assertEqual(set(capture["environment"]), ENVIRONMENT_FIELDS)
-                    self.assertEqual(capture["environment"], evidence_environment(ROOT, capture_path, capture))
+                    self.assertEqual(capture["environment"], evidence_environment(ROOT, path, capture))
             self.assertEqual(len(seen), len(set(seen)), msg=f"{path}: duplicate other_capture")
 
     def test_the_explicitly_excluded_control_is_classified_invalid(self):
@@ -271,13 +283,12 @@ class OtherCaptureTests(unittest.TestCase):
                 if date is None:
                     continue
                 compact = date.replace("-", "")
-                root = ROOT / "labs" / path / capture["path"]
                 found = any(
                     date in file.name or compact in file.name or date in file.read_text(errors="ignore")
-                    for file in root.rglob("*") if file.is_file()
+                    for file in capture_files(ROOT / "labs" / path, capture)
                 )
-                with self.subTest(capture=f"{path}/{capture['path']}"):
-                    self.assertTrue(found, msg=f"{date} is not derivable from files under {capture['path']}")
+                with self.subTest(capture=capture):
+                    self.assertTrue(found, msg=f"{date} is not derivable from scoped files")
 
     def test_a_set_referencing_several_deployments_declares_all_of_them(self):
         deployment = re.compile(r"\brg-lab-[a-z0-9]+(?:-[a-z0-9]+)*")
@@ -308,12 +319,184 @@ class OtherCaptureTests(unittest.TestCase):
         self.assertIn(transition["at"][:19], activity)
         self.assertEqual(transition["recorded_sku_scope"], "end of run")
         self.assertIn("does not describe the whole arm", capture["limitation"])
+        # Given the retained activity events and both arm windows, derive the scopes.
+        events = json.loads(activity)
+        write = next(event for event in events if event["operation"].endswith("/write")
+                     and event["time"].startswith(transition["at"][:19]))
+        completed = next(event for event in events if event["operation"] == write["operation"]
+                         and event["caller"] == write["caller"] and event["status"] == "Succeeded")
+        diag = json.loads((ROOT / "labs" / settle.replace("settle", "diag")).read_text())
+        self.assertEqual(write["status"], "Started")
+        self.assertEqual(transition["completed_at"], completed["time"])
+        self.assertLess(manifest["armStartedAt"], completed["time"])
+        self.assertLess(completed["time"], manifest["armFinishedAt"])
+        self.assertLess(completed["time"], diag["armStartedAt"])
+        self.assertLess(diag["armStartedAt"], diag["armFinishedAt"])
+        self.assertEqual(transition["arm_sku_scopes"], {"arm-b-settle": "end of arm", "arm-b-diag": "whole arm"})
 
     def test_the_f1_capture_is_not_folded_into_the_b1_environment(self):
         by_path = dict(classified_artifact_sets())
         item = by_path["missing-wwwroot-content/artifacts-sanitized"]
         self.assertEqual(item["environment"]["sku"], "B1")
         self.assertEqual({c["path"]: c["environment"]["sku"] for c in item["other_captures"]}, {"f1-plan-run": "F1"})
+
+
+class ConfigurationIntegrityTests(unittest.TestCase):
+    def test_partial_configuration_preserves_recorded_fields(self):
+        for path, item in classified_artifact_sets():
+            if item["captured_at"] == "2026-04-04":
+                with self.subTest(path=path):
+                    config = json.loads((ROOT / "labs" / path / "baseline/app-config.json").read_text())
+                    self.assertEqual(item["environment"]["runtime"], config["linuxFxVersion"])
+                    self.assertEqual(item["environment"]["region"], config["location"])
+                    self.assertEqual(item["environment"]["os"], "Linux")
+
+    def test_blanket_unknown_is_rejected_when_configuration_exists(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = pathlib.Path(directory)
+            capture = root / "labs/example/results"
+            capture.mkdir(parents=True)
+            (capture / "app-config.json").write_text(json.dumps({"linuxFxVersion": "PYTHON|3.11"}))
+            with self.assertRaisesRegex(AssertionError, "environment-bearing"):
+                evidence_environment(root, "example/results", {"environment_evidence_unavailable_reason": "Missing manifest"})
+
+    def test_unknown_region_is_rejected_when_cited_configuration_records_it(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = pathlib.Path(directory)
+            capture = root / "labs/example/results"
+            capture.mkdir(parents=True)
+            (capture / "app-config.json").write_text(json.dumps({"location": "Korea Central"}))
+            item = {"environment_evidence": ["example/results/app-config.json"],
+                    "environment": {"region": None, "unknown_reasons": {"region": "Not recorded"}}}
+            with self.assertRaisesRegex(AssertionError, "region.*unknown"):
+                evidence_environment(root, "example/results", item)
+
+    def test_conflicting_configuration_values_are_rejected(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = pathlib.Path(directory)
+            capture = root / "labs/example/results"
+            capture.mkdir(parents=True)
+            for name, region in (("first", "Korea Central"), ("second", "koreacentral")):
+                (capture / f"{name}.json").write_text(json.dumps({"location": region}))
+            with self.assertRaisesRegex(AssertionError, "conflicting.*region"):
+                evidence_environment(root, "example/results", {"environment_evidence": [
+                    "example/results/first.json", "example/results/second.json"]})
+
+    def test_recorded_configuration_fields_cannot_be_declared_unknown(self):
+        for field, document in (("sku", {"sku": "B1"}), ("runtime", {"linuxFxVersion": "PYTHON|3.11"}),
+                                ("os", {"reserved": True}), ("cli_version", {"azureCliVersion": "2.89.0"})):
+            with self.subTest(field=field), tempfile.TemporaryDirectory() as directory:
+                root = pathlib.Path(directory)
+                capture = root / "labs/example/results"
+                capture.mkdir(parents=True)
+                (capture / "config.json").write_text(json.dumps(document))
+                item = {"environment_evidence": ["example/results/config.json"],
+                        "environment": {field: None, "unknown_reasons": {field: "Not recorded"}}}
+                with self.assertRaisesRegex(AssertionError, f"{field} declared unknown"):
+                    evidence_environment(root, "example/results", item)
+
+    def test_each_recorded_linux_signal_derives_linux(self):
+        for document in ({"reserved": True}, {"kind": "app,linux"}, {"linuxFxVersion": "PYTHON|3.11"}):
+            with self.subTest(document=document), tempfile.TemporaryDirectory() as directory:
+                root = pathlib.Path(directory)
+                capture = root / "labs/example/results"
+                capture.mkdir(parents=True)
+                (capture / "config.json").write_text(json.dumps(document))
+                derived = evidence_environment(root, "example/results", {"environment_evidence": ["example/results/config.json"]})
+                self.assertEqual(derived["os"], "Linux")
+
+    def test_unknown_reasons_do_not_conflate_missing_and_bound_evidence(self):
+        self.assertFalse("described by the set-level record or is not recorded" in CLASSIFICATION.read_text())
+
+
+class Lab2CohortTests(unittest.TestCase):
+    def setUp(self):
+        self.item = dict(classified_artifact_sets())[LAB2]
+        self.root = ROOT / "labs" / LAB2
+
+    def assert_cohort_bindings(self, item):
+        captures = item["other_captures"]
+        assigned = {}
+        for capture in captures:
+            for file in capture_files(self.root, capture):
+                self.assertNotIn(file, assigned, msg="file assigned to multiple cohorts")
+                assigned[file] = capture
+        metadata = json.loads((self.root / "deploy-metadata.json").read_text())
+        config = json.loads((self.root / "effective-config-20260701T133917Z.json").read_text())
+        sources = {
+            metadata["resourceGroup"]: (metadata["deployedAt"][:10], "deploy-metadata.json"),
+            config["webapp_config"]["resourceGroup"]: (item["captured_at"], "effective-config-20260701T133917Z.json"),
+        }
+        self.assertEqual(config["plan_config"]["resourceGroup"], config["webapp_config"]["resourceGroup"])
+        for file in self.root.iterdir():
+            if file.is_file():
+                owner = assigned.get(file, item)
+                names = set(re.findall(r"\brg-lab-winjaval2(?:sat|cap)\b", file.read_text()))
+                self.assertEqual(set(owner["deployments"]), names, msg=file.name)
+                self.assertEqual(owner["captured_at"], sources[next(iter(names))][0], msg=file.name)
+        report_owner = assigned[self.root / "verify-report.md"]
+        self.assertIsNot(report_owner, item)
+        self.assertEqual(set(report_owner["files"]), {"deploy-metadata.json", "deploy-outputs.json", "verify-report.md"})
+        self.assertNotIn(self.root / "effective-config-20260701T133917Z.json", assigned)
+        for capture in captures:
+            files = capture_files(self.root, capture)
+            names = set()
+            for file in files:
+                names.update(re.findall(r"\brg-lab-winjaval2(?:sat|cap)\b", file.read_text(errors="ignore")))
+            self.assertEqual(set(capture.get("deployments", [])), names)
+            if names:
+                self.assertEqual(len(names), 1, msg="mixed deployment cohort")
+                date, source = sources[next(iter(names))]
+                self.assertEqual(capture["captured_at"], date)
+                self.assertEqual(capture["environment_evidence"], [f"{LAB2}/{source}"])
+                expected = evidence_environment(ROOT, LAB2, {"environment_evidence": [f"{LAB2}/{source}"]})
+                self.assertEqual(capture["environment"], expected)
+        e3 = {file.relative_to(self.root).as_posix(): capture for file, capture in assigned.items()
+              if file.is_relative_to(self.root / "e3")}
+        self.assertEqual(set(e3), {file.relative_to(self.root).as_posix() for file in (self.root / "e3").rglob("*") if file.is_file()})
+        for name, capture in e3.items():
+            self.assertIn("files", capture)
+            expected_day = "2026-07-01" if name.startswith("e3/primary/") or "20260701" in name else "2026-07-02"
+            self.assertEqual(capture["captured_at"], expected_day, msg=name)
+
+    def test_files_are_bound_to_their_recorded_deployment_environment(self):
+        self.assert_cohort_bindings(self.item)
+
+    def test_pre_e1_preserves_the_location_of_its_named_deployment(self):
+        capture = next(c for c in self.item["other_captures"] if c.get("path") == "pre-e1")
+        metadata = json.loads((self.root / "deploy-metadata.json").read_text())
+        self.assertEqual(capture["environment"]["region"], metadata["location"])
+
+    def test_e2_preserves_the_environment_of_its_named_deployment(self):
+        capture = next(c for c in self.item["other_captures"] if c.get("path") == "e2")
+        manifest = json.loads((self.root / "e2/rate-0.5/manifest.json").read_text())
+        config = json.loads((self.root / "effective-config-20260701T133917Z.json").read_text())
+        self.assertTrue(config["webapp_config"]["id"].startswith(manifest["webAppResourceId"]))
+        self.assertEqual(capture["environment"], evidence_environment(ROOT, LAB2, self.item))
+
+    def test_july_two_root_cohort_date_is_recorded_in_metadata_and_report(self):
+        capture = next(c for c in self.item["other_captures"] if "verify-report.md" in c.get("files", []))
+        metadata = json.loads((self.root / "deploy-metadata.json").read_text())
+        generated = re.search(r"Generated: (\d{4}-\d{2}-\d{2})T", (self.root / "verify-report.md").read_text())
+        self.assertIsNotNone(generated)
+        self.assertEqual(capture["captured_at"], metadata["deployedAt"][:10])
+        self.assertEqual(capture["captured_at"], generated[1])
+
+    def test_report_cannot_be_moved_back_to_the_set_level_cohort(self):
+        mutated = copy.deepcopy(self.item)
+        for capture in mutated["other_captures"]:
+            if "verify-report.md" in capture.get("files", []):
+                capture["files"].remove("verify-report.md")
+        with self.assertRaises(AssertionError):
+            self.assert_cohort_bindings(mutated)
+
+    def test_same_deployment_cannot_hide_a_recorded_field_as_unknown(self):
+        mutated = copy.deepcopy(self.item)
+        capture = next(c for c in mutated["other_captures"] if c.get("path") == "e2")
+        capture["environment"]["region"] = None
+        capture["environment"]["unknown_reasons"]["region"] = "Not recorded"
+        with self.assertRaises(AssertionError):
+            self.assert_cohort_bindings(mutated)
 
 
 class GoldenClaimTests(unittest.TestCase):
