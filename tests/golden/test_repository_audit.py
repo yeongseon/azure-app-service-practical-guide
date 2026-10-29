@@ -13,6 +13,7 @@ sys.dont_write_bytecode = True
 import json
 import pathlib
 import re
+import subprocess
 import unittest
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
@@ -82,10 +83,13 @@ class ExistenceTests(unittest.TestCase):
                 msg=f"audit decides on {row['path']}, which is not in the repository")
 
     def test_every_top_level_repository_area_is_audited(self):
+        # Tracked files only: local tool or build directories must not change the result.
         audited = {row["path"].split("/", 1)[0] for row in AUDIT["paths"]}
-        ignored = {".git", ".codegraph", ".playwright-mcp", ".venv", "site"}
-        actual = {path.name for path in ROOT.iterdir() if path.is_dir() and path.name not in ignored}
-        self.assertTrue(actual <= audited)
+        tracked = subprocess.run(
+            ["git", "ls-files"], cwd=ROOT, check=True, capture_output=True, text=True
+        ).stdout.splitlines()
+        actual = {path.split("/", 1)[0] for path in tracked if "/" in path}
+        self.assertEqual(sorted(actual - audited), [], msg="top-level areas missing from the audit")
 
     def test_historical_drift_and_issue_links_are_recorded(self):
         findings = AUDIT["baseline_findings"]
