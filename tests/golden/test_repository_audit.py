@@ -11,9 +11,11 @@ import sys
 sys.dont_write_bytecode = True
 
 import json
+import os
 import pathlib
 import re
 import subprocess
+import tempfile
 import unittest
 from collections import Counter
 from typing import TypedDict
@@ -40,6 +42,14 @@ class Disposition(Membership):
     path: str
     decision: str
     reason: str
+
+
+def tracked_paths(root: pathlib.Path = ROOT) -> list[str]:
+    """Preserve Git's NUL-delimited filename bytes without newline translation."""
+    output = subprocess.run(
+        ["git", "ls-files", "-z"], cwd=root, check=True, capture_output=True
+    ).stdout
+    return [os.fsdecode(path) for path in output.split(b"\0") if path]
 
 
 def coverage_problems(tracked: list[str], records: list[Disposition]) -> list[str]:
@@ -92,6 +102,7 @@ def coverage_problems(tracked: list[str], records: list[Disposition]) -> list[st
 
 
 class CoverageTests(unittest.TestCase):
+    maxDiff: int | None = None
     tracked: list[str] = []
     records: list[Disposition] = []
 
@@ -153,6 +164,33 @@ class CoverageTests(unittest.TestCase):
                 record: Disposition = {"path": path, "decision": "ARCHIVE", "reason": "Historical"}
                 self.assertIn(f"protected capture must stay KEEP: {path}", coverage_problems([path], [record]))
 
+    def test_noncanonical_members_fail_by_path_name(self) -> None:
+        for member in ["../x", "/abs", "a//b", "./a", "a/./b"]:
+            with self.subTest(member=member):
+                self.records[1]["members"] = ["index.md", member]
+                problems = coverage_problems(self.tracked, self.records)
+                self.assertIn(f"noncanonical member: docs/{member}", problems)
+
+    def test_blank_reason_fails_by_path_name(self) -> None:
+        self.records[0]["reason"] = " \t\n"
+        problems = coverage_problems(self.tracked, self.records)
+        self.assertEqual(problems, ["missing reason: README.md"])
+
+    def test_git_preserves_distinct_cr_and_lf_paths(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = pathlib.Path(directory)
+            _ = subprocess.run(["git", "init", "--quiet", str(root)], check=True)
+            (root / "docs").mkdir()
+            for name in ["docs/a\nb.md", "docs/a\rb.md"]:
+                _ = (root / name).write_bytes(b"")
+            _ = subprocess.run(["git", "add", "--", "docs"], cwd=root, check=True)
+            records: list[Disposition] = [
+                {"path": "docs/", "decision": "KEEP", "reason": "Declared LF path", "members": ["a\nb.md"]},
+            ]
+            tracked = tracked_paths(root)
+            self.assertEqual(tracked, ["docs/a\nb.md", "docs/a\rb.md"])
+            self.assertEqual(coverage_problems(tracked, records), ["unclassified tracked path: docs/a\rb.md"])
+
 def invoked_by_ci(basename):
     """True when a workflow runs the script on a pull request.
 
@@ -199,6 +237,8 @@ class ShapeTests(unittest.TestCase):
 
 
 class ExistenceTests(unittest.TestCase):
+    maxDiff: int | None = None
+
     def test_every_audited_path_exists(self):
         for row in AUDIT["paths"]:
             self.assertTrue(
@@ -207,10 +247,10 @@ class ExistenceTests(unittest.TestCase):
 
     def test_declared_full_coverage_matches_the_tracked_tree(self):
         self.assertEqual(AUDIT["coverage_mode"], "exact-tracked-members")
-        tracked = subprocess.run(
-            ["git", "ls-files", "-z"], cwd=ROOT, check=True, capture_output=True, text=True
-        ).stdout.rstrip("\0").split("\0")
-        self.assertEqual(coverage_problems(tracked, AUDIT["paths"]), [])
+        self.assertEqual(
+            coverage_problems(tracked_paths(), AUDIT["paths"]), [],
+            msg="Update docs/reference/golden-repository-audit.json: add the path to the winning record's members or add a more specific record; delete or rename the record of a removed or renamed path.",
+        )
 
     def test_historical_drift_and_issue_links_are_recorded(self):
         findings = AUDIT["baseline_findings"]
@@ -245,8 +285,13 @@ class ExistenceTests(unittest.TestCase):
         for row in records:
             self.assertIn(row["decision"], VALID, msg=row["id"])
             self.assertEqual(row["verification"], "Observed by reading")
-            for field in ("section", "baseline_description", "disposition", "issues", "current_sources"):
+            fields = ("section", "baseline_description", "disposition", "issues", "current_sources")
+            if row["id"] in {"startup-entrypoints-resolved", "java-package-resolved", "historical-catalog"}:
+                fields += ("baseline_source",)
+            for field in fields:
                 self.assertTrue(row[field], msg=f"{row['id']}:{field}")
+            if "baseline_source" in row:
+                self.assertTrue(isinstance(row["baseline_source"], str), msg=row["id"])
             for path in [row["path"], *row["current_sources"]]:
                 self.assertTrue((ROOT / path).is_file(), msg=path)
             self.assertTrue(set(row["issues"]) <= {"#202", "#203", "#176", "#182"})

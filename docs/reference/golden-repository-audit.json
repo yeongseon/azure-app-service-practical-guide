@@ -54,7 +54,7 @@
         "decision": "KEEP",
         "disposition": "Retain historical draft, not current instructions: Draft 2 time is explicitly labelled in the source. Lab 1 scripts and historical results are now committed; the current stage table is the reader entry point. Already-resolved correction, not a new execution.",
         "issues": [
-          "#203"
+          "#202"
         ],
         "verification": "Observed by reading"
       },
@@ -70,42 +70,43 @@
         "decision": "KEEP",
         "disposition": "Retain historical draft with its Draft 2 label, not a claim that today's lab entry point is pending. The proposed stage-local README is not present; use the current parent README and published lab guide. No approval or execution is inferred from this draft.",
         "issues": [
-          "#203",
-          "#182"
+          "#202"
         ],
         "verification": "Observed by reading"
       },
       {
         "id": "startup-entrypoints-resolved",
         "path": "docs/troubleshooting/lab-guides/deployment-succeeded-startup-failed.md",
-        "section": "Historical October 13 baseline recorded in issue #180 / Context",
+        "section": "Historical startup entrypoint baseline",
         "baseline_description": "the startup guide referenced contract.json/run.py absent from main",
+        "baseline_source": "Issue #203 Context (review baseline 1e0423b); historical summary, not a quotation from the current guide.",
         "current_sources": [
           "labs/deployment-succeeded-startup-failed/contract.json",
           "labs/deployment-succeeded-startup-failed/run.py",
           "labs/deployment-succeeded-startup-failed/trigger.sh"
         ],
         "decision": "KEEP",
-        "disposition": "Keep the corrected current entrypoints and retain this baseline as historical context. The paired runbook comparison records the already-resolved #202 correction; source presence is not re-execution.",
+        "disposition": "Keep the corrected current entrypoints and retain this baseline as historical context. The paired runbook comparison records the already-resolved #203 correction; source presence is not re-execution.",
         "issues": [
-          "#202"
+          "#203"
         ],
         "verification": "Observed by reading"
       },
       {
         "id": "java-package-resolved",
         "path": "docs/troubleshooting/lab-guides/windows-java-httpplatformhandler-timeout.md",
-        "section": "Historical October 13 baseline recorded in issue #180 / Context",
+        "section": "Historical Windows Java package baseline",
         "baseline_description": "the Windows Java guide referenced a nonexistent Lab 2 app directory and a ZIP artifact type inconsistent with its JAR deployment script",
+        "baseline_source": "Issue #202 Context (review baseline 1e0423b); historical summary, not a quotation from the current guide.",
         "current_sources": [
           "labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/deploy.sh",
           "labs/windows-java-httpplatformhandler-timeout/stage-0-config-discovery/app/pom.xml",
           "labs/windows-java-httpplatformhandler-timeout/README.md"
         ],
         "decision": "KEEP",
-        "disposition": "Keep the corrected current JAR reuse/build instructions. The parent stage table distinguishes committed scripts from historical results; #203 is already resolved structurally, not freshly executed. Retained reports and capture dates remain untouched.",
+        "disposition": "Keep the corrected current JAR reuse/build instructions. The parent stage table distinguishes committed scripts from historical results; #202 is already resolved structurally, not freshly executed. Retained reports and capture dates remain untouched.",
         "issues": [
-          "#203"
+          "#202"
         ],
         "verification": "Observed by reading"
       },
@@ -114,6 +115,7 @@
         "path": "README.md",
         "section": "Troubleshooting Labs / historical catalog baseline",
         "baseline_description": "The historical README advertised 10 labs while the then-current catalog contained 13.",
+        "baseline_source": "README.md at 1e0423b, Troubleshooting Labs, says '10 hands-on labs'; git ls-tree -d 1e0423b labs/ lists 13 scenario directories excluding _shared. The comparison is a historical summary, not a quotation from today's README.",
         "current_sources": [
           "README.md",
           "labs/golden-classification.json"
@@ -284,7 +286,7 @@
     {
       "path": "labs/deployment-succeeded-startup-failed/",
       "decision": "KEEP",
-      "reason": "PR #234 reconciled the documented contract.json and run.py entrypoints with the checked-in shell runbook; package, prerequisites and cleanup now describe one startup-failure scenario. Execution corrections are tracked by #202.",
+      "reason": "PR #234 reconciled the documented contract.json and run.py entrypoints with the checked-in shell runbook; package, prerequisites and cleanup now describe one startup-failure scenario. Execution corrections are tracked by #203.",
       "members": [
         "app/app.py",
         "app/requirements.txt",
@@ -300,7 +302,7 @@
     {
       "path": "labs/windows-java-httpplatformhandler-timeout/",
       "decision": "KEEP",
-      "reason": "Three staged experiments use Java SE JAR deployment assets (WAR, EAR and Tomcat or JBoss are out of scope) and stage-specific build directories, prerequisites and cleanup. Their retained results remain evidence; structural migration decisions belong to #182 and execution corrections to #203.",
+      "reason": "Three staged experiments use Java SE JAR deployment assets (WAR, EAR and Tomcat or JBoss are out of scope) and stage-specific build directories, prerequisites and cleanup. Their retained results remain evidence; structural migration decisions belong to #182 and execution corrections to #202.",
       "members": [
         "README.md"
       ]
@@ -433,7 +435,7 @@
     {
       "path": "scripts/generate_validation_status.py",
       "decision": "KEEP",
-      "reason": "Generator for the committed tutorial dashboard and the scheduled read-only freshness report. Preserve it as the output owner; neither mode may invent execution dates."
+      "reason": "Generator for the committed tutorial metadata dashboard only, with --docs-dir and --output options. It reads existing validation dates without updating them; the scheduled read-only freshness report is owned separately by scripts/golden/freshness_report.py and validation-freshness.yml."
     },
     {
       "path": "scripts/generate_content_validation_status.py",
@@ -442,8 +444,8 @@
     },
     {
       "path": "scripts/normalize_content_sources_schema.py",
-      "decision": "ARCHIVE",
-      "reason": "Retain the historical migration helper as ARCHIVE for its apply-mode provenance, not as dead code: its read-only --check remains an active Content sources schema gate in scripts/generate_golden_status.py and CI. Do not remove or retire that enforcement."
+      "decision": "KEEP",
+      "reason": "Keep the active read-only --check enforcement of canonical content_sources mappings in the Content sources schema gate and Validate Content Source Metadata CI job. Only its historical apply-mode migration use is obsolete; the script and its ongoing enforcement are not archived."
     },
     {
       "path": "scripts/remove_out_of_scope_validation.py",
@@ -536,7 +538,7 @@
     {
       "path": "requirements-docs.txt",
       "decision": "KEEP",
-      "reason": "Documentation dependency pins supply the strict MkDocs build and shared manifest-driven capture toolkit."
+      "reason": "Documentation dependencies supply the strict MkDocs build and shared manifest-driven capture toolkit. The MkDocs packages and PyYAML are unversioned; only azure-guide-capture-toolkit is referenced at the v0.1.1 Git tag, not a full set of dependency pins."
     },
     {
       "path": ".github/",
@@ -2042,7 +2044,7 @@
     {
       "path": "labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/",
       "decision": "KEEP",
-      "reason": "Retain lab-2-loopback-saturation runtime scripts as migration-needed per labs/golden-classification.json. Stage 0 builds the shared JAR; later stages reuse it. Script presence does not establish a successful reproduction.",
+      "reason": "Retain lab-2-loopback-saturation runtime scripts and historical interpretation.md as migration-needed per labs/golden-classification.json. Stage 0 builds the shared JAR; later stages reuse it. interpretation.md is analysis, not a protected capture or current causal proof; the capture-protection predicate covers the separate results/ members. Script presence does not establish a successful reproduction.",
       "members": [
         "cleanup.sh",
         "collect-effective-config.sh",

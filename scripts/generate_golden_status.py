@@ -479,6 +479,17 @@ GATES: tuple[Gate, ...] = (
         display="mkdocs build --strict",
     ),
     Gate(
+        key="repository-audit",
+        name="Repository audit coverage",
+        enforces="Every tracked path has exactly one disposition record in docs/reference/golden-repository-audit.json; additions, renames and removals fail by path name.",
+        argv=("{python}", "tests/golden/test_repository_audit.py"),
+        severity=BLOCKING,
+        covers=("tests/golden/test_repository_audit.py", "docs/reference/golden-repository-audit.json"),
+        bindings=(Binding("Validate Golden Status", GOLDEN_STATUS_WORKFLOW),),
+        requires=("exe:git",),
+        verified_in_ci=True,
+    ),
+    Gate(
         key="impact-classifier-tests",
         name="App and Infra impact classifier tests",
         enforces="PR, push, rename, deletion, executable Markdown, app, lab, shared-helper, workflow, and full-regression changes select the intended jobs.",
