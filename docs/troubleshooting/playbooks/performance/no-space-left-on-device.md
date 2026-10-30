@@ -57,7 +57,7 @@ The issue often looks like an application bug, but the underlying constraint can
 <!-- diagram-id: no-space-left-on-device-flow -->
 ```mermaid
 graph TD
-    A[Symptom: "No space left on device"] --> B{Where is pressure?}
+    A["Symptom: #quot;No space left on device#quot;"] --> B{Where is pressure?}
     B --> C[Check /home usage and growth]
     B --> D[Check /tmp and container writable layer usage]
     C --> E{High /home usage?}

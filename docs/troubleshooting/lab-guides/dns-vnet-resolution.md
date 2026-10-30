@@ -320,8 +320,8 @@ Control approach:
 <!-- diagram-id: troubleshooting-lab-guides-dns-vnet-resolution-diagram-4 -->
 ```mermaid
 flowchart TD
-    A[/resolve success?] -->|No| B[DNS failure confirmed]
-    A -->|Yes| C[/connect success?]
+    A["/resolve success?"] -->|No| B[DNS failure confirmed]
+    A -->|Yes| C["/connect success?"]
     C -->|No| D[Not a pure DNS failure; inspect TLS/auth/routing]
     C -->|Yes| E[No dependency-path failure in current run]
     B --> F[Check VNet DNS chain: resolver, forwarders, private zone links]

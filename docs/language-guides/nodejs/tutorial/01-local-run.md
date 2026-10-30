@@ -68,9 +68,9 @@ flowchart TD
     B --> C[npm start]
     C --> D[localhost:3000]
     D --> E{Test Endpoints}
-    E --> F[/health]
-    E --> G[/info]
-    E --> H[/api/*]
+    E --> F["/health"]
+    E --> G["/info"]
+    E --> H["/api/*"]
 ```
 
 ## Prerequisites

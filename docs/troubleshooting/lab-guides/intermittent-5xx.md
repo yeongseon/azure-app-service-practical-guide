@@ -246,7 +246,7 @@ which confirms worker starvation and queueing.
 ```mermaid
 flowchart TD
     A[Limited sync workers=2] --> B[Concurrent /slow saturates workers]
-    B --> C[/fast cannot start promptly]
+    B --> C["/fast cannot start promptly"]
     C --> D[Queue wait increases]
     D --> E[Client timeout threshold exceeded]
     E --> F[499 in HTTP logs and timeout at caller]
