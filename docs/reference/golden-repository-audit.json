@@ -16,7 +16,75 @@
   "baseline_findings": {
     "catalog_drift": "The historical README advertised 10 labs while the then-current catalog contained 13. Current counts are derived from labs/golden-classification.json and checked against the filesystem.",
     "execution_corrections": ["#202", "#203"],
-    "catalog_corrections": ["#176", "#182"]
+    "catalog_corrections": ["#176", "#182"],
+    "description_drift": [
+      {
+        "id": "windows-readme",
+        "path": "labs/windows-java-httpplatformhandler-timeout/README.md",
+        "section": "Introduction",
+        "baseline_description": "Windows Java SE is under-documented in the App Service troubleshooting corpus (all 10 existing labs in this repo are Linux). This lab establishes the first Windows Java SE reproduction and mitigation playbook.",
+        "current_sources": ["labs/golden-classification.json", "labs/windows-java-httpplatformhandler-timeout/README.md"],
+        "decision": "REWRITE",
+        "disposition": "Correct current prose: replace the stale Linux-only count and unsupported first-reproduction claim with scoped historical retention wording. The current Status table remains unchanged.",
+        "issues": ["#176", "#182"],
+        "verification": "Observed by reading"
+      },
+      {
+        "id": "historical-stage-prerequisites",
+        "path": "labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/design-proposal.md",
+        "section": "Draft 2 / Non-blocking item 4",
+        "baseline_description": "**Lab 1 references** in this Draft (e.g. path `../lab-1-baseline-signature/...`) point to files that exist in the working tree but are **not yet committed at Draft 2 time**; this is expected during the draft phase and will resolve when Lab 1 files land in the same PR series.",
+        "current_sources": ["labs/windows-java-httpplatformhandler-timeout/lab-1-baseline-signature/README.md", "labs/windows-java-httpplatformhandler-timeout/README.md"],
+        "decision": "KEEP",
+        "disposition": "Retain historical draft, not current instructions: Draft 2 time is explicitly labelled in the source. Lab 1 scripts and historical results are now committed; the current stage table is the reader entry point. Already-resolved correction, not a new execution.",
+        "issues": ["#203"],
+        "verification": "Observed by reading"
+      },
+      {
+        "id": "historical-stage-layout",
+        "path": "labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/design-proposal.md",
+        "section": "Directory layout",
+        "baseline_description": "README.md                             # (pending, gated on Oracle Draft 2 approval)",
+        "current_sources": ["labs/windows-java-httpplatformhandler-timeout/README.md", "docs/troubleshooting/lab-guides/windows-java-httpplatformhandler-timeout.md"],
+        "decision": "KEEP",
+        "disposition": "Retain historical draft with its Draft 2 label, not a claim that today's lab entry point is pending. The proposed stage-local README is not present; use the current parent README and published lab guide. No approval or execution is inferred from this draft.",
+        "issues": ["#203", "#182"],
+        "verification": "Observed by reading"
+      },
+      {
+        "id": "startup-entrypoints-resolved",
+        "path": "docs/troubleshooting/lab-guides/deployment-succeeded-startup-failed.md",
+        "section": "Historical October 13 baseline recorded in issue #180 / Context",
+        "baseline_description": "the startup guide referenced contract.json/run.py absent from main",
+        "current_sources": ["labs/deployment-succeeded-startup-failed/contract.json", "labs/deployment-succeeded-startup-failed/run.py", "labs/deployment-succeeded-startup-failed/trigger.sh"],
+        "decision": "KEEP",
+        "disposition": "Keep the corrected current entrypoints and retain this baseline as historical context. The paired runbook comparison records the already-resolved #202 correction; source presence is not re-execution.",
+        "issues": ["#202"],
+        "verification": "Observed by reading"
+      },
+      {
+        "id": "java-package-resolved",
+        "path": "docs/troubleshooting/lab-guides/windows-java-httpplatformhandler-timeout.md",
+        "section": "Historical October 13 baseline recorded in issue #180 / Context",
+        "baseline_description": "the Windows Java guide referenced a nonexistent Lab 2 app directory and a ZIP artifact type inconsistent with its JAR deployment script",
+        "current_sources": ["labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/deploy.sh", "labs/windows-java-httpplatformhandler-timeout/stage-0-config-discovery/app/pom.xml", "labs/windows-java-httpplatformhandler-timeout/README.md"],
+        "decision": "KEEP",
+        "disposition": "Keep the corrected current JAR reuse/build instructions. The parent stage table distinguishes committed scripts from historical results; #203 is already resolved structurally, not freshly executed. Retained reports and capture dates remain untouched.",
+        "issues": ["#203"],
+        "verification": "Observed by reading"
+      },
+      {
+        "id": "historical-catalog",
+        "path": "README.md",
+        "section": "Troubleshooting Labs / historical catalog baseline",
+        "baseline_description": "The historical README advertised 10 labs while the then-current catalog contained 13.",
+        "current_sources": ["README.md", "labs/golden-classification.json"],
+        "decision": "KEEP",
+        "disposition": "Retain the historical mismatch separately from the current catalog. The root README's current scenario count follows the classification and is not reverted to either historical count.",
+        "issues": ["#176", "#182"],
+        "verification": "Observed by reading"
+      }
+    ]
   },
   "paired_runbooks": [
     {

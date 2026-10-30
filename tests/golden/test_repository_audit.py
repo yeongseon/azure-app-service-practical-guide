@@ -115,6 +115,21 @@ class ExistenceTests(unittest.TestCase):
             self.assertTrue((ROOT / link_audit["validator"]).is_file(), msg=record["id"])
             self.assertTrue(invoked_by_ci(pathlib.Path(link_audit["validator"]).name), msg=record["id"])
 
+    def test_description_findings_have_sources_and_scoped_dispositions(self):
+        records = AUDIT["baseline_findings"]["description_drift"]
+        self.assertEqual({row["id"] for row in records}, {
+            "windows-readme", "historical-stage-prerequisites", "historical-stage-layout",
+            "startup-entrypoints-resolved", "java-package-resolved", "historical-catalog",
+        })
+        for row in records:
+            self.assertIn(row["decision"], VALID, msg=row["id"])
+            self.assertEqual(row["verification"], "Observed by reading")
+            for field in ("section", "baseline_description", "disposition", "issues", "current_sources"):
+                self.assertTrue(row[field], msg=f"{row['id']}:{field}")
+            for path in [row["path"], *row["current_sources"]]:
+                self.assertTrue((ROOT / path).is_file(), msg=path)
+            self.assertTrue(set(row["issues"]) <= {"#202", "#203", "#176", "#182"})
+
 
 class ReviewHonestyTests(unittest.TestCase):
     def test_no_comparison_claims_an_unattributed_human_review(self):
