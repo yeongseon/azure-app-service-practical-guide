@@ -19,7 +19,7 @@ Proposed. Composition depends on the opt-in shared prototype [#283](https://gith
 
 ## Context and Problem Statement
 
-The [manifest](diagram-manifest.json) records 399 Mermaid occurrences in 245 tracked Markdown files at App Service commit `c169da0`: 398 published under `docs/` and one authoring example in the repository contract. Of these, 355 are flowchart/graph blocks (89.0%); the remaining 44 are sequence, state, timeline, or chart blocks (11.0%). Four explicit exclusions leave 395 migration-required Mermaid occurrences.
+The [manifest](diagram-manifest.json) records 399 Mermaid occurrences in 245 tracked Markdown files at the manifest's baseline commit `036376d`: 398 published under `docs/` and one authoring example in the repository contract. Of these, 355 are flowchart/graph blocks (89.0%); the remaining 44 are sequence, state, timeline, or chart blocks (11.0%). Four explicit exclusions leave 395 migration-required Mermaid occurrences.
 
 Approximate node-label extraction finds `microsoft entra id` in 38 diagrams and `azure sql` in 29. This suggests potential component reuse, not identical semantics or accepted component definitions. Metadata extraction finds 24 IDs reused across pages and two occurrences without frontmatter provenance; page-qualified keys avoid conflating them. Declared sources split into 200 `mslearn-adapted`, 197 `self-generated`, and two absent declarations. None of these declarations has been verified by this inventory.
 
@@ -60,7 +60,7 @@ Proposed: retain inline Mermaid as the reviewed diagram source, evaluate B again
 2. Versioned interchange: `schema_version: 1` describes inventory, not composition. The manifest pins scanner version and SHA-256, rules SHA-256, and source base commit. Scanner/schema updates must be coordinated byte-identically with sibling guides and followed by regeneration; they must not acquire local composition logic. Any breaking interchange change requires a coordinated schema-version decision, not a silent local reinterpretation.
 3. Deferred composition interface: #283 owns component IDs, boundaries, arrow semantics, references, extension/overlay naming and compatibility. It must demonstrate one base, two distinct extensions, and normal/failure overlays before #284 adopts the product base and #285–#288 migrate assigned entries.
 4. Typed semantics: sequence, state, timeline, and chart diagrams remain hand-authored unless a later review demonstrates an adequate typed template. Flowchart/graph genre candidates are advisory and all remain unreviewed. Reader intent stays null until reviewed; targets remain provisional and migration stays `not-started`.
-5. Ownership: #283 owns no legacy occurrences because its affected scope is an opt-in pipeline, and its acceptance keeps existing diagrams unchanged outside the PoC. #289 owns no diagrams; full migration/render coverage belongs there, not to this frozen-baseline consistency check.
+5. Ownership: #283 owns no legacy occurrences because its affected scope is an opt-in pipeline, and its acceptance keeps existing diagrams unchanged outside the PoC. #289 owns no diagrams; full migration/render coverage belongs there, not to this committed-snapshot consistency check.
 6. Non-Mermaid owner decision: explicitly exclude the generated Cytoscape navigation producers and unwired learning-path containers provisionally, rather than replace them with static topology. Including or excluding them in the migration is an owner decision that must be settled before #281 closes; if included, #288's auxiliary/published-assets scope is the proposed owner. This is not an approved permanent exclusion or proof the widgets work.
 
 ## Over-Engineering Assessment
@@ -77,14 +77,14 @@ The supplied render measurement produced 13.0 MB of derived App Service PNGs (ab
 
 - All 395 migration-required Mermaid occurrences have exactly one owning batch. Four excluded occurrences and every tracked image have explicit reasons; no asset or assignment is unresolved.
 - The manifest preserves declared provenance verbatim, locations, source hashes and approximate structural fields without rewriting source diagrams or evidence.
-- The two inventory CI steps validate fixtures and frozen-baseline consistency without cloud credentials, network access, or a rendering runtime.
+- The two inventory CI steps validate fixtures and committed-snapshot consistency without cloud credentials, network access, or a rendering runtime.
 
 ### Risks and Mitigations
 
 - The PoC may not justify composition. Keep Option A viable and do not prescribe target component names before review.
 - Genre signals mislead: a diamond may be decorative, while a topology may have no subgraph. Preserve `unreviewed`, report sample disagreement, and have batch owners read the actual diagram.
 - A line-based scanner cannot fully reproduce the site's Markdown container rendering. It errs toward reporting: `blockquote`, `list-marker`, and `indented` findings block `--check`; `html-comment` and plain `indented-code` findings are informational. `--write` warns once per page for blocking findings only. App Service's separate Mermaid format validator already rejects indented Mermaid fences; examples belong inside longer outer fences. See the [inventory's known limitations](diagram-inventory.md#command-reference), including extra info words, prefixed comments, conservative nested-container over-reporting and corrupted fences. The shared scanner's classification was checked against Python-Markdown 3.10.2 / pymdownx 10.21.3 in local experiments run for the Container Apps pull request on 2026-10-30; those experiments are not committed here or rerun for App Service.
-- `--check` does not compare the source tree to the frozen baseline. Use advisory `--verify-tree` to see drift; #289 must design future coverage rather than presenting P0 as full migration enforcement.
+- `--check` does not compare the source tree to the committed snapshot. Use advisory `--verify-tree` to see drift; #289 must design future coverage rather than presenting P0 as full migration enforcement.
 - Asset `referenced_count` counts Markdown image usages, not `shot()` macro expansion. Manifest-driven WebPs can therefore have zero literal usages without being unused. Capture registration and evidence validity remain separate gates.
 - Visual exclusions need an owner decision. Source inspection also finds a stale producer name on the troubleshooting-map page and learning-path containers with no initializer/dataset. Record the limitations rather than repair unrelated visual behavior in P0.
 

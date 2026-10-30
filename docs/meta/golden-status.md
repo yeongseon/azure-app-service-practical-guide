@@ -25,7 +25,7 @@ Every quality gate in this repository, its most recently recorded result, and th
 
 ## Summary
 
-*Snapshot of `036376d plus uncommitted working-tree changes`, generated 2026-10-30.*
+*Snapshot of `b9e4f93 plus uncommitted working-tree changes`, generated 2026-10-30.*
 
 *Only the rows of `Diagram inventory tests` and `Diagram inventory consistency` ran on that date; every other row is carried over unchanged from the previous snapshot (`036376d`, 2026-10-30; its `Repository audit coverage` row ran that day, its other rows come from `1327bae`, 2026-10-19) and was not re-run in this change. The `Validate Golden Status` job re-verifies the CI-verifiable statuses.*
 
@@ -58,7 +58,7 @@ These are locally executed results, not GitHub Actions statuses. **Skipped** mea
 | Capture asset geometry | Blocking | ✅ Pass | Capture assets conform to the capture profile. | < 10s |
 | Mermaid format | Blocking | ✅ Pass | Files checked: 246 · Files with errors: 0 | < 10s |
 | Mermaid syntax | Blocking | ✅ Pass | Diagrams checked: 395 · Errors found: 0 | < 10s |
-| Diagram inventory tests | Blocking | ✅ Pass | Ran 105 tests in 8.514s · OK (skipped=1) | < 10s |
+| Diagram inventory tests | Blocking | ✅ Pass | Ran 117 tests in 9.024s · OK (skipped=1) | < 10s |
 | Diagram inventory consistency | Blocking | ✅ Pass | diagram inventory: check passed | < 10s |
 | Content sources | Blocking | ✅ Pass | Files with mermaid: 241 · Validation errors: 0 | < 10s |
 | Content sources schema | Blocking | ✅ Pass | Files with content_sources schema drift: 0 · Parse errors: 0 | < 10s |
