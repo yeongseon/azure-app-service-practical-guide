@@ -65,6 +65,14 @@ Verify checks on the exact head SHA. No missing, pending or failing check may be
 bypassed. This adoption does not change approval counts, branch protection or
 release behavior. AI comments are review input, not human approval.
 
+### Repository Audit Coverage
+
+A PR adding, renaming or removing a tracked path must update
+`docs/reference/golden-repository-audit.json`. Add the path to the winning
+record's `members` or add a more specific record, and delete or rename the
+record of a removed or renamed path. The `Repository audit coverage` gate
+otherwise fails by path name.
+
 ### Writing PR Descriptions
 
 Use the existing ordered headings required by the PR metadata workflow. In

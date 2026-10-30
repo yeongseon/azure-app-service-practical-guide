@@ -32,6 +32,9 @@ jobs:
         run: |
           python -m doctest scripts/generate_golden_status.py -v
 
+      - name: Repository audit coverage
+        run: python3 tests/golden/test_repository_audit.py
+
       # Re-runs only the gates marked `verified_in_ci`: the ones needing nothing
       # beyond the two packages above plus the coreutils already on the runner.
       # Gates with their own heavy job (MkDocs, the reference-app builds, the

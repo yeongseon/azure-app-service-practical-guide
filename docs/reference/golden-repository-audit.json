@@ -2,9 +2,10 @@
   "policy": "Decision record only. Nothing here deletes or moves anything; ARCHIVE marks a path retained for provenance rather than routine use, and no evidence is deleted without a separate review.",
   "evaluated_at": "2026-09-27T00:00:00Z",
   "review_methods": {
-    "static-review": "The comparison was read from the cited files by the reviewing agent. It is neither mechanically enforced nor attributed to a human reviewer; only the path and link properties of a paired runbook are checked by a validator."
+    "static-review": "The comparison was read from the cited files by the reviewing agent. It is neither mechanically enforced nor attributed to a human reviewer; only the path and link properties of a paired runbook are checked by a validator.",
+    "inventory-source-review": "Observed by reading: section responsibilities and page headings/indexes; application entrypoints and build manifests; lab classification reasons and capture limitations; Golden gate registry/workflow bindings; retained digest registry/checker. Agent review supplies group reasons; git enumeration supplies members only. This is not an exhaustive factual/semantic review of every leaf, a human review, Azure re-execution or authorization to delete. Unresolved lifecycle questions remain conservative KEEP."
   },
-  "coverage_note": "Coverage is by top-level repository area plus the specific paths listed below. Additions or renames beneath a broad entry such as docs/ are governed by the existing content gates and are not individually re-audited here, so this inventory is partial below the top level.",
+  "coverage_note": "Complete tracked-tree membership snapshot, reviewed offline. Each root file and occupied top-level/depth-two directory has an explicit record, with deeper lifecycle groups and selected overrides. Longest explicit path wins; directory members are exact relative paths assigned only to that winner, not recursive permission for future children. Empty parent member lists mean all descendants have more-specific records. Additions, removals and renames require deliberate review and member edits; CI checks but never regenerates the snapshot. KEEP conservatively retains content and does not certify factual accuracy, Azure execution, evidence trust or final Golden review.",
   "decisions": [
     "KEEP",
     "REWRITE",
@@ -15,43 +16,243 @@
   "delete_count_note": "No path is marked DELETE. Nothing measured in this audit justified destruction over archival. The single REWRITE finding was resolved by wiring the orphaned validator into CI rather than by removing it.",
   "baseline_findings": {
     "catalog_drift": "The historical README advertised 10 labs while the then-current catalog contained 13. Current counts are derived from labs/golden-classification.json and checked against the filesystem.",
-    "execution_corrections": ["#202", "#203"],
-    "catalog_corrections": ["#176", "#182"]
+    "execution_corrections": [
+      "#202",
+      "#203"
+    ],
+    "catalog_corrections": [
+      "#176",
+      "#182"
+    ],
+    "description_drift": [
+      {
+        "id": "windows-readme",
+        "path": "labs/windows-java-httpplatformhandler-timeout/README.md",
+        "section": "Introduction",
+        "baseline_description": "Windows Java SE is under-documented in the App Service troubleshooting corpus (all 10 existing labs in this repo are Linux). This lab establishes the first Windows Java SE reproduction and mitigation playbook.",
+        "current_sources": [
+          "labs/golden-classification.json",
+          "labs/windows-java-httpplatformhandler-timeout/README.md"
+        ],
+        "decision": "REWRITE",
+        "disposition": "Correct current prose: replace the stale Linux-only count and unsupported first-reproduction claim with scoped historical retention wording. The current Status table remains unchanged.",
+        "issues": [
+          "#176",
+          "#182"
+        ],
+        "verification": "Observed by reading"
+      },
+      {
+        "id": "historical-stage-prerequisites",
+        "path": "labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/design-proposal.md",
+        "section": "Draft 2 / Non-blocking item 4",
+        "baseline_description": "**Lab 1 references** in this Draft (e.g. path `../lab-1-baseline-signature/...`) point to files that exist in the working tree but are **not yet committed at Draft 2 time**; this is expected during the draft phase and will resolve when Lab 1 files land in the same PR series.",
+        "current_sources": [
+          "labs/windows-java-httpplatformhandler-timeout/lab-1-baseline-signature/README.md",
+          "labs/windows-java-httpplatformhandler-timeout/README.md"
+        ],
+        "decision": "KEEP",
+        "disposition": "Retain historical draft, not current instructions: Draft 2 time is explicitly labelled in the source. Lab 1 scripts and historical results are now committed; the current stage table is the reader entry point. Already-resolved correction, not a new execution.",
+        "issues": [
+          "#202"
+        ],
+        "verification": "Observed by reading"
+      },
+      {
+        "id": "historical-stage-layout",
+        "path": "labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/design-proposal.md",
+        "section": "Directory layout",
+        "baseline_description": "README.md                             # (pending, gated on Oracle Draft 2 approval)",
+        "current_sources": [
+          "labs/windows-java-httpplatformhandler-timeout/README.md",
+          "docs/troubleshooting/lab-guides/windows-java-httpplatformhandler-timeout.md"
+        ],
+        "decision": "KEEP",
+        "disposition": "Retain historical draft with its Draft 2 label, not a claim that today's lab entry point is pending. The proposed stage-local README is not present; use the current parent README and published lab guide. No approval or execution is inferred from this draft.",
+        "issues": [
+          "#202"
+        ],
+        "verification": "Observed by reading"
+      },
+      {
+        "id": "startup-entrypoints-resolved",
+        "path": "docs/troubleshooting/lab-guides/deployment-succeeded-startup-failed.md",
+        "section": "Historical startup entrypoint baseline",
+        "baseline_description": "the startup guide referenced contract.json/run.py absent from main",
+        "baseline_source": "Issue #203 Context (review baseline 1e0423b); historical summary, not a quotation from the current guide.",
+        "current_sources": [
+          "labs/deployment-succeeded-startup-failed/contract.json",
+          "labs/deployment-succeeded-startup-failed/run.py",
+          "labs/deployment-succeeded-startup-failed/trigger.sh"
+        ],
+        "decision": "KEEP",
+        "disposition": "Keep the corrected current entrypoints and retain this baseline as historical context. The paired runbook comparison records the already-resolved #203 correction; source presence is not re-execution.",
+        "issues": [
+          "#203"
+        ],
+        "verification": "Observed by reading"
+      },
+      {
+        "id": "java-package-resolved",
+        "path": "docs/troubleshooting/lab-guides/windows-java-httpplatformhandler-timeout.md",
+        "section": "Historical Windows Java package baseline",
+        "baseline_description": "the Windows Java guide referenced a nonexistent Lab 2 app directory and a ZIP artifact type inconsistent with its JAR deployment script",
+        "baseline_source": "Issue #202 Context (review baseline 1e0423b); historical summary, not a quotation from the current guide.",
+        "current_sources": [
+          "labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/deploy.sh",
+          "labs/windows-java-httpplatformhandler-timeout/stage-0-config-discovery/app/pom.xml",
+          "labs/windows-java-httpplatformhandler-timeout/README.md"
+        ],
+        "decision": "KEEP",
+        "disposition": "Keep the corrected current JAR reuse/build instructions. The parent stage table distinguishes committed scripts from historical results; #202 is already resolved structurally, not freshly executed. Retained reports and capture dates remain untouched.",
+        "issues": [
+          "#202"
+        ],
+        "verification": "Observed by reading"
+      },
+      {
+        "id": "historical-catalog",
+        "path": "README.md",
+        "section": "Troubleshooting Labs / historical catalog baseline",
+        "baseline_description": "The historical README advertised 10 labs while the then-current catalog contained 13.",
+        "baseline_source": "README.md at 1e0423b, Troubleshooting Labs, says '10 hands-on labs'; git ls-tree -d 1e0423b labs/ lists 13 scenario directories excluding _shared. The comparison is a historical summary, not a quotation from today's README.",
+        "current_sources": [
+          "README.md",
+          "labs/golden-classification.json"
+        ],
+        "decision": "KEEP",
+        "disposition": "Retain the historical mismatch separately from the current catalog. The root README's current scenario count follows the classification and is not reverted to either historical count.",
+        "issues": [
+          "#176",
+          "#182"
+        ],
+        "verification": "Observed by reading"
+      }
+    ]
   },
   "paired_runbooks": [
     {
       "id": "deployment-succeeded-startup-failed",
       "comparisons": {
-        "entrypoint": {"result": "MATCH", "review_method": "static-review", "evidence": ["labs/deployment-succeeded-startup-failed/contract.json", "labs/deployment-succeeded-startup-failed/run.py", "labs/deployment-succeeded-startup-failed/trigger.sh"]},
-        "package": {"result": "MATCH", "review_method": "static-review", "evidence": ["labs/deployment-succeeded-startup-failed/app/requirements.txt", "labs/deployment-succeeded-startup-failed/run.py"]},
-        "build": {"result": "MATCH", "review_method": "static-review", "evidence": ["labs/deployment-succeeded-startup-failed/run.py", "labs/deployment-succeeded-startup-failed/trigger.sh"]},
-        "prerequisite": {"result": "MATCH", "review_method": "static-review", "evidence": ["labs/deployment-succeeded-startup-failed/main.bicep", "labs/deployment-succeeded-startup-failed/contract.json"]},
-        "cleanup": {"result": "MATCH", "review_method": "static-review", "evidence": ["labs/deployment-succeeded-startup-failed/cleanup.sh", "labs/deployment-succeeded-startup-failed/contract.json"]}
+        "entrypoint": {
+          "result": "MATCH",
+          "review_method": "static-review",
+          "evidence": [
+            "labs/deployment-succeeded-startup-failed/contract.json",
+            "labs/deployment-succeeded-startup-failed/run.py",
+            "labs/deployment-succeeded-startup-failed/trigger.sh"
+          ]
+        },
+        "package": {
+          "result": "MATCH",
+          "review_method": "static-review",
+          "evidence": [
+            "labs/deployment-succeeded-startup-failed/app/requirements.txt",
+            "labs/deployment-succeeded-startup-failed/run.py"
+          ]
+        },
+        "build": {
+          "result": "MATCH",
+          "review_method": "static-review",
+          "evidence": [
+            "labs/deployment-succeeded-startup-failed/run.py",
+            "labs/deployment-succeeded-startup-failed/trigger.sh"
+          ]
+        },
+        "prerequisite": {
+          "result": "MATCH",
+          "review_method": "static-review",
+          "evidence": [
+            "labs/deployment-succeeded-startup-failed/main.bicep",
+            "labs/deployment-succeeded-startup-failed/contract.json"
+          ]
+        },
+        "cleanup": {
+          "result": "MATCH",
+          "review_method": "static-review",
+          "evidence": [
+            "labs/deployment-succeeded-startup-failed/cleanup.sh",
+            "labs/deployment-succeeded-startup-failed/contract.json"
+          ]
+        }
       },
-      "link_audit": {"repo_local": "PASS", "absolute_github": "PASS", "validator": "scripts/validate_documented_paths.py"}
+      "link_audit": {
+        "repo_local": "PASS",
+        "absolute_github": "PASS",
+        "validator": "scripts/validate_documented_paths.py"
+      }
     },
     {
       "id": "windows-java-httpplatformhandler-timeout",
       "comparisons": {
-        "entrypoint": {"result": "MATCH", "review_method": "static-review", "evidence": ["labs/windows-java-httpplatformhandler-timeout/README.md", "labs/windows-java-httpplatformhandler-timeout/stage-0-config-discovery/README.md", "labs/windows-java-httpplatformhandler-timeout/lab-1-baseline-signature/README.md"]},
-        "package": {"result": "MATCH", "review_method": "static-review", "evidence": ["labs/windows-java-httpplatformhandler-timeout/stage-0-config-discovery/app/pom.xml", "labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/webconfig/web.config"]},
-        "build": {"result": "MATCH", "review_method": "static-review", "evidence": ["labs/windows-java-httpplatformhandler-timeout/stage-0-config-discovery/deploy.sh", "labs/windows-java-httpplatformhandler-timeout/lab-1-baseline-signature/deploy.sh", "labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/deploy.sh"]},
-        "prerequisite": {"result": "MATCH", "review_method": "static-review", "evidence": ["labs/windows-java-httpplatformhandler-timeout/stage-0-config-discovery/README.md", "labs/windows-java-httpplatformhandler-timeout/lab-1-baseline-signature/README.md", "labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/design-proposal.md"]},
-        "cleanup": {"result": "MATCH", "review_method": "static-review", "evidence": ["labs/windows-java-httpplatformhandler-timeout/stage-0-config-discovery/cleanup.sh", "labs/windows-java-httpplatformhandler-timeout/lab-1-baseline-signature/cleanup.sh", "labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/cleanup.sh"]}
+        "entrypoint": {
+          "result": "MATCH",
+          "review_method": "static-review",
+          "evidence": [
+            "labs/windows-java-httpplatformhandler-timeout/README.md",
+            "labs/windows-java-httpplatformhandler-timeout/stage-0-config-discovery/README.md",
+            "labs/windows-java-httpplatformhandler-timeout/lab-1-baseline-signature/README.md"
+          ]
+        },
+        "package": {
+          "result": "MATCH",
+          "review_method": "static-review",
+          "evidence": [
+            "labs/windows-java-httpplatformhandler-timeout/stage-0-config-discovery/app/pom.xml",
+            "labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/webconfig/web.config"
+          ]
+        },
+        "build": {
+          "result": "MATCH",
+          "review_method": "static-review",
+          "evidence": [
+            "labs/windows-java-httpplatformhandler-timeout/stage-0-config-discovery/deploy.sh",
+            "labs/windows-java-httpplatformhandler-timeout/lab-1-baseline-signature/deploy.sh",
+            "labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/deploy.sh"
+          ]
+        },
+        "prerequisite": {
+          "result": "MATCH",
+          "review_method": "static-review",
+          "evidence": [
+            "labs/windows-java-httpplatformhandler-timeout/stage-0-config-discovery/README.md",
+            "labs/windows-java-httpplatformhandler-timeout/lab-1-baseline-signature/README.md",
+            "labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/design-proposal.md"
+          ]
+        },
+        "cleanup": {
+          "result": "MATCH",
+          "review_method": "static-review",
+          "evidence": [
+            "labs/windows-java-httpplatformhandler-timeout/stage-0-config-discovery/cleanup.sh",
+            "labs/windows-java-httpplatformhandler-timeout/lab-1-baseline-signature/cleanup.sh",
+            "labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/cleanup.sh"
+          ]
+        }
       },
-      "link_audit": {"repo_local": "PASS", "absolute_github": "PASS", "validator": "scripts/validate_documented_paths.py"}
+      "link_audit": {
+        "repo_local": "PASS",
+        "absolute_github": "PASS",
+        "validator": "scripts/validate_documented_paths.py"
+      }
     }
   ],
   "paths": [
     {
       "path": "apps/",
       "decision": "KEEP",
-      "reason": "Four reference applications exercised by the app-infra-ci workflow. Unrelated to the Golden model and independently useful."
+      "reason": "Four reference applications exercised by the app-infra-ci workflow. Unrelated to the Golden model and independently useful.",
+      "members": []
     },
     {
       "path": "docs/",
       "decision": "KEEP",
-      "reason": "The published guide. Individual pages are governed by the existing content gates, not by this audit."
+      "reason": "The published guide. Individual pages are governed by the existing content gates, not by this audit.",
+      "members": [
+        "about.md",
+        "index.md",
+        "main.html"
+      ]
     },
     {
       "path": "docs/operations/deployment-slots.md",
@@ -66,52 +267,155 @@
     {
       "path": "docs/reference/content-validation-status.md",
       "decision": "KEEP",
-      "reason": "Generated dashboard. Its generator is not invoked by CI, so it can silently go stale; that is recorded against the generator rather than the output."
+      "reason": "Committed generated content-review dashboard, rebuilt by scripts/generate_content_validation_status.py; generation time is not Azure verification. Scheduled freshness reporting and committed dashboard refresh are distinct operations."
     },
     {
       "path": "docs/reference/validation-status.md",
       "decision": "KEEP",
-      "reason": "Generated dashboard, same staleness exposure as above."
+      "reason": "Committed tutorial metadata dashboard rebuilt by scripts/generate_validation_status.py. The scheduled validation-freshness workflow reports age without refreshing this file or establishing tutorial/method execution binding."
     },
     {
       "path": "labs/",
       "decision": "KEEP",
-      "reason": "Per-lab decisions live in labs/golden-classification.json rather than being duplicated here."
+      "reason": "Per-lab decisions live in labs/golden-classification.json rather than being duplicated here.",
+      "members": [
+        "PII-REDACTION-REVIEW.md",
+        "golden-classification.json"
+      ]
     },
     {
       "path": "labs/deployment-succeeded-startup-failed/",
       "decision": "KEEP",
-      "reason": "PR #234 reconciled the documented contract.json and run.py entrypoints with the checked-in shell runbook; package, prerequisites and cleanup now describe one startup-failure scenario. Execution corrections are tracked by #202."
+      "reason": "PR #234 reconciled the documented contract.json and run.py entrypoints with the checked-in shell runbook; package, prerequisites and cleanup now describe one startup-failure scenario. Execution corrections are tracked by #203.",
+      "members": [
+        "app/app.py",
+        "app/requirements.txt",
+        "cleanup.sh",
+        "contract.json",
+        "main.bicep",
+        "run.py",
+        "test_run.py",
+        "trigger.sh",
+        "verify.sh"
+      ]
     },
     {
       "path": "labs/windows-java-httpplatformhandler-timeout/",
       "decision": "KEEP",
-      "reason": "Three staged experiments use Java SE JAR deployment assets (WAR, EAR and Tomcat or JBoss are out of scope) and stage-specific build directories, prerequisites and cleanup. Their retained results remain evidence; structural migration decisions belong to #182 and execution corrections to #203."
+      "reason": "Three staged experiments use Java SE JAR deployment assets (WAR, EAR and Tomcat or JBoss are out of scope) and stage-specific build directories, prerequisites and cleanup. Their retained results remain evidence; structural migration decisions belong to #182 and execution corrections to #202.",
+      "members": [
+        "README.md"
+      ]
     },
     {
       "path": "labs/_shared/",
       "decision": "KEEP",
-      "reason": "Collector harness shared by several labs. Not a lab and not classified as one."
+      "reason": "Collector harness shared by several labs. Not a lab and not classified as one.",
+      "members": [
+        "scripts/collect-app-logs.sh",
+        "scripts/collect-config.sh",
+        "scripts/collect-http.sh",
+        "scripts/collect-kql.sh",
+        "scripts/collect-metrics.sh",
+        "scripts/deploy-lab.sh",
+        "scripts/generate-charts.py",
+        "scripts/sanitize-artifacts.py"
+      ]
     },
     {
       "path": "evidence/",
       "decision": "KEEP",
-      "reason": "Run-scoped evidence and reproduction records. Evidence is never deleted without a separate review."
+      "reason": "Run-scoped evidence and reproduction records. Evidence is never deleted without a separate review.",
+      "members": [
+        "retained-digests.json",
+        "run-declarations.json"
+      ]
     },
     {
       "path": "schemas/golden/",
       "decision": "KEEP",
-      "reason": "The Golden v1 contract surface: run manifest, assertion and result schemas. Deleting or moving these breaks every scenario that declares assertions against them."
+      "reason": "The Golden v1 contract surface: run manifest, assertion and result schemas. Deleting or moving these breaks every scenario that declares assertions against them.",
+      "members": [
+        "assertion.schema.json",
+        "evidence.schema.json",
+        "manifest.schema.json",
+        "reproduction.schema.json",
+        "result.schema.json",
+        "run-declarations.schema.json"
+      ]
     },
     {
       "path": "scripts/golden/",
       "decision": "KEEP",
-      "reason": "The Golden v1 reference evaluator and independent-reproduction gate. Both are stdlib-only and are the only code permitted to derive a verdict from raw evidence."
+      "reason": "Golden evaluator derives assertions from raw evidence; reproduction, retention, schema and guarded execution tools implement separate gates in scripts/generate_golden_status.py. The evaluator is stdlib-only; reproduction additionally uses jsonschema/referencing. KEEP is not execution approval.",
+      "members": [
+        "azure_cleanup.py",
+        "azure_e2e_artifact_scan.py",
+        "azure_e2e_cli.py",
+        "azure_e2e_guard.py",
+        "azure_e2e_sanitize.py",
+        "check_reproduction.py",
+        "check_retained_packages.py",
+        "collect_scenario_a.py",
+        "collect_scenario_b.py",
+        "collect_scenario_c.py",
+        "evaluate_run.py",
+        "freshness_report.py",
+        "run_scenario_b.py",
+        "run_scenario_c.py",
+        "scenario-a-recipe.json",
+        "validate_schemas.py",
+        "validate_tutorial_validation.py"
+      ]
     },
     {
       "path": "tests/golden/",
       "decision": "KEEP",
-      "reason": "The Golden v1 suites, including the negative cases that prove each gate discriminates. Removing them would leave the evaluator unverified while it still looked tested."
+      "reason": "The Golden v1 suites, including the negative cases that prove each gate discriminates. Removing them would leave the evaluator unverified while it still looked tested.",
+      "members": [
+        "classification_integrity.py",
+        "test_azure_cleanup.py",
+        "test_azure_e2e_artifact_contract.py",
+        "test_azure_e2e_failure_record.py",
+        "test_azure_e2e_guard.py",
+        "test_azure_e2e_sanitize.py",
+        "test_collect_scenario_a.py",
+        "test_collect_scenario_b.py",
+        "test_collect_scenario_c.py",
+        "test_contract_collector_alignment.py",
+        "test_evaluate_run.py",
+        "test_exit_code_agreement.py",
+        "test_freshness_report.py",
+        "test_lab_classification.py",
+        "test_legacy_startup_verifier.py",
+        "test_migration_spec.py",
+        "test_negative_evidence.py",
+        "test_negative_evidence_matrix.py",
+        "test_oracle_evaluator_blockers.py",
+        "test_pr234_self_attacks.py",
+        "test_readme_claims.py",
+        "test_repository_audit.py",
+        "test_reproduction.py",
+        "test_reproduction_hardening.py",
+        "test_retained_package_immutability.py",
+        "test_retained_runs.py",
+        "test_run_scenario_b.py",
+        "test_runner_vocabulary.py",
+        "test_scan_lab_pii.py",
+        "test_scenario_a.py",
+        "test_scenario_a_raw_binding.py",
+        "test_scenario_b.py",
+        "test_scenario_c.py",
+        "test_schema_conformance.py",
+        "test_second_round_adversarial.py",
+        "test_series_lab_contract.py",
+        "test_trust_axes.py",
+        "test_tutorial_validation_reference.py",
+        "test_v1_review.py",
+        "test_validation_status.py",
+        "test_vocabulary_consistency.py",
+        "test_workflow_yaml.py"
+      ]
     },
     {
       "path": "scripts/lib/content_scope.py",
@@ -131,7 +435,7 @@
     {
       "path": "scripts/generate_validation_status.py",
       "decision": "KEEP",
-      "reason": "Manual generator for a committed dashboard. AGENTS.md forbids editing the output by hand, so the generator must stay."
+      "reason": "Generator for the committed tutorial metadata dashboard only, with --docs-dir and --output options. It reads existing validation dates without updating them; the scheduled read-only freshness report is owned separately by scripts/golden/freshness_report.py and validation-freshness.yml."
     },
     {
       "path": "scripts/generate_content_validation_status.py",
@@ -140,8 +444,8 @@
     },
     {
       "path": "scripts/normalize_content_sources_schema.py",
-      "decision": "ARCHIVE",
-      "reason": "One-off schema migration. Superseded by the normalized frontmatter now in the tree; retained for provenance rather than routine use."
+      "decision": "KEEP",
+      "reason": "Keep the active read-only --check enforcement of canonical content_sources mappings in the Content sources schema gate and Validate Content Source Metadata CI job. Only its historical apply-mode migration use is obsolete; the script and its ongoing enforcement are not archived."
     },
     {
       "path": "scripts/remove_out_of_scope_validation.py",
@@ -156,7 +460,1829 @@
     {
       "path": ".github/workflows/",
       "decision": "KEEP",
-      "reason": "Existing documentation and application gates. Golden v1 adds to them and must not regress them."
+      "reason": "Existing documentation and application gates. Golden v1 adds to them and must not regress them.",
+      "members": [
+        "app-infra-ci.yml",
+        "docs.yml",
+        "e2e-azure.yml",
+        "pr-title.yml",
+        "project-operations.yml",
+        "refresh-golden-status.yml",
+        "validate-content-sources.yml",
+        "validate-golden-status.yml",
+        "validate-repetition.yml",
+        "validate-visual-content.yml",
+        "validation-freshness.yml"
+      ]
+    },
+    {
+      "path": ".gitignore",
+      "decision": "KEEP",
+      "reason": "Excludes generated site, dependencies, local credentials and raw scratch artifacts; sanitized committed captures are intentionally separate."
+    },
+    {
+      "path": "AGENTS.md",
+      "decision": "KEEP",
+      "reason": "Agent entry point defines evidence judgment and delegates detailed mechanical and merge rules to their owning contracts."
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "decision": "KEEP",
+      "reason": "Community participation and enforcement expectations belong to repository governance, not disposable lab output."
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "decision": "KEEP",
+      "reason": "Canonical title, ordered PR headings and one-priority-label rules are consumed by project metadata checks."
+    },
+    {
+      "path": "DOCUMENTATION_CONTRACT.md",
+      "decision": "KEEP",
+      "reason": "Retained authoring, capture, Golden registry and merge contract remains normative; this inventory does not replace or revise it."
+    },
+    {
+      "path": "LICENSE",
+      "decision": "KEEP",
+      "reason": "MIT grant and copyright terms apply to the distributed source and must accompany it."
+    },
+    {
+      "path": "README.md",
+      "decision": "KEEP",
+      "reason": "English reader entry point scopes Evidence-retained claims and derives the current scenario catalog from lab classification."
+    },
+    {
+      "path": "README.ko.md",
+      "decision": "KEEP",
+      "reason": "Korean entry point provides localized navigation and the same scoped evidence legend and scenario catalog as English."
+    },
+    {
+      "path": "README.ja.md",
+      "decision": "KEEP",
+      "reason": "Japanese entry point provides localized navigation and the same scoped evidence legend and scenario catalog as English."
+    },
+    {
+      "path": "README.zh-CN.md",
+      "decision": "KEEP",
+      "reason": "Simplified Chinese entry point provides localized navigation and the same scoped evidence legend and scenario catalog as English."
+    },
+    {
+      "path": "SECURITY.md",
+      "decision": "KEEP",
+      "reason": "Directs vulnerability reports to private advisories and prohibits sensitive experiment data and credentials in public reports."
+    },
+    {
+      "path": "mkdocs.yml",
+      "decision": "KEEP",
+      "reason": "Publication configuration owns navigation, theme, macros, capture registry integration and documentation build plugins."
+    },
+    {
+      "path": "requirements-docs.txt",
+      "decision": "KEEP",
+      "reason": "Documentation dependencies supply the strict MkDocs build and shared manifest-driven capture toolkit. The MkDocs packages and PyYAML are unversioned; only azure-guide-capture-toolkit is referenced at the v0.1.1 Git tag, not a full set of dependency pins."
+    },
+    {
+      "path": ".github/",
+      "decision": "KEEP",
+      "reason": "Repository-facing metadata, Copilot entry point and PR template implement CONTRIBUTING rather than duplicate reader guidance.",
+      "members": [
+        "copilot-instructions.md",
+        "priority-labels.json",
+        "pull_request_template.md"
+      ]
+    },
+    {
+      "path": ".github/ISSUE_TEMPLATE/",
+      "decision": "KEEP",
+      "reason": "Issue forms require context, acceptance, exclusions and references while leaving triage priority to maintainers.",
+      "members": [
+        "bug-report.yml",
+        "config.yml",
+        "documentation-correction.yml",
+        "feature-request.yml"
+      ]
+    },
+    {
+      "path": "apps/dotnet-aspnetcore/",
+      "decision": "KEEP",
+      "reason": "ASP.NET Core reference solution includes controllers, lifecycle hosted service and deployment infrastructure used by the .NET tutorial.",
+      "members": [
+        "GuideApi.sln",
+        "GuideApi/Controllers/HealthController.cs",
+        "GuideApi/Controllers/InfoController.cs",
+        "GuideApi/Controllers/RequestController.cs",
+        "GuideApi/GuideApi.csproj",
+        "GuideApi/Program.cs",
+        "GuideApi/Properties/launchSettings.json",
+        "GuideApi/Services/LifecycleHostedService.cs",
+        "GuideApi/appsettings.Production.json",
+        "GuideApi/appsettings.json",
+        "infra/deploy.sh",
+        "infra/main.bicep",
+        "infra/modules/application-insights.bicep",
+        "infra/modules/appservice-plan.bicep",
+        "infra/modules/log-analytics.bicep",
+        "infra/modules/webapp.bicep",
+        "infra/profiles/minimal.bicepparam",
+        "infra/profiles/observability.bicepparam"
+      ]
+    },
+    {
+      "path": "apps/java-springboot/",
+      "decision": "KEEP",
+      "reason": "Spring Boot reference project builds Java SE JARs with Maven; its source, tests and infrastructure support the Java tutorial rather than the Windows staged lab.",
+      "members": [
+        "infra/deploy.sh",
+        "infra/main.bicep",
+        "infra/modules/application-insights.bicep",
+        "infra/modules/appservice-plan.bicep",
+        "infra/modules/log-analytics.bicep",
+        "infra/modules/webapp.bicep",
+        "infra/profiles/minimal.bicepparam",
+        "infra/profiles/observability.bicepparam",
+        "mvnw",
+        "mvnw.cmd",
+        "pom.xml",
+        "src/main/java/com/example/guide/GuideApplication.java",
+        "src/main/java/com/example/guide/config/WebConfig.java",
+        "src/main/java/com/example/guide/controller/HealthController.java",
+        "src/main/java/com/example/guide/controller/InfoController.java",
+        "src/main/java/com/example/guide/controller/RequestController.java",
+        "src/main/resources/application-production.properties",
+        "src/main/resources/application.properties",
+        "src/main/resources/logback-spring.xml",
+        "src/test/java/com/example/guide/GuideApplicationTests.java"
+      ]
+    },
+    {
+      "path": "apps/nodejs/",
+      "decision": "KEEP",
+      "reason": "Express reference app has a lockfile, node test entry point, telemetry modes and container SSH startup assets used by Node tutorials and app CI.",
+      "members": [
+        ".dockerignore",
+        "Dockerfile",
+        "entrypoint.sh",
+        "infra/deploy.sh",
+        "infra/main.bicep",
+        "infra/modules/application-insights.bicep",
+        "infra/modules/appservice-plan.bicep",
+        "infra/modules/deployment-slot.bicep",
+        "infra/modules/log-analytics.bicep",
+        "infra/modules/webapp.bicep",
+        "infra/profiles/minimal.bicepparam",
+        "infra/profiles/observability.bicepparam",
+        "infra/profiles/release.bicepparam",
+        "package-lock.json",
+        "package.json",
+        "smoke-container.sh",
+        "src/config/telemetry/advanced.js",
+        "src/config/telemetry/basic.js",
+        "src/config/telemetry/index.js",
+        "src/middleware/correlation.js",
+        "src/middleware/httpLogger.js",
+        "src/routes/demo/dependencies.js",
+        "src/routes/demo/exceptions.js",
+        "src/routes/demo/requests.js",
+        "src/routes/health.js",
+        "src/routes/info.js",
+        "src/server.js",
+        "sshd_config",
+        "test/server.test.js"
+      ]
+    },
+    {
+      "path": "apps/python-flask/",
+      "decision": "KEEP",
+      "reason": "Flask reference app separates configuration, correlation middleware and routes; Gunicorn/container assets and tests support the Python tutorial.",
+      "members": [
+        ".dockerignore",
+        "Dockerfile",
+        "entrypoint.sh",
+        "examples/README.md",
+        "examples/with-azure-sql/README.md",
+        "examples/with-cosmosdb/README.md",
+        "examples/with-redis/README.md",
+        "gunicorn.conf.py",
+        "infra/deploy.sh",
+        "infra/main.bicep",
+        "infra/modules/application-insights.bicep",
+        "infra/modules/appservice-plan.bicep",
+        "infra/modules/deployment-slot.bicep",
+        "infra/modules/log-analytics.bicep",
+        "infra/modules/webapp.bicep",
+        "infra/profiles/minimal.bicepparam",
+        "infra/profiles/observability.bicepparam",
+        "infra/scripts/cleanup.sh",
+        "requirements-dev.txt",
+        "requirements.txt",
+        "src/__init__.py",
+        "src/app.py",
+        "src/config/__init__.py",
+        "src/config/settings.py",
+        "src/config/telemetry.py",
+        "src/middleware/__init__.py",
+        "src/middleware/correlation.py",
+        "src/routes/__init__.py",
+        "src/routes/demo/__init__.py",
+        "src/routes/demo/dependencies.py",
+        "src/routes/demo/exceptions.py",
+        "src/routes/demo/requests.py",
+        "src/routes/health.py",
+        "src/routes/info.py",
+        "sshd_config",
+        "tests/test_app.py"
+      ]
+    },
+    {
+      "path": "docs/assets/",
+      "decision": "KEEP",
+      "reason": "Brand SVGs support the site identity. More-specific records distinguish generated graph data from retained screenshot bytes.",
+      "members": [
+        "favicon.svg",
+        "logo.svg"
+      ]
+    },
+    {
+      "path": "docs/best-practices/",
+      "decision": "KEEP",
+      "reason": "Production baseline, anti-patterns, security, reliability, deployment and network guidance explain choices; they are not duplicate step-by-step tutorial execution evidence.",
+      "members": [
+        "common-anti-patterns.md",
+        "deployment.md",
+        "index.md",
+        "mtls.md",
+        "networking.md",
+        "production-baseline.md",
+        "reliability.md",
+        "scaling.md",
+        "security.md"
+      ]
+    },
+    {
+      "path": "docs/contributing/",
+      "decision": "KEEP",
+      "reason": "Reader-facing authoring templates and local preview instructions complement the root governance entry point.",
+      "members": [
+        "index.md"
+      ]
+    },
+    {
+      "path": "docs/javascripts/",
+      "decision": "KEEP",
+      "reason": "Document graph, troubleshooting map and Mermaid zoom code implement the visualization pages rather than unused sample scripts.",
+      "members": [
+        "document-graph.js",
+        "mermaid-zoom.js",
+        "troubleshooting-map.js"
+      ]
+    },
+    {
+      "path": "docs/language-guides/",
+      "decision": "KEEP",
+      "reason": "Language landing page routes readers to runtime explanations, ordered tutorials and optional recipes; deeper records keep these lifecycles distinct.",
+      "members": [
+        "index.md"
+      ]
+    },
+    {
+      "path": "docs/meta/",
+      "decision": "KEEP",
+      "reason": "Taxonomy and series contract document content structure; Golden Status is a separately scoped local gate snapshot, not an Azure certificate.",
+      "members": [
+        "golden-status.md",
+        "series-contract.md",
+        "taxonomy.md"
+      ]
+    },
+    {
+      "path": "docs/operations/",
+      "decision": "KEEP",
+      "reason": "Day-2 backup, scaling, cost, health, security and certificate procedures remain reader tasks; deployment execution is separated below and slot overrides retain the canonical choice.",
+      "members": [
+        "backup-restore.md",
+        "cost-optimization.md",
+        "health-recovery.md",
+        "incoming-client-certificates.md",
+        "index.md",
+        "networking.md",
+        "outbound-client-certificates.md",
+        "scaling.md",
+        "security.md"
+      ]
+    },
+    {
+      "path": "docs/operations/deployment/",
+      "decision": "KEEP",
+      "reason": "Deployment method pages cover ZIP, containers, GitHub Actions and slot promotion. The selected slots page links to the authoritative operational sticky-setting procedure.",
+      "members": [
+        "container-deploy.md",
+        "github-actions.md",
+        "index.md",
+        "zip-deploy.md"
+      ]
+    },
+    {
+      "path": "docs/platform/",
+      "decision": "KEEP",
+      "reason": "Architecture, hosting, request/process lifecycle, Kudu, storage, networking and security pages provide mechanisms needed to interpret operational observations.",
+      "members": [
+        "architecture/index.md",
+        "authentication-architecture.md",
+        "containers/index.md",
+        "deployment-options.md",
+        "deployment-scenarios.md",
+        "hosting-models.md",
+        "index.md",
+        "kudu-linux.md",
+        "kudu-overview.md",
+        "kudu-windows.md",
+        "mtls.md",
+        "networking.md",
+        "process-lifecycle-and-in-flight-work.md",
+        "request-lifecycle.md",
+        "resource-relationships.md",
+        "run-from-package.md",
+        "scaling.md",
+        "security-architecture.md",
+        "storage-connectivity.md"
+      ]
+    },
+    {
+      "path": "docs/reference/",
+      "decision": "KEEP",
+      "reason": "CLI, KQL, limits and diagnostics lookups coexist with Golden model, audit and migration records; reference presence is not live verification or final-review approval.",
+      "members": [
+        "azure-e2e-operations.md",
+        "cli-cheatsheet.md",
+        "golden-evidence-model.md",
+        "golden-migration-spec.md",
+        "golden-repository-audit.json",
+        "golden-v1-review.json",
+        "index.md",
+        "kql-queries.md",
+        "kudu-queries.md",
+        "platform-limits.md",
+        "troubleshooting.md"
+      ]
+    },
+    {
+      "path": "docs/start-here/",
+      "decision": "KEEP",
+      "reason": "Overview, role-based learning paths, scenario router and repository map provide orientation without embedding deployment tutorials.",
+      "members": [
+        "learning-paths.md",
+        "overview.md",
+        "repository-map.md",
+        "scenario-router.md"
+      ]
+    },
+    {
+      "path": "docs/stylesheets/",
+      "decision": "KEEP",
+      "reason": "Site layout and document-graph styling are loaded by the configured theme and visualizations; retain alongside the JavaScript consumers.",
+      "members": [
+        "document-graph.css",
+        "extra.css"
+      ]
+    },
+    {
+      "path": "docs/troubleshooting/",
+      "decision": "KEEP",
+      "reason": "Routing, mental model, decision tree and evidence map connect symptom questions to procedures; specialized subgroups separate playbooks, labs and query packs.",
+      "members": [
+        "architecture-overview.md",
+        "decision-tree.md",
+        "evidence-map.md",
+        "index.md",
+        "mental-model.md",
+        "quick-diagnosis-cards.md"
+      ]
+    },
+    {
+      "path": "docs/troubleshooting/first-10-minutes/",
+      "decision": "KEEP",
+      "reason": "Short startup, performance and outbound checklists support initial triage, not a second full incident playbook.",
+      "members": [
+        "index.md",
+        "outbound-network.md",
+        "performance.md",
+        "startup-availability.md"
+      ]
+    },
+    {
+      "path": "docs/troubleshooting/methodology/",
+      "decision": "KEEP",
+      "reason": "Troubleshooting method and detector map define investigation sequence and source selection rather than claim a measured cause.",
+      "members": [
+        "detector-map.md",
+        "troubleshooting-method.md"
+      ]
+    },
+    {
+      "path": "docs/troubleshooting/playbooks/",
+      "decision": "KEEP",
+      "reason": "Symptom-oriented playbooks guide discriminating checks and competing explanations; do not treat diagnostic command examples as retained lab execution.",
+      "members": [
+        "app-startup-failures.md",
+        "arm-configuration-http-400.md",
+        "authentication-failures.md",
+        "cd-rbac-role-assignment-conflict.md",
+        "deployment-failures.md",
+        "index.md",
+        "missing-wwwroot-files-404.md",
+        "mtls-failures.md",
+        "outbound-network/dns-resolution-vnet-integrated-app-service.md",
+        "outbound-network/private-endpoint-custom-dns-route-confusion.md",
+        "outbound-network/snat-or-application-issue.md",
+        "outbound-network/storage-connectivity-firewall-authorization.md",
+        "performance-degradation.md",
+        "performance/cors-and-token-errors.md",
+        "performance/intermittent-5xx-under-load.md",
+        "performance/memory-pressure-and-worker-degradation.md",
+        "performance/no-space-left-on-device.md",
+        "performance/slow-response-but-low-cpu.md",
+        "performance/slow-start-cold-start.md",
+        "performance/tail-latency-baseline-comparison.md",
+        "performance/windows-filesystem-quotas.md",
+        "performance/windows-memory-pressure-worker-recycling.md",
+        "private-endpoint-access-restrictions.md",
+        "scm-access-dns-and-http-failures.md",
+        "ssl-certificate-issues.md",
+        "startup-availability/auth-redirect-loop.md",
+        "startup-availability/container-didnt-respond-to-http-pings.md",
+        "startup-availability/deployment-succeeded-startup-failed.md",
+        "startup-availability/failed-to-forward-request.md",
+        "startup-availability/slot-swap-config-drift.md",
+        "startup-availability/slot-swap-failed-during-warmup.md",
+        "startup-availability/warmup-vs-health-check.md",
+        "startup-availability/windows-container-health-probes.md",
+        "startup-availability/windows-first-static-asset-request-500.md",
+        "startup-availability/windows-iis-webconfig-startup.md",
+        "startup-availability/windows-kudu-diagnostics.md",
+        "startup-availability/windows-slot-swap-binding-recycle.md",
+        "startup-availability/windows-slot-swap-first-request-latency.md"
+      ]
+    },
+    {
+      "path": "docs/troubleshooting/lab-guides/",
+      "decision": "KEEP",
+      "reason": "Published experiments define questions, predictions and falsification alongside instructions linked to lab assets. Catalog and trust remain owned by labs/golden-classification.json.",
+      "members": [
+        "cd-reconnect-rbac-conflict.md",
+        "container-http-pings.md",
+        "deployment-succeeded-startup-failed.md",
+        "dns-vnet-resolution.md",
+        "failed-to-forward-request.md",
+        "index.md",
+        "intermittent-5xx.md",
+        "memory-pressure.md",
+        "missing-wwwroot-content.md",
+        "no-space-left-on-device.md",
+        "private-endpoint-route-fault.md",
+        "slot-swap-config-drift.md",
+        "slow-start-cold-start.md",
+        "snat-exhaustion.md",
+        "windows-java-httpplatformhandler-timeout.md",
+        "zipdeploy-file-lock-serialization.md"
+      ]
+    },
+    {
+      "path": "docs/troubleshooting/kql/",
+      "decision": "KEEP",
+      "reason": "Query pack indexes and queries document diagnostic tables and interpretation; they are recipes, not captured query results.",
+      "members": [
+        "console/container-binding-errors.md",
+        "console/index.md",
+        "console/startup-errors.md",
+        "correlation/index.md",
+        "correlation/latency-vs-errors.md",
+        "correlation/restarts-vs-latency.md",
+        "http/5xx-trend-over-time.md",
+        "http/index.md",
+        "http/latency-trend-by-status-code.md",
+        "http/slowest-requests-by-path.md",
+        "index.md",
+        "restarts/index.md",
+        "restarts/repeated-startup-attempts.md",
+        "restarts/restart-timing-correlation.md",
+        "windows-httpplatformhandler/500-121-timeout-signature.md",
+        "windows-httpplatformhandler/backend-orphan-timeline.md",
+        "windows-httpplatformhandler/index.md",
+        "windows-httpplatformhandler/scwin32status-adaptive-extension.md",
+        "windows-httpplatformhandler/timeout-cluster-statistics.md"
+      ]
+    },
+    {
+      "path": "docs/visualization/",
+      "decision": "KEEP",
+      "reason": "Knowledge graph, learning path and troubleshooting map pages consume graph JSON and site assets; generator outputs are intentional navigation surfaces.",
+      "members": [
+        "core-knowledge-graph.md",
+        "index.md",
+        "learning-paths.md",
+        "troubleshooting-map.md"
+      ]
+    },
+    {
+      "path": "evidence/reproductions/",
+      "decision": "KEEP",
+      "reason": "Retained agent-repeat records preserve documentation and repeatability history; check_reproduction does not accept them as independent human evidence.",
+      "members": [
+        "scenario-a-second.json",
+        "scenario-a-third.json",
+        "scenario-a.json"
+      ]
+    },
+    {
+      "path": "evidence/runs/",
+      "decision": "KEEP",
+      "reason": "Immutable run packages bind manifests, raw observations, derivations and results. retained-digests.json and check_retained_packages protect bytes independently of this inventory.",
+      "members": [
+        "20260927T104304Z-aba0d3a9daa7/evidence.json",
+        "20260927T104304Z-aba0d3a9daa7/manifest.json",
+        "20260927T104304Z-aba0d3a9daa7/provenance.json",
+        "20260927T104304Z-aba0d3a9daa7/result.json",
+        "20260927T114621Z-04c6c02c9ae1/evidence.json",
+        "20260927T114621Z-04c6c02c9ae1/manifest.json",
+        "20260927T114621Z-04c6c02c9ae1/provenance.json",
+        "20260927T114621Z-04c6c02c9ae1/result.json",
+        "20261016T075147Z-6d019de6e2f2/cleanup.json",
+        "20261016T075147Z-6d019de6e2f2/evidence.json",
+        "20261016T075147Z-6d019de6e2f2/manifest.json",
+        "20261016T075147Z-6d019de6e2f2/provenance.json",
+        "20261016T075147Z-6d019de6e2f2/result.json"
+      ]
+    },
+    {
+      "path": "schemas/",
+      "decision": "KEEP",
+      "reason": "Golden schemas are the checked contract surface, not generated validation results; the occupied schema group is explicit below.",
+      "members": []
+    },
+    {
+      "path": "scripts/",
+      "decision": "KEEP",
+      "reason": "Gate validators, allowlists, impact-selection code and manual generators support CI and publishing. Explicit historical helper overrides do not authorize execution or removal.",
+      "members": [
+        "absorbed-predicate-allowlist.txt",
+        "check_quick_triage_claims.py",
+        "detect_absorbed_predicates.py",
+        "detect_repetition.py",
+        "generate_golden_status.py",
+        "impact_ci.py",
+        "impact_classifier.py",
+        "lab-pii-allowlist.txt",
+        "normalize_mslearn_locale.py",
+        "normalize_yaml_frontmatter.py",
+        "package-lock.json",
+        "package.json",
+        "pii-allowlist.txt",
+        "portal-capture-helpers.js",
+        "portal-capture-helpers.md",
+        "repetition-allowlist.txt",
+        "repetition-markers.txt",
+        "scan_lab_pii.py",
+        "test_impact_ci.py",
+        "test_impact_classifier.py",
+        "validate_capture_assets.py",
+        "validate_cli_explanations.py",
+        "validate_content_sources.py",
+        "validate_doc_quality.py",
+        "validate_documented_paths.py",
+        "validate_mermaid_format.py",
+        "validate_mermaid_syntax.py",
+        "validate_mslearn_urls.py",
+        "validate_pii.py",
+        "validate_visual_content.py",
+        "validate_windows_navigation.py"
+      ]
+    },
+    {
+      "path": "scripts/capture/",
+      "decision": "KEEP",
+      "reason": "Manifest, fixed profile, runner and provenance define permitted screenshot production; frozen exception registries retain historical limitations without re-dating images.",
+      "members": [
+        "README.md",
+        "capture-profile.json",
+        "capture.cjs",
+        "dimension-exceptions.yaml",
+        "legacy-assets.yaml",
+        "manifest.yaml",
+        "provenance.yaml"
+      ]
+    },
+    {
+      "path": "scripts/ci/",
+      "decision": "KEEP",
+      "reason": "Project metadata and priority-label tools enforce root conventions; label synchronization is read-only unless explicitly applied outside this audit.",
+      "members": [
+        "check_project_metadata.py",
+        "sync_priority_labels.py"
+      ]
+    },
+    {
+      "path": "scripts/lib/",
+      "decision": "KEEP",
+      "reason": "Shared content-scope and round-trip YAML serialization code keep generators and validators consistent without duplicating policy.",
+      "members": [
+        "__init__.py",
+        "yaml_style.py"
+      ]
+    },
+    {
+      "path": "scripts/tests/",
+      "decision": "KEEP",
+      "reason": "Documented-path and Windows Java consistency fixtures guard repository links, package/build paths and static guide/script agreement without Azure execution.",
+      "members": [
+        "test_validate_documented_paths.py",
+        "test_windows_java_lab_consistency.py"
+      ]
+    },
+    {
+      "path": "tests/",
+      "decision": "KEEP",
+      "reason": "Offline CI and Golden regression suites retain executable evidence of enforcement behavior; test results are not cloud captures.",
+      "members": []
+    },
+    {
+      "path": "tests/ci/",
+      "decision": "KEEP",
+      "reason": "Operating-contract and documentation claim tests cover metadata, protected Azure workflow boundaries and specific runbook semantics.",
+      "members": [
+        "test_always_on_tier_docs.py",
+        "test_azure_e2e_workflow.py",
+        "test_dns_resolver_path_claims.py",
+        "test_outbound_capture_captions.py",
+        "test_outbound_vnet_routing_docs.py",
+        "test_platform_limits_values.py",
+        "test_private_endpoint_playbook.py",
+        "test_project_metadata.py",
+        "test_scm_access_playbook.py",
+        "test_slot_settings_docs.py",
+        "test_storage_persistence_docs.py",
+        "test_sync_priority_labels.py",
+        "test_tail_latency_playbook.py"
+      ]
+    },
+    {
+      "path": "tools/",
+      "decision": "KEEP",
+      "reason": "Frontmatter validation and manual document-graph generation remain distinct tools; selected file overrides record enforcement versus manual-use status.",
+      "members": []
+    },
+    {
+      "path": "docs/language-guides/python/",
+      "decision": "KEEP",
+      "reason": "Flask/Gunicorn runtime and landing pages explain hosting choices; tutorial execution and optional integration recipes have separate reviewed groups.",
+      "members": [
+        "index.md",
+        "python-runtime.md"
+      ]
+    },
+    {
+      "path": "docs/language-guides/python/tutorial/",
+      "decision": "KEEP",
+      "reason": "Ordered Flask/Gunicorn local-run through deployment, configuration, monitoring, IaC, CI/CD and TLS instructions retain existing per-method validation metadata; no execution is certified here.",
+      "members": [
+        "01-local-run.md",
+        "02-first-deploy.md",
+        "03-configuration.md",
+        "04-logging-monitoring.md",
+        "05-infrastructure-as-code.md",
+        "06-ci-cd.md",
+        "07-custom-domain-ssl.md",
+        "index.md"
+      ]
+    },
+    {
+      "path": "docs/language-guides/python/recipes/",
+      "decision": "KEEP",
+      "reason": "Optional Flask/Gunicorn identity, data, network and container patterns extend the core tutorial; these are reusable instructions rather than completed tutorial run evidence.",
+      "members": [
+        "azure-sql.md",
+        "bring-your-own-storage.md",
+        "cosmosdb.md",
+        "custom-container.md",
+        "deployment-slots-validation.md",
+        "easy-auth.md",
+        "index.md",
+        "key-vault-reference.md",
+        "managed-identity.md",
+        "mtls-client-certificates.md",
+        "native-dependencies.md",
+        "private-endpoints.md",
+        "private-network-deploy.md",
+        "redis.md",
+        "vnet-integration.md"
+      ]
+    },
+    {
+      "path": "docs/language-guides/nodejs/",
+      "decision": "KEEP",
+      "reason": "Express runtime and landing pages explain hosting choices; tutorial execution and optional integration recipes have separate reviewed groups.",
+      "members": [
+        "index.md",
+        "nodejs-runtime.md"
+      ]
+    },
+    {
+      "path": "docs/language-guides/nodejs/tutorial/",
+      "decision": "KEEP",
+      "reason": "Ordered Express local-run through deployment, configuration, monitoring, IaC, CI/CD and TLS instructions retain existing per-method validation metadata; no execution is certified here.",
+      "members": [
+        "01-local-run.md",
+        "02-first-deploy.md",
+        "03-configuration.md",
+        "04-logging-monitoring.md",
+        "05-infrastructure-as-code.md",
+        "06-ci-cd.md",
+        "07-custom-domain-ssl.md",
+        "index.md"
+      ]
+    },
+    {
+      "path": "docs/language-guides/nodejs/recipes/",
+      "decision": "KEEP",
+      "reason": "Optional Express identity, data, network and container patterns extend the core tutorial; these are reusable instructions rather than completed tutorial run evidence.",
+      "members": [
+        "azure-sql.md",
+        "bring-your-own-storage.md",
+        "cosmosdb.md",
+        "custom-container.md",
+        "deployment-slots-validation.md",
+        "easy-auth.md",
+        "index.md",
+        "key-vault-reference.md",
+        "managed-identity.md",
+        "mtls-client-certificates.md",
+        "native-dependencies.md",
+        "nextjs.md",
+        "private-endpoints.md",
+        "private-network-deploy.md",
+        "redis.md",
+        "vnet-integration.md"
+      ]
+    },
+    {
+      "path": "docs/language-guides/java/",
+      "decision": "KEEP",
+      "reason": "Spring Boot runtime and landing pages explain hosting choices; tutorial execution and optional integration recipes have separate reviewed groups.",
+      "members": [
+        "index.md",
+        "java-runtime.md"
+      ]
+    },
+    {
+      "path": "docs/language-guides/java/tutorial/",
+      "decision": "KEEP",
+      "reason": "Ordered Spring Boot local-run through deployment, configuration, monitoring, IaC, CI/CD and TLS instructions retain existing per-method validation metadata; no execution is certified here.",
+      "members": [
+        "01-local-run.md",
+        "02-first-deploy.md",
+        "03-configuration.md",
+        "04-logging-monitoring.md",
+        "05-infrastructure-as-code.md",
+        "06-ci-cd.md",
+        "07-custom-domain-ssl.md",
+        "index.md"
+      ]
+    },
+    {
+      "path": "docs/language-guides/java/recipes/",
+      "decision": "KEEP",
+      "reason": "Optional Spring Boot identity, data, network and container patterns extend the core tutorial; these are reusable instructions rather than completed tutorial run evidence.",
+      "members": [
+        "azure-sql.md",
+        "cosmosdb.md",
+        "deployment-slots-zero-downtime.md",
+        "easy-auth.md",
+        "index.md",
+        "key-vault-reference.md",
+        "managed-identity.md",
+        "mtls-client-certificates.md",
+        "private-endpoints.md",
+        "private-network-deploy.md",
+        "redis.md",
+        "vnet-integration.md"
+      ]
+    },
+    {
+      "path": "docs/language-guides/dotnet/",
+      "decision": "KEEP",
+      "reason": "ASP.NET Core runtime and landing pages explain hosting choices; tutorial execution and optional integration recipes have separate reviewed groups.",
+      "members": [
+        "dotnet-runtime.md",
+        "index.md"
+      ]
+    },
+    {
+      "path": "docs/language-guides/dotnet/tutorial/",
+      "decision": "KEEP",
+      "reason": "Ordered ASP.NET Core local-run through deployment, configuration, monitoring, IaC, CI/CD and TLS instructions retain existing per-method validation metadata; no execution is certified here.",
+      "members": [
+        "01-local-run.md",
+        "02-first-deploy.md",
+        "03-configuration.md",
+        "04-logging-monitoring.md",
+        "05-infrastructure-as-code.md",
+        "06-ci-cd.md",
+        "07-custom-domain-ssl.md",
+        "index.md"
+      ]
+    },
+    {
+      "path": "docs/language-guides/dotnet/recipes/",
+      "decision": "KEEP",
+      "reason": "Optional ASP.NET Core identity, data, network and container patterns extend the core tutorial; these are reusable instructions rather than completed tutorial run evidence.",
+      "members": [
+        "azure-sql.md",
+        "cosmosdb.md",
+        "deployment-slots-validation.md",
+        "easy-auth.md",
+        "index.md",
+        "key-vault-reference.md",
+        "managed-identity.md",
+        "mtls-client-certificates.md",
+        "private-endpoints.md",
+        "private-network-deploy.md",
+        "redis.md",
+        "vnet-integration.md"
+      ]
+    },
+    {
+      "path": "labs/cd-reconnect-rbac-conflict/",
+      "decision": "KEEP",
+      "reason": "Retain scenario assets; labs/golden-classification.json classifies this as migration-needed: Has trigger.sh, verify.sh and cleanup.sh but no declared assertions. verify.sh decides its own outcome rather than emitting evidence for an evaluator. This is not a new execution or migration decision.",
+      "members": [
+        "README.md",
+        "cleanup.sh",
+        "infra/main.bicep",
+        "infra/role-assignment.bicep",
+        "trigger.sh",
+        "verify.sh"
+      ]
+    },
+    {
+      "path": "labs/container-http-pings/",
+      "decision": "KEEP",
+      "reason": "Retain scenario assets; labs/golden-classification.json classifies this as migration-needed: Has trigger.sh and fix.sh but no verify.sh at all, so there is currently nothing to evaluate. Needs a collector plus a declared contract. This is not a new execution or migration decision.",
+      "members": [
+        "app/app.py",
+        "app/requirements.txt",
+        "fix.sh",
+        "main.bicep",
+        "trigger.sh"
+      ]
+    },
+    {
+      "path": "labs/container-http-pings/artifacts-sanitized/",
+      "decision": "KEEP",
+      "reason": "Retain sanitized container-http-pings captures, including incomplete or invalid observations, separately from executable assets. Trust and provenance remain scoped by labs/golden-classification.json, not inferred from KEEP.",
+      "members": [
+        "baseline/app-config.json",
+        "baseline/app-settings.json",
+        "baseline/diag-env.json",
+        "baseline/diag-stats.json",
+        "baseline/health.json",
+        "trigger/app-state-failing-20260404T053512Z.json",
+        "trigger/kql-console-20260404T060104Z.json",
+        "trigger/kql-console-20260404T060610Z.json",
+        "trigger/kql-http-20260404T060104Z.json",
+        "trigger/kql-http-20260404T060610Z.json",
+        "trigger/kql-platform-20260404T060104Z.json",
+        "trigger/kql-platform-20260404T060610Z.json",
+        "trigger/linux-pings-finding-20260404T055338Z.json",
+        "trigger/ping-failure-after-restart-20260404T055203Z.csv",
+        "trigger/ping-failure-probes-20260404T053512Z.csv",
+        "trigger/webapp-details-20260404T055338Z.json"
+      ]
+    },
+    {
+      "path": "labs/deployment-succeeded-startup-failed/artifacts-sanitized/",
+      "decision": "KEEP",
+      "reason": "Retain sanitized deployment-succeeded-startup-failed captures, including incomplete or invalid observations, separately from executable assets. Trust and provenance remain scoped by labs/golden-classification.json, not inferred from KEEP.",
+      "members": [
+        "README.md",
+        "baseline/app-config.json",
+        "baseline/app-state.json",
+        "baseline/root-response.txt",
+        "baseline/startup-command.txt",
+        "postfix/diag-env-20260404T055349Z.json",
+        "postfix/diag-stats-20260404T055349Z.json",
+        "postfix/health-20260404T055349Z.json",
+        "trigger/diag-env-postfix-20260404T054537Z.json",
+        "trigger/diag-stats-postfix-20260404T054537Z.json",
+        "trigger/kql-console-20260404T060041Z.json",
+        "trigger/kql-console-20260404T060359Z.json",
+        "trigger/kql-console-20260404T060610Z.json",
+        "trigger/kql-http-20260404T060041Z.json",
+        "trigger/kql-http-20260404T060359Z.json",
+        "trigger/kql-http-20260404T060610Z.json",
+        "trigger/kql-platform-20260404T060041Z.json",
+        "trigger/kql-platform-20260404T060359Z.json",
+        "trigger/kql-platform-20260404T060610Z.json",
+        "trigger/recovery-probes-20260404T054537Z.csv",
+        "trigger/startup-cmd-after-20260404T054537Z.txt",
+        "trigger/startup-cmd-before-20260404T054537Z.txt"
+      ]
+    },
+    {
+      "path": "labs/deployment-succeeded-startup-failed/golden/",
+      "decision": "KEEP",
+      "reason": "Retain the deployment-succeeded-startup-failed declared manifest and historical evidence classification protected by evidence/retained-digests.json. No template or assertion bytes are rewritten by inventory review.",
+      "members": [
+        "evidence-classification.json",
+        "manifest.template.json"
+      ]
+    },
+    {
+      "path": "labs/dns-vnet-resolution/",
+      "decision": "KEEP",
+      "reason": "Retain scenario assets; labs/golden-classification.json classifies this as migration-needed: Runnable trigger/verify pair with sanitized artifacts, no declared assertions and no run identity. This is not a new execution or migration decision.",
+      "members": [
+        "app/app.py",
+        "app/requirements.txt",
+        "main.bicep",
+        "trigger.sh",
+        "verify.sh"
+      ]
+    },
+    {
+      "path": "labs/dns-vnet-resolution/artifacts-sanitized/",
+      "decision": "KEEP",
+      "reason": "Retain sanitized dns-vnet-resolution captures, including incomplete or invalid observations, separately from executable assets. Trust and provenance remain scoped by labs/golden-classification.json, not inferred from KEEP.",
+      "members": [
+        "baseline/app-config.json",
+        "baseline/diag-dns.json",
+        "baseline/diag-env.json",
+        "baseline/diag-stats.json",
+        "baseline/health.json",
+        "trigger/connect-response-20260404T053457Z.json",
+        "trigger/diag-dns-20260404T053457Z.json",
+        "trigger/diag-stats-20260404T053457Z.json",
+        "trigger/kql-console-20260404T060048Z.json",
+        "trigger/kql-console-20260404T060610Z.json",
+        "trigger/kql-http-20260404T060048Z.json",
+        "trigger/kql-http-20260404T060610Z.json",
+        "trigger/kql-platform-20260404T060048Z.json",
+        "trigger/kql-platform-20260404T060610Z.json",
+        "trigger/resolve-response-20260404T053457Z.json"
+      ]
+    },
+    {
+      "path": "labs/failed-to-forward-request/",
+      "decision": "KEEP",
+      "reason": "Retain scenario assets; labs/golden-classification.json classifies this as migration-needed: Runnable trigger/verify pair with sanitized artifacts, no declared assertions and no run identity. This is not a new execution or migration decision.",
+      "members": [
+        "app/app.py",
+        "app/requirements.txt",
+        "main.bicep",
+        "trigger.sh",
+        "verify.sh"
+      ]
+    },
+    {
+      "path": "labs/failed-to-forward-request/artifacts-sanitized/",
+      "decision": "KEEP",
+      "reason": "Retain sanitized failed-to-forward-request captures, including incomplete or invalid observations, separately from executable assets. Trust and provenance remain scoped by labs/golden-classification.json, not inferred from KEEP.",
+      "members": [
+        "baseline/app-config.json",
+        "baseline/app-state.json",
+        "baseline/startup-command.txt",
+        "postfix/diag-bind-20260404T055117Z.json",
+        "postfix/diag-env-20260404T055117Z.json",
+        "postfix/diag-stats-20260404T055117Z.json",
+        "postfix/health-20260404T055117Z.json",
+        "trigger/failure-probes-20260404T054545Z.csv",
+        "trigger/kql-console-20260404T060104Z.json",
+        "trigger/kql-console-20260404T060359Z.json",
+        "trigger/kql-console-20260404T060610Z.json",
+        "trigger/kql-http-20260404T060104Z.json",
+        "trigger/kql-http-20260404T060359Z.json",
+        "trigger/kql-http-20260404T060610Z.json",
+        "trigger/kql-platform-20260404T060104Z.json",
+        "trigger/kql-platform-20260404T060359Z.json",
+        "trigger/kql-platform-20260404T060610Z.json",
+        "trigger/recovery-probes-20260404T054545Z.csv",
+        "trigger/startup-cmd-before-20260404T054545Z.txt"
+      ]
+    },
+    {
+      "path": "labs/intermittent-5xx/",
+      "decision": "KEEP",
+      "reason": "Retain scenario assets; labs/golden-classification.json classifies this as migration-needed: Runnable trigger/verify pair. Intermittent symptoms make a declared sampling plan and an explicit INCONCLUSIVE outcome mandatory before this can be evaluated. This is not a new execution or migration decision.",
+      "members": [
+        "app/app.py",
+        "app/requirements.txt",
+        "main.bicep",
+        "trigger.sh",
+        "verify.sh"
+      ]
+    },
+    {
+      "path": "labs/intermittent-5xx/artifacts-sanitized/",
+      "decision": "KEEP",
+      "reason": "Retain sanitized intermittent-5xx captures, including incomplete or invalid observations, separately from executable assets. Trust and provenance remain scoped by labs/golden-classification.json, not inferred from KEEP.",
+      "members": [
+        "baseline/app-config.json",
+        "baseline/diag-env.json",
+        "baseline/diag-stats.json",
+        "baseline/fast-response.json",
+        "baseline/health.json",
+        "trigger/diag-stats-after-20260404T053453Z.json",
+        "trigger/fast-responses-20260404T053453Z.csv",
+        "trigger/kql-console-20260404T060418Z.json",
+        "trigger/kql-console-20260404T060610Z.json",
+        "trigger/kql-http-20260404T060025Z.json",
+        "trigger/kql-http-20260404T060418Z.json",
+        "trigger/kql-http-20260404T060610Z.json",
+        "trigger/kql-platform-20260404T060610Z.json",
+        "trigger/kql-status-by-endpoint-20260404T060025Z.json",
+        "trigger/kql-worker-timeouts-20260404T060025Z.json",
+        "trigger/slow-responses-20260404T053453Z.csv"
+      ]
+    },
+    {
+      "path": "labs/memory-pressure/",
+      "decision": "KEEP",
+      "reason": "Retain scenario assets; labs/golden-classification.json classifies this as migration-needed: Runnable trigger/verify pair with sanitized artifacts, no declared assertions and no run identity. This is not a new execution or migration decision.",
+      "members": [
+        "app/app.py",
+        "app/requirements.txt",
+        "main.bicep",
+        "trigger.sh",
+        "verify.sh"
+      ]
+    },
+    {
+      "path": "labs/memory-pressure/artifacts-sanitized/",
+      "decision": "KEEP",
+      "reason": "Retain sanitized memory-pressure captures, including incomplete or invalid observations, separately from executable assets. Trust and provenance remain scoped by labs/golden-classification.json, not inferred from KEEP.",
+      "members": [
+        "baseline/app-config.json",
+        "baseline/app-state.json",
+        "baseline/diag-env.json",
+        "baseline/diag-proc.json",
+        "baseline/diag-stats.json",
+        "baseline/health.json",
+        "trigger/diag-proc-midleak-20260404T053438Z.json",
+        "trigger/diag-proc-postheavy-20260404T053438Z.json",
+        "trigger/diag-stats-midleak-20260404T053438Z.json",
+        "trigger/diag-stats-postheavy-20260404T053438Z.json",
+        "trigger/heavy-responses-20260404T053438Z.csv",
+        "trigger/kql-console-20260404T060019Z.json",
+        "trigger/kql-console-20260404T060418Z.json",
+        "trigger/kql-console-20260404T060610Z.json",
+        "trigger/kql-http-20260404T060418Z.json",
+        "trigger/kql-http-20260404T060610Z.json",
+        "trigger/kql-http-requests-20260404T060019Z.json",
+        "trigger/kql-http-status-20260404T060019Z.json",
+        "trigger/kql-platform-20260404T060019Z.json",
+        "trigger/kql-platform-20260404T060418Z.json",
+        "trigger/kql-platform-20260404T060610Z.json",
+        "trigger/leak-responses-20260404T053438Z.csv"
+      ]
+    },
+    {
+      "path": "labs/missing-wwwroot-content/",
+      "decision": "KEEP",
+      "reason": "Retain scenario assets; labs/golden-classification.json classifies this as migration-needed: Retains an executed Azure B1/F1 experiment with per-arm manifests, sanitized evidence, and dirty-checkout provenance. It needs a Golden contract before those Azure observations can support a verdict. This is not a new execution or migration decision.",
+      "members": [
+        "app/package.json",
+        "app/public/assets/probe.txt",
+        "app/public/index.html",
+        "app/server.js",
+        "cleanup.sh",
+        "main.bicep",
+        "package.sh",
+        "trigger.sh",
+        "verify.sh"
+      ]
+    },
+    {
+      "path": "labs/missing-wwwroot-content/artifacts-sanitized/",
+      "decision": "KEEP",
+      "reason": "Retain sanitized missing-wwwroot-content captures, including incomplete or invalid observations, separately from executable assets. Trust and provenance remain scoped by labs/golden-classification.json, not inferred from KEEP.",
+      "members": [
+        "evidence-b1-settle-diag/activity-log-plan.json",
+        "evidence-b1-settle-diag/activity-log.json",
+        "evidence-b1-settle-diag/cleanup.json",
+        "evidence-b1-settle-diag/deployment-records.json",
+        "evidence-b1-settle-diag/evidence-manifest.json",
+        "evidence-b1-settle-diag/kql-console-audit.json",
+        "evidence-b1-settle-diag/kql-http-404.json",
+        "evidence-b1-settle-diag/kql-http-success.json",
+        "evidence-b1-settle-diag/kql-ingestion-lag.json",
+        "evidence-b1-settle-diag/kql-platform-lifecycle.json",
+        "evidence/activity-log.json",
+        "evidence/cleanup.json",
+        "evidence/deployment-records.json",
+        "evidence/evidence-manifest.json",
+        "evidence/kql-console-audit.json",
+        "evidence/kql-http-404.json",
+        "evidence/kql-platform-lifecycle.json",
+        "experiment/arm-a-timeline.log",
+        "experiment/arm-a1-probe.log",
+        "experiment/arm-a1-remove-response.json",
+        "experiment/arm-a2-remove-response.json",
+        "experiment/arm-a2-state-after.json",
+        "experiment/arm-b-diag-rfp-off.json",
+        "experiment/arm-b-diag-rfp-on.json",
+        "experiment/arm-b-diag-timeline.log",
+        "experiment/arm-b-settle-fs.json",
+        "experiment/arm-b-settle-remove.json",
+        "experiment/arm-b-settle-timeline.log",
+        "experiment/manifest-arm-a.json",
+        "experiment/manifest-arm-b-diag.json",
+        "experiment/manifest-arm-b-settle.json",
+        "experiment/package.txt",
+        "f1-plan-run/arm-b-diag-rfp-off.json",
+        "f1-plan-run/arm-b-diag-rfp-on.json",
+        "f1-plan-run/arm-b-diag-timeline.log",
+        "f1-plan-run/arm-b-settle-fs.json",
+        "f1-plan-run/arm-b-settle-remove.json",
+        "f1-plan-run/arm-b-settle-timeline.log",
+        "f1-plan-run/manifest-arm-b-diag.json",
+        "f1-plan-run/manifest-arm-b-settle.json",
+        "f1-plan-run/plan-activity.json",
+        "failed-attempt/arm-b-repeat-attempt1-cli.txt",
+        "failed-attempt/arm-b-repeat-attempt1-platform-lines.json",
+        "failed-attempt/arm-b-repeat-attempt1-timeline.log",
+        "failed-attempt/arm-b-repeat-attempt2-first-fs.json",
+        "failed-attempt/arm-b-repeat-attempt2-first-remove.json",
+        "failed-attempt/arm-b-repeat-attempt2-platform-lines.json",
+        "failed-attempt/arm-b-repeat-attempt2-timeline.log"
+      ]
+    },
+    {
+      "path": "labs/no-space-left-on-device/",
+      "decision": "KEEP",
+      "reason": "Retain scenario assets; labs/golden-classification.json classifies this as migration-needed: Runnable trigger/verify pair with sanitized artifacts, no declared assertions and no run identity. This is not a new execution or migration decision.",
+      "members": [
+        "app/app.py",
+        "app/requirements.txt",
+        "main.bicep",
+        "trigger.sh",
+        "verify.sh"
+      ]
+    },
+    {
+      "path": "labs/no-space-left-on-device/artifacts-sanitized/",
+      "decision": "KEEP",
+      "reason": "Retain sanitized no-space-left-on-device captures, including incomplete or invalid observations, separately from executable assets. Trust and provenance remain scoped by labs/golden-classification.json, not inferred from KEEP.",
+      "members": [
+        "baseline/app-config.json",
+        "baseline/diag-disk.json",
+        "baseline/diag-env.json",
+        "baseline/diag-stats.json",
+        "baseline/disk-status.json",
+        "baseline/health.json",
+        "trigger/diag-disk-after-20260404T053504Z.json",
+        "trigger/diag-disk-aggressive-20260404T055432Z.json",
+        "trigger/diag-disk-before-20260404T053504Z.json",
+        "trigger/diag-disk-final-20260404T055739Z.json",
+        "trigger/diag-disk-midfill-20260404T053504Z.json",
+        "trigger/diag-stats-after-20260404T053504Z.json",
+        "trigger/disk-status-after-20260404T053504Z.json",
+        "trigger/disk-status-aggressive-20260404T055432Z.json",
+        "trigger/disk-status-before-20260404T053504Z.json",
+        "trigger/disk-status-final-20260404T055739Z.json",
+        "trigger/fill-home-1-20260404T053504Z.json",
+        "trigger/fill-home-2-20260404T053504Z.json",
+        "trigger/fill-home-3-20260404T053504Z.json",
+        "trigger/fill-home-4-20260404T053504Z.json",
+        "trigger/fill-home-5-20260404T053504Z.json",
+        "trigger/fill-home-500mb-1-20260404T055739Z.json",
+        "trigger/fill-home-500mb-10-20260404T055739Z.json",
+        "trigger/fill-home-500mb-11-20260404T055739Z.json",
+        "trigger/fill-home-500mb-2-20260404T055739Z.json",
+        "trigger/fill-home-500mb-3-20260404T055739Z.json",
+        "trigger/fill-home-500mb-4-20260404T055739Z.json",
+        "trigger/fill-home-500mb-5-20260404T055739Z.json",
+        "trigger/fill-home-500mb-6-20260404T055739Z.json",
+        "trigger/fill-home-500mb-7-20260404T055739Z.json",
+        "trigger/fill-home-500mb-8-20260404T055739Z.json",
+        "trigger/fill-home-500mb-9-20260404T055739Z.json",
+        "trigger/fill-home-6-20260404T053504Z.json",
+        "trigger/fill-home-7-20260404T053504Z.json",
+        "trigger/fill-home-8-20260404T053504Z.json",
+        "trigger/fill-home-big-1-20260404T055432Z.json",
+        "trigger/fill-home-big-10-20260404T055432Z.json",
+        "trigger/fill-home-big-11-20260404T055432Z.json",
+        "trigger/fill-home-big-12-20260404T055432Z.json",
+        "trigger/fill-home-big-13-20260404T055432Z.json",
+        "trigger/fill-home-big-14-20260404T055432Z.json",
+        "trigger/fill-home-big-15-20260404T055432Z.json",
+        "trigger/fill-home-big-16-20260404T055432Z.json",
+        "trigger/fill-home-big-17-20260404T055432Z.json",
+        "trigger/fill-home-big-18-20260404T055432Z.json",
+        "trigger/fill-home-big-19-20260404T055432Z.json",
+        "trigger/fill-home-big-2-20260404T055432Z.json",
+        "trigger/fill-home-big-20-20260404T055432Z.json",
+        "trigger/fill-home-big-3-20260404T055432Z.json",
+        "trigger/fill-home-big-4-20260404T055432Z.json",
+        "trigger/fill-home-big-5-20260404T055432Z.json",
+        "trigger/fill-home-big-6-20260404T055432Z.json",
+        "trigger/fill-home-big-7-20260404T055432Z.json",
+        "trigger/fill-home-big-8-20260404T055432Z.json",
+        "trigger/fill-home-big-9-20260404T055432Z.json",
+        "trigger/fill-tmp-1-20260404T053504Z.json",
+        "trigger/fill-tmp-2-20260404T053504Z.json",
+        "trigger/fill-tmp-3-20260404T053504Z.json",
+        "trigger/fill-tmp-4-20260404T053504Z.json",
+        "trigger/fill-tmp-5-20260404T053504Z.json",
+        "trigger/kql-console-20260404T060112Z.json",
+        "trigger/kql-console-20260404T060359Z.json",
+        "trigger/kql-console-20260404T060610Z.json",
+        "trigger/kql-http-20260404T060112Z.json",
+        "trigger/kql-http-20260404T060359Z.json",
+        "trigger/kql-http-20260404T060610Z.json",
+        "trigger/kql-platform-20260404T060112Z.json",
+        "trigger/kql-platform-20260404T060359Z.json",
+        "trigger/kql-platform-20260404T060610Z.json"
+      ]
+    },
+    {
+      "path": "labs/private-endpoint-route-fault/",
+      "decision": "KEEP",
+      "reason": "Retain scenario assets; labs/golden-classification.json classifies this as migration-needed: Contains runnable infrastructure, trigger and verification assets plus retained Azure evidence, but no Golden manifest binds those artifacts to declared assertions and a run identity. Retained captures require explicit trust classification during migration. This is not a new execution or migration decision.",
+      "members": [
+        "app/app.py",
+        "app/requirements.txt",
+        "main.bicep",
+        "trigger.sh",
+        "verify.sh"
+      ]
+    },
+    {
+      "path": "labs/slot-swap-config-drift/",
+      "decision": "KEEP",
+      "reason": "Retain scenario assets; labs/golden-classification.json classifies this as golden: Scenario C. Declares the stickiness mechanism as discriminating, a deployment-error control for the competing hypothesis, and an activation precondition on the production restart. This is not a new execution or migration decision.",
+      "members": [
+        "app/app.py",
+        "app/requirements.txt",
+        "cleanup.sh",
+        "main.bicep",
+        "trigger.sh",
+        "verify.sh"
+      ]
+    },
+    {
+      "path": "labs/slot-swap-config-drift/artifacts-sanitized/",
+      "decision": "KEEP",
+      "reason": "Retain sanitized slot-swap-config-drift captures, including incomplete or invalid observations, separately from executable assets. Trust and provenance remain scoped by labs/golden-classification.json, not inferred from KEEP.",
+      "members": [
+        "baseline/app-config.json",
+        "baseline/app-settings-prod.json",
+        "baseline/app-settings-staging.json",
+        "baseline/config-prod.json",
+        "baseline/config-staging.json",
+        "baseline/diag-env-prod.json",
+        "baseline/diag-slots-prod.json",
+        "baseline/diag-slots-staging.json",
+        "baseline/diag-stats-prod.json",
+        "trigger/config-prod-after-20260404T055128Z.json",
+        "trigger/config-prod-before-20260404T054527Z.json",
+        "trigger/config-staging-after-20260404T055128Z.json",
+        "trigger/config-staging-before-20260404T054527Z.json",
+        "trigger/diag-slots-postswap-20260404T055128Z.json",
+        "trigger/diag-stats-postswap-20260404T055128Z.json",
+        "trigger/kql-console-20260404T060149Z.json",
+        "trigger/kql-console-20260404T060359Z.json",
+        "trigger/kql-console-20260404T060610Z.json",
+        "trigger/kql-http-20260404T060149Z.json",
+        "trigger/kql-http-20260404T060359Z.json",
+        "trigger/kql-http-20260404T060610Z.json",
+        "trigger/kql-platform-20260404T060149Z.json",
+        "trigger/kql-platform-20260404T060359Z.json",
+        "trigger/kql-platform-20260404T060610Z.json"
+      ]
+    },
+    {
+      "path": "labs/slot-swap-config-drift/golden/",
+      "decision": "KEEP",
+      "reason": "Retain the slot-swap-config-drift declared manifest and historical evidence classification protected by evidence/retained-digests.json. No template or assertion bytes are rewritten by inventory review.",
+      "members": [
+        "evidence-classification.json",
+        "manifest.template.json"
+      ]
+    },
+    {
+      "path": "labs/slow-start-cold-start/",
+      "decision": "KEEP",
+      "reason": "Retain scenario assets; labs/golden-classification.json classifies this as migration-needed: Runnable trigger/verify pair. A latency claim needs a declared measurement and threshold before a verdict is meaningful. This is not a new execution or migration decision.",
+      "members": [
+        "app/app.py",
+        "app/requirements.txt",
+        "main.bicep",
+        "trigger.sh",
+        "verify.sh"
+      ]
+    },
+    {
+      "path": "labs/slow-start-cold-start/artifacts-sanitized/",
+      "decision": "KEEP",
+      "reason": "Retain sanitized slow-start-cold-start captures, including incomplete or invalid observations, separately from executable assets. Trust and provenance remain scoped by labs/golden-classification.json, not inferred from KEEP.",
+      "members": [
+        "baseline/app-config.json",
+        "baseline/diag-env.json",
+        "baseline/diag-stats.json",
+        "baseline/health.json",
+        "baseline/timing.json",
+        "trigger/cold-latency-20260404T054518Z.csv",
+        "trigger/diag-stats-final-20260404T054518Z.json",
+        "trigger/diag-stats-postcold-20260404T054518Z.json",
+        "trigger/kql-console-20260404T060127Z.json",
+        "trigger/kql-console-20260404T060359Z.json",
+        "trigger/kql-console-20260404T060610Z.json",
+        "trigger/kql-http-20260404T060127Z.json",
+        "trigger/kql-http-20260404T060359Z.json",
+        "trigger/kql-http-20260404T060610Z.json",
+        "trigger/kql-platform-20260404T060127Z.json",
+        "trigger/kql-platform-20260404T060359Z.json",
+        "trigger/kql-platform-20260404T060610Z.json",
+        "trigger/timing-response-20260404T054518Z.json",
+        "trigger/warm-latencies-20260404T054518Z.csv",
+        "trigger/warm-post-latencies-20260404T054518Z.csv"
+      ]
+    },
+    {
+      "path": "labs/snat-exhaustion/",
+      "decision": "KEEP",
+      "reason": "Retain scenario assets; labs/golden-classification.json classifies this as golden: Ships a Golden contract: a manifest template declaring the discriminating assertion that separates SNAT exhaustion from destination failure, an evidence-classification naming what its retained captures cannot support, and a suite proving an unhealthy destination refuses the hypothesis. Both transports classify through one shared function, so a disagreement between urllib and requests can no longer look like evidence about Azure. This is not a new execution or migration decision.",
+      "members": [
+        "app/app.py",
+        "app/classification.py",
+        "app/requirements.txt",
+        "cleanup.sh",
+        "main.bicep",
+        "trigger.sh",
+        "verify.sh"
+      ]
+    },
+    {
+      "path": "labs/snat-exhaustion/artifacts-sanitized/",
+      "decision": "KEEP",
+      "reason": "Retain sanitized snat-exhaustion captures, including incomplete or invalid observations, separately from executable assets. Trust and provenance remain scoped by labs/golden-classification.json, not inferred from KEEP.",
+      "members": [
+        "baseline/app-config.json",
+        "baseline/diag-env.json",
+        "baseline/diag-net.json",
+        "baseline/diag-stats.json",
+        "baseline/health.json",
+        "trigger/diag-net-before-20260404T053447Z.json",
+        "trigger/diag-net-posttarget-20260404T055433Z.json",
+        "trigger/diag-net-posttrigger-20260404T054508Z.json",
+        "trigger/diag-net-recovered-20260404T055433Z.json",
+        "trigger/diag-stats-posttrigger-20260404T054508Z.json",
+        "trigger/diag-stats-recovered-20260404T055433Z.json",
+        "trigger/error-body-10_body-20260404T055433Z.txt",
+        "trigger/error-body-11_body-20260404T055433Z.txt",
+        "trigger/error-body-14_body-20260404T055433Z.txt",
+        "trigger/error-body-2_body-20260404T055433Z.txt",
+        "trigger/error-body-3_body-20260404T055433Z.txt",
+        "trigger/kql-console-20260404T060032Z.json",
+        "trigger/kql-console-20260404T060418Z.json",
+        "trigger/kql-console-20260404T060610Z.json",
+        "trigger/kql-http-20260404T060032Z.json",
+        "trigger/kql-http-20260404T060418Z.json",
+        "trigger/kql-http-20260404T060610Z.json",
+        "trigger/kql-platform-20260404T060032Z.json",
+        "trigger/kql-platform-20260404T060610Z.json",
+        "trigger/outbound-targeted-20260404T055433Z.csv"
+      ]
+    },
+    {
+      "path": "labs/snat-exhaustion/golden/",
+      "decision": "KEEP",
+      "reason": "Retain the snat-exhaustion declared manifest and historical evidence classification protected by evidence/retained-digests.json. No template or assertion bytes are rewritten by inventory review.",
+      "members": [
+        "evidence-classification.json",
+        "manifest.template.json"
+      ]
+    },
+    {
+      "path": "labs/zipdeploy-file-lock-serialization/",
+      "decision": "KEEP",
+      "reason": "Retain scenario assets; labs/golden-classification.json classifies this as migration-needed: Retains an executed Azure Windows B1 serialization experiment with a sanitized manifest and dirty-checkout provenance. It needs a Golden contract before those Azure observations can support a verdict. This is not a new execution or migration decision.",
+      "members": [
+        "app/build.txt",
+        "app/data/lockme.txt",
+        "app/package.json",
+        "app/server.js",
+        "app/web.config",
+        "cleanup.sh",
+        "main.bicep",
+        "package.sh",
+        "trigger.sh",
+        "verify.sh"
+      ]
+    },
+    {
+      "path": "labs/zipdeploy-file-lock-serialization/artifacts-sanitized/",
+      "decision": "KEEP",
+      "reason": "Retain sanitized zipdeploy-file-lock-serialization captures, including incomplete or invalid observations, separately from executable assets. Trust and provenance remain scoped by labs/golden-classification.json, not inferred from KEEP.",
+      "members": [
+        "evidence/activity-log-plan.json",
+        "evidence/activity-log.json",
+        "evidence/cleanup.json",
+        "evidence/deployment-records.json",
+        "evidence/evidence-manifest.json",
+        "excluded/no-lock-control-contaminated-by-host-suspend.log",
+        "experiment/deploy-control-baseline.out",
+        "experiment/deploy-control-no-lock.out",
+        "experiment/deploy-ordinary-baseline.out",
+        "experiment/deploy-ordinary-with-lock.out",
+        "experiment/deploy-rfp-baseline.out",
+        "experiment/deploy-rfp-with-lock.out",
+        "experiment/lock-ordinary-deployment-records.json",
+        "experiment/lock-ordinary-hold-attempt1.json",
+        "experiment/lock-ordinary-latest-deployment-log.json",
+        "experiment/lock-ordinary-release.json",
+        "experiment/lock-ordinary-timeline.log",
+        "experiment/lock-rfp-deployment-records.json",
+        "experiment/lock-rfp-diag-deployment-records.json",
+        "experiment/lock-rfp-diag-ps-test.json",
+        "experiment/lock-rfp-diag-timeline.log",
+        "experiment/lock-rfp-hold-attempt1.json",
+        "experiment/lock-rfp-hold-attempt2.json",
+        "experiment/lock-rfp-hold-attempt3.json",
+        "experiment/lock-rfp-latest-deployment-log.json",
+        "experiment/lock-rfp-release.json",
+        "experiment/lock-rfp-timeline.log",
+        "experiment/manifest-lock-ordinary.json",
+        "experiment/manifest-lock-rfp-diag.json",
+        "experiment/manifest-lock-rfp.json",
+        "experiment/manifest-no-lock-control.json",
+        "experiment/manifest-serialize.json",
+        "experiment/no-lock-control-deployment-records.json",
+        "experiment/no-lock-control-latest-deployment-log.json",
+        "experiment/no-lock-control-timeline.log",
+        "experiment/package-1.txt",
+        "experiment/package-2.txt",
+        "experiment/package-3.txt",
+        "experiment/package-4.txt",
+        "experiment/package-A.txt",
+        "experiment/package-B.txt",
+        "experiment/serialize-A.out",
+        "experiment/serialize-B.out",
+        "experiment/serialize-deployment-records.json",
+        "experiment/serialize-timeline.log"
+      ]
+    },
+    {
+      "path": "labs/windows-java-httpplatformhandler-timeout/stage-0-config-discovery/",
+      "decision": "KEEP",
+      "reason": "Retain stage-0-config-discovery runtime scripts as migration-needed per labs/golden-classification.json. Stage 0 builds the shared JAR; later stages reuse it. Script presence does not establish a successful reproduction.",
+      "members": [
+        "README.md",
+        "app/pom.xml",
+        "app/src/main/java/com/example/stage0/Stage0Application.java",
+        "cleanup.sh",
+        "collect-effective-config.sh",
+        "deploy.sh",
+        "main.bicep",
+        "run-timeout-probe.sh",
+        "warm-up.sh"
+      ]
+    },
+    {
+      "path": "labs/windows-java-httpplatformhandler-timeout/stage-0-config-discovery/results/",
+      "decision": "KEEP",
+      "reason": "Retain historical stage-0-config-discovery probes, configuration and reports unchanged. labs/golden-classification.json scopes trust per capture; Lab 2 mixes deployments and overwritten sampling metadata, so KEEP must not certify its causal summaries.",
+      "members": [
+        "az-webapp-appsettings.json",
+        "az-webapp-config-show.json",
+        "az-webapp-show.json",
+        "kudu-appdata-listing.json.http-404",
+        "kudu-command-dir-config.json",
+        "kudu-command-dir-wwwroot.json",
+        "kudu-diagnostics-runtime.json",
+        "kudu-environment.json",
+        "kudu-fetch-manifest.csv",
+        "kudu-processes.json",
+        "kudu-scm-info.json",
+        "kudu-settings.json",
+        "kudu-site-listing.json",
+        "kudu-web-config.xml.http-404",
+        "kudu-wwwroot-listing.json",
+        "probe-run.log",
+        "probe.pid",
+        "slow-probes.csv",
+        "stage-0-interpretation.md",
+        "stream-body.ndjson",
+        "stream-probes.csv",
+        "summary.md"
+      ]
+    },
+    {
+      "path": "labs/windows-java-httpplatformhandler-timeout/lab-1-baseline-signature/",
+      "decision": "KEEP",
+      "reason": "Retain lab-1-baseline-signature runtime scripts as migration-needed per labs/golden-classification.json. Stage 0 builds the shared JAR; later stages reuse it. Script presence does not establish a successful reproduction.",
+      "members": [
+        "README.md",
+        "cleanup.sh",
+        "collect-effective-config.sh",
+        "deploy.sh",
+        "main.bicep",
+        "run-e1-signature-probe.sh",
+        "run-e2-config-visibility.sh",
+        "run-e3-stream-test.sh",
+        "verify.sh",
+        "warm-up.sh"
+      ]
+    },
+    {
+      "path": "labs/windows-java-httpplatformhandler-timeout/lab-1-baseline-signature/results/",
+      "decision": "KEEP",
+      "reason": "Retain historical lab-1-baseline-signature probes, configuration and reports unchanged. labs/golden-classification.json scopes trust per capture; Lab 2 mixes deployments and overwritten sampling metadata, so KEEP must not certify its causal summaries.",
+      "members": [
+        "az-webapp-appsettings.json",
+        "az-webapp-config-show.json",
+        "az-webapp-show.json",
+        "e1-run.log",
+        "e1-signature-probes.csv",
+        "e1-summary.md",
+        "e1.pid",
+        "e2-httpplatform-grep.log",
+        "e2-kudu-fetch-manifest.csv",
+        "e2-p1-inetpub-applicationhost.config.http-401",
+        "e2-p2-inetsrv-applicationhost.config.http-401",
+        "e2-p3-dir-home-site.json.http-401",
+        "e2-p4-applicationhost-xdt.json.http-401",
+        "e2-p5-dir-httpplatform-logs.json.http-401",
+        "e2-p6-vfs-httpplatform-listing.json.http-401",
+        "e2-p7-reg-w3svc.json.http-401",
+        "e2-summary.md",
+        "e3-stream-body.ndjson",
+        "e3-stream-probe.csv",
+        "e3-summary.md",
+        "kudu-appdata-listing.json.http-401",
+        "kudu-command-dir-config.json.http-401",
+        "kudu-command-dir-wwwroot.json.http-401",
+        "kudu-diagnostics-runtime.json.http-401",
+        "kudu-environment.json.http-401",
+        "kudu-fetch-manifest.csv",
+        "kudu-processes.json.http-401",
+        "kudu-scm-info.json.http-401",
+        "kudu-settings.json.http-401",
+        "kudu-site-listing.json.http-401",
+        "kudu-web-config.xml.http-401",
+        "kudu-wwwroot-listing.json.http-401",
+        "lab-1-interpretation.md",
+        "verify-e1-http-rows.json",
+        "verify-e1-stats.json",
+        "verify-e3-console-rows.json",
+        "verify-e3-http-rows.json",
+        "verify-report.md"
+      ]
+    },
+    {
+      "path": "labs/windows-java-httpplatformhandler-timeout/lab-1-baseline-signature/design-proposal.md",
+      "decision": "KEEP",
+      "reason": "Retain the explicitly labelled historical lab-1-baseline-signature design proposal as context for experiment choices, not as the current stage status or new review approval."
+    },
+    {
+      "path": "labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/",
+      "decision": "KEEP",
+      "reason": "Retain lab-2-loopback-saturation runtime scripts and historical interpretation.md as migration-needed per labs/golden-classification.json. Stage 0 builds the shared JAR; later stages reuse it. interpretation.md is analysis, not a protected capture or current causal proof; the capture-protection predicate covers the separate results/ members. Script presence does not establish a successful reproduction.",
+      "members": [
+        "cleanup.sh",
+        "collect-effective-config.sh",
+        "deploy-webconfig-m1a.sh",
+        "deploy.sh",
+        "enable-autoheal-m2.sh",
+        "interpretation.md",
+        "k6/constant-arrival.js",
+        "k6/lib.js",
+        "main.bicep",
+        "preflight-platform-logs.sh",
+        "revert-baseline-artifact.sh",
+        "run-baseline-recheck.sh",
+        "run-e1-per-rate.sh",
+        "run-e2-sustained.sh",
+        "run-e3-m1a-probes.sh",
+        "run-e4-m2-autoheal.sh",
+        "run-e5-scaleout.sh",
+        "verify.sh",
+        "warm-up.sh",
+        "webconfig/web.config",
+        "webconfig/web.config.partial"
+      ]
+    },
+    {
+      "path": "labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/results/",
+      "decision": "KEEP",
+      "reason": "Retain historical lab-2-loopback-saturation probes, configuration and reports unchanged. labs/golden-classification.json scopes trust per capture; Lab 2 mixes deployments and overwritten sampling metadata, so KEEP must not certify its causal summaries.",
+      "members": [
+        "deploy-metadata.json",
+        "deploy-outputs.json",
+        "e1/run-1-rate-0.5/k6-stdout.log",
+        "e1/run-1-rate-0.5/k6-summary.json",
+        "e1/run-1-rate-0.5/kql-final-5min.json",
+        "e1/run-1-rate-0.5/manifest.json",
+        "e1/run-2-rate-0.75/k6-stdout.log",
+        "e1/run-2-rate-0.75/k6-summary.json",
+        "e1/run-2-rate-0.75/kql-final-5min.json",
+        "e1/run-2-rate-0.75/manifest.json",
+        "e1/run-3-rate-0.9/k6-stdout.log",
+        "e1/run-3-rate-0.9/k6-summary.json",
+        "e1/run-3-rate-0.9/kql-final-5min.json",
+        "e1/run-3-rate-0.9/manifest.json",
+        "e1/run-4-rate-1.05/k6-stdout.log",
+        "e1/run-4-rate-1.05/k6-summary.json",
+        "e1/run-4-rate-1.05/kql-final-5min.json",
+        "e1/run-4-rate-1.05/manifest.json",
+        "e2/rate-0.5/k6-stdout.log",
+        "e2/rate-0.5/k6-summary.json",
+        "e2/rate-0.5/manifest.json",
+        "e3/deploy-log-primary-20260701T152224Z.txt",
+        "e3/deploy-log-primary-20260702T021119Z.txt",
+        "e3/manifest.json",
+        "e3/primary/kql-probe-1.json",
+        "e3/primary/kql-probe-2.json",
+        "e3/primary/kql-probe-3.json",
+        "e3/primary/manifest.json",
+        "e3/primary/probe-1-response.log",
+        "e3/primary/probe-1.log",
+        "e3/primary/probe-2-response.log",
+        "e3/primary/probe-2.log",
+        "e3/primary/probe-3-response.log",
+        "e3/primary/probe-3.log",
+        "e4/autoheal-verify.json",
+        "e4/manifest.json",
+        "effective-config-20260701T133917Z.json",
+        "pre-e1/baseline.log",
+        "pre-e1/curl-format.txt",
+        "pre-e1/kql-baseline-rows.json",
+        "pre-e1/manifest.json",
+        "pre-e1/probe-1-response.log",
+        "pre-e1/probe-1-timestamp.log",
+        "pre-e1/probe-2-response.log",
+        "pre-e1/probe-2-timestamp.log",
+        "pre-e1/probe-3-response.log",
+        "pre-e1/probe-3-timestamp.log",
+        "preflight/deploy-output.txt",
+        "preflight/kql-result.json",
+        "preflight/manifest.json",
+        "revert/manifest.json",
+        "revert/revert-20260701T153348Z.log",
+        "verify-report.md"
+      ]
+    },
+    {
+      "path": "labs/windows-java-httpplatformhandler-timeout/lab-2-loopback-saturation/design-proposal.md",
+      "decision": "KEEP",
+      "reason": "Retain the explicitly labelled historical lab-2-loopback-saturation design proposal as context for experiment choices, not as the current stage status or new review approval."
+    },
+    {
+      "path": "docs/assets/graph/",
+      "decision": "KEEP",
+      "reason": "Generated documentation and learning-path graph JSON is consumed by visualization pages and rebuilt by tools/build_doc_graph.py; retain as intentional published navigation, not raw Azure evidence.",
+      "members": [
+        "core-knowledge.json",
+        "troubleshooting-map.json"
+      ]
+    },
+    {
+      "path": "docs/assets/best-practices/",
+      "decision": "KEEP",
+      "reason": "Retain registered screenshot bytes under docs/assets/best-practices/; scripts/capture/manifest.yaml and legacy-assets.yaml own references while provenance and geometry checks constrain changes. Inventory reading does not refresh capture or verification dates.",
+      "members": [
+        "common-anti-patterns/best-practices--common-anti-patterns--01-diagnose-and-solve.webp",
+        "deployment/best-practices--deployment--01-deployment-center.webp",
+        "mtls/best-practices--mtls--01-client-cert-config.webp",
+        "networking/best-practices--networking--01-access-restrictions.webp",
+        "production-baseline/best-practices--production-baseline--01-configuration-general.webp",
+        "reliability/best-practices--reliability--01-health-check.webp",
+        "scaling/best-practices--scaling--01-scale-out.webp",
+        "security/best-practices--security--01-identity-blade.webp"
+      ]
+    },
+    {
+      "path": "docs/assets/operations/",
+      "decision": "KEEP",
+      "reason": "Retain registered screenshot bytes under docs/assets/operations/; scripts/capture/manifest.yaml and legacy-assets.yaml own references while provenance and geometry checks constrain changes. Inventory reading does not refresh capture or verification dates.",
+      "members": [
+        "backup-restore/operations--backup-restore--01-backups.webp",
+        "cost-optimization/operations--cost-optimization--01-cost-analysis.webp",
+        "deployment-slots/operations--deployment-slots--01-deployment-slots.webp",
+        "deployment/container/operations--deployment--01-create-web-app-container-tab.webp",
+        "deployment/github-actions/operations--deployment--02-deployment-center-github.webp",
+        "deployment/slots-and-swap/operations--deployment--03-slot-swap-config-changes.webp",
+        "deployment/zip-deploy/operations--deployment--04-app-settings.webp",
+        "health-recovery/operations--health-recovery--01-availability-performance.webp",
+        "incoming-client-certificates/operations--incoming-client-certificates--01-tls-ssl-bindings.webp",
+        "networking/operations--networking--01-networking-hub.webp",
+        "outbound-client-certificates/operations--outbound-client-certificates--01-certificates.webp",
+        "scaling/operations--scaling--01-autoscale-rules.webp",
+        "security/operations--security--01-authentication.webp"
+      ]
+    },
+    {
+      "path": "docs/assets/platform/",
+      "decision": "KEEP",
+      "reason": "Retain registered screenshot bytes under docs/assets/platform/; scripts/capture/manifest.yaml and legacy-assets.yaml own references while provenance and geometry checks constrain changes. Inventory reading does not refresh capture or verification dates.",
+      "members": [
+        "architecture/platform--architecture--01-app-service-overview.webp",
+        "authentication-architecture/platform--authentication-architecture--01-authentication-blade.webp",
+        "containers/platform--containers--01-deployment-center-containers.webp",
+        "deployment-options/platform--deployment-options--01-deployment-center.webp",
+        "deployment-scenarios/platform--deployment-scenarios--01-deployment-slots.webp",
+        "hosting-models/platform--hosting-models--01-app-service-plan.webp",
+        "kudu/platform--kudu--01-advanced-tools-entry.webp",
+        "kudu/platform--kudu--02-environment-appsettings.webp",
+        "kudu/platform--kudu--03-debug-console-cmd.webp",
+        "kudu/platform--kudu--04-debug-console-powershell.webp",
+        "kudu/platform--kudu--05-site-extensions.webp",
+        "kudu/platform--kudu--07-diagnostic-dump.webp",
+        "kudu/platform--kudu--08-deployments-history.webp",
+        "kudu/platform--kudu--10-linux-modern-dashboard.webp",
+        "kudu/platform--kudu--11-linux-modern-logs-app.webp",
+        "kudu/platform--kudu--12-linux-modern-logs-platform.webp",
+        "kudu/platform--kudu--14-linux-modern-ssh-app.webp",
+        "kudu/platform--kudu--15-linux-modern-ssh-kudu.webp",
+        "kudu/platform--kudu--16-linux-modern-filemanager.webp",
+        "kudu/platform--kudu--17-linux-modern-filemanager-logs.webp",
+        "kudu/platform--kudu--18-linux-modern-process-explorer.webp",
+        "kudu/platform--kudu--19-linux-modern-environment.webp",
+        "kudu/platform--kudu--20-linux-modern-deployments.webp",
+        "kudu/platform--kudu--21-linux-modern-ai-playground.webp",
+        "kudu/platform--kudu--23-linux-classic-environment.webp",
+        "kudu/platform--kudu--24-linux-classic-bash.webp",
+        "kudu/platform--kudu--25-linux-classic-webssh.webp",
+        "kudu/platform--kudu--26-linux-classic-process-explorer.webp",
+        "kudu/platform--kudu--27-linux-classic-deployment-logs.webp",
+        "mtls/platform--mtls--01-custom-domains-tls.webp",
+        "networking/platform--networking--01-networking-blade.webp",
+        "networking/platform--networking--02-nat-gateway-config.webp",
+        "request-lifecycle/platform--request-lifecycle--01-log-stream.webp",
+        "resource-relationships/platform--resource-relationships--01-resource-group.webp",
+        "scaling/platform--scaling--01-scale-out.webp",
+        "scaling/platform--scaling--02-scale-up.webp",
+        "security-architecture/platform--security-architecture--01-identity-blade.webp",
+        "storage-connectivity/01-storage-networking-all-networks.webp",
+        "storage-connectivity/02-storage-networking-selected-networks.webp",
+        "storage-connectivity/03-storage-networking-disabled.webp",
+        "storage-connectivity/04-appservice-overview-vnet-integration.webp"
+      ]
+    },
+    {
+      "path": "docs/assets/troubleshooting/",
+      "decision": "KEEP",
+      "reason": "Retain registered screenshot bytes under docs/assets/troubleshooting/; scripts/capture/manifest.yaml and legacy-assets.yaml own references while provenance and geometry checks constrain changes. Inventory reading does not refresh capture or verification dates.",
+      "members": [
+        "activity-log/01-activity-log.png",
+        "activity-log/troubleshooting--activity-log--03-slotswap-swap-operation.webp",
+        "app-insights/01-overview.png",
+        "app-service-plan/troubleshooting--app-service-plan--01-asp-overview.webp",
+        "configuration/troubleshooting--configuration--01-always-on.webp",
+        "configuration/troubleshooting--configuration--03-autoheal-m2-rules.webp",
+        "configuration/troubleshooting--configuration--04-slotswap-sticky-vs-nonsticky.webp",
+        "configuration/troubleshooting--configuration--05-slowstart-always-on-off.webp",
+        "deployment-center/troubleshooting--deployment-center--01-deployment-center.webp",
+        "deployment-center/troubleshooting--deployment-center--02-depstart-successful-deploy.webp",
+        "deployments/troubleshooting--deployments--01-cdrecon-role-assignment-conflict.webp",
+        "diagnose-and-solve/01-overview.png",
+        "diagnose-and-solve/02-detector-web-app-down.png",
+        "diagnose-and-solve/troubleshooting--diagnose-and-solve--03-diagnose-hub.webp",
+        "health-check/troubleshooting--health-check--01-health-check.webp",
+        "health-check/troubleshooting--health-check--02-httppings-baseline-healthy.webp",
+        "iam/troubleshooting--iam--01-cdrecon-post-recovery-iam.webp",
+        "kudu/troubleshooting--kudu--01-overview.webp",
+        "kudu/troubleshooting--kudu--02-kudu-home.webp",
+        "kudu/troubleshooting--kudu--03-process-explorer.webp",
+        "kudu/troubleshooting--kudu--04-process-explorer-java.webp",
+        "kudu/troubleshooting--kudu--05-webconfig-verified.webp",
+        "kudu/troubleshooting--kudu--06-fwdreq-process-not-listening.webp",
+        "kudu/troubleshooting--kudu--07-nolabspace-df-output.webp",
+        "log-analytics/01-logs.png",
+        "log-analytics/troubleshooting--log-analytics--02-http-500-121-signature.webp",
+        "log-analytics/troubleshooting--log-analytics--03-httppings-empty-http-window.webp",
+        "log-analytics/troubleshooting--log-analytics--04-depstart-startup-failed-kql.webp",
+        "log-analytics/troubleshooting--log-analytics--05-depstart-runtime-vs-deploy-timeline.webp",
+        "log-analytics/troubleshooting--log-analytics--06-fwdreq-bind-line-absent.webp",
+        "log-analytics/troubleshooting--log-analytics--07-nolabspace-enospc-console-kql.webp",
+        "log-analytics/troubleshooting--log-analytics--08-mempressure-heavy-latency-kql.webp",
+        "log-analytics/troubleshooting--log-analytics--09-5xx-latency-percentiles-kql.webp",
+        "log-analytics/troubleshooting--log-analytics--09-5xx-status-by-endpoint-kql.webp",
+        "log-analytics/troubleshooting--log-analytics--10-snat-outbound-status-distribution-kql.webp",
+        "log-analytics/troubleshooting--log-analytics--10-snat-outbound-tail-latency-kql.webp",
+        "log-analytics/troubleshooting--log-analytics--11-dns-vnet-http-status-distribution-kql.webp",
+        "log-analytics/troubleshooting--log-analytics--11-dns-vnet-platform-startup-kql.webp",
+        "log-analytics/troubleshooting--log-analytics--11-slowstart-first-request-slow.webp",
+        "metrics/01-metrics-empty.png",
+        "metrics/troubleshooting--metrics--02-response-time.webp",
+        "metrics/troubleshooting--metrics--06-slowstart-first-vs-warm-response.webp",
+        "metrics/troubleshooting--metrics--08-mempressure-memory-working-set.webp",
+        "networking/troubleshooting--networking--02-app-overview.webp",
+        "networking/troubleshooting--networking--03-app-networking-blade.webp",
+        "storage-firewall/troubleshooting--storage-firewall--01-storage-overview.webp",
+        "storage-firewall/troubleshooting--storage-firewall--02-networking-disabled.webp",
+        "storage-iam/troubleshooting--storage-iam--01-iam-landing.webp",
+        "storage-iam/troubleshooting--storage-iam--02-role-assignments.webp",
+        "vnet-integration/troubleshooting--vnet-integration--01-vnet-integration.webp"
+      ]
     }
-  ]
+  ],
+  "coverage_mode": "exact-tracked-members"
 }

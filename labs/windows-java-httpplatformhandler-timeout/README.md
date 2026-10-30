@@ -6,7 +6,7 @@ Multi-stage troubleshooting lab for a production symptom seen on Azure App Servi
 - The observed cutoff sits near the App Service front-end's ~230s ceiling rather than the httpPlatformHandler documented default of 120s.
 - Under load, a burst of `500.121.64` errors correlates with an increase in loopback (`127.0.0.1`) traffic between the IIS worker (`w3wp.exe`) and the Java SE worker (`java.exe`).
 
-Windows Java SE is under-documented in the App Service troubleshooting corpus (all 10 existing labs in this repo are Linux). This lab establishes the first Windows Java SE reproduction and mitigation playbook.
+This repository includes a staged Windows Java SE investigation with retained historical results. Their evidentiary scope is described by the [lab classification](../golden-classification.json); committed scripts and results are not independent reproduction.
 
 ## Status
 
