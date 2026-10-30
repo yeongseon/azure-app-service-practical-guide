@@ -20,6 +20,7 @@
 
 ## Checklist
 
+- [ ] The smallest working change was preferred; no speculative framework, duplicate doc or validator was added.
 - [ ] Relevant checks were run and their results recorded.
 - [ ] Verification dates and claims reflect work actually performed.
 - [ ] Scope and mandatory review gates were checked; no failing gate was bypassed.

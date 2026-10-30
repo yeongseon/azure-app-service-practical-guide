@@ -14,7 +14,7 @@ body:
     id: acceptance
     attributes:
       label: Acceptance Checklist
-      description: State verifiable results. A maintainer assigns one priority label after triage.
+      description: State verifiable results. A maintainer assigns one priority and one size label after triage, and compares the full open backlog.
       placeholder: '- [ ] Describe an observable result'
     validations:
       required: true

@@ -184,7 +184,7 @@ az webapp create -g $RG -n $APP_NAME  # ❌ Don't do this
 
 ### Mermaid Diagrams
 
-All architectural diagrams use Mermaid. Every documentation page should include at least one diagram.
+All architectural diagrams use Mermaid. Only include diagrams where they materially clarify a flow, architecture or decision. Simple references and short operations do not need decorative diagrams.
 
 ### Nested Lists
 

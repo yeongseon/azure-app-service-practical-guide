@@ -1138,70 +1138,26 @@ Regenerating locally is still correct and encouraged for your own view; just exp
 - A gate that scans `docs/` also scans the generated dashboard, so changing what the generator *emits* takes two runs to settle: the first run records the gate result from the page it is about to overwrite. Regenerate twice and confirm the second run is byte-identical before committing.
 - Never claim CI status the page cannot observe. The verdict admonition reports locally executed results (`Golden` / `Blocking gates pass, with gaps` / `Not golden`); it does not read GitHub Actions.
 
-## Mandatory Oracle Review (AI Agent Rule)
+## Tool-Neutral PR Review and Merge
 
-**ALL work performed by AI agents MUST undergo Oracle quality review before completion.**
+All contributions follow the same process whether written by a human, Codex, Claude, OpenCode, Copilot, ChatGPT or another agent. `CONTRIBUTING.md` owns title conventions, issue triage, priority/size, PR sections and minimal-change development. This document owns the existing evidence, screenshots, privacy and authoring safety requirements. Do not recreate those rules in agent-specific files.
 
-### Review Protocol
+An Oracle score or another AI review can be useful **advisory evidence**, but it is never a mandatory numerical approval or a substitute for tests, recorded observations, source review or the responsible maintainer's decision. This replaces the former Oracle-only review loop; historical review records retain their original meaning.
 
-1. **Work Completion**: Agent completes assigned task
-2. **Build Verification**: Run `mkdocs build --strict` (must pass)
-3. **Oracle Review Request**: Submit all changes to Oracle for quality review
-4. **Quality Criteria**:
-   - MSLearn-first policy compliance
-   - Code explanation tables present for all CLI commands
-   - Mermaid diagrams with proper `<!-- diagram-id: -->` comments
-   - Long CLI flags only (no `-g`, `-n` shortcuts)
-   - No PII in examples
-   - Proper frontmatter with `content_sources`
-5. **Iteration**: If Oracle identifies issues → fix and re-submit
-6. **Completion**: Only mark done when Oracle approves (100% quality)
+### Required checks for the final PR head
 
-### Review Loop
+1. **GitHub CI:** all applicable required checks on the exact final head SHA are green. Missing, skipped-as-success, failing or pending required checks do not count as passing.
+2. **Evidence and scope:** the PR has verifiable acceptance criteria, honest command/test results, correct source citations, and no unresolved serious factual or security findings. Never re-date Azure evidence on a prose-only change.
+3. **Images and personal data:** every added/changed referenced image matches its description, and the final committed PNG/WebP bytes are inspected for PII. Re-encoded files require another visual inspection.
+4. **Review and decision:** inspect the final diff, outstanding threads, current-head review evidence where configured, and repository protection requirements. AI feedback is advisory, not human approval. The responsible maintainer decides whether the PR may merge. High-risk permissions/publishing changes warrant independent scrutiny.
 
-```
-while not oracle_approved:
-    fix_identified_issues()
-    run_build_verification()
-    submit_to_oracle()
-```
+### Merge procedure and stop conditions
 
-**NO WORK IS CONSIDERED COMPLETE WITHOUT ORACLE APPROVAL.**
-
-## Merge Policy (AI Agent Rule)
-
-AI agents MAY merge their own pull requests **autonomously**, but ONLY after ALL of the mandatory gates below pass. There is no separate human approval step — passing every gate IS the approval. If any gate cannot be satisfied, the agent MUST stop and hand the PR to the user instead of merging.
-
-### Mandatory merge gates (ALL required)
-
-| # | Gate | How it is verified |
-|---|---|---|
-| 1 | **Oracle review ≥ 90/100** | Submit the final diff to Oracle for quality review. Score must be **90 or higher with no merge-blocking issues**. Any must-fix item is a blocker even at ≥ 90. |
-| 2 | **CI fully green** | Every required GitHub Actions check on the PR head SHA passes. Verify with `gh pr checks <pr> --watch`; do not merge on `pending` or `failure`. |
-| 3 | **Caption ↔ image match** | For every added/changed image referenced from markdown, the caption/alt text MUST accurately describe the actual rendered image (as with the 02 storage-networking alt correction). |
-| 4 | **Final-image PII verification** | Every added/changed `.png`/`.webp` referenced from markdown MUST be visually verified (Read/`look_at`) for PII on the **final committed bytes** — zeroed subscription/tenant IDs, no employee identifiers, no black-box masks. WebP re-encodes are re-verified, not assumed from the raw PNG. |
-
-### Merge procedure
-
-1. Confirm gates 1-4 above, in order. Record the Oracle score and the visual-verification result in the PR thread or the final summary.
-2. Merge with **squash-and-merge** only:
-
-    ```bash
-    gh pr merge <pr> --squash --delete-branch
-    ```
-
-3. Never use merge-commit or rebase-merge; squash keeps `main` history linear and collapses fixup commits.
-4. Never bypass a failing or pending gate. Never merge with `--admin` to skip checks.
-
-### When to stop instead of merging
-
-- Oracle score < 90, or any unresolved must-fix.
-- Any CI check failing or still pending.
-- Any referenced image that cannot be visually verified (see the text-only review disclosure rules under Image and Screenshot Rules).
-- The PR touches something outside the agent's stated scope.
-
-In these cases, report the blocking gate and hand off to the user.
-
+- Mark incomplete work Draft. Use `Closes #N` only for completed local issue scope and `Refs #N` for partial work with the remainder stated.
+- Record the actual CI results, reviewer/finding dispositions and image/PII checks on the final head. A requested review, acknowledgment, comment, or outdated-head review is not a completed review.
+- Squash merge only after the responsible maintainer's decision and the configured GitHub gates pass; do not use `--admin`, force a stale-head merge or bypass branch protection.
+- Stop and report the blocker if evidence is missing, a required check is pending/failing, blocking review findings remain, an image cannot be checked, the PR exceeds its issue scope, or maintainer authorization is absent.
+- This policy text does not prove native GitHub enforcement. Reconcile current-head automated review behavior under issue #247; maintain existing protection requirements until verified.
 
 ## Tutorial Validation Tracking
 
