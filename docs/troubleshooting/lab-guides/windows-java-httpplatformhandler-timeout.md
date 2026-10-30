@@ -813,7 +813,7 @@ timeline
     E2 Sustained : 15-minute run provides stable 62% signature rate evidence.
     E3 Mitigation : web.config update shifts signature to 502.3.12002 at 60s.
     Analysis : Critical findings on KQL ingestion lag (300s) and manifest handling.
-    Verdict : Saturation causality confirmed; mitigation strategy verified.
+    Verdict : Saturation causality confirmed#59; mitigation strategy verified.
 ```
 
 ### Evidence Chain: Why This Proves the Hypothesis (falsification logic)

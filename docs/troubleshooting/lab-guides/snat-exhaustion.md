@@ -767,12 +767,12 @@ This indicates process turnover occurred during the trigger window.
 ```mermaid
 timeline
     title SNAT Lab Failure Cascade (artifact reconstruction)
-    05:40:02 : Console window starts
-    05:52:07 : New worker generation visible
-    05:54-05:56 : Trigger pressure period
-    05:56:00-05:57:26 : HTTP 499 near 59-60s dominates
-    05:58-05:59 : Repeated WORKER TIMEOUT and SIGKILL events
-    05:55+ : /diag endpoints eventually recover
+    05#58;40#58;02 : Console window starts
+    05#58;52#58;07 : New worker generation visible
+    05#58;54-05#58;56 : Trigger pressure period
+    05#58;56#58;00-05#58;57#58;26 : HTTP 499 near 59-60s dominates
+    05#58;58-05#58;59 : Repeated WORKER TIMEOUT and SIGKILL events
+    05#58;55+ : /diag endpoints eventually recover
 ```
 
 ### 4.11 Hypothesis verdict

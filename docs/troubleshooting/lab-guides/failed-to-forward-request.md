@@ -742,13 +742,13 @@ Source: `postfix/diag-stats-20260404T055117Z.json`
 ```mermaid
 timeline
     title Failed-to-forward-request lab timeline
-    05:46:16 : Failure probes start returning 000
-    05:47:07 : Failure probe series still all 000
-    05:48:03 : Recovery probe capture begins (still 000 during churn)
-    05:49:48 : HTTP logs show long 503 responses
-    05:51:02 : Transitional 499 entries on /health
-    05:51:05 : /health returns 200 in HTTP logs
-    05:55:xx : Postfix diagnostics confirm 0.0.0.0:8000 bind
+    05#58;46#58;16 : Failure probes start returning 000
+    05#58;47#58;07 : Failure probe series still all 000
+    05#58;48#58;03 : Recovery probe capture begins (still 000 during churn)
+    05#58;49#58;48 : HTTP logs show long 503 responses
+    05#58;51#58;02 : Transitional 499 entries on /health
+    05#58;51#58;05 : /health returns 200 in HTTP logs
+    05#58;55#58;xx : Postfix diagnostics confirm 0.0.0.0#58;8000 bind
 ```
 
 ### 4.9 Data quality notes
