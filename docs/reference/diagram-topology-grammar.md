@@ -36,8 +36,8 @@ content_sources:
     - id: topology-grammar-v1-adapter-container-apps
       type: flowchart
       source: self-generated
-      justification: Minimal service adapter fixture for Azure Container Apps showing VNet and environment subnet containment, external Private DNS zone, HTTP ingress proxy, and traffic splitting across revisions.
-      based_on: [https://learn.microsoft.com/en-us/azure/container-apps/networking, https://learn.microsoft.com/en-us/azure/container-apps/structure, https://learn.microsoft.com/en-us/azure/container-apps/revisions]
+      justification: Minimal service adapter fixture for Azure Container Apps showing VNet and environment subnet containment, external Private DNS zone, HTTP ingress proxy, traffic splitting across revisions, and NAT gateway egress on the subnet.
+      based_on: [https://learn.microsoft.com/en-us/azure/container-apps/networking, https://learn.microsoft.com/en-us/azure/container-apps/structure, https://learn.microsoft.com/en-us/azure/container-apps/revisions, https://learn.microsoft.com/en-us/azure/container-apps/custom-virtual-networks, https://learn.microsoft.com/en-us/azure/nat-gateway/nat-overview]
 ---
 
 # Azure Topology Visual Grammar (v1)
@@ -60,8 +60,8 @@ content_sources:
 
 | Boundary Type | Azure Scope / Examples | Containment and Placement Rules |
 |---|---|---|
-| **Administrative** | Subscription, Resource Group | Scopes RBAC, policy, and lifecycle operations via `management.azure.com` ([Control plane and data plane](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/control-plane-and-data-plane)). Does not isolate network traffic. |
-| **Network** | Virtual Network (`vnet`), Subnet (`subnet`) | Nests `Customer VNet ⊃ Subnet ⊃ NIC` only for factual containment; never put CIDR sizes (`/27`, `/28`, `/23`) in a container title. Subnet policy (`[NSG/UDR apply]`) is a tag on the subnet header unless a UDR routes traffic to a firewall/NAT hop. |
+| **Administrative** | Subscription, Resource Group | Scopes RBAC, policy, and lifecycle operations via `management.azure.com` (Azure public cloud; [Control plane and data plane](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/control-plane-and-data-plane)). Does not isolate network traffic. |
+| **Network** | Virtual Network (`vnet`), Subnet (`subnet`) | Nests `Customer VNet ⊃ Subnet ⊃ NIC` only for factual containment; never put CIDR sizes (`/27`, `/28`, `/23`) in a container title. Subnet policy (`[NSG/UDR apply]`) is a tag on the subnet header; a UDR is routing policy, never a node. A NAT Gateway is an outbound SNAT service associated with subnets that needs no route table entry and is not a UDR next hop type, so it is drawn as a subnet tag (`[NAT Gateway]`), not as a hop ([NAT Gateway resource](https://learn.microsoft.com/en-us/azure/nat-gateway/nat-gateway-resource), [NAT Gateway overview](https://learn.microsoft.com/en-us/azure/nat-gateway/nat-overview)). Only a firewall or network virtual appliance reached through a UDR `Virtual appliance` next hop is a routed hop, drawn in its own subnet ([User-defined routes](https://learn.microsoft.com/en-us/azure/virtual-network/virtual-networks-udr-overview)). |
 | **Managed Platform** | App Service scale unit, Functions host, Container Apps environment | In multitenant App Service, all roles exist in a multitenant network outside customer containers; App Service Environment (ASE) is the single-tenant option deployed in your VNet ([App Service networking features](https://learn.microsoft.com/en-us/azure/app-service/networking-features)). |
 | **Customer Application** | Web app code, slot, Function code, Container App revision | Workload artifact running on the managed compute boundary; inherits network paths from its hosting plan or environment. |
 
@@ -78,11 +78,12 @@ content_sources:
 | `dns` | `dns` / `dns_*` | External Name Resolution | Hexagon `{{"..."}}` outside VNet | `Private DNS zone: <zone> [linked to the VNet]` |
 | `vnet` | `vnet_*` | Outer Network Container | `subgraph vnet_*["Customer VNet"]` | `Customer VNet` |
 | `subnet` | `subnet_*` | Nested Subnet Container | `subgraph subnet_*["Subnet: ..."]` inside VNet | `Subnet: <role> [delegated / NSG/UDR apply]` |
-| `nsg-udr` | *(subnet tag)* | Subnet Policy Marker | Tag `[NSG/UDR apply]` in subnet title | Inline node `[/"..."/]` **only** when UDR routes to NVA/NAT |
+| `nsg-udr` | *(subnet tag)* | Subnet Policy Marker | Tag `[NSG/UDR apply]` in subnet title; never a node | `Subnet: <role> [NSG/UDR apply]` |
 | `ingress` | `ingress` | Managed Entry | Rectangle `["..."]` | `Ingress: <front end or proxy> [entry]` |
 | `private-endpoint` | `private_endpoint` / `pe_*` | Subnet NIC (Inbound) | Subroutine `[["..."]]` inside PE subnet | `Private Endpoint: <target> NIC [private IP]` |
 | `vnet-integration` | `vnet_integration` | Delegated Subnet NIC (Outbound) | Subroutine `[["..."]]` inside delegated subnet | `VNet Integration: delegated NIC [outbound]` |
-| `nat-firewall` | `nat_firewall` | Egress Appliance Hop | Parallelogram `[/"..."/]` inside subnet | `Egress: UDR / NAT Gateway [egress hop]` |
+| `nat-gateway` | *(subnet tag)* | Subnet-Associated Outbound SNAT | Tag `[NAT Gateway]` in subnet title; never a node or a UDR target | `Subnet: <role> [NAT Gateway]` |
+| `firewall-nva` | `firewall_nva` | Routed Egress Hop (UDR `Virtual appliance` next hop) | Parallelogram `[/"..."/]` inside its own subnet | `Firewall/NVA: <name> [UDR next hop]` |
 | `app-runtime` | `app_runtime` | Managed Compute | Rectangle `["..."]` | `Compute: <worker or app> [managed runtime]` |
 | `identity` | `identity` | Tenant Trust Boundary | Hexagon `{{"..."}}` | `Identity: Microsoft Entra ID [token]` |
 | `key-vault` | `key_vault` | Secret Store Dependency | Cylinder `[("...")]` | `Secrets: Azure Key Vault [vault]` |
@@ -90,7 +91,7 @@ content_sources:
 | `telemetry` | `telemetry` | Off-Path Observability | Asymmetric `>"..."]` | `Telemetry: Azure Monitor [off-path sink]` |
 | `control-plane` | `control_plane` | Upper Management Band | Rectangle `["..."]` | `Control Plane: ARM & Kudu SCM [mgmt band]` |
 
-**Icon and naming rules:** Generic concepts (`client`, generic `ingress`, generic `telemetry`) use geometric shapes, never product logos. Where a tool supports official Azure icons, Microsoft permits use in architectural diagrams, training materials, or documentation: "Don't crop, flip, or rotate icons", "Don't distort or change icon shape in any way", and "Use the icons as they would appear within Azure"; adding the product name near the icon is recommended ([Azure Architecture Icons](https://learn.microsoft.com/en-us/azure/architecture/icons/)). Because Mermaid `10.9.1` flowcharts do not bundle Azure icon packs, fixtures here use geometric shapes with bracketed role tags.
+**Icon and naming rules:** Generic concepts (`client`, generic `ingress`, generic `telemetry`) use geometric shapes, never product logos. Where a tool supports official Azure icons, Microsoft permits use in architectural diagrams, training materials, or documentation: "Don't crop, flip, or rotate icons", "Don't distort or change icon shape in any way", and "Use the icons as they would appear within Azure"; adding the product name near the icon is recommended ([Azure Architecture Icons](https://learn.microsoft.com/en-us/azure/architecture/icons/)). This grammar adds two requirements of its own, which are not Microsoft rules: one icon scale for the same service across guides, and no recoloring of product icons. Because Mermaid `10.9.1` flowcharts do not bundle Azure icon packs, fixtures here use geometric shapes with bracketed role tags.
 
 ## 5. Edge and Legend Contract
 
@@ -111,25 +112,25 @@ Every semantic relationship uses a single-headed directional arrow (`-->`, `-.->
 | `management/control` | `control_plane -.->\|"[Configured] ARM policy"\| B` | Dotted (`2px`) from upper band | `[Configured]` | `management.azure.com` or Kudu/SCM deployment and configuration operations. |
 | `auth/token` | `A -.->\|"[Configured] Managed identity token"\| identity` | Dotted (`2px`) | `[Configured]` | Microsoft Entra ID token acquisition or RBAC check. |
 | `observation` | `A -.->\|"[Configured] Logs and metrics"\| telemetry` | Dotted (`1.5px`) | `[Configured]` / `[Observed]` | Off-path diagnostic log and metric emission to Azure Monitor / Application Insights. |
-| `fault/evidence` | `A ==>\|"[FAULT / Illustrative] ..."\| B` | Thick (`3px`), red (`#bb3943`) | `[FAULT / Illustrative]` / `[FAULT / Inferred]` / `[FAULT / Observed]` | Broken path or anchored diagnostic callout. |
+| `fault/evidence` | `A ==>\|"[FAULT / Illustrative] ..."\| B` | Thick (`3px`), red (`#da495d`) | `[FAULT / Illustrative]` / `[FAULT / Inferred]` / `[FAULT / Observed]` | Broken path or anchored diagnostic callout. |
 
 ## 6. Visual System
 
-The palette adapts the design tokens of the maintainer's SME Research reference (external to this repository and not linked) to WCAG 2.1 AA (`>= 4.5:1` text contrast). Because Mermaid `classDef` declarations are static, the Mermaid fixtures on this page implement **only the Table 6.1 light role values** across both site themes (`default` `#ffffff` and `slate` `#1e2129`); opaque node fills and explicit text colors preserve identical intra-node contrast on both surfaces, while `netBox` uses `fill:transparent` so container titles inherit the page theme. **Table 6.2 records dark target values** for theme-aware realizations (not used by the static Mermaid fixtures). Every Mermaid diagram includes `accTitle` and `accDescr`, never encodes meaning by color alone, and keeps labels short (about six words per line, with `<br/>` between the name and its role tag; diagnostic callouts use one line each for Symptom, Evidence to collect, and Next check).
+This guide defines its own self-contained role palette; no other design system is a source or a dependency. The values were chosen by this guide's criteria: text inside a node reaches at least `7:1` against its fill, and every stroke reaches at least `3:1` against both site surfaces (`default` `#ffffff` and `slate` `#1e2129`), because a static Mermaid `classDef` cannot change with the theme. The Mermaid fixtures therefore use **only the Table 6.1 values**: opaque node fills with explicit text colors keep the same intra-node contrast on both surfaces, and `netBox` containers use `fill:transparent` with a `#287ce4` dashed stroke so their titles inherit the page theme. **Table 6.2 records dark target values** for realizations that can theme (not used by the static fixtures). Every Mermaid diagram includes `accTitle` and `accDescr`, never encodes meaning by color alone, and keeps labels short (about six words per line, with `<br/>` between the name and its role tag; diagnostic callouts use one line each for Symptom, Evidence to collect, and Next check).
 
-| Role Token (`classDef`) | Semantic Use | Light Fill / Text / Stroke (Used in Mermaid) | Light Contrast | Non-Color Redundancy |
-|---|---|---|---|---|
-| `baseNeutral` (`--wash` / `--ink`) | Standard nodes (`client`, `ingress`, `storage_db`) | `#f5f7fa` / `#172432` / `#526174` (`1.5px`) | `14.66:1` | Standard border + bracketed role tag |
-| `focusActive` (`--blue-soft` / `--blue`) | Active compute / subnet NIC (`app_runtime`, `private_endpoint`, `vnet_integration`) | `#eff3ff` / `#172432` / `#2456df` (`2.5px`) | `14.18:1` | Thick `2.5px` stroke + shape (`[[...]]` / `[...]`) + tag |
-| `bandMuted` (`--paper` / `--muted`) | Control plane, DNS, identity, telemetry | `#ffffff` / `#172432` / `#526174` (`1.5px` dashed) | `15.73:1` | Dashed border (`4 3`) + upper/off-path placement |
-| `stateHealthy` (`--green`) | Verified healthy / recovery check | `#ecfdf5` / `#14715b` / `#14715b` (`2px`) | `5.63:1` | `[HEALTHY]` or `[Recovery]` label prefix |
-| `stateWarn` (`--amber`) | Egress appliance hop or caveat (`nat_firewall`) | `#fffbeb` / `#956016` / `#956016` (`2px`) | `5.11:1` | Parallelogram `[/"..."/]` + `[egress hop]` / `[WARN]` tag |
-| `stateFault` (`--red`) | Fault boundary or callout (`fault_note`) | `#fef2f2` / `#bb3943` / `#bb3943` (`3px`) | `5.08:1` | Thick `3px` stroke + thick `==>` link + `[FAULT]` prefix |
+| Role (`classDef`) | Semantic Use | Fill / Text / Stroke (Used in Mermaid) | Text Contrast | Stroke Contrast on `#ffffff` / `#1e2129` | Non-Color Redundancy |
+|---|---|---|---|---|---|
+| `baseNeutral` | Standard nodes (`client`, `ingress`, `storage_db`) | `#f2f4f8` / `#14202e` / `#707e93` (`1.5px`) | `14.95:1` | `4.12:1` / `3.90:1` | Standard border + bracketed role tag |
+| `focusActive` | Active compute / subnet NIC (`app_runtime`, `private_endpoint`, `vnet_integration`) | `#e6f0fd` / `#14202e` / `#287ce4` (`2.5px`) | `14.30:1` | `4.12:1` / `3.90:1` | Thick `2.5px` stroke + shape (`[[...]]` / `[...]`) + tag |
+| `bandMuted` | Control plane, DNS, identity, telemetry | `#ffffff` / `#14202e` / `#707e93` (`1.5px` dashed) | `16.46:1` | `4.12:1` / `3.90:1` | Dashed border (`4 3`) + upper/off-path placement |
+| `stateHealthy` | Healthy path or recovery check (no fixture uses it) | `#e5f5ee` / `#0b4a35` / `#198d67` (`2px`) | `9.11:1` | `4.16:1` / `3.87:1` | `[HEALTHY]` or `[Recovery]` label prefix |
+| `stateWarn` | Caveat marker (no fixture uses it) | `#fff3e0` / `#5c3200` / `#ba690c` (`2px`) | `10.02:1` | `4.11:1` / `3.92:1` | `[WARN]` label prefix |
+| `stateFault` | Fault boundary or callout (`dns_out` and `fault_note` in the overlay) | `#fdebee` / `#86172a` / `#da495d` (`3px`) | `8.43:1` | `4.12:1` / `3.90:1` | Thick `3px` stroke + thick `==>` link + `[FAULT]` prefix |
 
-| Role Token | Dark Target Fill / Text / Stroke (Contract Target Only; Not Used in Mermaid) | Dark Text Contrast |
+| Role | Dark Target Fill / Text / Stroke (Contract Target Only; Not Used in Mermaid) | Contrast |
 |---|---|---|
-| `baseNeutral` / `focusActive` / `bandMuted` | `#263345` / `#f1f5f9` / `#94a3b8` (`11.68:1`) · `#1e3a5f` / `#f8fafc` / `#60a5fa` (`10.99:1`) · `#1e293b` / `#cbd5e1` / `#94a3b8` (`9.85:1`) | `>= 9.85:1` |
-| `stateHealthy` / `stateWarn` / `stateFault` | `#13382f` / `#a7f3d0` / `#34d399` (`10.02:1`) · `#3b2810` / `#fde68a` / `#fbbf24` (`11.26:1`) · `#451a20` / `#fecdd3` / `#f87171` (`10.47:1`) | `>= 10.02:1` |
+| `baseNeutral` / `focusActive` / `bandMuted` | `#2b313d` / `#eef1f6` / `#9aa6b8` (text `11.52:1`, stroke `6.53:1`) · `#16325c` / `#eef4ff` / `#6ea8fe` (`11.56:1`, `6.66:1`) · `#1e2129` / `#c9d1dd` / `#9aa6b8` (`10.46:1`, `6.53:1`) | text `>= 10.46:1`, stroke `>= 6.53:1` |
+| `stateHealthy` / `stateWarn` / `stateFault` | `#0f3a2b` / `#d5f5e6` / `#4cc79a` (`10.86:1`, `7.62:1`) · `#43290b` / `#ffe7c2` / `#e0a050` (`11.19:1`, `7.14:1`) · `#4a1520` / `#ffdce2` / `#ff7b8c` (`11.69:1`, `6.49:1`) | text `>= 10.86:1`, stroke `>= 6.49:1` |
 
 ## 7. Progressive Views
 
@@ -161,9 +162,9 @@ flowchart TD
     app_runtime -.->|"[Configured] Managed identity token"| identity
     app_runtime -->|"[Configured] HTTPS 443 shared outbound IP"| storage_db
     app_runtime -.->|"[Configured] Logs and metrics"| telemetry
-    classDef baseNeutral fill:#f5f7fa,stroke:#526174,stroke-width:1.5px,color:#172432;
-    classDef focusActive fill:#eff3ff,stroke:#2456df,stroke-width:2.5px,color:#172432;
-    classDef bandMuted fill:#ffffff,stroke:#526174,stroke-width:1.5px,stroke-dasharray:4 3,color:#172432;
+    classDef baseNeutral fill:#f2f4f8,stroke:#707e93,stroke-width:1.5px,color:#14202e;
+    classDef focusActive fill:#e6f0fd,stroke:#287ce4,stroke-width:2.5px,color:#14202e;
+    classDef bandMuted fill:#ffffff,stroke:#707e93,stroke-width:1.5px,stroke-dasharray:4 3,color:#14202e;
     class client,ingress,storage_db baseNeutral;
     class app_runtime focusActive;
     class control_plane,identity,telemetry bandMuted;
@@ -200,10 +201,10 @@ flowchart TD
     app_runtime -.->|"[Configured] Managed identity token"| identity
     app_runtime -->|"[Configured] HTTPS 443 shared outbound IP"| storage_db
     app_runtime -.->|"[Configured] Logs and metrics"| telemetry
-    classDef baseNeutral fill:#f5f7fa,stroke:#526174,stroke-width:1.5px,color:#172432;
-    classDef focusActive fill:#eff3ff,stroke:#2456df,stroke-width:2.5px,color:#172432;
-    classDef bandMuted fill:#ffffff,stroke:#526174,stroke-width:1.5px,stroke-dasharray:4 3,color:#172432;
-    classDef netBox fill:transparent,stroke:#2456df,stroke-width:2px,stroke-dasharray:6 3;
+    classDef baseNeutral fill:#f2f4f8,stroke:#707e93,stroke-width:1.5px,color:#14202e;
+    classDef focusActive fill:#e6f0fd,stroke:#287ce4,stroke-width:2.5px,color:#14202e;
+    classDef bandMuted fill:#ffffff,stroke:#707e93,stroke-width:1.5px,stroke-dasharray:4 3,color:#14202e;
+    classDef netBox fill:transparent,stroke:#287ce4,stroke-width:2px,stroke-dasharray:6 3;
     class client,ingress,storage_db baseNeutral;
     class app_runtime,private_endpoint focusActive;
     class control_plane,identity,telemetry,dns bandMuted;
@@ -245,10 +246,10 @@ flowchart TD
     vnet_integration -->|"[Configured] 3. HTTPS 443 to PE private IP"| pe_storage
     pe_storage -->|"[Configured] 4. Private Link to Storage"| storage_db
     app_runtime -...->|"[Configured] Logs and metrics"| telemetry
-    classDef baseNeutral fill:#f5f7fa,stroke:#526174,stroke-width:1.5px,color:#172432;
-    classDef focusActive fill:#eff3ff,stroke:#2456df,stroke-width:2.5px,color:#172432;
-    classDef bandMuted fill:#ffffff,stroke:#526174,stroke-width:1.5px,stroke-dasharray:4 3,color:#172432;
-    classDef netBox fill:transparent,stroke:#2456df,stroke-width:2px,stroke-dasharray:6 3;
+    classDef baseNeutral fill:#f2f4f8,stroke:#707e93,stroke-width:1.5px,color:#14202e;
+    classDef focusActive fill:#e6f0fd,stroke:#287ce4,stroke-width:2.5px,color:#14202e;
+    classDef bandMuted fill:#ffffff,stroke:#707e93,stroke-width:1.5px,stroke-dasharray:4 3,color:#14202e;
+    classDef netBox fill:transparent,stroke:#287ce4,stroke-width:2px,stroke-dasharray:6 3;
     class client,ingress,storage_db baseNeutral;
     class app_runtime,vnet_integration,pe_storage focusActive;
     class control_plane,identity,telemetry,dns_out bandMuted;
@@ -273,11 +274,11 @@ flowchart TD
     telemetry>"Telemetry: Azure Monitor<br/>[Off-Path Sink]"]
     dns_out{{"Private DNS zone: privatelink.blob.core.windows.net<br/>[unlinked to VNet]"}}
     fault_note["[Illustrative scenario - not a measurement]<br/>Symptom: storage calls fail with HTTP 403<br/>Evidence to collect: IP address the app resolves for the storage host name<br/>Next check: Private DNS zone virtual network link"]
-    subgraph vnet_out["Customer VNet &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [VNet boundary]"]
-        subgraph subnet_int["Subnet: VNet integration &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [delegated, NSG/UDR]"]
+    subgraph vnet_out["Customer VNet &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [VNet boundary]"]
+        subgraph subnet_int["Subnet: VNet integration &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [delegated, NSG/UDR]"]
             vnet_integration[["VNet Integration: Delegated Outbound Subnet NIC<br/>[Delegated Subnet / Outbound Only]"]]
         end
-        subgraph subnet_pe_out["Subnet: private endpoints &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [private endpoint NICs]"]
+        subgraph subnet_pe_out["Subnet: private endpoints &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [private endpoint NICs]"]
             pe_storage[["Private Endpoint: Azure Storage Inbound NIC<br/>[Unused Private Path]"]]
         end
     end
@@ -290,23 +291,23 @@ flowchart TD
     app_runtime -->|"[Configured] 2. Outbound VNet traffic"| vnet_integration
     vnet_integration -.->|"[Configured] unused"| pe_storage
     pe_storage -.->|"[Configured] unused"| storage_db
-    vnet_integration ==>|"[FAULT / Illustrative] 3. Public endpoint rejects: HTTP 403"| storage_db
-    vnet_integration ==>|"[FAULT / Illustrative] Diagnostic callout"| fault_note
+    vnet_integration ==>|"[FAULT / Illustrative] 3."| storage_db
+    dns_out ==>|"[FAULT / Illustrative] Callout"| fault_note
     app_runtime -...->|"[Configured] Logs and metrics"| telemetry
-    classDef baseNeutral fill:#f5f7fa,stroke:#526174,stroke-width:1.5px,color:#172432;
-    classDef focusActive fill:#eff3ff,stroke:#2456df,stroke-width:2.5px,color:#172432;
-    classDef bandMuted fill:#ffffff,stroke:#526174,stroke-width:1.5px,stroke-dasharray:4 3,color:#172432;
-    classDef stateFault fill:#fef2f2,stroke:#bb3943,stroke-width:3px,color:#bb3943;
-    classDef netBox fill:transparent,stroke:#2456df,stroke-width:2px,stroke-dasharray:6 3;
+    classDef baseNeutral fill:#f2f4f8,stroke:#707e93,stroke-width:1.5px,color:#14202e;
+    classDef focusActive fill:#e6f0fd,stroke:#287ce4,stroke-width:2.5px,color:#14202e;
+    classDef bandMuted fill:#ffffff,stroke:#707e93,stroke-width:1.5px,stroke-dasharray:4 3,color:#14202e;
+    classDef stateFault fill:#fdebee,stroke:#da495d,stroke-width:3px,color:#86172a;
+    classDef netBox fill:transparent,stroke:#287ce4,stroke-width:2px,stroke-dasharray:6 3;
     class client,ingress,storage_db baseNeutral;
     class app_runtime,vnet_integration,pe_storage focusActive;
     class control_plane,identity,telemetry bandMuted;
     class dns_out,fault_note stateFault;
     class vnet_out,subnet_int,subnet_pe_out netBox;
-    linkStyle 5,9,10 stroke:#bb3943,stroke-width:3px;
+    linkStyle 5,9,10 stroke:#da495d,stroke-width:3px;
 ```
 
-- **Legend & Takeaway:** Thick red (`==>`) `[FAULT / Illustrative]` arrow originates from `vnet_integration` to public Storage (`HTTP 403`) while `pe_storage` stays dashed `unused`; the anchored `[Illustrative scenario - not a measurement]` callout states `Symptom -> Evidence to collect -> Next check` while preserving base-node rank and sibling order.
+- **Legend & Takeaway:** Thick red (`==>`) `[FAULT / Illustrative]` arrow originates from `vnet_integration` to public Storage (`HTTP 403`) while `pe_storage` stays dashed `unused`; the anchored `[Illustrative scenario - not a measurement]` callout states `Symptom -> Evidence to collect -> Next check` while preserving base-node rank and sibling order. The illustration assumes public resolution (no other private DNS override), outbound traffic routed through VNet integration, and a Storage network rule that rejects the public path; the red arrow to the unlinked zone stands for failed private-zone resolution, not for a lookup that the zone answers.
 
 ## 9. Service Adapters
 
@@ -335,7 +336,7 @@ flowchart TD
             pe_storage[["Private Endpoint: Azure Storage Inbound NIC<br/>[Private Endpoint Subnet IP]"]]
         end
     end
-    storage_db[("Host Storage: Azure Storage<br/>[AzureWebJobsStorage]")]
+    storage_db[("Host Storage: Azure Blob<br/>[AzureWebJobsStorage, Blob path only]")]
     telemetry>"Telemetry: Application Insights<br/>[Off-Path Sink]"]
     control_plane -.->|"[Configured] ARM config"| app_runtime
     client ~~~ app_runtime
@@ -345,17 +346,17 @@ flowchart TD
     vnet_integration -->|"[Configured] 3. Outbound to storage PE private IP"| pe_storage
     pe_storage -->|"[Configured] 4. Host storage (AzureWebJobsStorage)"| storage_db
     app_runtime -..->|"[Configured] Logs and metrics"| telemetry
-    classDef baseNeutral fill:#f5f7fa,stroke:#526174,stroke-width:1.5px,color:#172432;
-    classDef focusActive fill:#eff3ff,stroke:#2456df,stroke-width:2.5px,color:#172432;
-    classDef bandMuted fill:#ffffff,stroke:#526174,stroke-width:1.5px,stroke-dasharray:4 3,color:#172432;
-    classDef netBox fill:transparent,stroke:#2456df,stroke-width:2px,stroke-dasharray:6 3;
+    classDef baseNeutral fill:#f2f4f8,stroke:#707e93,stroke-width:1.5px,color:#14202e;
+    classDef focusActive fill:#e6f0fd,stroke:#287ce4,stroke-width:2.5px,color:#14202e;
+    classDef bandMuted fill:#ffffff,stroke:#707e93,stroke-width:1.5px,stroke-dasharray:4 3,color:#14202e;
+    classDef netBox fill:transparent,stroke:#287ce4,stroke-width:2px,stroke-dasharray:6 3;
     class client,storage_db baseNeutral;
     class app_runtime,vnet_integration,pe_storage focusActive;
     class control_plane,telemetry,dns_fn bandMuted;
     class vnet_fn,subnet_int_fn,subnet_pe_fn netBox;
 ```
 
-**Takeaway:** For the Storage queue trigger, the Functions host initiates the poll (`app_runtime -> client`), so arrow direction (initiator) differs from reading order; outbound calls to the required `AzureWebJobsStorage` account traverse the delegated VNet integration subnet to the Private Endpoint subnet.
+**Takeaway:** For the Storage queue trigger, the Functions host initiates the poll (`app_runtime -> client`), so arrow direction (initiator) differs from reading order; outbound calls to the required `AzureWebJobsStorage` account traverse the delegated VNet integration subnet to the Private Endpoint subnet. The fixture draws only the Blob host-storage path: other storage endpoints that a hosting plan may require are omitted, and the queue-trigger connection is the separate arrow to the trigger source.
 
 ### 9.2 Azure Container Apps Adapter Example
 
@@ -363,17 +364,16 @@ flowchart TD
 ```mermaid
 flowchart TD
     accTitle: Azure Container Apps Topology Adapter Example (Grammar v1)
-    accDescr: Shows a Workload Profiles Container Apps environment deployed inside a customer VNet subnet with an external Private DNS zone, HTTP proxy ingress, traffic splitting across revisions, and UDR/NAT egress.
+    accDescr: Shows a Workload Profiles Container Apps environment deployed inside a customer VNet subnet with an external Private DNS zone, HTTP proxy ingress, traffic splitting across revisions, and outbound traffic through a NAT gateway configured on the subnet.
     control_plane["Control Plane: ARM<br/>[Mgmt Band]"]
     client(["Caller: HTTPS client<br/>[public or private network]"])
     dns_aca{{"Private DNS zone: internal environment domain<br/>[linked to the VNet]"}}
     subgraph vnet_aca["Customer VNet [VNet boundary]"]
-        subgraph subnet_aca["Subnet: ACA [NSG/UDR apply]"]
+        subgraph subnet_aca["Subnet: ACA [NAT Gateway]"]
             subgraph aca_env["ACA Environment"]
                 ingress["Ingress: Environment HTTP edge proxy<br/>[External or Internal Ingress]"]
                 app_runtime["Compute: Container App Workload<br/>[Immutable Revisions -> Replicas]"]
             end
-            nat_firewall[/"Egress: UDR / NAT Gateway<br/>[Subnet Egress Hop]"/]
         end
     end
     storage_db[("Dependency: Downstream Database<br/>[Data Store]")]
@@ -382,18 +382,15 @@ flowchart TD
     client -.->|"[Configured] 1. DNS lookup returns internal IP"| dns_aca
     client -->|"[Configured] 2. HTTPS 443 request"| ingress
     ingress -->|"[Configured] 3. Traffic split across revisions"| app_runtime
-    app_runtime -->|"[Configured] Outbound subnet egress"| nat_firewall
-    nat_firewall -->|"[Configured] Routed data call"| storage_db
+    app_runtime -->|"[Configured] Outbound via the subnet NAT gateway"| storage_db
     app_runtime -..->|"[Configured] Logs and metrics"| telemetry
-    classDef baseNeutral fill:#f5f7fa,stroke:#526174,stroke-width:1.5px,color:#172432;
-    classDef focusActive fill:#eff3ff,stroke:#2456df,stroke-width:2.5px,color:#172432;
-    classDef bandMuted fill:#ffffff,stroke:#526174,stroke-width:1.5px,stroke-dasharray:4 3,color:#172432;
-    classDef stateWarn fill:#fffbeb,stroke:#956016,stroke-width:2px,color:#956016;
-    classDef netBox fill:transparent,stroke:#2456df,stroke-width:2px,stroke-dasharray:6 3;
+    classDef baseNeutral fill:#f2f4f8,stroke:#707e93,stroke-width:1.5px,color:#14202e;
+    classDef focusActive fill:#e6f0fd,stroke:#287ce4,stroke-width:2.5px,color:#14202e;
+    classDef bandMuted fill:#ffffff,stroke:#707e93,stroke-width:1.5px,stroke-dasharray:4 3,color:#14202e;
+    classDef netBox fill:transparent,stroke:#287ce4,stroke-width:2px,stroke-dasharray:6 3;
     class client,ingress,storage_db baseNeutral;
     class app_runtime focusActive;
     class control_plane,telemetry,dns_aca bandMuted;
-    class nat_firewall stateWarn;
     class vnet_aca,subnet_aca,aca_env netBox;
 ```
 
@@ -410,13 +407,13 @@ flowchart TD
 
 - **Claim-level separation:** Keep `Documented` platform behavior, `Observed` retained-artifact measurements, `Inferred` hypotheses, and `Illustrative` fixture scenarios distinct. Never use `[Observed]` in a synthetic fixture.
 - **Documented Microsoft Learn platform constraints (read from the cited pages while authoring; not a live Azure verification):**
-    - Control-plane requests go to `https://management.azure.com`, whereas data-plane requests go to an endpoint specific to the resource instance ([Control plane and data plane operations](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/control-plane-and-data-plane)).
+    - In the Azure public cloud, control-plane requests go to `https://management.azure.com`, whereas data-plane requests go to an endpoint specific to the resource instance ([Control plane and data plane operations](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/control-plane-and-data-plane)).
     - In multitenant App Service, all roles exist in a multitenant network; App Service Environment (ASE) is the single-tenant deployment in your virtual network ([App Service networking features](https://learn.microsoft.com/en-us/azure/app-service/networking-features)).
     - Access restrictions run on App Service front-end roles upstream of workers; the main site (`ipSecurityRestrictions`) and SCM site (`scmIpSecurityRestrictions`) can have separate rule sets or the SCM site can reuse main-site rules ([App Service access restrictions](https://learn.microsoft.com/en-us/azure/app-service/app-service-ip-restrictions)).
     - For Private Endpoints (`privatelink.azurewebsites.net` for `<app>` and `<app>.scm`), inbound access restriction rules of your app aren't evaluated for traffic through the private endpoint, and the VNet integration feature cannot use the same subnet as the private endpoint ([Use Private Endpoints for App Service apps](https://learn.microsoft.com/en-us/azure/app-service/overview-private-endpoint)). Private DNS zones are linked to virtual networks via virtual network links ([Azure Private DNS Zone Overview](https://learn.microsoft.com/en-us/azure/dns/private-dns-privatednszone)); the zone for the Blob Storage `blob` sub-resource is `privatelink.blob.core.windows.net` ([Private endpoint private DNS zone values](https://learn.microsoft.com/en-us/azure/private-link/private-endpoint-dns)).
     - Regional VNet integration is outbound-only, requires a dedicated subnet (`/28` minimum when selecting an existing subnet; `/27` in the portal), and supports content-share routing via `vnetContentShareEnabled` / **Content storage** / `WEBSITE_CONTENTOVERVNET` ([Integrate your app with an Azure virtual network](https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration)).
     - Azure Functions requires `AzureWebJobsStorage` and supports content-share routing ([Secured storage with Azure Functions](https://learn.microsoft.com/en-us/azure/azure-functions/configure-networking-how-to), [Storage considerations for Azure Functions](https://learn.microsoft.com/en-us/azure/azure-functions/storage-considerations)). The Storage queue trigger polls the queue with a random exponential back-off ([Azure Queue storage trigger for Azure Functions](https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-storage-queue-trigger)). Functions subnet delegations and minimums are `Microsoft.App/environments` on Flex Consumption (`/27` min; `/26` recommended for multiple apps, native VNet triggers) and `Microsoft.Web/serverFarms` on Elastic Premium (`/28` min; portal `/24` Windows, `/26` Linux; `functionsRuntimeScaleMonitoringEnabled` for VNet triggers) and Dedicated (`/28` min) ([Azure Functions networking options](https://learn.microsoft.com/en-us/azure/azure-functions/functions-networking-options)).
-    - Azure Container Apps environments deploy into a subnet (`Workload profiles` `v2` default `/27` min with UDR, NAT Gateway, and environment PE when public network access is `Disabled`; legacy `Consumption-only` `v1` `/23` min), and traffic splitting routes across immutable `revisions` that run `replicas` ([Networking in Azure Container Apps](https://learn.microsoft.com/en-us/azure/container-apps/networking), [Compute and billing structures](https://learn.microsoft.com/en-us/azure/container-apps/structure), [Revisions in Azure Container Apps](https://learn.microsoft.com/en-us/azure/container-apps/revisions)).
+    - Azure Container Apps environments deploy into a subnet (`Workload profiles` `v2` default `/27` min with UDR, NAT Gateway, and environment PE when public network access is `Disabled`; legacy `Consumption-only` `v1` `/23` min), a NAT gateway configured on the environment subnet gives outbound traffic a static public IP in a workload profiles environment ([Integrate a virtual network with Container Apps](https://learn.microsoft.com/en-us/azure/container-apps/custom-virtual-networks)), and traffic splitting routes across immutable `revisions` that run `replicas` ([Networking in Azure Container Apps](https://learn.microsoft.com/en-us/azure/container-apps/networking), [Compute and billing structures](https://learn.microsoft.com/en-us/azure/container-apps/structure), [Revisions in Azure Container Apps](https://learn.microsoft.com/en-us/azure/container-apps/revisions)).
 - **Deterministic source metadata:** Every Mermaid fence is preceded by a unique `diagram-id` HTML comment, registered under `content_sources.diagrams[]` in YAML frontmatter, and stored as plain text in Git.
 
 ## See Also
@@ -445,3 +442,7 @@ flowchart TD
 - [Networking in an Azure Container Apps environment](https://learn.microsoft.com/en-us/azure/container-apps/networking)
 - [Compute and billing structures in Azure Container Apps](https://learn.microsoft.com/en-us/azure/container-apps/structure)
 - [Update and deploy changes (Revisions) in Azure Container Apps](https://learn.microsoft.com/en-us/azure/container-apps/revisions)
+- [Integrate a virtual network with Azure Container Apps](https://learn.microsoft.com/en-us/azure/container-apps/custom-virtual-networks)
+- [Azure NAT Gateway resource](https://learn.microsoft.com/en-us/azure/nat-gateway/nat-gateway-resource)
+- [What is Azure NAT Gateway?](https://learn.microsoft.com/en-us/azure/nat-gateway/nat-overview)
+- [Virtual network traffic routing (user-defined routes)](https://learn.microsoft.com/en-us/azure/virtual-network/virtual-networks-udr-overview)

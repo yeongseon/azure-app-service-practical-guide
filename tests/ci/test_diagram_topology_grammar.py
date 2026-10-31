@@ -3,12 +3,16 @@
 The page is a contract other guides will adopt, so the promises that can be
 checked mechanically are tested here: section order, the component and claim-level
 vocabularies, fixture structure (orientation, accessible names, no bidirectional
-arrows, stable base nodes across the four App Service variants, factual
-containment, no layout-only semantic edges) and the evidence-honesty rule that an
-illustrative fixture never uses the `[Observed]` claim level.
+arrows, a claim prefix on every visible edge, no unrecognized source lines),
+identical base nodes across the four App Service variants, factual containment
+(VNet > subnet > NIC, DNS zones outside, NAT/UDR/NSG as subnet tags and never as
+nodes), the required fault edges and their link styles, and the evidence-honesty
+rule that an illustrative fixture never uses the `[Observed]` claim level.
 
 This is a static check of text and Mermaid source. It renders nothing and says
-nothing about visual quality, layout stability or live Azure behavior.
+nothing about visual quality, title clearance, layout stability or live Azure
+behavior. Each mutation test asserts the diagnostic of the rule it targets, so a
+rule that stops firing is reported even if another rule still fails.
 """
 from pathlib import Path
 import re
@@ -34,18 +38,22 @@ HEADINGS = (
     "## Sources",
 )
 VOCABULARY = (
-    "client", "dns", "vnet", "subnet", "nsg-udr", "ingress", "private-endpoint",
-    "vnet-integration", "nat-firewall", "app-runtime", "identity", "key-vault",
+    "client", "dns", "vnet", "subnet", "nsg-udr", "nat-gateway", "firewall-nva", "ingress",
+    "private-endpoint", "vnet-integration", "app-runtime", "identity", "key-vault",
     "storage-db", "telemetry", "control-plane",
 )
 CLAIM_LEVELS = ("[Configured]", "[Illustrative]", "[Inferred]", "[Observed]")
+EDGE_PREFIXES = ("[Configured] ", "[Illustrative] ", "[Inferred] ", "[FAULT / Illustrative] ", "[FAULT / Inferred] ")
 BASE_NODES = ("control_plane", "client", "ingress", "app_runtime", "identity", "storage_db", "telemetry")
-APP_SERVICE = (
+BASELINE, INGRESS_PE, EGRESS, OVERLAY = (
     "topology-grammar-v1-appservice-baseline",
     "topology-grammar-v1-appservice-ingress-pe",
     "topology-grammar-v1-appservice-egress-vnet",
     "topology-grammar-v1-appservice-fault-overlay",
 )
+FUNCTIONS, CONTAINER_APPS = "topology-grammar-v1-adapter-functions", "topology-grammar-v1-adapter-container-apps"
+APP_SERVICE = (BASELINE, INGRESS_PE, EGRESS, OVERLAY)
+FIXTURES = APP_SERVICE + (FUNCTIONS, CONTAINER_APPS)
 REFUTED_PHRASES = (
     "bypasses access restriction",  # Learn: the rules "aren't evaluated" for private endpoint traffic
     "standalone resource",  # Learn only says a private DNS zone is linked to virtual networks
@@ -56,7 +64,9 @@ FENCE = re.compile(r"<!-- diagram-id: ([a-z0-9-]+) -->\n```mermaid\n(.*?)\n```",
 NODE = re.compile(r'^\s*(\w+)\s*(?:\[\[|\[\(|\(\[|\{\{|\[/|\[|\(|>)\s*"(.*)"\s*(?:\]\]|\)\]|\]\)|\}\}|/\]|\]|\))\s*$')
 EDGE = re.compile(r'^\s*(\w+)\s+(-\.+->|-{2,}>|={2,}>|~~~)\s*(?:\|"(.*?)"\|\s*)?(\w+)\s*$')
 SUBGRAPH = re.compile(r'^\s*subgraph\s+(\w+)(?:\[\s*"(.*)"\s*\])?\s*$')
+LINKSTYLE = re.compile(r"^\s*linkStyle\s+([\d,\s]+?)\s+\S.*;?\s*$")
 SIZE_IN_TITLE = re.compile(r"/\d{2}\b")
+KNOWN_LINE = re.compile(r"^\s*(flowchart TD|accTitle:|accDescr:|classDef |class |linkStyle |%%|end\s*$|$)")
 
 
 def section(text, start, end):
@@ -67,8 +77,8 @@ def section(text, start, end):
 
 
 def parse_fixture(code):
-    """Return nodes, edges, declaration order and subgraph structure of one fence."""
-    fixture = {"labels": {}, "order": [], "edges": [], "container": {}, "parent": {}, "title": {}}
+    """Return labels, declaration order, edges, link styles and subgraph structure of one fence."""
+    fixture = {"labels": {}, "order": [], "edges": [], "container": {}, "parent": {}, "title": {}, "linkstyle": set(), "unparsed": []}
     stack = []
     for raw in code.splitlines():
         match = SUBGRAPH.match(raw)
@@ -88,7 +98,16 @@ def parse_fixture(code):
         elif EDGE.match(raw):
             source, arrow, label, target = EDGE.match(raw).groups()
             fixture["edges"].append((source, arrow, label or "", target))
+        elif LINKSTYLE.match(raw):
+            fixture["linkstyle"] |= {int(i) for i in re.findall(r"\d+", LINKSTYLE.match(raw).group(1))}
+        elif not KNOWN_LINE.match(raw):
+            fixture["unparsed"].append(raw.strip())
     return fixture
+
+
+def chain_matches(chain, kinds):
+    """True when the innermost containers start with the given id prefixes, outermost first."""
+    return len(chain) >= len(kinds) and all(c.startswith(k) for c, k in zip(chain[-len(kinds):], kinds))
 
 
 def fixture_problems(name, code, fixture):
@@ -104,19 +123,47 @@ def fixture_problems(name, code, fixture):
         problems.append(f"{name}: unconstrained bidirectional arrow")
     if "[Observed]" in code or "/ Observed]" in code:
         problems.append(f"{name}: fixture uses the reserved [Observed] claim level")
+    problems.extend(f"{name}: unparsed line {line!r}" for line in fixture["unparsed"])
     for node, containers in fixture["container"].items():
         if node.startswith("dns") and containers:
             problems.append(f"{name}: DNS zone node {node} drawn inside container {containers[-1]}")
-    for title_owner, title in fixture["title"].items():
+        if node.startswith(("nsg", "nat", "udr")):
+            problems.append(f"{name}: {node} must be a subnet tag, not a node (UDR, NSG and NAT Gateway are not hops)")
+    for owner, title in fixture["title"].items():
         if SIZE_IN_TITLE.search(title):
-            problems.append(f"{name}: container {title_owner} carries a subnet size in its title: {title!r}")
-    for source, _, _, target in fixture["edges"]:
-        if source.startswith("dns"):
+            problems.append(f"{name}: container {owner} carries a subnet size in its title: {title!r}")
+    for source, arrow, label, target in fixture["edges"]:
+        if source.startswith("dns") and target != "fault_note":  # a callout anchor is an annotation, not a lookup
             problems.append(f"{name}: edge starts at DNS zone node {source} (lookups end at the zone)")
-    visible = [edge for edge in fixture["edges"] if edge[1] != "~~~"]
-    for node in fixture["labels"]:
-        if node.startswith("nsg") and any(e[3] == node for e in visible) and any(e[0] == node for e in visible):
-            problems.append(f"{name}: policy node {node} is drawn as a hop in the request chain")
+        if arrow == "~~~" and label:
+            problems.append(f"{name}: invisible layout anchor {source} ~~~ {target} must not carry a label")
+        if arrow != "~~~" and not label.startswith(EDGE_PREFIXES):
+            problems.append(f"{name}: edge {source} -> {target} lacks a claim prefix: {label!r}")
+    return problems
+
+
+def containment_problems(parsed):
+    """VNet > subnet > NIC and environment containment per fixture."""
+    problems = []
+    rules = {
+        INGRESS_PE: {"private_endpoint": ("vnet", "subnet")},
+        EGRESS: {"vnet_integration": ("vnet", "subnet"), "pe_storage": ("vnet", "subnet")},
+        OVERLAY: {"vnet_integration": ("vnet", "subnet"), "pe_storage": ("vnet", "subnet")},
+        FUNCTIONS: {"vnet_integration": ("vnet", "subnet"), "pe_storage": ("vnet", "subnet")},
+        CONTAINER_APPS: {"ingress": ("vnet", "subnet", "aca"), "app_runtime": ("vnet", "subnet", "aca")},
+    }
+    for fixture_id, nodes in rules.items():
+        fixture = parsed.get(fixture_id)
+        if fixture is None:
+            continue
+        for node, kinds in nodes.items():
+            chain = fixture["container"].get(node, ())
+            if not chain_matches(chain, kinds):
+                problems.append(f"{fixture_id}: {node} must sit inside {' > '.join(kinds)} containers, found {chain}")
+        if {"vnet_integration", "pe_storage"} <= set(nodes):
+            subnets = {fixture["container"].get(n, ("",))[-1] for n in ("vnet_integration", "pe_storage")}
+            if len(subnets) != 2:
+                problems.append(f"{fixture_id}: the integration subnet and the private-endpoint subnet must differ")
     return problems
 
 
@@ -162,10 +209,10 @@ def grammar_problems(text):
     for diagram_id, code in fences:
         parsed[diagram_id] = parse_fixture(code)
         problems.extend(fixture_problems(diagram_id, code, parsed[diagram_id]))
+    problems.extend(f"missing fixture {missing}" for missing in FIXTURES if missing not in parsed)
+    problems.extend(containment_problems(parsed))
 
     variants = [parsed[i] for i in APP_SERVICE if i in parsed]
-    for missing in (i for i in APP_SERVICE if i not in parsed):
-        problems.append(f"missing App Service fixture {missing}")
     if len(variants) == len(APP_SERVICE):
         base_order = [[n for n in v["order"] if n in BASE_NODES] for v in variants]
         if any(order != base_order[0] for order in base_order) or set(base_order[0]) != set(BASE_NODES):
@@ -181,16 +228,19 @@ def grammar_problems(text):
             for diagram_id, v in zip(APP_SERVICE, variants):
                 if v["container"].get(node):
                     problems.append(f"{diagram_id}: {node} is drawn inside a customer container")
-        for diagram_id in APP_SERVICE[1:3]:
-            nested = [c for c, p in parsed[diagram_id]["parent"].items() if p]
-            if not nested:
-                problems.append(f"{diagram_id}: no subnet container nested inside the VNet container")
-        overlay_code = dict(fences)[APP_SERVICE[3]]
+        overlay_code, overlay = dict(fences)[OVERLAY], parsed[OVERLAY]
         if "[FAULT / Illustrative]" not in overlay_code or "Illustrative scenario" not in overlay_code:
             problems.append("fault overlay is not labelled as an illustrative scenario")
-        for source, arrow, _, target in parsed[APP_SERVICE[3]]["edges"]:
-            if arrow.startswith("=") and target == "storage_db" and source != "vnet_integration":
+        fault_edges = [(s, t) for s, a, _, t in overlay["edges"] if a.startswith("=")]
+        for pair in (("vnet_integration", "storage_db"), ("app_runtime", "dns_out"), ("dns_out", "fault_note")):
+            if pair not in fault_edges:
+                problems.append(f"fault overlay is missing the required fault edge {pair[0]} -> {pair[1]}")
+        for source, target in fault_edges:
+            if target == "storage_db" and source != "vnet_integration":
                 problems.append(f"fault overlay: failing arrow into storage_db starts at {source}, not vnet_integration")
+        thick = {i for i, (_, a, _, _) in enumerate(overlay["edges"]) if a.startswith("=")}
+        if overlay["linkstyle"] != thick:
+            problems.append(f"fault overlay: linkStyle indices {sorted(overlay['linkstyle'])} do not match the thick edges {sorted(thick)}")
 
     if re.search(r"https://learn\.microsoft\.com/(?!en-us/)", text):
         problems.append("a Microsoft Learn URL lacks the /en-us/ locale")
@@ -207,6 +257,17 @@ class TopologyGrammarPageTests(unittest.TestCase):
     def setUpClass(cls):
         cls.text = PAGE.read_text(encoding="utf-8")
 
+    def edit_fixture(self, fixture_id, edit):
+        """Apply an edit inside one named Mermaid fence only (prose also mentions these tokens)."""
+        match = next(m for m in FENCE.finditer(self.text) if m.group(1) == fixture_id)
+        return self.text[:match.start(2)] + edit(match.group(2)) + self.text[match.end(2):]
+
+    def replace_in(self, fixture_id, old, new):
+        def edit(code):
+            self.assertIn(old, code, f"{fixture_id} no longer contains {old!r}; update the mutation")
+            return code.replace(old, new, 1)
+        return self.edit_fixture(fixture_id, edit)
+
     def test_the_committed_page_satisfies_every_rule(self):
         # Given: the committed grammar page.
         # When: every mechanical rule runs against it.
@@ -215,44 +276,94 @@ class TopologyGrammarPageTests(unittest.TestCase):
         # Then: nothing is reported.
         self.assertEqual(problems, [])
 
-    def test_a_vacuous_scan_is_impossible(self):
+    def test_all_six_fixtures_are_present_and_registered(self):
         # Given: the committed page.
-        fences = FENCE.findall(self.text)
+        fences = {diagram_id for diagram_id, _ in FENCE.findall(self.text)}
 
-        # When / Then: it carries the four App Service fixtures it is checked on.
-        self.assertTrue(set(APP_SERVICE) <= {diagram_id for diagram_id, _ in fences})
+        # When / Then: the scan is not vacuous.
+        self.assertEqual(fences, set(FIXTURES))
 
-    def mutate_first_fixture(self, old, new):
-        """Apply one edit inside the first Mermaid fence only (prose also mentions these tokens)."""
-        code = FENCE.search(self.text).group(2)
-        return self.text.replace(code, code.replace(old, new, 1), 1)
+    def test_the_vocabulary_separates_policy_nat_and_routed_hops(self):
+        # Given: the component vocabulary.
+        vocabulary = section(self.text, "\n## 4. Component Vocabulary", "\n## 5. ")
 
-    def test_each_rule_can_fail(self):
-        # Given: single-defect mutations of the committed page.
-        first_subgraph = re.search(r"^( *)subgraph .*$", self.text, re.M)
-        fixture = self.mutate_first_fixture
+        # When / Then: UDR/NSG and NAT Gateway are subnet tags and only a firewall/NVA is a node.
+        self.assertRegex(vocabulary, r"`nsg-udr`.*never a node")
+        self.assertRegex(vocabulary, r"`nat-gateway`.*never a node or a UDR target")
+        self.assertRegex(vocabulary, r"`firewall-nva`.*`firewall_nva`")
+
+    def test_each_rule_fires_its_own_diagnostic(self):
+        # Given: single-defect mutations of the committed page and the diagnostic each must raise.
+        def drop_block(diagram_id):
+            return re.sub(rf"<!-- diagram-id: {diagram_id} -->\n```mermaid\n.*?\n```\n", "", self.text, flags=re.S)
+
+        def move_runtime_into_subnet(code):
+            line = next(l for l in code.splitlines() if l.strip().startswith("app_runtime["))
+            code = code.replace(line + "\n", "", 1)
+            header = next(l for l in code.splitlines() if "subgraph subnet_int[" in l)
+            return code.replace(header, header + "\n" + line, 1)
+
+        def unwrap_pe_subnet(code):
+            header = next(l for l in code.splitlines() if "subgraph subnet_pe[" in l)
+            code = code.replace(header + "\n", "", 1)
+            at = code.index("        end\n", code.index("private_endpoint"))
+            return code[:at] + code[at + len("        end\n"):]
+
+        def drop_line(fixture_id, marker):
+            return self.edit_fixture(fixture_id, lambda code: "\n".join(l for l in code.splitlines() if marker not in l))
+
+        def dns_into_container(code):
+            header = next(l for l in code.splitlines() if "subgraph vnet_in[" in l)
+            return code.replace(header, header + '\n        dns_x{{"Zone"}}', 1)
+
         mutations = {
-            "orientation": fixture("flowchart TD", "flowchart LR"),
-            "bidirectional arrow": fixture("flowchart TD", "flowchart TD\n    a <--> b"),
-            "reserved claim level": fixture("[Configured]", "[Observed]"),
-            "dns lookup that starts at the zone": fixture("flowchart TD", 'flowchart TD\n    dns_x -.->|"x"| ingress'),
-            "dns inside a container": self.text.replace(
-                first_subgraph.group(0), first_subgraph.group(0) + "\n" + first_subgraph.group(1) + '    dns_x{{"d"}}', 1),
-            "policy node as a hop": fixture(
-                "flowchart TD", 'flowchart TD\n    nsg_x["n"]\n    a -->|"x"| nsg_x\n    nsg_x -->|"y"| b'),
-            "missing accessible name": fixture("accTitle:", "accTit:"),
-            "label drift in one variant": fixture('client(["', 'client(["X '),
-            "learn locale": self.text.replace("learn.microsoft.com/en-us/", "learn.microsoft.com/", 1),
-            "refuted claim": self.text + "\nPrivate Endpoint traffic bypasses access restriction rules.\n",
-            "image": self.text + "\n![x](a.png)\n",
-            "oversized page": self.text + "\n" * (MAX_LINES + 1),
+            "orientation": (self.replace_in(BASELINE, "flowchart TD", "flowchart LR"), "must start with 'flowchart TD'"),
+            "bidirectional arrow": (self.replace_in(BASELINE, "flowchart TD", "flowchart TD\n    a <--> b"), "bidirectional arrow"),
+            "reserved claim level": (self.replace_in(BASELINE, "[Configured]", "[Observed]"), "reserved [Observed] claim level"),
+            "dns lookup from the zone": (self.replace_in(INGRESS_PE, "flowchart TD", 'flowchart TD\n    dns -.->|"[Configured] x"| ingress'), "edge starts at DNS zone node"),
+            "dns inside a container": (self.edit_fixture(INGRESS_PE, dns_into_container), "DNS zone node dns_x drawn inside container vnet_in"),
+            "nat node": (self.replace_in(EGRESS, "flowchart TD", 'flowchart TD\n    nat_x["n"]'), "must be a subnet tag, not a node"),
+            "layout-only edge": (self.replace_in(INGRESS_PE, "flowchart TD", 'flowchart TD\n    ingress -.->|"layout only"| app_runtime'), "lacks a claim prefix"),
+            "missing accessible name": (self.replace_in(BASELINE, "accTitle:", "accTit:"), "missing accTitle:"),
+            "unrecognized source line": (self.replace_in(BASELINE, "flowchart TD", "flowchart TD\n    foo bar baz"), "unparsed line"),
+            "size in a container title": (self.replace_in(INGRESS_PE, 'subgraph vnet_in["Customer VNet', 'subgraph vnet_in["Customer VNet /27'), "carries a subnet size"),
+            "private endpoint outside its subnet": (self.edit_fixture(INGRESS_PE, unwrap_pe_subnet), "private_endpoint must sit inside vnet > subnet"),
+            "runtime inside a customer container": (self.edit_fixture(EGRESS, move_runtime_into_subnet), "app_runtime is drawn inside a customer container"),
+            "base node label drift": (self.replace_in(EGRESS, 'client(["', 'client(["X '), "base node client has different labels"),
+            "control plane edge drift": (self.replace_in(OVERLAY, "[Configured] SCM deploy", "[Configured] SCM deploy 2"), "control_plane edges differ"),
+            "fault arrow from the wrong node": (self.replace_in(OVERLAY, 'vnet_integration ==>|"[FAULT / Illustrative] 3."| storage_db', 'app_runtime ==>|"[FAULT / Illustrative] 3."| storage_db'), "starts at app_runtime, not vnet_integration"),
+            "fault arrow removed": (drop_line(OVERLAY, '[FAULT / Illustrative] 3."'), "missing the required fault edge vnet_integration -> storage_db"),
+            "fault link style removed": (drop_line(OVERLAY, "linkStyle"), "linkStyle indices"),
+            "fixture removed": (drop_block(CONTAINER_APPS), f"missing fixture {CONTAINER_APPS}"),
+            "metadata mismatch": (self.text.replace("- id: " + FUNCTIONS, "- id: topology-grammar-v1-adapter-xx", 1), "ids differ or repeat"),
+            "heading missing": (self.text.replace("\n## 7. Progressive Views\n", "\n## 7. Views\n", 1), "missing heading '## 7. Progressive Views'"),
+            "heading out of order": (self.text.replace("\n## 5. Edge and Legend Contract\n", "\n## 6x. Edge and Legend Contract\n", 1).replace("\n## 6. Visual System\n", "\n## 5. Edge and Legend Contract\n", 1), "missing heading"),
+            "learn locale": (self.text.replace("learn.microsoft.com/en-us/", "learn.microsoft.com/", 1), "lacks the /en-us/ locale"),
+            "refuted claim": (self.text + "\nPrivate Endpoint traffic bypasses access restriction rules.\n", "contains a refuted claim"),
+            "image": (self.text + "\n![x](a.png)\n", "references or embeds an image"),
+            "oversized page": (self.text + "\n" * (MAX_LINES + 1), "budget is"),
         }
 
-        # When / Then: every mutation is reported.
-        for name, mutated in mutations.items():
+        # When / Then: each mutation changes the page and raises the diagnostic of the rule it targets.
+        for name, (mutated, expected) in mutations.items():
             with self.subTest(defect=name):
                 self.assertNotEqual(mutated, self.text, "the mutation did not change the page")
-                self.assertTrue(grammar_problems(mutated), f"{name} went undetected")
+                problems = "\n".join(grammar_problems(mutated))
+                self.assertTrue(problems, f"{name} went undetected")
+                self.assertIn(expected, problems, f"{name} was not reported by its own rule")
+
+    def test_anchor_labels_and_zone_placement_are_enforced_on_synthetic_fixtures(self):
+        # Given: tiny fixtures that isolate rules the full-page mutations cannot target cleanly.
+        inside = 'flowchart TD\n    accTitle: t\n    accDescr: d\n    subgraph v["VNet"]\n        dns{{"Zone"}}\n    end\n'
+        anchored = 'flowchart TD\n    accTitle: t\n    accDescr: d\n    a["A"]\n    b["B"]\n    a ~~~|"x"| b\n'
+
+        # When: each is checked on its own.
+        inside_problems = fixture_problems("f", inside, parse_fixture(inside))
+        anchored_problems = fixture_problems("f", anchored, parse_fixture(anchored))
+
+        # Then: the diagnostics name the violated rule.
+        self.assertTrue(any("DNS zone node dns drawn inside container v" in p for p in inside_problems), inside_problems)
+        self.assertTrue(any("invisible layout anchor" in p for p in anchored_problems), anchored_problems)
 
 
 if __name__ == "__main__":
