@@ -125,6 +125,7 @@ PALETTE: Final = {
     "netBox": "fill:transparent,stroke:#287ce4,stroke-width:2px,stroke-dasharray:6 3;",
 }
 FENCE: Final = re.compile(r"^<!-- diagram-id: ([a-z0-9-]+) -->\r?\n```mermaid\r?\n(.*?)\r?\n```(?=\r?$)", re.M | re.S)
+CLOSING_FENCE: Final = re.compile(r"^ {0,3}`{3,}[ \t]*$", re.M)
 ROOT: Final = Path(__file__).resolve().parents[1]
 SPEC_PATH: Final = ROOT / "scripts/diagram_composition.json"
 T = TypeVar("T")
@@ -156,6 +157,8 @@ def decode(text: str) -> JSON:
         return json.loads(text, object_pairs_hook=unique, parse_constant=non_json)
     except json.JSONDecodeError as error:
         raise CompositionError(f"invalid JSON: {error.msg}") from error
+    except RecursionError as error:
+        raise CompositionError("invalid JSON: nesting too deep") from error
 
 
 def mapping(raw: JSON) -> dict[str, JSON]:
@@ -387,6 +390,12 @@ def compose(spec: Spec, diagram: Diagram) -> str:
     return "\n".join(lines)
 
 
+def page_path(page: str) -> Path:
+    path = (ROOT / page).resolve()
+    require(path.is_relative_to(ROOT.resolve()), f"{page}: resolves outside the repository")
+    return path
+
+
 def page_result(text: str, entries: tuple[tuple[Diagram, str], ...], write: bool = False) -> str:
     """Validate metadata and spans first; return a byte-preserving replacement plan."""
     normalized = text.replace("\r\n", "\n")
@@ -403,6 +412,7 @@ def page_result(text: str, entries: tuple[tuple[Diagram, str], ...], write: bool
         matches = [m for m in FENCE.finditer(text) if m.group(1) == diagram.id]
         require(len(matches) == 1, f"{diagram.id}: missing or duplicate committed fence")
         match = matches[0]
+        require(not CLOSING_FENCE.search(match.group(2).replace("\r\n", "\n")), f"{diagram.id}: noncanonical closing delimiter inside the fence body")
         require(write or match.group(2).replace("\r\n", "\n") == body, f"{diagram.id}: committed fence drift")
         newline = "\r\n" if "\r\n" in match.group(0) else "\n"
         spans.append((match.start(2), match.end(2), body.replace("\n", newline)))
@@ -421,7 +431,7 @@ def stats(spec: Spec) -> dict[str, JSON]:
     replacements = [f.replace_edges for f in (*fragments, *spec.overlays.values())]
     inline: dict[str, JSON] = {}
     for d in spec.diagrams:
-        page = (ROOT / d.page).read_text(encoding="utf-8")
+        page = page_path(d.page).read_text(encoding="utf-8")
         bodies = [m.group(2) for m in FENCE.finditer(page) if m.group(1) == d.id]
         require(len(bodies) == 1, f"{d.id}: missing or duplicate committed fence")
         inline[d.id] = nonblank_lines(bodies[0])
@@ -451,13 +461,13 @@ def main(argv: list[str] | None = None) -> int:
         outputs = tuple((d, compose(spec, d)) for d in spec.diagrams)
         if args.identifier:
             require(args.identifier in {d.id for d in spec.diagrams}, f"unknown diagram: {args.identifier}")
-            sys.stdout.write(next(body for d, body in outputs if d.id == args.identifier))
+            sys.stdout.buffer.write(next(body for d, body in outputs if d.id == args.identifier).encode("utf-8"))
         elif args.stats:
             print(json.dumps(stats(spec), indent=2))
         else:
             plans = []
             for page in sorted({d.page for d in spec.diagrams}):
-                path = ROOT / page
+                path = page_path(page)
                 text = path.read_bytes().decode("utf-8")
                 result = page_result(text, tuple((d, b) for d, b in outputs if d.page == page), args.write)
                 plans.append((path, text, result))

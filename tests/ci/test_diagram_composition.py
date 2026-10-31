@@ -10,6 +10,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest import mock
 
 guard = importlib.import_module("test_diagram_topology_grammar")
 
@@ -21,6 +22,14 @@ composer = importlib.util.module_from_spec(MODULE)
 MODULE.loader.exec_module(composer)
 RAW = json.loads((ROOT / "scripts/diagram_composition.json").read_text(encoding="utf-8"))
 PAGE = ROOT / RAW["diagrams"][0]["page"]
+CLI = ("import importlib.util, pathlib, sys; "
+       f"s=importlib.util.spec_from_file_location('c', {str(SCRIPT)!r}); "
+       "c=importlib.util.module_from_spec(s); s.loader.exec_module(c); "
+       "c.ROOT=pathlib.Path(sys.argv[1]); sys.exit(c.main(sys.argv[2:]))")
+
+
+def run_cli(root, *args):
+    return subprocess.run([sys.executable, "-c", CLI, str(root), *args], capture_output=True)
 
 
 def shuffled(value):
@@ -119,6 +128,8 @@ class CompositionTests(unittest.TestCase):
             composer.decode('{"base": {"id": "one", "id": "two"}}')
         with self.assertRaisesRegex(composer.CompositionError, "invalid JSON constant"):
             composer.decode('{"schema_version": NaN}')
+        with mock.patch.object(composer.json, "loads", side_effect=RecursionError), self.assertRaisesRegex(composer.CompositionError, "nesting too deep"):
+            composer.decode("[]")
 
     def test_committed_bodies_and_guard_round_trip(self):
         # Given: exactly four enrolled bodies from the working-tree oracle.
@@ -202,10 +213,6 @@ class CompositionTests(unittest.TestCase):
 
     def test_cli_write_is_span_only_idempotent_and_crlf_preserving(self):
         # Given: a temporary root, canonical metadata and one drifting body.
-        bootstrap = ("import importlib.util, pathlib, sys; "
-                     f"s=importlib.util.spec_from_file_location('c', {str(SCRIPT)!r}); "
-                     "c=importlib.util.module_from_spec(s); s.loader.exec_module(c); "
-                     "c.ROOT=pathlib.Path(sys.argv[1]); sys.exit(c.main(sys.argv[2:]))")
         for newline in ("\n", "\r\n"):
             with tempfile.TemporaryDirectory() as directory:
                 # Use the real spec path and mirror its page in this disposable root.
@@ -213,20 +220,54 @@ class CompositionTests(unittest.TestCase):
                 nested.parent.mkdir(parents=True)
                 original = PAGE.read_text(encoding="utf-8").replace("\n", newline).encode()
                 nested.write_bytes(original.replace(("```mermaid" + newline + "flowchart TD").encode(), ("```mermaid" + newline + "flowchart LR").encode(), 1))
-                command = [sys.executable, "-c", bootstrap, directory]
                 # When: read-only check fails, then write repairs only the enrolled span.
-                failed = subprocess.run(command + ["--check"], capture_output=True)
+                failed = run_cli(directory, "--check")
                 self.assertEqual(failed.returncode, 1)
                 self.assertIn(RAW["diagrams"][0]["id"].encode(), failed.stderr)
                 self.assertNotIn(b"Traceback", failed.stderr)
                 self.assertIn(b"flowchart LR", nested.read_bytes())
-                subprocess.run(command + ["--write"], check=True, capture_output=True)
+                self.assertEqual(run_cli(directory, "--write").returncode, 0)
                 # Then: every other byte, including CRLF and hand-written adapters, survives.
                 self.assertEqual(nested.read_bytes(), original)
                 stamp = nested.stat().st_mtime_ns
-                subprocess.run(command + ["--write"], check=True, capture_output=True)
+                self.assertEqual(run_cli(directory, "--write").returncode, 0)
                 self.assertEqual(nested.stat().st_mtime_ns, stamp)
-                subprocess.run(command + ["--check"], check=True, capture_output=True)
+                self.assertEqual(run_cli(directory, "--check").returncode, 0)
+
+    def test_noncanonical_closing_delimiters_are_refused_and_outside_text_survives(self):
+        # Given: bodies that Markdown closes early with a delimiter the fence pattern does not recognise.
+        original = PAGE.read_text(encoding="utf-8")
+        for closer in ("````", "``` ", "   ```"):
+            with self.subTest(closer=closer), tempfile.TemporaryDirectory() as directory:
+                target = Path(directory) / RAW["diagrams"][0]["page"]
+                target.parent.mkdir(parents=True)
+                attack = original.replace("```mermaid\nflowchart TD", f"```mermaid\nflowchart TD\n{closer}\nOUTSIDE_SENTINEL", 1)
+                target.write_text(attack, encoding="utf-8", newline="\n")
+                # When: the CLI is asked to write and to check.
+                results = [run_cli(directory, mode) for mode in ("--write", "--check")]
+                # Then: both refuse with a diagnostic and no byte changes, so the text after the delimiter survives.
+                self.assertEqual([r.returncode for r in results], [1, 1])
+                self.assertIn(b"noncanonical closing delimiter", results[0].stderr)
+                self.assertEqual(target.read_text(encoding="utf-8"), attack)
+
+    def test_a_page_symlinked_outside_the_root_is_refused(self):
+        # Given: an enrolled page that is a symlink to a drifting file outside the root.
+        with tempfile.TemporaryDirectory() as directory, tempfile.TemporaryDirectory() as outside:
+            external = Path(outside) / "outside.md"
+            external.write_text(PAGE.read_text(encoding="utf-8").replace("```mermaid\nflowchart TD", "```mermaid\nflowchart LR", 1), encoding="utf-8", newline="\n")
+            link = Path(directory) / RAW["diagrams"][0]["page"]
+            link.parent.mkdir(parents=True)
+            try:
+                link.symlink_to(external)
+            except (OSError, NotImplementedError):
+                self.skipTest("symlinks are unavailable")
+            before = external.read_bytes()
+            # When: the CLI is asked to write and to check.
+            results = [run_cli(directory, mode) for mode in ("--write", "--check")]
+            # Then: both refuse and the external file is untouched.
+            self.assertEqual([r.returncode for r in results], [1, 1])
+            self.assertIn(b"resolves outside the repository", results[0].stderr)
+            self.assertEqual(external.read_bytes(), before)
 
     def test_normal_path_rejects_a_claimed_fault(self):
         # Given: one fault record on the base's normal path.
