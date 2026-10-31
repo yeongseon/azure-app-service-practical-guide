@@ -46,7 +46,7 @@ The current toolchain already enables macros and `pymdownx.snippets`. Reusing th
 
 ### Option C: Small YAML-to-Mermaid Composition Renderer
 
-A minimal declarative base plus named extensions and normal/failure overlays could validate node references and separate shared topology from scenario detail. It adds a schema, a build step, and an authoring language. It is justified only if #283 demonstrates less duplication and lower maintenance cost than direct Mermaid or snippets.
+A minimal declarative base plus named extensions and normal/failure overlays could validate node references and separate shared topology from scenario detail. It adds a schema, a build step, and an authoring language. It is justified only if #283 demonstrates less duplication and lower maintenance cost than direct Mermaid or snippets. The #283 prototype narrowed this option to a stdlib-only JSON spec with generated literal fences; the measured comparison is on the [Diagram Composition Prototype](diagram-composition-prototype.md) page.
 
 ### Option D: Standalone Shared Package Across Repositories
 
@@ -62,6 +62,7 @@ Proposed: retain inline Mermaid as the reviewed diagram source, evaluate B again
 4. Typed semantics: sequence, state, timeline, and chart diagrams remain hand-authored unless a later review demonstrates an adequate typed template. Flowchart/graph genre candidates are advisory and all remain unreviewed. Reader intent stays null until reviewed; targets remain provisional and migration stays `not-started`.
 5. Ownership: #283 owns no legacy occurrences because its affected scope is an opt-in pipeline, and its acceptance keeps existing diagrams unchanged outside the PoC. #289 owns no diagrams; full migration/render coverage belongs there, not to this committed-snapshot consistency check.
 6. Non-Mermaid owner decision: explicitly exclude the generated Cytoscape navigation producers and unwired learning-path containers provisionally, rather than replace them with static topology. Including or excluding them in the migration is an owner decision that must be settled before #281 closes; if included, #288's auxiliary/published-assets scope is the proposed owner. This is not an approved permanent exclusion or proof the widgets work.
+7. Prototype result (#283): the prototype regenerates the four App Service fixtures of the topology grammar byte for byte from one base, two extensions and one failure overlay, and meets the necessary conditions of its predeclared protocol (authored volume, edit locality and tool size). At four variants its tooling costs about five times the inline lines and breaks even only near 33 variants (Inferred). The recommendation is to keep inline Mermaid with the grammar guard as the default, to keep the prototype as an opt-in experiment, and to decide per family; the language-tutorial diagrams owned by #288 are the candidate for a new measurement. This is a recommendation: the Status stays Proposed.
 
 ## Over-Engineering Assessment
 
@@ -91,6 +92,7 @@ The supplied render measurement produced 13.0 MB of derived App Service PNGs (ab
 ## See Also
 
 - [Diagram Inventory](diagram-inventory.md)
+- [Diagram Composition Prototype (#283)](diagram-composition-prototype.md)
 - [Diagram Manifest Schema](diagram-manifest.schema.json)
 - [Golden Evidence Model](golden-evidence-model.md)
 - [Parent Initiative #281](https://github.com/yeongseon/azure-app-service-practical-guide/issues/281)

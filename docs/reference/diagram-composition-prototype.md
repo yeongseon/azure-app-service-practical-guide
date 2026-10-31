@@ -63,6 +63,154 @@ Line counts are nonblank physical lines of each committed file. The spec is form
 
 **Decision rule.** Recommend composition as the default authoring path for a topology family only if M1, M2 and M4 all pass. If M1 or M2 fails, recommend inline Mermaid with the grammar guard as the default for that family and keep the prototype as an opt-in experiment. Another family, such as the language-tutorial diagrams in #288, needs its own measurement against this protocol. M3, M5 and M6 inform the recommendation and do not decide it. The prototype's own line counts are part of the result, not overhead to be excluded.
 
+## 3. Interface Contract
+
+The prototype has three files: the versioned spec `scripts/diagram_composition.json`, the stdlib-only generator `scripts/diagram_compose.py` and its tests `tests/ci/test_diagram_composition.py`.
+
+**Source of truth.** For the diagrams it enrolls, the spec is the authored input. The committed Markdown keeps the literal Mermaid fence, found by the diagram-id comment directly above it, and a check compares the two byte for byte. The frontmatter is never written: the check only compares the spec's diagram identifiers and source links with the `content_sources.diagrams` entries of the page.
+
+**Spec.** `schema_version` and `grammar_version` are both `1`. The JSON is strict: duplicate object keys, unknown keys, wrong types, `NaN` and a boolean version are rejected. Arrays carry order, and object key order never changes the output. The spec contains no raw Mermaid text.
+
+| Key | Content |
+|---|---|
+| `base` | One named graph: ordered node records (`id`, `component`, `label`, `class`) and edge records (`id`, `from`, `to`, `style`, `label`). `component` is a drawable id of the grammar vocabulary and selects the shape; `style` is `solid`, `dotted` or `fault`. |
+| `extensions` | Named additions: `nodes`, `containers` (`id`, `component` of `vnet` or `subnet`, `title`, `tag`, `members`, nested by listing member ids) and `replace_edges`, which swaps one existing edge, in place, for an ordered list of edges (an empty list removes it). |
+| `overlays` | Named failure overlays (`type` is `failure`; the normal path is the absence of an overlay): label and class overrides of existing nodes, `replace_edges`, and one `callout` that becomes a callout node with its fault edge. |
+| `diagrams` | Ordered outputs: `id`, `page`, `genre` (only `topology`), `accTitle`, `accDescr`, `base`, `extensions`, `overlay`, `sources` and `layout`. |
+| `layout` | Per-diagram hints: `link_length` (the number of dots of a dotted arrow, by edge id) and `title_padding` (the number of `&nbsp;` entities in a container title, by container id). |
+
+**Composition rules**
+
+- The order is the base, then the listed extensions in order, then the overlay, then the layout hints.
+- A replacement keeps the position of the edge it replaces. Replacing an unknown edge, or the same edge in two extensions, is an error.
+- The callout edge is placed after the last replacement span of the overlay.
+- Fault edges (`==>`, class `stateFault`) and the fault link style `stroke:#da495d,stroke-width:3px` are fixed by the grammar. The `linkStyle` indices are computed from the final edge list and are never written by hand.
+- Every identifier is explicit. The four diagram identifiers are the ones already on the grammar page, so the manifest keys do not change.
+- Rejected at load time: references to undeclared nodes, duplicate identifiers, containers with missing members, several parents or cycles, edge labels without a claim prefix, the reserved `[Observed]` level, a callout without its `[Illustrative scenario - not a measurement]` line, and a normal path that contains a fault edge.
+
+One extension, copied from the spec (the comma that closes the member inside `extensions` is omitted), shows the size of the data an author writes:
+
+```json
+"ingress-pe": {
+  "nodes": [
+    {"id": "dns", "component": "dns", "label": "Private DNS zone: privatelink.azurewebsites.net<br/>[linked to the VNet]", "class": "bandMuted"},
+    {"id": "private_endpoint", "component": "private-endpoint", "label": "Private Endpoint: App Service Inbound NIC<br/>[Inbound Private IP]", "class": "focusActive"}
+  ],
+  "containers": [
+    {"id": "vnet_in", "component": "vnet", "title": "Customer VNet", "tag": "[VNet boundary]", "members": ["subnet_pe"]},
+    {"id": "subnet_pe", "component": "subnet", "title": "Subnet: private endpoints", "tag": "[private endpoint NICs]", "members": ["private_endpoint"]}
+  ],
+  "replace_edges": {"request": [
+    {"id": "dns_in", "from": "client", "to": "dns", "style": "dotted", "label": "[Configured] 1. DNS lookup returns PE private IP"},
+    {"id": "pe_in", "from": "client", "to": "private_endpoint", "style": "solid", "label": "[Configured] 2. HTTPS 443 to PE private IP"},
+    {"id": "private_in", "from": "private_endpoint", "to": "ingress", "style": "solid", "label": "[Configured] 3. Private Link inbound"}
+  ]}
+}
+```
+
+**Compatibility path**
+
+- Opt-in: nothing changes for a diagram until it has an entry in `diagrams`. The generator never scans other fences.
+- Opt-out: remove the entry, or the three files. The fence stays as literal Mermaid, so every validator, the manifest and the grammar guard keep seeing the same source.
+- Versions: an unknown `schema_version` or `grammar_version` is a hard error. Mermaid is pinned to 10.9.1 by the site.
+- Typed diagrams other than topology stay hand-written under the same identifier and provenance rules, for example the sequence diagram `easy-auth` in `docs/language-guides/dotnet/recipes/easy-auth.md`. The generator rejects any other `genre`.
+- Sibling guides can use the grammar without the generator. Adoption there is not claimed, and divergent copies of the generator are not acceptable (see the ADR).
+
+## 4. Build and Check Commands
+
+Python 3.11 or later, standard library only, run from the repository root.
+
+```bash
+python scripts/diagram_compose.py --check
+python scripts/diagram_compose.py --write
+python scripts/diagram_compose.py --print topology-grammar-v1-appservice-baseline
+python scripts/diagram_compose.py --stats
+python -m unittest discover -s tests/ci -p test_diagram_composition.py -v
+```
+
+- `--check` is read-only. It composes every enrolled diagram, compares each body with the committed fence and the sources with the frontmatter, and prints `diagram composition: check passed (4 diagrams)`. Any problem prints one line and the exit code is 1.
+- `--write` validates every entry first and then rewrites only the enrolled fence bodies, preserving every other byte, including CRLF line endings. A second run changes nothing.
+- `--print ID` writes one composed body to standard output, and `--stats` prints the counts used by the evaluation.
+- The commands are not part of `mkdocs build`. The test suite runs in the existing `tests/ci` job on every pull request, so a drifted fence fails there. No workflow step and no Golden gate was added, so a push to `main` that touches only the spec or the page does not run the check again.
+
+A spec defect and a page drift produce these diagnostics (real output, exit code 1):
+
+```text
+edge dns_in: undeclared node
+topology-grammar-v1-appservice-baseline: committed fence drift
+```
+
+The first comes from an edge of the `ingress-pe` extension that points to a node that does not exist. The second comes from a hand edit of a fence (`flowchart TD` changed to `flowchart LR`); `--write` repairs it and leaves the page byte-identical to the committed one.
+
+## 5. Results
+
+Measured on the pull request that adds the generator, with the commands above. The inline-side numbers come from applying each edit to in-memory copies of the committed page and running the grammar guard. The composed-side numbers come from `--stats`, the tests and the same edits applied to the spec. The throwaway measuring scripts are not committed. The grammar guard is needed in both approaches and is not counted.
+
+| Metric | Result | Verdict |
+|---|---|---|
+| M1 Authored volume | The spec has 84 lines against 136 inline lines (38.2% fewer; the limit was 102). As a supplementary figure, the spec has 9,846 bytes against 10,633 bytes of inline fences; the spec also carries the source lists that live in the frontmatter on the inline side. | Pass |
+| M2 Edit locality | See the scenarios below. | Pass |
+| M3 Defects caught | Composition catches two classes that the guard misses (see below). | Pass; informs only |
+| M4 Implementation budget | The generator has 392 lines (limit 400) and the tests 253 (limit 260). No dependency, directory, workflow step, Golden gate or change to the pinned scanner, the grammar page or its guard was needed. | Pass |
+| M5 Layout upkeep | 15 hints (7 dash lengths and 8 title paddings) in 3 of the 4 diagrams: about a third of the roughly 47 spec records. | Reported |
+| M6 Break-even | Inferred: about 33 variants for a family shaped like this one, or about 19 diagrams if every further diagram were a one-line entry. At four variants the composed side costs 729 lines (84 spec, 392 generator, 253 tests) against 136. | Reported |
+
+The break-even is a linear extrapolation. Inline, the first fixture costs 23 lines and each further variant 37.7 on average (33, 37 and 43). Composed, the fixed cost is 676 lines (generator, tests and 31 spec lines for the base and the wrapper) and each further variant costs 17.3 on average (extension or overlay blocks of 15, 18 and 16 lines, plus one diagram line). It ignores review effort, the cost of reading generated diffs and layout retuning.
+
+Edit scenarios (M2):
+
+| Scenario | Inline with the guard | Composed |
+|---|---|---|
+| S1 rename a base node label | 4 fences, 4 lines; an edit of 3 of the 4 fences is caught by the guard | 1 spec line; the 4 fences change by 1 line each |
+| S2 add a base node with one edge | 8 lines in 4 fences and 1 line to repair the positional link-style indices of the fault fixture; an edit of 3 of the 4 fences is not caught, because the guard compares only the seven known base nodes | 2 spec lines in 1 place; the indices are regenerated (`6,10,11`) |
+| S3 add an extension | a new complete fence, 24 lines for a one-node extension, 19 of them copied from the baseline fence | 10 spec lines (9 for the extension, 1 for the diagram); no generator change |
+| S4 insert a fault edge | 2 lines (the edge and the indices); forgetting the indices is caught by the guard | 1 spec line; the indices follow (`5,9,10` becomes `5,9,10,11`) |
+
+Defect classes (M3), each applied to an inline fence and to the spec:
+
+| Defect | Grammar guard on inline fences | Composition on the spec |
+|---|---|---|
+| Edge to an undeclared node | caught | caught |
+| Duplicate node identifier | caught for the seven base nodes only | caught |
+| Node declared in two containers | not caught | caught |
+| Link-style index drift after an insertion | caught | cannot occur: the indices are computed |
+| Replacing a base edge that does not exist; an overlay targeting a missing node | no such concept | caught (these exist only because of the abstraction) |
+
+**Option B (macros or snippets)** was not implemented, and the fixtures show why it is not carried further. In every variant, three of the seven base edges are replaced or retuned, so additive fragments cannot express a variant without splitting the base into variant-specific pieces, which is the duplication to be removed. Fault link styles are positional indices that a fragment cannot compute. Snippets validate nothing: `check_paths` defaults to `False` in the installed pymdown-extensions 12.3, so a broken include would pass a strict build. A macro that emits the fence at build time would hide the diagram from the source-based validators, the diagram-id parity gate and the manifest.
+
+**Reading the result.** M1, M2 and M4, the conditions that the decision rule requires, all pass: composition works at this size and its output is checked. They are necessary conditions and not a case for adoption, and M1 compares only the spec. The protocol did not charge the generator and its tests to M1, a gap that became visible when the numbers came in. Section 2 was not edited afterwards; M6 carries that cost.
+
+Recommendation for the maintainer (the ADR stays Proposed):
+
+1. Do not make composition the default authoring path for the four-variant App Service network family. At four variants the tooling costs 729 lines against 136 inline lines, and M6 puts the break-even near 33 variants.
+2. Keep the prototype as an opt-in experiment. Enrollment is by spec entry, opting out means removing the entries or the three files, and the fences remain literal Mermaid either way. While the four fixtures are enrolled, a hand edit of their fences fails the test until the spec is updated and `--write` is run.
+3. Decide per family. The one family where the label-free comparison finds large duplication is the language-tutorial topology: 24 diagrams that differ in the one line that names the runtime (commit `3429ca0`, owned by #288). The prototype has no parameter substitution and so demonstrates nothing for them, and they break the grammar, so they need re-authoring first. If #288 re-authors them as one base with four runtime labels, M6 suggests a break-even near 19 diagrams if every further diagram were a one-line entry (Inferred), and this protocol should be run again on that family.
+4. For #284 to #288, adopt the grammar and treat composition as optional.
+
+## 6. Exceptions and Limits
+
+- **Layout stays per variant.** The 15 hints are Dagre tuning under Mermaid 10.9.1, and `&nbsp;` padding is a rendering workaround. Stable identifiers are not stable placement (see sections 7 and 10 of the grammar page), so no placement claim is made.
+- **Combined views are not published.** Composing both extensions, with and without the failure overlay, passes the grammar parser and renders (12 nodes, 5 containers and 12 edges; with the overlay 13, 5 and 14). The screenshots show the base nodes once, two separate customer VNets and the numbered paths. They also show entry arrows that appear to run through container titles and small text at 390 px; neither was measured. Publishing such a view needs its own hints and a full review.
+- **Rendering is checked outside CI.** A standalone check with Mermaid 10.9.1 in headless Chrome parsed and rendered the four generated outputs and the two combined views at 1440x900 and 390x844, in the light and dark themes: 24 checks, no parse error, no console error, and the expected node, container and edge counts. It is not the published page, so its appearance differs from the site. The author read the screenshots; no human approved them, and they are not committed.
+- **Topology only.** The generator rejects other genres. The `easy-auth` sequence diagram named above is untouched.
+- **Extensions and overlays are validated through the diagrams that use them.** An unused one is not checked.
+- **The frontmatter comparison** reads the canonical flow-list style (`based_on: [...]`) that the repository's YAML style check enforces.
+- **No parameter substitution.** The 24 language-tutorial diagrams are not covered (see section 1).
+- **No official Azure icons.** Mermaid 10.9.1 flowcharts do not bundle icon packs (grammar page, section 4).
+- **Enrollment has a price.** While the four fixtures are enrolled, a hand edit of their fences fails the test until the spec is edited and `--write` is run.
+
+## 7. Open Items
+
+Not claimed by this page, and left to the maintainer or to later work:
+
+- Human visual review of any render, including the combined views and the legibility at narrow widths.
+- A reproducible layout-stability measurement (#289), which the grammar page also defers.
+- Appearance on the published site after deployment.
+- Accepting or rejecting the recommendation, the ADR status and closing #283.
+- Whether the four enrolled fixtures should stay enrolled.
+- Re-authoring the language-tutorial diagrams against the grammar (#288) before any shared template could apply.
+- Sibling guides: no adoption is claimed and none was checked.
+
 ## See Also
 
 - [ADR: Diagram Composition and Shared Topology Strategy](adr-diagram-composition.md)
