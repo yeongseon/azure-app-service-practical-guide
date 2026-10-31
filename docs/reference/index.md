@@ -36,6 +36,7 @@ flowchart TD
 | [Platform Limits](platform-limits.md) | Platform quotas, request/timeout constraints, storage behavior, and scale boundaries |
 | [Diagram Inventory](diagram-inventory.md) | Frozen diagram baseline, candidate genres, exclusions, and migration ownership |
 | [ADR: Diagram Composition](adr-diagram-composition.md) | Reuse alternatives, prototype dependency, and limits of the proposed composition approach |
+| [Azure Topology Visual Grammar (v1)](diagram-topology-grammar.md) | Shared visual and semantic contract for Azure topology diagrams, boundaries, arrows, and progressive views |
 
 ## Quick Links
 
