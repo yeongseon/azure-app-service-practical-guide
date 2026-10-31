@@ -809,11 +809,12 @@
     {
       "path": "docs/reference/",
       "decision": "KEEP",
-      "reason": "CLI, KQL, limits and diagnostics lookups coexist with Golden model, audit, diagram inventory, topology visual grammar and migration records; reference presence is not live verification or final-review approval.",
+      "reason": "CLI, KQL, limits and diagnostics lookups coexist with Golden model, audit, diagram inventory, topology visual grammar, composition prototype and migration records; reference presence is not live verification or final-review approval.",
       "members": [
         "adr-diagram-composition.md",
         "azure-e2e-operations.md",
         "cli-cheatsheet.md",
+        "diagram-composition-prototype.md",
         "diagram-inventory.md",
         "diagram-manifest.json",
         "diagram-manifest.schema.json",
