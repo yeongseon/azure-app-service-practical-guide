@@ -5,9 +5,10 @@ checked mechanically are tested here: section order, the component and claim-lev
 vocabularies, fixture structure (orientation, accessible names, no bidirectional
 arrows, a claim prefix on every visible edge, no unrecognized source lines),
 identical base nodes across the four App Service variants, factual containment
-(VNet > subnet > NIC, DNS zones outside, NAT/UDR/NSG as subnet tags and never as
-nodes), the required fault edges and their link styles, and the evidence-honesty
-rule that an illustrative fixture never uses the `[Observed]` claim level.
+(VNet > subnet > NIC with each NIC in the subnet its role names, DNS zones outside,
+NAT/UDR/NSG as subnet tags and never as nodes), the required fault edges and
+their link styles, and the evidence-honesty rule that an illustrative fixture
+never uses the `[Observed]` claim level.
 
 This is a static check of text and Mermaid source. It renders nothing and says
 nothing about visual quality, title clearance, layout stability or live Azure
@@ -15,11 +16,12 @@ behavior. It is not a Mermaid parser: it accepts a line by a recognized shape or
 prefix (so a malformed `class` line still passes) and rejects any other line, and
 an extra `end` or a label that is true only in a diagram is not detected.
 Accessible names are checked for presence and non-empty text on the same line,
-DNS zones and NAT/UDR/NSG are identified by node id prefix or by label text, edge
-purposes are checked only for DNS lookups not being solid `-->` arrows (a thick
-`==>` lookup passes), link styles only for index membership, a non-white color
-and a width of at least 2px (a transparent or zero-opacity override passes), and
-colors and contrast are not checked otherwise (the page's tables are reviewed,
+DNS zones and NAT/UDR/NSG are identified by node id prefix or by label text, and
+a NIC's subnet by the start of its visible subnet title. Edge purposes are
+checked only for DNS lookups not being solid `-->` arrows (a thick `==>` lookup
+passes). Link styles are checked only for index membership, a non-white color
+and a width of at least 2px (a transparent or zero-opacity override passes).
+Colors and contrast are not checked otherwise (the page's tables are reviewed,
 not computed here). Each mutation test asserts the diagnostic of the rule it
 targets, so a rule that stops firing is reported even if another rule still
 fails.
@@ -55,6 +57,11 @@ VOCABULARY = (
 CLAIM_LEVELS = ("[Configured]", "[Illustrative]", "[Inferred]", "[Observed]")
 EDGE_PREFIXES = ("[Configured] ", "[Illustrative] ", "[Inferred] ", "[FAULT / Illustrative] ", "[FAULT / Inferred] ")
 BASE_NODES = ("control_plane", "client", "ingress", "app_runtime", "identity", "storage_db", "telemetry")
+NIC_SUBNET_TITLES = {
+    "vnet_integration": "Subnet: VNet integration",
+    "private_endpoint": "Subnet: private endpoints",
+    "pe_storage": "Subnet: private endpoints",
+}
 BASELINE, INGRESS_PE, EGRESS, OVERLAY = (
     "topology-grammar-v1-appservice-baseline",
     "topology-grammar-v1-appservice-ingress-pe",
@@ -183,6 +190,11 @@ def containment_problems(parsed):
             chain = fixture["container"].get(node, ())
             if not chain_matches(chain, kinds):
                 problems.append(f"{fixture_id}: {node} must sit inside {' > '.join(kinds)} containers, found {chain}")
+                continue
+            expected_title = NIC_SUBNET_TITLES.get(node)
+            actual_title = fixture["title"].get(chain[-1], "")
+            if expected_title and not actual_title.startswith(expected_title):
+                problems.append(f"{fixture_id}: {node} must sit in a subnet titled {expected_title!r}, found {actual_title!r}")
         if {"vnet_integration", "pe_storage"} <= set(nodes):
             subnets = {fixture["container"].get(n, ("",))[-1] for n in ("vnet_integration", "pe_storage")}
             if len(subnets) != 2:
@@ -348,6 +360,18 @@ class TopologyGrammarPageTests(unittest.TestCase):
             header = next(l for l in code.splitlines() if "subgraph vnet_in[" in l)
             return code.replace(header, header + '\n        dns_x{{"Zone"}}', 1)
 
+        def swap_nic_declarations(code):
+            lines = code.splitlines()
+            first = next(i for i, l in enumerate(lines) if l.strip().startswith("vnet_integration[["))
+            second = next(i for i, l in enumerate(lines) if l.strip().startswith("pe_storage[["))
+            lines[first], lines[second] = lines[second], lines[first]
+            return "\n".join(lines)
+
+        def swap_subnet_titles(code):
+            integration = re.search(r'subgraph subnet_int\["([^"]*)"\]', code).group(1)
+            endpoint = re.search(r'subgraph subnet_pe_out\["([^"]*)"\]', code).group(1)
+            return code.replace(integration, "@@", 1).replace(endpoint, integration, 1).replace("@@", endpoint, 1)
+
         mutations = {
             "orientation": (self.replace_in(BASELINE, "flowchart TD", "flowchart LR"), "must start with 'flowchart TD'"),
             "bidirectional arrow": (self.replace_in(BASELINE, "flowchart TD", "flowchart TD\n    a <--> b"), "bidirectional arrow"),
@@ -360,6 +384,8 @@ class TopologyGrammarPageTests(unittest.TestCase):
             "unrecognized source line": (self.replace_in(BASELINE, "flowchart TD", "flowchart TD\n    foo bar baz"), "unparsed line"),
             "size in a container title": (self.replace_in(INGRESS_PE, 'subgraph vnet_in["Customer VNet', 'subgraph vnet_in["Customer VNet /27'), "carries a subnet size"),
             "private endpoint outside its subnet": (self.edit_fixture(INGRESS_PE, unwrap_pe_subnet), "private_endpoint must sit inside vnet > subnet"),
+            "NICs swapped between the two subnets": (self.edit_fixture(EGRESS, swap_nic_declarations), "vnet_integration must sit in a subnet titled 'Subnet: VNet integration'"),
+            "subnet titles swapped": (self.edit_fixture(OVERLAY, swap_subnet_titles), "pe_storage must sit in a subnet titled 'Subnet: private endpoints'"),
             "runtime inside a customer container": (self.edit_fixture(EGRESS, move_runtime_into_subnet), "app_runtime is drawn inside a customer container"),
             "base node label drift": (self.replace_in(EGRESS, 'client(["', 'client(["X '), "base node client has different labels"),
             "control plane edge drift": (self.replace_in(OVERLAY, "[Configured] SCM deploy", "[Configured] SCM deploy 2"), "control_plane edges differ"),
