@@ -307,7 +307,7 @@ flowchart TD
     linkStyle 5,9,10 stroke:#da495d,stroke-width:3px;
 ```
 
-- **Legend & Takeaway:** Thick red (`==>`) `[FAULT / Illustrative]` arrow originates from `vnet_integration` to public Storage (`HTTP 403`) while `pe_storage` stays dashed `unused`; the anchored `[Illustrative scenario - not a measurement]` callout states `Symptom -> Evidence to collect -> Next check` while preserving base-node rank and sibling order. The illustration assumes public resolution (no other private DNS override), outbound traffic routed through VNet integration, and a Storage network rule that rejects the public path; the red arrow to the unlinked zone stands for failed private-zone resolution, not for a lookup that the zone answers.
+- **Legend & Takeaway:** Thick red (`==>`) `[FAULT / Illustrative]` arrow originates from `vnet_integration` to public Storage (`HTTP 403`) while `pe_storage` stays dashed `unused`; the anchored `[Illustrative scenario - not a measurement]` callout states `Symptom -> Evidence to collect -> Next check` while preserving base-node rank and sibling order. The illustration assumes public resolution (no other private DNS override), application routing of outbound internet traffic into the VNet (if only private traffic is routed and the integration subnet has no service endpoint for Storage, a call to a public Storage address is not sent into the VNet and never passes `vnet_integration`; [Integrate your app with an Azure virtual network](https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration)), and a Storage network rule that rejects the public path; the red arrow to the unlinked zone stands for failed private-zone resolution, not for a lookup that the zone answers.
 
 ## 9. Service Adapters
 
