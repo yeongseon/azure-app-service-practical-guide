@@ -127,7 +127,7 @@ This guide defines its own self-contained role palette; no other design system i
 | `stateWarn` | Caveat marker (no fixture uses it) | `#fff3e0` / `#5c3200` / `#ba690c` (`2px`) | `10.02:1` | `4.11:1` / `3.92:1` | `[WARN]` label prefix |
 | `stateFault` | Fault boundary or callout (`dns_out` and `fault_note` in the overlay) | `#fdebee` / `#86172a` / `#da495d` (`3px`) | `8.43:1` | `4.12:1` / `3.90:1` | Thick `3px` stroke + thick `==>` link + `[FAULT]` prefix |
 
-| Role | Dark Target Fill / Text / Stroke (Contract Target Only; Not Used in Mermaid) | Contrast |
+| Role | Dark Target Fill / Text / Stroke (Contract Target Only; Not Used in Mermaid) | Contrast (stroke against the slate surface `#1e2129`) |
 |---|---|---|
 | `baseNeutral` / `focusActive` / `bandMuted` | `#2b313d` / `#eef1f6` / `#9aa6b8` (text `11.52:1`, stroke `6.53:1`) · `#16325c` / `#eef4ff` / `#6ea8fe` (`11.56:1`, `6.66:1`) · `#1e2129` / `#c9d1dd` / `#9aa6b8` (`10.46:1`, `6.53:1`) | text `>= 10.46:1`, stroke `>= 6.53:1` |
 | `stateHealthy` / `stateWarn` / `stateFault` | `#0f3a2b` / `#d5f5e6` / `#4cc79a` (`10.86:1`, `7.62:1`) · `#43290b` / `#ffe7c2` / `#e0a050` (`11.19:1`, `7.14:1`) · `#4a1520` / `#ffdce2` / `#ff7b8c` (`11.69:1`, `6.49:1`) | text `>= 10.86:1`, stroke `>= 6.49:1` |
@@ -394,7 +394,7 @@ flowchart TD
     class vnet_aca,subnet_aca,aca_env netBox;
 ```
 
-**Takeaway:** A custom-VNet Container Apps environment is deployed inside a dedicated VNet subnet (`Customer VNet ⊃ Subnet ⊃ Container Apps Environment`), where environment ingress splits traffic across immutable revisions that run replicas.
+**Takeaway:** A custom-VNet Container Apps environment is deployed inside a dedicated VNet subnet (`Customer VNet ⊃ Subnet ⊃ Container Apps Environment`), where environment ingress splits traffic across immutable revisions that run replicas. The illustration assumes a network-connected caller, an internal environment and a public endpoint for the downstream database, because a NAT gateway serves outbound internet traffic.
 
 ## 10. Exceptions and Limits
 
