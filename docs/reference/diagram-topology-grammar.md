@@ -31,7 +31,7 @@ content_sources:
     - id: topology-grammar-v1-adapter-functions
       type: flowchart
       source: self-generated
-      justification: Minimal service adapter fixture for Azure Functions showing the Functions host polling a Storage queue trigger source, VNet integration, and required host storage connectivity.
+      justification: Minimal service adapter fixture for Azure Functions showing the Functions host polling a Storage queue trigger source, VNet integration, and the Blob path of host storage through a private endpoint; other Storage sub-resource endpoints are not drawn.
       based_on: [https://learn.microsoft.com/en-us/azure/azure-functions/functions-networking-options, https://learn.microsoft.com/en-us/azure/azure-functions/configure-networking-how-to, https://learn.microsoft.com/en-us/azure/azure-functions/storage-considerations, https://learn.microsoft.com/en-us/azure/private-link/private-endpoint-dns, https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-storage-queue-trigger]
     - id: topology-grammar-v1-adapter-container-apps
       type: flowchart
@@ -323,7 +323,7 @@ flowchart TD
 ```mermaid
 flowchart TD
     accTitle: Azure Functions Topology Adapter Example (Grammar v1)
-    accDescr: Shows a Functions host polling a Storage queue trigger source and accessing its required AzureWebJobsStorage account through regional VNet integration and a separate private-endpoint subnet.
+    accDescr: Shows a Functions host polling a Storage queue trigger source and reaching the Blob path of its AzureWebJobsStorage account through regional VNet integration and a separate private-endpoint subnet; other Storage sub-resource endpoints are not drawn.
     control_plane["Control Plane: ARM<br/>[Mgmt Band]"]
     client(["Trigger Source: Azure Storage Queue<br/>[Polled by the Functions host]"])
     app_runtime["Compute: Functions Host & Worker<br/>[Flex Consumption / Elastic Premium]"]
@@ -344,7 +344,7 @@ flowchart TD
     app_runtime -.->|"[Configured] 1. DNS lookup returns PE private IP"| dns_fn
     app_runtime -->|"[Configured] 2. Outbound VNet traffic"| vnet_integration
     vnet_integration -->|"[Configured] 3. Outbound to storage PE private IP"| pe_storage
-    pe_storage -->|"[Configured] 4. Host storage (AzureWebJobsStorage)"| storage_db
+    pe_storage -->|"[Configured] 4. Private Link to host Blob storage"| storage_db
     app_runtime -..->|"[Configured] Logs and metrics"| telemetry
     classDef baseNeutral fill:#f2f4f8,stroke:#707e93,stroke-width:1.5px,color:#14202e;
     classDef focusActive fill:#e6f0fd,stroke:#287ce4,stroke-width:2.5px,color:#14202e;
@@ -356,7 +356,7 @@ flowchart TD
     class vnet_fn,subnet_int_fn,subnet_pe_fn netBox;
 ```
 
-**Takeaway:** For the Storage queue trigger, the Functions host initiates the poll (`app_runtime -> client`), so arrow direction (initiator) differs from reading order; outbound calls to the required `AzureWebJobsStorage` account traverse the delegated VNet integration subnet to the Private Endpoint subnet. The fixture draws only the Blob host-storage path: other storage endpoints that a hosting plan may require are omitted, and the queue-trigger connection is the separate arrow to the trigger source.
+**Takeaway:** For the Storage queue trigger, the Functions host initiates the poll (`app_runtime -> client`), so arrow direction (initiator) differs from reading order. The fixture is a Blob-only slice of host-storage connectivity: the outbound call traverses the delegated VNet integration subnet to one Private Endpoint in the Private Endpoint subnet. A secured `AzureWebJobsStorage` account can need more than that endpoint and zone: Learn's secured-storage guide creates private endpoints for the `file`, `blob` and `table` subresources (and `queue` for Durable Functions), and each subresource has its own Private DNS zone ([Secured storage with Azure Functions](https://learn.microsoft.com/en-us/azure/azure-functions/configure-networking-how-to), [Private endpoint private DNS zone values](https://learn.microsoft.com/en-us/azure/private-link/private-endpoint-dns)). Those other endpoints and zones are not drawn; the queue-trigger connection is the separate arrow to the trigger source.
 
 ### 9.2 Azure Container Apps Adapter Example
 
