@@ -111,9 +111,9 @@ One extension, copied from the spec (the comma that closes the member inside `ex
 **Compatibility path**
 
 - Opt-in: nothing changes for a diagram until it has an entry in `diagrams`. The generator never scans other fences.
-- Opt-out: remove the entry, or the three files. The fence stays as literal Mermaid, so every validator, the manifest and the grammar guard keep seeing the same source.
+- Opt-out: remove the three files and their entries in the repository audit. The fences stay as literal Mermaid, so every validator, the manifest and the grammar guard keep seeing the same source. Removing a single entry is also possible, but the tests exercise the live spec, so removing the last entry that uses an extension or an overlay means adapting the tests that mutate it.
 - Versions: an unknown `schema_version` or `grammar_version` is a hard error. Mermaid is pinned to 10.9.1 by the site.
-- Typed diagrams other than topology stay hand-written under the same identifier and provenance rules, for example the sequence diagram `easy-auth` in `docs/language-guides/dotnet/recipes/easy-auth.md`. The generator rejects any other `genre`.
+- Typed diagrams other than topology stay hand-written under the same identifier and provenance rules, for example the sequence diagram `runtime-request-sequence` in `docs/platform/architecture/index.md`. The generator rejects any other `genre`.
 - Sibling guides can use the grammar without the generator. Adoption there is not claimed, and divergent copies of the generator are not acceptable (see the ADR).
 
 ## 4. Build and Check Commands
@@ -128,8 +128,8 @@ python scripts/diagram_compose.py --stats
 python -m unittest discover -s tests/ci -p test_diagram_composition.py -v
 ```
 
-- `--check` is read-only. It composes every enrolled diagram, compares each body with the committed fence and the sources with the frontmatter, and prints `diagram composition: check passed (4 diagrams)`. Any problem prints one line and the exit code is 1.
-- `--write` validates every entry first and then rewrites only the enrolled fence bodies, preserving every other byte, including CRLF line endings. A second run changes nothing.
+- `--check` is read-only. It composes every enrolled diagram, compares each body with the committed fence and the sources with the frontmatter, and prints `diagram composition: check passed (4 diagrams)`. Any handled spec or page problem prints one line and the exit code is 1; argument errors exit 2.
+- `--write` validates every entry first and then rewrites only the enrolled fence bodies, preserving every other byte, including CRLF line endings. A second run changes nothing. Both modes refuse a page that resolves outside the repository, symlinks included, and an enrolled body that contains a Markdown closing delimiter other than the plain three-backtick line (four backticks, a trailing space or an indent), so text outside a fence cannot be rewritten.
 - `--print ID` writes one composed body to standard output, and `--stats` prints the counts used by the evaluation.
 - The commands are not part of `mkdocs build`. The test suite runs in the existing `tests/ci` job on every pull request, so a drifted fence fails there. No workflow step and no Golden gate was added, so a push to `main` that touches only the spec or the page does not run the check again.
 
@@ -144,18 +144,18 @@ The first comes from an edge of the `ingress-pe` extension that points to a node
 
 ## 5. Results
 
-Measured on the pull request that adds the generator, with the commands above. The inline-side numbers come from applying each edit to in-memory copies of the committed page and running the grammar guard. The composed-side numbers come from `--stats`, the tests and the same edits applied to the spec. The throwaway measuring scripts are not committed. The grammar guard is needed in both approaches and is not counted.
+Measured on the pull request that adds the generator, with the commands above. The inline-side numbers come from applying each edit to in-memory copies of the committed page and running the grammar guard with its 450-line page-size rule filtered out, because every edit that adds lines trips it. The composed-side numbers come from `--stats`, the tests and the same edits applied to the spec. The throwaway measuring scripts are not committed. The grammar guard is needed in both approaches and is not counted.
 
 | Metric | Result | Verdict |
 |---|---|---|
 | M1 Authored volume | The spec has 84 lines against 136 inline lines (38.2% fewer; the limit was 102). As a supplementary figure, the spec has 9,846 bytes against 10,633 bytes of inline fences; the spec also carries the source lists that live in the frontmatter on the inline side. | Pass |
 | M2 Edit locality | See the scenarios below. | Pass |
 | M3 Defects caught | Composition catches two classes that the guard misses (see below). | Pass; informs only |
-| M4 Implementation budget | The generator has 392 lines (limit 400) and the tests 253 (limit 260). No dependency, directory, workflow step, Golden gate or change to the pinned scanner, the grammar page or its guard was needed. | Pass |
+| M4 Implementation budget | The generator has 400 lines (limit 400, met without margin) and the tests 290 (limit 260, exceeded by 30). No dependency, directory, workflow step, Golden gate or change to the pinned scanner, the grammar page or its guard was needed. | Fail |
 | M5 Layout upkeep | 15 hints (7 dash lengths and 8 title paddings) in 3 of the 4 diagrams: about a third of the roughly 47 spec records. | Reported |
-| M6 Break-even | Inferred: about 33 variants for a family shaped like this one, or about 19 diagrams if every further diagram were a one-line entry. At four variants the composed side costs 729 lines (84 spec, 392 generator, 253 tests) against 136. | Reported |
+| M6 Break-even | Inferred: about 35 variants for a family shaped like this one, or about 20 diagrams if every further diagram were a one-line entry. At four variants the composed side costs 774 lines (84 spec, 400 generator, 290 tests) against 136. | Reported |
 
-The break-even is a linear extrapolation. Inline, the first fixture costs 23 lines and each further variant 37.7 on average (33, 37 and 43). Composed, the fixed cost is 676 lines (generator, tests and 31 spec lines for the base and the wrapper) and each further variant costs 17.3 on average (extension or overlay blocks of 15, 18 and 16 lines, plus one diagram line). It ignores review effort, the cost of reading generated diffs and layout retuning.
+The break-even is a linear extrapolation. Inline, the first fixture costs 23 lines and each further variant 37.7 on average (33, 37 and 43). Composed, the fixed cost is 721 lines (generator, tests and 31 spec lines for the base and the wrapper) and each further variant costs 17.3 on average (extension or overlay blocks of 15, 18 and 16 lines, plus one diagram line). It ignores review effort, the cost of reading generated diffs and layout retuning.
 
 Edit scenarios (M2):
 
@@ -173,27 +173,31 @@ Defect classes (M3), each applied to an inline fence and to the spec:
 | Edge to an undeclared node | caught | caught |
 | Duplicate node identifier | caught for the seven base nodes only | caught |
 | Node declared in two containers | not caught | caught |
+| Container cycle | not measured on inline fences | caught (a test) |
 | Link-style index drift after an insertion | caught | cannot occur: the indices are computed |
 | Replacing a base edge that does not exist; an overlay targeting a missing node | no such concept | caught (these exist only because of the abstraction) |
 
-**Option B (macros or snippets)** was not implemented, and the fixtures show why it is not carried further. In every variant, three of the seven base edges are replaced or retuned, so additive fragments cannot express a variant without splitting the base into variant-specific pieces, which is the duplication to be removed. Fault link styles are positional indices that a fragment cannot compute. Snippets validate nothing: `check_paths` defaults to `False` in the installed pymdown-extensions 12.3, so a broken include would pass a strict build. A macro that emits the fence at build time would hide the diagram from the source-based validators, the diagram-id parity gate and the manifest.
+The cycle class was exercised only on the composed side, so no comparison is claimed for it.
 
-**Reading the result.** M1, M2 and M4, the conditions that the decision rule requires, all pass: composition works at this size and its output is checked. They are necessary conditions and not a case for adoption, and M1 compares only the spec. The protocol did not charge the generator and its tests to M1, a gap that became visible when the numbers came in. Section 2 was not edited afterwards; M6 carries that cost.
+**Option B (macros or snippets)** was not implemented, and the fixtures show what it would cost. In every variant, three of the seven base edges are replaced or retuned, so additive fragments can express a variant only by splitting those edges out of the shared base into per-variant fragments with a hand-assembled include order. That is a fragmentation trade-off and not an impossibility. Fault link styles are positional indices that a fragment cannot compute, and snippets do not validate graph semantics: `check_paths` defaults to `False` in the installed pymdown-extensions 12.3, so a missing include is silently dropped from a strict build, although setting it to `True` would check that included files and sections exist. A macro that emits the fence at build time would hide the diagram from the source-based validators, the diagram-id parity gate and the manifest.
+
+**Reading the result.** M1 and M2 pass and M4 fails, so the necessary conditions of the decision rule are not all met, and by the rule composition is not the default authoring path for this family. The generator meets its limit with no margin (400 lines). The tests exceed theirs: they were at 253 lines when first measured, and the regression tests for two write-safety defects that review found afterwards (a closing delimiter that the fence pattern does not recognise, and a page symlink that leaves the repository) took them to 290; the limit was not changed. M1 compares only the spec, because the protocol did not charge the generator and its tests to it, a gap that became visible when the numbers came in; section 2 was not edited. M6 and the total tooling volume (774 lines against 136) were not part of the decision rule. They support the per-family advice below as judgment, and they point the same way.
 
 Recommendation for the maintainer (the ADR stays Proposed):
 
-1. Do not make composition the default authoring path for the four-variant App Service network family. At four variants the tooling costs 729 lines against 136 inline lines, and M6 puts the break-even near 33 variants.
-2. Keep the prototype as an opt-in experiment. Enrollment is by spec entry, opting out means removing the entries or the three files, and the fences remain literal Mermaid either way. While the four fixtures are enrolled, a hand edit of their fences fails the test until the spec is updated and `--write` is run.
-3. Decide per family. The one family where the label-free comparison finds large duplication is the language-tutorial topology: 24 diagrams that differ in the one line that names the runtime (commit `3429ca0`, owned by #288). The prototype has no parameter substitution and so demonstrates nothing for them, and they break the grammar, so they need re-authoring first. If #288 re-authors them as one base with four runtime labels, M6 suggests a break-even near 19 diagrams if every further diagram were a one-line entry (Inferred), and this protocol should be run again on that family.
+1. Do not make composition the default authoring path for the four-variant App Service network family. By the rule it does not qualify, and at four variants the tooling costs 774 lines against 136 inline lines; M6 puts the break-even near 35 variants.
+2. Keep the prototype as an opt-in experiment. Opting out means removing the three files and their audit entries, and the fences remain literal Mermaid either way. Removing a single entry is possible, but the tests exercise the live spec, so removing the last entry that uses an extension or an overlay also means adapting the tests that mutate it. While the four fixtures are enrolled, a hand edit of their fences fails the test until the spec is updated and `--write` is run.
+3. Decide per family. The one family where the label-free comparison finds large duplication is the language-tutorial topology: 24 diagrams that differ in the one line that names the runtime (commit `3429ca0`, owned by #288). The prototype has no parameter substitution and so demonstrates nothing for them, and they break the grammar, so they need re-authoring first. If #288 re-authors them as one base with four runtime labels, M6 suggests a break-even near 20 diagrams if every further diagram were a one-line entry (Inferred), and this protocol should be run again on that family.
 4. For #284 to #288, adopt the grammar and treat composition as optional.
 
 ## 6. Exceptions and Limits
 
 - **Layout stays per variant.** The 15 hints are Dagre tuning under Mermaid 10.9.1, and `&nbsp;` padding is a rendering workaround. Stable identifiers are not stable placement (see sections 7 and 10 of the grammar page), so no placement claim is made.
 - **Combined views are not published.** Composing both extensions, with and without the failure overlay, passes the grammar parser and renders (12 nodes, 5 containers and 12 edges; with the overlay 13, 5 and 14). The screenshots show the base nodes once, two separate customer VNets and the numbered paths. They also show entry arrows that appear to run through container titles and small text at 390 px; neither was measured. Publishing such a view needs its own hints and a full review.
-- **Rendering is checked outside CI.** A standalone check with Mermaid 10.9.1 in headless Chrome parsed and rendered the four generated outputs and the two combined views at 1440x900 and 390x844, in the light and dark themes: 24 checks, no parse error, no console error, and the expected node, container and edge counts. It is not the published page, so its appearance differs from the site. The author read the screenshots; no human approved them, and they are not committed.
-- **Topology only.** The generator rejects other genres. The `easy-auth` sequence diagram named above is untouched.
-- **Extensions and overlays are validated through the diagrams that use them.** An unused one is not checked.
+- **Rendering is checked outside CI.** A standalone check with Mermaid 10.9.1 in headless Chrome parsed and rendered the four generated outputs and the two combined views at 1440x900, at 390x844 and at 720x450 with device scale 2 (an emulation of 200% browser zoom), in the light and dark themes: 36 checks, no parse error, no console error, and the expected node, container and edge counts. It is not the published page, so its appearance differs from the site, and neither the site's own zoom overlay nor real browser zoom was exercised. The author read the screenshots; no human approved them, and they are not committed.
+- **Topology only.** The generator rejects other genres. The `runtime-request-sequence` diagram named above is untouched.
+- **Extensions and overlays that no diagram uses** have their structure and field types checked, but not their graph-dependent validity (references, containers, conflicts), which is validated through the diagrams that use them.
+- **Write safety.** `--write` refuses unsafe pages as described in section 4. Pages are written one after another and not atomically; with one enrolled page, a failed write leaves at most that file, which git restores. The binary-mode output of `--print` is covered by no test on Linux, where text and binary output are identical.
 - **The frontmatter comparison** reads the canonical flow-list style (`based_on: [...]`) that the repository's YAML style check enforces.
 - **No parameter substitution.** The 24 language-tutorial diagrams are not covered (see section 1).
 - **No official Azure icons.** Mermaid 10.9.1 flowcharts do not bundle icon packs (grammar page, section 4).
@@ -204,6 +208,8 @@ Recommendation for the maintainer (the ADR stays Proposed):
 Not claimed by this page, and left to the maintainer or to later work:
 
 - Human visual review of any render, including the combined views and the legibility at narrow widths.
+- Real browser zoom and the site's own zoom overlay, which the standalone check does not exercise.
+- Execution on Windows, including the newline handling of `--print` output and symlink behavior.
 - A reproducible layout-stability measurement (#289), which the grammar page also defers.
 - Appearance on the published site after deployment.
 - Accepting or rejecting the recommendation, the ADR status and closing #283.
