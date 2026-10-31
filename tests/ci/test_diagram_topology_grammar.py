@@ -11,8 +11,16 @@ rule that an illustrative fixture never uses the `[Observed]` claim level.
 
 This is a static check of text and Mermaid source. It renders nothing and says
 nothing about visual quality, title clearance, layout stability or live Azure
-behavior. Each mutation test asserts the diagnostic of the rule it targets, so a
-rule that stops firing is reported even if another rule still fails.
+behavior. It is not a Mermaid parser: it recognizes the line shapes the fixtures
+use and rejects any other line, but an extra `end` or a label that is true only
+in a diagram is not detected. Accessible names are checked for presence and
+non-empty text, DNS zones and NAT/UDR/NSG are identified by node id prefix or by
+label text, edge purposes are checked only for DNS lookups being dotted, link
+styles only for index membership, a visible color and a width of at least 2px,
+and colors and contrast are not checked at all (the page's tables are reviewed,
+not computed here). Each mutation test asserts the diagnostic of the rule it
+targets, so a rule that stops firing is reported even if another rule still
+fails.
 """
 from pathlib import Path
 import re
@@ -78,7 +86,7 @@ def section(text, start, end):
 
 def parse_fixture(code):
     """Return labels, declaration order, edges, link styles and subgraph structure of one fence."""
-    fixture = {"labels": {}, "order": [], "edges": [], "container": {}, "parent": {}, "title": {}, "linkstyle": set(), "unparsed": []}
+    fixture = {"labels": {}, "order": [], "edges": [], "container": {}, "parent": {}, "title": {}, "linkstyle": set(), "linkstyle_lines": [], "unparsed": []}
     stack = []
     for raw in code.splitlines():
         match = SUBGRAPH.match(raw)
@@ -100,6 +108,7 @@ def parse_fixture(code):
             fixture["edges"].append((source, arrow, label or "", target))
         elif LINKSTYLE.match(raw):
             fixture["linkstyle"] |= {int(i) for i in re.findall(r"\d+", LINKSTYLE.match(raw).group(1))}
+            fixture["linkstyle_lines"].append(raw.strip())
         elif not KNOWN_LINE.match(raw):
             fixture["unparsed"].append(raw.strip())
     return fixture
@@ -119,6 +128,8 @@ def fixture_problems(name, code, fixture):
     for keyword in ("accTitle:", "accDescr:"):
         if keyword not in code:
             problems.append(f"{name}: missing {keyword}")
+        elif not re.search(rf"^[ \t]*{keyword}[ \t]*\S", code, re.M):  # horizontal space only: an empty name must not borrow the next line
+            problems.append(f"{name}: empty {keyword}")
     if "<-->" in code:
         problems.append(f"{name}: unconstrained bidirectional arrow")
     if "[Observed]" in code or "/ Observed]" in code:
@@ -129,12 +140,22 @@ def fixture_problems(name, code, fixture):
             problems.append(f"{name}: DNS zone node {node} drawn inside container {containers[-1]}")
         if node.startswith(("nsg", "nat", "udr")):
             problems.append(f"{name}: {node} must be a subnet tag, not a node (UDR, NSG and NAT Gateway are not hops)")
+    for node, label in fixture["labels"].items():
+        if re.search(r"\b(?:NAT|UDR|NSG)\b", label):
+            problems.append(f"{name}: node {node} label names NAT/UDR/NSG, which belong in subnet tags")
+        if "Private DNS zone" in label and fixture["container"][node]:
+            problems.append(f"{name}: Private DNS zone node {node} drawn inside container {fixture['container'][node][-1]}")
     for owner, title in fixture["title"].items():
         if SIZE_IN_TITLE.search(title):
             problems.append(f"{name}: container {owner} carries a subnet size in its title: {title!r}")
     for source, arrow, label, target in fixture["edges"]:
         if source.startswith("dns") and target != "fault_note":  # a callout anchor is an annotation, not a lookup
             problems.append(f"{name}: edge starts at DNS zone node {source} (lookups end at the zone)")
+        for end in (source, target):
+            if end not in fixture["labels"]:
+                problems.append(f"{name}: edge {source} -> {target} references undeclared node {end}")
+        if target.startswith("dns") and arrow.startswith("--"):
+            problems.append(f"{name}: DNS lookup arrows must be dotted, found a solid arrow to {target}")
         if arrow == "~~~" and label:
             problems.append(f"{name}: invisible layout anchor {source} ~~~ {target} must not carry a label")
         if arrow != "~~~" and not label.startswith(EDGE_PREFIXES):
@@ -238,6 +259,11 @@ def grammar_problems(text):
         for source, target in fault_edges:
             if target == "storage_db" and source != "vnet_integration":
                 problems.append(f"fault overlay: failing arrow into storage_db starts at {source}, not vnet_integration")
+        for line in overlay["linkstyle_lines"]:
+            color = re.search(r"stroke:(#[0-9a-fA-F]{3,8})", line)
+            width = re.search(r"stroke-width:(\d+(?:\.\d+)?)px", line)
+            if not color or color.group(1).lower() in ("#fff", "#ffffff") or not width or float(width.group(1)) < 2:
+                problems.append("fault overlay: linkStyle must use a visible stroke color and a width of at least 2px")
         thick = {i for i, (_, a, _, _) in enumerate(overlay["edges"]) if a.startswith("=")}
         if overlay["linkstyle"] != thick:
             problems.append(f"fault overlay: linkStyle indices {sorted(overlay['linkstyle'])} do not match the thick edges {sorted(thick)}")
@@ -309,6 +335,10 @@ class TopologyGrammarPageTests(unittest.TestCase):
             at = code.index("        end\n", code.index("private_endpoint"))
             return code[:at] + code[at + len("        end\n"):]
 
+        def swap_headings():
+            a, b = "\n## 5. Edge and Legend Contract\n", "\n## 6. Visual System\n"
+            return self.text.replace(a, "\n@@\n", 1).replace(b, a, 1).replace("\n@@\n", b, 1)
+
         def drop_line(fixture_id, marker):
             return self.edit_fixture(fixture_id, lambda code: "\n".join(l for l in code.splitlines() if marker not in l))
 
@@ -337,7 +367,12 @@ class TopologyGrammarPageTests(unittest.TestCase):
             "fixture removed": (drop_block(CONTAINER_APPS), f"missing fixture {CONTAINER_APPS}"),
             "metadata mismatch": (self.text.replace("- id: " + FUNCTIONS, "- id: topology-grammar-v1-adapter-xx", 1), "ids differ or repeat"),
             "heading missing": (self.text.replace("\n## 7. Progressive Views\n", "\n## 7. Views\n", 1), "missing heading '## 7. Progressive Views'"),
-            "heading out of order": (self.text.replace("\n## 5. Edge and Legend Contract\n", "\n## 6x. Edge and Legend Contract\n", 1).replace("\n## 6. Visual System\n", "\n## 5. Edge and Legend Contract\n", 1), "missing heading"),
+            "heading out of order": (swap_headings(), "level-two headings are out of order"),
+            "empty accessible title": (self.edit_fixture(BASELINE, lambda code: re.sub(r"accTitle:.*", "accTitle:", code, count=1)), "empty accTitle:"),
+            "edge to an undeclared node": (self.replace_in(INGRESS_PE, "flowchart TD", 'flowchart TD\n    ingress -.->|"[Configured] x"| ghost_node'), "references undeclared node ghost_node"),
+            "NAT named in a node label": (self.replace_in(EGRESS, 'identity{{"Identity: Microsoft Entra ID', 'identity{{"Identity: NAT Entra ID'), "label names NAT/UDR/NSG"),
+            "solid DNS lookup": (self.replace_in(INGRESS_PE, 'client -..->|"[Configured] 1. DNS lookup returns PE private IP"| dns', 'client -->|"[Configured] 1. DNS lookup returns PE private IP"| dns'), "DNS lookup arrows must be dotted"),
+            "invisible fault link style": (self.replace_in(OVERLAY, "linkStyle 5,9,10 stroke:#da495d,stroke-width:3px", "linkStyle 5,9,10 stroke:#ffffff,stroke-width:0px"), "linkStyle must use a visible stroke color"),
             "learn locale": (self.text.replace("learn.microsoft.com/en-us/", "learn.microsoft.com/", 1), "lacks the /en-us/ locale"),
             "refuted claim": (self.text + "\nPrivate Endpoint traffic bypasses access restriction rules.\n", "contains a refuted claim"),
             "image": (self.text + "\n![x](a.png)\n", "references or embeds an image"),
