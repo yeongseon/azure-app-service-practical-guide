@@ -11,13 +11,15 @@ rule that an illustrative fixture never uses the `[Observed]` claim level.
 
 This is a static check of text and Mermaid source. It renders nothing and says
 nothing about visual quality, title clearance, layout stability or live Azure
-behavior. It is not a Mermaid parser: it recognizes the line shapes the fixtures
-use and rejects any other line, but an extra `end` or a label that is true only
-in a diagram is not detected. Accessible names are checked for presence and
-non-empty text, DNS zones and NAT/UDR/NSG are identified by node id prefix or by
-label text, edge purposes are checked only for DNS lookups being dotted, link
-styles only for index membership, a visible color and a width of at least 2px,
-and colors and contrast are not checked at all (the page's tables are reviewed,
+behavior. It is not a Mermaid parser: it accepts a line by a recognized shape or
+prefix (so a malformed `class` line still passes) and rejects any other line, and
+an extra `end` or a label that is true only in a diagram is not detected.
+Accessible names are checked for presence and non-empty text on the same line,
+DNS zones and NAT/UDR/NSG are identified by node id prefix or by label text, edge
+purposes are checked only for DNS lookups not being solid `-->` arrows (a thick
+`==>` lookup passes), link styles only for index membership, a non-white color
+and a width of at least 2px (a transparent or zero-opacity override passes), and
+colors and contrast are not checked otherwise (the page's tables are reviewed,
 not computed here). Each mutation test asserts the diagnostic of the rule it
 targets, so a rule that stops firing is reported even if another rule still
 fails.
