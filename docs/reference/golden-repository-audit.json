@@ -809,7 +809,7 @@
     {
       "path": "docs/reference/",
       "decision": "KEEP",
-      "reason": "CLI, KQL, limits and diagnostics lookups coexist with Golden model, audit, diagram inventory and migration records; reference presence is not live verification or final-review approval.",
+      "reason": "CLI, KQL, limits and diagnostics lookups coexist with Golden model, audit, diagram inventory, topology visual grammar and migration records; reference presence is not live verification or final-review approval.",
       "members": [
         "adr-diagram-composition.md",
         "azure-e2e-operations.md",
@@ -817,6 +817,7 @@
         "diagram-inventory.md",
         "diagram-manifest.json",
         "diagram-manifest.schema.json",
+        "diagram-topology-grammar.md",
         "golden-evidence-model.md",
         "golden-migration-spec.md",
         "golden-repository-audit.json",
@@ -1113,10 +1114,11 @@
     {
       "path": "tests/ci/",
       "decision": "KEEP",
-      "reason": "Operating-contract and documentation claim tests cover metadata, protected Azure workflow boundaries and specific runbook semantics.",
+      "reason": "Operating-contract and documentation claim tests cover metadata, protected Azure workflow boundaries, specific runbook semantics and the diagram topology grammar contract.",
       "members": [
         "test_always_on_tier_docs.py",
         "test_azure_e2e_workflow.py",
+        "test_diagram_topology_grammar.py",
         "test_dns_resolver_path_claims.py",
         "test_outbound_capture_captions.py",
         "test_outbound_vnet_routing_docs.py",

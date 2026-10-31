@@ -19,9 +19,9 @@ Proposed. Composition depends on the opt-in shared prototype [#283](https://gith
 
 ## Context and Problem Statement
 
-The [manifest](diagram-manifest.json) records 399 Mermaid occurrences in 245 tracked Markdown files at the manifest's baseline commit `036376d`: 398 published under `docs/` and one authoring example in the repository contract. Of these, 355 are flowchart/graph blocks (89.0%); the remaining 44 are sequence, state, timeline, or chart blocks (11.0%). Four explicit exclusions leave 395 migration-required Mermaid occurrences.
+The [manifest](diagram-manifest.json) records 405 Mermaid occurrences in 246 tracked Markdown files (the baseline commit `036376d` is recorded as metadata; the scanner reads the working tree): 404 published under `docs/` and one authoring example in the repository contract. Of these, 361 are flowchart/graph blocks (89.1%); the remaining 44 are sequence, state, timeline, or chart blocks (10.9%). Ten explicit exclusions (the authoring example, three generated dashboard charts and, since [#296](https://github.com/yeongseon/azure-app-service-practical-guide/issues/296), the six illustrative fixtures of the topology visual grammar) leave 395 migration-required Mermaid occurrences.
 
-Approximate node-label extraction finds `microsoft entra id` in 38 diagrams and `azure sql` in 29. This suggests potential component reuse, not identical semantics or accepted component definitions. Metadata extraction finds 24 IDs reused across pages and two occurrences without frontmatter provenance; page-qualified keys avoid conflating them. Declared sources split into 200 `mslearn-adapted`, 197 `self-generated`, and two absent declarations. None of these declarations has been verified by this inventory.
+Approximate node-label extraction finds `microsoft entra id` in 38 diagrams and `azure sql` in 29. This suggests potential component reuse, not identical semantics or accepted component definitions. Metadata extraction finds 24 IDs reused across pages and two occurrences without frontmatter provenance; page-qualified keys avoid conflating them. Declared sources split into 200 `mslearn-adapted`, 203 `self-generated`, and two absent declarations. None of these declarations has been verified by this inventory.
 
 App Service also publishes Cytoscape navigation graphs, unlike a Mermaid-only guide. The manifest records those separately in `visuals[]`, including their JSON, JavaScript, stylesheet, page, and producer dependencies, plus unwired learning-path graph containers. They must not disappear behind a screenshot exclusion.
 
@@ -75,7 +75,7 @@ The supplied render measurement produced 13.0 MB of derived App Service PNGs (ab
 
 ### Positive Consequences
 
-- All 395 migration-required Mermaid occurrences have exactly one owning batch. Four excluded occurrences and every tracked image have explicit reasons; no asset or assignment is unresolved.
+- All 395 migration-required Mermaid occurrences have exactly one owning batch. Ten excluded occurrences and every tracked image have explicit reasons; no asset or assignment is unresolved.
 - The manifest preserves declared provenance verbatim, locations, source hashes and approximate structural fields without rewriting source diagrams or evidence.
 - The two inventory CI steps validate fixtures and committed-snapshot consistency without cloud credentials, network access, or a rendering runtime.
 

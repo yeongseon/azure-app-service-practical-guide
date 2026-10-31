@@ -106,6 +106,7 @@ extra:
 not_in_nav: |
   /reference/diagram-inventory.md
   /reference/adr-diagram-composition.md
+  /reference/diagram-topology-grammar.md
 
 nav:
   - Home: index.md
