@@ -809,11 +809,12 @@
     {
       "path": "docs/reference/",
       "decision": "KEEP",
-      "reason": "CLI, KQL, limits and diagnostics lookups coexist with Golden model, audit, diagram inventory, topology visual grammar and migration records; reference presence is not live verification or final-review approval.",
+      "reason": "CLI, KQL, limits and diagnostics lookups coexist with Golden model, audit, diagram inventory, topology visual grammar, composition prototype and migration records; reference presence is not live verification or final-review approval.",
       "members": [
         "adr-diagram-composition.md",
         "azure-e2e-operations.md",
         "cli-cheatsheet.md",
+        "diagram-composition-prototype.md",
         "diagram-inventory.md",
         "diagram-manifest.json",
         "diagram-manifest.schema.json",
@@ -1026,12 +1027,14 @@
     {
       "path": "scripts/",
       "decision": "KEEP",
-      "reason": "Gate validators, allowlists, impact-selection code and manual generators support CI and publishing. Explicit historical helper overrides do not authorize execution or removal.",
+      "reason": "Gate validators, allowlists, impact-selection code, the opt-in diagram composition prototype and manual generators support CI and publishing. Explicit historical helper overrides do not authorize execution or removal.",
       "members": [
         "absorbed-predicate-allowlist.txt",
         "check_quick_triage_claims.py",
         "detect_absorbed_predicates.py",
         "detect_repetition.py",
+        "diagram_compose.py",
+        "diagram_composition.json",
         "diagram_inventory.py",
         "diagram_inventory_rules.json",
         "generate_golden_status.py",
@@ -1114,10 +1117,11 @@
     {
       "path": "tests/ci/",
       "decision": "KEEP",
-      "reason": "Operating-contract and documentation claim tests cover metadata, protected Azure workflow boundaries, specific runbook semantics and the diagram topology grammar contract.",
+      "reason": "Operating-contract and documentation claim tests cover metadata, protected Azure workflow boundaries, specific runbook semantics, the diagram topology grammar contract and the diagram composition prototype.",
       "members": [
         "test_always_on_tier_docs.py",
         "test_azure_e2e_workflow.py",
+        "test_diagram_composition.py",
         "test_diagram_topology_grammar.py",
         "test_dns_resolver_path_claims.py",
         "test_outbound_capture_captions.py",
