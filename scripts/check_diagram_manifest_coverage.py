@@ -13,7 +13,8 @@ import argparse
 import json
 import subprocess
 import sys
-from pathlib import Path
+from pathlib import Path, PurePosixPath
+from typing import NamedTuple
 
 import diagram_inventory as inventory
 
@@ -22,6 +23,14 @@ REGENERATE = 'python scripts/diagram_inventory.py --write'
 STARTED = frozenset(('in-progress', 'completed'))
 Selection = tuple[str | None, tuple[str, ...], tuple[str, ...]]
 UNSELECTED: Selection = (None, (), ())
+
+
+class Composition(NamedTuple):
+    """The part of the composition spec that the targets of started migrations are resolved against."""
+    base: str
+    extensions: frozenset[str]
+    overlays: frozenset[str]
+    enrolled: dict[str, Selection]
 
 
 def started(manifest: inventory.Record) -> list[inventory.Record]:
@@ -44,37 +53,82 @@ def migration_problems(manifest: inventory.Record) -> list[str]:
     return errors
 
 
-def composition_problems(root: Path, manifest: inventory.Record) -> list[str]:
-    """Resolve the composition targets of started migrations against the opt-in composition spec.
+def mapping(value: object, what: str) -> inventory.Record:
+    if not isinstance(value, dict):
+        raise ValueError(f'{what} must be an object')
+    return value
 
-    The spec is read as plain JSON, so removing the prototype never breaks this check.
+
+def text(value: object, what: str) -> str:
+    if not isinstance(value, str):
+        raise ValueError(f'{what} must be text')
+    return value
+
+
+def texts(value: object, what: str) -> tuple[str, ...]:
+    if not isinstance(value, list) or not all(isinstance(item, str) for item in value):
+        raise ValueError(f'{what} must be a list of text')
+    return tuple(value)
+
+
+def enrollment(root: Path, position: int, value: object) -> tuple[str, Selection]:
+    """The manifest key and the selection of one enrolled diagram, with its page spelled as the scanner spells it."""
+    label = f'diagrams[{position}]'
+    entry = mapping(value, label)
+    page = PurePosixPath(text(entry['page'], label + '.page')).as_posix()
+    try:
+        _ = inventory.local(root, page)
+    except inventory.InventoryError:
+        raise ValueError(label + '.page leaves the repository') from None
+    overlay = entry['overlay']
+    return (f'{page}#{text(entry["id"], label + ".id")}',
+            (text(entry['base'], label + '.base'), texts(entry['extensions'], label + '.extensions'),
+             () if overlay is None else (text(overlay, label + '.overlay'),)))
+
+
+def read_composition(root: Path, path: Path) -> Composition:
+    """Read the fields of the composition spec that this guard resolves references against.
+
+    The spec is plain JSON, so removing the prototype never breaks this check. Every field read is checked
+    for its type, because a string would otherwise be read as a set of characters; the rest of the spec is
+    for the composer to validate. A page is compared as pathlib spells it, so `docs/./x.md` is `docs/x.md`.
     """
+    spec = mapping(json.loads(path.read_text(encoding='utf-8')), 'the spec')
+    diagrams = spec['diagrams']
+    if not isinstance(diagrams, list):
+        raise ValueError('diagrams must be a list')
+    return Composition(text(mapping(spec['base'], 'base')['id'], 'base.id'),
+                       frozenset(mapping(spec['extensions'], 'extensions')),
+                       frozenset(mapping(spec['overlays'], 'overlays')),
+                       dict(enrollment(root, position, value) for position, value in enumerate(diagrams)))
+
+
+def composition_problems(root: Path, manifest: inventory.Record) -> list[str]:
+    """Resolve the composition targets of started migrations against the opt-in composition spec."""
     path = inventory.local(root, COMPOSITION)
     declared = {d['key']: selection(d['target']) for d in started(manifest)}
     if not path.exists():
         return [f'{key}: composition target requires {COMPOSITION}'
                 for key, target in declared.items() if target != UNSELECTED]
     try:
-        spec: inventory.Record = json.loads(path.read_text(encoding='utf-8'))
-        base: str = spec['base']['id']
-        extensions, overlays = set(spec['extensions']), set(spec['overlays'])
-        enrolled: dict[str, Selection] = {
-            f'{e["page"]}#{e["id"]}': (e['base'], tuple(e['extensions']), (e['overlay'],) if e['overlay'] else ())
-            for e in spec['diagrams']}
-    except (OSError, ValueError, KeyError, TypeError) as error:
+        spec = read_composition(root, path)
+    except KeyError as error:
+        return [f'{COMPOSITION}: unreadable composition spec: missing key {error}']
+    except (OSError, ValueError, RecursionError) as error:
         return [f'{COMPOSITION}: unreadable composition spec: {error}']
     errors = [f'{key}: composition output is not in the manifest'
-              for key in sorted(enrolled.keys() - {d['key'] for d in manifest['diagrams']})]
-    for key, (target_base, target_extensions, target_overlays) in declared.items():
-        if (target_base, target_extensions, target_overlays) == UNSELECTED and key not in enrolled:
+              for key in sorted(spec.enrolled.keys() - {d['key'] for d in manifest['diagrams']})]
+    for key, target in declared.items():
+        if target == UNSELECTED and key not in spec.enrolled:
             continue
-        if target_base is not None and target_base != base:
-            errors.append(f'{key}: target.base {target_base!r} is not the composition base {base!r}')
-        errors += [f'{key}: unknown extension {name}' for name in target_extensions if name not in extensions]
-        errors += [f'{key}: unknown overlay {name}' for name in target_overlays if name not in overlays]
-        if key not in enrolled:
+        target_base, target_extensions, target_overlays = target
+        if target_base is not None and target_base != spec.base:
+            errors.append(f'{key}: target.base {target_base!r} is not the composition base {spec.base!r}')
+        errors += [f'{key}: unknown extension {name}' for name in target_extensions if name not in spec.extensions]
+        errors += [f'{key}: unknown overlay {name}' for name in target_overlays if name not in spec.overlays]
+        if key not in spec.enrolled:
             errors.append(f'{key}: composition target is not enrolled in {COMPOSITION}')
-        elif enrolled[key] != (target_base, target_extensions, target_overlays):
+        elif spec.enrolled[key] != target:
             errors.append(f'{key}: target differs from the enrolled composition')
     return errors
 
@@ -117,13 +171,13 @@ def main(argv: list[str] | None = None) -> int:
             return 1
         errors = migration_problems(manifest) + composition_problems(root, manifest)
         errors += coverage_problems(manifest, inventory.build(root, rules, manifest['baseline']['base_commit']))
-    except (inventory.InventoryError, OSError, ValueError, subprocess.CalledProcessError) as error:
+    except (inventory.InventoryError, OSError, ValueError, RecursionError, subprocess.CalledProcessError) as error:
         print(f'diagram manifest coverage: {error}', file=sys.stderr)
         return 1
     if errors:
         print('\n'.join(errors))
-        print(f'diagram manifest coverage: {len(errors)} problem(s); fix the page, the manifest planning fields or {COMPOSITION}. '
-              f'After adding, removing or renaming a Mermaid fence, run {REGENERATE} and commit the manifest')
+        print(f'diagram manifest coverage: {len(errors)} problem(s); correct the page, the manifest planning fields or {COMPOSITION}. '
+              f'If a Mermaid fence was added, removed or moved, or its page or diagram-id renamed, run {REGENERATE} and commit the manifest')
         return 1
     print(f'diagram manifest coverage: check passed ({len(manifest["diagrams"])} occurrences, {len(started(manifest))} with a started migration)')
     return 0

@@ -77,6 +77,12 @@ class GuardTests(unittest.TestCase):
             code = guard.main(['--root', str(self.root)])
         return code, out.getvalue(), err.getvalue()
 
+    def assert_blocked(self, finding: str) -> str:
+        code, out, _ = self.run_guard()
+        self.assertEqual(code, 1, out)
+        self.assertIn(finding, out)
+        return out
+
     def cli(self, script: Path, *args: str) -> subprocess.CompletedProcess[str]:
         return subprocess.run([sys.executable, str(script), '--root', str(self.root), *args], cwd=tempfile.gettempdir(),
                               capture_output=True, text=True, env={**os.environ, 'PYTHONDONTWRITEBYTECODE': '1'})
@@ -99,26 +105,21 @@ class GuardTests(unittest.TestCase):
 
     def test_a_duplicate_manifest_key_fails_before_the_tree_is_compared(self):
         _ = self.commit(lambda m: m['diagrams'].append(copy.deepcopy(m['diagrams'][0])))
-        code, out, _ = self.run_guard()
-        self.assertEqual(code, 1)
-        self.assertIn('diagrams: duplicate key', out)
-        self.assertIn('not evaluated', out)
+        self.assertIn('not evaluated', self.assert_blocked('diagrams: duplicate key'))
 
     def test_a_removed_or_renamed_occurrence_fails(self):
         _ = self.commit()
         page = self.root / 'docs/x.md'
         _ = page.write_text(page.read_text().replace('diagram-id: x', 'diagram-id: y'))
-        self.assertIn('docs/x.md#x: now docs/x.md#y in the tree', self.run_guard()[1])
+        _ = self.assert_blocked('docs/x.md#x: now docs/x.md#y in the tree')
         page.unlink()
-        self.assertIn('docs/x.md#x: manifest record has no Mermaid occurrence in the tree', self.run_guard()[1])
+        _ = self.assert_blocked('docs/x.md#x: manifest record has no Mermaid occurrence in the tree')
 
     def test_a_fence_the_scanner_cannot_recognize_is_not_covered(self):
         _ = self.commit()
         quoted = self.root / 'docs/quoted.md'
         _ = quoted.write_text('> ```mermaid\n> flowchart LR\n> A-->B\n> ```\n')
-        code, out, _ = self.run_guard()
-        self.assertEqual(code, 1)
-        self.assertIn('docs/quoted.md:1: blockquote Mermaid fence cannot be recognized, so the manifest cannot cover it', out)
+        out = self.assert_blocked('docs/quoted.md:1: blockquote Mermaid fence cannot be recognized, so the manifest cannot cover it')
         self.assertNotIn('is not in the manifest', out)
         _ = quoted.write_text('text\n\n    ```mermaid\n    flowchart LR\n    A-->B\n    ```\n')
         self.assertEqual(self.run_guard()[0], 0)
@@ -141,9 +142,9 @@ class GuardTests(unittest.TestCase):
                 _ = self.commit(lambda m: m['diagrams'][0].update(migration=migration(state)))
                 self.assertEqual(self.run_guard()[0], 0)
                 self.page(body='A[Changed label]-->B', declared=True)
-                self.assertIn(f'docs/x.md#x: {state} entry: source differs from the manifest', self.run_guard()[1])
+                _ = self.assert_blocked(f'docs/x.md#x: {state} entry: source differs from the manifest')
                 self.page()
-                self.assertIn(f'docs/x.md#x: {state} entry: provenance differs from the manifest', self.run_guard()[1])
+                _ = self.assert_blocked(f'docs/x.md#x: {state} entry: provenance differs from the manifest')
 
     def test_a_started_entry_needs_a_stable_id_and_declared_provenance(self):
         for state in ('in-progress', 'completed'):
@@ -165,9 +166,7 @@ class GuardTests(unittest.TestCase):
                 _ = self.commit(lambda m: m['diagrams'][0].update(migration=migration(state)))
                 self.assertEqual(self.run_guard()[0], 0)
         _ = self.commit(lambda m: m['diagrams'][0].update(migration=migration('completed')))
-        code, out, _ = self.run_guard()
-        self.assertEqual(code, 1)
-        self.assertIn('docs/x.md#x: migration completed requires declared source provenance', out)
+        _ = self.assert_blocked('docs/x.md#x: migration completed requires declared source provenance')
 
     def test_composition_targets_resolve_against_the_spec(self):
         self.spec()
@@ -193,9 +192,7 @@ class GuardTests(unittest.TestCase):
             manifest['diagrams'][0]['target'].update(base='appservice', extensions=['ghost'])
 
         _ = self.commit(mutate)
-        code, out, _ = self.run_guard()
-        self.assertEqual(code, 1)
-        self.assertIn('docs/x.md#x: unknown extension ghost', out)
+        _ = self.assert_blocked('docs/x.md#x: unknown extension ghost')
 
     def test_a_target_needs_an_enrolled_composition_and_every_enrolled_output_needs_a_record(self):
         self.page('y')
@@ -208,11 +205,66 @@ class GuardTests(unittest.TestCase):
         self.assertEqual(guard.composition_problems(self.root, self.started('not-started')),
                          ['docs/y.md#ghost: composition output is not in the manifest'])
 
+    def test_an_enrolled_page_is_matched_by_the_path_the_scanner_records(self):
+        enrolled = {'base': 'appservice', 'extensions': ['ingress-pe']}
+        for spelling in ('docs/x.md', 'docs/./x.md', './docs/x.md', 'docs//x.md'):
+            with self.subTest(spelling=spelling):
+                self.spec(f'{spelling}#x')
+                self.assertEqual(guard.composition_problems(self.root, self.started(target=enrolled)), [])
+        self.spec('docs/./y.md#x')
+        self.assertEqual(guard.composition_problems(self.root, self.started('not-started')),
+                         ['docs/y.md#x: composition output is not in the manifest'])
+
+    def test_an_enrolled_page_outside_the_repository_is_unreadable(self):
+        for page in ('../x.md', 'docs/../../x.md', '/etc/passwd'):
+            with self.subTest(page=page):
+                self.spec(f'{page}#x')
+                self.assertEqual(guard.composition_problems(self.root, self.started()),
+                                 [f'{guard.COMPOSITION}: unreadable composition spec: diagrams[0].page leaves the repository'])
+
+    def test_a_composition_spec_of_the_wrong_shape_is_unreadable(self):
+        self.spec()
+        valid: inventory.Record = json.loads((self.root / guard.COMPOSITION).read_text())
+        entry: inventory.Record = valid['diagrams'][0]
+        broken: list[tuple[str, object]] = [
+            ('the spec is a list', [valid]),
+            ('base is text', {**valid, 'base': 'appservice'}),
+            ('base has no id', {**valid, 'base': {}}),
+            ('base id is not text', {**valid, 'base': {'id': 7}}),
+            ('extensions is text', {**valid, 'extensions': 'ingress-pe'}),
+            ('extensions is a list', {**valid, 'extensions': ['ingress-pe']}),
+            ('overlays is text', {**valid, 'overlays': 'egress-failure'}),
+            ('overlays is a list', {**valid, 'overlays': ['egress-failure']}),
+            ('there is no diagrams key', {key: value for key, value in valid.items() if key != 'diagrams'}),
+            ('diagrams is an object', {**valid, 'diagrams': {}}),
+            ('a diagram is text', {**valid, 'diagrams': ['docs/x.md#x']}),
+            ('a diagram has no page', {**valid, 'diagrams': [{key: value for key, value in entry.items() if key != 'page'}]}),
+            ('a page is not text', {**valid, 'diagrams': [{**entry, 'page': 5}]}),
+            ('an id is not text', {**valid, 'diagrams': [{**entry, 'id': None}]}),
+            ('a diagram base is not text', {**valid, 'diagrams': [{**entry, 'base': ['appservice']}]}),
+            ('diagram extensions is text', {**valid, 'diagrams': [{**entry, 'extensions': 'ingress-pe'}]}),
+            ('diagram extensions holds a number', {**valid, 'diagrams': [{**entry, 'extensions': ['ingress-pe', 1]}]}),
+            ('an overlay is a list', {**valid, 'diagrams': [{**entry, 'overlay': ['egress-failure']}]})]
+        for name, spec in broken:
+            with self.subTest(spec=name):
+                _ = (self.root / guard.COMPOSITION).write_text(json.dumps(spec))
+                errors = guard.composition_problems(self.root, self.started())
+                self.assertEqual(len(errors), 1, errors)
+                self.assertTrue(errors[0].startswith(guard.COMPOSITION + ': unreadable composition spec: '), errors)
+
+    def test_a_malformed_spec_fails_the_check_without_a_traceback(self):
+        _ = self.commit()
+        _ = (self.root / guard.COMPOSITION).write_text(json.dumps({'base': 'appservice', 'extensions': 'x', 'overlays': 'y', 'diagrams': 'z'}))
+        failed = self.cli(GUARD)
+        self.assertEqual(failed.returncode, 1)
+        self.assertIn(guard.COMPOSITION + ': unreadable composition spec: ', failed.stdout)
+        self.assertNotIn('Traceback', failed.stderr)
+
     def test_the_composition_spec_is_optional(self):
         self.assertEqual(guard.composition_problems(self.root, self.started()), [])
         self.assertEqual(guard.composition_problems(self.root, self.started(target={'base': 'appservice'})),
                          ['docs/x.md#x: composition target requires ' + guard.COMPOSITION])
-        for broken in ('{', '[]', '{"base": {}}'):
+        for broken in ('{', '[]', '{"base": {}}', '[' * 10_000 + ']' * 10_000):
             with self.subTest(spec=broken):
                 _ = (self.root / guard.COMPOSITION).write_text(broken)
                 errors = guard.composition_problems(self.root, self.started())
@@ -255,6 +307,11 @@ class GuardTests(unittest.TestCase):
         self.assertEqual(unreadable.returncode, 1)
         self.assertTrue(unreadable.stderr.startswith('diagram manifest coverage: '), unreadable.stderr)
         self.assertNotIn('Traceback', unreadable.stderr)
+        _ = (self.root / inventory.MANIFEST).write_text('[' * 10_000 + ']' * 10_000)
+        nested = self.cli(GUARD)
+        self.assertEqual(nested.returncode, 1)
+        self.assertTrue(nested.stderr.startswith('diagram manifest coverage: '), nested.stderr)
+        self.assertNotIn('Traceback', nested.stderr)
 
 
 if __name__ == '__main__':
