@@ -32,11 +32,11 @@ EXACT_ASSERTIONS = json.loads(
 BAD_CMD = "gunicorn --bind=0.0.0.0:8000 --timeout=120 wrong_module:app"
 
 
-def run_with(evidence, execution="COMPLETE"):
+def run_with(evidence, execution="COMPLETE", assertions=None):
     d = pathlib.Path(tempfile.mkdtemp()) / "run"
     d.mkdir(parents=True)
     manifest = dict(TEMPLATE)
-    manifest["assertions"] = EXACT_ASSERTIONS
+    manifest["assertions"] = EXACT_ASSERTIONS if assertions is None else assertions
     manifest.update(run_id="20260927T010203Z-a1b2c3",
                     resource_id="/subscriptions/x/rg/app",
                     captured_at="2026-09-27T01:02:03Z",
@@ -112,6 +112,96 @@ class ActivationPreconditionTests(unittest.TestCase):
         self.assertEqual(
             ev.evaluate(run_with(evidence))["hypothesis_status"], "CONTRADICTED")
 
+    def test_a_healthy_response_without_console_evidence_is_inconclusive(self):
+        evidence = dict(COMPLETE_EVIDENCE, fault_status=200)
+        del evidence["fault_import_error_signature"]
+        self.assertEqual(
+            ev.evaluate(run_with(evidence))["hypothesis_status"], "INCONCLUSIVE")
+
+    def test_a_healthy_response_with_no_activation_evidence_at_all_is_inconclusive(self):
+        evidence = dict(COMPLETE_EVIDENCE, fault_status=200)
+        del evidence["fault_config_readback"]
+        del evidence["fault_import_error_signature"]
+        self.assertEqual(
+            ev.evaluate(run_with(evidence))["hypothesis_status"], "INCONCLUSIVE")
+
+    def test_the_healthy_response_still_contradicts_its_own_assertion(self):
+        evidence = dict(COMPLETE_EVIDENCE, fault_status=200)
+        del evidence["fault_import_error_signature"]
+        outcomes = ev.evaluate(run_with(evidence))["assertion_outcomes"]
+        self.assertEqual(outcomes["symptom-runtime-503"], "CONTRADICTED")
+        self.assertEqual(outcomes["discriminating-import-error"], "INCONCLUSIVE")
+
+    def test_the_same_response_contradicts_once_activation_evidence_is_available(self):
+        early = dict(COMPLETE_EVIDENCE, fault_status=200)
+        del early["fault_import_error_signature"]
+        late = dict(early, fault_import_error_signature=COMPLETE_EVIDENCE["fault_import_error_signature"])
+        self.assertEqual(
+            ev.evaluate(run_with(early))["hypothesis_status"], "INCONCLUSIVE")
+        self.assertEqual(
+            ev.evaluate(run_with(late))["hypothesis_status"], "CONTRADICTED")
+
+
+class SymptomWeightTests(unittest.TestCase):
+    """A contradicted symptom decides the hypothesis only when some discriminating assertion is not INCONCLUSIVE."""
+
+    CASES = (
+        ("one symptom and an inconclusive discriminator",
+         (("s", "symptom", "CONTRADICTED"), ("d", "discriminating", "INCONCLUSIVE")), "INCONCLUSIVE"),
+        ("every contradicted symptom loses its weight",
+         (("s1", "symptom", "CONTRADICTED"), ("s2", "symptom", "CONTRADICTED"),
+          ("d", "discriminating", "INCONCLUSIVE")), "INCONCLUSIVE"),
+        ("every discriminator inconclusive",
+         (("s", "symptom", "CONTRADICTED"), ("d1", "discriminating", "INCONCLUSIVE"),
+          ("d2", "discriminating", "INCONCLUSIVE")), "INCONCLUSIVE"),
+        ("one supported discriminator keeps the contradiction",
+         (("s", "symptom", "CONTRADICTED"), ("d1", "discriminating", "SUPPORTED"),
+          ("d2", "discriminating", "INCONCLUSIVE")), "CONTRADICTED"),
+        ("a contradicted discriminator decides by itself",
+         (("s", "symptom", "CONTRADICTED"), ("d", "discriminating", "CONTRADICTED")), "CONTRADICTED"),
+        ("no discriminating assertion keeps the ordinary aggregation",
+         (("s", "symptom", "CONTRADICTED"),), "CONTRADICTED"),
+        ("a contradicted recovery still decides",
+         (("s", "symptom", "CONTRADICTED"), ("d", "discriminating", "INCONCLUSIVE"),
+          ("r", "recovery", "CONTRADICTED")), "CONTRADICTED"),
+        ("a contradicted control still decides",
+         (("s", "symptom", "CONTRADICTED"), ("d", "discriminating", "INCONCLUSIVE"),
+          ("c", "control", "CONTRADICTED")), "CONTRADICTED"),
+        ("a satisfied symptom next to an inconclusive discriminator stays inconclusive",
+         (("s", "symptom", "SUPPORTED"), ("d", "discriminating", "INCONCLUSIVE")), "INCONCLUSIVE"),
+    )
+
+    def test_the_weight_of_a_contradicted_symptom(self):
+        for name, rows, expected in self.CASES:
+            with self.subTest(case=name):
+                assertions = [{"id": key, "role": role} for key, role, _ in rows]
+                outcomes = {key: outcome for key, _, outcome in rows}
+                self.assertEqual(
+                    ev.combine(ev._hypothesis_outcomes(assertions, outcomes).values()), expected)
+
+    def test_the_outcomes_it_is_given_are_left_as_they_were(self):
+        assertions = [{"id": "s", "role": "symptom"}, {"id": "d", "role": "discriminating"}]
+        outcomes = {"s": "CONTRADICTED", "d": "INCONCLUSIVE"}
+        ev._hypothesis_outcomes(assertions, outcomes)
+        self.assertEqual(outcomes, {"s": "CONTRADICTED", "d": "INCONCLUSIVE"})
+
+    def test_a_discriminator_weakened_by_its_claim_level_does_not_ground_the_symptom(self):
+        weakened = [dict(a, claim_level="Not Proven") if a["role"] == "discriminating" else a
+                    for a in EXACT_ASSERTIONS]
+        result = ev.evaluate(run_with(dict(COMPLETE_EVIDENCE, fault_status=200), assertions=weakened))
+        self.assertEqual(result["assertion_outcomes"]["discriminating-import-error"], "INCONCLUSIVE")
+        self.assertEqual(result["assertion_outcomes"]["symptom-runtime-503"], "CONTRADICTED")
+        self.assertEqual(result["hypothesis_status"], "INCONCLUSIVE")
+
+    def test_the_evidence_of_an_unfinished_run_still_decides_nothing(self):
+        evidence = dict(COMPLETE_EVIDENCE, fault_status=200)
+        del evidence["fault_import_error_signature"]
+        for execution in ("PARTIAL", "BLOCKED", "FAILED", "NOT_RUN"):
+            with self.subTest(execution=execution):
+                self.assertEqual(
+                    ev.evaluate(run_with(evidence, execution=execution))["hypothesis_status"],
+                    "NOT_TESTED")
+
 
 class ContradictionReachableTests(unittest.TestCase):
     def test_healthy_app_under_an_activated_fault_contradicts(self):
@@ -152,6 +242,11 @@ class ContradictionReachableTests(unittest.TestCase):
 
     def test_out_of_order_phases_do_not_support(self):
         evidence = dict(COMPLETE_EVIDENCE, phase_order_valid=False)
+        self.assertEqual(
+            ev.evaluate(run_with(evidence))["hypothesis_status"], "CONTRADICTED")
+
+    def test_a_failed_recovery_contradicts(self):
+        evidence = dict(COMPLETE_EVIDENCE, recovery_status=503)
         self.assertEqual(
             ev.evaluate(run_with(evidence))["hypothesis_status"], "CONTRADICTED")
 

@@ -32,6 +32,8 @@ A run that did not finish has not tested anything, whatever its partial evidence
 
 Evidence that cannot decide an assertion yields `INCONCLUSIVE`. It never yields `CONTRADICTED`. A missing field, a truncated capture, and a log that has not arrived yet are all states of not knowing. Treating them as disproof manufactures findings that the evidence does not support.
 
+A healthy response is a state of not knowing too, because it is also what a fault that never reached the running worker looks like. A configuration write or its read-back is control evidence; it does not show that the running worker has the fault. So when a run declares at least one discriminating assertion and every discriminating assertion is `INCONCLUSIVE`, a contradicted symptom assertion counts as `INCONCLUSIVE` when the hypothesis is derived. Unless another assertion contradicts it, the hypothesis is then `INCONCLUSIVE`. The symptom assertion itself stays `CONTRADICTED` in the published outcomes, because the response was observed. Any other contradicted assertion, a failed recovery or a wrong read-back for example, still makes the hypothesis `CONTRADICTED`, and a run that did not complete is still `NOT_TESTED`. Once a discriminating assertion is supported or contradicted, the symptom counts as it is.
+
 `INCONCLUSIVE` is a normal, publishable result.
 
 ### Raw evidence wins over any generated verdict
