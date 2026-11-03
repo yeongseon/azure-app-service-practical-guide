@@ -125,7 +125,8 @@ PALETTE: Final = {
     "netBox": "fill:transparent,stroke:#287ce4,stroke-width:2px,stroke-dasharray:6 3;",
 }
 FENCE: Final = re.compile(r"^<!-- diagram-id: ([a-z0-9-]+) -->\r?\n```mermaid\r?\n(.*?)\r?\n```(?=\r?$)", re.M | re.S)
-CLOSING_FENCE: Final = re.compile(r"^ {0,3}`{3,}[ \t]*$", re.M)
+GENERATED_BODY: Final = re.compile(r"flowchart [A-Z]{2}(?:\n {4,}\S.*)+")
+UNSAFE_CHAR: Final = re.compile(r"[\x00-\x08\x0b-\x1f\x7f\x85\u2028\u2029\ud800-\udfff]")
 ROOT: Final = Path(__file__).resolve().parents[1]
 SPEC_PATH: Final = ROOT / "scripts/diagram_composition.json"
 T = TypeVar("T")
@@ -157,6 +158,8 @@ def decode(text: str) -> JSON:
         return json.loads(text, object_pairs_hook=unique, parse_constant=non_json)
     except json.JSONDecodeError as error:
         raise CompositionError(f"invalid JSON: {error.msg}") from error
+    except ValueError as error:
+        raise CompositionError("invalid JSON: number out of range") from error
     except RecursionError as error:
         raise CompositionError("invalid JSON: nesting too deep") from error
 
@@ -179,8 +182,9 @@ def text(raw: JSON) -> str:
     if not isinstance(raw, str):
         raise CompositionError("expected str")
     require(bool(raw.strip()), "empty text")
+    require(not UNSAFE_CHAR.search(raw), "control, line-separator or lone surrogate character in text")
     require("[Observed]" not in raw and "/ Observed]" not in raw, "reserved [Observed]")
-    require(not re.search(r'["\r\n`|]|<(?!br/>)|&nbsp;', raw), "raw Mermaid or layout text")
+    require(not re.search(r'["\n`|]|<(?!br/>)|&nbsp;', raw), "raw Mermaid or layout text")
     return raw
 
 
@@ -343,14 +347,15 @@ def graph(spec: Spec, diagram: Diagram) -> tuple[tuple[Node, ...], tuple[Contain
         current = identifier
         while current in parents:
             require(current not in seen, f"container cycle: {identifier}")
+            require(len(seen) < 8, f"container nesting deeper than 8 levels: {identifier}")
             seen.add(current)
             current = parents[current]
     for key, value in diagram.layout.link_length.items():
         require(any(e.id == key and e.style == "dotted" for e in edges), f"link_length: unknown or non-dotted edge {key}")
-        require(value >= 1, "link_length must be positive")
+        require(1 <= value <= 100, "link_length must be between 1 and 100")
     for key, value in diagram.layout.title_padding.items():
         require(key in {c.id for c in containers}, f"title_padding: unknown container {key}")
-        require(value >= 0, "title_padding must be nonnegative")
+        require(0 <= value <= 100, "title_padding must be between 0 and 100")
     return nodes, containers, edges
 
 
@@ -391,13 +396,19 @@ def compose(spec: Spec, diagram: Diagram) -> str:
 
 
 def page_path(page: str) -> Path:
-    path = (ROOT / page).resolve()
+    try:
+        path = (ROOT / page).resolve()
+    except RuntimeError as error:  # Path.resolve() raises RuntimeError for a symlink loop before Python 3.13
+        raise CompositionError(f"{page}: symlink loop") from error
     require(path.is_relative_to(ROOT.resolve()), f"{page}: resolves outside the repository")
+    require(path.is_file(), f"{page}: missing or not a regular file")
     return path
 
 
 def page_result(text: str, entries: tuple[tuple[Diagram, str], ...], write: bool = False) -> str:
     """Validate metadata and spans first; return a byte-preserving replacement plan."""
+    pages = ", ".join(sorted({d.page for d, _ in entries}))
+    require(re.search(r"\r(?!\n)", text) is None, f"{pages}: bare carriage return (a line break for renderers that the fence scanner does not see)")
     normalized = text.replace("\r\n", "\n")
     head = re.match(r"\A---\n(.*?)\n---\n", normalized, re.S)
     if head is None:
@@ -412,8 +423,10 @@ def page_result(text: str, entries: tuple[tuple[Diagram, str], ...], write: bool
         matches = [m for m in FENCE.finditer(text) if m.group(1) == diagram.id]
         require(len(matches) == 1, f"{diagram.id}: missing or duplicate committed fence")
         match = matches[0]
-        require(not CLOSING_FENCE.search(match.group(2).replace("\r\n", "\n")), f"{diagram.id}: noncanonical closing delimiter inside the fence body")
-        require(write or match.group(2).replace("\r\n", "\n") == body, f"{diagram.id}: committed fence drift")
+        current = match.group(2).replace("\r\n", "\n")
+        if current != body:
+            require(write, f"{diagram.id}: committed fence drift")
+            require(GENERATED_BODY.fullmatch(current) is not None, f"{diagram.id}: --write refuses a committed body that is not shaped like a generated one (a flowchart header, then only lines indented four or more spaces); repair it by hand")
         newline = "\r\n" if "\r\n" in match.group(0) else "\n"
         spans.append((match.start(2), match.end(2), body.replace("\n", newline)))
     result = text
@@ -465,14 +478,17 @@ def main(argv: list[str] | None = None) -> int:
         elif args.stats:
             print(json.dumps(stats(spec), indent=2))
         else:
+            pages: dict[Path, list[tuple[Diagram, str]]] = {}
+            for diagram, body in outputs:
+                pages.setdefault(page_path(diagram.page), []).append((diagram, body))
             plans = []
-            for page in sorted({d.page for d in spec.diagrams}):
-                path = page_path(page)
+            for path, entries in sorted(pages.items()):
                 text = path.read_bytes().decode("utf-8")
-                result = page_result(text, tuple((d, b) for d, b in outputs if d.page == page), args.write)
-                plans.append((path, text, result))
+                plans.append((path, text, page_result(text, tuple(entries), args.write)))
             changed = [(path, result) for path, text, result in plans if result != text]
             if args.write:
+                for path, _ in changed:
+                    require(path.stat().st_nlink == 1, f"{path.name}: refusing to write a file that has more than one hard link")
                 for path, result in changed:
                     path.write_bytes(result.encode("utf-8"))
                 print(f"diagram composition: wrote {len(changed)} page(s)")

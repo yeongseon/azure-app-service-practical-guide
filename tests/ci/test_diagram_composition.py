@@ -1,6 +1,8 @@
 """Stdlib mutation tests against the independently authored grammar fences."""
+import contextlib
 import copy
 import importlib.util
+import io
 import json
 import os
 from pathlib import Path
@@ -70,11 +72,20 @@ class CompositionTests(unittest.TestCase):
             (("grammar_version",), 2, "unsupported grammar_version"),
             (("base", "nodes"), {}, "expected array"),
             (("diagrams", 0, "genre"), "sequence", "sequence/decision/state stay hand-written"),
+            (("diagrams", 0, "page"), "docs/page\x00.md", "control, line-separator or lone surrogate"),
+            (("diagrams", 0, "page"), "../outside.md", "repo-root relative"),
+            (("diagrams", 0, "page"), "/etc/outside.md", "repo-root relative"),
+            (("base", "nodes", 0, "label"), "two\rlines", "control, line-separator or lone surrogate"),
+            (("base", "nodes", 0, "label"), "two\u2028lines", "control, line-separator or lone surrogate"),
+            (("base", "nodes", 0, "label"), "lone\ud800surrogate", "control, line-separator or lone surrogate"),
             (("extensions", "ingress-pe", "containers", 1, "members"), ["ghost"], "missing member ghost"),
             (("extensions", "ingress-pe", "containers", 1, "members"), ["vnet_in"], "container cycle"),
             (("extensions", "ingress-pe", "containers", 1, "members"), [], "missing members"),
             (("diagrams", 1, "layout", "link_length", "arm"), True, "expected int"),
-            (("diagrams", 1, "layout", "title_padding", "vnet_in"), -1, "nonnegative"),
+            (("diagrams", 1, "layout", "title_padding", "vnet_in"), -1, "between 0 and 100"),
+            (("diagrams", 1, "layout", "title_padding", "vnet_in"), 101, "between 0 and 100"),
+            (("diagrams", 1, "layout", "link_length", "arm"), 0, "between 1 and 100"),
+            (("diagrams", 1, "layout", "link_length", "arm"), 2**63, "between 1 and 100"),
             (("diagrams", 1, "layout", "link_length", "ghost"), 2, "unknown or non-dotted edge"),
             (("diagrams", 1, "layout", "title_padding", "ghost"), 2, "unknown container"),
             (("base", "nodes", 0, "label"), 'x"]\nflowchart LR', "raw Mermaid"),
@@ -101,6 +112,12 @@ class CompositionTests(unittest.TestCase):
         def missing_overlay_node(raw):
             mapping = raw["overlays"]["egress-failure"]["nodes"]
             mapping["ghost"] = mapping.pop("dns_out")
+        def deep_nesting(raw):
+            names = ["vnet_in", "subnet_pe"] + [f"level{i}" for i in range(7)]
+            members = names[1:] + ["private_endpoint"]
+            raw["extensions"]["ingress-pe"]["containers"] = [
+                {"id": name, "component": "vnet" if index == 0 else "subnet", "title": "Nested", "tag": "[x]", "members": [member]}
+                for index, (name, member) in enumerate(zip(names, members))]
         def shared_parent(raw):
             raw["extensions"]["ingress-pe"]["containers"][0]["members"].append("private_endpoint")
         def conflicting_extension(raw):
@@ -109,6 +126,7 @@ class CompositionTests(unittest.TestCase):
         cases = [
             (unknown_replacement, "unknown edge"), (missing_overlay_edge, "unknown edge"),
             (missing_overlay_node, "overlay targets missing node"), (shared_parent, "multiple parents"),
+            (deep_nesting, "container nesting deeper than 8 levels"),
             (conflicting_extension, "two extensions replace the same edge"),
             (lambda r: r.update(extra=1), "unknown keys"),
             (lambda r: r["overlays"]["egress-failure"]["callout"].pop("anchor"), "missing anchor"),
@@ -130,6 +148,8 @@ class CompositionTests(unittest.TestCase):
             composer.decode('{"schema_version": NaN}')
         with mock.patch.object(composer.json, "loads", side_effect=RecursionError), self.assertRaisesRegex(composer.CompositionError, "nesting too deep"):
             composer.decode("[]")
+        with mock.patch.object(composer.json, "loads", side_effect=ValueError("Exceeds the limit (4300 digits)")), self.assertRaisesRegex(composer.CompositionError, "number out of range"):
+            composer.decode("[]")
 
     def test_committed_bodies_and_guard_round_trip(self):
         # Given: exactly four enrolled bodies from the working-tree oracle.
@@ -142,6 +162,7 @@ class CompositionTests(unittest.TestCase):
                 body = composer.compose(spec, diagram)
                 # Then: bytes match and the independent guard accepts the result.
                 self.assertEqual(body.encode(), fences[diagram.id].encode())
+                self.assertIsNotNone(composer.GENERATED_BODY.fullmatch(body))
                 self.assertEqual(guard.fixture_problems(diagram.id, body, guard.parse_fixture(body)), [])
 
     def test_determinism_across_repetition_key_order_and_hash_seeds(self):
@@ -154,7 +175,7 @@ class CompositionTests(unittest.TestCase):
         for seed in (0, 1, 42):
             for diagram, body in zip(specs[0].diagrams, expected):
                 result = subprocess.run([sys.executable, str(SCRIPT), "--print", diagram.id],
-                                        env={**os.environ, "PYTHONHASHSEED": str(seed), "PYTHONDONTWRITEBYTECODE": "1"},
+                                        env={**os.environ, "PYTHONHASHSEED": str(seed), "PYTHONDONTWRITEBYTECODE": "1", "PYTHONIOENCODING": "utf-16-le"},
                                         capture_output=True, check=True)
                 self.assertEqual(result.stdout, body.encode())
 
@@ -212,43 +233,77 @@ class CompositionTests(unittest.TestCase):
                         composer.page_result(page.read_bytes().decode(), entries)
 
     def test_cli_write_is_span_only_idempotent_and_crlf_preserving(self):
-        # Given: a temporary root, canonical metadata and one drifting body.
+        # Given: a temporary root and three drifting bodies that shrink, grow and keep their length.
         for newline in ("\n", "\r\n"):
             with tempfile.TemporaryDirectory() as directory:
-                # Use the real spec path and mirror its page in this disposable root.
                 nested = Path(directory) / RAW["diagrams"][0]["page"]
                 nested.parent.mkdir(parents=True)
-                original = PAGE.read_text(encoding="utf-8").replace("\n", newline).encode()
-                nested.write_bytes(original.replace(("```mermaid" + newline + "flowchart TD").encode(), ("```mermaid" + newline + "flowchart LR").encode(), 1))
-                # When: read-only check fails, then write repairs only the enrolled span.
+                original = PAGE.read_text(encoding="utf-8").replace("\n", newline)
+                ids = [d["id"] for d in RAW["diagrams"][:3]]
+                title = f"    accTitle: {RAW['diagrams'][0]['accTitle']}{newline}"
+                self.assertEqual(original.count(title), 1)
+                header = f"<!-- diagram-id: {ids[1]} -->{newline}```mermaid{newline}flowchart TD"
+                same = f"<!-- diagram-id: {ids[2]} -->{newline}```mermaid{newline}flowchart "
+                self.assertIn(header, original)
+                drifted = original.replace(title, "", 1).replace(header, f'{header}{newline}    extra["x"]', 1).replace(same + "TD", same + "BT", 1)
+                self.assertEqual(len({original, drifted}), 2)
+                nested.write_bytes(drifted.encode())
+                # When: read-only check fails, then write repairs only the enrolled spans.
                 failed = run_cli(directory, "--check")
                 self.assertEqual(failed.returncode, 1)
-                self.assertIn(RAW["diagrams"][0]["id"].encode(), failed.stderr)
+                self.assertIn(ids[0].encode(), failed.stderr)
                 self.assertNotIn(b"Traceback", failed.stderr)
-                self.assertIn(b"flowchart LR", nested.read_bytes())
+                self.assertEqual(nested.read_bytes(), drifted.encode())
                 self.assertEqual(run_cli(directory, "--write").returncode, 0)
                 # Then: every other byte, including CRLF and hand-written adapters, survives.
-                self.assertEqual(nested.read_bytes(), original)
+                self.assertEqual(nested.read_bytes(), original.encode())
                 stamp = nested.stat().st_mtime_ns
                 self.assertEqual(run_cli(directory, "--write").returncode, 0)
                 self.assertEqual(nested.stat().st_mtime_ns, stamp)
                 self.assertEqual(run_cli(directory, "--check").returncode, 0)
 
-    def test_noncanonical_closing_delimiters_are_refused_and_outside_text_survives(self):
-        # Given: bodies that Markdown closes early with a delimiter the fence pattern does not recognise.
+    def test_early_closing_lines_are_refused_and_outside_text_survives(self):
+        # Given: bodies that Markdown closes early, or that merely look like fence syntax; the text after each
+        # line is indented, so only that line can make the body unacceptable.
         original = PAGE.read_text(encoding="utf-8")
-        for closer in ("````", "``` ", "   ```"):
-            with self.subTest(closer=closer), tempfile.TemporaryDirectory() as directory:
+        opening = "```mermaid\nflowchart TD"
+        shape, drift, cr = b"not shaped like a generated one", b"committed fence drift", b"bare carriage return"
+        cases = [("four backticks", opening + "\n````\n    OUTSIDE_SENTINEL", shape, drift),
+                 ("trailing space", opening + "\n``` \n    OUTSIDE_SENTINEL", shape, drift),
+                 ("three-space indent", opening + "\n   ```\n    OUTSIDE_SENTINEL", shape, drift),
+                 ("tildes", opening + "\n~~~\n    OUTSIDE_SENTINEL", shape, drift),
+                 ("closer instead of the header", "```mermaid\n````\n    flowchart TD", shape, drift),
+                 ("bare carriage return", opening + "\n```\r    OUTSIDE_SENTINEL", cr, cr)]
+        for label, replacement, write_diagnostic, check_diagnostic in cases:
+            with self.subTest(case=label), tempfile.TemporaryDirectory() as directory:
                 target = Path(directory) / RAW["diagrams"][0]["page"]
                 target.parent.mkdir(parents=True)
-                attack = original.replace("```mermaid\nflowchart TD", f"```mermaid\nflowchart TD\n{closer}\nOUTSIDE_SENTINEL", 1)
-                target.write_text(attack, encoding="utf-8", newline="\n")
+                attack = original.replace(opening, replacement, 1).encode("utf-8")
+                target.write_bytes(attack)
                 # When: the CLI is asked to write and to check.
-                results = [run_cli(directory, mode) for mode in ("--write", "--check")]
-                # Then: both refuse with a diagnostic and no byte changes, so the text after the delimiter survives.
-                self.assertEqual([r.returncode for r in results], [1, 1])
-                self.assertIn(b"noncanonical closing delimiter", results[0].stderr)
-                self.assertEqual(target.read_text(encoding="utf-8"), attack)
+                written, checked = run_cli(directory, "--write"), run_cli(directory, "--check")
+                # Then: both refuse with their own diagnostic and no byte changes, so the text after the line survives.
+                self.assertEqual([written.returncode, checked.returncode], [1, 1])
+                self.assertIn(write_diagnostic, written.stderr)
+                self.assertIn(check_diagnostic, checked.stderr)
+                self.assertEqual(target.read_bytes(), attack)
+
+    def test_a_deleted_closing_delimiter_cannot_swallow_the_text_after_the_fence(self):
+        # Given: the last enrolled fence has lost its closing line, so the fence pattern runs into the following text.
+        original = PAGE.read_text(encoding="utf-8")
+        last = RAW["diagrams"][-1]["id"]
+        match = next(m for m in composer.FENCE.finditer(original) if m.group(1) == last)
+        with tempfile.TemporaryDirectory() as directory:
+            target = Path(directory) / RAW["diagrams"][0]["page"]
+            target.parent.mkdir(parents=True)
+            attack = (original[:match.end(2)] + original[match.end(0):]).encode("utf-8")
+            target.write_bytes(attack)
+            # When: the CLI is asked to write.
+            result = run_cli(directory, "--write")
+            # Then: it refuses and every byte of the text after the fence survives.
+            self.assertEqual(result.returncode, 1)
+            self.assertIn(b"not shaped like a generated one", result.stderr)
+            self.assertEqual(target.read_bytes(), attack)
 
     def test_a_page_symlinked_outside_the_root_is_refused(self):
         # Given: an enrolled page that is a symlink to a drifting file outside the root.
@@ -268,6 +323,70 @@ class CompositionTests(unittest.TestCase):
             self.assertEqual([r.returncode for r in results], [1, 1])
             self.assertIn(b"resolves outside the repository", results[0].stderr)
             self.assertEqual(external.read_bytes(), before)
+
+    def test_a_page_hard_linked_to_a_file_outside_the_root_is_not_written(self):
+        # Given: an enrolled page that is a hard link to a drifting file outside the root.
+        with tempfile.TemporaryDirectory() as directory, tempfile.TemporaryDirectory() as outside:
+            external = Path(outside) / "outside.md"
+            external.write_bytes(PAGE.read_bytes().replace(b"```mermaid\nflowchart TD", b"```mermaid\nflowchart LR", 1))
+            link = Path(directory) / RAW["diagrams"][0]["page"]
+            link.parent.mkdir(parents=True)
+            try:
+                os.link(external, link)
+            except (OSError, NotImplementedError):
+                self.skipTest("hard links are unavailable")
+            before = external.read_bytes()
+            # When: the CLI is asked to write.
+            result = run_cli(directory, "--write")
+            # Then: it refuses before any byte is written, so the file shared with the outside is untouched.
+            self.assertEqual(result.returncode, 1)
+            self.assertIn(b"more than one hard link", result.stderr)
+            self.assertEqual(external.read_bytes(), before)
+
+    def test_two_spellings_of_one_page_are_planned_together(self):
+        # Given: two enrolled diagrams that spell one page path differently, both drifting.
+        raw = copy.deepcopy(RAW)
+        raw["diagrams"][1]["page"] = raw["diagrams"][1]["page"].replace("docs/", "docs/./", 1)
+        spec = composer.parse_spec(raw)
+        original = PAGE.read_text(encoding="utf-8")
+        drifted = original
+        for diagram in spec.diagrams[:2]:
+            marker = f"<!-- diagram-id: {diagram.id} -->\n```mermaid\nflowchart TD"
+            self.assertIn(marker, drifted)
+            drifted = drifted.replace(marker, marker.replace("flowchart TD", "flowchart LR"), 1)
+        with tempfile.TemporaryDirectory() as directory:
+            page = Path(directory) / RAW["diagrams"][0]["page"]
+            page.parent.mkdir(parents=True)
+            page.write_bytes(drifted.encode("utf-8"))
+            # When: --write plans the file once, not once per spelling.
+            with mock.patch.object(composer, "ROOT", Path(directory)), mock.patch.object(composer, "load_spec", return_value=spec), contextlib.redirect_stdout(io.StringIO()):
+                code = composer.main(["--write"])
+            # Then: one write repairs both fences instead of the second plan undoing the first.
+            self.assertEqual(code, 0)
+            self.assertEqual(page.read_bytes(), original.encode("utf-8"))
+
+    def test_a_page_that_is_not_a_regular_file_is_a_diagnostic(self):
+        # Given: an enrolled page path that is a directory.
+        with tempfile.TemporaryDirectory() as directory:
+            (Path(directory) / RAW["diagrams"][0]["page"]).mkdir(parents=True)
+            # When / Then: the CLI reports one handled line before it reads anything.
+            result = run_cli(directory, "--check")
+            self.assertEqual(result.returncode, 1)
+            self.assertIn(b"not a regular file", result.stderr)
+
+    def test_a_symlink_loop_is_a_diagnostic_not_a_traceback(self):
+        # Given: an enrolled page that is a symlink to itself.
+        with tempfile.TemporaryDirectory() as directory:
+            link = Path(directory) / RAW["diagrams"][0]["page"]
+            link.parent.mkdir(parents=True)
+            try:
+                link.symlink_to(link.name)
+            except (OSError, NotImplementedError):
+                self.skipTest("symlinks are unavailable")
+            # When / Then: the CLI reports one handled line on every supported Python version.
+            result = run_cli(directory, "--check")
+            self.assertEqual(result.returncode, 1)
+            self.assertNotIn(b"Traceback", result.stderr)
 
     def test_normal_path_rejects_a_claimed_fault(self):
         # Given: one fault record on the base's normal path.
