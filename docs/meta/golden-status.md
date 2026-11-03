@@ -60,7 +60,7 @@ These are locally executed results, not GitHub Actions statuses. **Skipped** mea
 | Mermaid syntax | Blocking | ✅ Pass | Diagrams checked: 395 · Errors found: 0 | < 10s |
 | Diagram inventory tests | Blocking | ✅ Pass | Ran 117 tests in 9.024s · OK (skipped=1) | < 10s |
 | Diagram inventory consistency | Blocking | ✅ Pass | diagram inventory: check passed | < 10s |
-| Diagram manifest coverage tests | Blocking | ✅ Pass | Ran 19 tests in 1.041s · OK | < 10s |
+| Diagram manifest coverage tests | Blocking | ✅ Pass | Ran 26 tests in 2.347s · OK | < 10s |
 | Diagram manifest coverage | Blocking | ✅ Pass | diagram manifest coverage: check passed (405 occurrences, 0 with a started migration) | < 10s |
 | Content sources | Blocking | ✅ Pass | Files with mermaid: 241 · Validation errors: 0 | < 10s |
 | Content sources schema | Blocking | ✅ Pass | Files with content_sources schema drift: 0 · Parse errors: 0 | < 10s |

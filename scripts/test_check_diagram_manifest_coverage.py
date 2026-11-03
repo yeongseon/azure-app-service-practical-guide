@@ -6,7 +6,7 @@ import copy
 import io
 import json
 import os
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 import shutil
 import subprocess
 import sys
@@ -277,17 +277,89 @@ class GuardTests(unittest.TestCase):
         spec: inventory.Record = json.loads((ROOT / guard.COMPOSITION).read_text())
         manifest: inventory.Record = json.loads((ROOT / inventory.MANIFEST).read_text())
         self.assertEqual(guard.composition_problems(ROOT, manifest), [])
-        self.assertGreater(len(spec['diagrams']), 1)
-        for entry in spec['diagrams']:
-            key = f'{entry["page"]}#{entry["id"]}'
+        self.assertTrue(spec['diagrams'])
+        spellings: list[Callable[[str], str]] = [
+            lambda page: page, lambda page: page.replace('/', '/./', 1), lambda page: './' + page,
+            lambda page: page.replace('/', '//', 1), lambda page: page + '/']
+        for index, respell in enumerate(spellings):
+            respelled = {**spec, 'diagrams': [{**entry, 'page': respell(entry['page'])} for entry in spec['diagrams']]}
+            _ = (self.root / guard.COMPOSITION).write_text(json.dumps(respelled))
+            for entry in spec['diagrams']:
+                key = f'{PurePosixPath(entry["page"]).as_posix()}#{entry["id"]}'
+                with self.subTest(spelling=index, key=key):
+                    changed = copy.deepcopy(manifest)
+                    record = next(d for d in changed['diagrams'] if d['key'] == key)
+                    record['migration'] = migration('in-progress')
+                    record['target'].update(base=entry['base'], extensions=entry['extensions'], overlays=[entry['overlay']] if entry['overlay'] else [])
+                    self.assertEqual(guard.composition_problems(self.root, changed), [])
+                    record['target']['extensions'] = [*entry['extensions'], 'ghost']
+                    self.assertIn(f'{key}: unknown extension ghost', guard.composition_problems(self.root, changed))
+
+    def test_a_symlink_that_cannot_be_read_in_place_of_the_spec_is_unreadable(self):
+        manifest = self.started()
+        spec = self.root / guard.COMPOSITION
+        with tempfile.TemporaryDirectory() as outside:
+            elsewhere = Path(outside) / 'spec.json'
+            _ = elsewhere.write_text('{}')
+            for target in (spec.name, 'missing.json', str(elsewhere)):
+                with self.subTest(target=target):
+                    spec.unlink(missing_ok=True)
+                    spec.symlink_to(target)
+                    errors = guard.composition_problems(self.root, manifest)
+                    self.assertEqual(len(errors), 1, errors)
+                    self.assertTrue(errors[0].startswith(guard.COMPOSITION + ': unreadable composition spec: '), errors)
+
+    def test_an_enrolled_page_that_is_a_symlink_loop_is_a_finding_not_an_exception(self):
+        manifest = self.started()
+        (self.root / 'docs/loop.md').symlink_to('loop.md')
+        self.spec('docs/loop.md#x')
+        self.assertEqual(len(guard.composition_problems(self.root, manifest)), 1)
+
+    def test_a_spec_that_repeats_an_object_key_is_unreadable(self):
+        for text, key in (('{"base": {"id": "appservice"}, "extensions": {}, "extensions": {}, "overlays": {}, "diagrams": []}', 'extensions'),
+                          ('{"base": {"id": "appservice", "id": "other"}, "extensions": {}, "overlays": {}, "diagrams": []}', 'id')):
             with self.subTest(key=key):
-                changed = copy.deepcopy(manifest)
-                record = next(d for d in changed['diagrams'] if d['key'] == key)
-                record['migration'] = migration('in-progress')
-                record['target'].update(base=entry['base'], extensions=entry['extensions'], overlays=[entry['overlay']] if entry['overlay'] else [])
-                self.assertEqual(guard.composition_problems(ROOT, changed), [])
-                record['target']['extensions'] = [*entry['extensions'], 'ghost']
-                self.assertIn(f'{key}: unknown extension ghost', guard.composition_problems(ROOT, changed))
+                _ = (self.root / guard.COMPOSITION).write_text(text)
+                self.assertEqual(guard.composition_problems(self.root, self.started()),
+                                 [f"{guard.COMPOSITION}: unreadable composition spec: duplicate key '{key}'"])
+
+    def test_a_finding_stays_on_one_line_and_unprintable_text_is_escaped(self):
+        _ = self.commit()
+        entry = {'id': 'x\ud800\ny', 'page': 'docs/x.md', 'base': 'appservice', 'extensions': [], 'overlay': None}
+        _ = (self.root / guard.COMPOSITION).write_text(json.dumps({'base': {'id': 'appservice'}, 'extensions': {}, 'overlays': {}, 'diagrams': [entry]}))
+        failed = self.cli(GUARD)
+        self.assertEqual(failed.returncode, 1, failed.stderr)
+        self.assertNotIn('Traceback', failed.stderr)
+        self.assertIn('docs/x.md#x\\ud800\\ny: composition output is not in the manifest', failed.stdout)
+        self.assertEqual(len([line for line in failed.stdout.splitlines() if 'composition output' in line]), 1)
+
+    def test_a_message_of_the_scanner_that_quotes_a_key_is_escaped_too(self):
+        _ = self.commit()
+        manifest = self.root / inventory.MANIFEST
+        _ = manifest.write_text(manifest.read_text().replace('"key":"docs/x.md#x"', '"key":"docs/x.md#x\\ud800"', 1))
+        failed = self.cli(GUARD)
+        self.assertEqual(failed.returncode, 1, failed.stderr)
+        self.assertNotIn('Traceback', failed.stderr)
+        self.assertIn('docs/x.md#x\\ud800: key does not match page/id/ordinal', failed.stdout)
+
+    def test_an_error_that_quotes_a_file_name_stays_on_one_line(self):
+        _ = self.commit()
+        with tempfile.TemporaryDirectory() as outside:
+            elsewhere = Path(outside) / 'target.md'
+            _ = elsewhere.write_text('# target\n')
+            (self.root / 'docs/e\nscape.md').symlink_to(elsewhere)
+            failed = self.cli(GUARD)
+        self.assertEqual(failed.returncode, 1, failed.stdout)
+        self.assertEqual(failed.stderr.strip(), 'diagram manifest coverage: path outside repository: docs/e\\nscape.md')
+
+    def test_a_symlink_loop_in_the_tree_is_reported_without_a_traceback(self):
+        _ = self.commit()
+        (self.root / 'docs/loop.md').symlink_to('loop.md')
+        looped = self.cli(GUARD)
+        self.assertNotIn('Traceback', looped.stderr)
+        if sys.version_info < (3, 13):
+            self.assertEqual(looped.returncode, 1)
+            self.assertTrue(looped.stderr.startswith('diagram manifest coverage: '), looped.stderr)
 
     def test_the_content_sources_job_runs_the_guard_and_its_tests_as_blocking_steps(self):
         workflow = yaml.safe_load((ROOT / '.github/workflows/validate-content-sources.yml').read_text(encoding='utf-8'))
