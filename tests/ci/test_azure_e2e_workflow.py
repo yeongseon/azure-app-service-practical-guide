@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import re
 import subprocess
 import tempfile
 import textwrap
@@ -114,6 +115,87 @@ class AzureE2EWorkflowTests(unittest.TestCase):
 
         self.assertTrue(validation.startswith("        id: target\n"))
         self.assertIn('echo "sha=$sha" >> "$GITHUB_OUTPUT"', validation)
+
+    def _git(self, cwd: Path, *args: str) -> str:
+        environment = {**os.environ, "GIT_CONFIG_GLOBAL": os.devnull, "GIT_CONFIG_SYSTEM": os.devnull}
+        return subprocess.run(
+            ["git", "-c", "user.name=test", "-c", "user.email=test@example.com", *args],
+            cwd=cwd, env=environment, check=True, capture_output=True, text=True,
+        ).stdout.strip()
+
+    def _checkout_like_validate_target(self, root: Path) -> tuple[Path, dict[str, str]]:
+        upstream, work = root / "upstream.git", root / "work"
+        self._git(root, "init", "--quiet", "--bare", "-b", "main", str(upstream))
+        self._git(root, "init", "--quiet", "-b", "main", str(work))
+        shas: dict[str, str] = {}
+
+        def commit(name: str) -> None:
+            (work / name).write_text(name, encoding="utf-8")
+            self._git(work, "add", name)
+            self._git(work, "commit", "--quiet", "-m", name)
+            shas[name] = self._git(work, "rev-parse", "HEAD")
+
+        commit("older")
+        commit("newer")
+        commit("tip")
+        self._git(work, "checkout", "--quiet", "-b", "side", shas["older"])
+        commit("side")
+        self._git(work, "checkout", "--quiet", "main")
+        self._git(work, "remote", "add", "origin", str(upstream))
+        self._git(work, "push", "--quiet", "origin", "main", "side")
+        checkout = self._job("validate-target").split("      - name:", maxsplit=1)[0]
+        match = re.search(r"^\s+fetch-depth:\s*(\d+)\s*(?:#.*)?$", checkout, re.MULTILINE)
+        depth = int(match.group(1)) if match else 1  # actions/checkout fetches one commit unless told otherwise
+        clone = root / "clone"
+        if depth:
+            self._git(root, "clone", "--quiet", "--depth", str(depth), f"file://{upstream}", str(clone))
+        else:
+            self._git(root, "clone", "--quiet", str(upstream), str(clone))
+        return clone, shas
+
+    def _run_target_validation(self, clone: Path, target: str) -> tuple[subprocess.CompletedProcess[str], str]:
+        step = self._step("validate-target", "Require an immutable commit on this repository main history")
+        command = textwrap.dedent(step.split("        run: |\n", maxsplit=1)[1])
+        bin_dir = clone.parent / "bin"
+        bin_dir.mkdir(exist_ok=True)
+        helper = bin_dir / "python3"
+        helper.write_text('#!/bin/bash\n[ "$2" = validate-target ] && echo "$3"\nexit 0\n', encoding="utf-8")
+        helper.chmod(0o755)
+        output = clone.parent / "github-output"
+        output.write_text("", encoding="utf-8")
+        environment = {
+            **os.environ,
+            "PATH": f"{bin_dir}:{os.environ['PATH']}",
+            "TARGET_COMMIT": target,
+            "GITHUB_OUTPUT": str(output),
+        }
+        result = subprocess.run(
+            ["bash", "-c", command], cwd=clone, env=environment, capture_output=True, text=True, check=False,
+        )
+        return result, output.read_text(encoding="utf-8")
+
+    def test_target_validation_accepts_a_reviewed_commit_older_than_the_tip(self) -> None:
+        # Given: a checkout made the way the validate-target job makes it, and a commit that is on main but not its tip.
+        with tempfile.TemporaryDirectory() as temporary:
+            clone, shas = self._checkout_like_validate_target(Path(temporary))
+            # When: the validation step runs for the older commit and for the tip.
+            older, older_output = self._run_target_validation(clone, shas["older"])
+            tip, tip_output = self._run_target_validation(clone, shas["tip"])
+            # Then: both are accepted and published as the target.
+            self.assertEqual(older.returncode, 0, msg=older.stderr)
+            self.assertEqual(older_output, f"sha={shas['older']}\n")
+            self.assertEqual(tip.returncode, 0, msg=tip.stderr)
+            self.assertEqual(tip_output, f"sha={shas['tip']}\n")
+
+    def test_target_validation_rejects_a_commit_that_is_not_on_main_history(self) -> None:
+        # Given: a commit on a side branch that was never merged into main.
+        with tempfile.TemporaryDirectory() as temporary:
+            clone, shas = self._checkout_like_validate_target(Path(temporary))
+            # When: the validation step runs for it.
+            result, output = self._run_target_validation(clone, shas["side"])
+            # Then: it fails and publishes no target.
+            self.assertNotEqual(result.returncode, 0)
+            self.assertEqual(output, "")
 
     def test_every_failure_stage_writes_an_allowlisted_record(self) -> None:
         for stage in (
