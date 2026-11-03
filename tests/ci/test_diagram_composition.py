@@ -8,6 +8,7 @@ import os
 from pathlib import Path
 import random
 import re
+import stat
 import subprocess
 import sys
 import tempfile
@@ -28,6 +29,8 @@ CLI = ("import importlib.util, pathlib, sys; "
        f"s=importlib.util.spec_from_file_location('c', {str(SCRIPT)!r}); "
        "c=importlib.util.module_from_spec(s); s.loader.exec_module(c); "
        "c.ROOT=pathlib.Path(sys.argv[1]); sys.exit(c.main(sys.argv[2:]))")
+LIMITED_CLI = ("import resource, signal; signal.signal(signal.SIGXFSZ, signal.SIG_IGN); "
+               "resource.setrlimit(resource.RLIMIT_FSIZE, (1024, 1024)); ") + CLI
 
 
 def run_cli(root, *args):
@@ -248,6 +251,8 @@ class CompositionTests(unittest.TestCase):
                 drifted = original.replace(title, "", 1).replace(header, f'{header}{newline}    extra["x"]', 1).replace(same + "TD", same + "BT", 1)
                 self.assertEqual(len({original, drifted}), 2)
                 nested.write_bytes(drifted.encode())
+                nested.chmod(0o640)
+                mode = stat.S_IMODE(nested.stat().st_mode)
                 # When: read-only check fails, then write repairs only the enrolled spans.
                 failed = run_cli(directory, "--check")
                 self.assertEqual(failed.returncode, 1)
@@ -255,12 +260,55 @@ class CompositionTests(unittest.TestCase):
                 self.assertNotIn(b"Traceback", failed.stderr)
                 self.assertEqual(nested.read_bytes(), drifted.encode())
                 self.assertEqual(run_cli(directory, "--write").returncode, 0)
-                # Then: every other byte, including CRLF and hand-written adapters, survives.
+                # Then: every other byte, including CRLF and hand-written adapters, survives, the file keeps its
+                # permissions and the replacement leaves no temporary file behind.
                 self.assertEqual(nested.read_bytes(), original.encode())
+                self.assertEqual(stat.S_IMODE(nested.stat().st_mode), mode)
+                self.assertEqual([entry.name for entry in nested.parent.iterdir()], [nested.name])
                 stamp = nested.stat().st_mtime_ns
                 self.assertEqual(run_cli(directory, "--write").returncode, 0)
                 self.assertEqual(nested.stat().st_mtime_ns, stamp)
                 self.assertEqual(run_cli(directory, "--check").returncode, 0)
+
+    def test_a_write_that_fails_part_way_leaves_the_page_byte_identical(self):
+        # Given: a drifting page and a process that may not create a file larger than 1 KiB, so the write fails part way.
+        if importlib.util.find_spec("resource") is None:
+            self.skipTest("resource limits are unavailable")
+        drifted = PAGE.read_bytes().replace(b"```mermaid\nflowchart TD", b"```mermaid\nflowchart LR", 1)
+        self.assertGreater(len(drifted), 4096)
+        with tempfile.TemporaryDirectory() as directory:
+            page = Path(directory) / RAW["diagrams"][0]["page"]
+            page.parent.mkdir(parents=True)
+            page.write_bytes(drifted)
+            # When: --write replaces the page.
+            result = subprocess.run([sys.executable, "-c", LIMITED_CLI, directory, "--write"], capture_output=True)
+            # Then: one handled line, every byte of the page kept and no temporary file left behind.
+            self.assertEqual(result.returncode, 1)
+            self.assertEqual(len(result.stderr.splitlines()), 1)
+            self.assertNotIn(b"Traceback", result.stderr)
+            self.assertEqual(page.read_bytes(), drifted)
+            self.assertEqual([entry.name for entry in page.parent.iterdir()], [page.name])
+
+    def test_a_diagnostic_is_one_line_whatever_text_it_quotes(self):
+        # Given: a spec whose duplicate key holds a line break of some kind; the diagnostic quotes it before any text rule runs.
+        for key in ("x\rY", "x\u2028Y", "x\x85Y", "x\ud800Y"):
+            with self.subTest(key=key):
+                raw = f"{{{json.dumps(key)}: 1, {json.dumps(key)}: 2}}"
+                stderr = io.StringIO()
+                # When: the CLI loads it.
+                with mock.patch.object(composer, "load_spec", side_effect=lambda: composer.decode(raw)), contextlib.redirect_stderr(stderr):
+                    code = composer.main(["--check"])
+                # Then: it exits 1 with exactly one line that names the defect.
+                self.assertEqual(code, 1)
+                self.assertEqual(len(stderr.getvalue().splitlines()), 1)
+                self.assertIn("duplicate JSON key", stderr.getvalue())
+
+    def test_an_empty_print_identifier_is_refused_and_not_read_as_a_check(self):
+        # When: --print is given an empty identifier.
+        result = run_cli(ROOT, "--print", "")
+        # Then: it is an unknown diagram, not a silent check that passes.
+        self.assertEqual(result.returncode, 1)
+        self.assertIn(b"unknown diagram", result.stderr)
 
     def test_early_closing_lines_are_refused_and_outside_text_survives(self):
         # Given: bodies that Markdown closes early, or that merely look like fence syntax; the text after each

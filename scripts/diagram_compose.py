@@ -8,9 +8,12 @@ Run from the repository root:
 """
 import argparse
 import json
+import os
 from pathlib import Path
 import re
+import stat
 import sys
+import tempfile
 from typing import Callable, Final, Literal, NamedTuple, NoReturn, TypeVar
 
 JSON = str | int | float | bool | None | list["JSON"] | dict[str, "JSON"]
@@ -135,6 +138,11 @@ T = TypeVar("T")
 def require(condition: bool, diagnostic: str) -> None:
     if not condition:
         raise CompositionError(diagnostic)
+
+
+def one_line(message: str) -> str:
+    """Escape every character that is not printable, so a diagnostic stays one line whatever text it quotes."""
+    return "".join(c if c.isprintable() else c.encode("unicode_escape").decode() for c in message)
 
 
 def assert_never(value: NoReturn) -> NoReturn:
@@ -435,6 +443,20 @@ def page_result(text: str, entries: tuple[tuple[Diagram, str], ...], write: bool
     return result
 
 
+def replace_file(path: Path, data: bytes) -> None:
+    """Replace path through a sibling file, so a write that fails part way never leaves the page truncated."""
+    descriptor, name = tempfile.mkstemp(dir=path.parent, prefix=f".{path.name}.", suffix=".tmp")
+    temporary = Path(name)
+    try:
+        with os.fdopen(descriptor, "wb") as stream:
+            stream.write(data)
+        temporary.chmod(stat.S_IMODE(path.stat().st_mode))
+        os.replace(temporary, path)
+    except BaseException:
+        temporary.unlink(missing_ok=True)
+        raise
+
+
 def nonblank_lines(content: str) -> int:
     return sum(bool(line.strip()) for line in content.splitlines())
 
@@ -472,7 +494,7 @@ def main(argv: list[str] | None = None) -> int:
     try:
         spec = load_spec()
         outputs = tuple((d, compose(spec, d)) for d in spec.diagrams)
-        if args.identifier:
+        if args.identifier is not None:
             require(args.identifier in {d.id for d in spec.diagrams}, f"unknown diagram: {args.identifier}")
             sys.stdout.buffer.write(next(body for d, body in outputs if d.id == args.identifier).encode("utf-8"))
         elif args.stats:
@@ -490,13 +512,13 @@ def main(argv: list[str] | None = None) -> int:
                 for path, _ in changed:
                     require(path.stat().st_nlink == 1, f"{path.name}: refusing to write a file that has more than one hard link")
                 for path, result in changed:
-                    path.write_bytes(result.encode("utf-8"))
+                    replace_file(path, result.encode("utf-8"))
                 print(f"diagram composition: wrote {len(changed)} page(s)")
             else:
                 print(f"diagram composition: check passed ({len(outputs)} diagrams)")
         return 0
     except (CompositionError, OSError, UnicodeError) as error:
-        print(str(error).replace("\n", " "), file=sys.stderr)
+        print(one_line(str(error)), file=sys.stderr)
         return 1
 
 
