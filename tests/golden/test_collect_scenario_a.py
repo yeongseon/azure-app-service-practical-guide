@@ -136,6 +136,26 @@ def evaluate_with(evidence):
     return ev.evaluate(directory)
 
 
+def evaluate_fresh(evidence):
+    """Evaluate collector output as a run the repository never retained, so its scalar fields decide."""
+    directory = pathlib.Path(tempfile.mkdtemp()) / "run"
+    directory.mkdir(parents=True)
+    retained = json.loads(
+        (ROOT / "evidence/runs/20261016T075147Z-6d019de6e2f2/manifest.json").read_text())
+    manifest = dict(MANIFEST)
+    manifest.update(assertions=retained["assertions"], run_id=evidence["run_id"],
+                    captured_at=evidence["captured_at"], resource_id=evidence["resource_id"],
+                    execution_status="COMPLETE",
+                    source_commit="3e0442bb19b966766598ffeae1fb47f3f6960837",
+                    environment={"subscription_kind": "test", "region": "local",
+                                 "runtime": "Python 3.11", "sku": "test-sku"},
+                    recipe_digest="sha256:" + "0123456789abcdef" * 4,
+                    collector_digest="sha256:" + "fedcba9876543210" * 4)
+    (directory / "manifest.json").write_text(json.dumps(manifest))
+    (directory / "evidence.json").write_text(json.dumps(evidence))
+    return ev.evaluate(directory)
+
+
 class ProvenanceTests(unittest.TestCase):
 
     def test_every_declared_field_is_emitted(self):
@@ -250,6 +270,31 @@ class RawObservationTests(unittest.TestCase):
             observations["fault_probes"][-1]["captured_at"],
             "2026-10-16T00:02:59+00:00",
         )
+
+
+class FreshRunVerdictTests(unittest.TestCase):
+    """What a newly collected run may conclude from what the collector emits."""
+
+    def verdict(self, **overrides):
+        return evaluate_fresh(collect_a.collect(build_run(**overrides)))["hypothesis_status"]
+
+    def test_a_faithful_run_is_supported(self):
+        self.assertEqual(self.verdict(), "SUPPORTED")
+
+    def test_a_healthy_fault_phase_with_console_rows_contradicts(self):
+        self.assertEqual(self.verdict(statuses={"fault": 200}), "CONTRADICTED")
+
+    def test_a_healthy_fault_phase_without_console_rows_is_inconclusive(self):
+        self.assertEqual(self.verdict(statuses={"fault": 200}, console="[]"), "INCONCLUSIVE")
+
+    def test_a_503_without_console_rows_is_inconclusive(self):
+        self.assertEqual(self.verdict(console="[]"), "INCONCLUSIVE")
+
+    def test_a_console_row_after_the_fault_window_is_not_activation_evidence(self):
+        late = ('[{"TimeGenerated":"2026-10-16T00:03:15+00:00",'
+                '"ResultDescription":"ModuleNotFoundError: No module named \'wrong_module\'"}]')
+        self.assertEqual(self.verdict(statuses={"fault": 200}, console=late), "INCONCLUSIVE")
+        self.assertEqual(self.verdict(console=late), "INCONCLUSIVE")
 
 
 if __name__ == "__main__":
