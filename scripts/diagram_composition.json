@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "grammar_version": 1,
+  "base": {
+    "id": "appservice",
+    "nodes": [
+      {"id": "control_plane", "component": "control-plane", "label": "Control Plane: ARM & Kudu SCM<br/>[Mgmt Band]", "class": "bandMuted"},
+      {"id": "client", "component": "client", "label": "Caller: HTTPS client<br/>[public or private network]", "class": "baseNeutral"},
+      {"id": "ingress", "component": "ingress", "label": "Ingress: App Service Front End<br/>[Managed PaaS Entry]", "class": "baseNeutral"},
+      {"id": "app_runtime", "component": "app-runtime", "label": "Compute: App Service Worker<br/>[Managed PaaS Runtime]", "class": "focusActive"},
+      {"id": "identity", "component": "identity", "label": "Identity: Microsoft Entra ID<br/>[Tenant Boundary]", "class": "bandMuted"},
+      {"id": "storage_db", "component": "storage-db", "label": "Dependency: Azure Storage<br/>[Data Store]", "class": "baseNeutral"},
+      {"id": "telemetry", "component": "telemetry", "label": "Telemetry: Azure Monitor<br/>[Off-Path Sink]", "class": "bandMuted"}
+    ],
+    "edges": [
+      {"id": "arm", "from": "control_plane", "to": "ingress", "style": "dotted", "label": "[Configured] ARM policy"},
+      {"id": "scm", "from": "control_plane", "to": "app_runtime", "style": "dotted", "label": "[Configured] SCM deploy"},
+      {"id": "request", "from": "client", "to": "ingress", "style": "solid", "label": "[Configured] HTTPS 443 request"},
+      {"id": "route", "from": "ingress", "to": "app_runtime", "style": "solid", "label": "[Configured] Routed request"},
+      {"id": "token", "from": "app_runtime", "to": "identity", "style": "dotted", "label": "[Configured] Managed identity token"},
+      {"id": "storage", "from": "app_runtime", "to": "storage_db", "style": "solid", "label": "[Configured] HTTPS 443 shared outbound IP"},
+      {"id": "logs", "from": "app_runtime", "to": "telemetry", "style": "dotted", "label": "[Configured] Logs and metrics"}
+    ]
+  },
+  "extensions": {
+    "ingress-pe": {
+      "nodes": [
+        {"id": "dns", "component": "dns", "label": "Private DNS zone: privatelink.azurewebsites.net<br/>[linked to the VNet]", "class": "bandMuted"},
+        {"id": "private_endpoint", "component": "private-endpoint", "label": "Private Endpoint: App Service Inbound NIC<br/>[Inbound Private IP]", "class": "focusActive"}
+      ],
+      "containers": [
+        {"id": "vnet_in", "component": "vnet", "title": "Customer VNet", "tag": "[VNet boundary]", "members": ["subnet_pe"]},
+        {"id": "subnet_pe", "component": "subnet", "title": "Subnet: private endpoints", "tag": "[private endpoint NICs]", "members": ["private_endpoint"]}
+      ],
+      "replace_edges": {"request": [
+        {"id": "dns_in", "from": "client", "to": "dns", "style": "dotted", "label": "[Configured] 1. DNS lookup returns PE private IP"},
+        {"id": "pe_in", "from": "client", "to": "private_endpoint", "style": "solid", "label": "[Configured] 2. HTTPS 443 to PE private IP"},
+        {"id": "private_in", "from": "private_endpoint", "to": "ingress", "style": "solid", "label": "[Configured] 3. Private Link inbound"}
+      ]}
+    },
+    "egress-vnet": {
+      "nodes": [
+        {"id": "dns_out", "component": "dns", "label": "Private DNS zone: privatelink.blob.core.windows.net<br/>[linked to the VNet]", "class": "bandMuted"},
+        {"id": "vnet_integration", "component": "vnet-integration", "label": "VNet Integration: Delegated Outbound Subnet NIC<br/>[Delegated Subnet / Outbound Only]", "class": "focusActive"},
+        {"id": "pe_storage", "component": "private-endpoint", "label": "Private Endpoint: Azure Storage Inbound NIC<br/>[Private Endpoint Subnet IP]", "class": "focusActive"}
+      ],
+      "containers": [
+        {"id": "vnet_out", "component": "vnet", "title": "Customer VNet", "tag": "[VNet boundary]", "members": ["subnet_int", "subnet_pe_out"]},
+        {"id": "subnet_int", "component": "subnet", "title": "Subnet: VNet integration", "tag": "[delegated, NSG/UDR]", "members": ["vnet_integration"]},
+        {"id": "subnet_pe_out", "component": "subnet", "title": "Subnet: private endpoints", "tag": "[private endpoint NICs]", "members": ["pe_storage"]}
+      ],
+      "replace_edges": {"storage": [
+        {"id": "dns_lookup", "from": "app_runtime", "to": "dns_out", "style": "dotted", "label": "[Configured] 1. DNS lookup returns PE private IP"},
+        {"id": "outbound", "from": "app_runtime", "to": "vnet_integration", "style": "solid", "label": "[Configured] 2. Outbound VNet traffic"},
+        {"id": "pe_out", "from": "vnet_integration", "to": "pe_storage", "style": "solid", "label": "[Configured] 3. HTTPS 443 to PE private IP"},
+        {"id": "private_out", "from": "pe_storage", "to": "storage_db", "style": "solid", "label": "[Configured] 4. Private Link to Storage"}
+      ]}
+    }
+  },
+  "overlays": {
+    "egress-failure": {
+      "type": "failure",
+      "nodes": {
+        "dns_out": {"label": "Private DNS zone: privatelink.blob.core.windows.net<br/>[unlinked to VNet]", "class": "stateFault"},
+        "pe_storage": {"label": "Private Endpoint: Azure Storage Inbound NIC<br/>[Unused Private Path]", "class": "focusActive"}
+      },
+      "replace_edges": {
+        "dns_lookup": [{"id": "dns_lookup", "from": "app_runtime", "to": "dns_out", "style": "fault", "label": "[FAULT / Illustrative] 1. Lookup returns public IP"}],
+        "pe_out": [{"id": "pe_out", "from": "vnet_integration", "to": "pe_storage", "style": "dotted", "label": "[Configured] unused"}],
+        "private_out": [
+          {"id": "private_out", "from": "pe_storage", "to": "storage_db", "style": "dotted", "label": "[Configured] unused"},
+          {"id": "rejection", "from": "vnet_integration", "to": "storage_db", "style": "fault", "label": "[FAULT / Illustrative] 3."}
+        ]
+      },
+      "callout": {"id": "fault_note", "anchor": "dns_out", "edge_label": "[FAULT / Illustrative] Callout", "lines": ["[Illustrative scenario - not a measurement]", "Symptom: storage calls fail with HTTP 403", "Evidence to collect: IP address the app resolves for the storage host name", "Next check: Private DNS zone virtual network link"]}
+    }
+  },
+  "diagrams": [
+    {"id": "topology-grammar-v1-appservice-baseline", "page": "docs/reference/diagram-topology-grammar.md", "genre": "topology", "accTitle": "App Service Baseline Topology (Grammar v1)", "accDescr": "Top-down baseline topology showing upper control-plane band, caller to App Service front-end ingress, multitenant worker runtime, Entra ID token flow, public storage egress, and off-path Azure Monitor logs and metrics.", "base": "appservice", "extensions": [], "overlay": null, "sources": ["https://learn.microsoft.com/en-us/azure/well-architected/architect-role/design-diagrams", "https://learn.microsoft.com/en-us/azure/app-service/networking-features", "https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/control-plane-and-data-plane"], "layout": {"link_length": {}, "title_padding": {}}},
+    {"id": "topology-grammar-v1-appservice-ingress-pe", "page": "docs/reference/diagram-topology-grammar.md", "genre": "topology", "accTitle": "App Service Inbound Private Endpoint Extension (Grammar v1)", "accDescr": "Replaces direct public ingress with a Private DNS zone lookup outside the VNet and an inbound Private Endpoint NIC inside a customer VNet subnet while keeping App Service front-end and worker roles outside customer containers.", "base": "appservice", "extensions": ["ingress-pe"], "overlay": null, "sources": ["https://learn.microsoft.com/en-us/azure/app-service/overview-private-endpoint", "https://learn.microsoft.com/en-us/azure/app-service/app-service-ip-restrictions", "https://learn.microsoft.com/en-us/azure/dns/private-dns-privatednszone"], "layout": {"link_length": {"arm": 2, "scm": 3, "dns_in": 2}, "title_padding": {"vnet_in": 12, "subnet_pe": 10}}},
+    {"id": "topology-grammar-v1-appservice-egress-vnet", "page": "docs/reference/diagram-topology-grammar.md", "genre": "topology", "accTitle": "App Service Regional VNet Integration Egress Extension (Grammar v1)", "accDescr": "Extends the baseline topology with outbound regional VNet integration in a delegated subnet, a separate private-endpoint subnet for Azure Storage inside the customer VNet, and a linked Private DNS zone outside the VNet.", "base": "appservice", "extensions": ["egress-vnet"], "overlay": null, "sources": ["https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration", "https://learn.microsoft.com/en-us/azure/app-service/overview-private-endpoint", "https://learn.microsoft.com/en-us/azure/dns/private-dns-privatednszone", "https://learn.microsoft.com/en-us/azure/private-link/private-endpoint-dns"], "layout": {"link_length": {"token": 3, "logs": 3}, "title_padding": {"vnet_out": 12, "subnet_int": 10, "subnet_pe_out": 10}}},
+    {"id": "topology-grammar-v1-appservice-fault-overlay", "page": "docs/reference/diagram-topology-grammar.md", "genre": "topology", "accTitle": "App Service Egress Fault and Evidence Overlay (Grammar v1)", "accDescr": "Anchors an illustrative fault overlay to the regional VNet integration egress topology when an unlinked Private DNS zone causes public IP resolution and outbound HTTP 403 rejection from vnet_integration to Storage.", "base": "appservice", "extensions": ["egress-vnet"], "overlay": "egress-failure", "sources": ["https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration", "https://learn.microsoft.com/en-us/azure/app-service/overview-private-endpoint", "https://learn.microsoft.com/en-us/azure/dns/private-dns-privatednszone", "https://learn.microsoft.com/en-us/azure/private-link/private-endpoint-dns"], "layout": {"link_length": {"token": 3, "logs": 3}, "title_padding": {"vnet_out": 30, "subnet_int": 36, "subnet_pe_out": 26}}}
+  ]
+}

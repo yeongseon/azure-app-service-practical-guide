@@ -37,6 +37,7 @@ flowchart TD
 | [Diagram Inventory](diagram-inventory.md) | Frozen diagram baseline, candidate genres, exclusions, and migration ownership |
 | [ADR: Diagram Composition](adr-diagram-composition.md) | Reuse alternatives, prototype dependency, and limits of the proposed composition approach |
 | [Azure Topology Visual Grammar (v1)](diagram-topology-grammar.md) | Shared visual and semantic contract for Azure topology diagrams, boundaries, arrows, and progressive views |
+| [Diagram Composition Prototype (#283)](diagram-composition-prototype.md) | Opt-in prototype and pre-declared evaluation for regenerating the App Service topology fixtures from one base |
 
 ## Quick Links
 
