@@ -301,7 +301,7 @@ GATES: tuple[Gate, ...] = (
     Gate(
         key="diagram-manifest-coverage-tests",
         name="Diagram manifest coverage tests",
-        enforces="Fixture tests show that the coverage guard rejects uncovered, stale, renamed and unrecognizable occurrences, duplicate manifest keys, bad composition references and incomplete started migrations, and accepts edits to entries whose migration has not started; further tests check that the content-sources workflow runs the guard and these tests as blocking steps.",
+        enforces="Fixture tests show that the coverage guard rejects uncovered, stale, renamed and unrecognizable occurrences, duplicate manifest keys, bad composition references and incomplete started migrations, and accepts edits to entries whose migration has not started; one test checks that the content-sources workflow names the guard and these tests in a run step.",
         argv=("{python}", "scripts/test_check_diagram_manifest_coverage.py"),
         severity=BLOCKING,
         covers=("scripts/test_check_diagram_manifest_coverage.py",),
