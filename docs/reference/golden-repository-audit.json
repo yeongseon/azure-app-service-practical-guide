@@ -809,7 +809,7 @@
     {
       "path": "docs/reference/",
       "decision": "KEEP",
-      "reason": "CLI, KQL, limits and diagnostics lookups coexist with Golden model, audit, diagram inventory, topology visual grammar, composition prototype and migration records; reference presence is not live verification or final-review approval.",
+      "reason": "CLI, KQL, limits and diagnostics lookups coexist with Golden model, audit, diagram inventory, topology visual grammar, composition prototype, outbound evidence inventory and migration records; reference presence is not live verification or final-review approval.",
       "members": [
         "adr-diagram-composition.md",
         "azure-e2e-operations.md",
@@ -826,6 +826,7 @@
         "index.md",
         "kql-queries.md",
         "kudu-queries.md",
+        "outbound-evidence-gap-matrix.md",
         "platform-limits.md",
         "troubleshooting.md"
       ]
