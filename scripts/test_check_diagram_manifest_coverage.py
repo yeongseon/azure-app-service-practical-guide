@@ -104,9 +104,9 @@ class GuardTests(unittest.TestCase):
         self.assertIn(finding, out)
         return out
 
-    def cli(self, script: Path, *args: str) -> subprocess.CompletedProcess[str]:
+    def cli(self, script: Path, *args: str, env: Mapping[str, str] | None = None) -> subprocess.CompletedProcess[str]:
         return subprocess.run([sys.executable, str(script), '--root', str(self.root), *args], cwd=tempfile.gettempdir(),
-                              capture_output=True, text=True, env={**os.environ, 'PYTHONDONTWRITEBYTECODE': '1'})
+                              capture_output=True, text=True, env={**os.environ, 'PYTHONDONTWRITEBYTECODE': '1', **(env or {})})
 
     def test_a_manifest_that_covers_the_tree_passes(self):
         _ = self.commit()
@@ -295,8 +295,8 @@ class GuardTests(unittest.TestCase):
     def test_the_guard_reads_every_enrolled_selection_of_the_committed_spec(self):
         if not (ROOT / guard.COMPOSITION).exists():
             self.skipTest('the opt-in composition prototype is not present')
-        committed: inventory.Record = json.loads((ROOT / guard.COMPOSITION).read_text())
-        manifest: inventory.Record = json.loads((ROOT / inventory.MANIFEST).read_text())
+        committed: inventory.Record = json.loads((ROOT / guard.COMPOSITION).read_text(encoding='utf-8'))
+        manifest: inventory.Record = json.loads((ROOT / inventory.MANIFEST).read_text(encoding='utf-8'))
         self.assertEqual(guard.composition_problems(ROOT, manifest), [])
         self.assertTrue(committed['diagrams'])
 
@@ -364,6 +364,15 @@ class GuardTests(unittest.TestCase):
         self.assertNotIn('Traceback', failed.stderr)
         self.assertIn('docs/x.md#x\\ud800\\ny: composition output is not in the manifest', failed.stdout)
         self.assertEqual(len([line for line in failed.stdout.splitlines() if 'composition output' in line]), 1)
+
+    def test_a_finding_that_quotes_non_ascii_text_prints_under_an_ascii_output_encoding(self):
+        _ = self.commit()
+        entry = {'id': 'caf\u00e9', 'page': 'docs/x.md', 'base': 'appservice', 'extensions': [], 'overlay': None}
+        _ = (self.root / guard.COMPOSITION).write_text(json.dumps({'base': {'id': 'appservice'}, 'extensions': {}, 'overlays': {}, 'diagrams': [entry]}))
+        failed = self.cli(GUARD, env={'PYTHONIOENCODING': 'ascii'})
+        self.assertEqual(failed.returncode, 1, failed.stderr)
+        self.assertNotIn('Traceback', failed.stderr)
+        self.assertIn('docs/x.md#caf\\xe9: composition output is not in the manifest', failed.stdout)
 
     def test_a_message_of_the_scanner_that_quotes_a_key_is_escaped_too(self):
         _ = self.commit()

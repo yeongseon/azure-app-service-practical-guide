@@ -55,8 +55,8 @@ def migration_problems(manifest: inventory.Record) -> list[str]:
 
 
 def one_line(message: str) -> str:
-    """Escape every character that is not printable, so a finding stays on one line whatever text it quotes."""
-    return ''.join(char if char.isprintable() else char.encode('unicode_escape').decode() for char in message)
+    """Escape every character outside printable ASCII, so a finding stays on one line and prints under any output encoding."""
+    return ''.join(char if ' ' <= char <= '~' else char.encode('unicode_escape').decode() for char in message)
 
 
 def unique(pairs: list[tuple[str, object]]) -> inventory.Record:
