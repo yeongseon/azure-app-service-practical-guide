@@ -444,6 +444,35 @@ def combine(outcomes) -> str:
     return "SUPPORTED"
 
 
+def _hypothesis_outcomes(assertions: list, outcomes: dict) -> dict:
+    """Return the outcomes that may decide the hypothesis.
+
+    A healthy response is also what a fault that never reached the running
+    worker looks like. While every discriminating assertion is INCONCLUSIVE,
+    nothing shows the fault was active, so a contradicted symptom decides
+    nothing. The symptom assertion itself stays CONTRADICTED in the result;
+    only its weight in the hypothesis changes.
+
+    >>> roles = [{"id": "s", "role": "symptom"}, {"id": "d", "role": "discriminating"}]
+    >>> _hypothesis_outcomes(roles, {"s": "CONTRADICTED", "d": "INCONCLUSIVE"})
+    {'s': 'INCONCLUSIVE', 'd': 'INCONCLUSIVE'}
+    >>> _hypothesis_outcomes(roles, {"s": "CONTRADICTED", "d": "SUPPORTED"})
+    {'s': 'CONTRADICTED', 'd': 'SUPPORTED'}
+    >>> _hypothesis_outcomes(roles, {"s": "CONTRADICTED", "d": "CONTRADICTED"})
+    {'s': 'CONTRADICTED', 'd': 'CONTRADICTED'}
+    >>> _hypothesis_outcomes(roles[:1], {"s": "CONTRADICTED"})
+    {'s': 'CONTRADICTED'}
+    """
+    discriminating = [item.get("id") for item in assertions if item.get("role") == "discriminating"]
+    if not discriminating or any(outcomes[key] != "INCONCLUSIVE" for key in discriminating):
+        return dict(outcomes)
+    symptoms = {item.get("id") for item in assertions if item.get("role") == "symptom"}
+    return {
+        key: "INCONCLUSIVE" if key in symptoms and value == "CONTRADICTED" else value
+        for key, value in outcomes.items()
+    }
+
+
 def _bind_evidence(document: dict, manifest: dict):
     """Return (observations, identity_state) for one evidence document.
 
@@ -634,7 +663,7 @@ def evaluate(run_dir, *, skip_source_commit_resolution: bool = False,
     if execution_status != "COMPLETE":
         hypothesis_status = "NOT_TESTED"
     else:
-        hypothesis_status = combine(per_assertion.values())
+        hypothesis_status = combine(_hypothesis_outcomes(assertions, per_assertion).values())
         causal_claim = bool(manifest.get("hypothesis"))
         if hypothesis_status == "SUPPORTED" and causal_claim and (not strong or evidence_identity != "BOUND"):
             hypothesis_status = "INCONCLUSIVE"

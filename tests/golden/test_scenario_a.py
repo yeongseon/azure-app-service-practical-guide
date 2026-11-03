@@ -112,6 +112,35 @@ class ActivationPreconditionTests(unittest.TestCase):
         self.assertEqual(
             ev.evaluate(run_with(evidence))["hypothesis_status"], "CONTRADICTED")
 
+    def test_a_healthy_response_without_console_evidence_is_inconclusive(self):
+        evidence = dict(COMPLETE_EVIDENCE, fault_status=200)
+        del evidence["fault_import_error_signature"]
+        self.assertEqual(
+            ev.evaluate(run_with(evidence))["hypothesis_status"], "INCONCLUSIVE")
+
+    def test_a_healthy_response_with_no_activation_evidence_at_all_is_inconclusive(self):
+        evidence = dict(COMPLETE_EVIDENCE, fault_status=200)
+        del evidence["fault_config_readback"]
+        del evidence["fault_import_error_signature"]
+        self.assertEqual(
+            ev.evaluate(run_with(evidence))["hypothesis_status"], "INCONCLUSIVE")
+
+    def test_the_healthy_response_still_contradicts_its_own_assertion(self):
+        evidence = dict(COMPLETE_EVIDENCE, fault_status=200)
+        del evidence["fault_import_error_signature"]
+        outcomes = ev.evaluate(run_with(evidence))["assertion_outcomes"]
+        self.assertEqual(outcomes["symptom-runtime-503"], "CONTRADICTED")
+        self.assertEqual(outcomes["discriminating-import-error"], "INCONCLUSIVE")
+
+    def test_console_evidence_that_arrives_later_turns_the_same_response_into_a_contradiction(self):
+        early = dict(COMPLETE_EVIDENCE, fault_status=200)
+        del early["fault_import_error_signature"]
+        late = dict(early, fault_import_error_signature=COMPLETE_EVIDENCE["fault_import_error_signature"])
+        self.assertEqual(
+            ev.evaluate(run_with(early))["hypothesis_status"], "INCONCLUSIVE")
+        self.assertEqual(
+            ev.evaluate(run_with(late))["hypothesis_status"], "CONTRADICTED")
+
 
 class ContradictionReachableTests(unittest.TestCase):
     def test_healthy_app_under_an_activated_fault_contradicts(self):
@@ -152,6 +181,11 @@ class ContradictionReachableTests(unittest.TestCase):
 
     def test_out_of_order_phases_do_not_support(self):
         evidence = dict(COMPLETE_EVIDENCE, phase_order_valid=False)
+        self.assertEqual(
+            ev.evaluate(run_with(evidence))["hypothesis_status"], "CONTRADICTED")
+
+    def test_a_failed_recovery_contradicts(self):
+        evidence = dict(COMPLETE_EVIDENCE, recovery_status=503)
         self.assertEqual(
             ev.evaluate(run_with(evidence))["hypothesis_status"], "CONTRADICTED")
 
