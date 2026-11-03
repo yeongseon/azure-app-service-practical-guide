@@ -104,6 +104,14 @@ jobs:
       - name: Validate diagram inventory manifest
         run: |
           python scripts/diagram_inventory.py --check
+
+      - name: Run diagram manifest coverage tests
+        run: |
+          python scripts/test_check_diagram_manifest_coverage.py
+
+      - name: Validate diagram manifest coverage
+        run: |
+          python scripts/check_diagram_manifest_coverage.py
       
       - name: Validate changed documentation quality
         run: |

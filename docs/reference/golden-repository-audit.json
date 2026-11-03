@@ -1031,6 +1031,7 @@
       "reason": "Gate validators, allowlists, impact-selection code, the opt-in diagram composition prototype and manual generators support CI and publishing. Explicit historical helper overrides do not authorize execution or removal.",
       "members": [
         "absorbed-predicate-allowlist.txt",
+        "check_diagram_manifest_coverage.py",
         "check_quick_triage_claims.py",
         "detect_absorbed_predicates.py",
         "detect_repetition.py",
@@ -1052,6 +1053,7 @@
         "repetition-allowlist.txt",
         "repetition-markers.txt",
         "scan_lab_pii.py",
+        "test_check_diagram_manifest_coverage.py",
         "test_diagram_inventory.py",
         "test_impact_ci.py",
         "test_impact_classifier.py",

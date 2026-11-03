@@ -25,14 +25,14 @@ Every quality gate in this repository, its most recently recorded result, and th
 
 ## Summary
 
-*Snapshot of `b9e4f93 plus uncommitted working-tree changes`, generated 2026-10-30.*
+*Snapshot of `4b6806f plus uncommitted working-tree changes`, generated 2026-11-03.*
 
-*Only the rows of `Diagram inventory tests` and `Diagram inventory consistency` ran on that date; every other row is carried over unchanged from the previous snapshot (`036376d`, 2026-10-30; its `Repository audit coverage` row ran that day, its other rows come from `1327bae`, 2026-10-19) and was not re-run in this change. The `Validate Golden Status` job re-verifies the CI-verifiable statuses.*
+*Only the rows of `Diagram manifest coverage tests` and `Diagram manifest coverage` ran on that date; every other row is carried over unchanged from the previous snapshot (`6bca0d6`, 2026-10-30; its `Diagram inventory tests` and `Diagram inventory consistency` rows ran that day, its `Repository audit coverage` row ran in `036376d` the same day, and its other rows come from `1327bae`, 2026-10-19) and was not re-run in this change. The `Validate Golden Status` job re-verifies the CI-verifiable statuses.*
 
 | Metric | Count |
 |---|---:|
-| Registered gates | 43 |
-| ✅ Pass | 36 |
+| Registered gates | 45 |
+| ✅ Pass | 38 |
 | ❌ Fail | 0 |
 | ⚠️ Warn | 0 |
 | ➖ Skipped | 7 |
@@ -43,13 +43,13 @@ Every quality gate in this repository, its most recently recorded result, and th
 <!-- diagram-id: golden-status-gate-outcomes-pie -->
 ```mermaid
 pie title Quality Gate Outcomes
-    "Pass" : 36
+    "Pass" : 38
     "Skipped" : 7
 ```
 
 ## Gate Results
 
-These are locally executed results, not GitHub Actions statuses. **Skipped** means the machine that generated this page lacked the toolchain the gate needs. **Warn** means the gate reported findings its CI job would not fail on, either because the job is advisory or because the dashboard runs a wider scope than CI does. 24 of 43 gates are re-run and compared by the `Validate Golden Status` job, so a flip to **Fail** cannot sit here unnoticed.
+These are locally executed results, not GitHub Actions statuses. **Skipped** means the machine that generated this page lacked the toolchain the gate needs. **Warn** means the gate reported findings its CI job would not fail on, either because the job is advisory or because the dashboard runs a wider scope than CI does. 26 of 45 gates are re-run and compared by the `Validate Golden Status` job, so a flip to **Fail** cannot sit here unnoticed.
 
 <!-- golden-status:results:start -->
 | Gate | Severity | Status | Detail | Time |
@@ -60,6 +60,8 @@ These are locally executed results, not GitHub Actions statuses. **Skipped** mea
 | Mermaid syntax | Blocking | ✅ Pass | Diagrams checked: 395 · Errors found: 0 | < 10s |
 | Diagram inventory tests | Blocking | ✅ Pass | Ran 117 tests in 9.024s · OK (skipped=1) | < 10s |
 | Diagram inventory consistency | Blocking | ✅ Pass | diagram inventory: check passed | < 10s |
+| Diagram manifest coverage tests | Blocking | ✅ Pass | Ran 15 tests in 1.105s · OK | < 10s |
+| Diagram manifest coverage | Blocking | ✅ Pass | diagram manifest coverage: check passed (405 occurrences, 0 with a started migration) | < 10s |
 | Content sources | Blocking | ✅ Pass | Files with mermaid: 241 · Validation errors: 0 | < 10s |
 | Content sources schema | Blocking | ✅ Pass | Files with content_sources schema drift: 0 · Parse errors: 0 | < 10s |
 | Diagram ID parity | Blocking | ✅ Pass | mermaid blocks: 395 · diagram-id comments: 395 | < 10s |
@@ -113,6 +115,8 @@ Generated from the `GATES` registry in `scripts/generate_golden_status.py`. CI f
 | Mermaid syntax | Every diagram parses as valid Mermaid. | Blocking | `python3 scripts/validate_mermaid_syntax.py` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
 | Diagram inventory tests | Inventory parsing, classification, ownership, schema parity and deterministic baseline reproduction pass their fixture tests. | Blocking | `python3 scripts/test_diagram_inventory.py` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
 | Diagram inventory consistency | Frozen inventory schema, assignment totals, pinned hashes and generated tables reconcile; does not render diagrams or verify provenance. | Blocking | `python3 scripts/diagram_inventory.py --check` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
+| Diagram manifest coverage tests | Fixture tests show that the coverage guard rejects uncovered, stale, renamed and unrecognizable occurrences, duplicate manifest keys, bad composition references and incomplete started migrations, and accepts edits to entries whose migration has not started; one test checks that the content-sources job runs the guard and these tests as blocking steps. | Blocking | `python3 scripts/test_check_diagram_manifest_coverage.py` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
+| Diagram manifest coverage | The committed manifest and the tree list the same Mermaid occurrences, no fence is one the scanner cannot recognize, and entries whose migration has started keep their diagram ID, declared provenance, body and composition references; does not render diagrams, verify provenance or require any migration. | Blocking | `python3 scripts/check_diagram_manifest_coverage.py` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
 | Content sources | Pages with Mermaid carry content_sources metadata with a valid source type. | Blocking | `python3 scripts/validate_content_sources.py` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
 | Content sources schema | content_sources blocks use the canonical mapping shape, not the legacy list form. | Blocking | `python3 scripts/normalize_content_sources_schema.py --check` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
 | Diagram ID parity | Mermaid fence count equals diagram-id comment count across docs/. | Blocking | `python3 scripts/generate_golden_status.py --gate diagram-id-parity` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
