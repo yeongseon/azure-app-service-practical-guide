@@ -313,7 +313,7 @@ GATES: tuple[Gate, ...] = (
     Gate(
         key="diagram-manifest-coverage",
         name="Diagram manifest coverage",
-        enforces="The committed manifest and the tree list the same Mermaid occurrences, no fence is one the scanner cannot recognize, and entries whose migration has started keep their diagram ID, declared provenance, body and composition references; does not render diagrams, verify provenance or require any migration.",
+        enforces="The committed manifest and the tree list the same Mermaid occurrences, no unrecognized-fence finding of the scanner has a blocking reason (`blockquote`, `list-marker` or `indented`), and entries whose migration has started keep their diagram ID, declared provenance, body and composition references; the informational findings (`html-comment`, `indented-code`) do not fail it, and it does not render diagrams, verify provenance or require any migration.",
         argv=("{python}", "scripts/check_diagram_manifest_coverage.py"),
         severity=BLOCKING,
         covers=("scripts/check_diagram_manifest_coverage.py",),
