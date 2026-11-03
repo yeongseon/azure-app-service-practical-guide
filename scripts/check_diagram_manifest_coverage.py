@@ -173,8 +173,9 @@ def coverage_problems(previous: inventory.Record, current: inventory.Record) -> 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     _ = parser.add_argument('--root', type=Path, default=Path(__file__).resolve().parents[1])
-    root: Path = parser.parse_args(argv).root.resolve()
+    arguments = parser.parse_args(argv)
     try:
+        root: Path = arguments.root.resolve()
         manifest_path = inventory.local(root, inventory.MANIFEST)
         if not manifest_path.exists():
             raise inventory.InventoryError(f'{inventory.MANIFEST} is missing; run {REGENERATE}')

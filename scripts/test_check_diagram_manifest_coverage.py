@@ -7,6 +7,7 @@ import io
 import json
 import os
 from pathlib import Path, PurePosixPath
+import re
 import shutil
 import subprocess
 import sys
@@ -27,6 +28,26 @@ Mutation = Callable[[inventory.Record], object]
 
 def migration(state: str) -> inventory.Record:
     return {'state': state, 'exception': 'Owner deferred conversion' if state == 'exception' else None}
+
+
+WORKFLOW = '.github/workflows/validate-content-sources.yml'
+TESTS_SCRIPT, GUARD_SCRIPT = 'test_check_diagram_manifest_coverage', 'check_diagram_manifest_coverage'
+
+
+def blocking_scripts(workflow: inventory.Record) -> set[str]:
+    """The scripts of the guard that a job runs, as `python scripts/NAME.py`, in a step that is neither conditional nor allowed to fail."""
+    found: set[str] = set()
+    for job in workflow['jobs'].values():
+        if job.get('continue-on-error') or job.get('if'):
+            continue
+        for step in job.get('steps', []):
+            if step.get('continue-on-error') or step.get('if'):
+                continue
+            for line in str(step.get('run', '')).splitlines():
+                for name in (TESTS_SCRIPT, GUARD_SCRIPT):
+                    if re.fullmatch(rf'python3?(?:\.\d+)? (?:\./)?scripts/{name}\.py(?: (?:[^|&;<>]|&&)*)?', line.strip()):
+                        found.add(name)
+    return found
 
 
 class GuardTests(unittest.TestCase):
@@ -274,26 +295,37 @@ class GuardTests(unittest.TestCase):
     def test_the_guard_reads_every_enrolled_selection_of_the_committed_spec(self):
         if not (ROOT / guard.COMPOSITION).exists():
             self.skipTest('the opt-in composition prototype is not present')
-        spec: inventory.Record = json.loads((ROOT / guard.COMPOSITION).read_text())
+        committed: inventory.Record = json.loads((ROOT / guard.COMPOSITION).read_text())
         manifest: inventory.Record = json.loads((ROOT / inventory.MANIFEST).read_text())
         self.assertEqual(guard.composition_problems(ROOT, manifest), [])
-        self.assertTrue(spec['diagrams'])
-        spellings: list[Callable[[str], str]] = [
-            lambda page: page, lambda page: page.replace('/', '/./', 1), lambda page: './' + page,
-            lambda page: page.replace('/', '//', 1), lambda page: page + '/']
-        for index, respell in enumerate(spellings):
-            respelled = {**spec, 'diagrams': [{**entry, 'page': respell(entry['page'])} for entry in spec['diagrams']]}
-            _ = (self.root / guard.COMPOSITION).write_text(json.dumps(respelled))
-            for entry in spec['diagrams']:
+        self.assertTrue(committed['diagrams'])
+
+        def respelled(respell: Callable[[str], str]) -> inventory.Record:
+            return {**committed, 'diagrams': [{**entry, 'page': respell(entry['page'])} for entry in committed['diagrams']]}
+
+        fragment: inventory.Record = {'nodes': [], 'containers': [], 'replace_edges': {}}
+        variants: dict[str, inventory.Record] = {
+            'as committed': committed,
+            'docs/./': respelled(lambda page: page.replace('/', '/./', 1)),
+            './docs/': respelled(lambda page: './' + page),
+            'docs//': respelled(lambda page: page.replace('/', '//', 1)),
+            'a trailing slash': respelled(lambda page: page + '/'),
+            'an extension named ghost': {**committed, 'extensions': {**committed['extensions'], 'ghost': fragment}}}
+        for name, spec in variants.items():
+            _ = (self.root / guard.COMPOSITION).write_text(json.dumps(spec))
+            absent = 'ghost'
+            while absent in spec['extensions']:
+                absent += '-x'
+            for entry in committed['diagrams']:
                 key = f'{PurePosixPath(entry["page"]).as_posix()}#{entry["id"]}'
-                with self.subTest(spelling=index, key=key):
+                with self.subTest(variant=name, key=key):
                     changed = copy.deepcopy(manifest)
                     record = next(d for d in changed['diagrams'] if d['key'] == key)
                     record['migration'] = migration('in-progress')
                     record['target'].update(base=entry['base'], extensions=entry['extensions'], overlays=[entry['overlay']] if entry['overlay'] else [])
                     self.assertEqual(guard.composition_problems(self.root, changed), [])
-                    record['target']['extensions'] = [*entry['extensions'], 'ghost']
-                    self.assertIn(f'{key}: unknown extension ghost', guard.composition_problems(self.root, changed))
+                    record['target']['extensions'] = [*entry['extensions'], absent]
+                    self.assertIn(f'{key}: unknown extension {absent}', guard.composition_problems(self.root, changed))
 
     def test_a_symlink_that_cannot_be_read_in_place_of_the_spec_is_unreadable(self):
         manifest = self.started()
@@ -359,16 +391,53 @@ class GuardTests(unittest.TestCase):
         self.assertNotIn('Traceback', looped.stderr)
         if sys.version_info < (3, 13):
             self.assertEqual(looped.returncode, 1)
-            self.assertTrue(looped.stderr.startswith('diagram manifest coverage: '), looped.stderr)
+            self.assertTrue(looped.stderr.startswith('diagram manifest coverage: Symlink loop'), looped.stderr)
+        else:
+            self.assertEqual((looped.returncode, looped.stderr), (0, ''))
+            self.assertIn('check passed', looped.stdout)
 
-    def test_the_content_sources_job_runs_the_guard_and_its_tests_as_blocking_steps(self):
-        workflow = yaml.safe_load((ROOT / '.github/workflows/validate-content-sources.yml').read_text(encoding='utf-8'))
-        job = workflow['jobs']['validate-content-sources']
-        wanted = {'python scripts/test_check_diagram_manifest_coverage.py', 'python scripts/check_diagram_manifest_coverage.py'}
-        steps = {' '.join(str(step.get('run', '')).split()): step for step in job['steps']}
-        self.assertLessEqual(wanted, steps.keys())
-        self.assertFalse(job.get('continue-on-error'))
-        self.assertFalse([command for command in wanted if steps[command].get('continue-on-error')])
+    def test_a_root_that_is_a_symlink_loop_is_reported_without_a_traceback(self):
+        with tempfile.TemporaryDirectory() as directory:
+            loop = Path(directory) / 'root'
+            loop.symlink_to(loop.name)
+            looped = subprocess.run([sys.executable, str(GUARD), '--root', str(loop)], cwd=directory, capture_output=True, text=True,
+                                    env={**os.environ, 'PYTHONDONTWRITEBYTECODE': '1'})
+        self.assertEqual(looped.returncode, 1)
+        self.assertTrue(looped.stderr.startswith('diagram manifest coverage: '), looped.stderr)
+        self.assertNotIn('Traceback', looped.stderr)
+
+    def test_the_content_sources_workflow_runs_the_guard_and_its_tests_as_blocking_steps(self):
+        workflow: inventory.Record = yaml.safe_load((ROOT / WORKFLOW).read_text(encoding='utf-8'))
+        self.assertEqual(blocking_scripts(workflow), {TESTS_SCRIPT, GUARD_SCRIPT})
+
+    def test_the_workflow_check_accepts_equivalent_invocations_and_rejects_steps_that_can_pass_unnoticed(self):
+        tests, guard_command = f'scripts/{TESTS_SCRIPT}.py', f'scripts/{GUARD_SCRIPT}.py'
+
+        def workflow(*commands: str, job: Mapping[str, object] | None = None, step: Mapping[str, object] | None = None) -> inventory.Record:
+            steps = [{'run': command, **(step or {})} for command in commands]
+            return {'jobs': {'other': {'steps': [{'run': 'echo unrelated'}]}, 'target': {'steps': steps, **(job or {})}}}
+
+        both = {TESTS_SCRIPT, GUARD_SCRIPT}
+        cases: list[tuple[str, inventory.Record, set[str]]] = [
+            ('python', workflow(f'python {tests}', f'python {guard_command}'), both),
+            ('python3', workflow(f'python3 {tests}', f'python3 {guard_command}'), both),
+            ('a versioned interpreter and ./', workflow(f'python3.11 ./{tests}', f'python3.11 ./{guard_command}'), both),
+            ('one step with two lines', workflow(f'python {tests}\npython {guard_command}\n'), both),
+            ('arguments', workflow(f'python {tests}', f'python {guard_command} --root .'), both),
+            ('a chain that stops at a failure', workflow(f'python {tests} && echo done', f'python {guard_command} && echo done'), both),
+            ('no step for the guard', workflow(f'python {tests}'), {TESTS_SCRIPT}),
+            ('no step for the tests', workflow(f'python {guard_command}'), {GUARD_SCRIPT}),
+            ('a step that may fail', workflow(f'python {tests}', f'python {guard_command}', step={'continue-on-error': True}), set()),
+            ('a conditional step', workflow(f'python {tests}', f'python {guard_command}', step={'if': "github.event_name == 'push'"}), set()),
+            ('a job that may fail', workflow(f'python {tests}', f'python {guard_command}', job={'continue-on-error': True}), set()),
+            ('a conditional job', workflow(f'python {tests}', f'python {guard_command}', job={'if': 'false'}), set()),
+            ('a swallowed failure', workflow(f'python {tests} || true', f'python {guard_command} || true'), set()),
+            ('a command run in the background', workflow(f'python {tests} & wait', f'python {guard_command} & wait'), set()),
+            ('a command followed by another', workflow(f'python {tests}; true', f'python {guard_command}; true'), set()),
+            ('a command that is only echoed', workflow(f'echo python {tests}', f'echo python {guard_command}'), set())]
+        for label, candidate, expected in cases:
+            with self.subTest(case=label):
+                self.assertEqual(blocking_scripts(candidate), expected)
 
     def test_unusable_inputs_are_reported_without_a_traceback(self):
         missing = self.cli(GUARD)
@@ -382,8 +451,11 @@ class GuardTests(unittest.TestCase):
         _ = (self.root / inventory.MANIFEST).write_text('[' * 10_000 + ']' * 10_000)
         nested = self.cli(GUARD)
         self.assertEqual(nested.returncode, 1)
-        self.assertTrue(nested.stderr.startswith('diagram manifest coverage: '), nested.stderr)
         self.assertNotIn('Traceback', nested.stderr)
+        if sys.version_info < (3, 14):
+            self.assertTrue(nested.stderr.startswith('diagram manifest coverage: '), nested.stderr)
+        else:
+            self.assertIn('expected object', nested.stdout)
 
 
 if __name__ == '__main__':
