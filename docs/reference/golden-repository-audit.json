@@ -809,7 +809,7 @@
     {
       "path": "docs/reference/",
       "decision": "KEEP",
-      "reason": "CLI, KQL, limits and diagnostics lookups coexist with Golden model, audit, diagram inventory, topology visual grammar, composition prototype, outbound evidence inventory and migration records; reference presence is not live verification or final-review approval.",
+      "reason": "CLI, KQL, limits and diagnostics lookups coexist with Golden model, audit, diagram inventory, topology visual grammar, composition prototype, outbound evidence inventory, GitHub enforcement record and migration records; reference presence is not live verification or final-review approval.",
       "members": [
         "adr-diagram-composition.md",
         "azure-e2e-operations.md",
@@ -819,6 +819,7 @@
         "diagram-manifest.json",
         "diagram-manifest.schema.json",
         "diagram-topology-grammar.md",
+        "github-merge-enforcement-verification.md",
         "golden-evidence-model.md",
         "golden-migration-spec.md",
         "golden-repository-audit.json",

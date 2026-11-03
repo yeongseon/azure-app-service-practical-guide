@@ -109,6 +109,7 @@ not_in_nav: |
   /reference/diagram-topology-grammar.md
   /reference/diagram-composition-prototype.md
   /reference/outbound-evidence-gap-matrix.md
+  /reference/github-merge-enforcement-verification.md
 
 nav:
   - Home: index.md
