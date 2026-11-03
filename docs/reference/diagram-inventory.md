@@ -209,7 +209,36 @@ python scripts/test_diagram_inventory.py
 python scripts/diagram_inventory.py --check
 ```
 
-`--check` validates schema, keys, owning batches, reconciliation, pinned hashes and generated blocks. It does not compare current source to the committed snapshot, render diagrams, or verify provenance. Deterministic fixture reproduction remains blocking; current-tree baseline reproduction is opt-in with `DIAGRAM_INVENTORY_REPRODUCE=1` when the tree is unchanged.
+`--check` validates schema, keys, owning batches, reconciliation, pinned hashes and generated blocks. It does not compare current source to the committed snapshot, render diagrams, or verify provenance. Deterministic fixture reproduction remains blocking; current-tree baseline reproduction is opt-in with `DIAGRAM_INVENTORY_REPRODUCE=1` when the tree is unchanged. The comparison of the tree with the snapshot that `--check` does not make is made by the guard in the next section.
+
+### Guarding Manifest Coverage (Blocking CI)
+
+```bash
+python scripts/test_check_diagram_manifest_coverage.py
+python scripts/check_diagram_manifest_coverage.py
+```
+
+`scripts/check_diagram_manifest_coverage.py` is the repository-local guard for [#394](https://github.com/yeongseon/azure-app-service-practical-guide/issues/394). It imports `scripts/diagram_inventory.py` without changing it, so no repository-specific logic enters the shared scanner and schema, whose updates the [ADR](adr-diagram-composition.md) requires to be coordinated byte-identically with the sibling guides; it renders nothing. It needs the same Python 3.11 and PyYAML as the scanner. It first runs the scanner's consistency checks and stops with their errors if the manifest is inconsistent. It then scans the Markdown files that Git tracks, as they are in the working tree (stage a new page before running the guard), and compares the result with the committed manifest:
+
+| Finding | Reported when | Applies to |
+|---|---|---|
+| `Mermaid occurrence is not in the manifest` | A fence exists in the tree and has no manifest record (uncovered). | Every entry |
+| `Mermaid fence cannot be recognized, so the manifest cannot cover it` | The scan of the tree reports a fence in `unrecognized_mermaid_fences` with a blocking reason (`blockquote`, `list-marker` or `indented`). Fix the page: regenerating the manifest would only make the scanner's `--check` fail on the same fence. | The fence |
+| `manifest record has no Mermaid occurrence in the tree` | A record has no fence in the tree (stale), for example after its page was deleted. | Every entry |
+| `now <key> in the tree` | A record's body appears under another key, after a page or `diagram-id` rename. | Every entry |
+| `source differs from the manifest`, `provenance differs from the manifest` | The body hash or the declared provenance of the entry no longer matches the manifest. | `in-progress` and `completed` entries |
+| `requires a stable diagram-id comment`, `requires declared source provenance` | The entry has no stable `diagram-id` comment, or its page declares no source for that ID. | `in-progress` and `completed` entries |
+| `is not the composition base`, `unknown extension`, `unknown overlay` | The `target` of the entry names a base, extension or overlay that `scripts/diagram_composition.json` does not define. | `in-progress` and `completed` entries with a `target` |
+| `is not enrolled in`, `composition target requires scripts/diagram_composition.json` | The `target` of the entry names a composition, but the spec does not enroll that diagram or the spec file does not exist. | `in-progress` and `completed` entries with a `target` |
+| `differs from the enrolled composition` | The `target` of the entry is not the selection (base, extensions in the same order, and overlay) that the spec enrolls for that diagram. An empty `target` differs from the selection of an enrolled diagram. | `in-progress` and `completed` entries with a `target`, and those whose diagram the spec enrolls |
+| `composition output is not in the manifest` | A diagram enrolled in `scripts/diagram_composition.json` has no manifest record. | Every enrolled diagram |
+| `unreadable composition spec` | The spec exists but is not valid JSON of the expected shape. | The spec file |
+
+Edits to the body or provenance of a `not-started` or `exception` entry, line moves and changed classifications are not reported; `--verify-tree` still lists them as advisory drift. The guard therefore requires no diagram to be migrated. At the baseline every entry is `not-started`, so only the tree-coverage findings (including the unrecognized-fence finding), the enrolled-diagram finding and the unreadable-spec finding can occur until an owner starts a migration.
+
+After a pull request adds or removes a Mermaid fence, moves one to another page, or renames its page or its `diagram-id`, regenerate and commit the manifest with `python scripts/diagram_inventory.py --write` (see Regenerating the Manifest). The manifest is the authority for which occurrences are in scope. Two pull requests that each change fences can therefore conflict in it, or merge without a conflict into a manifest that matches neither tree (for example when both raise a total to the same value); the checks can then fail on `main` after the second merge until the manifest is regenerated and committed. Resolve it by regenerating the manifest, not by merging it by hand.
+
+The guard does not render a diagram, verify a declared source, or establish that a migrated diagram renders correctly. Render inspection and the target of zero unconverted in-scope diagrams stay with [#289](https://github.com/yeongseon/azure-app-service-practical-guide/issues/289). The composition checks read `scripts/diagram_composition.json` as plain JSON and never import the prototype, so removing the opt-in [composition prototype](diagram-composition-prototype.md) does not change the guard. A composed fence that has drifted from its spec is not checked here: `tests/ci/test_diagram_composition.py` compares every committed fence with the body its spec composes, and the Operating contract tests job runs it on every pull request.
 
 ### Regenerating the Manifest
 
@@ -232,7 +261,7 @@ Batch owners edit `target`, `context.reader_intent`, and `migration` by key; the
 | `completed` | The owning batch records migration as complete. | `null` |
 | `exception` | Migration has an explicitly recorded exception. | Nonblank explanation string |
 
-These are owner-maintained progress states, not proof of rendering, source verification, or review approval.
+These are owner-maintained progress states, not proof of rendering, source verification, or review approval. The [coverage guard](#guarding-manifest-coverage-blocking-ci) checks an `in-progress` or `completed` entry against the tree and the composition spec; it checks a `not-started` or `exception` entry only for the coverage of its occurrence.
 
 ### Checking Tree Drift (Advisory)
 
@@ -242,7 +271,7 @@ python scripts/diagram_inventory.py --verify-tree
 
 This compares extracted diagram records with the baseline; it does not report extraction completeness. Consult `unrecognized_mermaid_fences` through `--check` for blocking extraction findings. A drift-free result alone does not establish a complete inventory.
 
-The JSON categories are `added` and `removed` keys; `moved` key changes with identical bodies; `changed` body hashes; `reclassified` genre, syntax type, or assignment changes; `provenance` changes to the complete provenance record; and `relocated` changes to the same key's line, end line, or heading path. `assets` lists changed exclusion-group path sets as `{group, added, removed}` records, with `group: null` for the unclassified-asset set; `visuals` lists keys added, removed, or changed in non-Mermaid visual records. Paths are compared as sets, not list order. Drift remains advisory (exit zero); adding `--strict` makes any non-empty category fail. This does not refresh Azure capture or validation dates.
+The JSON categories are `added` and `removed` keys; `moved` key changes with identical bodies; `changed` body hashes; `reclassified` genre, syntax type, or assignment changes; `provenance` changes to the complete provenance record; and `relocated` changes to the same key's line, end line, or heading path. `assets` lists changed exclusion-group path sets as `{group, added, removed}` records, with `group: null` for the unclassified-asset set; `visuals` lists keys added, removed, or changed in non-Mermaid visual records. Paths are compared as sets, not list order. Drift remains advisory (exit zero); adding `--strict` makes any non-empty category fail. The [coverage guard](#guarding-manifest-coverage-blocking-ci) makes `added`, `removed` and `moved` blocking, and `changed` and `provenance` blocking for started migrations only; `reclassified`, `relocated`, `assets` and `visuals` stay advisory. This does not refresh Azure capture or validation dates.
 
 ### Displaying Summary Metrics
 

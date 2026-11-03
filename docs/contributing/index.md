@@ -186,6 +186,8 @@ az webapp create -g $RG -n $APP_NAME  # ❌ Don't do this
 
 All architectural diagrams use Mermaid. Every documentation page should include at least one diagram.
 
+A pull request that adds or removes a Mermaid fence, moves one to another page, or renames its page or its `diagram-id` comment, must also regenerate the diagram manifest with `python scripts/diagram_inventory.py --write` and commit the result. The blocking check `python scripts/check_diagram_manifest_coverage.py` fails until the manifest covers the tree; see [Diagram Inventory](../reference/diagram-inventory.md#guarding-manifest-coverage-blocking-ci).
+
 ### Nested Lists
 
 All nested list items MUST use **4-space indent** (Python-Markdown standard).
