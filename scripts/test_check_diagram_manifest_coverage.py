@@ -1,0 +1,428 @@
+#!/usr/bin/env python3
+"""Fixture tests for the diagram manifest coverage guard; run with python3 scripts/test_check_diagram_manifest_coverage.py."""
+
+import contextlib
+import copy
+import io
+import json
+import os
+from pathlib import Path, PurePosixPath
+import shutil
+import subprocess
+import sys
+import tempfile
+import unittest
+from collections.abc import Callable, Mapping
+
+import yaml
+
+import check_diagram_manifest_coverage as guard
+import diagram_inventory as inventory
+
+ROOT = Path(__file__).resolve().parents[1]
+GUARD = ROOT / 'scripts/check_diagram_manifest_coverage.py'
+FENCE = '<!-- diagram-id: {id} -->\n```mermaid\nflowchart LR\n{body}\n```\n'
+Mutation = Callable[[inventory.Record], object]
+
+
+def migration(state: str) -> inventory.Record:
+    return {'state': state, 'exception': 'Owner deferred conversion' if state == 'exception' else None}
+
+
+WORKFLOW = '.github/workflows/validate-content-sources.yml'
+TESTS_SCRIPT, GUARD_SCRIPT = 'test_check_diagram_manifest_coverage', 'check_diagram_manifest_coverage'
+
+
+class GuardTests(unittest.TestCase):
+    def __init__(self, methodName: str = 'runTest') -> None:
+        super().__init__(methodName)
+        self.root: Path = Path(tempfile.gettempdir())
+        self.rules: inventory.Record = {}
+
+    def setUp(self) -> None:
+        temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(temporary.cleanup)
+        self.root = Path(temporary.name)
+        (self.root / 'scripts').mkdir()
+        (self.root / 'docs/reference').mkdir(parents=True)
+        for relative in (inventory.SCRIPT, inventory.SCHEMA):
+            _ = shutil.copyfile(ROOT / relative, self.root / relative)
+        self.rules = {'repository': 'fixture', 'batches': [{'issue': 1, 'title': 'Fixture', 'phase': 'P0', 'scope': 'Fixture diagrams', 'owns_diagrams': True}], 'ownership_rules': [{'id': 'fixture', 'paths': ['*.md', 'docs/**'], 'priority': 1, 'batch_issue': 1, 'rationale': 'Fixture scope'}], 'overrides': {}, 'occurrence_exclusions': [], 'asset_exclusions': [], 'visuals': []}
+        _ = (self.root / inventory.RULES).write_text(inventory.encoded(self.rules))
+        self.page()
+
+    def page(self, name: str = 'x', body: str = 'A-->B', declared: bool = False) -> None:
+        head = f'---\ncontent_sources:\n  diagrams: [{{id: {name}}}]\n---\n' if declared else ''
+        _ = (self.root / f'docs/{name}.md').write_text(head + FENCE.format(id=name, body=body))
+
+    def commit(self, mutate: Mutation | None = None) -> inventory.Record:
+        manifest = inventory.build(self.root, self.rules, '0' * 40)
+        if mutate is not None:
+            _ = mutate(manifest)
+        _ = (self.root / inventory.MANIFEST).write_text(inventory.encoded(manifest))
+        return manifest
+
+    def started(self, state: str = 'completed', target: Mapping[str, object] | None = None) -> inventory.Record:
+        self.page(declared=True)
+        manifest = inventory.build(self.root, self.rules, '0' * 40)
+        manifest['diagrams'][0]['migration'] = migration(state)
+        manifest['diagrams'][0]['target'].update(target or {})
+        return manifest
+
+    def spec(self, enrolled: str = 'docs/x.md#x') -> None:
+        page, identifier = enrolled.split('#')
+        spec = {'base': {'id': 'appservice'}, 'extensions': {'ingress-pe': {}, 'egress-vnet': {}}, 'overlays': {'egress-failure': {}},
+                'diagrams': [{'id': identifier, 'page': page, 'base': 'appservice', 'extensions': ['ingress-pe'], 'overlay': None}]}
+        _ = (self.root / guard.COMPOSITION).write_text(json.dumps(spec))
+
+    def run_guard(self) -> tuple[int, str, str]:
+        out, err = io.StringIO(), io.StringIO()
+        with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+            code = guard.main(['--root', str(self.root)])
+        return code, out.getvalue(), err.getvalue()
+
+    def assert_blocked(self, finding: str) -> str:
+        code, out, _ = self.run_guard()
+        self.assertEqual(code, 1, out)
+        self.assertIn(finding, out)
+        return out
+
+    def cli(self, script: Path, *args: str, env: Mapping[str, str] | None = None) -> subprocess.CompletedProcess[str]:
+        return subprocess.run([sys.executable, str(script), '--root', str(self.root), *args], cwd=tempfile.gettempdir(),
+                              capture_output=True, text=True, env={**os.environ, 'PYTHONDONTWRITEBYTECODE': '1', **(env or {})})
+
+    def test_a_manifest_that_covers_the_tree_passes(self):
+        _ = self.commit()
+        code, out, err = self.run_guard()
+        self.assertEqual((code, err), (0, ''))
+        self.assertIn('check passed (1 occurrences, 0 with a started migration)', out)
+
+    def test_a_missing_manifest_key_fails_until_the_manifest_is_regenerated(self):
+        _ = self.commit()
+        self.page('new')
+        failed = self.cli(GUARD)
+        self.assertEqual(failed.returncode, 1, failed.stderr)
+        self.assertIn('docs/new.md#new: Mermaid occurrence is not in the manifest', failed.stdout)
+        self.assertIn(guard.REGENERATE, failed.stdout)
+        self.assertEqual(self.cli(self.root / inventory.SCRIPT, '--write').returncode, 0)
+        self.assertEqual(self.cli(GUARD).returncode, 0)
+
+    def test_a_duplicate_manifest_key_fails_before_the_tree_is_compared(self):
+        _ = self.commit(lambda m: m['diagrams'].append(copy.deepcopy(m['diagrams'][0])))
+        self.assertIn('not evaluated', self.assert_blocked('diagrams: duplicate key'))
+
+    def test_a_removed_or_renamed_occurrence_fails(self):
+        _ = self.commit()
+        page = self.root / 'docs/x.md'
+        _ = page.write_text(page.read_text().replace('diagram-id: x', 'diagram-id: y'))
+        _ = self.assert_blocked('docs/x.md#x: now docs/x.md#y in the tree')
+        page.unlink()
+        _ = self.assert_blocked('docs/x.md#x: manifest record has no Mermaid occurrence in the tree')
+
+    def test_a_fence_the_scanner_cannot_recognize_is_not_covered(self):
+        _ = self.commit()
+        quoted = self.root / 'docs/quoted.md'
+        _ = quoted.write_text('> ```mermaid\n> flowchart LR\n> A-->B\n> ```\n')
+        out = self.assert_blocked('docs/quoted.md:1: blockquote Mermaid fence cannot be recognized, so the manifest cannot cover it')
+        self.assertNotIn('is not in the manifest', out)
+        _ = quoted.write_text('text\n\n    ```mermaid\n    flowchart LR\n    A-->B\n    ```\n')
+        self.assertEqual(self.run_guard()[0], 0)
+
+    def test_edits_to_entries_that_have_not_started_stay_advisory(self):
+        for state in ('not-started', 'exception'):
+            with self.subTest(state=state):
+                self.page()
+                _ = self.commit(lambda m: m['diagrams'][0].update(migration=migration(state)))
+                self.page(body='A[Changed label]-->B', declared=True)
+                self.assertEqual(self.run_guard()[0], 0)
+                page = self.root / 'docs/x.md'
+                _ = page.write_text('\n\n' + page.read_text())
+                self.assertEqual(self.run_guard()[0], 0)
+
+    def test_a_started_entry_must_match_the_tree(self):
+        for state in ('in-progress', 'completed'):
+            with self.subTest(state=state):
+                self.page(declared=True)
+                _ = self.commit(lambda m: m['diagrams'][0].update(migration=migration(state)))
+                self.assertEqual(self.run_guard()[0], 0)
+                self.page(body='A[Changed label]-->B', declared=True)
+                _ = self.assert_blocked(f'docs/x.md#x: {state} entry: source differs from the manifest')
+                self.page()
+                _ = self.assert_blocked(f'docs/x.md#x: {state} entry: provenance differs from the manifest')
+
+    def test_a_started_entry_needs_a_stable_id_and_declared_provenance(self):
+        for state in ('in-progress', 'completed'):
+            manifest = self.started(state)
+            self.assertEqual(guard.migration_problems(manifest), [])
+            defects: list[tuple[str, Mutation, str]] = [
+                ('no id', lambda m: m['diagrams'][0].update(diagram_id=None), 'requires a stable diagram-id comment'),
+                ('provisional id', lambda m: m['diagrams'][0].update(id_provisional=True), 'requires a stable diagram-id comment'),
+                ('missing provenance', lambda m: m['diagrams'][0]['provenance'].update(status='missing'), 'requires declared source provenance'),
+                ('malformed provenance', lambda m: m['diagrams'][0]['provenance'].update(status='malformed'), 'requires declared source provenance')]
+            for name, mutate, message in defects:
+                with self.subTest(state=state, defect=name):
+                    changed = copy.deepcopy(manifest)
+                    _ = mutate(changed)
+                    self.assertEqual(guard.migration_problems(changed), [f'docs/x.md#x: migration {state} {message}'])
+        self.page()
+        for state in ('not-started', 'exception'):
+            with self.subTest(state=state):
+                _ = self.commit(lambda m: m['diagrams'][0].update(migration=migration(state)))
+                self.assertEqual(self.run_guard()[0], 0)
+        _ = self.commit(lambda m: m['diagrams'][0].update(migration=migration('completed')))
+        _ = self.assert_blocked('docs/x.md#x: migration completed requires declared source provenance')
+
+    def test_composition_targets_resolve_against_the_spec(self):
+        self.spec()
+        enrolled = {'base': 'appservice', 'extensions': ['ingress-pe']}
+        self.assertEqual(guard.composition_problems(self.root, self.started(target=enrolled)), [])
+        defects: list[tuple[str, dict[str, object], str]] = [
+            ('unknown base', {'base': 'other'}, "target.base 'other' is not the composition base 'appservice'"),
+            ('unknown extension', {'extensions': ['ghost']}, 'unknown extension ghost'),
+            ('unknown overlay', {'overlays': ['ghost']}, 'unknown overlay ghost'),
+            ('another enrolled selection', {'extensions': ['egress-vnet']}, 'target differs from the enrolled composition'),
+            ('no selection for an enrolled output', {'base': None, 'extensions': []}, 'target differs from the enrolled composition')]
+        for name, change, message in defects:
+            with self.subTest(defect=name):
+                errors = guard.composition_problems(self.root, self.started(target={**enrolled, **change}))
+                self.assertIn(f'docs/x.md#x: {message}', errors)
+
+    def test_a_bad_composition_reference_fails_the_check(self):
+        self.spec()
+        self.page(declared=True)
+
+        def mutate(manifest: inventory.Record) -> None:
+            manifest['diagrams'][0]['migration'] = migration('in-progress')
+            manifest['diagrams'][0]['target'].update(base='appservice', extensions=['ghost'])
+
+        _ = self.commit(mutate)
+        _ = self.assert_blocked('docs/x.md#x: unknown extension ghost')
+
+    def test_a_target_needs_an_enrolled_composition_and_every_enrolled_output_needs_a_record(self):
+        self.page('y')
+        self.spec('docs/y.md#y')
+        self.assertEqual(guard.composition_problems(self.root, self.started()), [])
+        self.assertEqual(guard.composition_problems(self.root, self.started('not-started', {'base': 'ghost', 'extensions': ['ghost']})), [])
+        self.assertEqual(guard.composition_problems(self.root, self.started(target={'base': 'appservice', 'extensions': ['ingress-pe']})),
+                         ['docs/x.md#x: composition target is not enrolled in ' + guard.COMPOSITION])
+        self.spec('docs/y.md#ghost')
+        self.assertEqual(guard.composition_problems(self.root, self.started('not-started')),
+                         ['docs/y.md#ghost: composition output is not in the manifest'])
+
+    def test_an_enrolled_page_is_matched_by_the_path_the_scanner_records(self):
+        enrolled = {'base': 'appservice', 'extensions': ['ingress-pe']}
+        for spelling in ('docs/x.md', 'docs/./x.md', './docs/x.md', 'docs//x.md'):
+            with self.subTest(spelling=spelling):
+                self.spec(f'{spelling}#x')
+                self.assertEqual(guard.composition_problems(self.root, self.started(target=enrolled)), [])
+        self.spec('docs/./y.md#x')
+        self.assertEqual(guard.composition_problems(self.root, self.started('not-started')),
+                         ['docs/y.md#x: composition output is not in the manifest'])
+
+    def test_an_enrolled_page_outside_the_repository_is_unreadable(self):
+        for page in ('../x.md', 'docs/../../x.md', '/etc/passwd'):
+            with self.subTest(page=page):
+                self.spec(f'{page}#x')
+                self.assertEqual(guard.composition_problems(self.root, self.started()),
+                                 [f'{guard.COMPOSITION}: unreadable composition spec: diagrams[0].page leaves the repository'])
+
+    def test_a_composition_spec_of_the_wrong_shape_is_unreadable(self):
+        self.spec()
+        valid: inventory.Record = json.loads((self.root / guard.COMPOSITION).read_text())
+        entry: inventory.Record = valid['diagrams'][0]
+        broken: list[tuple[str, object]] = [
+            ('the spec is a list', [valid]),
+            ('base is text', {**valid, 'base': 'appservice'}),
+            ('base has no id', {**valid, 'base': {}}),
+            ('base id is not text', {**valid, 'base': {'id': 7}}),
+            ('extensions is text', {**valid, 'extensions': 'ingress-pe'}),
+            ('extensions is a list', {**valid, 'extensions': ['ingress-pe']}),
+            ('overlays is text', {**valid, 'overlays': 'egress-failure'}),
+            ('overlays is a list', {**valid, 'overlays': ['egress-failure']}),
+            ('there is no diagrams key', {key: value for key, value in valid.items() if key != 'diagrams'}),
+            ('diagrams is an object', {**valid, 'diagrams': {}}),
+            ('a diagram is text', {**valid, 'diagrams': ['docs/x.md#x']}),
+            ('a diagram has no page', {**valid, 'diagrams': [{key: value for key, value in entry.items() if key != 'page'}]}),
+            ('a page is not text', {**valid, 'diagrams': [{**entry, 'page': 5}]}),
+            ('an id is not text', {**valid, 'diagrams': [{**entry, 'id': None}]}),
+            ('a diagram base is not text', {**valid, 'diagrams': [{**entry, 'base': ['appservice']}]}),
+            ('diagram extensions is text', {**valid, 'diagrams': [{**entry, 'extensions': 'ingress-pe'}]}),
+            ('diagram extensions holds a number', {**valid, 'diagrams': [{**entry, 'extensions': ['ingress-pe', 1]}]}),
+            ('an overlay is a list', {**valid, 'diagrams': [{**entry, 'overlay': ['egress-failure']}]})]
+        for name, spec in broken:
+            with self.subTest(spec=name):
+                _ = (self.root / guard.COMPOSITION).write_text(json.dumps(spec))
+                errors = guard.composition_problems(self.root, self.started())
+                self.assertEqual(len(errors), 1, errors)
+                self.assertTrue(errors[0].startswith(guard.COMPOSITION + ': unreadable composition spec: '), errors)
+
+    def test_a_malformed_spec_fails_the_check_without_a_traceback(self):
+        _ = self.commit()
+        _ = (self.root / guard.COMPOSITION).write_text(json.dumps({'base': 'appservice', 'extensions': 'x', 'overlays': 'y', 'diagrams': 'z'}))
+        failed = self.cli(GUARD)
+        self.assertEqual(failed.returncode, 1)
+        self.assertIn(guard.COMPOSITION + ': unreadable composition spec: ', failed.stdout)
+        self.assertNotIn('Traceback', failed.stderr)
+
+    def test_the_composition_spec_is_optional(self):
+        self.assertEqual(guard.composition_problems(self.root, self.started()), [])
+        self.assertEqual(guard.composition_problems(self.root, self.started(target={'base': 'appservice'})),
+                         ['docs/x.md#x: composition target requires ' + guard.COMPOSITION])
+        for broken in ('{', '[]', '{"base": {}}', '[' * 10_000 + ']' * 10_000):
+            with self.subTest(spec=broken):
+                _ = (self.root / guard.COMPOSITION).write_text(broken)
+                errors = guard.composition_problems(self.root, self.started())
+                self.assertEqual(len(errors), 1)
+                self.assertTrue(errors[0].startswith(guard.COMPOSITION + ': unreadable composition spec'), errors)
+
+    def test_the_guard_reads_every_enrolled_selection_of_the_committed_spec(self):
+        if not (ROOT / guard.COMPOSITION).exists():
+            self.skipTest('the opt-in composition prototype is not present')
+        committed: inventory.Record = json.loads((ROOT / guard.COMPOSITION).read_text(encoding='utf-8'))
+        manifest: inventory.Record = json.loads((ROOT / inventory.MANIFEST).read_text(encoding='utf-8'))
+        self.assertEqual(guard.composition_problems(ROOT, manifest), [])
+        self.assertTrue(committed['diagrams'])
+
+        def respelled(respell: Callable[[str], str]) -> inventory.Record:
+            return {**committed, 'diagrams': [{**entry, 'page': respell(entry['page'])} for entry in committed['diagrams']]}
+
+        fragment: inventory.Record = {'nodes': [], 'containers': [], 'replace_edges': {}}
+        variants: dict[str, inventory.Record] = {
+            'as committed': committed,
+            'docs/./': respelled(lambda page: page.replace('/', '/./', 1)),
+            './docs/': respelled(lambda page: './' + page),
+            'docs//': respelled(lambda page: page.replace('/', '//', 1)),
+            'a trailing slash': respelled(lambda page: page + '/'),
+            'an extension named ghost': {**committed, 'extensions': {**committed['extensions'], 'ghost': fragment}}}
+        for name, spec in variants.items():
+            _ = (self.root / guard.COMPOSITION).write_text(json.dumps(spec))
+            absent = 'ghost'
+            while absent in spec['extensions']:
+                absent += '-x'
+            for entry in committed['diagrams']:
+                key = f'{PurePosixPath(entry["page"]).as_posix()}#{entry["id"]}'
+                with self.subTest(variant=name, key=key):
+                    changed = copy.deepcopy(manifest)
+                    record = next(d for d in changed['diagrams'] if d['key'] == key)
+                    record['migration'] = migration('in-progress')
+                    record['target'].update(base=entry['base'], extensions=entry['extensions'], overlays=[entry['overlay']] if entry['overlay'] else [])
+                    self.assertEqual(guard.composition_problems(self.root, changed), [])
+                    record['target']['extensions'] = [*entry['extensions'], absent]
+                    self.assertIn(f'{key}: unknown extension {absent}', guard.composition_problems(self.root, changed))
+
+    def test_a_symlink_that_cannot_be_read_in_place_of_the_spec_is_unreadable(self):
+        manifest = self.started()
+        spec = self.root / guard.COMPOSITION
+        with tempfile.TemporaryDirectory() as outside:
+            elsewhere = Path(outside) / 'spec.json'
+            _ = elsewhere.write_text('{}')
+            for target in (spec.name, 'missing.json', str(elsewhere)):
+                with self.subTest(target=target):
+                    spec.unlink(missing_ok=True)
+                    spec.symlink_to(target)
+                    errors = guard.composition_problems(self.root, manifest)
+                    self.assertEqual(len(errors), 1, errors)
+                    self.assertTrue(errors[0].startswith(guard.COMPOSITION + ': unreadable composition spec: '), errors)
+
+    def test_an_enrolled_page_that_is_a_symlink_loop_is_a_finding_not_an_exception(self):
+        manifest = self.started()
+        (self.root / 'docs/loop.md').symlink_to('loop.md')
+        self.spec('docs/loop.md#x')
+        self.assertEqual(len(guard.composition_problems(self.root, manifest)), 1)
+
+    def test_a_spec_that_repeats_an_object_key_is_unreadable(self):
+        for text, key in (('{"base": {"id": "appservice"}, "extensions": {}, "extensions": {}, "overlays": {}, "diagrams": []}', 'extensions'),
+                          ('{"base": {"id": "appservice", "id": "other"}, "extensions": {}, "overlays": {}, "diagrams": []}', 'id')):
+            with self.subTest(key=key):
+                _ = (self.root / guard.COMPOSITION).write_text(text)
+                self.assertEqual(guard.composition_problems(self.root, self.started()),
+                                 [f"{guard.COMPOSITION}: unreadable composition spec: duplicate key '{key}'"])
+
+    def test_a_finding_stays_on_one_line_and_unprintable_text_is_escaped(self):
+        _ = self.commit()
+        entry = {'id': 'x\ud800\ny', 'page': 'docs/x.md', 'base': 'appservice', 'extensions': [], 'overlay': None}
+        _ = (self.root / guard.COMPOSITION).write_text(json.dumps({'base': {'id': 'appservice'}, 'extensions': {}, 'overlays': {}, 'diagrams': [entry]}))
+        failed = self.cli(GUARD)
+        self.assertEqual(failed.returncode, 1, failed.stderr)
+        self.assertNotIn('Traceback', failed.stderr)
+        self.assertIn('docs/x.md#x\\ud800\\ny: composition output is not in the manifest', failed.stdout)
+        self.assertEqual(len([line for line in failed.stdout.splitlines() if 'composition output' in line]), 1)
+
+    def test_a_finding_that_quotes_non_ascii_text_prints_under_an_ascii_output_encoding(self):
+        _ = self.commit()
+        entry = {'id': 'caf\u00e9', 'page': 'docs/x.md', 'base': 'appservice', 'extensions': [], 'overlay': None}
+        _ = (self.root / guard.COMPOSITION).write_text(json.dumps({'base': {'id': 'appservice'}, 'extensions': {}, 'overlays': {}, 'diagrams': [entry]}))
+        failed = self.cli(GUARD, env={'PYTHONIOENCODING': 'ascii'})
+        self.assertEqual(failed.returncode, 1, failed.stderr)
+        self.assertNotIn('Traceback', failed.stderr)
+        self.assertIn('docs/x.md#caf\\xe9: composition output is not in the manifest', failed.stdout)
+
+    def test_a_message_of_the_scanner_that_quotes_a_key_is_escaped_too(self):
+        _ = self.commit()
+        manifest = self.root / inventory.MANIFEST
+        _ = manifest.write_text(manifest.read_text().replace('"key":"docs/x.md#x"', '"key":"docs/x.md#x\\ud800"', 1))
+        failed = self.cli(GUARD)
+        self.assertEqual(failed.returncode, 1, failed.stderr)
+        self.assertNotIn('Traceback', failed.stderr)
+        self.assertIn('docs/x.md#x\\ud800: key does not match page/id/ordinal', failed.stdout)
+
+    def test_an_error_that_quotes_a_file_name_stays_on_one_line(self):
+        _ = self.commit()
+        with tempfile.TemporaryDirectory() as outside:
+            elsewhere = Path(outside) / 'target.md'
+            _ = elsewhere.write_text('# target\n')
+            (self.root / 'docs/e\nscape.md').symlink_to(elsewhere)
+            failed = self.cli(GUARD)
+        self.assertEqual(failed.returncode, 1, failed.stdout)
+        self.assertEqual(failed.stderr.strip(), 'diagram manifest coverage: path outside repository: docs/e\\nscape.md')
+
+    def test_a_symlink_loop_in_the_tree_is_reported_without_a_traceback(self):
+        _ = self.commit()
+        (self.root / 'docs/loop.md').symlink_to('loop.md')
+        looped = self.cli(GUARD)
+        self.assertNotIn('Traceback', looped.stderr)
+        if sys.version_info < (3, 13):
+            self.assertEqual(looped.returncode, 1)
+            self.assertTrue(looped.stderr.startswith('diagram manifest coverage: Symlink loop'), looped.stderr)
+        else:
+            self.assertEqual((looped.returncode, looped.stderr), (0, ''))
+            self.assertIn('check passed', looped.stdout)
+
+    def test_a_root_that_is_a_symlink_loop_is_reported_without_a_traceback(self):
+        with tempfile.TemporaryDirectory() as directory:
+            loop = Path(directory) / 'root'
+            loop.symlink_to(loop.name)
+            looped = subprocess.run([sys.executable, str(GUARD), '--root', str(loop)], cwd=directory, capture_output=True, text=True,
+                                    env={**os.environ, 'PYTHONDONTWRITEBYTECODE': '1'})
+        self.assertEqual(looped.returncode, 1)
+        self.assertTrue(looped.stderr.startswith('diagram manifest coverage: '), looped.stderr)
+        self.assertNotIn('Traceback', looped.stderr)
+
+    def test_the_content_sources_workflow_names_the_guard_and_its_tests_in_a_run_step(self):
+        workflow: inventory.Record = yaml.safe_load((ROOT / WORKFLOW).read_text(encoding='utf-8'))
+        commands = '\n'.join(str(step.get('run', '')) for job in workflow['jobs'].values() for step in job.get('steps', []))
+        for name in (TESTS_SCRIPT, GUARD_SCRIPT):
+            with self.subTest(script=name):
+                self.assertRegex(commands, rf'(?<!\w){name}\.py')
+
+    def test_unusable_inputs_are_reported_without_a_traceback(self):
+        missing = self.cli(GUARD)
+        self.assertEqual(missing.returncode, 1)
+        self.assertIn(f'{inventory.MANIFEST} is missing; run {guard.REGENERATE}', missing.stderr)
+        _ = (self.root / inventory.MANIFEST).write_text('{')
+        unreadable = self.cli(GUARD)
+        self.assertEqual(unreadable.returncode, 1)
+        self.assertTrue(unreadable.stderr.startswith('diagram manifest coverage: '), unreadable.stderr)
+        self.assertNotIn('Traceback', unreadable.stderr)
+        _ = (self.root / inventory.MANIFEST).write_text('[' * 10_000 + ']' * 10_000)
+        nested = self.cli(GUARD)
+        self.assertEqual(nested.returncode, 1)
+        self.assertNotIn('Traceback', nested.stderr)
+        if sys.version_info < (3, 14):
+            self.assertTrue(nested.stderr.startswith('diagram manifest coverage: '), nested.stderr)
+        else:
+            self.assertIn('expected object', nested.stdout)
+
+
+if __name__ == '__main__':
+    _ = unittest.main(verbosity=2)
