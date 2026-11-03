@@ -4,11 +4,12 @@ slug: outbound-evidence-gap-matrix
 doc_type: reference
 section: reference
 summary: Dated inventory of the DNS, Private Endpoint and SNAT evidence behind the outbound playbooks, separating retained artifacts, reported runs without retained output, illustrative samples and missing signals.
-topics:
-  - troubleshooting
-  - evidence
-products:
-  - azure-app-service
+topics: [troubleshooting, evidence]
+products: [azure-app-service]
+content_sources:
+  references:
+    - type: self-generated
+      justification: Inventory derived from this repository at main 9d9d71f (the outbound playbooks, lab guides, lab folders, retained evidence, capture manifest and the unmerged pull request 249 branch); it makes no Azure-behavior claim of its own.
 ---
 
 # Outbound Network Evidence Gap Matrix (#387)
@@ -32,7 +33,7 @@ This page inventories the evidence behind the outbound-network playbooks (DNS re
 | Reported run | A page states results of a live run, often under `[Observed]` or `[Measured]`, and no file in the repository holds the raw output. | A reader can follow the text but cannot check it. Under the repository's evidence rules (`AGENTS.md`), `Observed` records what a named artifact directly shows, so these statements are not observations in that sense until output is retained. |
 | Illustrative | A sample, example or "representative" block that no retained artifact contains. | A shape, not an observation. |
 | Documented only | A query, command or Portal path with no retained output. | Documented behavior if it is sourced; nothing observed. |
-| Portal capture | A retained image of a blade at capture time. | The displayed configuration of that environment, not runtime behavior. |
+| Portal capture | A retained image of what the Portal displayed at capture time: a configuration blade or a query result. | What was visibly displayed for that environment and query window. It does not establish a cause and is not a complete export. |
 
 Absence from this inventory is not refutation. "Not retained" means that no file in the repository holds the output; it does not mean that the behavior did not occur on Azure.
 
@@ -40,9 +41,9 @@ Absence from this inventory is not refutation. "Not retained" means that no file
 
 | Playbook | Retained artifacts | Reported runs without retained output | Main missing signal |
 |---|---|---|---|
-| [DNS resolution on a VNet-integrated app](../troubleshooting/playbooks/outbound-network/dns-resolution-vnet-integrated-app-service.md) | 15 April 2026 lab files that show a non-VNet baseline | 1 (2026-10-02): a public answer with `403`, then a private answer with `409` | A custom or forwarding resolver run (H1, H3); the raw dependency rows |
+| [DNS resolution on a VNet-integrated app](../troubleshooting/playbooks/outbound-network/dns-resolution-vnet-integrated-app-service.md) | 15 April 2026 lab files that the guide calls a non-VNet baseline (the integration state is unsettled, section 4.1); 2 July 2026 Portal query-result captures | 1 (2026-10-02): a public answer with `403`, then a private answer with `409` | A custom or forwarding resolver run (H1) or an app-level override run (H3); the raw dependency rows |
 | [Private Endpoint, custom DNS and route confusion](../troubleshooting/playbooks/outbound-network/private-endpoint-custom-dns-route-confusion.md) | None cited | 1 (2026-10-02): a `/32` route fault, added and removed | Effective routes and NSG rules during the fault; a custom resolver run (H2) |
-| [SNAT or application issue](../troubleshooting/playbooks/outbound-network/snat-or-application-issue.md) | 25 April 2026 lab files, target a public third-party site | 1 (2026-10-02): no failed outbound call | SNAT port usage; a connection rate that could exhaust the ports |
+| [SNAT or application issue](../troubleshooting/playbooks/outbound-network/snat-or-application-issue.md) | 25 April 2026 lab files, target a public third-party site; 2 July 2026 Portal query-result captures | 2: the 2026-10-02 rerun (no failed outbound call) and an undated, incomplete first Scenario B attempt (120 successful outbound calls) | SNAT port usage; a connection rate that could exhaust the ports |
 | [Storage connectivity, firewall and authorization](../troubleshooting/playbooks/outbound-network/storage-connectivity-firewall-authorization.md) | 6 Portal captures | 0 | Any run; no lab exists |
 | [Private Endpoint access restrictions](../troubleshooting/playbooks/private-endpoint-access-restrictions.md) (inbound) | None | 0 | Any run; no lab exists |
 | [SCM access, DNS and HTTP failures](../troubleshooting/playbooks/scm-access-dns-and-http-failures.md) (inbound) | None | 0 | Any run; no lab exists |
@@ -51,18 +52,18 @@ Absence from this inventory is not refutation. "Not retained" means that no file
 
 ### 4.1 DNS resolution on a VNet-integrated app
 
-- **Retained artifact:** none is cited by the page. The lab's April 2026 set (section 5) shows the non-VNet baseline; the lab guide itself concludes that the VNet-integrated failure is not in it (`dns-vnet-resolution.md`, lines 865-874).
+- **Retained artifact:** none is cited by the page. The lab's April 2026 set (section 5) is described by the lab guide as a non-VNet baseline, and the guide concludes that the VNet-integrated failure is not in it (`dns-vnet-resolution.md`, lines 865-874). The retained configuration (`labs/dns-vnet-resolution/artifacts-sanitized/baseline/app-config.json`, line 120) records a populated `vnetName` with `vnetRouteAllEnabled` `false`, so the artifacts do not settle whether the app was VNet-integrated at capture.
 - **Reported run:** "Live reproduction evidence (2026-10-02)", lines 494-516. With the zone unlinked, the standard storage name resolved to a public address and the call returned `403` (10 of 10); after the link was created it resolved to the endpoint address and returned `409` (5 of 5); `AppServiceHTTPLogs` showed no `5xx`. No file in the repository holds the rows. The lab app records the status code and not the Storage error body, so the specific error code was not captured (line 506).
-- **Illustrative:** "Sample Log Patterns" under the heading "dns-vnet lab", lines 144-175, shows rows such as `/diag/stats 499 24400`. No retained artifact file contains these values, and the lab's retained HTTP export (27 rows, ending 2026-04-04T05:35Z) has only `200` and `202` responses. The page does not say which capture the rows came from. The same excerpts appear under the same heading in the Private Endpoint playbook (lines 117-139).
+- **Illustrative:** "Sample Log Patterns" under the heading "dns-vnet lab", lines 144-175, shows rows such as `/diag/stats 499 24400`. No retained artifact file contains these values, and the lab's retained HTTP export (27 rows, ending 2026-04-04T05:35Z) has only `200` and `202` responses. The page does not say which capture the rows came from. The same excerpts appear under the same heading in the Private Endpoint playbook (lines 117-147).
 - **Documented only:** 8 KQL blocks and 7 CLI blocks. Where they show output, the values are placeholders or unattributed.
-- **Portal capture:** 1, a public app without VNet integration (`Not configured`). It cannot show a VNet-integrated path.
+- **Portal captures:** 1 configuration blade of a public app without VNet integration (`Not configured`), which cannot show a VNet-integrated path; and 2 query results, `troubleshooting--log-analytics--11-dns-vnet-http-status-distribution-kql` (2026-07-18) and `...11-dns-vnet-platform-startup-kql` (2026-07-20), recorded in the capture manifest and not read as text here.
 - **Missing signals:** a run with a custom or forwarding resolver (H1) or an app-level override (H3), because the 2026-10-02 run used the default resolver path (`dns-vnet-resolution.md`, line 902); a lookup-error variant (lines 885-906); the raw `AppDependencies` rows; the Storage error body.
 
 ### 4.2 Private Endpoint, custom DNS and route confusion
 
 - **Retained artifact:** none. The route-fault lab (`labs/private-endpoint-route-fault`) has no artifact folder, and its guide says "Raw run output stayed outside the repository" (`private-endpoint-route-fault.md`, lines 176-178).
 - **Reported run:** "Live reproduction (2026-10-02)", lines 381-394: with DNS, the zone link and the endpoint approval constant, an exact `/32` route added from the integration subnet turned `409` responses into `ResultCode` `0` at about 8 s, and removing it restored them (8 calls per phase).
-- **Illustrative:** the same "dns-vnet lab" log excerpts as in section 4.1 (lines 117-139). They are labelled as coming from the DNS lab and dated 2026-04-04, before the route-fault lab existed. The CLI example output (for example `pe-stlabdnsvnet-blob`) occurs in no retained artifact.
+- **Illustrative:** the same "dns-vnet lab" log excerpts as in section 4.1 (lines 117-147). They are labelled as coming from the DNS lab and dated 2026-04-04, before the route-fault lab existed. The CLI example output (for example `pe-stlabdnsvnet-blob`) occurs in no retained artifact.
 - **Documented only:** 8 KQL blocks and 5 CLI blocks.
 - **Portal capture:** 1, the same public app without VNet integration; its route-table and NSG rows read `N/A`, and the page says these placeholders do not identify the governing route table or NSG (line 547).
 - **Missing signals:** the integration subnet's effective routes and effective NSG rules during the fault, which the page lists as required evidence (line 108); a custom resolver run (H2); a run that varies an NSG or firewall deny, endpoint approval or a stale cache (H4), since the endpoint stayed `Approved` throughout. The route-fault guide marks as not proven which of `vnetRouteAllEnabled` and `WEBSITE_VNET_ROUTE_ALL` governed routing (line 151).
@@ -72,8 +73,9 @@ Absence from this inventory is not refutation. "Not retained" means that no file
 - **Retained artifact:** the April 2026 set under `labs/snat-exhaustion/artifacts-sanitized` (section 5). Its target was the public `httpbin.org`, so its timeouts cannot be separated from that service's own throttling (`snat-exhaustion.md`, line 791), and the lab's own classification says that it supports none of the declared assertions.
 - **Reported run:** "Live reproduction evidence (2026-10-02)", lines 429-446: 0 failed outbound calls in either phase; 90 inbound `499` responses without pooling and 0 with it; the SNAT detectors returned only a "non production tier" message on the Basic plan. No file in the repository holds the output.
 - **Illustrative:** "Sample Log Patterns", lines 137-176, with rows such as `/outbound 499 29840`; no retained artifact file contains these values (the retained export holds other `499` rows). The "Normal vs Abnormal Comparison" row "SNAT detector expectation: ports near/exceed threshold during incidents" (line 426) is an expectation. No retained or reported run observed it.
+- **Reported, incomplete attempt:** `labs/snat-exhaustion/golden/evidence-classification.json` (`known_gaps`, line 61) reports a first live Scenario B run that was started and stopped before completing. Probes were served and the app's own counters reported 120 successful outbound calls, with no failures and no transport failures. It was stopped because fifty probes per phase meant about six thousand requests against a public, rate-limited host and did not finish inside a window that could be supervised. The attempt is undated, no raw output is retained, and `executed_runs` is empty (line 65).
 - **Documented only:** 7 KQL blocks and 1 CLI block.
-- **Portal capture:** 1, a public app without VNet integration.
+- **Portal captures:** 1 configuration blade of a public app without VNet integration; and 2 query results, `troubleshooting--log-analytics--10-snat-outbound-status-distribution-kql` (2026-07-18) and `...10-snat-outbound-tail-latency-kql` (2026-07-20), recorded in the capture manifest and not read as text here.
 - **Missing signals:** SNAT port usage. The page's first required item is the "SNAT port allocation timeline"; no retained or reported output provides port data. The 2026-10-02 rerun used a Basic plan, whose detector returned none, and the April plan SKU was not recorded. The page also says that a `499` cluster supports H1 only when outbound calls fail at the connection level and the detector shows port pressure; no retained or reported run has both. The 2026-10-02 rerun reports about 4.5 new connections per second to one destination and states that this stayed below the rate that would exhaust the preallocated ports (`snat-exhaustion.md`, 4.14).
 
 ### 4.4 Storage connectivity, firewall and authorization
@@ -89,11 +91,11 @@ Absence from this inventory is not refutation. "Not retained" means that no file
 
 ## 5. Retained evidence by lab
 
-| Lab | Golden contract | Retained Golden runs on `main` | Pre-Golden artifacts | 2026-10-02 run |
+| Lab | Golden contract | Retained Golden runs on `main` | Pre-Golden artifacts | Reported live runs |
 |---|---|---|---|---|
-| `dns-vnet-resolution` | None (`migration-needed`); no `golden/` folder | 0 | 15 files captured 2026-04-04, `trusted-historical`; 3 are empty (`kql-*-20260404T060048Z.json`). The non-empty KQL exports hold 27 HTTP, 94 console and 158 platform rows. | Prose only (reported run) |
-| `private-endpoint-route-fault` | None (`migration-needed`); no `golden/` folder | 0 | None. `labs/golden-classification.json` describes the lab as containing "retained Azure evidence", but its folder holds only the app, the template and the trigger and verify scripts. | Prose only; raw output stayed outside the repository |
-| `snat-exhaustion` | Scenario B: 7 declared assertions, `execution_status` `NOT_RUN` ("never executed against Azure"), plus an evidence classification | 0 | 25 files captured 2026-04-04, `trusted-historical`; 7 are empty. The HTTP export has 195 rows (129 `499`, 47 `200`, 17 `503`, 2 `202`). The `/diag/net` snapshots (baseline, before, recovered) are single points in time; the one taken after the trigger is a `504` and the one after the target is empty. | Prose only (reported run) |
+| `dns-vnet-resolution` | None (`migration-needed`); no `golden/` folder | 0 | 15 files captured 2026-04-04, `trusted-historical`; 3 are empty (`kql-*-20260404T060048Z.json`). The non-empty KQL exports hold 27 HTTP, 94 console and 158 platform rows. The guide calls the set a non-VNet baseline, but `baseline/app-config.json` records a populated `vnetName`. | 2026-10-02 (prose only) |
+| `private-endpoint-route-fault` | None (`migration-needed`); no `golden/` folder | 0 | None. `labs/golden-classification.json` describes the lab as containing "retained Azure evidence", but its folder holds only the app, the template and the trigger and verify scripts. | 2026-10-02 (prose only; raw output stayed outside the repository) |
+| `snat-exhaustion` | Scenario B: 7 declared assertions, `execution_status` `NOT_RUN` ("never executed against Azure"), plus an evidence classification whose `known_gaps` report one started and stopped live attempt and an empty `executed_runs` | 0 | 25 files captured 2026-04-04, `trusted-historical`; 7 are empty. The HTTP export has 195 rows (129 `499`, 47 `200`, 17 `503`, 2 `202`). The `/diag/net` snapshots (baseline, before, recovered) are single points in time; the one taken after the trigger is a `504` and the one after the target is empty. | 2026-10-02 (prose only); one undated, incomplete first attempt (section 4.3) |
 
 The three runs retained on `main` under `evidence/runs` concern `deployment-succeeded-startup-failed` (2026-09-27 and 2026-10-16) and `slot-swap-config-drift` (2026-09-27). None concerns DNS, a Private Endpoint route or SNAT, and `evidence/run-declarations.json` registers only the 2026-10-16 run. The April captures record neither a source revision nor a plan SKU nor a CLI version (`labs/golden-classification.json`).
 
