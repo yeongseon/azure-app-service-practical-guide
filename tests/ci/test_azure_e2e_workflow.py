@@ -7,6 +7,7 @@ import tempfile
 import textwrap
 import unittest
 from pathlib import Path
+from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[2]
 WORKFLOW_PATH = ROOT / ".github/workflows/e2e-azure.yml"
@@ -116,11 +117,16 @@ class AzureE2EWorkflowTests(unittest.TestCase):
         self.assertTrue(validation.startswith("        id: target\n"))
         self.assertIn('echo "sha=$sha" >> "$GITHUB_OUTPUT"', validation)
 
+    @staticmethod
+    def _git_environment() -> dict[str, str]:
+        environment = {key: value for key, value in os.environ.items() if not key.startswith("GIT_")}
+        environment.update({"GIT_CONFIG_GLOBAL": os.devnull, "GIT_CONFIG_SYSTEM": os.devnull, "GIT_TERMINAL_PROMPT": "0"})
+        return environment
+
     def _git(self, cwd: Path, *args: str) -> str:
-        environment = {**os.environ, "GIT_CONFIG_GLOBAL": os.devnull, "GIT_CONFIG_SYSTEM": os.devnull}
         return subprocess.run(
             ["git", "-c", "user.name=test", "-c", "user.email=test@example.com", *args],
-            cwd=cwd, env=environment, check=True, capture_output=True, text=True,
+            cwd=cwd, env=self._git_environment(), check=True, capture_output=True, text=True,
         ).stdout.strip()
 
     def _checkout_like_validate_target(self, root: Path) -> tuple[Path, dict[str, str]]:
@@ -164,7 +170,7 @@ class AzureE2EWorkflowTests(unittest.TestCase):
         output = clone.parent / "github-output"
         output.write_text("", encoding="utf-8")
         environment = {
-            **os.environ,
+            **self._git_environment(),
             "PATH": f"{bin_dir}:{os.environ['PATH']}",
             "TARGET_COMMIT": target,
             "GITHUB_OUTPUT": str(output),
@@ -186,6 +192,21 @@ class AzureE2EWorkflowTests(unittest.TestCase):
             self.assertEqual(older_output, f"sha={shas['older']}\n")
             self.assertEqual(tip.returncode, 0, msg=tip.stderr)
             self.assertEqual(tip_output, f"sha={shas['tip']}\n")
+
+    def test_target_validation_ignores_user_git_configuration(self) -> None:
+        # Given: a user-level Git configuration that forbids the file transport the fixture clones over.
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            configuration = root / "gitconfig"
+            configuration.write_text('[protocol "file"]\n\tallow = never\n', encoding="utf-8")
+            (root / "repository").mkdir()
+            with mock.patch.dict(os.environ, {"GIT_CONFIG_GLOBAL": str(configuration)}):
+                clone, shas = self._checkout_like_validate_target(root / "repository")
+                # When: the validation step runs under that configuration.
+                result, output = self._run_target_validation(clone, shas["older"])
+            # Then: the step still accepts the commit, because the tests do not read the user's configuration.
+            self.assertEqual(result.returncode, 0, msg=result.stderr)
+            self.assertEqual(output, f"sha={shas['older']}\n")
 
     def test_target_validation_rejects_a_commit_that_is_not_on_main_history(self) -> None:
         # Given: a commit on a side branch that was never merged into main.
