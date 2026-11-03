@@ -197,6 +197,26 @@ class AzureE2EWorkflowTests(unittest.TestCase):
             self.assertNotEqual(result.returncode, 0)
             self.assertEqual(output, "")
 
+    def test_missing_oidc_configuration_blocks_before_azure_login(self) -> None:
+        job = self._job("scenario-a")
+        self.assertLess(job.index("id: oidc-config"), job.index("uses: azure/login"))
+        step = self._step("scenario-a", "Require Azure OIDC configuration")
+        command = textwrap.dedent(step.split("        run: |\n", maxsplit=1)[1])
+        names = ("AZURE_CLIENT_ID", "AZURE_TENANT_ID", "AZURE_SUBSCRIPTION_ID")
+        for missing in (None, *names):
+            with self.subTest(missing=missing):
+                # Given: the three values that the secrets resolve to, one of them empty as an unset secret is.
+                environment = {key: value for key, value in os.environ.items() if key not in names}
+                environment.update({name: "" if name == missing else "value" for name in names})
+                # When: the step runs.
+                result = subprocess.run(
+                    ["bash", "-c", command], env=environment, capture_output=True, text=True, check=False,
+                )
+                # Then: it blocks with exit code 3 unless every value is present.
+                self.assertEqual(result.returncode, 0 if missing is None else 3, msg=result.stderr)
+                if missing is not None:
+                    self.assertIn("BLOCKED", result.stderr)
+
     def test_every_failure_stage_writes_an_allowlisted_record(self) -> None:
         for stage in (
             "oidc-config",
