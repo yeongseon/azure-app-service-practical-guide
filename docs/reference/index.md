@@ -39,6 +39,7 @@ flowchart TD
 | [Azure Topology Visual Grammar (v1)](diagram-topology-grammar.md) | Shared visual and semantic contract for Azure topology diagrams, boundaries, arrows, and progressive views |
 | [Diagram Composition Prototype (#283)](diagram-composition-prototype.md) | Opt-in prototype and pre-declared evaluation for regenerating the App Service topology fixtures from one base |
 | [Outbound Network Evidence Gap Matrix (#387)](outbound-evidence-gap-matrix.md) | Dated inventory of retained, reported, illustrative and missing DNS, Private Endpoint and SNAT evidence |
+| [GitHub Merge Enforcement Verification (#396)](github-merge-enforcement-verification.md) | Dated record of the branch settings, review-integration behavior and merge behavior observed on `main` |
 
 ## Quick Links
 
