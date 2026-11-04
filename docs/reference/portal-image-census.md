@@ -29,6 +29,14 @@ It is offline and read-only. It changes no image byte, deletes nothing, edits no
 | Origin hint | For each manifest WebP, the PNGs that the commit which added the file removed under `docs/assets` are its candidate sources. The WebP and each candidate are converted to grayscale (Pillow `convert('L')`) and resized with Lanczos to 480 px wide and `round(480 x height / width)` px tall, with the height and width of the WebP. For each candidate the report stores the mean absolute difference (MAD, as a share of 255), the share of pixels that differ by more than 16 levels, and the aspect-ratio gap `abs(PNG ratio / WebP ratio - 1)`, each rounded to five decimals. Candidates are ranked by their MAD rounded to six decimals; a tie goes to the candidate in the same directory with the same normalized stem (the part of the stem after its last `--`), then to the first path in alphabetical order. The best candidate is recorded. A WebP counts as consistent with a re-encode when the stored MAD is at most 0.01 and the stored aspect-ratio gap is at most 0.01. The threshold was declared, not calibrated. |
 | Claim labels | **Observed**: what the committed report shows for the commit. **Documented**: what a repository file states. **Inferred**: an explanation drawn from several observations. **Not Proven**: a limit of the evidence. The report is a derived artifact of tracked files, and it is not a Golden evidence run. |
 
+### Delta since the census — 2026-11-04
+
+**Observed** by reading `origin/main` at `3e6d950dbec05c5e692e3869ce8d19302d183fea` on 2026-11-04 (UTC): [PR #406](https://github.com/yeongseon/azure-app-service-practical-guide/pull/406), squash `3e6d950`, unified the alt text of the scale-out pair (batch 1). Those two byte-identical images no longer differ in alt text; the other six Portal pairs still do. The pair table in section 5 and the JSON retain the descriptions at the census base, not these later alts.
+
+For all 106 manifest alts, Python `len()` of each YAML-decoded `alt` gives a median of 695 characters, a maximum of 1,876, and 70 longer than 500 at that main SHA. The same calculation at the census base `d1dde4a` gives 709 / 1,876 / 72 respectively. Length identifies candidates for review, not a hard limit or proof of a contract violation.
+
+This additive note is not a recount: the census base SHA, computation time, snapshot counts and JSON are unchanged. It neither supplies the pending maintainer review of the census and proposed batches nor establishes image accuracy, PII safety or new capture/provenance dates. The snapshot sections below still describe `d1dde4a`.
+
 ## 2. The census at a glance
 
 All values are **Observed** unless a row says otherwise.
@@ -59,7 +67,7 @@ Each file has one disposition, which names what to do with it now, and any numbe
 |---|---|---|
 | `retain-registered` | 93 | A manifest WebP that is referenced and is 1440 x 900 px, the size the validator derives from the capture profile; it has no dimension exception. Nothing else about the profile is established: none of these has a `produced` record, and conditions such as locale, theme, device scale factor and readiness signals cannot be read from the dimensions |
 | `retain-registered-dimension-exception` | 13 | A manifest WebP that is referenced and is listed in `dimension-exceptions.yaml`; only a recapture under the profile removes the exception |
-| `retain-legacy-pinned` | 6 | A legacy PNG pinned by hash and size, referenced directly from Markdown, all with a dimension exception (captured at device pixel ratio 2) |
+| `retain-legacy-pinned` | 6 | A legacy PNG pinned by hash and size, referenced directly from Markdown, all with a dimension exception; the exception records describe these as captures at device pixel ratio 2, which the census did not measure |
 | `retain-site-asset` | 2 | The site logo and favicon, referenced from the site configuration; they are not Portal captures |
 
 No file is an orphan, so no asset needs an orphan-retention decision. No image is unexpectedly unregistered: the two site SVGs are outside both registries on purpose, and the validator exempts them by name. A disposition is not a review, because no image content was judged here (section 8). The flags are `no-provenance-record` (98 WebPs), `duplicate-content` (16 files), `core-name-collision` (14), `short-id` (4) and `identical-stem` (2).
@@ -115,6 +123,8 @@ The census finds 195 `shot()` calls and 16 direct references. The CI helper find
 ## 7. Proposed batches
 
 These are proposals. No issue was filed and nothing was changed. The batches partition the work: each of the 106 files for which work is proposed belongs to exactly one batch, each Markdown page that a batch edits belongs to exactly one batch, and a batch carries every task that applies to its files. The report records both: each file has one `proposed_batch` (null for the 8 files with no proposed work), and each entry of `proposed_batches` lists the pages it edits. The registry files `manifest.yaml`, `provenance.yaml`, `dimension-exceptions.yaml` and `legacy-assets.yaml` each hold one entry per asset, so batches that touch the same registry file edit different entries.
+
+The pair batches are ordered by page count, then alphabetically by the smallest identifier (`method.batches` in the JSON). Within each pair, the generator sorted the repository-relative asset paths alphabetically; for these pairs that also puts `proposed_batches[].identifiers` in alphabetical order, not in order of the number of pages calling each member.
 
 | Batch | Members | Prerequisite |
 |---|---|---|
