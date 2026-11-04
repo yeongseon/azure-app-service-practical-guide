@@ -29,11 +29,113 @@ An offline unit test or evidence replay is labeled **Offline replay**. It never 
 
 No credential, environment, federated identity, role assignment, or paid schedule is created by this repository change. The first real workflow run, recovery evidence, and cleanup result require independent inspection before any verified metadata changes.
 
+### First Protected Run: BLOCKED / NOT_RUN
+
+Read-only GitHub observations on **2026-11-04, 13:26:04–13:26:08 UTC**:
+preparation is **BLOCKED**, protected Scenario A execution is **NOT_RUN**, and
+the hypothesis is **NOT_TESTED**. This is a prerequisite snapshot, not an Azure
+capture or permission to dispatch.
+
+| Read-only command | Exact output | Meaning and unblocker |
+|---|---|---|
+| `gh api repos/yeongseon/azure-app-service-practical-guide/environments --jq '{total_count, names: [.environments[].name]}'` | `{"names":["copilot","github-pages"],"total_count":2}` | Observed: no `azure-e2e` environment in the list. A GitHub administrator must create it and verify the protections above before adding secrets. |
+| `gh api repos/yeongseon/azure-app-service-practical-guide/actions/secrets --jq .total_count` | `0` | Observed: no repository Actions secrets. This does not inventory organization or environment secrets. A GitHub administrator must configure the three required environment secrets after protection is established. |
+| `gh run list --repo yeongseon/azure-app-service-practical-guide --workflow e2e-azure.yml --limit 5 --json databaseId,status,conclusion,headSha` | `[]` | Observed: no returned workflow runs. An explicitly authorized operator, not this checklist's author, must perform the first run after all prerequisites pass. |
+| `gh api 'repos/yeongseon/azure-app-service-practical-guide/actions/workflows/e2e-azure.yml/runs?per_page=5' --jq .total_count` | `0` | Observed: the workflow run total is zero at this read. |
+
+These commands only read metadata; `--jq` selects output fields, `--repo`
+selects the repository, `--workflow` selects the workflow, `--limit` bounds the
+listing, and `--json` names the returned fields. The remote settings, secret
+inventory and run history can change after this snapshot; repeat the reads
+before authorization. Azure federation, RBAC, permitted scope, quota and spend
+approval are **Unknown** (no Azure API was queried); the Azure owner must
+establish them. Operator approval and private raw-evidence retention are also
+**Unknown** and require the signed-off records below.
+
+No acceptance item in #393 that requires a real run is satisfied by this
+documentation. `validation.az_cli.last_tested`, `validation.bicep.last_tested`
+and every capture date are untouched; this snapshot refreshes none of them.
+
+Source inspection used `git show origin/main:.github/workflows/e2e-azure.yml`
+at `3e6d950dbec05c5e692e3869ce8d19302d183fea`. Its only `on:` trigger is
+`workflow_dispatch`; workflow permissions are `contents: read`. The
+`scenario-a`, `cleanup` and `ttl-sweep` jobs each declare `environment: azure-e2e`
+and `id-token: write`; the sweep also requests `actions: read`.
+These are observed source declarations, not proof of deployed protection,
+human review or Azure access. Ancestry validation is not review approval.
+
+### First-Run Operator Checklist
+
+Complete these additional records before step 7 above. Unavailable
+prerequisites leave preparation **BLOCKED** and execution **NOT_RUN**. This
+unchecked checklist is neither authorization nor a run/result record; keep
+account identifiers and raw private evidence out of the public record.
+
+- [ ] **Approval and spend:** retain an approval record naming the exact reviewed
+    target SHA and workflow revision, approver, operator and separate inspector;
+    permitted resource scope, region/SKU/runtime, quota, maximum spend and elapsed
+    time, TTL, and cancellation/escalation owner. Evidence: private Azure-owner
+    authorization plus a PII-safe review reference and fresh GitHub protection
+    readback. Arrange protected approvals for scenario, cleanup and TTL jobs, not
+    just the scenario. Stop if scope, spend or review approval is absent.
+- [ ] **Declaration and worker activation:** resolve the declaration/template
+    choice tracked in #184 with the maintainer, freeze its source SHA/digest,
+    assertions, sampling windows, log-arrival deadline and contrary observations
+    before dispatch. Evidence: the pre-run declaration and a collection plan for
+    a worker-side start/identity signal bound to this run, resource and fault
+    window. Configuration acceptance/readback is only control evidence; healthy
+    probes plus elapsed time do not prove activation. If that signal cannot be
+    collected, record activation **Unknown**, not causal contradiction. The
+    current runner's heuristic is not worker-side proof.
+- [ ] **Private originals:** agree a reviewed, access-controlled, PII-safe export
+    method before authorization and prove it preserves phase JSON, exact console
+    rows and raw command/deletion outputs before workspace expiry, including
+    failures. Evidence: retention owner, destination/access and expiry policy,
+    export/readback verification and a byte/hash inventory. The current public
+    artifact cannot reconstruct dropped raw bytes from hashes. If no approved
+    preservation method exists, keep the first-run preparation **BLOCKED**; do
+    not assume the existing workflow exports private originals.
+- [ ] **Identity and conversion:** prepare an inspection record linking GitHub
+    run ID/attempt to the runner's different evidence run ID, actual capture
+    source, recipe digest, resource/worker bindings and baseline/deployment/
+    configuration/probe/console windows. Evidence: privately preserved manifest,
+    phase files and raw hashes. For later Golden conversion, record collector
+    source/digest and actual derivation/evaluation time separately. The workflow
+    invokes the lab runner and guard, not the Golden collector/evaluator.
+- [ ] **Typed outcomes:** predeclare how the inspector will reconcile execution,
+    evidence validity, hypothesis, recovery, cleanup and independent reproduction
+    separately. Evidence: runner `run.json`, evaluation JSON, guard output,
+    failure record/job logs and separate cleanup artifact, using the distinctions
+    below. Missing evidence is not a successful reproduction; a failed Actions
+    gate does not by itself prove a process crash.
+- [ ] **Cancellation and inspection:** name the operator who stops the run on
+    spend/time limits and the Azure owner who handles interrupted or failed
+    cleanup. Evidence: cancellation time/reason, job states, retained failure
+    output, exact run-owned name/tag readback, deletion output and subsequent
+    absence readback. Do not assume cancellation runs cleanup or that TTL itself
+    deletes anything; inspect cleanup and any approved sweep independently and
+    escalate missing proof. Never select resources by a name fragment. The
+    separate inspector records recovered responses and verified deletion as
+    different findings before any metadata or paid-schedule decision; inspection
+    alone is not independent human reproduction.
+
 ## Execution Outcomes
 
 Missing Azure configuration or a missing runner is a blocked prerequisite. A missing `run.json`, incomplete runner status, or absent baseline, fault, recovery, or console evidence exits nonzero as `BLOCKED` or `FAILED`. Only a complete runner package can exit zero.
 
 The run summary records the target commit, GitHub run identity, protected environment, runner execution status, capture time, and evaluation time. These times remain separate because an offline replay is not a new capture.
+
+At the source revision above, the runner maps hypothesis exits to 0
+(`SUPPORTED`), 1 (`CONTRADICTED`), 2 (`INCONCLUSIVE`) and 3 (`NOT_TESTED`), with
+4 for invalid evidence. The guard accepts only `COMPLETE` execution with `PASS`
+evidence and a `SUPPORTED` hypothesis. The workflow normalizes nonzero runner
+or guard outcomes to exit 4 and labels any nonzero runner exit `runner-crash`.
+That label alone does not distinguish an honest completed `INCONCLUSIVE` or
+`CONTRADICTED` result from a crash: preserve the original evaluation and actual
+execution status, and report any disagreement rather than rewriting the result.
+For unfinished execution, the Golden hypothesis remains `NOT_TESTED`; preserve
+the lab runner's original fields separately if they disagree. Recovery and
+cleanup require their own evidence regardless of the hypothesis or job result.
 
 ## Evidence Retention
 
