@@ -41,6 +41,7 @@ flowchart TD
 | [Outbound Network Evidence Gap Matrix (#387)](outbound-evidence-gap-matrix.md) | Dated inventory of retained, reported, illustrative and missing DNS, Private Endpoint and SNAT evidence |
 | [GitHub Merge Enforcement Verification (#396)](github-merge-enforcement-verification.md) | Dated record of the branch settings, review-integration behavior and merge behavior observed on `main` |
 | [Diagram Render Audit Protocol (#395)](diagram-render-audit.md) | Minimum render-audit protocol and reusable checklist for Mermaid diagrams, with a dated baseline comparison of two samples recorded as agent-run measurements |
+| [Portal Image Census (#390)](portal-image-census.md) | Per-file census of the Portal screenshots, legacy PNGs and site images at one commit, with registry, reference, duplicate and origin facts and proposed batches |
 
 ## Quick Links
 
