@@ -29,7 +29,7 @@ Every Mermaid fence in tracked Markdown is one occurrence; equal source bodies r
 - 404 are published under `docs/`; one is a repository-only authoring example in `DOCUMENTATION_CONTRACT.md`.
 - Ten occurrences are excluded: the authoring example, three generated dashboards (content validation, tutorial validation, Golden status) and, since [#296](https://github.com/yeongseon/azure-app-service-practical-guide/issues/296), the six illustrative fixtures of the topology visual grammar.
 - 395 Mermaid occurrences require migration; their batch counts sum to 395.
-- `visuals[]` separately records two interactive Cytoscape navigation graphs and one learning-path placeholder group, all explicitly excluded pending an owner decision. These are not added to Mermaid batch totals.
+- `visuals[]` separately records two interactive Cytoscape navigation graphs and one learning-path placeholder group, all explicitly excluded from the Mermaid migration. The #397 browser audit resolved their earlier pending owner decision (see Non-Mermaid Visuals). These are not added to Mermaid batch totals.
 - Asset exclusions cover 106 WebPs, six legacy PNGs and two branding SVGs, each in exactly one group. There are no tracked standalone Mermaid, draw.io, PlantUML, or Excalidraw sources.
 
 ## Inventory Tables
@@ -141,17 +141,17 @@ The core page is not a single indivisible batch: its health and swap diagrams be
 
 ## Non-Mermaid Visuals
 
-The current inventory records three published non-Mermaid visual surfaces as first-class `visuals[]` records with disposition `excluded-pending-owner-decision` and assignment method `excluded`. This textual inventory is not an exhaustive visual classification of raster assets. The records are reported separately from `totals.by_batch`, which counts only migration-required Mermaid occurrences:
+The current inventory records three published non-Mermaid visual surfaces as first-class `visuals[]` records with assignment method `excluded`. The #397 browser audit ([Visualization Audit](visualization-audit.md)) replaced their earlier pending owner decisions with the dispositions below. This textual inventory is not an exhaustive visual classification of raster assets. The records are reported separately from `totals.by_batch`, which counts only migration-required Mermaid occurrences:
 
 | Visual | Pages and sources | Disposition |
 |---|---|---|
-| Core knowledge graph | `visualization/core-knowledge-graph.md`, navigation hub, `assets/graph/core-knowledge.json`, `javascripts/document-graph.js` | Explicit generated-navigation exclusion pending owner decision |
-| Troubleshooting graph | `visualization/troubleshooting-map.md`, navigation hub, `assets/graph/troubleshooting-map.json`, `javascripts/troubleshooting-map.js` | Explicit generated-navigation exclusion pending owner decision |
-| Language graph placeholders | Python, Node.js, Java and .NET containers in `visualization/learning-paths.md` | Explicit unwired-placeholder exclusion pending owner decision |
+| Core knowledge graph | `visualization/core-knowledge-graph.md`, navigation hub, `assets/graph/core-knowledge.json`, `javascripts/document-graph.js` | `excluded-retained-interactive-navigation`: working interactive navigation, retained; not a Mermaid migration target |
+| Troubleshooting graph | `visualization/troubleshooting-map.md`, navigation hub, `assets/graph/troubleshooting-map.json`, `javascripts/troubleshooting-map.js` | `excluded-retained-interactive-navigation`: working interactive navigation, retained; not a Mermaid migration target |
+| Language graph placeholders | Python, Node.js, Java and .NET containers in `visualization/learning-paths.md` | `excluded-remove-unwired-placeholders`: empty unwired containers; removal justified and proposed as a separate change |
 
-Both graph datasets are produced by `tools/build_doc_graph.py`; stylesheet and MkDocs library wiring are listed in each record. The troubleshooting-map page names a nonexistent alternative producer. Source inspection found no learning-path initializer or tracked learning-path dataset; the generator accepts `--learning-paths` but does not implement a separate output. These are recorded limitations, not fixes or runtime verification.
+Both graph datasets are produced by `tools/build_doc_graph.py`; stylesheet and MkDocs library wiring are listed in each record. The audit rendered each visual in a real browser. The two graphs draw, answer their controls and open the pages that their nodes link to. Their committed data is a snapshot that the generator no longer reproduces (30 of 159 and 24 of 77 nodes), and they have dark-mode, keyboard and gesture defects that the audit records and does not fix. The troubleshooting-map page names a nonexistent alternative producer. The learning-path containers are empty boxes with no initializer or tracked dataset, and the generator accepts `--learning-paths` but never reads it. The corrections are proposals for separate changes, not fixes made here.
 
-Including or excluding these surfaces from the migration is an owner decision; #288's auxiliary/published-assets scope is the proposed destination if included. Their provisional exclusion must not be used to close #281 without that decision. Mermaid diagrams on these pages remain in scope separately.
+Retaining the two graphs and proposing the removal of the placeholders settles the owner decision that this section previously described as pending, which was a condition for closing #281; that is subject to maintainer review of the audit. Mermaid diagrams on these pages remain in scope separately.
 
 The 112 raster assets (106 WebPs and six PNGs) are grouped as Portal/Kudu screenshots or log/metric evidence captures by path and alt-text screening, not exhaustive visual inspection. The historical per-directory selection covered 52 asset-containing directories and selected 68 files, including two SVGs. All 66 selected raster files were viewed; no authored architecture drawing was found in that raster sample. The SVG viewing attempts returned no response, so `docs/assets/logo.svg` and `docs/assets/favicon.svg` are classified as branding by file name only, not visual inspection. Sampling is not proof about every unsampled image, screenshot provenance, or PII approval. Literal Markdown usage counts do not expand `shot()` macros, so zero literal usages for WebP groups does not mean unused captures.
 
