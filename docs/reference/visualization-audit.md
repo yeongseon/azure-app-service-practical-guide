@@ -26,7 +26,7 @@ It is an agent-run audit of the published site on one day with one browser. The 
 | Measured | On 2026-11-04 (UTC), in four scripted runs. |
 | Browser | Google Chrome 145.0.7632.67 headless on Linux x86_64, driven by Playwright over the Chrome DevTools Protocol. One browser and one operating system. |
 | Matrix | Each page at 1440 x 900 (scale 1) and 390 x 844 (scale 2), in the light palette (`default`) and the dark palette (`slate`). For the dark palette the palette toggle was clicked and the page was reloaded before measuring, so that the graph initialised under the dark palette. |
-| Further runs | Search, filter, reset, one node click, Tab order, mouse wheel, mouse drag, a synthetic touch swipe (DevTools touch events, not a device), an HTTP `HEAD` request for every node link, a run with `unpkg.com` blocked, and a contrast measurement. |
+| Further runs | Search, filter, reset, one node click, Tab order, mouse wheel, mouse drag, a synthetic touch swipe (DevTools touch events, not a device), an HTTP `HEAD` request for every node link (sent to the github.io host and counted after following its redirect), a run with `unpkg.com` blocked, and a contrast measurement. |
 | Instruments | The graph state (node and edge counts, zoom, the resolved label style) was read from the Cytoscape instance that the library keeps on the container, through its internal `_cyreg` property. Names and roles came from the Chrome accessibility tree. Screenshots were read by the agent that took them. |
 | Claim labels | **Observed**: what the runs measured or showed on the published site. **Documented**: what a repository file states. **Inferred**: an explanation drawn from several observations. **Not Proven**: a limit of the evidence. |
 
@@ -95,7 +95,7 @@ All rows are **Documented**.
 | Generator | **Documented**: `tools/build_doc_graph.py` defines `--learning-paths` and never reads it. The page (line 270) tells readers to run it. |
 | Companions | **Observed**: the three Mermaid diagrams on the page render; they are 842, 138 and 624 px high. |
 
-**Disposition: remove only if justified and reviewed.** The removal is justified. There is nothing interactive to retain, and no producer to repair: the flag does nothing and no builder, data or initialiser exists. Writing a learning-path builder would be a new feature, which the issue excludes. This audit and its review are the justification and the review; the removal of the four containers and of the instruction is proposed as a separate change. Until it is made, the containers stay excluded from the migration counts. The page's three Mermaid diagrams remain in migration scope.
+**Disposition: remove, in a separate change.** The issue allows removal only if it is justified and reviewed. The removal is justified. There is nothing interactive to retain, and no producer to repair: the flag does nothing and no builder, data or initialiser exists. Writing a learning-path builder would be a new feature, which the issue excludes. This audit is the justification. The review that the issue asks for belongs to the separate change that removes the four containers and the instruction, and nothing is removed here. Until that change is made, the containers stay excluded from the migration counts. The page's three Mermaid diagrams remain in migration scope.
 
 ## 6. Generator, data and wiring
 
@@ -120,7 +120,7 @@ All rows are **Documented**.
 |---|---|---|
 | `docs/visualization/core-knowledge-graph.md#core-graph` | Retain as working interactive navigation (`excluded-retained-interactive-navigation`) | It renders, answers its controls and every link works. The defects are in the data and the implementation. |
 | `docs/visualization/troubleshooting-map.md#troubleshooting-graph` | Retain as working interactive navigation (`excluded-retained-interactive-navigation`) | The same, with a wrong producer name on its page. |
-| `docs/visualization/learning-paths.md#language-graph-containers` | Remove, justified and reviewed here, to be made separately (`excluded-remove-unwired-placeholders`) | Empty containers with no initialiser, data or working producer. |
+| `docs/visualization/learning-paths.md#language-graph-containers` | Remove, justified here and to be made, with its own review, in a separate change (`excluded-remove-unwired-placeholders`) | Empty containers with no initialiser, data or working producer. |
 
 The corrections below are proposals for separate changes. None is made here, and no issue was filed.
 
