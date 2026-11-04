@@ -112,6 +112,7 @@ not_in_nav: |
   /reference/github-merge-enforcement-verification.md
   /reference/diagram-render-audit.md
   /reference/portal-image-census.md
+  /reference/portal-playbook-evidence-inventory.md
 
 nav:
   - Home: index.md
