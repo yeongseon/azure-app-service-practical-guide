@@ -42,6 +42,7 @@ flowchart TD
 | [GitHub Merge Enforcement Verification (#396)](github-merge-enforcement-verification.md) | Dated record of the branch settings, review-integration behavior and merge behavior observed on `main` |
 | [Diagram Render Audit Protocol (#395)](diagram-render-audit.md) | Minimum render-audit protocol and reusable checklist for Mermaid diagrams, with a dated baseline comparison of two samples recorded as agent-run measurements |
 | [Portal Image Census (#390)](portal-image-census.md) | Per-file census of the Portal screenshots, legacy PNGs and site images at one commit, with registry, reference, duplicate and origin facts and proposed batches |
+| [Visualization Audit (#397)](visualization-audit.md) | Browser audit of the three published non-Mermaid visuals, with the disposition chosen for each, the check of their generator, data and wiring, and the smallest corrections proposed |
 | [Portal Playbook Evidence Inventory](portal-playbook-evidence-inventory.md) | Pinned per-playbook screenshot references, documentary trail gaps and bounded follow-up proposals; no capture or completeness certification |
 
 ## Quick Links
