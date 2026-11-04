@@ -111,6 +111,7 @@ not_in_nav: |
   /reference/outbound-evidence-gap-matrix.md
   /reference/github-merge-enforcement-verification.md
   /reference/diagram-render-audit.md
+  /reference/portal-image-census.md
 
 nav:
   - Home: index.md
