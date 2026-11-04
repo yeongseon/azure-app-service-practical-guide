@@ -132,6 +132,7 @@ Both runs record a verified cleanup (`az group exists` returned `false`). The pu
 
 ## See Also
 
+- [SNAT Evidence Review (#389)](snat-evidence-review.md)
 - [Golden Evidence Model](golden-evidence-model.md)
 - [Guarded Azure E2E Operations](azure-e2e-operations.md)
 - [Lab: DNS Resolution (VNet)](../troubleshooting/lab-guides/dns-vnet-resolution.md)
