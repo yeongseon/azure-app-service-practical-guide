@@ -1,0 +1,3047 @@
+{
+  "kind": "portal-playbook-evidence-inventory",
+  "schema_version": 1,
+  "repository": "yeongseon/azure-app-service-practical-guide",
+  "main_sha": "3e6d950dbec05c5e692e3869ce8d19302d183fea",
+  "computed_at_utc": "2026-11-04T13:30:53+00:00",
+  "document_updated_at": "2026-11-04",
+  "azure_execution": "NOT_RUN",
+  "hypothesis_status": "NOT_TESTED",
+  "method": {
+    "playbooks": "git ls-tree -r --name-only MAIN_SHA docs/troubleshooting/playbooks; .md files excluding every index.md, sorted by path",
+    "references": "Inline shot calls and Markdown image paths outside fences, comments and inline code; fence closers must be bare, same character and at least opener length. Source lines remain one-based.",
+    "layers": "Portal Evidence Layer/Step subsections where present; Windows Kudu's three Portal views; otherwise section 6 Hn subsections, or the section 6 decision matrix. These are documentary units, not an exhaustive model of all runtime layers.",
+    "pinning": "All playbook text, registry YAML and image bytes read with git show MAIN_SHA:path. Hashes match census files entries; current registry owns alt/provenance metadata, not the older census alts.",
+    "precedent": "#405 retained an artifact, not its one-off generator or tests. This inventory likewise commits no generator; exact derivation and mutation commands are retained in the author evidence file.",
+    "classification": {
+      "present": "Documented navigation/observations/decisions exist at the declared limited scope; NOT a complete or correct trail certification",
+      "missing": "No embedded capture or missing per-image navigation/caption/decision trail; rationale distinguishes these",
+      "stale": "Reserved for an established UI/recipe mismatch; age alone or missing captions never establishes it",
+      "blocked-manual": "Capture access axis: authorized resources and compliant human sign-in are not available in this offline task"
+    },
+    "uncertainty": "Freshness and unrecorded live captured_at remain Unknown; manifest conversion/repository-introduction dates are not live capture times. trail_complete is always false because semantic and pixel review were not performed.",
+    "field_contract": {
+      "screenshots": "Occurrence records, not independent observations. census_ref points to reused per-asset facts; canonical_alt_source names a registry ID, not a Markdown anchor.",
+      "diagnostic_layers": "Each unit carries a source line, navigation pointer (null when missing), direct observation support, decision pointer and missing signal. #L pointers address the source blob at main_sha, not rendered page anchors.",
+      "classification_axes": "classification describes documentary presence; capture_access separately describes manual prerequisites; freshness never inferred from either"
+    }
+  },
+  "verification_commands": [
+    "GIT_MASTER=1 git merge-base --is-ancestor 3e6d950dbec05c5e692e3869ce8d19302d183fea origin/main",
+    "GIT_MASTER=1 git ls-tree -r --name-only 3e6d950dbec05c5e692e3869ce8d19302d183fea docs/troubleshooting/playbooks",
+    "GIT_MASTER=1 git grep -n -E 'Portal Evidence|shot\\(' 3e6d950dbec05c5e692e3869ce8d19302d183fea -- docs/troubleshooting/playbooks"
+  ],
+  "reuse": {
+    "census": "docs/reference/portal-image-census.json",
+    "census_page": "docs/reference/portal-image-census.md",
+    "outbound_matrix": "docs/reference/outbound-evidence-gap-matrix.md",
+    "manifest": "scripts/capture/manifest.yaml",
+    "legacy": "scripts/capture/legacy-assets.yaml",
+    "provenance": "scripts/capture/provenance.yaml",
+    "dimensions": "scripts/capture/dimension-exceptions.yaml",
+    "capture_contract": "DOCUMENTATION_CONTRACT.md#portal-screenshot-capture-pii-replacement-rules"
+  },
+  "totals": {
+    "playbooks": 37,
+    "by_domain": {
+      "general": 11,
+      "outbound-network": 4,
+      "performance": 9,
+      "startup-availability": 13
+    },
+    "portal_evidence_sections": 4,
+    "by_coverage_class": {
+      "no-embedded-capture": 32,
+      "single-blade-card-walk": 3,
+      "storage-reference": 1,
+      "windows-kudu-caption-gap": 1
+    },
+    "by_classification": {
+      "missing": 33,
+      "present": 4
+    },
+    "screenshot_occurrences": 12,
+    "diagnostic_layers": 152
+  },
+  "playbooks": [
+    {
+      "path": "docs/troubleshooting/playbooks/app-startup-failures.md",
+      "domain": "general",
+      "hosting_mode": "Unknown; no OS restriction inferred from an unqualified title",
+      "hosting_basis_line": 31,
+      "source_sha": "3e6d950dbec05c5e692e3869ce8d19302d183fea",
+      "portal_evidence_heading_line": null,
+      "screenshots": [],
+      "diagnostic_layers": [
+        {
+          "layer": "H1: Entrypoint, startup command, or artifact path mismatch",
+          "source_line": 290,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/app-startup-failures.md#L290",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H2: Port or bind mismatch",
+          "source_line": 302,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/app-startup-failures.md#L302",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H3: Runtime or dependency mismatch",
+          "source_line": 314,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/app-startup-failures.md#L314",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H4: Custom container startup contract issue",
+          "source_line": 326,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/app-startup-failures.md#L326",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        }
+      ],
+      "classification": "missing",
+      "classification_reason": "No embedded shot or legacy image reference. Existing evidence/validation prose does not constitute a captured Portal trail.",
+      "coverage_class": "no-embedded-capture",
+      "freshness": "Unknown",
+      "capture_access": "blocked-manual",
+      "capture_blocker": "Authorized resource/cost owner and compliant human Portal session not supplied; no capture attempted",
+      "trail_complete": false,
+      "outbound_matrix_ref": null
+    },
+    {
+      "path": "docs/troubleshooting/playbooks/arm-configuration-http-400.md",
+      "domain": "general",
+      "hosting_mode": "Unknown; no OS restriction inferred from an unqualified title",
+      "hosting_basis_line": 36,
+      "source_sha": "3e6d950dbec05c5e692e3869ce8d19302d183fea",
+      "portal_evidence_heading_line": null,
+      "screenshots": [],
+      "diagnostic_layers": [
+        {
+          "layer": "H1: Application response mistaken for ARM validation",
+          "source_line": 367,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/arm-configuration-http-400.md#L367",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H2: Invalid, immutable, or unsupported property",
+          "source_line": 375,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/arm-configuration-http-400.md#L375",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H3: Site-versus-slot targeting",
+          "source_line": 386,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/arm-configuration-http-400.md#L386",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H4: App-setting and sticky-setting treatment",
+          "source_line": 399,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/arm-configuration-http-400.md#L399",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H5: RBAC scope or identity",
+          "source_line": 412,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/arm-configuration-http-400.md#L412",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H6: Locks or policy",
+          "source_line": 420,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/arm-configuration-http-400.md#L420",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H7: Feature, plan, OS, or runtime compatibility",
+          "source_line": 428,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/arm-configuration-http-400.md#L428",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H8: Concurrent updates or stale ETag context",
+          "source_line": 436,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/arm-configuration-http-400.md#L436",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        }
+      ],
+      "classification": "missing",
+      "classification_reason": "No embedded shot or legacy image reference. Existing evidence/validation prose does not constitute a captured Portal trail.",
+      "coverage_class": "no-embedded-capture",
+      "freshness": "Unknown",
+      "capture_access": "blocked-manual",
+      "capture_blocker": "Authorized resource/cost owner and compliant human Portal session not supplied; no capture attempted",
+      "trail_complete": false,
+      "outbound_matrix_ref": null
+    },
+    {
+      "path": "docs/troubleshooting/playbooks/authentication-failures.md",
+      "domain": "general",
+      "hosting_mode": "Unknown; no OS restriction inferred from an unqualified title",
+      "hosting_basis_line": 33,
+      "source_sha": "3e6d950dbec05c5e692e3869ce8d19302d183fea",
+      "portal_evidence_heading_line": null,
+      "screenshots": [],
+      "diagnostic_layers": [
+        {
+          "layer": "H1: App Service Authentication misconfiguration",
+          "source_line": 291,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/authentication-failures.md#L291",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H2: Redirect URI, issuer, or tenant mismatch",
+          "source_line": 303,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/authentication-failures.md#L303",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H3: Missing Easy Auth headers or tokens",
+          "source_line": 315,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/authentication-failures.md#L315",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H4: Authorization mismatch after successful authentication",
+          "source_line": 327,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/authentication-failures.md#L327",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        }
+      ],
+      "classification": "missing",
+      "classification_reason": "No embedded shot or legacy image reference. Existing evidence/validation prose does not constitute a captured Portal trail.",
+      "coverage_class": "no-embedded-capture",
+      "freshness": "Unknown",
+      "capture_access": "blocked-manual",
+      "capture_blocker": "Authorized resource/cost owner and compliant human Portal session not supplied; no capture attempted",
+      "trail_complete": false,
+      "outbound_matrix_ref": null
+    },
+    {
+      "path": "docs/troubleshooting/playbooks/cd-rbac-role-assignment-conflict.md",
+      "domain": "general",
+      "hosting_mode": "Unknown; no OS restriction inferred from an unqualified title",
+      "hosting_basis_line": 46,
+      "source_sha": "3e6d950dbec05c5e692e3869ce8d19302d183fea",
+      "portal_evidence_heading_line": null,
+      "screenshots": [],
+      "diagnostic_layers": [
+        {
+          "layer": "H1: Orphaned AcrPull assignment from previous Deployment Center CD setup",
+          "source_line": 224,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/cd-rbac-role-assignment-conflict.md#L224",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H2: AcrPull was previously granted by IaC and Deployment Center is now trying to re-grant it",
+          "source_line": 262,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/cd-rbac-role-assignment-conflict.md#L262",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H3: Orphaned assignment from a deleted Web App reusing the same name",
+          "source_line": 277,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/cd-rbac-role-assignment-conflict.md#L277",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H4: AcrPull was granted manually for testing",
+          "source_line": 308,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/cd-rbac-role-assignment-conflict.md#L308",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H5: Same registry shared by multiple Web Apps, all granted at once via a script",
+          "source_line": 334,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/cd-rbac-role-assignment-conflict.md#L334",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        }
+      ],
+      "classification": "missing",
+      "classification_reason": "No embedded shot or legacy image reference. Existing evidence/validation prose does not constitute a captured Portal trail.",
+      "coverage_class": "no-embedded-capture",
+      "freshness": "Unknown",
+      "capture_access": "blocked-manual",
+      "capture_blocker": "Authorized resource/cost owner and compliant human Portal session not supplied; no capture attempted",
+      "trail_complete": false,
+      "outbound_matrix_ref": null
+    },
+    {
+      "path": "docs/troubleshooting/playbooks/deployment-failures.md",
+      "domain": "general",
+      "hosting_mode": "Unknown; no OS restriction inferred from an unqualified title",
+      "hosting_basis_line": 42,
+      "source_sha": "3e6d950dbec05c5e692e3869ce8d19302d183fea",
+      "portal_evidence_heading_line": null,
+      "screenshots": [],
+      "diagnostic_layers": [
+        {
+          "layer": "H1: Deployment transport or Kudu orchestration failed",
+          "source_line": 378,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/deployment-failures.md#L378",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H2: Artifact, package shape, or build phase failed",
+          "source_line": 391,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/deployment-failures.md#L391",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H3: Deployment succeeded but startup failed",
+          "source_line": 405,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/deployment-failures.md#L405",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H4: Slot swap warm-up or slot config drift",
+          "source_line": 417,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/deployment-failures.md#L417",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        }
+      ],
+      "classification": "missing",
+      "classification_reason": "No embedded shot or legacy image reference. Existing evidence/validation prose does not constitute a captured Portal trail.",
+      "coverage_class": "no-embedded-capture",
+      "freshness": "Unknown",
+      "capture_access": "blocked-manual",
+      "capture_blocker": "Authorized resource/cost owner and compliant human Portal session not supplied; no capture attempted",
+      "trail_complete": false,
+      "outbound_matrix_ref": null
+    },
+    {
+      "path": "docs/troubleshooting/playbooks/missing-wwwroot-files-404.md",
+      "domain": "general",
+      "hosting_mode": "Unknown; no OS restriction inferred from an unqualified title",
+      "hosting_basis_line": 35,
+      "source_sha": "3e6d950dbec05c5e692e3869ce8d19302d183fea",
+      "portal_evidence_heading_line": null,
+      "screenshots": [],
+      "diagnostic_layers": [
+        {
+          "layer": "H1: The artifact or package layout never contained the file",
+          "source_line": 234,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/missing-wwwroot-files-404.md#L234",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H2: The file exists in a different path, slot, or instance",
+          "source_line": 246,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/missing-wwwroot-files-404.md#L246",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H3: An actor removed or overwrote the file",
+          "source_line": 258,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/missing-wwwroot-files-404.md#L258",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H4: The content lived on instance-local or non-persistent storage",
+          "source_line": 272,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/missing-wwwroot-files-404.md#L272",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H5: A mounted storage path or content-share backing issue",
+          "source_line": 284,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/missing-wwwroot-files-404.md#L284",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H6: The file is present but a routing or rewrite rule returns 404",
+          "source_line": 296,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/missing-wwwroot-files-404.md#L296",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        }
+      ],
+      "classification": "missing",
+      "classification_reason": "No embedded shot or legacy image reference. Existing evidence/validation prose does not constitute a captured Portal trail.",
+      "coverage_class": "no-embedded-capture",
+      "freshness": "Unknown",
+      "capture_access": "blocked-manual",
+      "capture_blocker": "Authorized resource/cost owner and compliant human Portal session not supplied; no capture attempted",
+      "trail_complete": false,
+      "outbound_matrix_ref": null
+    },
+    {
+      "path": "docs/troubleshooting/playbooks/mtls-failures.md",
+      "domain": "general",
+      "hosting_mode": "Unknown; no OS restriction inferred from an unqualified title",
+      "hosting_basis_line": 28,
+      "source_sha": "3e6d950dbec05c5e692e3869ce8d19302d183fea",
+      "portal_evidence_heading_line": null,
+      "screenshots": [],
+      "diagnostic_layers": [
+        {
+          "layer": "H1: X-ARR-ClientCert header missing",
+          "source_line": 148,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/mtls-failures.md#L148",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H2: 403 from front end with certificate required",
+          "source_line": 160,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/mtls-failures.md#L160",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H3: Chain validation failure in app code",
+          "source_line": 171,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/mtls-failures.md#L171",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H4: WEBSITE_LOAD_CERTIFICATES certificate missing",
+          "source_line": 184,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/mtls-failures.md#L184",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H5: ASE-specific ingress topology",
+          "source_line": 200,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/mtls-failures.md#L200",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        }
+      ],
+      "classification": "missing",
+      "classification_reason": "No embedded shot or legacy image reference. Existing evidence/validation prose does not constitute a captured Portal trail.",
+      "coverage_class": "no-embedded-capture",
+      "freshness": "Unknown",
+      "capture_access": "blocked-manual",
+      "capture_blocker": "Authorized resource/cost owner and compliant human Portal session not supplied; no capture attempted",
+      "trail_complete": false,
+      "outbound_matrix_ref": null
+    },
+    {
+      "path": "docs/troubleshooting/playbooks/outbound-network/dns-resolution-vnet-integrated-app-service.md",
+      "domain": "outbound-network",
+      "hosting_mode": "Linux",
+      "hosting_basis_line": 54,
+      "source_sha": "3e6d950dbec05c5e692e3869ce8d19302d183fea",
+      "portal_evidence_heading_line": 549,
+      "screenshots": [
+        {
+          "line": 553,
+          "registry": "shot",
+          "id": "operations--networking--01-networking-hub",
+          "final_path": "docs/assets/operations/networking/operations--networking--01-networking-hub.webp",
+          "sha256": "6d200a0b740403f9f1be3d6b718288371d027ee9a87fc35165ce2d244fee8ffc",
+          "census_ref": "docs/reference/portal-image-census.json#/files/19",
+          "canonical_alt_source": "scripts/capture/manifest.yaml#operations--networking--01-networking-hub",
+          "provenance_kind": "legacy_reencode",
+          "profile": "Unknown",
+          "captured_at": "Unknown",
+          "dimension_exception": null,
+          "caption_lines": {
+            "Purpose": 555,
+            "Look for": 557,
+            "Expected result": 559,
+            "Next step": null
+          }
+        }
+      ],
+      "diagnostic_layers": [
+        {
+          "layer": "Step 1 — Confirm the resolver-origin prerequisite: ",
+          "source_line": 561,
+          "navigation_pointer": "docs/troubleshooting/playbooks/outbound-network/dns-resolution-vnet-integrated-app-service.md#L561",
+          "observation_support": {
+            "reference_lines": [
+              553
+            ],
+            "scope": "Caption-described configuration only; pixels not reviewed"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/outbound-network/dns-resolution-vnet-integrated-app-service.md#L567",
+          "missing_signal": "Current matched runtime evidence; configuration is not causal proof",
+          "trail_complete": false
+        },
+        {
+          "layer": "Step 2 — Identify the resolver path: ",
+          "source_line": 569,
+          "navigation_pointer": "docs/troubleshooting/playbooks/outbound-network/dns-resolution-vnet-integrated-app-service.md#L569",
+          "observation_support": {
+            "reference_lines": [
+              553
+            ],
+            "scope": "Caption-described configuration only; pixels not reviewed"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/outbound-network/dns-resolution-vnet-integrated-app-service.md#L575",
+          "missing_signal": "Current matched runtime evidence; configuration is not causal proof",
+          "trail_complete": false
+        },
+        {
+          "layer": "Step 3 — Verify route reachability to the resolver:  (User defined route / NSG)",
+          "source_line": 577,
+          "navigation_pointer": "docs/troubleshooting/playbooks/outbound-network/dns-resolution-vnet-integrated-app-service.md#L577",
+          "observation_support": {
+            "reference_lines": [
+              553
+            ],
+            "scope": "Caption-described configuration only; pixels not reviewed"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/outbound-network/dns-resolution-vnet-integrated-app-service.md#L583",
+          "missing_signal": "Current matched runtime evidence; configuration is not causal proof",
+          "trail_complete": false
+        },
+        {
+          "layer": "Step 4 — Disambiguate the inbound  red herring",
+          "source_line": 585,
+          "navigation_pointer": "docs/troubleshooting/playbooks/outbound-network/dns-resolution-vnet-integrated-app-service.md#L585",
+          "observation_support": {
+            "reference_lines": [
+              553
+            ],
+            "scope": "Caption-described configuration only; pixels not reviewed"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/outbound-network/dns-resolution-vnet-integrated-app-service.md#L590",
+          "missing_signal": "Current matched runtime evidence; configuration is not causal proof",
+          "trail_complete": false
+        }
+      ],
+      "classification": "present",
+      "classification_reason": "Ordered card navigation and decisions are documented, but all four steps reuse one non-integrated-app configuration capture; integrated runtime diagnosis is not established.",
+      "coverage_class": "single-blade-card-walk",
+      "freshness": "Unknown",
+      "capture_access": "blocked-manual",
+      "capture_blocker": "Authorized resource/cost owner and compliant human Portal session not supplied; no capture attempted",
+      "trail_complete": false,
+      "outbound_matrix_ref": "docs/reference/outbound-evidence-gap-matrix.md#4-detail-by-playbook"
+    },
+    {
+      "path": "docs/troubleshooting/playbooks/outbound-network/private-endpoint-custom-dns-route-confusion.md",
+      "domain": "outbound-network",
+      "hosting_mode": "Linux",
+      "hosting_basis_line": 29,
+      "source_sha": "3e6d950dbec05c5e692e3869ce8d19302d183fea",
+      "portal_evidence_heading_line": 515,
+      "screenshots": [
+        {
+          "line": 519,
+          "registry": "shot",
+          "id": "operations--networking--01-networking-hub",
+          "final_path": "docs/assets/operations/networking/operations--networking--01-networking-hub.webp",
+          "sha256": "6d200a0b740403f9f1be3d6b718288371d027ee9a87fc35165ce2d244fee8ffc",
+          "census_ref": "docs/reference/portal-image-census.json#/files/19",
+          "canonical_alt_source": "scripts/capture/manifest.yaml#operations--networking--01-networking-hub",
+          "provenance_kind": "legacy_reencode",
+          "profile": "Unknown",
+          "captured_at": "Unknown",
+          "dimension_exception": null,
+          "caption_lines": {
+            "Purpose": 521,
+            "Look for": 523,
+            "Expected result": 525,
+            "Next step": null
+          }
+        }
+      ],
+      "diagnostic_layers": [
+        {
+          "layer": "Step 1 — Confirm the integration prerequisite: ",
+          "source_line": 527,
+          "navigation_pointer": "docs/troubleshooting/playbooks/outbound-network/private-endpoint-custom-dns-route-confusion.md#L527",
+          "observation_support": {
+            "reference_lines": [
+              519
+            ],
+            "scope": "Caption-described configuration only; pixels not reviewed"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/outbound-network/private-endpoint-custom-dns-route-confusion.md#L533",
+          "missing_signal": "Current matched runtime evidence; configuration is not causal proof",
+          "trail_complete": false
+        },
+        {
+          "layer": "Step 2 — Establish the resolver path: ",
+          "source_line": 535,
+          "navigation_pointer": "docs/troubleshooting/playbooks/outbound-network/private-endpoint-custom-dns-route-confusion.md#L535",
+          "observation_support": {
+            "reference_lines": [
+              519
+            ],
+            "scope": "Caption-described configuration only; pixels not reviewed"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/outbound-network/private-endpoint-custom-dns-route-confusion.md#L541",
+          "missing_signal": "Current matched runtime evidence; configuration is not causal proof",
+          "trail_complete": false
+        },
+        {
+          "layer": "Step 3 — Rule out route/policy interference:  (NSG / User defined route)",
+          "source_line": 543,
+          "navigation_pointer": "docs/troubleshooting/playbooks/outbound-network/private-endpoint-custom-dns-route-confusion.md#L543",
+          "observation_support": {
+            "reference_lines": [
+              519
+            ],
+            "scope": "Caption-described configuration only; pixels not reviewed"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/outbound-network/private-endpoint-custom-dns-route-confusion.md#L549",
+          "missing_signal": "Current matched runtime evidence; configuration is not causal proof",
+          "trail_complete": false
+        },
+        {
+          "layer": "Step 4 — Disambiguate the inbound  red herring",
+          "source_line": 551,
+          "navigation_pointer": "docs/troubleshooting/playbooks/outbound-network/private-endpoint-custom-dns-route-confusion.md#L551",
+          "observation_support": {
+            "reference_lines": [
+              519
+            ],
+            "scope": "Caption-described configuration only; pixels not reviewed"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/outbound-network/private-endpoint-custom-dns-route-confusion.md#L556",
+          "missing_signal": "Current matched runtime evidence; configuration is not causal proof",
+          "trail_complete": false
+        }
+      ],
+      "classification": "present",
+      "classification_reason": "Ordered card navigation and decisions are documented, but all four steps reuse one non-integrated-app configuration capture; integrated runtime diagnosis is not established.",
+      "coverage_class": "single-blade-card-walk",
+      "freshness": "Unknown",
+      "capture_access": "blocked-manual",
+      "capture_blocker": "Authorized resource/cost owner and compliant human Portal session not supplied; no capture attempted",
+      "trail_complete": false,
+      "outbound_matrix_ref": "docs/reference/outbound-evidence-gap-matrix.md#4-detail-by-playbook"
+    },
+    {
+      "path": "docs/troubleshooting/playbooks/outbound-network/snat-or-application-issue.md",
+      "domain": "outbound-network",
+      "hosting_mode": "Linux",
+      "hosting_basis_line": 47,
+      "source_sha": "3e6d950dbec05c5e692e3869ce8d19302d183fea",
+      "portal_evidence_heading_line": 468,
+      "screenshots": [
+        {
+          "line": 472,
+          "registry": "shot",
+          "id": "operations--networking--01-networking-hub",
+          "final_path": "docs/assets/operations/networking/operations--networking--01-networking-hub.webp",
+          "sha256": "6d200a0b740403f9f1be3d6b718288371d027ee9a87fc35165ce2d244fee8ffc",
+          "census_ref": "docs/reference/portal-image-census.json#/files/19",
+          "canonical_alt_source": "scripts/capture/manifest.yaml#operations--networking--01-networking-hub",
+          "provenance_kind": "legacy_reencode",
+          "profile": "Unknown",
+          "captured_at": "Unknown",
+          "dimension_exception": null,
+          "caption_lines": {
+            "Purpose": 474,
+            "Look for": 476,
+            "Expected result": 478,
+            "Next step": null
+          }
+        }
+      ],
+      "diagnostic_layers": [
+        {
+          "layer": "Step 1 — Establish the SNAT-mitigation prerequisite: ",
+          "source_line": 480,
+          "navigation_pointer": "docs/troubleshooting/playbooks/outbound-network/snat-or-application-issue.md#L480",
+          "observation_support": {
+            "reference_lines": [
+              472
+            ],
+            "scope": "Caption-described configuration only; pixels not reviewed"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/outbound-network/snat-or-application-issue.md#L486",
+          "missing_signal": "Current matched runtime evidence; configuration is not causal proof",
+          "trail_complete": false
+        },
+        {
+          "layer": "Step 2 — Check for a dedicated SNAT port pool: ",
+          "source_line": 488,
+          "navigation_pointer": "docs/troubleshooting/playbooks/outbound-network/snat-or-application-issue.md#L488",
+          "observation_support": {
+            "reference_lines": [
+              472
+            ],
+            "scope": "Caption-described configuration only; pixels not reviewed"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/outbound-network/snat-or-application-issue.md#L494",
+          "missing_signal": "Current matched runtime evidence; configuration is not causal proof",
+          "trail_complete": false
+        },
+        {
+          "layer": "Step 3 — Note the shared outbound source pool: ",
+          "source_line": 496,
+          "navigation_pointer": "docs/troubleshooting/playbooks/outbound-network/snat-or-application-issue.md#L496",
+          "observation_support": {
+            "reference_lines": [
+              472
+            ],
+            "scope": "Caption-described configuration only; pixels not reviewed"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/outbound-network/snat-or-application-issue.md#L502",
+          "missing_signal": "Current matched runtime evidence; configuration is not causal proof",
+          "trail_complete": false
+        },
+        {
+          "layer": "Step 4 — Disambiguate the inbound  red herring",
+          "source_line": 504,
+          "navigation_pointer": "docs/troubleshooting/playbooks/outbound-network/snat-or-application-issue.md#L504",
+          "observation_support": {
+            "reference_lines": [
+              472
+            ],
+            "scope": "Caption-described configuration only; pixels not reviewed"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/outbound-network/snat-or-application-issue.md#L509",
+          "missing_signal": "Current matched runtime evidence; configuration is not causal proof",
+          "trail_complete": false
+        }
+      ],
+      "classification": "present",
+      "classification_reason": "Ordered card navigation and decisions are documented, but all four steps reuse one non-integrated-app configuration capture; integrated runtime diagnosis is not established.",
+      "coverage_class": "single-blade-card-walk",
+      "freshness": "Unknown",
+      "capture_access": "blocked-manual",
+      "capture_blocker": "Authorized resource/cost owner and compliant human Portal session not supplied; no capture attempted",
+      "trail_complete": false,
+      "outbound_matrix_ref": "docs/reference/outbound-evidence-gap-matrix.md#4-detail-by-playbook"
+    },
+    {
+      "path": "docs/troubleshooting/playbooks/outbound-network/storage-connectivity-firewall-authorization.md",
+      "domain": "outbound-network",
+      "hosting_mode": "Linux",
+      "hosting_basis_line": 32,
+      "source_sha": "3e6d950dbec05c5e692e3869ce8d19302d183fea",
+      "portal_evidence_heading_line": 307,
+      "screenshots": [
+        {
+          "line": 345,
+          "registry": "shot",
+          "id": "troubleshooting--networking--02-app-overview",
+          "final_path": "docs/assets/troubleshooting/networking/troubleshooting--networking--02-app-overview.webp",
+          "sha256": "7776dd6c081f37c0d2d9b94fa11b2882412cc7d13aec2358b2715cf3109e19dc",
+          "census_ref": "docs/reference/portal-image-census.json#/files/107",
+          "canonical_alt_source": "scripts/capture/manifest.yaml#troubleshooting--networking--02-app-overview",
+          "provenance_kind": "Unknown",
+          "profile": "Unknown",
+          "captured_at": "Unknown",
+          "dimension_exception": {
+            "asset": "troubleshooting/networking/troubleshooting--networking--02-app-overview.webp",
+            "observed": [
+              1440,
+              1744
+            ],
+            "reason": "Variable-height or full-page capture taken before the fixed-viewport profile existed.",
+            "issue": 135
+          },
+          "caption_lines": {
+            "Purpose": 347,
+            "Look for": 348,
+            "Expected result": 349,
+            "Next step": 351
+          }
+        },
+        {
+          "line": 355,
+          "registry": "shot",
+          "id": "troubleshooting--networking--03-app-networking-blade",
+          "final_path": "docs/assets/troubleshooting/networking/troubleshooting--networking--03-app-networking-blade.webp",
+          "sha256": "eaeb7438e839255a513b0d98d03e5bcef2a62d25e2a0f05f667b85ad7bf9efd0",
+          "census_ref": "docs/reference/portal-image-census.json#/files/108",
+          "canonical_alt_source": "scripts/capture/manifest.yaml#troubleshooting--networking--03-app-networking-blade",
+          "provenance_kind": "Unknown",
+          "profile": "Unknown",
+          "captured_at": "Unknown",
+          "dimension_exception": {
+            "asset": "troubleshooting/networking/troubleshooting--networking--03-app-networking-blade.webp",
+            "observed": [
+              1440,
+              1744
+            ],
+            "reason": "Variable-height or full-page capture taken before the fixed-viewport profile existed.",
+            "issue": 135
+          },
+          "caption_lines": {
+            "Purpose": 357,
+            "Look for": 358,
+            "Expected result": 359,
+            "Next step": 360
+          }
+        },
+        {
+          "line": 366,
+          "registry": "shot",
+          "id": "troubleshooting--storage-firewall--01-storage-overview",
+          "final_path": "docs/assets/troubleshooting/storage-firewall/troubleshooting--storage-firewall--01-storage-overview.webp",
+          "sha256": "a6d7fc7f56c153b9ab14bf74e700a3498b2f089549c95b31c424a5d8bad202cb",
+          "census_ref": "docs/reference/portal-image-census.json#/files/109",
+          "canonical_alt_source": "scripts/capture/manifest.yaml#troubleshooting--storage-firewall--01-storage-overview",
+          "provenance_kind": "Unknown",
+          "profile": "Unknown",
+          "captured_at": "Unknown",
+          "dimension_exception": {
+            "asset": "troubleshooting/storage-firewall/troubleshooting--storage-firewall--01-storage-overview.webp",
+            "observed": [
+              1440,
+              1744
+            ],
+            "reason": "Variable-height or full-page capture taken before the fixed-viewport profile existed.",
+            "issue": 135
+          },
+          "caption_lines": {
+            "Purpose": 368,
+            "Look for": 369,
+            "Expected result": 370,
+            "Next step": 371
+          }
+        },
+        {
+          "line": 375,
+          "registry": "shot",
+          "id": "troubleshooting--storage-firewall--02-networking-disabled",
+          "final_path": "docs/assets/troubleshooting/storage-firewall/troubleshooting--storage-firewall--02-networking-disabled.webp",
+          "sha256": "46191c0ebb5e4504fc72ad585c07d8804e0275cd4d68e3fa9e1f1fac4b3ac610",
+          "census_ref": "docs/reference/portal-image-census.json#/files/110",
+          "canonical_alt_source": "scripts/capture/manifest.yaml#troubleshooting--storage-firewall--02-networking-disabled",
+          "provenance_kind": "Unknown",
+          "profile": "Unknown",
+          "captured_at": "Unknown",
+          "dimension_exception": {
+            "asset": "troubleshooting/storage-firewall/troubleshooting--storage-firewall--02-networking-disabled.webp",
+            "observed": [
+              1440,
+              1744
+            ],
+            "reason": "Variable-height or full-page capture taken before the fixed-viewport profile existed.",
+            "issue": 135
+          },
+          "caption_lines": {
+            "Purpose": 377,
+            "Look for": 378,
+            "Expected result": 379,
+            "Next step": 380
+          }
+        },
+        {
+          "line": 386,
+          "registry": "shot",
+          "id": "troubleshooting--storage-iam--01-iam-landing",
+          "final_path": "docs/assets/troubleshooting/storage-iam/troubleshooting--storage-iam--01-iam-landing.webp",
+          "sha256": "f4db51a36e4338f349bba2a36e292dcafc8a946bff0bf683292b08964bd187f8",
+          "census_ref": "docs/reference/portal-image-census.json#/files/111",
+          "canonical_alt_source": "scripts/capture/manifest.yaml#troubleshooting--storage-iam--01-iam-landing",
+          "provenance_kind": "Unknown",
+          "profile": "Unknown",
+          "captured_at": "Unknown",
+          "dimension_exception": {
+            "asset": "troubleshooting/storage-iam/troubleshooting--storage-iam--01-iam-landing.webp",
+            "observed": [
+              1440,
+              1744
+            ],
+            "reason": "Variable-height or full-page capture taken before the fixed-viewport profile existed.",
+            "issue": 135
+          },
+          "caption_lines": {
+            "Purpose": 388,
+            "Look for": 389,
+            "Expected result": null,
+            "Next step": 390
+          }
+        },
+        {
+          "line": 394,
+          "registry": "shot",
+          "id": "troubleshooting--storage-iam--02-role-assignments",
+          "final_path": "docs/assets/troubleshooting/storage-iam/troubleshooting--storage-iam--02-role-assignments.webp",
+          "sha256": "a1c7b87ae345f40d5b04216e81ad2c37a229f806e4546efc181fec1bd0a08b65",
+          "census_ref": "docs/reference/portal-image-census.json#/files/112",
+          "canonical_alt_source": "scripts/capture/manifest.yaml#troubleshooting--storage-iam--02-role-assignments",
+          "provenance_kind": "Unknown",
+          "profile": "Unknown",
+          "captured_at": "Unknown",
+          "dimension_exception": {
+            "asset": "troubleshooting/storage-iam/troubleshooting--storage-iam--02-role-assignments.webp",
+            "observed": [
+              1440,
+              1744
+            ],
+            "reason": "Variable-height or full-page capture taken before the fixed-viewport profile existed.",
+            "issue": 135
+          },
+          "caption_lines": {
+            "Purpose": 396,
+            "Look for": 397,
+            "Expected result": 398,
+            "Next step": 405
+          }
+        }
+      ],
+      "diagnostic_layers": [
+        {
+          "layer": "Layer 1 — DNS resolution (command procedure, no screenshot)",
+          "source_line": 311,
+          "navigation_pointer": "docs/troubleshooting/playbooks/outbound-network/storage-connectivity-firewall-authorization.md#L311",
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "Representative command output; not retained runtime observation"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/outbound-network/storage-connectivity-firewall-authorization.md#L339",
+          "missing_signal": "A retained runtime lookup, not a screenshot request (canvas sanitation limit)",
+          "trail_complete": false
+        },
+        {
+          "layer": "Layer 2 — App Service outbound routing evidence (captured)",
+          "source_line": 341,
+          "navigation_pointer": "docs/troubleshooting/playbooks/outbound-network/storage-connectivity-firewall-authorization.md#L341",
+          "observation_support": {
+            "reference_lines": [
+              345,
+              355
+            ],
+            "scope": "Caption-described configuration only; pixels not reviewed"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/outbound-network/storage-connectivity-firewall-authorization.md#L360",
+          "missing_signal": "Current matched runtime evidence; configuration is not causal proof",
+          "trail_complete": false
+        },
+        {
+          "layer": "Layer 3 — Storage firewall evidence (captured)",
+          "source_line": 362,
+          "navigation_pointer": "docs/troubleshooting/playbooks/outbound-network/storage-connectivity-firewall-authorization.md#L362",
+          "observation_support": {
+            "reference_lines": [
+              366,
+              375
+            ],
+            "scope": "Caption-described configuration only; pixels not reviewed"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/outbound-network/storage-connectivity-firewall-authorization.md#L380",
+          "missing_signal": "Current matched runtime evidence; configuration is not causal proof",
+          "trail_complete": false
+        },
+        {
+          "layer": "Layer 4 — Data-plane authorization evidence (captured)",
+          "source_line": 382,
+          "navigation_pointer": "docs/troubleshooting/playbooks/outbound-network/storage-connectivity-firewall-authorization.md#L382",
+          "observation_support": {
+            "reference_lines": [
+              386,
+              394
+            ],
+            "scope": "Caption-described configuration only; pixels not reviewed"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/outbound-network/storage-connectivity-firewall-authorization.md#L405",
+          "missing_signal": "Current matched runtime evidence; configuration is not causal proof",
+          "trail_complete": false
+        }
+      ],
+      "classification": "present",
+      "classification_reason": "Layered navigation, caption-described observations and next decisions are documented; DNS is intentionally illustrative text. Preserve #127; no replacement capture task.",
+      "coverage_class": "storage-reference",
+      "freshness": "Unknown",
+      "capture_access": "blocked-manual",
+      "capture_blocker": "Authorized resource/cost owner and compliant human Portal session not supplied; no capture attempted",
+      "trail_complete": false,
+      "outbound_matrix_ref": "docs/reference/outbound-evidence-gap-matrix.md#4-detail-by-playbook"
+    },
+    {
+      "path": "docs/troubleshooting/playbooks/performance-degradation.md",
+      "domain": "general",
+      "hosting_mode": "Unknown; no OS restriction inferred from an unqualified title",
+      "hosting_basis_line": 34,
+      "source_sha": "3e6d950dbec05c5e692e3869ce8d19302d183fea",
+      "portal_evidence_heading_line": null,
+      "screenshots": [],
+      "diagnostic_layers": [
+        {
+          "layer": "H1: One endpoint, query, or code path regressed",
+          "source_line": 311,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/performance-degradation.md#L311",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H2: CPU saturation or insufficient capacity",
+          "source_line": 323,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/performance-degradation.md#L323",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H3: Memory pressure or worker degradation",
+          "source_line": 335,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/performance-degradation.md#L335",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H4: Downstream dependency or outbound issue",
+          "source_line": 347,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/performance-degradation.md#L347",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        }
+      ],
+      "classification": "missing",
+      "classification_reason": "No embedded shot or legacy image reference. Existing evidence/validation prose does not constitute a captured Portal trail.",
+      "coverage_class": "no-embedded-capture",
+      "freshness": "Unknown",
+      "capture_access": "blocked-manual",
+      "capture_blocker": "Authorized resource/cost owner and compliant human Portal session not supplied; no capture attempted",
+      "trail_complete": false,
+      "outbound_matrix_ref": null
+    },
+    {
+      "path": "docs/troubleshooting/playbooks/performance/cors-and-token-errors.md",
+      "domain": "performance",
+      "hosting_mode": "Linux",
+      "hosting_basis_line": 35,
+      "source_sha": "3e6d950dbec05c5e692e3869ce8d19302d183fea",
+      "portal_evidence_heading_line": null,
+      "screenshots": [],
+      "diagnostic_layers": [
+        {
+          "layer": "H1: CORS not configured or misconfigured",
+          "source_line": 401,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/performance/cors-and-token-errors.md#L401",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H2: Preflight OPTIONS blocked by auth",
+          "source_line": 414,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/performance/cors-and-token-errors.md#L414",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H3: Token expired and silent refresh fails",
+          "source_line": 427,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/performance/cors-and-token-errors.md#L427",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H4: Double CORS headers",
+          "source_line": 440,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/performance/cors-and-token-errors.md#L440",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H5: Custom domain vs default domain mismatch",
+          "source_line": 453,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/performance/cors-and-token-errors.md#L453",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        }
+      ],
+      "classification": "missing",
+      "classification_reason": "No embedded shot or legacy image reference. Existing evidence/validation prose does not constitute a captured Portal trail.",
+      "coverage_class": "no-embedded-capture",
+      "freshness": "Unknown",
+      "capture_access": "blocked-manual",
+      "capture_blocker": "Authorized resource/cost owner and compliant human Portal session not supplied; no capture attempted",
+      "trail_complete": false,
+      "outbound_matrix_ref": null
+    },
+    {
+      "path": "docs/troubleshooting/playbooks/performance/intermittent-5xx-under-load.md",
+      "domain": "performance",
+      "hosting_mode": "Linux",
+      "hosting_basis_line": 51,
+      "source_sha": "3e6d950dbec05c5e692e3869ce8d19302d183fea",
+      "portal_evidence_heading_line": null,
+      "screenshots": [],
+      "diagnostic_layers": [
+        {
+          "layer": "H1: Worker concurrency exhaustion under burst traffic",
+          "source_line": 294,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/performance/intermittent-5xx-under-load.md#L294",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H2: Dependency latency cascade",
+          "source_line": 336,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/performance/intermittent-5xx-under-load.md#L336",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H3: Platform health probe and restart overlap",
+          "source_line": 378,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/performance/intermittent-5xx-under-load.md#L378",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H4: Outbound connection pressure (including SNAT-like behavior)",
+          "source_line": 420,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/performance/intermittent-5xx-under-load.md#L420",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        }
+      ],
+      "classification": "missing",
+      "classification_reason": "No embedded shot or legacy image reference. Existing evidence/validation prose does not constitute a captured Portal trail.",
+      "coverage_class": "no-embedded-capture",
+      "freshness": "Unknown",
+      "capture_access": "blocked-manual",
+      "capture_blocker": "Authorized resource/cost owner and compliant human Portal session not supplied; no capture attempted",
+      "trail_complete": false,
+      "outbound_matrix_ref": null
+    },
+    {
+      "path": "docs/troubleshooting/playbooks/performance/memory-pressure-and-worker-degradation.md",
+      "domain": "performance",
+      "hosting_mode": "Linux",
+      "hosting_basis_line": 52,
+      "source_sha": "3e6d950dbec05c5e692e3869ce8d19302d183fea",
+      "portal_evidence_heading_line": null,
+      "screenshots": [],
+      "diagnostic_layers": [
+        {
+          "layer": "H1: Application memory leak or unbounded cache growth",
+          "source_line": 301,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/performance/memory-pressure-and-worker-degradation.md#L301",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H2: Plan-level memory contention across multiple apps",
+          "source_line": 344,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/performance/memory-pressure-and-worker-degradation.md#L344",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H3: Worker/process model is overcommitted for memory budget",
+          "source_line": 387,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/performance/memory-pressure-and-worker-degradation.md#L387",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H4: Dependency/runtime behavior amplifies memory pressure",
+          "source_line": 423,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/performance/memory-pressure-and-worker-degradation.md#L423",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        }
+      ],
+      "classification": "missing",
+      "classification_reason": "No embedded shot or legacy image reference. Existing evidence/validation prose does not constitute a captured Portal trail.",
+      "coverage_class": "no-embedded-capture",
+      "freshness": "Unknown",
+      "capture_access": "blocked-manual",
+      "capture_blocker": "Authorized resource/cost owner and compliant human Portal session not supplied; no capture attempted",
+      "trail_complete": false,
+      "outbound_matrix_ref": null
+    },
+    {
+      "path": "docs/troubleshooting/playbooks/performance/no-space-left-on-device.md",
+      "domain": "performance",
+      "hosting_mode": "Linux",
+      "hosting_basis_line": 46,
+      "source_sha": "3e6d950dbec05c5e692e3869ce8d19302d183fea",
+      "portal_evidence_heading_line": null,
+      "screenshots": [],
+      "diagnostic_layers": [
+        {
+          "layer": "H1: Persistent  quota exhaustion",
+          "source_line": 280,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/performance/no-space-left-on-device.md#L280",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H2: Ephemeral  or writable layer exhaustion at runtime",
+          "source_line": 323,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/performance/no-space-left-on-device.md#L323",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H3: Image extraction or container layer pressure",
+          "source_line": 363,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/performance/no-space-left-on-device.md#L363",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H4: Storage signal is secondary to another churn pattern",
+          "source_line": 404,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/performance/no-space-left-on-device.md#L404",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        }
+      ],
+      "classification": "missing",
+      "classification_reason": "No embedded shot or legacy image reference. Existing evidence/validation prose does not constitute a captured Portal trail.",
+      "coverage_class": "no-embedded-capture",
+      "freshness": "Unknown",
+      "capture_access": "blocked-manual",
+      "capture_blocker": "Authorized resource/cost owner and compliant human Portal session not supplied; no capture attempted",
+      "trail_complete": false,
+      "outbound_matrix_ref": null
+    },
+    {
+      "path": "docs/troubleshooting/playbooks/performance/slow-response-but-low-cpu.md",
+      "domain": "performance",
+      "hosting_mode": "Linux",
+      "hosting_basis_line": 25,
+      "source_sha": "3e6d950dbec05c5e692e3869ce8d19302d183fea",
+      "portal_evidence_heading_line": null,
+      "screenshots": [],
+      "diagnostic_layers": [
+        {
+          "layer": "H1: Downstream dependency slowness",
+          "source_line": 268,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/performance/slow-response-but-low-cpu.md#L268",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H2: Thread/worker starvation",
+          "source_line": 318,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/performance/slow-response-but-low-cpu.md#L318",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H3: Memory pressure causing GC pauses or degraded responsiveness",
+          "source_line": 354,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/performance/slow-response-but-low-cpu.md#L354",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H4: Platform-side delays (cold start, SNAT contention, shared I/O bottlenecks)",
+          "source_line": 393,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/performance/slow-response-but-low-cpu.md#L393",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        }
+      ],
+      "classification": "missing",
+      "classification_reason": "No embedded shot or legacy image reference. Existing evidence/validation prose does not constitute a captured Portal trail.",
+      "coverage_class": "no-embedded-capture",
+      "freshness": "Unknown",
+      "capture_access": "blocked-manual",
+      "capture_blocker": "Authorized resource/cost owner and compliant human Portal session not supplied; no capture attempted",
+      "trail_complete": false,
+      "outbound_matrix_ref": null
+    },
+    {
+      "path": "docs/troubleshooting/playbooks/performance/slow-start-cold-start.md",
+      "domain": "performance",
+      "hosting_mode": "Linux",
+      "hosting_basis_line": 26,
+      "source_sha": "3e6d950dbec05c5e692e3869ce8d19302d183fea",
+      "portal_evidence_heading_line": null,
+      "screenshots": [],
+      "diagnostic_layers": [
+        {
+          "layer": "H1: Expected cold start window",
+          "source_line": 241,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/performance/slow-start-cold-start.md#L241",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H2: Startup path is too heavy (Python-specific initialization)",
+          "source_line": 272,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/performance/slow-start-cold-start.md#L272",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H3: Warm-up/startup controls are misconfigured",
+          "source_line": 309,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/performance/slow-start-cold-start.md#L309",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H4: Real regression in warm request path",
+          "source_line": 347,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/performance/slow-start-cold-start.md#L347",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        }
+      ],
+      "classification": "missing",
+      "classification_reason": "No embedded shot or legacy image reference. Existing evidence/validation prose does not constitute a captured Portal trail.",
+      "coverage_class": "no-embedded-capture",
+      "freshness": "Unknown",
+      "capture_access": "blocked-manual",
+      "capture_blocker": "Authorized resource/cost owner and compliant human Portal session not supplied; no capture attempted",
+      "trail_complete": false,
+      "outbound_matrix_ref": null
+    },
+    {
+      "path": "docs/troubleshooting/playbooks/performance/tail-latency-baseline-comparison.md",
+      "domain": "performance",
+      "hosting_mode": "Unknown; no OS restriction inferred from an unqualified title",
+      "hosting_basis_line": 40,
+      "source_sha": "3e6d950dbec05c5e692e3869ce8d19302d183fea",
+      "portal_evidence_heading_line": null,
+      "screenshots": [],
+      "diagnostic_layers": [
+        {
+          "layer": "Hypothesis decision matrix",
+          "source_line": 183,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/performance/tail-latency-baseline-comparison.md#L183",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        }
+      ],
+      "classification": "missing",
+      "classification_reason": "No embedded shot or legacy image reference. Existing evidence/validation prose does not constitute a captured Portal trail.",
+      "coverage_class": "no-embedded-capture",
+      "freshness": "Unknown",
+      "capture_access": "blocked-manual",
+      "capture_blocker": "Authorized resource/cost owner and compliant human Portal session not supplied; no capture attempted",
+      "trail_complete": false,
+      "outbound_matrix_ref": null
+    },
+    {
+      "path": "docs/troubleshooting/playbooks/performance/windows-filesystem-quotas.md",
+      "domain": "performance",
+      "hosting_mode": "Windows; exact runtime/container applicability requires target selection",
+      "hosting_basis_line": 39,
+      "source_sha": "3e6d950dbec05c5e692e3869ce8d19302d183fea",
+      "portal_evidence_heading_line": null,
+      "screenshots": [],
+      "diagnostic_layers": [
+        {
+          "layer": "H1: IIS HTTP logs filling D:\\home (not rotated/cleaned)",
+          "source_line": 323,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/performance/windows-filesystem-quotas.md#L323",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H2: Application writing large temp files to D:\\home instead of D:\\local",
+          "source_line": 336,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/performance/windows-filesystem-quotas.md#L336",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H3: FREB traces enabled and accumulating",
+          "source_line": 349,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/performance/windows-filesystem-quotas.md#L349",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H4: Deployment artifacts (old zip packages) consuming quota",
+          "source_line": 362,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/performance/windows-filesystem-quotas.md#L362",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H5: Diagnostic dumps consuming disk space",
+          "source_line": 375,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/performance/windows-filesystem-quotas.md#L375",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        }
+      ],
+      "classification": "missing",
+      "classification_reason": "No embedded shot or legacy image reference. Existing evidence/validation prose does not constitute a captured Portal trail.",
+      "coverage_class": "no-embedded-capture",
+      "freshness": "Unknown",
+      "capture_access": "blocked-manual",
+      "capture_blocker": "Authorized resource/cost owner and compliant human Portal session not supplied; no capture attempted",
+      "trail_complete": false,
+      "outbound_matrix_ref": null
+    },
+    {
+      "path": "docs/troubleshooting/playbooks/performance/windows-memory-pressure-worker-recycling.md",
+      "domain": "performance",
+      "hosting_mode": "Windows; exact runtime/container applicability requires target selection",
+      "hosting_basis_line": 39,
+      "source_sha": "3e6d950dbec05c5e692e3869ce8d19302d183fea",
+      "portal_evidence_heading_line": null,
+      "screenshots": [],
+      "diagnostic_layers": [
+        {
+          "layer": "H1: Application memory leak (steady growth until recycling)",
+          "source_line": 333,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/performance/windows-memory-pressure-worker-recycling.md#L333",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H2: Tier memory limit reached (app needs more RAM than plan provides)",
+          "source_line": 348,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/performance/windows-memory-pressure-worker-recycling.md#L348",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H3: IIS proactive recycling (time-based or overlapping recycle)",
+          "source_line": 363,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/performance/windows-memory-pressure-worker-recycling.md#L363",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H4: GC pressure in .NET (LOH fragmentation, excessive Gen2)",
+          "source_line": 378,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/performance/windows-memory-pressure-worker-recycling.md#L378",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H5: Native memory leak in unmanaged code",
+          "source_line": 393,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/performance/windows-memory-pressure-worker-recycling.md#L393",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        }
+      ],
+      "classification": "missing",
+      "classification_reason": "No embedded shot or legacy image reference. Existing evidence/validation prose does not constitute a captured Portal trail.",
+      "coverage_class": "no-embedded-capture",
+      "freshness": "Unknown",
+      "capture_access": "blocked-manual",
+      "capture_blocker": "Authorized resource/cost owner and compliant human Portal session not supplied; no capture attempted",
+      "trail_complete": false,
+      "outbound_matrix_ref": null
+    },
+    {
+      "path": "docs/troubleshooting/playbooks/private-endpoint-access-restrictions.md",
+      "domain": "general",
+      "hosting_mode": "Unknown; no OS restriction inferred from an unqualified title",
+      "hosting_basis_line": 45,
+      "source_sha": "3e6d950dbec05c5e692e3869ce8d19302d183fea",
+      "portal_evidence_heading_line": null,
+      "screenshots": [],
+      "diagnostic_layers": [
+        {
+          "layer": "Hypothesis decision matrix",
+          "source_line": 193,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/private-endpoint-access-restrictions.md#L193",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        }
+      ],
+      "classification": "missing",
+      "classification_reason": "No embedded shot or legacy image reference. Existing evidence/validation prose does not constitute a captured Portal trail.",
+      "coverage_class": "no-embedded-capture",
+      "freshness": "Unknown",
+      "capture_access": "blocked-manual",
+      "capture_blocker": "Authorized resource/cost owner and compliant human Portal session not supplied; no capture attempted",
+      "trail_complete": false,
+      "outbound_matrix_ref": null
+    },
+    {
+      "path": "docs/troubleshooting/playbooks/scm-access-dns-and-http-failures.md",
+      "domain": "general",
+      "hosting_mode": "Unknown; no OS restriction inferred from an unqualified title",
+      "hosting_basis_line": 43,
+      "source_sha": "3e6d950dbec05c5e692e3869ce8d19302d183fea",
+      "portal_evidence_heading_line": null,
+      "screenshots": [],
+      "diagnostic_layers": [
+        {
+          "layer": "Hypothesis decision matrix",
+          "source_line": 159,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/scm-access-dns-and-http-failures.md#L159",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        }
+      ],
+      "classification": "missing",
+      "classification_reason": "No embedded shot or legacy image reference. Existing evidence/validation prose does not constitute a captured Portal trail.",
+      "coverage_class": "no-embedded-capture",
+      "freshness": "Unknown",
+      "capture_access": "blocked-manual",
+      "capture_blocker": "Authorized resource/cost owner and compliant human Portal session not supplied; no capture attempted",
+      "trail_complete": false,
+      "outbound_matrix_ref": null
+    },
+    {
+      "path": "docs/troubleshooting/playbooks/ssl-certificate-issues.md",
+      "domain": "general",
+      "hosting_mode": "Unknown; no OS restriction inferred from an unqualified title",
+      "hosting_basis_line": 33,
+      "source_sha": "3e6d950dbec05c5e692e3869ce8d19302d183fea",
+      "portal_evidence_heading_line": null,
+      "screenshots": [],
+      "diagnostic_layers": [
+        {
+          "layer": "H1: Hostname validation or DNS issue",
+          "source_line": 281,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/ssl-certificate-issues.md#L281",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H2: Certificate missing, expired, or issuance failed",
+          "source_line": 293,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/ssl-certificate-issues.md#L293",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H3: Wrong thumbprint or binding type",
+          "source_line": 305,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/ssl-certificate-issues.md#L305",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H4: Propagation or cache timing issue",
+          "source_line": 317,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/ssl-certificate-issues.md#L317",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        }
+      ],
+      "classification": "missing",
+      "classification_reason": "No embedded shot or legacy image reference. Existing evidence/validation prose does not constitute a captured Portal trail.",
+      "coverage_class": "no-embedded-capture",
+      "freshness": "Unknown",
+      "capture_access": "blocked-manual",
+      "capture_blocker": "Authorized resource/cost owner and compliant human Portal session not supplied; no capture attempted",
+      "trail_complete": false,
+      "outbound_matrix_ref": null
+    },
+    {
+      "path": "docs/troubleshooting/playbooks/startup-availability/auth-redirect-loop.md",
+      "domain": "startup-availability",
+      "hosting_mode": "Linux",
+      "hosting_basis_line": 31,
+      "source_sha": "3e6d950dbec05c5e692e3869ce8d19302d183fea",
+      "portal_evidence_heading_line": null,
+      "screenshots": [],
+      "diagnostic_layers": [
+        {
+          "layer": "H1: Redirect URI mismatch",
+          "source_line": 385,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/startup-availability/auth-redirect-loop.md#L385",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H2: Reverse proxy stripping headers",
+          "source_line": 398,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/startup-availability/auth-redirect-loop.md#L398",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H3: Token store corruption or full",
+          "source_line": 411,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/startup-availability/auth-redirect-loop.md#L411",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H4: Mixed HTTP/HTTPS",
+          "source_line": 424,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/startup-availability/auth-redirect-loop.md#L424",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H5: Slot swap broke auth config",
+          "source_line": 437,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/startup-availability/auth-redirect-loop.md#L437",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        }
+      ],
+      "classification": "missing",
+      "classification_reason": "No embedded shot or legacy image reference. Existing evidence/validation prose does not constitute a captured Portal trail.",
+      "coverage_class": "no-embedded-capture",
+      "freshness": "Unknown",
+      "capture_access": "blocked-manual",
+      "capture_blocker": "Authorized resource/cost owner and compliant human Portal session not supplied; no capture attempted",
+      "trail_complete": false,
+      "outbound_matrix_ref": null
+    },
+    {
+      "path": "docs/troubleshooting/playbooks/startup-availability/container-didnt-respond-to-http-pings.md",
+      "domain": "startup-availability",
+      "hosting_mode": "Linux",
+      "hosting_basis_line": 54,
+      "source_sha": "3e6d950dbec05c5e692e3869ce8d19302d183fea",
+      "portal_evidence_heading_line": null,
+      "screenshots": [],
+      "diagnostic_layers": [
+        {
+          "layer": "H1: Port mismatch",
+          "source_line": 344,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/startup-availability/container-didnt-respond-to-http-pings.md#L344",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H2: Binding to localhost",
+          "source_line": 364,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/startup-availability/container-didnt-respond-to-http-pings.md#L364",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H3: Startup time exceeded",
+          "source_line": 384,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/startup-availability/container-didnt-respond-to-http-pings.md#L384",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H4: Application crash during startup",
+          "source_line": 404,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/startup-availability/container-didnt-respond-to-http-pings.md#L404",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H5: Missing or incorrect startup command",
+          "source_line": 424,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/startup-availability/container-didnt-respond-to-http-pings.md#L424",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        }
+      ],
+      "classification": "missing",
+      "classification_reason": "No embedded shot or legacy image reference. Existing evidence/validation prose does not constitute a captured Portal trail.",
+      "coverage_class": "no-embedded-capture",
+      "freshness": "Unknown",
+      "capture_access": "blocked-manual",
+      "capture_blocker": "Authorized resource/cost owner and compliant human Portal session not supplied; no capture attempted",
+      "trail_complete": false,
+      "outbound_matrix_ref": null
+    },
+    {
+      "path": "docs/troubleshooting/playbooks/startup-availability/deployment-succeeded-startup-failed.md",
+      "domain": "startup-availability",
+      "hosting_mode": "Linux",
+      "hosting_basis_line": 54,
+      "source_sha": "3e6d950dbec05c5e692e3869ce8d19302d183fea",
+      "portal_evidence_heading_line": null,
+      "screenshots": [],
+      "diagnostic_layers": [
+        {
+          "layer": "H1: Startup command and artifact/module path mismatch",
+          "source_line": 331,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/startup-availability/deployment-succeeded-startup-failed.md#L331",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H2:  mismatch with ZipDeploy/build flow",
+          "source_line": 389,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/startup-availability/deployment-succeeded-startup-failed.md#L389",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H3: Port/bind mismatch ( and actual listen target)",
+          "source_line": 448,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/startup-availability/deployment-succeeded-startup-failed.md#L448",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H4: Python runtime/dependency compatibility mismatch",
+          "source_line": 507,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/startup-availability/deployment-succeeded-startup-failed.md#L507",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        }
+      ],
+      "classification": "missing",
+      "classification_reason": "No embedded shot or legacy image reference. Existing evidence/validation prose does not constitute a captured Portal trail.",
+      "coverage_class": "no-embedded-capture",
+      "freshness": "Unknown",
+      "capture_access": "blocked-manual",
+      "capture_blocker": "Authorized resource/cost owner and compliant human Portal session not supplied; no capture attempted",
+      "trail_complete": false,
+      "outbound_matrix_ref": null
+    },
+    {
+      "path": "docs/troubleshooting/playbooks/startup-availability/failed-to-forward-request.md",
+      "domain": "startup-availability",
+      "hosting_mode": "Linux",
+      "hosting_basis_line": 53,
+      "source_sha": "3e6d950dbec05c5e692e3869ce8d19302d183fea",
+      "portal_evidence_heading_line": null,
+      "screenshots": [],
+      "diagnostic_layers": [
+        {
+          "layer": "H1: Bind/address mismatch ( vs )",
+          "source_line": 380,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/startup-availability/failed-to-forward-request.md#L380",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H2: Port mismatch ( vs actual listen port)",
+          "source_line": 399,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/startup-availability/failed-to-forward-request.md#L399",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H3: Protocol/path mismatch (HTTP/2/WebSocket expectations)",
+          "source_line": 417,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/startup-availability/failed-to-forward-request.md#L417",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H4: Double-proxy conflict (custom nginx/caddy + platform proxy)",
+          "source_line": 436,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/startup-availability/failed-to-forward-request.md#L436",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H5: Slow first response / timeout before forward succeeds",
+          "source_line": 455,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/startup-availability/failed-to-forward-request.md#L455",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H6: Crash after bind, before handling first request",
+          "source_line": 474,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/startup-availability/failed-to-forward-request.md#L474",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        }
+      ],
+      "classification": "missing",
+      "classification_reason": "No embedded shot or legacy image reference. Existing evidence/validation prose does not constitute a captured Portal trail.",
+      "coverage_class": "no-embedded-capture",
+      "freshness": "Unknown",
+      "capture_access": "blocked-manual",
+      "capture_blocker": "Authorized resource/cost owner and compliant human Portal session not supplied; no capture attempted",
+      "trail_complete": false,
+      "outbound_matrix_ref": null
+    },
+    {
+      "path": "docs/troubleshooting/playbooks/startup-availability/slot-swap-config-drift.md",
+      "domain": "startup-availability",
+      "hosting_mode": "Linux",
+      "hosting_basis_line": 27,
+      "source_sha": "3e6d950dbec05c5e692e3869ce8d19302d183fea",
+      "portal_evidence_heading_line": null,
+      "screenshots": [],
+      "diagnostic_layers": [
+        {
+          "layer": "H1: Non-sticky settings change triggers restart after successful swap",
+          "source_line": 370,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/startup-availability/slot-swap-config-drift.md#L370",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H2: Slot-setting drift causes swapped code to run with unexpected configuration",
+          "source_line": 408,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/startup-availability/slot-swap-config-drift.md#L408",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H3: Warm-up race allows traffic before effective readiness after swap",
+          "source_line": 450,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/startup-availability/slot-swap-config-drift.md#L450",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H4: Post-swap dependency context breaks (stale connection strings or identity RBAC mismatch)",
+          "source_line": 489,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/startup-availability/slot-swap-config-drift.md#L489",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        }
+      ],
+      "classification": "missing",
+      "classification_reason": "No embedded shot or legacy image reference. Existing evidence/validation prose does not constitute a captured Portal trail.",
+      "coverage_class": "no-embedded-capture",
+      "freshness": "Unknown",
+      "capture_access": "blocked-manual",
+      "capture_blocker": "Authorized resource/cost owner and compliant human Portal session not supplied; no capture attempted",
+      "trail_complete": false,
+      "outbound_matrix_ref": null
+    },
+    {
+      "path": "docs/troubleshooting/playbooks/startup-availability/slot-swap-failed-during-warmup.md",
+      "domain": "startup-availability",
+      "hosting_mode": "Linux",
+      "hosting_basis_line": 28,
+      "source_sha": "3e6d950dbec05c5e692e3869ce8d19302d183fea",
+      "portal_evidence_heading_line": null,
+      "screenshots": [],
+      "diagnostic_layers": [
+        {
+          "layer": "H1: Startup time exceeds warm-up budget",
+          "source_line": 332,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/startup-availability/slot-swap-failed-during-warmup.md#L332",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H2: Warm-up path or accepted statuses are misconfigured",
+          "source_line": 382,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/startup-availability/slot-swap-failed-during-warmup.md#L382",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H3: Slot-specific configuration drift breaks staging warm-up",
+          "source_line": 424,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/startup-availability/slot-swap-failed-during-warmup.md#L424",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H4: Health Check behavior conflicts with swap warm-up timing",
+          "source_line": 464,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/startup-availability/slot-swap-failed-during-warmup.md#L464",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        }
+      ],
+      "classification": "missing",
+      "classification_reason": "No embedded shot or legacy image reference. Existing evidence/validation prose does not constitute a captured Portal trail.",
+      "coverage_class": "no-embedded-capture",
+      "freshness": "Unknown",
+      "capture_access": "blocked-manual",
+      "capture_blocker": "Authorized resource/cost owner and compliant human Portal session not supplied; no capture attempted",
+      "trail_complete": false,
+      "outbound_matrix_ref": null
+    },
+    {
+      "path": "docs/troubleshooting/playbooks/startup-availability/warmup-vs-health-check.md",
+      "domain": "startup-availability",
+      "hosting_mode": "Linux",
+      "hosting_basis_line": 28,
+      "source_sha": "3e6d950dbec05c5e692e3869ce8d19302d183fea",
+      "portal_evidence_heading_line": null,
+      "screenshots": [],
+      "diagnostic_layers": [
+        {
+          "layer": "H1: Startup warm-up timeout",
+          "source_line": 320,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/startup-availability/warmup-vs-health-check.md#L320",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H2: Health Check endpoint is heavy",
+          "source_line": 358,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/startup-availability/warmup-vs-health-check.md#L358",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H3: Path mismatch between warm-up behavior and Health Check",
+          "source_line": 396,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/startup-availability/warmup-vs-health-check.md#L396",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H4: Port or bind mismatch during startup",
+          "source_line": 434,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/startup-availability/warmup-vs-health-check.md#L434",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        }
+      ],
+      "classification": "missing",
+      "classification_reason": "No embedded shot or legacy image reference. Existing evidence/validation prose does not constitute a captured Portal trail.",
+      "coverage_class": "no-embedded-capture",
+      "freshness": "Unknown",
+      "capture_access": "blocked-manual",
+      "capture_blocker": "Authorized resource/cost owner and compliant human Portal session not supplied; no capture attempted",
+      "trail_complete": false,
+      "outbound_matrix_ref": null
+    },
+    {
+      "path": "docs/troubleshooting/playbooks/startup-availability/windows-container-health-probes.md",
+      "domain": "startup-availability",
+      "hosting_mode": "Windows container",
+      "hosting_basis_line": 41,
+      "source_sha": "3e6d950dbec05c5e692e3869ce8d19302d183fea",
+      "portal_evidence_heading_line": null,
+      "screenshots": [],
+      "diagnostic_layers": [
+        {
+          "layer": "H1: Container image too large (pull timeout)",
+          "source_line": 306,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/startup-availability/windows-container-health-probes.md#L306",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H2: Wrong base image (servercore vs nanoserver incompatibility)",
+          "source_line": 322,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/startup-availability/windows-container-health-probes.md#L322",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H3: IIS binding mismatch (port 80 vs WEBSITES_PORT)",
+          "source_line": 341,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/startup-availability/windows-container-health-probes.md#L341",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H4: ServiceMonitor.exe not running (IIS won't start)",
+          "source_line": 357,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/startup-availability/windows-container-health-probes.md#L357",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H5: Startup time exceeded (Windows containers inherently slower)",
+          "source_line": 373,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/startup-availability/windows-container-health-probes.md#L373",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        }
+      ],
+      "classification": "missing",
+      "classification_reason": "No embedded shot or legacy image reference. Existing evidence/validation prose does not constitute a captured Portal trail.",
+      "coverage_class": "no-embedded-capture",
+      "freshness": "Unknown",
+      "capture_access": "blocked-manual",
+      "capture_blocker": "Authorized resource/cost owner and compliant human Portal session not supplied; no capture attempted",
+      "trail_complete": false,
+      "outbound_matrix_ref": null
+    },
+    {
+      "path": "docs/troubleshooting/playbooks/startup-availability/windows-first-static-asset-request-500.md",
+      "domain": "startup-availability",
+      "hosting_mode": "Windows; exact runtime/container applicability requires target selection",
+      "hosting_basis_line": 52,
+      "source_sha": "3e6d950dbec05c5e692e3869ce8d19302d183fea",
+      "portal_evidence_heading_line": null,
+      "screenshots": [],
+      "diagnostic_layers": [
+        {
+          "layer": "H1: Artifact visibility or partial deployment",
+          "source_line": 190,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/startup-availability/windows-first-static-asset-request-500.md#L190",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H2: Path, rewrite, or handler mismatch",
+          "source_line": 197,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/startup-availability/windows-first-static-asset-request-500.md#L197",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H3: Initialization race",
+          "source_line": 203,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/startup-availability/windows-first-static-asset-request-500.md#L203",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H4: File lock or ACL",
+          "source_line": 209,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/startup-availability/windows-first-static-asset-request-500.md#L209",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H5: Cache behavior",
+          "source_line": 215,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/startup-availability/windows-first-static-asset-request-500.md#L215",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H6: Dependency failure",
+          "source_line": 221,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/startup-availability/windows-first-static-asset-request-500.md#L221",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H7: Worker change",
+          "source_line": 227,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/startup-availability/windows-first-static-asset-request-500.md#L227",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        }
+      ],
+      "classification": "missing",
+      "classification_reason": "No embedded shot or legacy image reference. Existing evidence/validation prose does not constitute a captured Portal trail.",
+      "coverage_class": "no-embedded-capture",
+      "freshness": "Unknown",
+      "capture_access": "blocked-manual",
+      "capture_blocker": "Authorized resource/cost owner and compliant human Portal session not supplied; no capture attempted",
+      "trail_complete": false,
+      "outbound_matrix_ref": null
+    },
+    {
+      "path": "docs/troubleshooting/playbooks/startup-availability/windows-iis-webconfig-startup.md",
+      "domain": "startup-availability",
+      "hosting_mode": "Windows; exact runtime/container applicability requires target selection",
+      "hosting_basis_line": 40,
+      "source_sha": "3e6d950dbec05c5e692e3869ce8d19302d183fea",
+      "portal_evidence_heading_line": null,
+      "screenshots": [],
+      "diagnostic_layers": [
+        {
+          "layer": "H1: Malformed web.config XML (parse error)",
+          "source_line": 300,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/startup-availability/windows-iis-webconfig-startup.md#L300",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H2: Incorrect processPath or handler mapping",
+          "source_line": 347,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/startup-availability/windows-iis-webconfig-startup.md#L347",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H3: Missing runtime/module dependency",
+          "source_line": 399,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/startup-availability/windows-iis-webconfig-startup.md#L399",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H4: URL Rewrite rule conflict",
+          "source_line": 454,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/startup-availability/windows-iis-webconfig-startup.md#L454",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "H5: web.config locked settings conflict with applicationHost.config",
+          "source_line": 499,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/startup-availability/windows-iis-webconfig-startup.md#L499",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        }
+      ],
+      "classification": "missing",
+      "classification_reason": "No embedded shot or legacy image reference. Existing evidence/validation prose does not constitute a captured Portal trail.",
+      "coverage_class": "no-embedded-capture",
+      "freshness": "Unknown",
+      "capture_access": "blocked-manual",
+      "capture_blocker": "Authorized resource/cost owner and compliant human Portal session not supplied; no capture attempted",
+      "trail_complete": false,
+      "outbound_matrix_ref": null
+    },
+    {
+      "path": "docs/troubleshooting/playbooks/startup-availability/windows-kudu-diagnostics.md",
+      "domain": "startup-availability",
+      "hosting_mode": "Windows; exact runtime/container applicability requires target selection",
+      "hosting_basis_line": 42,
+      "source_sha": "3e6d950dbec05c5e692e3869ce8d19302d183fea",
+      "portal_evidence_heading_line": null,
+      "screenshots": [
+        {
+          "line": 178,
+          "registry": "shot",
+          "id": "troubleshooting--kudu--01-overview",
+          "final_path": "docs/assets/troubleshooting/kudu/troubleshooting--kudu--01-overview.webp",
+          "sha256": "1b83d58ca130a9fde73ab7e3ea2f3e98e7760d2884d52283c49198b351ccc52b",
+          "census_ref": "docs/reference/portal-image-census.json#/files/81",
+          "canonical_alt_source": "scripts/capture/manifest.yaml#troubleshooting--kudu--01-overview",
+          "provenance_kind": "Unknown",
+          "profile": "Unknown",
+          "captured_at": "Unknown",
+          "dimension_exception": null,
+          "caption_lines": {
+            "Purpose": null,
+            "Look for": null,
+            "Expected result": null,
+            "Next step": null
+          }
+        },
+        {
+          "line": 184,
+          "registry": "shot",
+          "id": "troubleshooting--kudu--02-kudu-home",
+          "final_path": "docs/assets/troubleshooting/kudu/troubleshooting--kudu--02-kudu-home.webp",
+          "sha256": "1a5284630505fea19b09129b4e56afd0e26c67b718d391d1d4d038937bc9750a",
+          "census_ref": "docs/reference/portal-image-census.json#/files/82",
+          "canonical_alt_source": "scripts/capture/manifest.yaml#troubleshooting--kudu--02-kudu-home",
+          "provenance_kind": "Unknown",
+          "profile": "Unknown",
+          "captured_at": "Unknown",
+          "dimension_exception": {
+            "asset": "troubleshooting/kudu/troubleshooting--kudu--02-kudu-home.webp",
+            "observed": [
+              1440,
+              1060
+            ],
+            "reason": "Variable-height or full-page capture taken before the fixed-viewport profile existed.",
+            "issue": 135
+          },
+          "caption_lines": {
+            "Purpose": null,
+            "Look for": null,
+            "Expected result": null,
+            "Next step": null
+          }
+        },
+        {
+          "line": 190,
+          "registry": "shot",
+          "id": "troubleshooting--kudu--03-process-explorer",
+          "final_path": "docs/assets/troubleshooting/kudu/troubleshooting--kudu--03-process-explorer.webp",
+          "sha256": "4e7da3957dd8bbc53947f734699bb41d2ac943377a8144d50cc7b3048faa5694",
+          "census_ref": "docs/reference/portal-image-census.json#/files/83",
+          "canonical_alt_source": "scripts/capture/manifest.yaml#troubleshooting--kudu--03-process-explorer",
+          "provenance_kind": "Unknown",
+          "profile": "Unknown",
+          "captured_at": "Unknown",
+          "dimension_exception": {
+            "asset": "troubleshooting/kudu/troubleshooting--kudu--03-process-explorer.webp",
+            "observed": [
+              1440,
+              1060
+            ],
+            "reason": "Variable-height or full-page capture taken before the fixed-viewport profile existed.",
+            "issue": 135
+          },
+          "caption_lines": {
+            "Purpose": null,
+            "Look for": null,
+            "Expected result": null,
+            "Next step": null
+          }
+        }
+      ],
+      "diagnostic_layers": [
+        {
+          "layer": "Portal view: Overview blade confirming Windows runtime",
+          "source_line": 178,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [
+              178
+            ],
+            "scope": "Nearby prose describes the UI; pixels not reviewed"
+          },
+          "next_decision_pointer": null,
+          "missing_signal": "Purpose / Look for / Expected result / Next step caption trail tied to the tool-selection decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "Portal view: Kudu Environment home with REST API surface inventory",
+          "source_line": 184,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [
+              184
+            ],
+            "scope": "Nearby prose describes the UI; pixels not reviewed"
+          },
+          "next_decision_pointer": null,
+          "missing_signal": "Purpose / Look for / Expected result / Next step caption trail tied to the tool-selection decision",
+          "trail_complete": false
+        },
+        {
+          "layer": "Portal view: Kudu Process Explorer table with live w3wp.exe rows",
+          "source_line": 190,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [
+              190
+            ],
+            "scope": "Nearby prose describes the UI; pixels not reviewed"
+          },
+          "next_decision_pointer": null,
+          "missing_signal": "Purpose / Look for / Expected result / Next step caption trail tied to the tool-selection decision",
+          "trail_complete": false
+        }
+      ],
+      "classification": "missing",
+      "classification_reason": "Three registered screenshots and descriptive prose exist, but prescribed captions and linked per-image next decisions are missing; caption-only review first.",
+      "coverage_class": "windows-kudu-caption-gap",
+      "freshness": "Unknown",
+      "capture_access": "blocked-manual",
+      "capture_blocker": "Authorized resource/cost owner and compliant human Portal session not supplied; no capture attempted",
+      "trail_complete": false,
+      "outbound_matrix_ref": null
+    },
+    {
+      "path": "docs/troubleshooting/playbooks/startup-availability/windows-slot-swap-binding-recycle.md",
+      "domain": "startup-availability",
+      "hosting_mode": "Windows; exact runtime/container applicability requires target selection",
+      "hosting_basis_line": 45,
+      "source_sha": "3e6d950dbec05c5e692e3869ce8d19302d183fea",
+      "portal_evidence_heading_line": null,
+      "screenshots": [],
+      "diagnostic_layers": [
+        {
+          "layer": "Hypothesis decision matrix",
+          "source_line": 244,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/startup-availability/windows-slot-swap-binding-recycle.md#L244",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        }
+      ],
+      "classification": "missing",
+      "classification_reason": "No embedded shot or legacy image reference. Existing evidence/validation prose does not constitute a captured Portal trail.",
+      "coverage_class": "no-embedded-capture",
+      "freshness": "Unknown",
+      "capture_access": "blocked-manual",
+      "capture_blocker": "Authorized resource/cost owner and compliant human Portal session not supplied; no capture attempted",
+      "trail_complete": false,
+      "outbound_matrix_ref": null
+    },
+    {
+      "path": "docs/troubleshooting/playbooks/startup-availability/windows-slot-swap-first-request-latency.md",
+      "domain": "startup-availability",
+      "hosting_mode": "Windows; exact runtime/container applicability requires target selection",
+      "hosting_basis_line": 46,
+      "source_sha": "3e6d950dbec05c5e692e3869ce8d19302d183fea",
+      "portal_evidence_heading_line": null,
+      "screenshots": [],
+      "diagnostic_layers": [
+        {
+          "layer": "Hypothesis decision matrix",
+          "source_line": 243,
+          "navigation_pointer": null,
+          "observation_support": {
+            "reference_lines": [],
+            "scope": "No embedded screenshot; evidence requirements are prose, not a Portal capture trail"
+          },
+          "next_decision_pointer": "docs/troubleshooting/playbooks/startup-availability/windows-slot-swap-first-request-latency.md#L243",
+          "missing_signal": "Layer-specific navigation and retained UI observation linked to this diagnostic decision",
+          "trail_complete": false
+        }
+      ],
+      "classification": "missing",
+      "classification_reason": "No embedded shot or legacy image reference. Existing evidence/validation prose does not constitute a captured Portal trail.",
+      "coverage_class": "no-embedded-capture",
+      "freshness": "Unknown",
+      "capture_access": "blocked-manual",
+      "capture_blocker": "Authorized resource/cost owner and compliant human Portal session not supplied; no capture attempted",
+      "trail_complete": false,
+      "outbound_matrix_ref": null
+    }
+  ],
+  "capture_prerequisites": {
+    "authorization": "Resource/cost owner approves one controlled app, diagnostic question, fault/logging writes, region, SKU, runtime and cleanup boundary before execution; actual RBAC must permit the selected blades and SCM actions, not inferred from Reader access.",
+    "human_session": "Device-compliant interactively signed-in Chrome; human completes MFA and confirms English/en-US, Light not Auto, Flyout closed, service menu collapsed, notifications off and DevTools closed. No enrollment or cookie bypass.",
+    "runner": "scripts/capture/capture.cjs with portal-desktop-v1: 1600x1000 DPR1 viewport, zoom100%, UTC, light, reduced motion, stable blade-specific ready selector; 1440x900 final WebP. Raw PNG stays private. No capture is attempted here.",
+    "privacy_and_review": "Use imported text-replacement helper in frames and attributes; canvas/unsanitizable output fails or becomes sanitized text. Pin final-byte hash and honest provenance, short canonical alt and Purpose/Look for/Expected/Next step. Visually inspect final WebP for PII/caption accuracy; Oracle and exact-head CI before merge.",
+    "owner": "Maintainer selects child scope; resource owner authorizes; compliant-device human operator supplies session; reviewers judge final bytes."
+  },
+  "proposed_single_playbook_scopes": [
+    {
+      "priority": 1,
+      "playbook": "docs/troubleshooting/playbooks/startup-availability/deployment-succeeded-startup-failed.md",
+      "owner_issue": 295,
+      "parent_issue": 128,
+      "work_class": "reuse-existing-child",
+      "status": "blocked-manual",
+      "expected_blades": [
+        "App Service > Deployment Center > deployment logs",
+        "App Service > Log stream",
+        "Log Analytics > Logs > startup phase query",
+        "App Service > Configuration > startup settings"
+      ],
+      "reuse_ids": [
+        "troubleshooting--deployment-center--02-depstart-successful-deploy",
+        "troubleshooting--log-analytics--04-depstart-startup-failed-kql",
+        "troubleshooting--log-analytics--05-depstart-runtime-vs-deploy-timeline"
+      ],
+      "proposed_ids": [],
+      "missing_signal": "Target playbook has no embedded capture. Link successful deployment navigation to same-run startup failure observation and next hypothesis decision, not a historical lab screenshot presented as current failure.",
+      "prerequisites": "Shared capture prerequisites plus owner-selected Linux startup scenario, approved fault/logging costs, Deployment Center and workspace log access. Review existing bytes for reuse before defining any new stable ID."
+    },
+    {
+      "priority": 2,
+      "playbook": "docs/troubleshooting/playbooks/startup-availability/windows-kudu-diagnostics.md",
+      "owner_issue": 128,
+      "coordinate_with": [
+        135
+      ],
+      "work_class": "caption-only-first",
+      "status": "missing",
+      "expected_blades": [
+        "App Service > Overview",
+        "Development Tools > Advanced Tools > Go > Kudu Environment",
+        "Kudu > Process explorer"
+      ],
+      "reuse_ids": [
+        "troubleshooting--kudu--01-overview",
+        "troubleshooting--kudu--02-kudu-home",
+        "troubleshooting--kudu--03-process-explorer"
+      ],
+      "proposed_ids": [],
+      "missing_signal": "Per-view navigation, prescribed caption pattern and next diagnostic decision; do not request the existing Java worker screenshot again.",
+      "prerequisites": "Maintainer scopes a caption-only child and reviewer reads existing final bytes first; no Azure needed for prose. Recapture only for a specifically established remaining gap; profile exceptions stay with census batch 9 / #135."
+    },
+    {
+      "priority": 3,
+      "playbook": "docs/troubleshooting/playbooks/startup-availability/windows-iis-webconfig-startup.md",
+      "owner_issue": 128,
+      "work_class": "proposed-child-not-filed",
+      "status": "blocked-manual",
+      "expected_blades": [
+        "App Service > Diagnose and solve problems > startup diagnostics",
+        "App Service > Log stream",
+        "Advanced Tools > Kudu > Debug console > deployed web.config"
+      ],
+      "reuse_ids": [
+        "troubleshooting--kudu--05-webconfig-verified"
+      ],
+      "proposed_ids": [],
+      "missing_signal": "Windows/IIS failure signature, sanitized effective web.config and next disproof step on the same selected hosting model; historical lab asset is a reuse candidate, not linked by this playbook.",
+      "prerequisites": "Shared capture prerequisites plus approved disposable Windows code/IIS app, SCM/file read access and enabled error diagnostics. Any logging, restart or fault write and its cost needs explicit owner approval; select new IDs only after reuse review."
+    },
+    {
+      "priority": 4,
+      "playbook": "docs/troubleshooting/playbooks/performance/windows-memory-pressure-worker-recycling.md",
+      "owner_issue": 128,
+      "work_class": "proposed-child-not-filed",
+      "status": "blocked-manual",
+      "expected_blades": [
+        "Diagnose and solve problems > Memory",
+        "Kudu > Process explorer",
+        "Log Analytics > Logs > memory/recycle timeline"
+      ],
+      "reuse_ids": [
+        "troubleshooting--kudu--03-process-explorer"
+      ],
+      "proposed_ids": [],
+      "missing_signal": "Matched per-instance memory and recycle windows; a static process table cannot prove memory pressure caused recycling.",
+      "prerequisites": "Shared capture prerequisites plus Windows worker app, selected tier/window, diagnostic and SCM permissions, approved load/logging costs. Coordinate existing-byte caption work, not a duplicate Process Explorer capture request."
+    },
+    {
+      "priority": 5,
+      "playbook": "docs/troubleshooting/playbooks/performance/windows-filesystem-quotas.md",
+      "owner_issue": 128,
+      "work_class": "proposed-child-not-filed",
+      "status": "blocked-manual",
+      "expected_blades": [
+        "App Service > Diagnose and solve problems > storage/quota diagnostics (availability to be confirmed)",
+        "Advanced Tools > Kudu > Debug console > filesystem"
+      ],
+      "reuse_ids": [],
+      "proposed_ids": [],
+      "missing_signal": "Persistent versus instance-local path/quota observation linked to retention decision; no dump contents, credentials or deletion during capture.",
+      "prerequisites": "Shared capture prerequisites plus selected Windows hosting model, quota/SCM visibility and owner-approved controlled file/log growth costs. Confirm attainable quota surface before promising a blade; sanitize output or retain as text if canvas prevents safe capture."
+    }
+  ],
+  "nonduplicated_ownership": {
+    "storage": "#127 existing layered reference preserved; no storage capture task proposed",
+    "outbound": "#129 / #388 and #389 retain the live signal work described by #399; no duplicate live task",
+    "asset_migration": "#135 and #405 census batches own conversion, exceptions and provenance decisions; no asset batch copied",
+    "java_worker": {
+      "id": "troubleshooting--kudu--04-process-explorer-java",
+      "linked_playbook_paths": [],
+      "existing_lab_reference": "docs/troubleshooting/lab-guides/windows-java-httpplatformhandler-timeout.md#L167",
+      "decision": "Existing registered asset is linked in the lab, not a symptom-first playbook. Review reuse instead of requesting another capture."
+    }
+  }
+}
