@@ -13,6 +13,14 @@ summary: Measure intermittent user impact with matched time windows and request 
 status: draft
 last_reviewed: '2026-10-16'
 content_sources:
+  references:
+    - type: self-generated
+      justification: Distinguishes documented real query columns and workspace millisecond units from the formatted telemetry model; legacy millisecond equivalence and the ingestion-payload distinction are inferred from the mapping, not directly stated query units in the model article.
+      based_on:
+        - https://learn.microsoft.com/en-us/azure/azure-monitor/app/convert-classic-resource
+        - https://learn.microsoft.com/en-us/azure/azure-monitor/reference/tables/apprequests
+        - https://learn.microsoft.com/en-us/azure/azure-monitor/reference/tables/appdependencies
+        - https://learn.microsoft.com/en-us/azure/azure-monitor/app/data-model-complete
   diagrams:
     - id: tail-latency-impact-to-cause-flow
       type: flowchart
@@ -170,13 +178,13 @@ This invented example uses 1,000 timings per window. Baseline: 980 requests at 1
 | Baseline | 1000 | 1.28 | 1 | 1 | 15 | 20 | 2.0 |
 | Incident | 1000 | 1.72 | 1 | 1 | 25 | 30 | 3.0 |
 
-The exact nearest-rank arithmetic is checked by `tests/ci/test_generalized_case_docs.py`. These are **synthetic arithmetic values**, not observed Azure output. Kusto uses estimated percentiles, so the table is not an assertion of byte-for-byte KQL results.
+The exact nearest-rank arithmetic is checked by `tests/ci/test_tail_latency_playbook.py`. These are **synthetic arithmetic values**, not observed Azure output. Kusto uses estimated percentiles, so the table is not an assertion of byte-for-byte KQL results.
 
 [Inferred from the synthetic model] A minority can experience a 25-second server duration while the overall mean remains below 2 seconds. This example proves only that such a distribution is possible, not that any real user or incident followed it.
 
 ### Correlating beyond percentiles
 
-Use individual request IDs, operation/trace IDs, parent-child span relationships, UTC timestamps, artifact version and instance identity. The [Application Insights data model](https://learn.microsoft.com/en-us/azure/azure-monitor/app/data-model-complete) distinguishes browser, request and dependency telemetry, including `requests`/`dependencies` in the Application Insights view and `AppRequests`/`AppDependencies` in Log Analytics. Convert timespan `duration` and numeric `DurationMs` explicitly before comparison; do not paste field names between schemas unchanged.
+Use individual request IDs, operation/trace IDs, parent-child span relationships, UTC timestamps, artifact version and instance identity. The [Application Insights data model](https://learn.microsoft.com/en-us/azure/azure-monitor/app/data-model-complete) distinguishes browser, request and dependency telemetry, including `requests`/`dependencies` in the Application Insights view and `AppRequests`/`AppDependencies` in Log Analytics. [Documented] The query-schema mapping types `requests.duration` and `dependencies.duration` as `real`, and the workspace table references define `AppRequests.DurationMs` and `AppDependencies.DurationMs` as numeric milliseconds. [Inferred] The mapped Application Insights Logs fields use milliseconds too; the model's formatted duration describes the ingestion payload, not a query timespan. The model article alone leaves query units Unknown; do not paste field names between schemas unchanged.
 
 A dependency's P99 subtracted from a request's P99 is **not** the dependency's contribution to a request. Nor can parallel dependency durations simply be added. Examine the correlated critical path. Check the actual SDK/collector [sampling configuration](https://learn.microsoft.com/en-us/azure/azure-monitor/app/opentelemetry-sampling); retained Application Insights spans may not represent the same population as HTTP logs. Counts, weights and percentile estimation require an explicit sampling model, not a silent table substitution.
 

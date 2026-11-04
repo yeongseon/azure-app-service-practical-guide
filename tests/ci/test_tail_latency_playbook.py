@@ -88,6 +88,9 @@ class TailLatencyPlaybookTests(unittest.TestCase):
         self.assertIn("Do not average per-minute P99 values", text)
         self.assertIn("AppRequests", text)
 
+    def test_stale_reference_and_timespan_conversion_do_not_return(self) -> None:
+        self.assertNotRegex(TAIL.read_text(), r"test_generalized_case_docs\.py|timespan `duration`")
+
     def test_overstrong_shorthand_removed_from_existing_page(self) -> None:
         page = (ROOT / "docs/troubleshooting/playbooks/performance-degradation.md").read_text()
         self.assertNotIn("Tail latency helps isolate queueing", page)
