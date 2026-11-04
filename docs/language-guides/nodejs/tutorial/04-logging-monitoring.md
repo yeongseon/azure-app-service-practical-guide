@@ -272,7 +272,6 @@ router.get('/external', async (req, res) => {
   "error": "The operation was aborted due to timeout",
   "duration": 10043
 ```
-```
 
 | Command/Code | Purpose |
 |--------------|---------|
