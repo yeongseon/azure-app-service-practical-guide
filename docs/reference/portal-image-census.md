@@ -124,7 +124,7 @@ The census finds 195 `shot()` calls and 16 direct references. The CI helper find
 
 These are proposals. No issue was filed and nothing was changed. The batches partition the work: each of the 106 files for which work is proposed belongs to exactly one batch, each Markdown page that a batch edits belongs to exactly one batch, and a batch carries every task that applies to its files. The report records both: each file has one `proposed_batch` (null for the 8 files with no proposed work), and each entry of `proposed_batches` lists the pages it edits. The registry files `manifest.yaml`, `provenance.yaml`, `dimension-exceptions.yaml` and `legacy-assets.yaml` each hold one entry per asset, so batches that touch the same registry file edit different entries.
 
-The pair batches are ordered by page count, then alphabetically by the smallest identifier (`method.batches` in the JSON). Within each pair, the generator sorted the repository-relative asset paths alphabetically; for these pairs that also puts `proposed_batches[].identifiers` in alphabetical order, not in order of the number of pages calling each member.
+The pair batches are ordered by page count, then alphabetically by the smallest identifier (`method.batches` in the JSON). Within each retained pair, the repository-relative asset paths are alphabetical; for these pairs that also puts `proposed_batches[].identifiers` in alphabetical order, not in order of the number of pages calling each member.
 
 | Batch | Members | Prerequisite |
 |---|---|---|

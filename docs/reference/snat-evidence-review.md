@@ -78,7 +78,7 @@ At each capture source, `run_scenario_b.py` calls `apply_pressure` to completion
 Actual new-connection rate and SNAT inventory are **Unknown**, not the number of outer probes. R's independent destination is a different app; the template puts it on the same plan, so destination resource isolation is not established.
 
 The runner writes `port-pressure.json` from attempts, workers, seconds and times, defaulting `status` to `unavailable`; it queries no SNAT counter or detector. The collector tries `port-pressure.json.status` for `snat_port_pressure`, `destination-health.json.status` for destination control and `app-target.json` for binding.
-The evaluator maps `unavailable` to `INCONCLUSIVE` (lines 153–157). Its role combiner (479–497) treats failed controls/recovery as `INCONCLUSIVE`; it also exempts F from stored-verdict rejection (828–842). Thus F's preserved `CONTRADICTED` result is not causal refutation. No evaluator is run here.
+PR #249's evaluator maps `unavailable` to `INCONCLUSIVE` (lines 153–157). Its role combiner (479–497) treats failed controls/recovery as `INCONCLUSIVE`; it also exempts F from stored-verdict rejection (828–842). Thus F's preserved `CONTRADICTED` result is not causal refutation. The evaluator of current `main` handles failed controls and recovery differently, so a replay on `main` may not give the stored outcomes; no replay was made. No evaluator is run here.
 
 ## 3. Documented telemetry, by outbound path
 

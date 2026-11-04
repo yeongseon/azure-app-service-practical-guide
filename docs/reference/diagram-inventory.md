@@ -29,7 +29,7 @@ Every Mermaid fence in tracked Markdown is one occurrence; equal source bodies r
 - 404 are published under `docs/`; one is a repository-only authoring example in `DOCUMENTATION_CONTRACT.md`.
 - Ten occurrences are excluded: the authoring example, three generated dashboards (content validation, tutorial validation, Golden status) and, since [#296](https://github.com/yeongseon/azure-app-service-practical-guide/issues/296), the six illustrative fixtures of the topology visual grammar.
 - 395 Mermaid occurrences require migration; their batch counts sum to 395.
-- `visuals[]` separately records two interactive Cytoscape navigation graphs and one learning-path placeholder group, all explicitly excluded from the Mermaid migration. The #397 browser audit resolved their earlier pending owner decision (see Non-Mermaid Visuals). These are not added to Mermaid batch totals.
+- `visuals[]` separately records two interactive Cytoscape navigation graphs and one learning-path placeholder group, all explicitly excluded from the Mermaid migration. The #397 browser audit proposed a resolution of their earlier pending owner decision, which awaits maintainer review (see Non-Mermaid Visuals). These are not added to Mermaid batch totals.
 - Asset exclusions cover 106 WebPs, six legacy PNGs and two branding SVGs, each in exactly one group. There are no tracked standalone Mermaid, draw.io, PlantUML, or Excalidraw sources.
 
 ## Inventory Tables

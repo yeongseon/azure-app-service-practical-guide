@@ -66,7 +66,7 @@ human review or Azure access. Ancestry validation is not review approval.
 
 ### First-Run Operator Checklist
 
-Complete these additional records before step 7 above. Unavailable
+Prepare the plans before dispatch; populate the actual observations afterward. Unavailable
 prerequisites leave preparation **BLOCKED** and execution **NOT_RUN**. This
 unchecked checklist is neither authorization nor a run/result record; keep
 account identifiers and raw private evidence out of the public record.
@@ -94,7 +94,12 @@ account identifiers and raw private evidence out of the public record.
     export/readback verification and a byte/hash inventory. The current public
     artifact cannot reconstruct dropped raw bytes from hashes. If no approved
     preservation method exists, keep the first-run preparation **BLOCKED**; do
-    not assume the existing workflow exports private originals.
+    not assume the existing workflow exports private originals. Exporting the
+    existing workspace does not preserve every deletion observation:
+    `scripts/golden/azure_cleanup.py` consumes the ownership readback in
+    `delete_group()`, discards successful deletion output, and retains only a
+    summarized cleanup result through `write_cleanup_result()`. Reviewed capture
+    plumbing is needed, not only an export destination.
 - [ ] **Identity and conversion:** prepare an inspection record linking GitHub
     run ID/attempt to the runner's different evidence run ID, actual capture
     source, recipe digest, resource/worker bindings and baseline/deployment/

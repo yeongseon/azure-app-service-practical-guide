@@ -40,7 +40,10 @@ views, or otherwise section 6's hypothesis subsections/decision matrix. Each has
 navigation, observation-support and next-decision pointers, with null for missing
 links and a missing-signal explanation. These units are not image counts or an
 exhaustive runtime-layer model. As in #405, the artifact is retained, not a
-generator; its `method` and `verification_commands` describe the repeatable scan.
+generator; its `method` describes the scan. Its three public
+`verification_commands` are inspection commands (ancestry, path listing,
+reference lines), not a complete derivation of the hashes, captions and
+classifications.
 
 **Documented** means the pinned prose/contract states it; **Observed** below means
 the source scan found it, not that Azure was observed. Follow-up selection is
@@ -105,6 +108,9 @@ No image was visually read or changed. Static checks do not certify caption/imag
 accuracy, current Portal availability, RBAC, retained runtime output, hypothesis
 outcomes, independent reproduction or maintainer acceptance. All `trail_complete`
 fields remain false: documentary presence is not semantic or pixel verification.
+
+A change to a playbook, a reference, a registry or an image byte makes these figures stale until a new inventory is made; there is no automatic freshness gate.
+In 18 `layer` labels of the JSON the text inside inline code was dropped by the heading extraction (for example `WEBSITES_PORT`); the source-line pointers identify the exact heading.
 
 ## See Also
 
