@@ -809,7 +809,7 @@
     {
       "path": "docs/reference/",
       "decision": "KEEP",
-      "reason": "CLI, KQL, limits and diagnostics lookups coexist with Golden model, audit, diagram inventory, topology visual grammar, composition prototype, render audit protocol, Portal image census, outbound evidence inventory, GitHub enforcement record and migration records; reference presence is not live verification or final-review approval.",
+      "reason": "CLI, KQL, limits and diagnostics lookups coexist with Golden model, audit, diagram inventory, topology visual grammar, composition prototype, render audit protocol, Portal image census, visualization audit, outbound evidence inventory, GitHub enforcement record and migration records; reference presence is not live verification or final-review approval.",
       "members": [
         "adr-diagram-composition.md",
         "azure-e2e-operations.md",
@@ -832,7 +832,8 @@
         "platform-limits.md",
         "portal-image-census.json",
         "portal-image-census.md",
-        "troubleshooting.md"
+        "troubleshooting.md",
+        "visualization-audit.md"
       ]
     },
     {
