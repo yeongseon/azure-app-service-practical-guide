@@ -3,18 +3,20 @@
  "schema_version": 1,
  "repository": "yeongseon/azure-app-service-practical-guide",
  "main_sha": "d1dde4a0f737da6e76780ab6cbeea0110ba33b68",
- "computed_at_utc": "2026-11-04T09:32:15Z",
+ "computed_at_utc": "2026-11-04T10:08:37Z",
  "history": {
   "commits": 274,
   "shallow": false
  },
  "method": {
   "images": "tracked files with an image extension anywhere in the repository",
-  "references": "scripts/validate_capture_assets.image_references over every tracked Markdown file (shot macro, inline path images; fenced code, HTML comments and inline code are ignored), plus mkdocs.yml and docs/main.html for configuration references",
-  "orphan": "no shot() call, no direct Markdown reference and no configuration reference",
+  "references": "the image_references logic of scripts/validate_capture_assets.py over every tracked Markdown file (shot macro and inline path images; fenced code, HTML comments and inline code are ignored), with one change: a closing code fence may not carry an info string, as in CommonMark. The unchanged helper finds one reference fewer (see references_invisible_to_the_ci_validator). Configuration references are the lines of mkdocs.yml and docs/main.html that contain an image's docs-relative path; one line is one occurrence",
+  "orphan": "no shot() call, no direct Markdown reference and no configuration occurrence",
   "introduced_by": "oldest commit whose diff adds the current path (git log --diff-filter=A -- path)",
-  "source_png": "among the PNGs removed in the introducing commit under docs/assets, the one with the smallest mean absolute difference (MAD) to the WebP after converting both to grayscale and resizing both to 480 px wide with the WebP's aspect (Lanczos); ties prefer the same directory and stem",
-  "origin_agreement": "MAD <= 0.01 and a PNG/WebP aspect-ratio gap <= 0.01; a hint only, not provenance"
+  "manifest_dates": "captured and captured_basis are copied as written in scripts/capture/manifest.yaml. captured_basis is present on the 8 entries that have a legacy_reencode record and, per scripts/capture/README.md, means that captured is the date the PNG entered the repository and not an observed capture date",
+  "candidate_source_png": "among the PNGs removed under docs/assets by the introducing commit, the candidate with the smallest mean absolute difference (MAD, as a share of 255) to the WebP. Both images are converted to grayscale (Pillow convert('L')) and resized with Lanczos to 480 px wide and round(480 * webp_height / webp_width) px tall. Candidates are ranked by round(MAD, 6), then by same directory and same normalized stem first (the normalized stem is the part of the stem after its last '--'), then by path. mad, share_off_gt16 (share of pixels that differ by more than 16 levels) and aspect_gap (|png aspect ratio / webp aspect ratio - 1|) are stored rounded to five decimals. A candidate is a hint, not proven lineage",
+  "origin_agreement": "the stored mad <= 0.01 and the stored aspect_gap <= 0.01 (five-decimal values); a hint only, not provenance",
+  "batches": "Proposals, not changes. A byte-identical pair of Portal WebPs is one batch (1 to 7, ordered by the number of pages that call it, then by identifier). A WebP with a dimension exception is covered by the recapture batch 9 and a legacy PNG by batch 10, because a recapture replaces the bytes. The remaining WebPs without a provenance record are the backfill batch 8, split by the commit that introduced them (8a, 8b, and so on). Each asset has one proposed_batch (null when no work is proposed) and each page belongs to at most one batch (proposed_batches[].pages); batches 8 and 9 edit no page. The generator asserts both properties"
  },
  "totals": {
   "image_files": 114,
@@ -43,7 +45,8 @@
   "orphans": 0,
   "shot_calls": 195,
   "direct_markdown_references": 16,
-  "configuration_references": 3,
+  "configuration_occurrences": 4,
+  "configuration_asset_file_pairs": 3,
   "direct_alt_mismatches": 0,
   "unresolved_shot_ids": 0,
   "unsupported_image_forms": 0,
@@ -61,7 +64,10 @@
   "manifest_id_stem_mismatches": 0,
   "identical_stem_groups": 1,
   "core_name_groups": 6,
-  "short_id_entries": 4
+  "short_id_entries": 4,
+  "proposed_batches": 20,
+  "assets_in_a_proposed_batch": 106,
+  "assets_without_a_proposed_batch": 8
  },
  "collisions": {
   "duplicate_registry_ids": [],
@@ -365,6 +371,235 @@
   "remaining_stem_collisions": 1,
   "disposition": "retain_pending_profile_recapture"
  },
+ "proposed_batches": [
+  {
+   "id": "1",
+   "kind": "byte-identical-pair",
+   "assets": 2,
+   "identifiers": [
+    "best-practices--scaling--01-scale-out",
+    "platform--scaling--01-scale-out"
+   ],
+   "pages": [
+    "docs/best-practices/scaling.md",
+    "docs/platform/scaling.md"
+   ]
+  },
+  {
+   "id": "2",
+   "kind": "byte-identical-pair",
+   "assets": 2,
+   "identifiers": [
+    "operations--deployment-slots--01-deployment-slots",
+    "platform--deployment-scenarios--01-deployment-slots"
+   ],
+   "pages": [
+    "docs/operations/deployment-slots.md",
+    "docs/platform/deployment-scenarios.md"
+   ]
+  },
+  {
+   "id": "3",
+   "kind": "byte-identical-pair",
+   "assets": 2,
+   "identifiers": [
+    "platform--deployment-options--01-deployment-center",
+    "troubleshooting--deployment-center--01-deployment-center"
+   ],
+   "pages": [
+    "docs/platform/deployment-options.md",
+    "docs/troubleshooting/lab-guides/deployment-succeeded-startup-failed.md"
+   ]
+  },
+  {
+   "id": "4",
+   "kind": "byte-identical-pair",
+   "assets": 2,
+   "identifiers": [
+    "operations--incoming-client-certificates--01-tls-ssl-bindings",
+    "platform--mtls--01-custom-domains-tls"
+   ],
+   "pages": [
+    "docs/language-guides/dotnet/tutorial/07-custom-domain-ssl.md",
+    "docs/language-guides/java/tutorial/07-custom-domain-ssl.md",
+    "docs/language-guides/nodejs/tutorial/07-custom-domain-ssl.md",
+    "docs/language-guides/python/tutorial/07-custom-domain-ssl.md",
+    "docs/operations/incoming-client-certificates.md",
+    "docs/platform/mtls.md"
+   ]
+  },
+  {
+   "id": "5",
+   "kind": "byte-identical-pair",
+   "assets": 2,
+   "identifiers": [
+    "operations--security--01-authentication",
+    "platform--authentication-architecture--01-authentication-blade"
+   ],
+   "pages": [
+    "docs/language-guides/dotnet/recipes/easy-auth.md",
+    "docs/language-guides/java/recipes/easy-auth.md",
+    "docs/language-guides/nodejs/recipes/easy-auth.md",
+    "docs/language-guides/python/recipes/easy-auth.md",
+    "docs/operations/security.md",
+    "docs/platform/authentication-architecture.md"
+   ]
+  },
+  {
+   "id": "6",
+   "kind": "byte-identical-pair",
+   "assets": 2,
+   "identifiers": [
+    "best-practices--security--01-identity-blade",
+    "platform--security-architecture--01-identity-blade"
+   ],
+   "pages": [
+    "docs/best-practices/security.md",
+    "docs/language-guides/dotnet/recipes/azure-sql.md",
+    "docs/language-guides/dotnet/recipes/managed-identity.md",
+    "docs/language-guides/dotnet/recipes/redis.md",
+    "docs/language-guides/java/recipes/azure-sql.md",
+    "docs/language-guides/java/recipes/managed-identity.md",
+    "docs/language-guides/java/recipes/redis.md",
+    "docs/language-guides/nodejs/recipes/azure-sql.md",
+    "docs/language-guides/nodejs/recipes/managed-identity.md",
+    "docs/language-guides/nodejs/recipes/redis.md",
+    "docs/language-guides/python/recipes/azure-sql.md",
+    "docs/language-guides/python/recipes/managed-identity.md",
+    "docs/language-guides/python/recipes/redis.md",
+    "docs/platform/security-architecture.md"
+   ]
+  },
+  {
+   "id": "7",
+   "kind": "byte-identical-pair",
+   "assets": 2,
+   "identifiers": [
+    "operations--networking--01-networking-hub",
+    "platform--networking--01-networking-blade"
+   ],
+   "pages": [
+    "docs/language-guides/dotnet/recipes/private-endpoints.md",
+    "docs/language-guides/dotnet/recipes/vnet-integration.md",
+    "docs/language-guides/java/recipes/private-endpoints.md",
+    "docs/language-guides/java/recipes/vnet-integration.md",
+    "docs/language-guides/nodejs/recipes/private-endpoints.md",
+    "docs/language-guides/nodejs/recipes/vnet-integration.md",
+    "docs/language-guides/python/recipes/private-endpoints.md",
+    "docs/language-guides/python/recipes/vnet-integration.md",
+    "docs/operations/networking.md",
+    "docs/platform/networking.md",
+    "docs/troubleshooting/first-10-minutes/outbound-network.md",
+    "docs/troubleshooting/lab-guides/snat-exhaustion.md",
+    "docs/troubleshooting/playbooks/outbound-network/dns-resolution-vnet-integrated-app-service.md",
+    "docs/troubleshooting/playbooks/outbound-network/private-endpoint-custom-dns-route-confusion.md",
+    "docs/troubleshooting/playbooks/outbound-network/snat-or-application-issue.md"
+   ]
+  },
+  {
+   "id": "8a",
+   "kind": "provenance-backfill",
+   "assets": 4,
+   "introduced_by": "272d7cfe5de91627145c3d2e6e988a27d89a7d5a",
+   "pages": []
+  },
+  {
+   "id": "8b",
+   "kind": "provenance-backfill",
+   "assets": 5,
+   "introduced_by": "35061902f823b47914062db99f719c1e2b9ad510",
+   "pages": []
+  },
+  {
+   "id": "8c",
+   "kind": "provenance-backfill",
+   "assets": 23,
+   "introduced_by": "f79132325bf123bd49f88fa36957347014ea31c3",
+   "pages": []
+  },
+  {
+   "id": "8d",
+   "kind": "provenance-backfill",
+   "assets": 3,
+   "introduced_by": "435c40fd69689a37ed15e9a763b52f9eac882fa4",
+   "pages": []
+  },
+  {
+   "id": "8e",
+   "kind": "provenance-backfill",
+   "assets": 8,
+   "introduced_by": "21369b478337f74a4ff4fe8b66f0e393ea7ca4c5",
+   "pages": []
+  },
+  {
+   "id": "8f",
+   "kind": "provenance-backfill",
+   "assets": 5,
+   "introduced_by": "8792e9c5e26c8869eae98df2b5290150404bda83",
+   "pages": []
+  },
+  {
+   "id": "8g",
+   "kind": "provenance-backfill",
+   "assets": 10,
+   "introduced_by": "f49b0736ace4a8816cf55f2c440b1123d8da55eb",
+   "pages": []
+  },
+  {
+   "id": "8h",
+   "kind": "provenance-backfill",
+   "assets": 7,
+   "introduced_by": "a565f9b4b60a71821bfef6bdeef9b47c945f4168",
+   "pages": []
+  },
+  {
+   "id": "8i",
+   "kind": "provenance-backfill",
+   "assets": 3,
+   "introduced_by": "67dac28189775f7b5ce410810629f4d595666155",
+   "pages": []
+  },
+  {
+   "id": "8j",
+   "kind": "provenance-backfill",
+   "assets": 4,
+   "introduced_by": "a630c8c90c7dbc0da90f90f1dbdf6786e83482cc",
+   "pages": []
+  },
+  {
+   "id": "8k",
+   "kind": "provenance-backfill",
+   "assets": 1,
+   "introduced_by": "55698e1bf10f52a6650abeea47ad7273720bd84c",
+   "pages": []
+  },
+  {
+   "id": "9",
+   "kind": "recapture-dimension-exception-webps",
+   "assets": 13,
+   "pages": []
+  },
+  {
+   "id": "10",
+   "kind": "recapture-legacy-pngs-and-migrate-references",
+   "assets": 6,
+   "pages": [
+    "docs/language-guides/dotnet/tutorial/04-logging-monitoring.md",
+    "docs/language-guides/java/tutorial/04-logging-monitoring.md",
+    "docs/language-guides/nodejs/tutorial/04-logging-monitoring.md",
+    "docs/language-guides/python/tutorial/04-logging-monitoring.md",
+    "docs/troubleshooting/decision-tree.md",
+    "docs/troubleshooting/evidence-map.md",
+    "docs/troubleshooting/first-10-minutes/index.md",
+    "docs/troubleshooting/first-10-minutes/startup-availability.md",
+    "docs/troubleshooting/index.md",
+    "docs/troubleshooting/kql/index.md",
+    "docs/troubleshooting/lab-guides/failed-to-forward-request.md",
+    "docs/troubleshooting/mental-model.md",
+    "docs/troubleshooting/methodology/detector-map.md"
+   ]
+  }
+ ],
  "files": [
   {
    "path": "docs/assets/best-practices/common-anti-patterns/best-practices--common-anti-patterns--01-diagnose-and-solve.webp",
@@ -380,6 +615,7 @@
    "manifest": {
     "page": "best-practices/common-anti-patterns",
     "captured": "2026-07-20",
+    "captured_basis": null,
     "verified": "2026-07-20",
     "diff_threshold": 0.02,
     "prereq": null
@@ -390,7 +626,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/best-practices/common-anti-patterns.md"
     ],
@@ -410,7 +647,7 @@
      "subject": "docs: onboard best-practices single-ref Portal screenshots onto manifest pipeline (#158)",
      "pr": 158
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/best-practices/common-anti-patterns/01-diagnose-and-solve.png",
      "same_directory_and_stem": true,
      "blob_sha256": "14f2f5027c1f7f994d5d9805d25d7932efe0ffcdec2276104cd28cddfd76a6b4",
@@ -432,7 +669,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8i"
   },
   {
    "path": "docs/assets/best-practices/deployment/best-practices--deployment--01-deployment-center.webp",
@@ -448,6 +686,7 @@
    "manifest": {
     "page": "best-practices/deployment",
     "captured": "2026-07-20",
+    "captured_basis": null,
     "verified": "2026-07-20",
     "diff_threshold": 0.02,
     "prereq": null
@@ -458,7 +697,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/best-practices/deployment.md"
     ],
@@ -481,7 +721,7 @@
      "subject": "docs: onboard best-practices single-ref Portal screenshots onto manifest pipeline (#158)",
      "pr": 158
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/best-practices/deployment/01-deployment-center.png",
      "same_directory_and_stem": true,
      "blob_sha256": "aed0a72028cd30d7f2c19de410e0b591e7189990f039b3776e1e9c82c29cf101",
@@ -504,7 +744,8 @@
    "flags": [
     "core-name-collision",
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8i"
   },
   {
    "path": "docs/assets/best-practices/mtls/best-practices--mtls--01-client-cert-config.webp",
@@ -520,6 +761,7 @@
    "manifest": {
     "page": "best-practices/mtls",
     "captured": "2026-07-20",
+    "captured_basis": null,
     "verified": "2026-07-20",
     "diff_threshold": 0.02,
     "prereq": null
@@ -530,7 +772,8 @@
    "references": {
     "shot_calls": 5,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/best-practices/mtls.md",
      "docs/language-guides/dotnet/recipes/mtls-client-certificates.md",
@@ -554,7 +797,7 @@
      "subject": "docs: onboard mtls client-cert Portal screenshot onto manifest pipeline (#135) (#162)",
      "pr": 162
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/best-practices/mtls/01-client-cert-config.png",
      "same_directory_and_stem": true,
      "blob_sha256": "50414947b7e6fd06afcb1e77332e5c0687d6d976e12f1fe4d27c70a18fba9ead",
@@ -576,7 +819,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8k"
   },
   {
    "path": "docs/assets/best-practices/networking/best-practices--networking--01-access-restrictions.webp",
@@ -592,6 +836,7 @@
    "manifest": {
     "page": "best-practices/networking",
     "captured": "2026-06-07",
+    "captured_basis": "repository_introduced",
     "verified": "2026-10-03",
     "diff_threshold": 0.02,
     "prereq": null
@@ -603,13 +848,14 @@
     "final_sha256_matches_file": true,
     "derived_from_path": "docs/assets/best-practices/networking/01-access-restrictions.png",
     "derived_from_sha256": "e608d81ff74bc4918b49466a9c91b7522a4cf71b52de3151bad0ccd40a12b8d8",
-    "census_source_png_matches_recorded_derived_from": true
+    "candidate_matches_recorded_derived_from": true
    },
    "dimension_exception": null,
    "references": {
     "shot_calls": 5,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/best-practices/networking.md",
      "docs/language-guides/dotnet/recipes/private-network-deploy.md",
@@ -633,7 +879,7 @@
      "subject": "feat: manage image metadata through the manifest and gate direct image paths (#201)",
      "pr": 201
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/best-practices/networking/01-access-restrictions.png",
      "same_directory_and_stem": true,
      "blob_sha256": "e608d81ff74bc4918b49466a9c91b7522a4cf71b52de3151bad0ccd40a12b8d8",
@@ -653,7 +899,8 @@
    },
    "origin_class": "reencode-recorded",
    "disposition": "retain-registered",
-   "flags": []
+   "flags": [],
+   "proposed_batch": null
   },
   {
    "path": "docs/assets/best-practices/production-baseline/best-practices--production-baseline--01-configuration-general.webp",
@@ -669,6 +916,7 @@
    "manifest": {
     "page": "best-practices/production-baseline",
     "captured": "2026-06-07",
+    "captured_basis": "repository_introduced",
     "verified": "2026-10-03",
     "diff_threshold": 0.02,
     "prereq": null
@@ -680,13 +928,14 @@
     "final_sha256_matches_file": true,
     "derived_from_path": "docs/assets/best-practices/production-baseline/01-configuration-general.png",
     "derived_from_sha256": "7180065ca3a928d2fa8af904471973d1b87208d130b70bf8f274c325121c8909",
-    "census_source_png_matches_recorded_derived_from": true
+    "candidate_matches_recorded_derived_from": true
    },
    "dimension_exception": null,
    "references": {
     "shot_calls": 6,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/best-practices/index.md",
      "docs/best-practices/production-baseline.md",
@@ -711,7 +960,7 @@
      "subject": "feat: manage image metadata through the manifest and gate direct image paths (#201)",
      "pr": 201
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/best-practices/production-baseline/01-configuration-general.png",
      "same_directory_and_stem": true,
      "blob_sha256": "7180065ca3a928d2fa8af904471973d1b87208d130b70bf8f274c325121c8909",
@@ -731,7 +980,8 @@
    },
    "origin_class": "reencode-recorded",
    "disposition": "retain-registered",
-   "flags": []
+   "flags": [],
+   "proposed_batch": null
   },
   {
    "path": "docs/assets/best-practices/reliability/best-practices--reliability--01-health-check.webp",
@@ -747,6 +997,7 @@
    "manifest": {
     "page": "best-practices/reliability",
     "captured": "2026-07-20",
+    "captured_basis": null,
     "verified": "2026-07-20",
     "diff_threshold": 0.02,
     "prereq": null
@@ -757,7 +1008,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/best-practices/reliability.md"
     ],
@@ -779,7 +1031,7 @@
      "subject": "docs: onboard best-practices single-ref Portal screenshots onto manifest pipeline (#158)",
      "pr": 158
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/best-practices/reliability/01-health-check.png",
      "same_directory_and_stem": true,
      "blob_sha256": "3fbe219144397f7cf923c6a5c34162de006a53c66d3810810927c7659c9304c3",
@@ -802,7 +1054,8 @@
    "flags": [
     "core-name-collision",
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8i"
   },
   {
    "path": "docs/assets/best-practices/scaling/best-practices--scaling--01-scale-out.webp",
@@ -818,6 +1071,7 @@
    "manifest": {
     "page": "best-practices/scaling",
     "captured": "2026-07-20",
+    "captured_basis": null,
     "verified": "2026-07-20",
     "diff_threshold": 0.02,
     "prereq": null
@@ -828,7 +1082,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/best-practices/scaling.md"
     ],
@@ -852,7 +1107,7 @@
      "subject": "docs: onboard best-practices single-ref Portal screenshots onto manifest pipeline (#158)",
      "pr": 158
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/best-practices/scaling/01-scale-out.png",
      "same_directory_and_stem": true,
      "blob_sha256": "e28c401bd78be8e1d145a26df9450b23f1c7b9dddc3e2a282f09e1d9470388ee",
@@ -876,7 +1131,8 @@
     "duplicate-content",
     "core-name-collision",
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "1"
   },
   {
    "path": "docs/assets/best-practices/security/best-practices--security--01-identity-blade.webp",
@@ -892,6 +1148,7 @@
    "manifest": {
     "page": "best-practices/security",
     "captured": "2026-06-07",
+    "captured_basis": "repository_introduced",
     "verified": "2026-10-03",
     "diff_threshold": 0.02,
     "prereq": null
@@ -903,13 +1160,14 @@
     "final_sha256_matches_file": true,
     "derived_from_path": "docs/assets/best-practices/security/01-identity-blade.png",
     "derived_from_sha256": "68d510731037c166aeb498e82107ab46dcd831ac3a8eaed137eefdb1c9b4751d",
-    "census_source_png_matches_recorded_derived_from": true
+    "candidate_matches_recorded_derived_from": true
    },
    "dimension_exception": null,
    "references": {
     "shot_calls": 5,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/best-practices/security.md",
      "docs/language-guides/dotnet/recipes/managed-identity.md",
@@ -937,7 +1195,7 @@
      "subject": "feat: manage image metadata through the manifest and gate direct image paths (#201)",
      "pr": 201
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/best-practices/security/01-identity-blade.png",
      "same_directory_and_stem": true,
      "blob_sha256": "68d510731037c166aeb498e82107ab46dcd831ac3a8eaed137eefdb1c9b4751d",
@@ -960,7 +1218,8 @@
    "flags": [
     "duplicate-content",
     "core-name-collision"
-   ]
+   ],
+   "proposed_batch": "6"
   },
   {
    "path": "docs/assets/favicon.svg",
@@ -980,7 +1239,21 @@
    "references": {
     "shot_calls": 0,
     "direct_markdown": 0,
-    "configuration": 2,
+    "configuration_occurrences": 3,
+    "configuration_sites": [
+     {
+      "file": "mkdocs.yml",
+      "line": 12
+     },
+     {
+      "file": "docs/main.html",
+      "line": 8
+     },
+     {
+      "file": "docs/main.html",
+      "line": 16
+     }
+    ],
     "pages": [],
     "direct_alt_mismatches": 0,
     "invisible_to_validator": 0
@@ -1000,14 +1273,15 @@
      "subject": "chore: apply official Azure App Service icon",
      "pr": null
     },
-    "source_png": null,
+    "candidate_source_png": null,
     "png_candidates_considered": null
    },
    "origin_class": "site-asset",
    "disposition": "retain-site-asset",
    "flags": [
     "duplicate-content"
-   ]
+   ],
+   "proposed_batch": null
   },
   {
    "path": "docs/assets/logo.svg",
@@ -1027,7 +1301,13 @@
    "references": {
     "shot_calls": 0,
     "direct_markdown": 0,
-    "configuration": 1,
+    "configuration_occurrences": 1,
+    "configuration_sites": [
+     {
+      "file": "mkdocs.yml",
+      "line": 13
+     }
+    ],
     "pages": [],
     "direct_alt_mismatches": 0,
     "invisible_to_validator": 0
@@ -1047,14 +1327,15 @@
      "subject": "feat: unified Azure App Service monorepo with full documentation",
      "pr": null
     },
-    "source_png": null,
+    "candidate_source_png": null,
     "png_candidates_considered": null
    },
    "origin_class": "site-asset",
    "disposition": "retain-site-asset",
    "flags": [
     "duplicate-content"
-   ]
+   ],
+   "proposed_batch": null
   },
   {
    "path": "docs/assets/operations/backup-restore/operations--backup-restore--01-backups.webp",
@@ -1070,6 +1351,7 @@
    "manifest": {
     "page": "operations/backup-restore",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -1080,7 +1362,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/operations/backup-restore.md"
     ],
@@ -1100,7 +1383,7 @@
      "subject": "docs: onboard operations Portal screenshots onto manifest pipeline (#136)",
      "pr": 136
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/operations/backup-restore/01-backups.png",
      "same_directory_and_stem": true,
      "blob_sha256": "0447e4eddf0f5ef71b535730415e23094fb606f16f5458379aaf8db4ca6000fe",
@@ -1122,7 +1405,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8b"
   },
   {
    "path": "docs/assets/operations/cost-optimization/operations--cost-optimization--01-cost-analysis.webp",
@@ -1138,6 +1422,7 @@
    "manifest": {
     "page": "operations/cost-optimization",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -1148,7 +1433,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/operations/cost-optimization.md"
     ],
@@ -1168,7 +1454,7 @@
      "subject": "docs: onboard operations Portal screenshots onto manifest pipeline (#136)",
      "pr": 136
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/operations/cost-optimization/01-cost-analysis.png",
      "same_directory_and_stem": true,
      "blob_sha256": "98611ffd137fe77ce64215c50286063c4c54c37ce48dae3610238d42efbd953d",
@@ -1190,7 +1476,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8b"
   },
   {
    "path": "docs/assets/operations/deployment-slots/operations--deployment-slots--01-deployment-slots.webp",
@@ -1206,6 +1493,7 @@
    "manifest": {
     "page": "operations/deployment-slots",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -1216,7 +1504,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/operations/deployment-slots.md"
     ],
@@ -1240,7 +1529,7 @@
      "subject": "docs: onboard operations Portal screenshots onto manifest pipeline (#136)",
      "pr": 136
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/operations/deployment-slots/01-deployment-slots.png",
      "same_directory_and_stem": true,
      "blob_sha256": "315bd423d0b8594d22aac56cbb54152ab664a25c9179b1366ed766987ced3d2b",
@@ -1264,7 +1553,8 @@
     "duplicate-content",
     "core-name-collision",
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "2"
   },
   {
    "path": "docs/assets/operations/deployment/container/operations--deployment--01-create-web-app-container-tab.webp",
@@ -1280,6 +1570,7 @@
    "manifest": {
     "page": "operations/deployment/container",
     "captured": "2026-06-07",
+    "captured_basis": "repository_introduced",
     "verified": "2026-10-03",
     "diff_threshold": 0.02,
     "prereq": null
@@ -1291,13 +1582,14 @@
     "final_sha256_matches_file": true,
     "derived_from_path": "docs/assets/operations/deployment/container/01-deployment-center-container.png",
     "derived_from_sha256": "6e700832466bc2cdfd629060085a5cc23bce876e99262b9d2a406aa6ce5074b0",
-    "census_source_png_matches_recorded_derived_from": true
+    "candidate_matches_recorded_derived_from": true
    },
    "dimension_exception": null,
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/operations/deployment/container-deploy.md"
     ],
@@ -1317,7 +1609,7 @@
      "subject": "feat: manage image metadata through the manifest and gate direct image paths (#201)",
      "pr": 201
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/operations/deployment/container/01-deployment-center-container.png",
      "same_directory_and_stem": false,
      "blob_sha256": "6e700832466bc2cdfd629060085a5cc23bce876e99262b9d2a406aa6ce5074b0",
@@ -1337,7 +1629,8 @@
    },
    "origin_class": "reencode-recorded",
    "disposition": "retain-registered",
-   "flags": []
+   "flags": [],
+   "proposed_batch": null
   },
   {
    "path": "docs/assets/operations/deployment/github-actions/operations--deployment--02-deployment-center-github.webp",
@@ -1353,6 +1646,7 @@
    "manifest": {
     "page": "operations/deployment/github-actions",
     "captured": "2026-06-07",
+    "captured_basis": "repository_introduced",
     "verified": "2026-10-03",
     "diff_threshold": 0.02,
     "prereq": null
@@ -1364,13 +1658,14 @@
     "final_sha256_matches_file": true,
     "derived_from_path": "docs/assets/operations/deployment/github-actions/01-deployment-center-github.png",
     "derived_from_sha256": "79bd8fe511bbcf0dff63e7fd801f3e8df0c99763d36fd66ab4a3a54040c89e8c",
-    "census_source_png_matches_recorded_derived_from": true
+    "candidate_matches_recorded_derived_from": true
    },
    "dimension_exception": null,
    "references": {
     "shot_calls": 5,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/language-guides/dotnet/tutorial/06-ci-cd.md",
      "docs/language-guides/java/tutorial/06-ci-cd.md",
@@ -1394,7 +1689,7 @@
      "subject": "feat: manage image metadata through the manifest and gate direct image paths (#201)",
      "pr": 201
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/operations/deployment/github-actions/01-deployment-center-github.png",
      "same_directory_and_stem": false,
      "blob_sha256": "79bd8fe511bbcf0dff63e7fd801f3e8df0c99763d36fd66ab4a3a54040c89e8c",
@@ -1414,7 +1709,8 @@
    },
    "origin_class": "reencode-recorded",
    "disposition": "retain-registered",
-   "flags": []
+   "flags": [],
+   "proposed_batch": null
   },
   {
    "path": "docs/assets/operations/deployment/slots-and-swap/operations--deployment--03-slot-swap-config-changes.webp",
@@ -1430,6 +1726,7 @@
    "manifest": {
     "page": "operations/deployment/slots-and-swap",
     "captured": "2026-06-07",
+    "captured_basis": "repository_introduced",
     "verified": "2026-10-03",
     "diff_threshold": 0.02,
     "prereq": null
@@ -1441,13 +1738,14 @@
     "final_sha256_matches_file": true,
     "derived_from_path": "docs/assets/operations/deployment/slots-and-swap/01-swap-dialog.png",
     "derived_from_sha256": "caf53a859b888c3a403124f6f0a635a5a74700b806e30d93d175dd9b29a57170",
-    "census_source_png_matches_recorded_derived_from": true
+    "candidate_matches_recorded_derived_from": true
    },
    "dimension_exception": null,
    "references": {
     "shot_calls": 5,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/language-guides/dotnet/recipes/deployment-slots-validation.md",
      "docs/language-guides/java/recipes/deployment-slots-zero-downtime.md",
@@ -1471,7 +1769,7 @@
      "subject": "feat: manage image metadata through the manifest and gate direct image paths (#201)",
      "pr": 201
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/operations/deployment/slots-and-swap/01-swap-dialog.png",
      "same_directory_and_stem": false,
      "blob_sha256": "caf53a859b888c3a403124f6f0a635a5a74700b806e30d93d175dd9b29a57170",
@@ -1491,7 +1789,8 @@
    },
    "origin_class": "reencode-recorded",
    "disposition": "retain-registered",
-   "flags": []
+   "flags": [],
+   "proposed_batch": null
   },
   {
    "path": "docs/assets/operations/deployment/zip-deploy/operations--deployment--04-app-settings.webp",
@@ -1507,6 +1806,7 @@
    "manifest": {
     "page": "operations/deployment/zip-deploy",
     "captured": "2026-06-07",
+    "captured_basis": "repository_introduced",
     "verified": "2026-10-03",
     "diff_threshold": 0.02,
     "prereq": null
@@ -1518,13 +1818,14 @@
     "final_sha256_matches_file": true,
     "derived_from_path": "docs/assets/operations/deployment/zip-deploy/01-app-settings-run-from-package.png",
     "derived_from_sha256": "668534ef989cef322ed1145599d87c93701190854a846103086cd34a1ac75398",
-    "census_source_png_matches_recorded_derived_from": true
+    "candidate_matches_recorded_derived_from": true
    },
    "dimension_exception": null,
    "references": {
     "shot_calls": 5,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/language-guides/dotnet/dotnet-runtime.md",
      "docs/language-guides/java/java-runtime.md",
@@ -1548,7 +1849,7 @@
      "subject": "feat: manage image metadata through the manifest and gate direct image paths (#201)",
      "pr": 201
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/operations/deployment/zip-deploy/01-app-settings-run-from-package.png",
      "same_directory_and_stem": false,
      "blob_sha256": "668534ef989cef322ed1145599d87c93701190854a846103086cd34a1ac75398",
@@ -1568,7 +1869,8 @@
    },
    "origin_class": "reencode-recorded",
    "disposition": "retain-registered",
-   "flags": []
+   "flags": [],
+   "proposed_batch": null
   },
   {
    "path": "docs/assets/operations/health-recovery/operations--health-recovery--01-availability-performance.webp",
@@ -1584,6 +1886,7 @@
    "manifest": {
     "page": "operations/health-recovery",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -1594,7 +1897,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/operations/health-recovery.md"
     ],
@@ -1614,7 +1918,7 @@
      "subject": "docs: onboard operations Portal screenshots onto manifest pipeline (#136)",
      "pr": 136
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/operations/health-recovery/01-availability-performance.png",
      "same_directory_and_stem": true,
      "blob_sha256": "ad408f1cc2cb913bf72adbb8c3ad8c6d75c11f5a00ba2b9c718f6bdc4a1e8e96",
@@ -1636,7 +1940,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8b"
   },
   {
    "path": "docs/assets/operations/incoming-client-certificates/operations--incoming-client-certificates--01-tls-ssl-bindings.webp",
@@ -1652,6 +1957,7 @@
    "manifest": {
     "page": "operations/incoming-client-certificates",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -1662,7 +1968,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/operations/incoming-client-certificates.md"
     ],
@@ -1684,7 +1991,7 @@
      "subject": "docs: onboard operations Portal screenshots onto manifest pipeline (#136)",
      "pr": 136
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/operations/incoming-client-certificates/01-tls-ssl-bindings.png",
      "same_directory_and_stem": true,
      "blob_sha256": "97da098b6bdd5a8d030b7b777d9b164e482ee637bb57df3acc5b92b2ddcf7ccf",
@@ -1707,7 +2014,8 @@
    "flags": [
     "duplicate-content",
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "4"
   },
   {
    "path": "docs/assets/operations/networking/operations--networking--01-networking-hub.webp",
@@ -1723,6 +2031,7 @@
    "manifest": {
     "page": "operations/networking",
     "captured": "2026-06-07",
+    "captured_basis": "repository_introduced",
     "verified": "2026-10-03",
     "diff_threshold": 0.02,
     "prereq": null
@@ -1734,13 +2043,14 @@
     "final_sha256_matches_file": true,
     "derived_from_path": "docs/assets/troubleshooting/networking/01-networking-hub.png",
     "derived_from_sha256": "d3f49362ccd38f340dffb4cc62b9a476a770fd80c18c075559b76f05706100f4",
-    "census_source_png_matches_recorded_derived_from": true
+    "candidate_matches_recorded_derived_from": true
    },
    "dimension_exception": null,
    "references": {
     "shot_calls": 10,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/language-guides/dotnet/recipes/private-endpoints.md",
      "docs/language-guides/java/recipes/private-endpoints.md",
@@ -1771,7 +2081,7 @@
      "subject": "feat: manage image metadata through the manifest and gate direct image paths (#201)",
      "pr": 201
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/operations/networking/01-networking-overview.png",
      "same_directory_and_stem": false,
      "blob_sha256": "d3f49362ccd38f340dffb4cc62b9a476a770fd80c18c075559b76f05706100f4",
@@ -1793,7 +2103,8 @@
    "disposition": "retain-registered",
    "flags": [
     "duplicate-content"
-   ]
+   ],
+   "proposed_batch": "7"
   },
   {
    "path": "docs/assets/operations/outbound-client-certificates/operations--outbound-client-certificates--01-certificates.webp",
@@ -1809,6 +2120,7 @@
    "manifest": {
     "page": "operations/outbound-client-certificates",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -1819,7 +2131,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/operations/outbound-client-certificates.md"
     ],
@@ -1839,7 +2152,7 @@
      "subject": "docs: onboard operations Portal screenshots onto manifest pipeline (#136)",
      "pr": 136
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/operations/outbound-client-certificates/01-certificates.png",
      "same_directory_and_stem": true,
      "blob_sha256": "0c4b9365854a71ecaed300771bf547280e55a5e85feb8aece35397d43dac4f2e",
@@ -1861,7 +2174,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8b"
   },
   {
    "path": "docs/assets/operations/scaling/operations--scaling--01-autoscale-rules.webp",
@@ -1877,6 +2191,7 @@
    "manifest": {
     "page": "operations/scaling",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -1887,7 +2202,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/operations/scaling.md"
     ],
@@ -1907,7 +2223,7 @@
      "subject": "docs: onboard operations Portal screenshots onto manifest pipeline (#136)",
      "pr": 136
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/operations/scaling/01-autoscale-rules.png",
      "same_directory_and_stem": true,
      "blob_sha256": "357ff57641d31d323bf022cbaabecf39aa48faf1e24cdfbdad893c248eeffb57",
@@ -1929,7 +2245,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8b"
   },
   {
    "path": "docs/assets/operations/security/operations--security--01-authentication.webp",
@@ -1945,6 +2262,7 @@
    "manifest": {
     "page": "operations/security",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -1955,7 +2273,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/operations/security.md"
     ],
@@ -1977,7 +2296,7 @@
      "subject": "docs: onboard operations Portal screenshots onto manifest pipeline (#136)",
      "pr": 136
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/operations/security/01-authentication.png",
      "same_directory_and_stem": true,
      "blob_sha256": "69141221295daf83e5e3e888d38627c4d8fb3b3f7e7a064e44cd254277986b3d",
@@ -2000,7 +2319,8 @@
    "flags": [
     "duplicate-content",
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "5"
   },
   {
    "path": "docs/assets/platform/architecture/platform--architecture--01-app-service-overview.webp",
@@ -2016,6 +2336,7 @@
    "manifest": {
     "page": "platform/architecture",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -2026,7 +2347,8 @@
    "references": {
     "shot_calls": 12,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/language-guides/dotnet/tutorial/02-first-deploy.md",
      "docs/language-guides/dotnet/tutorial/index.md",
@@ -2057,7 +2379,7 @@
      "subject": "docs: onboard platform Portal screenshots onto manifest pipeline (#142)",
      "pr": 142
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/platform/architecture/01-app-service-overview.png",
      "same_directory_and_stem": true,
      "blob_sha256": "1f0ec6f1cebe1490a1343e4d6117baa3c71b8582bfb96410e0e0d7078bc49963",
@@ -2079,7 +2401,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8h"
   },
   {
    "path": "docs/assets/platform/authentication-architecture/platform--authentication-architecture--01-authentication-blade.webp",
@@ -2095,6 +2418,7 @@
    "manifest": {
     "page": "platform/authentication-architecture",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -2105,7 +2429,8 @@
    "references": {
     "shot_calls": 5,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/language-guides/dotnet/recipes/easy-auth.md",
      "docs/language-guides/java/recipes/easy-auth.md",
@@ -2131,7 +2456,7 @@
      "subject": "docs: onboard platform Portal screenshots onto manifest pipeline (#142)",
      "pr": 142
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/platform/authentication-architecture/01-authentication-blade.png",
      "same_directory_and_stem": true,
      "blob_sha256": "69141221295daf83e5e3e888d38627c4d8fb3b3f7e7a064e44cd254277986b3d",
@@ -2154,7 +2479,8 @@
    "flags": [
     "duplicate-content",
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "5"
   },
   {
    "path": "docs/assets/platform/containers/platform--containers--01-deployment-center-containers.webp",
@@ -2170,6 +2496,7 @@
    "manifest": {
     "page": "platform/containers",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -2180,7 +2507,8 @@
    "references": {
     "shot_calls": 3,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/language-guides/nodejs/recipes/custom-container.md",
      "docs/language-guides/python/recipes/custom-container.md",
@@ -2202,7 +2530,7 @@
      "subject": "docs: onboard platform Portal screenshots onto manifest pipeline (#142)",
      "pr": 142
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/platform/containers/01-deployment-center-containers.png",
      "same_directory_and_stem": true,
      "blob_sha256": "7f1ca759c3b33d9731ae69df587815be7edd86a9a73264aeec35b3cc58e4aa29",
@@ -2224,7 +2552,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8h"
   },
   {
    "path": "docs/assets/platform/deployment-options/platform--deployment-options--01-deployment-center.webp",
@@ -2240,6 +2569,7 @@
    "manifest": {
     "page": "platform/deployment-options",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -2250,7 +2580,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/platform/deployment-options.md"
     ],
@@ -2275,7 +2606,7 @@
      "subject": "docs: onboard platform Portal screenshots onto manifest pipeline (#142)",
      "pr": 142
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/platform/deployment-options/01-deployment-center.png",
      "same_directory_and_stem": true,
      "blob_sha256": "fd9369e21a581d7bc8cadd6223d4d979fbf34f56220ba07291a42d627c54f8b8",
@@ -2299,7 +2630,8 @@
     "duplicate-content",
     "core-name-collision",
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "3"
   },
   {
    "path": "docs/assets/platform/deployment-scenarios/platform--deployment-scenarios--01-deployment-slots.webp",
@@ -2315,6 +2647,7 @@
    "manifest": {
     "page": "platform/deployment-scenarios",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -2325,7 +2658,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/platform/deployment-scenarios.md"
     ],
@@ -2349,7 +2683,7 @@
      "subject": "docs: onboard platform Portal screenshots onto manifest pipeline (#142)",
      "pr": 142
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/platform/deployment-scenarios/01-deployment-slots.png",
      "same_directory_and_stem": true,
      "blob_sha256": "315bd423d0b8594d22aac56cbb54152ab664a25c9179b1366ed766987ced3d2b",
@@ -2373,7 +2707,8 @@
     "duplicate-content",
     "core-name-collision",
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "2"
   },
   {
    "path": "docs/assets/platform/hosting-models/platform--hosting-models--01-app-service-plan.webp",
@@ -2389,6 +2724,7 @@
    "manifest": {
     "page": "platform/hosting-models",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -2399,7 +2735,8 @@
    "references": {
     "shot_calls": 9,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/language-guides/dotnet/index.md",
      "docs/language-guides/dotnet/tutorial/01-local-run.md",
@@ -2427,7 +2764,7 @@
      "subject": "docs: onboard platform Portal screenshots onto manifest pipeline (#142)",
      "pr": 142
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/platform/hosting-models/01-app-service-plan.png",
      "same_directory_and_stem": true,
      "blob_sha256": "d344075861f621aff1c2437a2372888967ca47611fd1789dd52ce7005185adda",
@@ -2449,7 +2786,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8h"
   },
   {
    "path": "docs/assets/platform/kudu/platform--kudu--01-advanced-tools-entry.webp",
@@ -2465,6 +2803,7 @@
    "manifest": {
     "page": "platform/kudu",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -2475,7 +2814,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/platform/kudu-overview.md"
     ],
@@ -2495,7 +2835,7 @@
      "subject": "docs: onboard platform/kudu Portal screenshots onto manifest pipeline (#137)",
      "pr": 137
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/platform/kudu/01-advanced-tools-entry.png",
      "same_directory_and_stem": true,
      "blob_sha256": "9a9f5fa2e25d6ae7b7b1946049ed9568824673307db1077bd10148178f8603b7",
@@ -2517,7 +2857,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8c"
   },
   {
    "path": "docs/assets/platform/kudu/platform--kudu--02-environment-appsettings.webp",
@@ -2533,6 +2874,7 @@
    "manifest": {
     "page": "platform/kudu",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -2543,7 +2885,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/platform/kudu-windows.md"
     ],
@@ -2563,7 +2906,7 @@
      "subject": "docs: onboard platform/kudu Portal screenshots onto manifest pipeline (#137)",
      "pr": 137
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/platform/kudu/02-environment-appsettings.png",
      "same_directory_and_stem": true,
      "blob_sha256": "419d3b1ccd1e55d71c62d6871286618291eea1010dcb2f6fd3fdcdfafed8fc77",
@@ -2585,7 +2928,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8c"
   },
   {
    "path": "docs/assets/platform/kudu/platform--kudu--03-debug-console-cmd.webp",
@@ -2601,6 +2945,7 @@
    "manifest": {
     "page": "platform/kudu",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -2611,7 +2956,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/platform/kudu-windows.md"
     ],
@@ -2631,7 +2977,7 @@
      "subject": "docs: onboard platform/kudu Portal screenshots onto manifest pipeline (#137)",
      "pr": 137
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/platform/kudu/03-debug-console-cmd.png",
      "same_directory_and_stem": true,
      "blob_sha256": "ddfccba1b8ee4bebb7a4be8ea48a4df7a592deb6b058935c917b72a54cac438f",
@@ -2653,7 +2999,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8c"
   },
   {
    "path": "docs/assets/platform/kudu/platform--kudu--04-debug-console-powershell.webp",
@@ -2669,6 +3016,7 @@
    "manifest": {
     "page": "platform/kudu",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -2679,7 +3027,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/platform/kudu-windows.md"
     ],
@@ -2699,7 +3048,7 @@
      "subject": "docs: onboard platform/kudu Portal screenshots onto manifest pipeline (#137)",
      "pr": 137
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/platform/kudu/04-debug-console-powershell.png",
      "same_directory_and_stem": true,
      "blob_sha256": "5f86c51477fd427d528a28d391bcc36a17174eb69f87290ee34fdf278204b2da",
@@ -2721,7 +3070,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8c"
   },
   {
    "path": "docs/assets/platform/kudu/platform--kudu--05-site-extensions.webp",
@@ -2737,6 +3087,7 @@
    "manifest": {
     "page": "platform/kudu",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -2747,7 +3098,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/platform/kudu-windows.md"
     ],
@@ -2767,7 +3119,7 @@
      "subject": "docs: onboard platform/kudu Portal screenshots onto manifest pipeline (#137)",
      "pr": 137
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/platform/kudu/05-site-extensions.png",
      "same_directory_and_stem": true,
      "blob_sha256": "77776481d250eeb2c1537d12f8843d5465aa2ccac883674f8613306e42769363",
@@ -2789,7 +3141,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8c"
   },
   {
    "path": "docs/assets/platform/kudu/platform--kudu--07-diagnostic-dump.webp",
@@ -2805,6 +3158,7 @@
    "manifest": {
     "page": "platform/kudu",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -2815,7 +3169,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/platform/kudu-windows.md"
     ],
@@ -2835,7 +3190,7 @@
      "subject": "docs: onboard platform/kudu Portal screenshots onto manifest pipeline (#137)",
      "pr": 137
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/platform/kudu/07-diagnostic-dump.png",
      "same_directory_and_stem": true,
      "blob_sha256": "c51fa9fb56824ac108aa09cb9b28d6f52d167d8299a117224de07b2f0bae8f1c",
@@ -2857,7 +3212,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8c"
   },
   {
    "path": "docs/assets/platform/kudu/platform--kudu--08-deployments-history.webp",
@@ -2873,6 +3229,7 @@
    "manifest": {
     "page": "platform/kudu",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -2883,7 +3240,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/platform/kudu-overview.md"
     ],
@@ -2903,7 +3261,7 @@
      "subject": "docs: onboard platform/kudu Portal screenshots onto manifest pipeline (#137)",
      "pr": 137
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/platform/kudu/08-deployments-history.png",
      "same_directory_and_stem": true,
      "blob_sha256": "b88a8f04c3a322625483c13fbce0c415af9a93412f125945d1027ef23b1baa89",
@@ -2925,7 +3283,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8c"
   },
   {
    "path": "docs/assets/platform/kudu/platform--kudu--10-linux-modern-dashboard.webp",
@@ -2941,6 +3300,7 @@
    "manifest": {
     "page": "platform/kudu",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -2951,7 +3311,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/platform/kudu-linux.md"
     ],
@@ -2971,7 +3332,7 @@
      "subject": "docs: onboard platform/kudu Portal screenshots onto manifest pipeline (#137)",
      "pr": 137
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/platform/kudu/10-linux-modern-dashboard.png",
      "same_directory_and_stem": true,
      "blob_sha256": "f8b5c83c30a1602d48a2623119b0cfb3d9edbebdc8c8f76c2a7458848b5cfe04",
@@ -2993,7 +3354,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8c"
   },
   {
    "path": "docs/assets/platform/kudu/platform--kudu--11-linux-modern-logs-app.webp",
@@ -3009,6 +3371,7 @@
    "manifest": {
     "page": "platform/kudu",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -3019,7 +3382,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/platform/kudu-linux.md"
     ],
@@ -3039,7 +3403,7 @@
      "subject": "docs: onboard platform/kudu Portal screenshots onto manifest pipeline (#137)",
      "pr": 137
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/platform/kudu/11-linux-modern-logs-app.png",
      "same_directory_and_stem": true,
      "blob_sha256": "8752d758a1f21847b9063d7c346197b3b7e699c946b37a75a7907dedac62bf7c",
@@ -3061,7 +3425,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8c"
   },
   {
    "path": "docs/assets/platform/kudu/platform--kudu--12-linux-modern-logs-platform.webp",
@@ -3077,6 +3442,7 @@
    "manifest": {
     "page": "platform/kudu",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -3087,7 +3453,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/platform/kudu-linux.md"
     ],
@@ -3107,7 +3474,7 @@
      "subject": "docs: onboard platform/kudu Portal screenshots onto manifest pipeline (#137)",
      "pr": 137
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/platform/kudu/12-linux-modern-logs-platform.png",
      "same_directory_and_stem": true,
      "blob_sha256": "dba0ab11d026614946e18fccd077e26e5e623e0bd21988957c1c2fecb8e9dd8d",
@@ -3129,7 +3496,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8c"
   },
   {
    "path": "docs/assets/platform/kudu/platform--kudu--14-linux-modern-ssh-app.webp",
@@ -3145,6 +3513,7 @@
    "manifest": {
     "page": "platform/kudu",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -3155,7 +3524,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/platform/kudu-linux.md"
     ],
@@ -3175,7 +3545,7 @@
      "subject": "docs: onboard platform/kudu Portal screenshots onto manifest pipeline (#137)",
      "pr": 137
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/platform/kudu/14-linux-modern-ssh-app.png",
      "same_directory_and_stem": true,
      "blob_sha256": "9d99d3a0d8edfeefe85fb5b0b3a599aeaf656def6c0d8f12b7c051ffb2d1ec46",
@@ -3197,7 +3567,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8c"
   },
   {
    "path": "docs/assets/platform/kudu/platform--kudu--15-linux-modern-ssh-kudu.webp",
@@ -3213,6 +3584,7 @@
    "manifest": {
     "page": "platform/kudu",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -3223,7 +3595,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/platform/kudu-linux.md"
     ],
@@ -3243,7 +3616,7 @@
      "subject": "docs: onboard platform/kudu Portal screenshots onto manifest pipeline (#137)",
      "pr": 137
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/platform/kudu/15-linux-modern-ssh-kudu.png",
      "same_directory_and_stem": true,
      "blob_sha256": "a50fb6a8279b1a09912bb09fc87b4785dee2d3a0c7f77a8ce7d293cd1e268ce7",
@@ -3265,7 +3638,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8c"
   },
   {
    "path": "docs/assets/platform/kudu/platform--kudu--16-linux-modern-filemanager.webp",
@@ -3281,6 +3655,7 @@
    "manifest": {
     "page": "platform/kudu",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -3291,7 +3666,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/platform/kudu-linux.md"
     ],
@@ -3311,7 +3687,7 @@
      "subject": "docs: onboard platform/kudu Portal screenshots onto manifest pipeline (#137)",
      "pr": 137
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/platform/kudu/16-linux-modern-filemanager.png",
      "same_directory_and_stem": true,
      "blob_sha256": "c496ad52a27eaccaf697cc3c11f93b394cb28ebd88c5a1053e0c3f345ed634e2",
@@ -3333,7 +3709,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8c"
   },
   {
    "path": "docs/assets/platform/kudu/platform--kudu--17-linux-modern-filemanager-logs.webp",
@@ -3349,6 +3726,7 @@
    "manifest": {
     "page": "platform/kudu",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -3359,7 +3737,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/platform/kudu-linux.md"
     ],
@@ -3379,7 +3758,7 @@
      "subject": "docs: onboard platform/kudu Portal screenshots onto manifest pipeline (#137)",
      "pr": 137
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/platform/kudu/17-linux-modern-filemanager-logs.png",
      "same_directory_and_stem": true,
      "blob_sha256": "63ed36c10b6a29ac96e790fd0aa75d8e343d8b43ca140aceba7247e2212a8407",
@@ -3401,7 +3780,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8c"
   },
   {
    "path": "docs/assets/platform/kudu/platform--kudu--18-linux-modern-process-explorer.webp",
@@ -3417,6 +3797,7 @@
    "manifest": {
     "page": "platform/kudu",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -3427,7 +3808,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/platform/kudu-linux.md"
     ],
@@ -3447,7 +3829,7 @@
      "subject": "docs: onboard platform/kudu Portal screenshots onto manifest pipeline (#137)",
      "pr": 137
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/platform/kudu/18-linux-modern-process-explorer.png",
      "same_directory_and_stem": true,
      "blob_sha256": "befb5cdcdf7eaaa2616db5e201bc6f1ea2a4df60024f52e622429f4759caaf50",
@@ -3469,7 +3851,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8c"
   },
   {
    "path": "docs/assets/platform/kudu/platform--kudu--19-linux-modern-environment.webp",
@@ -3485,6 +3868,7 @@
    "manifest": {
     "page": "platform/kudu",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -3495,7 +3879,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/platform/kudu-linux.md"
     ],
@@ -3515,7 +3900,7 @@
      "subject": "docs: onboard platform/kudu Portal screenshots onto manifest pipeline (#137)",
      "pr": 137
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/platform/kudu/19-linux-modern-environment.png",
      "same_directory_and_stem": true,
      "blob_sha256": "4198e1ff7fa746e9deb2001764dc44ee1743bb38a0e92272df16e9145b871b0c",
@@ -3537,7 +3922,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8c"
   },
   {
    "path": "docs/assets/platform/kudu/platform--kudu--20-linux-modern-deployments.webp",
@@ -3553,6 +3939,7 @@
    "manifest": {
     "page": "platform/kudu",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -3563,7 +3950,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/platform/kudu-linux.md"
     ],
@@ -3583,7 +3971,7 @@
      "subject": "docs: onboard platform/kudu Portal screenshots onto manifest pipeline (#137)",
      "pr": 137
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/platform/kudu/20-linux-modern-deployments.png",
      "same_directory_and_stem": true,
      "blob_sha256": "8bdf98f85da4f9389acd04a8da06a9fde8858dd80e8f151cda435649d020fb71",
@@ -3605,7 +3993,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8c"
   },
   {
    "path": "docs/assets/platform/kudu/platform--kudu--21-linux-modern-ai-playground.webp",
@@ -3621,6 +4010,7 @@
    "manifest": {
     "page": "platform/kudu",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -3631,7 +4021,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/platform/kudu-linux.md"
     ],
@@ -3651,7 +4042,7 @@
      "subject": "docs: onboard platform/kudu Portal screenshots onto manifest pipeline (#137)",
      "pr": 137
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/platform/kudu/21-linux-modern-ai-playground.png",
      "same_directory_and_stem": true,
      "blob_sha256": "9236b82b5737a81d2a0ef24ea54d99abbbb83ae1f3f273198443ad121d3c0121",
@@ -3673,7 +4064,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8c"
   },
   {
    "path": "docs/assets/platform/kudu/platform--kudu--23-linux-classic-environment.webp",
@@ -3689,6 +4081,7 @@
    "manifest": {
     "page": "platform/kudu",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -3699,7 +4092,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/platform/kudu-linux.md"
     ],
@@ -3719,7 +4113,7 @@
      "subject": "docs: onboard platform/kudu Portal screenshots onto manifest pipeline (#137)",
      "pr": 137
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/platform/kudu/23-linux-classic-environment.png",
      "same_directory_and_stem": true,
      "blob_sha256": "e0692e5cfb7b98c8953a2c047088900b5e244d56c7b814a6d9b4d6d1d76d7710",
@@ -3741,7 +4135,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8c"
   },
   {
    "path": "docs/assets/platform/kudu/platform--kudu--24-linux-classic-bash.webp",
@@ -3757,6 +4152,7 @@
    "manifest": {
     "page": "platform/kudu",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -3767,7 +4163,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/platform/kudu-linux.md"
     ],
@@ -3787,7 +4184,7 @@
      "subject": "docs: onboard platform/kudu Portal screenshots onto manifest pipeline (#137)",
      "pr": 137
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/platform/kudu/24-linux-classic-bash.png",
      "same_directory_and_stem": true,
      "blob_sha256": "6b71d3ec22a80a21649030537ed2b6eb64cc958fac7f3c7a513c30fda563a1f2",
@@ -3809,7 +4206,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8c"
   },
   {
    "path": "docs/assets/platform/kudu/platform--kudu--25-linux-classic-webssh.webp",
@@ -3825,6 +4223,7 @@
    "manifest": {
     "page": "platform/kudu",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -3835,7 +4234,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/platform/kudu-linux.md"
     ],
@@ -3855,7 +4255,7 @@
      "subject": "docs: onboard platform/kudu Portal screenshots onto manifest pipeline (#137)",
      "pr": 137
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/platform/kudu/25-linux-classic-webssh.png",
      "same_directory_and_stem": true,
      "blob_sha256": "0a8b8b388a2fe4cac3bbb3335e4b6516b4db5089eabba3e84f6cd6778f867949",
@@ -3877,7 +4277,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8c"
   },
   {
    "path": "docs/assets/platform/kudu/platform--kudu--26-linux-classic-process-explorer.webp",
@@ -3893,6 +4294,7 @@
    "manifest": {
     "page": "platform/kudu",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -3903,7 +4305,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/platform/kudu-linux.md"
     ],
@@ -3923,7 +4326,7 @@
      "subject": "docs: onboard platform/kudu Portal screenshots onto manifest pipeline (#137)",
      "pr": 137
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/platform/kudu/26-linux-classic-process-explorer.png",
      "same_directory_and_stem": true,
      "blob_sha256": "c726f38ed9054baf084ecf8e8f1c2a2194f63303313e98ab4336624100b956de",
@@ -3945,7 +4348,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8c"
   },
   {
    "path": "docs/assets/platform/kudu/platform--kudu--27-linux-classic-deployment-logs.webp",
@@ -3961,6 +4365,7 @@
    "manifest": {
     "page": "platform/kudu",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -3971,7 +4376,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/platform/kudu-linux.md"
     ],
@@ -3991,7 +4397,7 @@
      "subject": "docs: onboard platform/kudu Portal screenshots onto manifest pipeline (#137)",
      "pr": 137
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/platform/kudu/27-linux-classic-deployment-logs.png",
      "same_directory_and_stem": true,
      "blob_sha256": "c2b97c773a0600513efb6b34c60073de2e57e6a3634969e8e230f1dfbb3727ad",
@@ -4013,7 +4419,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8c"
   },
   {
    "path": "docs/assets/platform/mtls/platform--mtls--01-custom-domains-tls.webp",
@@ -4029,6 +4436,7 @@
    "manifest": {
     "page": "platform/mtls",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -4039,7 +4447,8 @@
    "references": {
     "shot_calls": 5,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/language-guides/dotnet/tutorial/07-custom-domain-ssl.md",
      "docs/language-guides/java/tutorial/07-custom-domain-ssl.md",
@@ -4065,7 +4474,7 @@
      "subject": "docs: onboard platform Portal screenshots onto manifest pipeline (#142)",
      "pr": 142
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/platform/mtls/01-custom-domains-tls.png",
      "same_directory_and_stem": true,
      "blob_sha256": "97da098b6bdd5a8d030b7b777d9b164e482ee637bb57df3acc5b92b2ddcf7ccf",
@@ -4088,7 +4497,8 @@
    "flags": [
     "duplicate-content",
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "4"
   },
   {
    "path": "docs/assets/platform/networking/platform--networking--01-networking-blade.webp",
@@ -4104,6 +4514,7 @@
    "manifest": {
     "page": "platform/networking",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -4114,7 +4525,8 @@
    "references": {
     "shot_calls": 5,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/language-guides/dotnet/recipes/vnet-integration.md",
      "docs/language-guides/java/recipes/vnet-integration.md",
@@ -4140,7 +4552,7 @@
      "subject": "docs: onboard platform Portal screenshots onto manifest pipeline (#142)",
      "pr": 142
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/platform/networking/01-networking-blade.png",
      "same_directory_and_stem": true,
      "blob_sha256": "d3f49362ccd38f340dffb4cc62b9a476a770fd80c18c075559b76f05706100f4",
@@ -4163,7 +4575,8 @@
    "flags": [
     "duplicate-content",
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "7"
   },
   {
    "path": "docs/assets/platform/networking/platform--networking--02-nat-gateway-config.webp",
@@ -4179,6 +4592,7 @@
    "manifest": {
     "page": "platform/networking",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -4189,7 +4603,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/platform/networking.md"
     ],
@@ -4209,7 +4624,7 @@
      "subject": "docs: onboard platform Portal screenshots onto manifest pipeline (#142)",
      "pr": 142
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/platform/networking/02-nat-gateway-config.png",
      "same_directory_and_stem": true,
      "blob_sha256": "fdea6e75a7d98df375b7a3a3f0e97aadf1d07e6c0f7cff50fd1c56bbf086ac99",
@@ -4231,7 +4646,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8h"
   },
   {
    "path": "docs/assets/platform/request-lifecycle/platform--request-lifecycle--01-log-stream.webp",
@@ -4247,6 +4663,7 @@
    "manifest": {
     "page": "platform/request-lifecycle",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -4257,7 +4674,8 @@
    "references": {
     "shot_calls": 3,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/language-guides/nodejs/recipes/native-dependencies.md",
      "docs/language-guides/python/recipes/native-dependencies.md",
@@ -4279,7 +4697,7 @@
      "subject": "docs: onboard platform Portal screenshots onto manifest pipeline (#142)",
      "pr": 142
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/platform/request-lifecycle/01-log-stream.png",
      "same_directory_and_stem": true,
      "blob_sha256": "f386e56057f5c1e8e1c487e8f161ce52fa20fa6df7ba4b7333b75b1ba5554594",
@@ -4301,7 +4719,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8h"
   },
   {
    "path": "docs/assets/platform/resource-relationships/platform--resource-relationships--01-resource-group.webp",
@@ -4317,6 +4736,7 @@
    "manifest": {
     "page": "platform/resource-relationships",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -4327,7 +4747,8 @@
    "references": {
     "shot_calls": 5,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/language-guides/dotnet/tutorial/05-infrastructure-as-code.md",
      "docs/language-guides/java/tutorial/05-infrastructure-as-code.md",
@@ -4351,7 +4772,7 @@
      "subject": "docs: onboard platform Portal screenshots onto manifest pipeline (#142)",
      "pr": 142
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/platform/resource-relationships/01-resource-group.png",
      "same_directory_and_stem": true,
      "blob_sha256": "064d8c1906e1fd83163d300ebbe6e0535b4d946be30a5e235f46257cc88f5976",
@@ -4373,7 +4794,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8h"
   },
   {
    "path": "docs/assets/platform/scaling/platform--scaling--01-scale-out.webp",
@@ -4389,6 +4811,7 @@
    "manifest": {
     "page": "platform/scaling",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -4399,7 +4822,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/platform/scaling.md"
     ],
@@ -4423,7 +4847,7 @@
      "subject": "docs: onboard platform Portal screenshots onto manifest pipeline (#142)",
      "pr": 142
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/platform/scaling/01-scale-out.png",
      "same_directory_and_stem": true,
      "blob_sha256": "e28c401bd78be8e1d145a26df9450b23f1c7b9dddc3e2a282f09e1d9470388ee",
@@ -4447,7 +4871,8 @@
     "duplicate-content",
     "core-name-collision",
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "1"
   },
   {
    "path": "docs/assets/platform/scaling/platform--scaling--02-scale-up.webp",
@@ -4463,6 +4888,7 @@
    "manifest": {
     "page": "platform/scaling",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -4473,7 +4899,8 @@
    "references": {
     "shot_calls": 2,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/platform/scaling.md",
      "docs/reference/platform-limits.md"
@@ -4494,7 +4921,7 @@
      "subject": "docs: onboard platform Portal screenshots onto manifest pipeline (#142)",
      "pr": 142
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/platform/scaling/02-scale-up.png",
      "same_directory_and_stem": true,
      "blob_sha256": "bf78f8a9adb53544767af2ba142275a0a8d480d0f3a54791b70b5b1dc71b71d2",
@@ -4516,7 +4943,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8h"
   },
   {
    "path": "docs/assets/platform/security-architecture/platform--security-architecture--01-identity-blade.webp",
@@ -4532,6 +4960,7 @@
    "manifest": {
     "page": "platform/security-architecture",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -4542,7 +4971,8 @@
    "references": {
     "shot_calls": 9,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/language-guides/dotnet/recipes/azure-sql.md",
      "docs/language-guides/dotnet/recipes/redis.md",
@@ -4574,7 +5004,7 @@
      "subject": "docs: onboard platform Portal screenshots onto manifest pipeline (#142)",
      "pr": 142
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/platform/security-architecture/01-identity-blade.png",
      "same_directory_and_stem": true,
      "blob_sha256": "68d510731037c166aeb498e82107ab46dcd831ac3a8eaed137eefdb1c9b4751d",
@@ -4598,7 +5028,8 @@
     "duplicate-content",
     "core-name-collision",
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "6"
   },
   {
    "path": "docs/assets/platform/storage-connectivity/01-storage-networking-all-networks.webp",
@@ -4614,6 +5045,7 @@
    "manifest": {
     "page": "Storage account → Networking → Firewalls and virtual networks",
     "captured": "2026-07-17",
+    "captured_basis": null,
     "verified": "2026-07-17",
     "diff_threshold": 0.02,
     "prereq": null
@@ -4624,7 +5056,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/platform/storage-connectivity.md"
     ],
@@ -4644,7 +5077,7 @@
      "subject": "feat: manifest-driven screenshot pipeline pilot (#133)",
      "pr": 133
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/platform/storage-connectivity/01-storage-networking-all-networks.png",
      "same_directory_and_stem": true,
      "blob_sha256": "f8c1969ffa2f3f2bdf5c810132c34ce109819144ef532a20a69df9d6519fa72a",
@@ -4667,7 +5100,8 @@
    "flags": [
     "short-id",
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8a"
   },
   {
    "path": "docs/assets/platform/storage-connectivity/02-storage-networking-selected-networks.webp",
@@ -4683,6 +5117,7 @@
    "manifest": {
     "page": "Storage account → Networking → Firewalls and virtual networks",
     "captured": "2026-07-17",
+    "captured_basis": null,
     "verified": "2026-07-17",
     "diff_threshold": 0.02,
     "prereq": null
@@ -4693,7 +5128,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/platform/storage-connectivity.md"
     ],
@@ -4713,7 +5149,7 @@
      "subject": "feat: manifest-driven screenshot pipeline pilot (#133)",
      "pr": 133
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/platform/storage-connectivity/02-storage-networking-selected-networks.png",
      "same_directory_and_stem": true,
      "blob_sha256": "6c54a981b8a56a0f018bc677fc9e28ad22cc10b92c3bf71bfe8c5131731b5824",
@@ -4736,7 +5172,8 @@
    "flags": [
     "short-id",
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8a"
   },
   {
    "path": "docs/assets/platform/storage-connectivity/03-storage-networking-disabled.webp",
@@ -4752,6 +5189,7 @@
    "manifest": {
     "page": "Storage account → Networking → Firewalls and virtual networks",
     "captured": "2026-07-17",
+    "captured_basis": null,
     "verified": "2026-07-17",
     "diff_threshold": 0.02,
     "prereq": null
@@ -4762,7 +5200,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/platform/storage-connectivity.md"
     ],
@@ -4782,7 +5221,7 @@
      "subject": "feat: manifest-driven screenshot pipeline pilot (#133)",
      "pr": 133
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/platform/storage-connectivity/03-storage-networking-disabled.png",
      "same_directory_and_stem": true,
      "blob_sha256": "4a74c3459e4217e329c896267fb685b30b9c87695a0bf1c5b5b15c942bcbfae5",
@@ -4805,7 +5244,8 @@
    "flags": [
     "short-id",
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8a"
   },
   {
    "path": "docs/assets/platform/storage-connectivity/04-appservice-overview-vnet-integration.webp",
@@ -4821,6 +5261,7 @@
    "manifest": {
     "page": "App Service → Overview (Virtual network integration field)",
     "captured": "2026-07-17",
+    "captured_basis": null,
     "verified": "2026-07-17",
     "diff_threshold": 0.02,
     "prereq": null
@@ -4831,7 +5272,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/platform/storage-connectivity.md"
     ],
@@ -4851,7 +5293,7 @@
      "subject": "feat: manifest-driven screenshot pipeline pilot (#133)",
      "pr": 133
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/platform/storage-connectivity/04-appservice-overview-vnet-integration.png",
      "same_directory_and_stem": true,
      "blob_sha256": "f0b6d7dc2e480cf10e58540cc2072323d090d4e0c0d1ec6533537305bebdf4fe",
@@ -4874,7 +5316,8 @@
    "flags": [
     "short-id",
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8a"
   },
   {
    "path": "docs/assets/troubleshooting/activity-log/01-activity-log.png",
@@ -4907,7 +5350,8 @@
    "references": {
     "shot_calls": 0,
     "direct_markdown": 2,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/troubleshooting/evidence-map.md",
      "docs/troubleshooting/mental-model.md"
@@ -4928,12 +5372,13 @@
      "subject": "feat: add Portal UI captures to Tier 4 troubleshooting docs (Phase 1) (#72)",
      "pr": 72
     },
-    "source_png": null,
+    "candidate_source_png": null,
     "png_candidates_considered": null
    },
    "origin_class": "legacy-png-pinned",
    "disposition": "retain-legacy-pinned",
-   "flags": []
+   "flags": [],
+   "proposed_batch": "10"
   },
   {
    "path": "docs/assets/troubleshooting/activity-log/troubleshooting--activity-log--03-slotswap-swap-operation.webp",
@@ -4949,6 +5394,7 @@
    "manifest": {
     "page": "troubleshooting/activity-log",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -4959,7 +5405,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/troubleshooting/lab-guides/slot-swap-config-drift.md"
     ],
@@ -4979,7 +5426,7 @@
      "subject": "docs: onboard troubleshooting single-ref Portal screenshots onto manifest pipeline (#141)",
      "pr": 141
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/troubleshooting/activity-log/03-slotswap-swap-operation.png",
      "same_directory_and_stem": true,
      "blob_sha256": "35939010c8fd959a7a43dfd1570ff62c0570527c2a99216971b936627ad4e470",
@@ -5001,7 +5448,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8g"
   },
   {
    "path": "docs/assets/troubleshooting/app-insights/01-overview.png",
@@ -5034,7 +5482,8 @@
    "references": {
     "shot_calls": 0,
     "direct_markdown": 5,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/language-guides/dotnet/tutorial/04-logging-monitoring.md",
      "docs/language-guides/java/tutorial/04-logging-monitoring.md",
@@ -5063,7 +5512,7 @@
      "subject": "feat: add Portal UI captures to Tier 4 troubleshooting docs (Phase 1) (#72)",
      "pr": 72
     },
-    "source_png": null,
+    "candidate_source_png": null,
     "png_candidates_considered": null
    },
    "origin_class": "legacy-png-pinned",
@@ -5071,7 +5520,8 @@
    "flags": [
     "core-name-collision",
     "identical-stem"
-   ]
+   ],
+   "proposed_batch": "10"
   },
   {
    "path": "docs/assets/troubleshooting/app-service-plan/troubleshooting--app-service-plan--01-asp-overview.webp",
@@ -5087,6 +5537,7 @@
    "manifest": {
     "page": "troubleshooting/app-service-plan",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -5097,7 +5548,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/troubleshooting/lab-guides/no-space-left-on-device.md"
     ],
@@ -5117,7 +5569,7 @@
      "subject": "docs: onboard troubleshooting single-ref Portal screenshots onto manifest pipeline (#141)",
      "pr": 141
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/troubleshooting/app-service-plan/01-asp-overview.png",
      "same_directory_and_stem": true,
      "blob_sha256": "cb8165ffc7d702a2c9c742c6b59346a9b7359f058933b51a74ccde315eb16f75",
@@ -5139,7 +5591,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8g"
   },
   {
    "path": "docs/assets/troubleshooting/configuration/troubleshooting--configuration--01-always-on.webp",
@@ -5155,6 +5608,7 @@
    "manifest": {
     "page": "troubleshooting/configuration",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -5165,7 +5619,8 @@
    "references": {
     "shot_calls": 2,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/troubleshooting/lab-guides/slot-swap-config-drift.md",
      "docs/troubleshooting/lab-guides/slow-start-cold-start.md"
@@ -5186,7 +5641,7 @@
      "subject": "docs: onboard troubleshooting configuration/metrics/networking Portal screenshots onto manifest pipeline (#140)",
      "pr": 140
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/troubleshooting/configuration/01-always-on.png",
      "same_directory_and_stem": true,
      "blob_sha256": "b762d6ad6f91df62e95a1dde8208dfe4e532b2f57f7348582a0b4ec2cfd02255",
@@ -5208,7 +5663,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8f"
   },
   {
    "path": "docs/assets/troubleshooting/configuration/troubleshooting--configuration--03-autoheal-m2-rules.webp",
@@ -5224,6 +5680,7 @@
    "manifest": {
     "page": "troubleshooting/configuration",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -5234,7 +5691,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/troubleshooting/lab-guides/windows-java-httpplatformhandler-timeout.md"
     ],
@@ -5254,7 +5712,7 @@
      "subject": "docs: onboard troubleshooting configuration/metrics/networking Portal screenshots onto manifest pipeline (#140)",
      "pr": 140
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/troubleshooting/configuration/03-autoheal-m2-rules.png",
      "same_directory_and_stem": true,
      "blob_sha256": "5158b5c4ac2afb9d35e1baf5d5f0de45095fcacd75a5f2d2ddc64329b092e2aa",
@@ -5276,7 +5734,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8f"
   },
   {
    "path": "docs/assets/troubleshooting/configuration/troubleshooting--configuration--04-slotswap-sticky-vs-nonsticky.webp",
@@ -5292,6 +5751,7 @@
    "manifest": {
     "page": "troubleshooting/configuration",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -5302,7 +5762,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/troubleshooting/lab-guides/slot-swap-config-drift.md"
     ],
@@ -5322,7 +5783,7 @@
      "subject": "docs: onboard troubleshooting configuration/metrics/networking Portal screenshots onto manifest pipeline (#140)",
      "pr": 140
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/troubleshooting/configuration/04-slotswap-sticky-vs-nonsticky.png",
      "same_directory_and_stem": true,
      "blob_sha256": "9b46cdad73e2adb8255236d4fb84487f4c84471b387212e401ab60bedf22fa6d",
@@ -5344,7 +5805,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8f"
   },
   {
    "path": "docs/assets/troubleshooting/configuration/troubleshooting--configuration--05-slowstart-always-on-off.webp",
@@ -5360,6 +5822,7 @@
    "manifest": {
     "page": "troubleshooting/configuration",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -5377,7 +5840,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/troubleshooting/lab-guides/slow-start-cold-start.md"
     ],
@@ -5397,7 +5861,7 @@
      "subject": "docs: onboard troubleshooting configuration/metrics/networking Portal screenshots onto manifest pipeline (#140)",
      "pr": 140
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/troubleshooting/configuration/05-slowstart-always-on-off.png",
      "same_directory_and_stem": true,
      "blob_sha256": "8674b51bc105adeb526d6a4911fb20e0ab4da3fa09b3595fa8dd02fb7151ca9d",
@@ -5419,7 +5883,8 @@
    "disposition": "retain-registered-dimension-exception",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "9"
   },
   {
    "path": "docs/assets/troubleshooting/deployment-center/troubleshooting--deployment-center--01-deployment-center.webp",
@@ -5435,6 +5900,7 @@
    "manifest": {
     "page": "troubleshooting/deployment-center",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -5445,7 +5911,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/troubleshooting/lab-guides/deployment-succeeded-startup-failed.md"
     ],
@@ -5470,7 +5937,7 @@
      "subject": "docs: onboard troubleshooting single-ref Portal screenshots onto manifest pipeline (#141)",
      "pr": 141
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/troubleshooting/deployment-center/01-deployment-center.png",
      "same_directory_and_stem": true,
      "blob_sha256": "fd9369e21a581d7bc8cadd6223d4d979fbf34f56220ba07291a42d627c54f8b8",
@@ -5494,7 +5961,8 @@
     "duplicate-content",
     "core-name-collision",
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "3"
   },
   {
    "path": "docs/assets/troubleshooting/deployment-center/troubleshooting--deployment-center--02-depstart-successful-deploy.webp",
@@ -5510,6 +5978,7 @@
    "manifest": {
     "page": "troubleshooting/deployment-center",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -5520,7 +5989,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/troubleshooting/lab-guides/deployment-succeeded-startup-failed.md"
     ],
@@ -5540,7 +6010,7 @@
      "subject": "docs: onboard troubleshooting single-ref Portal screenshots onto manifest pipeline (#141)",
      "pr": 141
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/troubleshooting/deployment-center/02-depstart-successful-deploy.png",
      "same_directory_and_stem": true,
      "blob_sha256": "3043add166dee76b4f29c0de7e7241988b5df9282bf5f3ca052cfd9306e00b38",
@@ -5562,7 +6032,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8g"
   },
   {
    "path": "docs/assets/troubleshooting/deployments/troubleshooting--deployments--01-cdrecon-role-assignment-conflict.webp",
@@ -5578,6 +6049,7 @@
    "manifest": {
     "page": "troubleshooting/deployments",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -5588,7 +6060,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/troubleshooting/lab-guides/cd-reconnect-rbac-conflict.md"
     ],
@@ -5608,7 +6081,7 @@
      "subject": "docs: onboard troubleshooting single-ref Portal screenshots onto manifest pipeline (#141)",
      "pr": 141
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/troubleshooting/deployments/01-cdrecon-role-assignment-conflict.png",
      "same_directory_and_stem": true,
      "blob_sha256": "1ea1a00196b4e8f0d74f8c060373017e517fadeea5314bff938635906265d34c",
@@ -5630,7 +6103,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8g"
   },
   {
    "path": "docs/assets/troubleshooting/diagnose-and-solve/01-overview.png",
@@ -5663,7 +6137,8 @@
    "references": {
     "shot_calls": 0,
     "direct_markdown": 4,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/troubleshooting/decision-tree.md",
      "docs/troubleshooting/first-10-minutes/index.md",
@@ -5691,7 +6166,7 @@
      "subject": "feat: add Portal UI captures to Tier 4 troubleshooting docs (Phase 1) (#72)",
      "pr": 72
     },
-    "source_png": null,
+    "candidate_source_png": null,
     "png_candidates_considered": null
    },
    "origin_class": "legacy-png-pinned",
@@ -5699,7 +6174,8 @@
    "flags": [
     "core-name-collision",
     "identical-stem"
-   ]
+   ],
+   "proposed_batch": "10"
   },
   {
    "path": "docs/assets/troubleshooting/diagnose-and-solve/02-detector-web-app-down.png",
@@ -5732,7 +6208,8 @@
    "references": {
     "shot_calls": 0,
     "direct_markdown": 3,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/troubleshooting/first-10-minutes/startup-availability.md",
      "docs/troubleshooting/lab-guides/failed-to-forward-request.md",
@@ -5754,12 +6231,13 @@
      "subject": "feat: add Portal UI captures to Tier 4 troubleshooting docs (Phase 1) (#72)",
      "pr": 72
     },
-    "source_png": null,
+    "candidate_source_png": null,
     "png_candidates_considered": null
    },
    "origin_class": "legacy-png-pinned",
    "disposition": "retain-legacy-pinned",
-   "flags": []
+   "flags": [],
+   "proposed_batch": "10"
   },
   {
    "path": "docs/assets/troubleshooting/diagnose-and-solve/troubleshooting--diagnose-and-solve--03-diagnose-hub.webp",
@@ -5775,6 +6253,7 @@
    "manifest": {
     "page": "troubleshooting/diagnose-and-solve",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -5785,7 +6264,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/troubleshooting/lab-guides/memory-pressure.md"
     ],
@@ -5805,7 +6285,7 @@
      "subject": "docs: onboard troubleshooting single-ref Portal screenshots onto manifest pipeline (#141)",
      "pr": 141
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/troubleshooting/diagnose-and-solve/03-diagnose-hub.png",
      "same_directory_and_stem": true,
      "blob_sha256": "50165000cfae580d9c31f2127a40fe7316c1e3b81de34883ecc394af4ed6033c",
@@ -5827,7 +6307,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8g"
   },
   {
    "path": "docs/assets/troubleshooting/health-check/troubleshooting--health-check--01-health-check.webp",
@@ -5843,6 +6324,7 @@
    "manifest": {
     "page": "troubleshooting/health-check",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -5853,7 +6335,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/troubleshooting/lab-guides/container-http-pings.md"
     ],
@@ -5875,7 +6358,7 @@
      "subject": "docs: onboard troubleshooting single-ref Portal screenshots onto manifest pipeline (#141)",
      "pr": 141
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/troubleshooting/health-check/01-health-check.png",
      "same_directory_and_stem": true,
      "blob_sha256": "525dd583d0850ac38796ab79316a8edc8cc4b0a1e596c6f84bf715da1d7c3d80",
@@ -5898,7 +6381,8 @@
    "flags": [
     "core-name-collision",
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8g"
   },
   {
    "path": "docs/assets/troubleshooting/health-check/troubleshooting--health-check--02-httppings-baseline-healthy.webp",
@@ -5914,6 +6398,7 @@
    "manifest": {
     "page": "troubleshooting/health-check",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -5924,7 +6409,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/troubleshooting/lab-guides/container-http-pings.md"
     ],
@@ -5944,7 +6430,7 @@
      "subject": "docs: onboard troubleshooting single-ref Portal screenshots onto manifest pipeline (#141)",
      "pr": 141
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/troubleshooting/health-check/02-httppings-baseline-healthy.png",
      "same_directory_and_stem": true,
      "blob_sha256": "d7fd28d1c48e9c60b1d0f76e6c5baebbfdef62e77cc8473206c3e33c93100b25",
@@ -5966,7 +6452,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8g"
   },
   {
    "path": "docs/assets/troubleshooting/iam/troubleshooting--iam--01-cdrecon-post-recovery-iam.webp",
@@ -5982,6 +6469,7 @@
    "manifest": {
     "page": "troubleshooting/iam",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -5992,7 +6480,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/troubleshooting/lab-guides/cd-reconnect-rbac-conflict.md"
     ],
@@ -6012,7 +6501,7 @@
      "subject": "docs: onboard troubleshooting single-ref Portal screenshots onto manifest pipeline (#141)",
      "pr": 141
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/troubleshooting/iam/01-cdrecon-post-recovery-iam.png",
      "same_directory_and_stem": true,
      "blob_sha256": "c28af97829c6e8d33a1b12803b601380be810c9387c1edca65bee69b4483ac5c",
@@ -6034,7 +6523,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8g"
   },
   {
    "path": "docs/assets/troubleshooting/kudu/troubleshooting--kudu--01-overview.webp",
@@ -6050,6 +6540,7 @@
    "manifest": {
     "page": "troubleshooting/kudu",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -6060,7 +6551,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/troubleshooting/playbooks/startup-availability/windows-kudu-diagnostics.md"
     ],
@@ -6083,7 +6575,7 @@
      "subject": "docs: onboard troubleshooting single-ref Portal screenshots onto manifest pipeline (#141)",
      "pr": 141
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/troubleshooting/kudu/01-overview.png",
      "same_directory_and_stem": true,
      "blob_sha256": "f73fbc9c73ed87c2a3c8dad84c8382e54c7a83f6a64b4e3b1ac00d520c529e4b",
@@ -6106,7 +6598,8 @@
    "flags": [
     "core-name-collision",
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8g"
   },
   {
    "path": "docs/assets/troubleshooting/kudu/troubleshooting--kudu--02-kudu-home.webp",
@@ -6122,6 +6615,7 @@
    "manifest": {
     "page": "troubleshooting/kudu",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -6139,7 +6633,8 @@
    "references": {
     "shot_calls": 2,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/platform/kudu-windows.md",
      "docs/troubleshooting/playbooks/startup-availability/windows-kudu-diagnostics.md"
@@ -6160,7 +6655,7 @@
      "subject": "docs: onboard troubleshooting/kudu Portal screenshots onto manifest pipeline (#138)",
      "pr": 138
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/troubleshooting/kudu/02-kudu-home.png",
      "same_directory_and_stem": true,
      "blob_sha256": "c1e43a9d0d25cea30f7b49f27ae616b2cbeb6e1fb41523c36b18b32529425851",
@@ -6182,7 +6677,8 @@
    "disposition": "retain-registered-dimension-exception",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "9"
   },
   {
    "path": "docs/assets/troubleshooting/kudu/troubleshooting--kudu--03-process-explorer.webp",
@@ -6198,6 +6694,7 @@
    "manifest": {
     "page": "troubleshooting/kudu",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -6215,7 +6712,8 @@
    "references": {
     "shot_calls": 2,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/platform/kudu-windows.md",
      "docs/troubleshooting/playbooks/startup-availability/windows-kudu-diagnostics.md"
@@ -6236,7 +6734,7 @@
      "subject": "docs: onboard troubleshooting/kudu Portal screenshots onto manifest pipeline (#138)",
      "pr": 138
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/troubleshooting/kudu/03-process-explorer.png",
      "same_directory_and_stem": true,
      "blob_sha256": "345f60ec41a839642b5606a265b6c84a578ef6528ef85b737a9f6d885165df9d",
@@ -6258,7 +6756,8 @@
    "disposition": "retain-registered-dimension-exception",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "9"
   },
   {
    "path": "docs/assets/troubleshooting/kudu/troubleshooting--kudu--04-process-explorer-java.webp",
@@ -6274,6 +6773,7 @@
    "manifest": {
     "page": "troubleshooting/kudu",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -6284,7 +6784,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/troubleshooting/lab-guides/windows-java-httpplatformhandler-timeout.md"
     ],
@@ -6304,7 +6805,7 @@
      "subject": "docs: onboard troubleshooting/kudu Portal screenshots onto manifest pipeline (#138)",
      "pr": 138
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/troubleshooting/kudu/04-process-explorer-java.png",
      "same_directory_and_stem": true,
      "blob_sha256": "2d234990c8cb56df6cf45f124e710846c5c651afcef5a5f959653168f4af18ac",
@@ -6326,7 +6827,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8d"
   },
   {
    "path": "docs/assets/troubleshooting/kudu/troubleshooting--kudu--05-webconfig-verified.webp",
@@ -6342,6 +6844,7 @@
    "manifest": {
     "page": "troubleshooting/kudu",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -6359,7 +6862,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/troubleshooting/lab-guides/windows-java-httpplatformhandler-timeout.md"
     ],
@@ -6379,7 +6883,7 @@
      "subject": "docs: onboard troubleshooting/kudu Portal screenshots onto manifest pipeline (#138)",
      "pr": 138
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/troubleshooting/kudu/05-webconfig-verified.png",
      "same_directory_and_stem": true,
      "blob_sha256": "ae25add4c91c4ca07ccb1d01aca75abd60ef4b96acf65300ed933f2bd4361c8d",
@@ -6401,7 +6905,8 @@
    "disposition": "retain-registered-dimension-exception",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "9"
   },
   {
    "path": "docs/assets/troubleshooting/kudu/troubleshooting--kudu--06-fwdreq-process-not-listening.webp",
@@ -6417,6 +6922,7 @@
    "manifest": {
     "page": "troubleshooting/kudu",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -6427,7 +6933,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/troubleshooting/lab-guides/failed-to-forward-request.md"
     ],
@@ -6447,7 +6954,7 @@
      "subject": "docs: onboard troubleshooting/kudu Portal screenshots onto manifest pipeline (#138)",
      "pr": 138
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/troubleshooting/kudu/06-fwdreq-process-not-listening.png",
      "same_directory_and_stem": true,
      "blob_sha256": "229dfb04fbd3aea23c09c52008d631954cab62420642383dff49245b035d89bc",
@@ -6469,7 +6976,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8d"
   },
   {
    "path": "docs/assets/troubleshooting/kudu/troubleshooting--kudu--07-nolabspace-df-output.webp",
@@ -6485,6 +6993,7 @@
    "manifest": {
     "page": "troubleshooting/kudu",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -6495,7 +7004,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/troubleshooting/lab-guides/no-space-left-on-device.md"
     ],
@@ -6515,7 +7025,7 @@
      "subject": "docs: onboard troubleshooting/kudu Portal screenshots onto manifest pipeline (#138)",
      "pr": 138
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/troubleshooting/kudu/07-nolabspace-df-output.png",
      "same_directory_and_stem": true,
      "blob_sha256": "ff5eee8a10c0003d63d88a0a11d1d45f4d63b9f95e67e83efae9b358cd7d0a45",
@@ -6537,7 +7047,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8d"
   },
   {
    "path": "docs/assets/troubleshooting/log-analytics/01-logs.png",
@@ -6570,7 +7081,8 @@
    "references": {
     "shot_calls": 0,
     "direct_markdown": 1,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/troubleshooting/kql/index.md"
     ],
@@ -6590,12 +7102,13 @@
      "subject": "feat: add Portal UI captures to Tier 4 troubleshooting docs (Phase 1) (#72)",
      "pr": 72
     },
-    "source_png": null,
+    "candidate_source_png": null,
     "png_candidates_considered": null
    },
    "origin_class": "legacy-png-pinned",
    "disposition": "retain-legacy-pinned",
-   "flags": []
+   "flags": [],
+   "proposed_batch": "10"
   },
   {
    "path": "docs/assets/troubleshooting/log-analytics/troubleshooting--log-analytics--02-http-500-121-signature.webp",
@@ -6611,6 +7124,7 @@
    "manifest": {
     "page": "troubleshooting/log-analytics",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -6628,7 +7142,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/troubleshooting/lab-guides/windows-java-httpplatformhandler-timeout.md"
     ],
@@ -6648,7 +7163,7 @@
      "subject": "docs: onboard troubleshooting/log-analytics Portal screenshots onto manifest pipeline (#139)",
      "pr": 139
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/troubleshooting/log-analytics/02-http-500-121-signature.png",
      "same_directory_and_stem": true,
      "blob_sha256": "c1b6f433c84f5fb25e7dcf63473e2e613d807bf430adc4113da3fac27afeac90",
@@ -6670,7 +7185,8 @@
    "disposition": "retain-registered-dimension-exception",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "9"
   },
   {
    "path": "docs/assets/troubleshooting/log-analytics/troubleshooting--log-analytics--03-httppings-empty-http-window.webp",
@@ -6686,6 +7202,7 @@
    "manifest": {
     "page": "troubleshooting/log-analytics",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -6696,7 +7213,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/troubleshooting/lab-guides/container-http-pings.md"
     ],
@@ -6716,7 +7234,7 @@
      "subject": "docs: onboard troubleshooting/log-analytics Portal screenshots onto manifest pipeline (#139)",
      "pr": 139
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/troubleshooting/log-analytics/03-httppings-empty-http-window.png",
      "same_directory_and_stem": true,
      "blob_sha256": "23229f64005ec5c0baa1193ffe8e48dd91381a126298bfead3b30edcfc650227",
@@ -6738,7 +7256,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8e"
   },
   {
    "path": "docs/assets/troubleshooting/log-analytics/troubleshooting--log-analytics--04-depstart-startup-failed-kql.webp",
@@ -6754,6 +7273,7 @@
    "manifest": {
     "page": "troubleshooting/log-analytics",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -6764,7 +7284,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/troubleshooting/lab-guides/deployment-succeeded-startup-failed.md"
     ],
@@ -6784,7 +7305,7 @@
      "subject": "docs: onboard troubleshooting/log-analytics Portal screenshots onto manifest pipeline (#139)",
      "pr": 139
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/troubleshooting/log-analytics/04-depstart-startup-failed-kql.png",
      "same_directory_and_stem": true,
      "blob_sha256": "9412dca8b24c3639e729b8541bb944cb05e4a8b489b7cf4bf4d34660d59a41fc",
@@ -6806,7 +7327,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8e"
   },
   {
    "path": "docs/assets/troubleshooting/log-analytics/troubleshooting--log-analytics--05-depstart-runtime-vs-deploy-timeline.webp",
@@ -6822,6 +7344,7 @@
    "manifest": {
     "page": "troubleshooting/log-analytics",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -6832,7 +7355,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/troubleshooting/lab-guides/deployment-succeeded-startup-failed.md"
     ],
@@ -6852,7 +7376,7 @@
      "subject": "docs: onboard troubleshooting/log-analytics Portal screenshots onto manifest pipeline (#139)",
      "pr": 139
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/troubleshooting/log-analytics/05-depstart-runtime-vs-deploy-timeline.png",
      "same_directory_and_stem": true,
      "blob_sha256": "95c50a0e0f7473ee89235691d9c41e01014e94bdf35aa7304142a9f2b22d0ab8",
@@ -6874,7 +7398,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8e"
   },
   {
    "path": "docs/assets/troubleshooting/log-analytics/troubleshooting--log-analytics--06-fwdreq-bind-line-absent.webp",
@@ -6890,6 +7415,7 @@
    "manifest": {
     "page": "troubleshooting/log-analytics",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -6900,7 +7426,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/troubleshooting/lab-guides/failed-to-forward-request.md"
     ],
@@ -6920,7 +7447,7 @@
      "subject": "docs: onboard troubleshooting/log-analytics Portal screenshots onto manifest pipeline (#139)",
      "pr": 139
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/troubleshooting/log-analytics/06-fwdreq-bind-line-absent.png",
      "same_directory_and_stem": true,
      "blob_sha256": "30e4a4545ff657c05025f1af2bba9b0e70dc7960fda997c2cdd239b2d3f9a4e9",
@@ -6942,7 +7469,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8e"
   },
   {
    "path": "docs/assets/troubleshooting/log-analytics/troubleshooting--log-analytics--07-nolabspace-enospc-console-kql.webp",
@@ -6958,6 +7486,7 @@
    "manifest": {
     "page": "troubleshooting/lab-guides/no-space-left-on-device",
     "captured": "2026-07-20",
+    "captured_basis": null,
     "verified": "2026-07-20",
     "diff_threshold": 0.02,
     "prereq": null
@@ -6968,7 +7497,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/troubleshooting/lab-guides/no-space-left-on-device.md"
     ],
@@ -6988,7 +7518,7 @@
      "subject": "docs: onboard log-analytics KQL evidence screenshots onto manifest pipeline (#135) (#161)",
      "pr": 161
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/troubleshooting/log-analytics/07-nolabspace-enospc-console-kql.png",
      "same_directory_and_stem": true,
      "blob_sha256": "d75c6faa87500c2da51f48091dd3a1bf5e40a0b3180979dc5e0d5fded6951b04",
@@ -7010,7 +7540,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8j"
   },
   {
    "path": "docs/assets/troubleshooting/log-analytics/troubleshooting--log-analytics--08-mempressure-heavy-latency-kql.webp",
@@ -7026,6 +7557,7 @@
    "manifest": {
     "page": "troubleshooting/lab-guides/memory-pressure",
     "captured": "2026-07-20",
+    "captured_basis": null,
     "verified": "2026-07-20",
     "diff_threshold": 0.02,
     "prereq": null
@@ -7036,7 +7568,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/troubleshooting/lab-guides/memory-pressure.md"
     ],
@@ -7056,7 +7589,7 @@
      "subject": "docs: onboard log-analytics KQL evidence screenshots onto manifest pipeline (#135) (#161)",
      "pr": 161
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/troubleshooting/log-analytics/08-mempressure-heavy-latency-kql.png",
      "same_directory_and_stem": true,
      "blob_sha256": "149ecc1099ece74d4ba739735afa9a634e3f18a672589c55169ada4043ed35e9",
@@ -7078,7 +7611,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8j"
   },
   {
    "path": "docs/assets/troubleshooting/log-analytics/troubleshooting--log-analytics--09-5xx-latency-percentiles-kql.webp",
@@ -7094,6 +7628,7 @@
    "manifest": {
     "page": "troubleshooting/log-analytics",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -7104,7 +7639,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/troubleshooting/lab-guides/intermittent-5xx.md"
     ],
@@ -7124,7 +7660,7 @@
      "subject": "docs: onboard troubleshooting/log-analytics Portal screenshots onto manifest pipeline (#139)",
      "pr": 139
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/troubleshooting/log-analytics/09-5xx-latency-percentiles-kql.png",
      "same_directory_and_stem": true,
      "blob_sha256": "05099dcca0f26124d2ecc9dd119a268bbc65599b103b3ec2a2a252be041e3fae",
@@ -7146,7 +7682,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8e"
   },
   {
    "path": "docs/assets/troubleshooting/log-analytics/troubleshooting--log-analytics--09-5xx-status-by-endpoint-kql.webp",
@@ -7162,6 +7699,7 @@
    "manifest": {
     "page": "troubleshooting/log-analytics",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -7172,7 +7710,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/troubleshooting/lab-guides/intermittent-5xx.md"
     ],
@@ -7192,7 +7731,7 @@
      "subject": "docs: onboard troubleshooting/log-analytics Portal screenshots onto manifest pipeline (#139)",
      "pr": 139
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/troubleshooting/log-analytics/09-5xx-status-by-endpoint-kql.png",
      "same_directory_and_stem": true,
      "blob_sha256": "de2a67eea5cebd8f9c85920682569965325b3361014353c2bd9c250097bfc10c",
@@ -7214,7 +7753,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8e"
   },
   {
    "path": "docs/assets/troubleshooting/log-analytics/troubleshooting--log-analytics--10-snat-outbound-status-distribution-kql.webp",
@@ -7230,6 +7770,7 @@
    "manifest": {
     "page": "troubleshooting/log-analytics",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -7240,7 +7781,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/troubleshooting/lab-guides/snat-exhaustion.md"
     ],
@@ -7260,7 +7802,7 @@
      "subject": "docs: onboard troubleshooting/log-analytics Portal screenshots onto manifest pipeline (#139)",
      "pr": 139
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/troubleshooting/log-analytics/10-snat-outbound-status-distribution-kql.png",
      "same_directory_and_stem": true,
      "blob_sha256": "d4130dd964fbb95bda0985dbf835fe7ba7c7eb648a5da6f151414066b3b0a9a1",
@@ -7282,7 +7824,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8e"
   },
   {
    "path": "docs/assets/troubleshooting/log-analytics/troubleshooting--log-analytics--10-snat-outbound-tail-latency-kql.webp",
@@ -7298,6 +7841,7 @@
    "manifest": {
     "page": "troubleshooting/lab-guides/snat-exhaustion",
     "captured": "2026-07-20",
+    "captured_basis": null,
     "verified": "2026-07-20",
     "diff_threshold": 0.02,
     "prereq": null
@@ -7308,7 +7852,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/troubleshooting/lab-guides/snat-exhaustion.md"
     ],
@@ -7328,7 +7873,7 @@
      "subject": "docs: onboard log-analytics KQL evidence screenshots onto manifest pipeline (#135) (#161)",
      "pr": 161
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/troubleshooting/log-analytics/10-snat-outbound-tail-latency-kql.png",
      "same_directory_and_stem": true,
      "blob_sha256": "5c8537035a2ea043111b5d16f700eb92d2a8ef5a1c99f929f8762d6b28732145",
@@ -7350,7 +7895,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8j"
   },
   {
    "path": "docs/assets/troubleshooting/log-analytics/troubleshooting--log-analytics--11-dns-vnet-http-status-distribution-kql.webp",
@@ -7366,6 +7912,7 @@
    "manifest": {
     "page": "troubleshooting/log-analytics",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -7376,7 +7923,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/troubleshooting/lab-guides/dns-vnet-resolution.md"
     ],
@@ -7396,7 +7944,7 @@
      "subject": "docs: onboard troubleshooting/log-analytics Portal screenshots onto manifest pipeline (#139)",
      "pr": 139
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/troubleshooting/log-analytics/11-dns-vnet-http-status-distribution-kql.png",
      "same_directory_and_stem": true,
      "blob_sha256": "7fcd05f8a3a617bab28724b15bab588fc2b9ae79cdfafa52c84f4213da8f0ea7",
@@ -7418,7 +7966,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8e"
   },
   {
    "path": "docs/assets/troubleshooting/log-analytics/troubleshooting--log-analytics--11-dns-vnet-platform-startup-kql.webp",
@@ -7434,6 +7983,7 @@
    "manifest": {
     "page": "troubleshooting/lab-guides/dns-vnet-resolution",
     "captured": "2026-07-20",
+    "captured_basis": null,
     "verified": "2026-07-20",
     "diff_threshold": 0.02,
     "prereq": null
@@ -7444,7 +7994,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/troubleshooting/lab-guides/dns-vnet-resolution.md"
     ],
@@ -7464,7 +8015,7 @@
      "subject": "docs: onboard log-analytics KQL evidence screenshots onto manifest pipeline (#135) (#161)",
      "pr": 161
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/troubleshooting/log-analytics/11-dns-vnet-platform-startup-kql.png",
      "same_directory_and_stem": true,
      "blob_sha256": "c076c8c6a2c4c1ecadd9ce56e136e41f1ee9dd639b47a5a804fa5a7c48d66ceb",
@@ -7486,7 +8037,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8j"
   },
   {
    "path": "docs/assets/troubleshooting/log-analytics/troubleshooting--log-analytics--11-slowstart-first-request-slow.webp",
@@ -7502,6 +8054,7 @@
    "manifest": {
     "page": "troubleshooting/lab-guides/slow-start-cold-start",
     "captured": "2026-07-20",
+    "captured_basis": null,
     "verified": "2026-07-20",
     "diff_threshold": 0.02,
     "prereq": null
@@ -7519,7 +8072,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/troubleshooting/lab-guides/slow-start-cold-start.md"
     ],
@@ -7539,7 +8093,7 @@
      "subject": "docs: onboard log-analytics KQL evidence screenshots onto manifest pipeline (#135) (#161)",
      "pr": 161
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/troubleshooting/log-analytics/11-slowstart-first-request-slow.png",
      "same_directory_and_stem": true,
      "blob_sha256": "d0ab3c0c69fb679f58b3861d5b29f0cdde01947554b27a1ce983d79988563e73",
@@ -7561,7 +8115,8 @@
    "disposition": "retain-registered-dimension-exception",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "9"
   },
   {
    "path": "docs/assets/troubleshooting/metrics/01-metrics-empty.png",
@@ -7594,7 +8149,8 @@
    "references": {
     "shot_calls": 0,
     "direct_markdown": 1,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/troubleshooting/evidence-map.md"
     ],
@@ -7614,12 +8170,13 @@
      "subject": "feat: add Portal UI captures to Tier 4 troubleshooting docs (Phase 1) (#72)",
      "pr": 72
     },
-    "source_png": null,
+    "candidate_source_png": null,
     "png_candidates_considered": null
    },
    "origin_class": "legacy-png-pinned",
    "disposition": "retain-legacy-pinned",
-   "flags": []
+   "flags": [],
+   "proposed_batch": "10"
   },
   {
    "path": "docs/assets/troubleshooting/metrics/troubleshooting--metrics--02-response-time.webp",
@@ -7635,6 +8192,7 @@
    "manifest": {
     "page": "troubleshooting/metrics",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -7645,7 +8203,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/troubleshooting/lab-guides/slow-start-cold-start.md"
     ],
@@ -7665,7 +8224,7 @@
      "subject": "docs: onboard troubleshooting configuration/metrics/networking Portal screenshots onto manifest pipeline (#140)",
      "pr": 140
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/troubleshooting/metrics/02-response-time.png",
      "same_directory_and_stem": true,
      "blob_sha256": "e670159a7d286caf21dc7965234606fccd275ed0b52bc38d4dc12d8c09addb23",
@@ -7687,7 +8246,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8f"
   },
   {
    "path": "docs/assets/troubleshooting/metrics/troubleshooting--metrics--06-slowstart-first-vs-warm-response.webp",
@@ -7703,6 +8263,7 @@
    "manifest": {
     "page": "troubleshooting/metrics",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -7720,7 +8281,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/troubleshooting/lab-guides/slow-start-cold-start.md"
     ],
@@ -7740,7 +8302,7 @@
      "subject": "docs: onboard troubleshooting configuration/metrics/networking Portal screenshots onto manifest pipeline (#140)",
      "pr": 140
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/troubleshooting/metrics/06-slowstart-first-vs-warm-response.png",
      "same_directory_and_stem": true,
      "blob_sha256": "2c7d3cfc7af5da52db616de487af77306e40632cf8e8ca2840a3b2687fc49238",
@@ -7762,7 +8324,8 @@
    "disposition": "retain-registered-dimension-exception",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "9"
   },
   {
    "path": "docs/assets/troubleshooting/metrics/troubleshooting--metrics--08-mempressure-memory-working-set.webp",
@@ -7778,6 +8341,7 @@
    "manifest": {
     "page": "troubleshooting/metrics",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -7788,7 +8352,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/troubleshooting/lab-guides/memory-pressure.md"
     ],
@@ -7808,7 +8373,7 @@
      "subject": "docs: onboard troubleshooting configuration/metrics/networking Portal screenshots onto manifest pipeline (#140)",
      "pr": 140
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/troubleshooting/metrics/08-mempressure-memory-working-set.png",
      "same_directory_and_stem": true,
      "blob_sha256": "38262c5ebbb8dd1de75305b2bc798602d3e6559cf3b269b88a5b51abb9126102",
@@ -7830,7 +8395,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8f"
   },
   {
    "path": "docs/assets/troubleshooting/networking/troubleshooting--networking--02-app-overview.webp",
@@ -7846,6 +8412,7 @@
    "manifest": {
     "page": "troubleshooting/networking",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -7863,7 +8430,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/troubleshooting/playbooks/outbound-network/storage-connectivity-firewall-authorization.md"
     ],
@@ -7883,7 +8451,7 @@
      "subject": "docs: onboard troubleshooting configuration/metrics/networking Portal screenshots onto manifest pipeline (#140)",
      "pr": 140
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/troubleshooting/networking/02-app-overview.png",
      "same_directory_and_stem": true,
      "blob_sha256": "98227cf99fccf2dcb5b42a975d2469f8d9861d9abd9902f8845646984da7bcba",
@@ -7905,7 +8473,8 @@
    "disposition": "retain-registered-dimension-exception",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "9"
   },
   {
    "path": "docs/assets/troubleshooting/networking/troubleshooting--networking--03-app-networking-blade.webp",
@@ -7921,6 +8490,7 @@
    "manifest": {
     "page": "troubleshooting/networking",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -7938,7 +8508,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/troubleshooting/playbooks/outbound-network/storage-connectivity-firewall-authorization.md"
     ],
@@ -7958,7 +8529,7 @@
      "subject": "docs: onboard troubleshooting configuration/metrics/networking Portal screenshots onto manifest pipeline (#140)",
      "pr": 140
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/troubleshooting/networking/03-app-networking-blade.png",
      "same_directory_and_stem": true,
      "blob_sha256": "38f34a36bcfefd33d9dcafde8ef5e2d5219d4572106b2553922d71baeb1c07f8",
@@ -7980,7 +8551,8 @@
    "disposition": "retain-registered-dimension-exception",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "9"
   },
   {
    "path": "docs/assets/troubleshooting/storage-firewall/troubleshooting--storage-firewall--01-storage-overview.webp",
@@ -7996,6 +8568,7 @@
    "manifest": {
     "page": "troubleshooting/storage-firewall",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -8013,7 +8586,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/troubleshooting/playbooks/outbound-network/storage-connectivity-firewall-authorization.md"
     ],
@@ -8033,7 +8607,7 @@
      "subject": "docs: onboard troubleshooting single-ref Portal screenshots onto manifest pipeline (#141)",
      "pr": 141
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/troubleshooting/storage-firewall/01-storage-overview.png",
      "same_directory_and_stem": true,
      "blob_sha256": "ae55e660b0f51d7cd37c9b47bbb0343c037b76eac7abed7e817826edaa7d2457",
@@ -8055,7 +8629,8 @@
    "disposition": "retain-registered-dimension-exception",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "9"
   },
   {
    "path": "docs/assets/troubleshooting/storage-firewall/troubleshooting--storage-firewall--02-networking-disabled.webp",
@@ -8071,6 +8646,7 @@
    "manifest": {
     "page": "troubleshooting/storage-firewall",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -8088,7 +8664,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/troubleshooting/playbooks/outbound-network/storage-connectivity-firewall-authorization.md"
     ],
@@ -8108,7 +8685,7 @@
      "subject": "docs: onboard troubleshooting single-ref Portal screenshots onto manifest pipeline (#141)",
      "pr": 141
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/troubleshooting/storage-firewall/02-networking-disabled.png",
      "same_directory_and_stem": true,
      "blob_sha256": "7c0681c36a78e9d7341427ace9e2cbc82b6845803c3149ac71ac542f4c286c34",
@@ -8130,7 +8707,8 @@
    "disposition": "retain-registered-dimension-exception",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "9"
   },
   {
    "path": "docs/assets/troubleshooting/storage-iam/troubleshooting--storage-iam--01-iam-landing.webp",
@@ -8146,6 +8724,7 @@
    "manifest": {
     "page": "troubleshooting/storage-iam",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -8163,7 +8742,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/troubleshooting/playbooks/outbound-network/storage-connectivity-firewall-authorization.md"
     ],
@@ -8183,7 +8763,7 @@
      "subject": "docs: onboard troubleshooting single-ref Portal screenshots onto manifest pipeline (#141)",
      "pr": 141
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/troubleshooting/storage-iam/01-iam-landing.png",
      "same_directory_and_stem": true,
      "blob_sha256": "2cf0a2a0be97e8eb0dadba2f2e4c60ef31514e07bcb56cc57b37b16f76ca111d",
@@ -8205,7 +8785,8 @@
    "disposition": "retain-registered-dimension-exception",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "9"
   },
   {
    "path": "docs/assets/troubleshooting/storage-iam/troubleshooting--storage-iam--02-role-assignments.webp",
@@ -8221,6 +8802,7 @@
    "manifest": {
     "page": "troubleshooting/storage-iam",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -8238,7 +8820,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/troubleshooting/playbooks/outbound-network/storage-connectivity-firewall-authorization.md"
     ],
@@ -8258,7 +8841,7 @@
      "subject": "docs: onboard troubleshooting single-ref Portal screenshots onto manifest pipeline (#141)",
      "pr": 141
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/troubleshooting/storage-iam/02-role-assignments.png",
      "same_directory_and_stem": true,
      "blob_sha256": "33a37129206f9875a1ccbf9f6bd75a7fea40dd5dff98e1dd322cfdbe9beb47fc",
@@ -8280,7 +8863,8 @@
    "disposition": "retain-registered-dimension-exception",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "9"
   },
   {
    "path": "docs/assets/troubleshooting/vnet-integration/troubleshooting--vnet-integration--01-vnet-integration.webp",
@@ -8296,6 +8880,7 @@
    "manifest": {
     "page": "troubleshooting/vnet-integration",
     "captured": "2026-07-18",
+    "captured_basis": null,
     "verified": "2026-07-18",
     "diff_threshold": 0.02,
     "prereq": null
@@ -8306,7 +8891,8 @@
    "references": {
     "shot_calls": 1,
     "direct_markdown": 0,
-    "configuration": 0,
+    "configuration_occurrences": 0,
+    "configuration_sites": [],
     "pages": [
      "docs/troubleshooting/lab-guides/dns-vnet-resolution.md"
     ],
@@ -8326,7 +8912,7 @@
      "subject": "docs: onboard troubleshooting single-ref Portal screenshots onto manifest pipeline (#141)",
      "pr": 141
     },
-    "source_png": {
+    "candidate_source_png": {
      "path": "docs/assets/troubleshooting/vnet-integration/01-vnet-integration.png",
      "same_directory_and_stem": true,
      "blob_sha256": "f8f33681c58c08148cae1b4385a2d5c3c2916825cc948bc22c660078417df70b",
@@ -8348,7 +8934,8 @@
    "disposition": "retain-registered",
    "flags": [
     "no-provenance-record"
-   ]
+   ],
+   "proposed_batch": "8g"
   }
  ]
 }
