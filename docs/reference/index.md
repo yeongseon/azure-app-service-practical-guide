@@ -44,6 +44,7 @@ flowchart TD
 | [Portal Image Census (#390)](portal-image-census.md) | Per-file census of the Portal screenshots, legacy PNGs and site images at one commit, with registry, reference, duplicate and origin facts and proposed batches |
 | [Visualization Audit (#397)](visualization-audit.md) | Browser audit of the three published non-Mermaid visuals, with the disposition chosen for each, the check of their generator, data and wiring, and the smallest corrections proposed |
 | [Portal Playbook Evidence Inventory](portal-playbook-evidence-inventory.md) | Pinned per-playbook screenshot references, documentary trail gaps and bounded follow-up proposals; no capture or completeness certification |
+| [SNAT Evidence Review (#389)](snat-evidence-review.md) | Pinned unmerged Scenario B comparison, missing port-pressure telemetry, causal limits and minimum authorized follow-up |
 
 ## Quick Links
 

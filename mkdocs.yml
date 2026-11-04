@@ -114,6 +114,7 @@ not_in_nav: |
   /reference/portal-image-census.md
   /reference/visualization-audit.md
   /reference/portal-playbook-evidence-inventory.md
+  /reference/snat-evidence-review.md
 
 nav:
   - Home: index.md
