@@ -32,7 +32,7 @@ for its own scenarios, and supplies its own recipe and registries.
 | `tests/golden/test_readme_claims.py` | Replace the retained-package reference, the review file and the README expectations with the destination's |
 | `schemas/golden/*.json` | `$id` host and path only, plus the one `$ref` in `manifest.schema.json` |
 
-The six schemas under `schemas/golden/` carry this repository's Pages host in
+The seven schemas under `schemas/golden/` carry this repository's Pages host in
 their `$id`. Nothing fetches those URLs: the reproduction gate registers each
 schema's `$id` as a local resource and resolves references locally, so a stale
 `$id` will not fail a run; it will quietly assert that two different
