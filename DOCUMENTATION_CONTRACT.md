@@ -1237,6 +1237,20 @@ validation:
     ```
 5. **Include the regenerated dashboard** (`docs/reference/validation-status.md`) in the same commit as the frontmatter change.
 6. **Do not manually edit** `docs/reference/validation-status.md` — it is auto-generated.
+7. **A new or changed `pass` or `fail` requires a retained execution record.**
+   Set canonical `run_id` and `evidence: evidence/runs/<run_id>` references to a
+   new whole package containing `tutorial-execution.json`, with all files
+   registered in `evidence/retained-digests.json`. Never append a record to an
+   existing package. Follow the closed record contract in the
+   [Golden evidence model](docs/reference/golden-evidence-model.md#tutorial-execution-record):
+   tutorial, method, result, CLI version, execution status and final-phase date
+   must agree. `last_tested` is the UTC calendar date when the final required
+   phase completed, successfully or with failure; nobody stamps a date without
+   real execution. An unchanged legacy method stays accepted whatever it
+   contains; do not rewrite history or refresh dates to satisfy this rule.
+   `not_tested` requires `last_tested: null` and no reference. Offline agreement
+   does not establish that execution happened or that the record is authentic;
+   retained-evidence rules, human review and #179 remain separate requirements.
 
 ## Build & Preview
 

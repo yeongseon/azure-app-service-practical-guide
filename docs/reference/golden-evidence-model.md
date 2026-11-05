@@ -56,10 +56,48 @@ was last executed. For multi-phase runs, `last_tested` uses the UTC calendar dat
 `evaluated_at`, or `document_updated_at`. Validation frontmatter uses a closed
 schema: only `az_cli` and `bicep` methods, the documented result vocabulary,
 valid non-future dates, and a consistent `not_tested` state are accepted. A new
-or changed `pass` entry must name an existing retained package through canonical
-`run_id` and `evidence` fields. This existence check does **not** prove that the
-retained package executed the named tutorial or method. Binding retained
-evidence to an actual tutorial execution remains open in issue #176.
+or changed `pass` or `fail` entry must name a retained execution record through
+canonical `run_id` and `evidence` fields, as described below. An unchanged legacy
+method stays accepted whatever it contains; this exemption neither rewrites
+history nor refreshes a date.
+
+### Tutorial execution record
+
+`evidence/runs/<run_id>/tutorial-execution.json` is a closed agreement record.
+Its fields are `schema_version` (integer `1`), `run_id`, `tutorial` (the exact
+repository-relative tutorial path), `method` (`az_cli` or `bicep`),
+`execution_status`, `tutorial_result` (`pass` or `fail`), `phases`,
+`final_required_phase`, `final_required_phase_completed_at`, `cli_version`
+(required for `az_cli`), `source_commit` (full lowercase commit SHA),
+`environment`, and `raw_evidence`. Unknown fields are rejected, including inside
+phases and environment. The [JSON Schema](https://github.com/yeongseon/azure-app-service-practical-guide/blob/main/schemas/golden/tutorial-execution.schema.json)
+defines the shape; the tutorial validator checks cross-field agreement.
+
+Each phase has a unique `name`, timezone-aware `completed_at`, and `outcome`
+(`pass` or `fail`). The final required phase must exist and agree with the
+declared final completion instant and tutorial result. Times are normalized to
+UTC before comparison; `last_tested` equals that instant's UTC calendar date.
+No phase or declared final completion may be in the future, and no other phase
+may complete after the final required phase. A `pass` requires `COMPLETE`;
+a `fail` requires `COMPLETE` or `FAILED`, never `NOT_RUN`, `BLOCKED`, or `PARTIAL`.
+The run identity, tutorial, method, result, and CLI version (when present in both
+places) must agree with frontmatter. `not_tested` still requires a null date and
+no retained reference.
+
+`environment` records non-empty `region`, `sku`, `runtime`, and `hosting_model`.
+`raw_evidence` maps canonical package-relative file paths to bare lowercase
+64-hex SHA-256 digests, following the retained provenance `digests` convention.
+The record and raw files must be regular files inside the package, without
+symlinks; their bytes must match the declared digests. The record cannot name
+itself as raw evidence. A new execution creates a **new whole package**, registered
+in `evidence/retained-digests.json`; never append the record to an existing
+immutable package. This change adds no retained run and refreshes no test date.
+
+These checks establish agreement between metadata and retained bytes, **not**
+that the run happened or the record is authentic. Retained-evidence integrity,
+human review, and the authenticity and independence work of issue #179 remain
+separate. No tutorial gains an Azure-execution claim merely from passing this
+offline check; real execution and maintainer review remain open in #176/#183.
 
 The vocabulary migration from both stacked implementations, PR #186 and PR
 #187, was completed when they were reconciled into PR #234. The exact retired
@@ -226,10 +264,9 @@ repository. Comparison with the privately retained raw capture and the reviewer
 protocol are the control for that residual risk. A passing offline replay must
 not be described as independent proof that Azure execution occurred.
 
-Tutorial frontmatter may refer to a retained package, but the offline gate checks
-only that the path is canonical and the directory exists. It does not enforce a
-tutorial/method binding and must not be presented as proof that the package is
-the tutorial's execution record.
+For new or changed tutorial `pass` and `fail` methods, the offline gate binds
+frontmatter to a retained tutorial execution record. Agreement is not proof of
+actual execution or authenticity, and unchanged legacy methods remain exempt.
 
 `source_commit` is the runner-captured commit and proves only that the executed
 recipe was not committed after capture. Offline transformation is a separate
