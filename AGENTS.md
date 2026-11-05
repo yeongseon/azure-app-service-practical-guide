@@ -142,6 +142,8 @@ mandatory metadata headings, and independent review and image/PII requirements.
 
 ## Review and Merge Boundary
 
+Follow the [current-head GitHub review loop](DOCUMENTATION_CONTRACT.md#current-head-github-review-loop) to request, record and answer GitHub reviews; it adds no merge gate to the retained gates below.
+
 All mandatory review and merge gates in
 [DOCUMENTATION_CONTRACT.md](DOCUMENTATION_CONTRACT.md#mandatory-oracle-review-ai-agent-rule)
 remain in force, including Oracle review, fully green CI on the exact head SHA,
