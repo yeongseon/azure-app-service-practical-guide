@@ -35,6 +35,11 @@ class MetadataTests(unittest.TestCase):
     def test_valid(self):
         self.assertEqual(metadata.validate(pr()), [])
 
+    def test_repository_template_preserves_metadata_contract(self) -> None:
+        template = (ROOT / ".github/pull_request_template.md").read_text(encoding="utf-8")
+        result = metadata.validate(pr(body=template + "\nRefs #256\n"))
+        self.assertEqual(result, [])
+
     def test_missing_priority(self):
         self.assertTrue(metadata.validate(pr(labels=[])))
 

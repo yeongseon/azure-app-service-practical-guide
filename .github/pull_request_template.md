@@ -37,6 +37,7 @@
 - [ ] Relevant checks were run and their results recorded.
 - [ ] Verification dates and claims reflect work actually performed.
 - [ ] Scope and mandatory review gates were checked; no failing gate was bypassed.
+- [ ] The change is the smallest that satisfies the issue; unrelated work is split out.
 - [ ] Any GitHub review of the current head SHA is recorded above with its state; a request or an acknowledgement is not reported as a review result.
 - [ ] Every finding of a recorded review has a disposition: fixed with evidence, not applicable with a reason, or deferred with a linked issue.
 - [ ] No review result of an earlier head is reused as coverage of a later head.

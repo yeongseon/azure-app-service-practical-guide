@@ -486,6 +486,11 @@
       "reason": "Agent entry point defines evidence judgment and delegates detailed mechanical and merge rules to their owning contracts."
     },
     {
+      "path": "CLAUDE.md",
+      "decision": "KEEP",
+      "reason": "Thin Claude entry point imports AGENTS.md so agent discovery reuses the canonical evidence and mandatory review contracts without duplicating policy."
+    },
+    {
       "path": "CODE_OF_CONDUCT.md",
       "decision": "KEEP",
       "reason": "Community participation and enforcement expectations belong to repository governance, not disposable lab output."

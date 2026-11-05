@@ -28,8 +28,22 @@ Context / Acceptance Checklist / Out of scope / References. GitHub Issue Forms
 render the same field names as third-level headings. Preserve concrete acceptance
 criteria, exclusions, evidence and checked/unchecked states.
 
-Apply a type label: bug, enhancement, documentation, chore, ci or test. New reports
-receive needs-triage; a maintainer confirms scope and selects exactly one priority:
+### Triage
+
+New reports receive `needs-triage`. A maintainer:
+
+1. Checks the repository-specific problem and sanitized evidence, validity,
+   duplicates, scope and the smallest useful result. Close duplicates with a link
+   instead of opening a second tracker.
+2. Confirms a type label: bug, enhancement, documentation, chore, ci or test;
+   selects exactly one priority label and exactly one size label.
+3. Compares impact and urgency with all currently open issues, including
+   dependencies, before confirming priority. Reassess relative priorities when
+   new evidence changes impact or scope; age and size do not determine urgency.
+4. Verifies in the saved GitHub issue that the type label, exactly one priority
+   label and exactly one size label are present before removing `needs-triage`.
+   If evidence, scope or a required label is missing, leave it in triage and
+   record what is missing.
 
 | Label | Meaning |
 |---|---|
@@ -38,10 +52,40 @@ receive needs-triage; a maintainer confirms scope and selects exactly one priori
 | `priority:medium` | Normal planned work or limited impact with a workaround |
 | `priority:low` | Non-urgent polish or optional expansion |
 
+| Size label | Expected scope |
+|---|---|
+| `size: XS` | Very small, isolated correction |
+| `size: S` | Small, independently reviewable change |
+| `size: M` | Several related files or a moderate reproducible scenario |
+| `size: L` | Cross-cutting work; split into independently useful issues where possible |
+| `size: XL` | Too broad for one PR; define a local tracker and split |
+
+Priority describes impact; size describes scope, not importance. Select both
+during triage; issue forms do not assign dynamic priority or size labels.
+
 Priority lives in labels, not title prefixes or another status field. Preserve
 unrelated labels. An umbrella tracks only local issues; sibling links are
 references. Do not introduce milestones, WIP labels or release grouping labels.
 Use blocker only for an actual publication blocker.
+
+### After triage: develop the smallest useful change
+
+1. Reproduce or locate the issue and read the relevant implementation, docs and
+   tests. Identify one observable outcome and consider a simpler alternative.
+2. Prefer a direct correction or an existing pattern. Ask what can be removed or
+   reused before adding abstractions, wrappers, feature flags, duplicate guides
+   or validators; do not build for hypothetical future use.
+3. Work in one focused branch and PR. Split `L`/`XL` work before implementation;
+   every child issue must be independently useful. Do not expand an issue
+   silently to justify a larger redesign.
+4. Run all checks required by the changed scope and the existing contracts,
+   including relevant executable examples, tests, source checks, rendering and
+   PII/image checks. A static pass does not certify live Azure execution or a
+   Golden evidence outcome. Follow the Pull Request Workflow and every mandatory
+   review and merge gate below without exception.
+5. After resolving the scoped work, reassess remaining backlog urgency where
+   evidence or dependencies changed. Close only fully completed local issue
+   scope; use `Refs #N` and state the remainder for partial work.
 
 ## Pull Request Workflow
 
