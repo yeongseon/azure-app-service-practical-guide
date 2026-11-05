@@ -29,7 +29,7 @@ def run_git(repo: Path, *args: str) -> str:
     ).stdout.strip()
 
 
-# SIZE_OK: one gate's adversarial fixtures stay in its existing registered suite.
+# One gate's adversarial fixtures stay in its existing registered suite.
 class TutorialValidationReferenceTests(unittest.TestCase):
     def __init__(self, methodName: str = "runTest") -> None:
         super().__init__(methodName)
@@ -417,6 +417,31 @@ class TutorialValidationReferenceTests(unittest.TestCase):
 
     def test_valid_pass_record_is_accepted(self) -> None:
         self.save_record(self.execution_fixture())
+
+        problems = self.problems()
+
+        self.assertEqual(problems, [])
+
+    def quoted_date_frontmatter(self, text: str) -> str:
+        return (
+            f"  az_cli:\n    result: pass\n    last_tested: '{text}'\n"
+            "    cli_version: '2.83.0'\n    run_id: run-1\n"
+            "    evidence: evidence/runs/run-1\n"
+        )
+
+    def test_non_canonical_date_text_is_rejected_even_with_an_agreeing_record(self) -> None:
+        self.save_record(self.execution_fixture())
+        for text in ("20261018", "2026-W42-7", "2026W427"):
+            with self.subTest(last_tested=text):
+                self.write_validation(self.quoted_date_frontmatter(text))
+
+                problems = self.problems()
+
+                self.assertTrue(any("invalid last_tested date" in p for p in problems), problems)
+
+    def test_canonical_quoted_date_text_is_accepted_with_an_agreeing_record(self) -> None:
+        self.save_record(self.execution_fixture())
+        self.write_validation(self.quoted_date_frontmatter("2026-10-18"))
 
         problems = self.problems()
 
