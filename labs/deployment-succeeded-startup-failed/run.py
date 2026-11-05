@@ -5,12 +5,14 @@ import datetime as dt
 import hashlib
 import json
 import pathlib
+import re
 import subprocess
 import sys
 import tempfile
 import time
 import uuid
 import zipfile
+from collections.abc import Mapping
 
 ROOT = pathlib.Path(__file__).resolve().parent
 GOOD = 'gunicorn --bind=0.0.0.0:8000 --timeout=120 app:app'
@@ -335,26 +337,68 @@ def evaluate_folder(folder):
     return exit_code_for(result)
 
 
+class CleanupOwnershipError(Exception):
+    def __init__(self, check: str) -> None:
+        self.check = check
+        super().__init__('ownership-unproven')
+
+
+def require_cleanup_ownership(name: str, tags: Mapping[str, str], run_id: str | None) -> None:
+    """Keep the copyable lab's checks equivalent to the shared cleanup helper (tested)."""
+    if run_id is None:
+        raise CleanupOwnershipError('github-run-id-required')
+    if not re.fullmatch(r'[0-9]+-[1-9][0-9]*', run_id) or name != f'rg-golden-e2e-{run_id}':
+        raise CleanupOwnershipError('owned-name')
+    if (tags.get('owner') != 'golden-e2e'
+            or tags.get('repository') != 'yeongseon/azure-app-service-practical-guide'
+            or tags.get('run-id') != run_id):
+        raise CleanupOwnershipError('run-ownership')
+
+
 def cleanup(args):
     folder = pathlib.Path(args.run_dir).resolve()
     run = json.loads((folder / 'run.json').read_text())
     target = folder / ('cleanup-' + uuid.uuid4().hex)
     target.mkdir()
-    result = {'run_id': run['run_id'], 'started_at': now(), 'cleanup_status': 'FAILED'}
+    result = {'run_id': run['run_id'], 'started_at': now(), 'cleanup_status': 'BLOCKED',
+              'resource_group': args.resource_group, 'github_run_id': args.github_run_id,
+              'failed_check': 'recorded-group'}
     try:
         # Caller explicitly supplies the dedicated group, preventing accidental copied-path deletion.
         if args.resource_group != run['resource_group']:
             raise ValueError('Resource group does not match run')
-        azure(target, 'delete', ['group', 'delete', '--name', args.resource_group, '--yes', '--no-wait'])
-        for attempt in range(30):
-            exists = json.loads(azure(target, f'exists-{attempt}', ['group', 'exists', '--name', args.resource_group]))
-            if exists is False:
-                result['cleanup_status'] = 'VERIFIED'
-                break
-            if attempt < 29:
-                time.sleep(10)
-    except Exception as exc:
+        result['failed_check'] = 'group-exists-readback'
+        exists = json.loads(azure(target, 'exists-before', ['group', 'exists', '--name', args.resource_group]))
+        if exists is False:
+            result['cleanup_status'] = 'VERIFIED'
+        else:
+            if exists is not True:
+                raise CleanupOwnershipError('group-exists-readback')
+            result['failed_check'] = 'tags-readback'
+            tags = json.loads(azure(target, 'ownership-tags',
+                                   ['group', 'show', '--name', args.resource_group, '--query', 'tags']))
+            if not isinstance(tags, dict):
+                raise CleanupOwnershipError('tags-readback')
+            result['ownership_tags'] = {key: tags.get(key) for key in ('owner', 'repository', 'run-id')}
+            require_cleanup_ownership(args.resource_group, tags, args.github_run_id)
+            result.pop('failed_check')
+            result['cleanup_status'] = 'FAILED'
+            azure(target, 'delete', ['group', 'delete', '--name', args.resource_group, '--yes', '--no-wait'])
+            for attempt in range(30):
+                exists = json.loads(azure(target, f'exists-{attempt}', ['group', 'exists', '--name', args.resource_group]))
+                if exists is False:
+                    result['cleanup_status'] = 'VERIFIED'
+                    break
+                if attempt < 29:
+                    time.sleep(10)
+        result.pop('failed_check', None)
+    except CleanupOwnershipError as exc:
+        result['error'] = 'ownership-unproven'
+        result['failed_check'] = exc.check
+    except (ValueError, RuntimeError, OSError) as exc:
         result['error'] = str(exc)
+        if result['cleanup_status'] == 'BLOCKED':
+            result['error'] = 'ownership-unproven'
     result['ended_at'] = now()
     write_json(target / 'result.json', result)
     print(json.dumps(result, indent=2))
@@ -380,6 +424,8 @@ def main():
         'cleanup', help='Delete the lab resources and record the outcome in the run.')
     clean.add_argument('run_dir', help='Run directory to annotate with the cleanup result.')
     clean.add_argument('resource_group', help='Resource group to delete.')
+    clean.add_argument('--github-run-id',
+                       help='Provisioning GitHub run ID and attempt (<id>-<attempt>); required before deletion.')
     args = parser.parse_args()
     if args.action == 'execute':
         return execute(args)
