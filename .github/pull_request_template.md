@@ -23,6 +23,7 @@
 - [ ] Relevant checks were run and their results recorded.
 - [ ] Verification dates and claims reflect work actually performed.
 - [ ] Scope and mandatory review gates were checked; no failing gate was bypassed.
+- [ ] The change is the smallest that satisfies the issue; unrelated work is split out.
 
 ## Related Issues
 
