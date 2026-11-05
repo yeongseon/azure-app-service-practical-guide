@@ -67,6 +67,9 @@ class TutorialValidationReferenceTests(unittest.TestCase):
             self.root, base_ref=base_ref or self.base, today=date(2026, 10, 19)
         )
 
+    def method_key(self, method: str) -> str:
+        return f"{self.tutorial.relative_to(self.root).as_posix()}#{method}"
+
     def test_validation_sequence_is_rejected(self) -> None:
         self.write_validation("  []\n")
         self.assertTrue(any("validation must be a mapping" in p for p in self.problems()))
@@ -86,6 +89,32 @@ class TutorialValidationReferenceTests(unittest.TestCase):
     def test_non_mapping_method_is_rejected(self) -> None:
         self.write_validation("  az_cli: pass\n")
         self.assertTrue(any("az_cli must be a mapping" in p for p in self.problems()))
+
+    def test_new_null_method_is_rejected(self) -> None:
+        self.write_validation("  az_cli:\n")
+
+        problems = self.problems()
+
+        self.assertEqual(problems, [f"{self.method_key('az_cli')} must be a mapping"])
+
+    def test_new_null_method_beside_a_base_method_is_rejected(self) -> None:
+        self.write_validation("  az_cli:\n    result: not_tested\n    last_tested: null\n")
+        base = self.commit_base()
+        self.write_validation(
+            "  az_cli:\n    result: not_tested\n    last_tested: null\n  bicep:\n"
+        )
+
+        problems = self.problems(base)
+
+        self.assertEqual(problems, [f"{self.method_key('bicep')} must be a mapping"])
+
+    def test_unchanged_legacy_null_method_is_accepted(self) -> None:
+        self.write_validation("  az_cli:\n")
+        base = self.commit_base()
+
+        problems = self.problems(base)
+
+        self.assertEqual(problems, [])
 
     def test_unknown_result_is_rejected(self) -> None:
         self.write_validation("  az_cli:\n    result: inconclusive\n    last_tested: null\n")

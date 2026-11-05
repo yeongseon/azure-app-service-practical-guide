@@ -25,6 +25,7 @@ METHOD_FIELDS: Final = frozenset(
 )
 RESULTS: Final = frozenset({"pass", "fail", "not_tested"})
 FRONTMATTER: Final = re.compile(r"^---\s*\n(.*?)\n---", re.DOTALL)
+ABSENT_IN_BASE: Final = object()
 
 
 class UniqueKeyLoader(yaml.SafeLoader):
@@ -230,7 +231,7 @@ def validate(root: Path, *, base_ref: str, today: date | None = None) -> list[st
                     root,
                     f"{relative}#{method}",
                     validation[method],
-                    base_mapping.get(method),
+                    base_mapping.get(method, ABSENT_IN_BASE),
                     now,
                 )
             )
