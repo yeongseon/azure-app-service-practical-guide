@@ -1147,6 +1147,7 @@
         "test_platform_limits_values.py",
         "test_private_endpoint_playbook.py",
         "test_project_metadata.py",
+        "test_review_and_triage_contract.py",
         "test_scm_access_playbook.py",
         "test_slot_settings_docs.py",
         "test_storage_persistence_docs.py",
