@@ -1168,6 +1168,61 @@ while not oracle_approved:
 
 **NO WORK IS CONSIDERED COMPLETE WITHOUT ORACLE APPROVAL.**
 
+### Current-head GitHub review loop
+
+This additional agent procedure does not replace or weaken the Oracle, CI,
+caption/image, final-image PII, or autonomous squash-merge policy below.
+A bot review is evidence, not an approval or a substitute for Oracle review.
+The [GitHub enforcement record](docs/reference/github-merge-enforcement-verification.md)
+reports no branch protection or ruleset on `main` at its recorded read; GitHub
+does not enforce these procedural gates in that record. This procedure changes
+no settings and makes no claim that they remain unchanged after that read.
+
+1. After opening a PR, inspect review requests, submissions and threads for
+   the current head SHA. If no request or run for that head exists, explicitly
+   request the configured reviewer; do not duplicate an active request. For
+   Codex, use a top-level `@codex review` comment naming the head SHA and scope.
+   Copilot reviews in the enforcement record followed explicit requests. The
+   Codex connector names opening for review, marking a draft ready, and review
+   comments as triggers, but names no push trigger; do not assume a push runs
+   a fresh review.
+2. Record the current head SHA, reviewer identity, review URL/ID, reviewed head
+   SHA, outcome, findings and thread dispositions in the PR's Validation section.
+   Use these local review states, not CI results or GitHub review API states:
+
+    | Review state | Meaning |
+    | --- | --- |
+    | `REQUESTED` | A request for this head is awaiting a review result. |
+    | `COMPLETE` | A review result for this head is recorded and no finding remains open; this is not merge approval. |
+    | `FINDINGS_OPEN` | A review returned findings that still need an evidenced disposition. |
+    | `BLOCKED` | The reviewer service or required review evidence is unavailable. |
+
+    No response, an acknowledgement reaction, quota failure or an empty comment
+    list is not review success. Never invent a review URL, result or approval,
+    or submit an approval as the PR author to stand in for another reviewer.
+3. Give every finding a disposition: fixed with evidence and relevant tests;
+   not applicable with a reason and evidence; or deferred with a linked issue
+   and an evidence-backed reason agreed with the reviewer/maintainer. Deferral
+   does not clear a must-fix or an active changes-requested review: either blocks
+   merge until addressed. Resolve threads only after addressing their findings;
+   a resolved-thread flag alone is not proof of a fix.
+4. Every head SHA change requires a fresh review request and a review of that
+   new head. Preserve earlier reviews as history, not coverage of changed code.
+   A previous `COMMENTED` review can remain visible after a push; visibility
+   does not make it current. Reassess base-branch changes and conflicts too.
+5. Before merge, verify a non-draft PR, complete declared scope, a `COMPLETE`
+   current-head review with all findings dispositioned, no unresolved must-fix
+   or active changes-requested review, and all mandatory gates below on the
+   final head. Preserve any applicable GitHub-required approvals; do not add a
+   separate human-approval step to the autonomous policy. A missing required
+   check is `BLOCKED`; a passing summary cannot override a failed job.
+6. Apply an expected-head guard immediately before the squash merge: read the
+   head SHA from the GitHub API and compare it with the reviewed SHA, for example
+   with `gh api repos/{owner}/{repo}/pulls/{n} --jq .head.sha`. If they differ,
+   stop the merge and restart this review and validation loop for the new head.
+   If the head cannot be read, stop as `BLOCKED`. Do not enable native auto-merge
+   as a substitute for this loop or bypass any existing gate.
+
 ## Merge Policy (AI Agent Rule)
 
 AI agents MAY merge their own pull requests **autonomously**, but ONLY after ALL of the mandatory gates below pass. There is no separate human approval step — passing every gate IS the approval. If any gate cannot be satisfied, the agent MUST stop and hand the PR to the user instead of merging.
