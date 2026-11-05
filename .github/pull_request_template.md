@@ -37,9 +37,9 @@
 - [ ] Relevant checks were run and their results recorded.
 - [ ] Verification dates and claims reflect work actually performed.
 - [ ] Scope and mandatory review gates were checked; no failing gate was bypassed.
-- [ ] GitHub review completed for the current head SHA; requests or acknowledgements alone do not count.
-- [ ] Review findings were addressed with evidence; no unresolved must-fix or active changes-requested review remains.
-- [ ] Every head change received a fresh review request and review rather than reusing an earlier result.
+- [ ] Any GitHub review of the current head SHA is recorded above with its state; a request or an acknowledgement is not reported as a review result.
+- [ ] Every finding of a recorded review has a disposition: fixed with evidence, not applicable with a reason, or deferred with a linked issue.
+- [ ] No review result of an earlier head is reused as coverage of a later head.
 - [ ] PR is non-draft and all mandatory gates pass before an expected-head-guarded squash merge.
 
 ## Related Issues
