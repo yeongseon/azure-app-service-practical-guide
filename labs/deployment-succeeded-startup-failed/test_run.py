@@ -365,6 +365,26 @@ class CleanupTests(unittest.TestCase):
         self.assertEqual(result['error'], 'ownership-unproven')
         self.assertEqual(result['failed_check'], check)
         self.assertFalse(any(argv[1:3] == ['group', 'delete'] for argv in self.calls))
+        return result
+
+    def bind_identity(self, case, identity):
+        self.folder = pathlib.Path(self.temporary.name) / f'case-{case}'
+        self.folder.mkdir()
+        self.group = f'rg-golden-e2e-{identity}'
+        self.tags = dict(self.tags, **{'run-id': identity})
+        self.args = SimpleNamespace(run_dir=str(self.folder), resource_group=self.group,
+                                    github_run_id=identity)
+        self.exists = [True, False]
+        self.tag_response = None
+        self.calls = []
+
+    def assert_coherent_identity_blocked(self, case, identity):
+        self.bind_identity(case, identity)
+        result = self.assert_blocked('owned-name')
+        self.assertEqual(result['ownership_tags'], self.tags)
+        self.assertEqual(result['resource_group'], f'rg-golden-e2e-{identity}')
+        self.assertEqual(result['github_run_id'], identity)
+        self.assertEqual([argv[1:3] for argv in self.calls], [['group', 'exists'], ['group', 'show']])
 
     def test_missing_operator_identity_blocks_even_with_matching_tags(self):
         self.args.github_run_id = None
@@ -384,8 +404,13 @@ class CleanupTests(unittest.TestCase):
         self.assert_blocked('owned-name')
 
     def test_timestamp_capture_identity_cannot_authorize_deletion(self):
-        self.args.github_run_id = '20261105T000000Z-abcdef123456'
-        self.assert_blocked('owned-name')
+        self.assert_coherent_identity_blocked(0, '20261105T000000Z-abcdef123456')
+
+    def test_coherent_identity_outside_the_run_id_grammar_blocks(self):
+        for case, identity in enumerate(('fixture', '', '12345', '123-0', '123-01',
+                                         ' 123-1', '123-1 ', '123-1\n'), start=1):
+            with self.subTest(identity=identity):
+                self.assert_coherent_identity_blocked(case, identity)
 
     def test_wrong_owner_blocks(self):
         self.tags['owner'] = 'foreign'
@@ -458,11 +483,14 @@ class CleanupTests(unittest.TestCase):
         assert shared_spec is not None and shared_spec.loader is not None
         shared = importlib.util.module_from_spec(shared_spec)
         shared_spec.loader.exec_module(shared)
-        valid = {'owner': shared.OWNER, 'repository': shared.REPOSITORY, 'run-id': self.identity}
-        for identity in (self.identity, '0-1', '123-01', '123-0', 'fixture', self.identity + '\n'):
+        coherent_outcomes = set()
+        for identity in (self.identity, '0-1', '00123-2', '123-01', '123-0', 'fixture', '', '12345',
+                         '20261105T000000Z-abcdef123456', ' 123-1', '123-1 ', self.identity + '\n'):
+            valid = {'owner': shared.OWNER, 'repository': shared.REPOSITORY, 'run-id': identity}
             for name in (self.group, shared.GROUP_PREFIX + identity, self.group + '-foreign'):
                 for tags in (valid, {}, dict(valid, owner='foreign'),
                              dict(valid, repository='foreign'), dict(valid, **{'run-id': '999-1'})):
+                    coherent = tags is valid and name == shared.GROUP_PREFIX + identity
                     with self.subTest(identity=identity, name=name, tags=tags):
                         try:
                             shared.require_owned_name(name, identity)
@@ -470,8 +498,13 @@ class CleanupTests(unittest.TestCase):
                         except shared.CleanupError:
                             with self.assertRaises(pilot.CleanupOwnershipError):
                                 pilot.require_cleanup_ownership(name, tags, identity)
+                            outcome = 'rejected'
                         else:
                             pilot.require_cleanup_ownership(name, tags, identity)
+                            outcome = 'accepted'
+                        if coherent:
+                            coherent_outcomes.add(outcome)
+        self.assertEqual(coherent_outcomes, {'accepted', 'rejected'})
 
 
 if __name__ == '__main__':
