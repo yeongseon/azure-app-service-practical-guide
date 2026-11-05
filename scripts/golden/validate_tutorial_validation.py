@@ -128,6 +128,37 @@ def _validate_retained_package(root: Path, run_id: str, evidence: str) -> str | 
     return None
 
 
+YAML_SCALARS: Final = (str, int, float, bool, type(None), date, datetime, bytes)
+
+
+def _same_yaml_value(left: object, right: object, seen: set[tuple[int, int]]) -> bool:
+    """Equality that keeps YAML types apart: Python treats 1, 1.0 and True as equal.
+
+    Shared or recursive aliases are visited once per pair. A value of a type the
+    YAML loader should not produce is never the same, so it is validated.
+    """
+    if type(left) is not type(right):
+        return False
+    if isinstance(left, (dict, list, tuple)):
+        pair = (id(left), id(right))
+        if pair in seen:
+            return True
+        seen.add(pair)
+    if isinstance(left, dict) and isinstance(right, dict):
+        left_items = {(type(key), key): value for key, value in left.items()}
+        right_items = {(type(key), key): value for key, value in right.items()}
+        return left_items.keys() == right_items.keys() and all(
+            _same_yaml_value(value, right_items[key], seen) for key, value in left_items.items()
+        )
+    if isinstance(left, (list, tuple)) and isinstance(right, (list, tuple)):
+        return len(left) == len(right) and all(
+            _same_yaml_value(one, other, seen) for one, other in zip(left, right)
+        )
+    if isinstance(left, (set, frozenset)) and isinstance(right, (set, frozenset)):
+        return {(type(item), item) for item in left} == {(type(item), item) for item in right}
+    return isinstance(left, YAML_SCALARS) and left == right
+
+
 def _method_problems(
     root: Path,
     key: str,
@@ -136,7 +167,12 @@ def _method_problems(
     now: datetime,
 ) -> list[str]:
     # Unchanged legacy methods are exempt, even without an execution record.
-    if method_data == base_method:
+    # A value too deeply nested to compare counts as changed and is validated.
+    try:
+        unchanged = _same_yaml_value(method_data, base_method, set())
+    except RecursionError:
+        unchanged = False
+    if unchanged:
         return []
     if not isinstance(method_data, dict):
         return [f"{key} must be a mapping"]

@@ -116,6 +116,89 @@ class TutorialValidationReferenceTests(unittest.TestCase):
 
         self.assertEqual(problems, [])
 
+    def base_with(self, yaml_text: str) -> str:
+        self.write_validation(yaml_text)
+        run_git(self.root, "add", ".")
+        run_git(self.root, "commit", "--allow-empty", "-m", "base")
+        return run_git(self.root, "rev-parse", "HEAD")
+
+    def legacy_method(self, cli_version: str, result: str = "pass") -> str:
+        return (
+            f"  az_cli:\n    result: {result}\n    last_tested: 2026-10-18\n"
+            f"    cli_version: {cli_version}\n"
+        )
+
+    def test_changed_scalar_type_cannot_inherit_the_legacy_exemption(self) -> None:
+        for result in ("pass", "fail"):
+            for old, new in (("1", "true"), ("0", "false"), ("1", "1.0"), ("1.0", "true")):
+                with self.subTest(result=result, old=old, new=new):
+                    base = self.base_with(self.legacy_method(old, result))
+                    self.write_validation(self.legacy_method(new, result))
+
+                    problems = self.problems(base)
+
+                    self.assertIn(
+                        f"{self.method_key('az_cli')}: new or changed {result} requires run_id and evidence",
+                        problems,
+                    )
+
+    def test_changed_nested_key_and_set_types_cannot_inherit_the_legacy_exemption(self) -> None:
+        for label, old, new in (
+            ("list element", "[1]", "[true]"),
+            ("mapping value", "{a: 1}", "{a: true}"),
+            ("mapping key", "{1: a}", "{true: a}"),
+            ("set member", "!!set {1}", "!!set {true}"),
+            ("ordered pairs", "!!omap [a: 1]", "!!omap [a: true]"),
+        ):
+            with self.subTest(label=label):
+                base = self.base_with(self.legacy_method(old))
+                self.write_validation(self.legacy_method(new))
+
+                problems = self.problems(base)
+
+                self.assertIn(
+                    f"{self.method_key('az_cli')}: new or changed pass requires run_id and evidence",
+                    problems,
+                )
+
+    def test_unchanged_typed_legacy_values_stay_accepted(self) -> None:
+        for value in ("1", "1.0", "true", "[1]", "{a: 1}", "{1: a}", "!!set {1}", "!!omap [a: 1]"):
+            with self.subTest(value=value):
+                base = self.base_with(self.legacy_method(value))
+                self.write_validation(self.legacy_method(value))
+
+                problems = self.problems(base)
+
+                self.assertEqual(problems, [])
+
+    def test_recursive_alias_is_compared_without_a_traceback(self) -> None:
+        recursive = (
+            "  az_cli: &method\n    result: pass\n    last_tested: 2026-10-18\n    again: *method\n"
+        )
+        base = self.base_with(recursive)
+        self.write_validation(recursive)
+
+        unchanged = self.problems(base)
+        self.write_validation(recursive.replace("2026-10-18", "2026-10-17"))
+        changed = self.problems(base)
+
+        self.assertEqual(unchanged, [])
+        self.assertIn(
+            f"{self.method_key('az_cli')}: new or changed pass requires run_id and evidence", changed
+        )
+
+    def test_a_value_too_deep_to_compare_is_treated_as_changed(self) -> None:
+        legacy = "  az_cli:\n    result: pass\n    last_tested: 2026-10-18\n"
+        base = self.base_with(legacy)
+        self.write_validation(legacy)
+
+        with patch.object(tutorial_validation, "_same_yaml_value", side_effect=RecursionError):
+            problems = self.problems(base)
+
+        self.assertEqual(
+            problems, [f"{self.method_key('az_cli')}: new or changed pass requires run_id and evidence"]
+        )
+
     def test_unknown_result_is_rejected(self) -> None:
         self.write_validation("  az_cli:\n    result: inconclusive\n    last_tested: null\n")
         self.assertTrue(any("invalid result" in p for p in self.problems()))
