@@ -1113,7 +1113,51 @@ For the checked-in fault-first procedure, deployment success while `wrong_module
 
 ## Clean Up
 
-Preserve terminal output and evidence outside the resource group, then clean up the dedicated group directly:
+Preserve terminal output and evidence outside the resource group before cleanup,
+including after a failed or interrupted experiment.
+
+[Observed] The offline mock tests in
+`labs/deployment-succeeded-startup-failed/test_run.py` verify that standalone
+`run.py cleanup` refuses deletion unless the supplied group matches `run.json`
+and the shared helper's ownership checks pass. For an existing group, supply the
+**provisioning GitHub run ID and attempt**, not the timestamp-based capture ID:
+
+```bash
+python3 labs/deployment-succeeded-startup-failed/run.py cleanup "$RUN_DIR" "$RG" \
+  --github-run-id "<github-run-id>-<attempt>"
+```
+
+The exact name must be `rg-golden-e2e-<github-run-id>-<attempt>`, with
+`owner=golden-e2e`, `repository=yeongseon/azure-app-service-practical-guide`,
+and a matching `run-id` tag. The runner reads existence and tags through its
+evidence-recording wrapper; it does not infer authorization from tags or ambient
+GitHub variables. Missing identity, failed readback, or failed ownership checks
+produce a nonzero exit and `cleanup_status: BLOCKED` with
+`error: ownership-unproven` and `failed_check` in a new
+`cleanup-<uuid>/result.json`. No deletion is issued. An already absent group is
+`VERIFIED` without an identity; after authorized deletion, absence must still be
+verified. These are mock-tested behaviors, not new Azure cleanup observations.
+
+The locally provisioned `rg-lab-startup` in this guide does **not** meet that
+workflow ownership contract. Do not retag or rename an existing group to make it
+pass. For a genuinely workflow-owned group, the shared helper is an alternative:
+
+```bash
+python3 scripts/golden/azure_cleanup.py run --name "$RG" \
+  --run-id "<github-run-id>-<attempt>" --result /tmp/startup-cleanup-result.json
+```
+
+The helper enforces the same name and tags and verifies absence, but writes its
+own summary rather than the runner's per-command cleanup evidence. Neither path
+records a provisioning identity at `execute` time; that stronger binding and a
+separate standalone ownership contract remain open work. See
+[Azure E2E operations](../../reference/azure-e2e-operations.md) for the protected
+workflow's ownership contract.
+
+For this guide's locally provisioned group, an authorized operator must manually
+confirm the exact subscription and dedicated group against the provisioning
+record before deleting it. Manual deletion bypasses the automated ownership
+guard; never select groups by a name fragment or delete an unrelated group:
 
 ```bash
 az group delete --name "$RG" --yes
