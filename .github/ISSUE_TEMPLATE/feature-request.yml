@@ -14,7 +14,7 @@ body:
     id: acceptance
     attributes:
       label: Acceptance Checklist
-      description: Concrete, verifiable completion criteria. Maintainers choose a priority label.
+      description: State concrete, verifiable completion criteria and the simplest alternative. Maintainers select exactly one priority and one size label during triage.
       placeholder: '- [ ] Describe an observable result'
     validations:
       required: true
