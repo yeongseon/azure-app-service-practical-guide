@@ -81,7 +81,8 @@ def documents():
         for run in sorted(runs.iterdir()):
             for name, schema in (("manifest.json", "manifest.schema.json"),
                                  ("evidence.json", "evidence.schema.json"),
-                                 ("result.json", "result.schema.json")):
+                                 ("result.json", "result.schema.json"),
+                                 ("tutorial-execution.json", "tutorial-execution.schema.json")):
                 if (run / name).is_file():
                     pairs.append((run / name, schema))
     return pairs
