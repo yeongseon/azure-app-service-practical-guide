@@ -13,14 +13,12 @@ RUN_ID = "20261016T075147Z-6d019de6e2f2"
 SOURCE = ROOT / "evidence/runs" / RUN_ID
 SPEC = importlib.util.spec_from_file_location(
     "raw_binding_evaluator", ROOT / "scripts/golden/evaluate_run.py")
-assert SPEC is not None and SPEC.loader is not None
 evaluator = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(evaluator)
 
 
 class ScenarioARawBindingTests(unittest.TestCase):
-    def __init__(self, methodName: str = 'runTest') -> None:
-        super().__init__(methodName)
+    def setUp(self):
         self.directory = pathlib.Path(tempfile.mkdtemp()) / RUN_ID
         shutil.copytree(SOURCE, self.directory)
         (self.directory / "result.json").unlink()
