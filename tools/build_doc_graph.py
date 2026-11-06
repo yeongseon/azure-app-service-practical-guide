@@ -4,6 +4,7 @@ Build documentation graph JSON from markdown frontmatter.
 
 Scans docs/ for markdown files with frontmatter, extracts relationships,
 and generates Cytoscape.js-compatible JSON graph data.
+Exits 1 without writing output when document slugs collide.
 
 Usage:
     python tools/build_doc_graph.py [--learning-paths]
@@ -42,6 +43,25 @@ EDGE_TYPES = {
     "validated_by_lab",
     "investigated_with_kql",
 }
+
+
+class SlugCollisionError(ValueError):
+    def __init__(self, collisions: tuple[tuple[str, tuple[str, ...]], ...]) -> None:
+        self.collisions = collisions
+        super().__init__()
+
+    def __str__(self) -> str:
+        lines = ["Error: document slug collisions (paths relative to docs/):"]
+        for slug, paths in self.collisions:
+            lines.append(f"  Slug {slug!r}:")
+            lines.extend(f"    {path}" for path in paths)
+        affected = sum(len(paths) for _, paths in self.collisions)
+        lines.append(f"Total: {len(self.collisions)} shared slugs, {affected} files affected.")
+        lines.append(
+            "Give each listed file a unique frontmatter slug, or ask the maintainer "
+            "to decide the node key. No graph files were written."
+        )
+        return "\n".join(lines)
 
 
 def parse_frontmatter(file_path: Path) -> dict[str, Any] | None:
@@ -85,6 +105,7 @@ def get_relative_href(file_path: Path, base_url: str = "") -> str:
 def scan_documents() -> dict[str, dict[str, Any]]:
     """Scan all markdown files and extract frontmatter."""
     documents: dict[str, dict[str, Any]] = {}
+    slug_paths: dict[str, list[str]] = {}
 
     for md_file in DOCS_DIR.rglob("*.md"):
         rel_path = md_file.relative_to(DOCS_DIR)
@@ -99,12 +120,23 @@ def scan_documents() -> dict[str, dict[str, Any]]:
         if not slug:
             slug = md_file.stem
 
+        slug_paths.setdefault(slug, []).append(rel_path.as_posix())
+        if slug in documents:
+            continue
+
         documents[slug] = {
             "file": str(rel_path),
             "href": get_relative_href(md_file),
             "frontmatter": frontmatter,
         }
 
+    collisions = tuple(
+        (slug, tuple(sorted(paths)))
+        for slug, paths in sorted(slug_paths.items())
+        if len(paths) > 1
+    )
+    if collisions:
+        raise SlugCollisionError(collisions)
     return documents
 
 
@@ -234,18 +266,21 @@ def build_troubleshooting_map(documents: dict[str, dict[str, Any]]) -> dict[str,
     return {"elements": nodes + [{"data": e["data"]} for e in edges]}
 
 
-def main():
+def main() -> int:
     parser = argparse.ArgumentParser(description="Build documentation graphs")
     parser.add_argument(
         "--learning-paths", action="store_true", help="Include learning path graphs"
     )
     args = parser.parse_args()
 
-    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-
     print("Scanning documents...")
-    documents = scan_documents()
+    try:
+        documents = scan_documents()
+    except SlugCollisionError as error:
+        print(error, file=sys.stderr)
+        return 1
     print(f"  Found {len(documents)} documents with frontmatter")
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
     print("Building core knowledge graph...")
     core_graph = build_core_knowledge_graph(documents)
@@ -262,7 +297,8 @@ def main():
     print(f"  Wrote {ts_path} ({len(ts_graph['elements'])} elements)")
 
     print("Done!")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
