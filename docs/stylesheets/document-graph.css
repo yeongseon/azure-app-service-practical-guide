@@ -105,7 +105,7 @@
 
 #core-graph, #core-graph *,
 #troubleshooting-graph, #troubleshooting-graph * {
-  touch-action: pan-y !important;
+  touch-action: manipulation !important;
 }
 
 #core-graph.graph-gestures-enabled, #core-graph.graph-gestures-enabled *,
