@@ -18,6 +18,65 @@
     return new URL(path.replace(/^\//, ''), basePath).href;
   }
 
+  function parseRgbColor(value) {
+    var match = value && value.match(/^rgba?\(\s*(\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)(?:\s*[,/]\s*(\d+(?:\.\d+)?))?\s*\)$/);
+    if (!match) return null;
+    return {
+      r: Number(match[1]),
+      g: Number(match[2]),
+      b: Number(match[3]),
+      a: match[4] !== undefined ? Number(match[4]) : 1
+    };
+  }
+
+  function resolveNodeLabelColor(container) {
+    var target = container || document.body;
+    if (!target || typeof window.getComputedStyle !== 'function') {
+      return '#333';
+    }
+    var fg = parseRgbColor(window.getComputedStyle(target).color);
+    if (!fg && document.body && target !== document.body) {
+      fg = parseRgbColor(window.getComputedStyle(document.body).color);
+    }
+    if (!fg) {
+      return '#333';
+    }
+    if (fg.a >= 1) {
+      return 'rgb(' + Math.round(fg.r) + ', ' + Math.round(fg.g) + ', ' + Math.round(fg.b) + ')';
+    }
+    var bg = { r: 255, g: 255, b: 255 };
+    var el = target;
+    while (el && el.nodeType === 1) {
+      var parsedBg = parseRgbColor(window.getComputedStyle(el).backgroundColor);
+      if (parsedBg && parsedBg.a >= 0.99) {
+        bg = parsedBg;
+        break;
+      }
+      el = el.parentElement;
+    }
+    var r = Math.round(fg.r * fg.a + bg.r * (1 - fg.a));
+    var g = Math.round(fg.g * fg.a + bg.g * (1 - fg.a));
+    var b = Math.round(fg.b * fg.a + bg.b * (1 - fg.a));
+    return 'rgb(' + r + ', ' + g + ', ' + b + ')';
+  }
+
+  function observePaletteChanges(container, cy) {
+    if (typeof MutationObserver === 'undefined' || !document.body) {
+      return;
+    }
+    var observer = new MutationObserver(function() {
+      if (!container.isConnected || cy.destroyed()) {
+        observer.disconnect();
+        return;
+      }
+      cy.style().selector('node').style('color', resolveNodeLabelColor(container)).update();
+    });
+    observer.observe(document.body, {
+      attributes: true,
+      attributeFilter: ['data-md-color-scheme']
+    });
+  }
+
   // Node type colors (matching Material theme)
   const NODE_COLORS = {
     concept: '#1976d2',       // Blue - Platform concepts
@@ -102,7 +161,7 @@
             'text-margin-y': 5,
             'font-size': '11px',
             'font-family': 'var(--md-text-font-family, Roboto, sans-serif)',
-            'color': 'var(--md-default-fg-color, #333)',
+            'color': resolveNodeLabelColor(container),
             'text-max-width': '100px',
             'text-wrap': 'ellipsis',
             'width': 30,
@@ -240,6 +299,7 @@
 
     // Setup controls
     setupControls(cy);
+    observePaletteChanges(container, cy);
   }
 
   /**
