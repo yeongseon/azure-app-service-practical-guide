@@ -114,13 +114,6 @@
       return;
     }
 
-    // Check if Cytoscape is loaded
-    if (typeof cytoscape === 'undefined') {
-      console.warn('Cytoscape.js not loaded');
-      container.innerHTML = '<p style="color: var(--md-default-fg-color--light); text-align: center; padding: 2rem;">Loading visualization library...</p>';
-      return;
-    }
-
     // Load graph data
     fetch(dataUrl)
       .then(response => {
@@ -130,6 +123,24 @@
         return response.json();
       })
       .then(data => {
+        const links = document.getElementById('troubleshooting-graph-links');
+        const list = document.createElement('ul');
+        data.elements.filter(element => !element.data.source).map(element => element.data)
+          .sort((a, b) => a.label.localeCompare(b.label, 'en') || a.id.localeCompare(b.id, 'en'))
+          .forEach(node => {
+            const item = document.createElement('li');
+            const link = document.createElement('a');
+            link.href = resolveSiteUrl(node.href);
+            link.textContent = node.label;
+            item.append(link, ' (' + node.type.replace(/_/g, ' ') + ', ' + node.category + ')');
+            list.append(item);
+          });
+        links.append(list);
+        if (typeof cytoscape === 'undefined') {
+          console.warn('Cytoscape.js not loaded');
+          container.innerHTML = '<p style="color: var(--md-default-fg-color--light); text-align: center; padding: 2rem;">Loading visualization library...</p>';
+          return;
+        }
         renderTroubleshootingMap(container, data);
       })
       .catch(error => {
