@@ -59,7 +59,7 @@ content_sources:
 ---
 # Troubleshooting Map
 
-Navigate the troubleshooting documentation visually. This map shows how symptoms lead to playbooks, how playbooks connect to labs and KQL queries, and how evidence patterns validate hypotheses.
+Navigate the troubleshooting documentation visually. This map shows how symptoms lead to playbooks, how playbooks connect to labs and KQL queries, and how evidence patterns validate hypotheses. <span id="troubleshooting-graph-description">The visual graph cannot be operated by keyboard; use the same destinations in the <a href="#troubleshooting-graph-links">Troubleshooting graph destinations</a> list immediately below it.</span>
 
 <div id="troubleshooting-map-container">
   <div id="ts-controls">
@@ -79,7 +79,7 @@ Navigate the troubleshooting documentation visually. This map shows how symptoms
     </select>
     <button id="ts-reset">Reset View</button>
   </div>
-  <div id="troubleshooting-graph" style="width: 100%; height: 700px; border: 1px solid var(--md-default-fg-color--lightest); border-radius: 4px;"></div>
+  <div id="troubleshooting-graph" role="group" aria-label="Troubleshooting Map" aria-describedby="troubleshooting-graph-description" style="width: 100%; height: 700px; border: 1px solid var(--md-default-fg-color--lightest); border-radius: 4px;"></div><nav id="troubleshooting-graph-links" aria-labelledby="troubleshooting-graph-links-heading"><h2 id="troubleshooting-graph-links-heading">Troubleshooting graph destinations</h2></nav>
   <div id="ts-info">
     <p><strong>Selected:</strong> <span id="ts-selected-node">None</span></p>
     <p><strong>Category:</strong> <span id="ts-node-category">-</span></p>

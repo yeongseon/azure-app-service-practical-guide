@@ -41,7 +41,7 @@ content_sources:
 ---
 # Core Knowledge Graph
 
-The Core Knowledge Graph provides a bird's-eye view of the entire Azure App Service Practical Guide. It shows how platform concepts, best practices, troubleshooting playbooks, and reference materials interconnect.
+The Core Knowledge Graph provides a bird's-eye view of the entire Azure App Service Practical Guide. It shows how platform concepts, best practices, troubleshooting playbooks, and reference materials interconnect. <span id="core-graph-description">The visual graph cannot be operated by keyboard; use the same destinations in the <a href="#core-graph-links">Core graph destinations</a> list immediately below it.</span>
 
 <div id="core-graph-container">
   <div id="graph-controls">
@@ -58,7 +58,7 @@ The Core Knowledge Graph provides a bird's-eye view of the entire Azure App Serv
     </select>
     <button id="graph-reset">Reset View</button>
   </div>
-  <div id="core-graph" style="width: 100%; height: 600px; border: 1px solid var(--md-default-fg-color--lightest); border-radius: 4px;"></div>
+  <div id="core-graph" role="group" aria-label="Core Knowledge Graph" aria-describedby="core-graph-description" style="width: 100%; height: 600px; border: 1px solid var(--md-default-fg-color--lightest); border-radius: 4px;"></div><nav id="core-graph-links" aria-labelledby="core-graph-links-heading"><h2 id="core-graph-links-heading">Core graph destinations</h2></nav>
   <div id="graph-info">
     <p><strong>Selected:</strong> <span id="selected-node">None</span></p>
     <p><strong>Connections:</strong> <span id="node-connections">-</span></p>
