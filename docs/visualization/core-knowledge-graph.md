@@ -45,8 +45,8 @@ The Core Knowledge Graph provides a bird's-eye view of the entire Azure App Serv
 
 <div id="core-graph-container">
   <div id="graph-controls">
-    <input type="text" id="graph-search" placeholder="Search nodes..." />
-    <select id="graph-filter">
+    <input type="text" id="graph-search" aria-label="Search nodes" placeholder="Search nodes..." />
+    <select id="graph-filter" aria-label="Filter nodes by type">
       <option value="all">All Types</option>
       <option value="concept">Concepts</option>
       <option value="best_practice">Best Practices</option>

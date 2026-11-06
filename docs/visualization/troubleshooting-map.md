@@ -63,14 +63,14 @@ Navigate the troubleshooting documentation visually. This map shows how symptoms
 
 <div id="troubleshooting-map-container">
   <div id="ts-controls">
-    <input type="text" id="ts-search" placeholder="Search by symptom or topic..." />
-    <select id="ts-category">
+    <input type="text" id="ts-search" aria-label="Search by symptom or topic" placeholder="Search by symptom or topic..." />
+    <select id="ts-category" aria-label="Filter by category">
       <option value="all">All Categories</option>
       <option value="startup">Startup & Availability</option>
       <option value="performance">Performance</option>
       <option value="network">Outbound Network</option>
     </select>
-    <select id="ts-type">
+    <select id="ts-type" aria-label="Filter by type">
       <option value="all">All Types</option>
       <option value="playbook">Playbooks</option>
       <option value="lab">Labs</option>
