@@ -220,6 +220,46 @@ class EvaluationTests(unittest.TestCase):
         self.logs = []
         self.assertEqual(self.result(), 'INCONCLUSIVE')
 
+    def test_short_probe_series_cannot_activate_a_healthy_fault(self) -> None:
+        self.phases['fault'].update(status=200, config_readback=pilot.BAD,
+                                   probe_budget_exhausted=True,
+                                   probes=[{'status': 200, 'exit_code': 0}] * 23)
+        outcome = pilot.evaluate(self.capture, self.phases, [])
+        self.assertEqual(outcome['hypothesis_evaluation'], 'INCONCLUSIVE')
+
+    def test_unexhausted_budget_cannot_activate_a_healthy_fault(self) -> None:
+        self.phases['fault'].update(status=200, config_readback=pilot.BAD,
+                                   probe_budget_exhausted=False,
+                                   probes=[{'status': 200, 'exit_code': 0}] * 24)
+        outcome = pilot.evaluate(self.capture, self.phases, [])
+        self.assertEqual(outcome['hypothesis_evaluation'], 'INCONCLUSIVE')
+
+    def test_earlier_transport_error_cannot_activate_a_healthy_fault(self) -> None:
+        probes = [{'status': 200, 'exit_code': 0} for _ in range(24)]
+        probes[0]['exit_code'] = 28
+        self.phases['fault'].update(status=200, config_readback=pilot.BAD,
+                                   probe_budget_exhausted=True, probes=probes)
+        outcome = pilot.evaluate(self.capture, self.phases, [])
+        self.assertEqual(outcome['hypothesis_evaluation'], 'INCONCLUSIVE')
+
+    def test_earlier_5xx_cannot_activate_a_healthy_fault(self) -> None:
+        probes = [{'status': 200, 'exit_code': 0} for _ in range(24)]
+        probes[0]['status'] = 503
+        self.phases['fault'].update(status=200, config_readback=pilot.BAD,
+                                   probe_budget_exhausted=True, probes=probes)
+        outcome = pilot.evaluate(self.capture, self.phases, [])
+        self.assertEqual(outcome['hypothesis_evaluation'], 'INCONCLUSIVE')
+
+    def test_recovery_reusing_baseline_or_fault_window_is_invalid(self) -> None:
+        for source in ('baseline', 'fault'):
+            with self.subTest(source=source):
+                self.phases['recovery'].update(
+                    started_at=self.phases[source]['started_at'],
+                    ended_at=self.phases[source]['ended_at'])
+                outcome = pilot.evaluate(self.capture, self.phases, self.logs)
+                self.assertEqual(outcome['hypothesis_evaluation'], 'INCONCLUSIVE')
+                self.assertEqual(outcome['evidence_validation'], 'FAIL')
+
     def test_transport_failure_not_fault_evidence(self):
         self.phases['fault']['status'] = 0
         self.phases['fault']['probes'] = [{'status': 0, 'exit_code': 28}]

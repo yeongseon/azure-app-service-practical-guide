@@ -13,12 +13,14 @@ RUN_ID = "20261016T075147Z-6d019de6e2f2"
 SOURCE = ROOT / "evidence/runs" / RUN_ID
 SPEC = importlib.util.spec_from_file_location(
     "raw_binding_evaluator", ROOT / "scripts/golden/evaluate_run.py")
+assert SPEC is not None and SPEC.loader is not None
 evaluator = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(evaluator)
 
 
 class ScenarioARawBindingTests(unittest.TestCase):
-    def setUp(self):
+    def __init__(self, methodName: str = 'runTest') -> None:
+        super().__init__(methodName)
         self.directory = pathlib.Path(tempfile.mkdtemp()) / RUN_ID
         shutil.copytree(SOURCE, self.directory)
         (self.directory / "result.json").unlink()
@@ -58,6 +60,29 @@ class ScenarioARawBindingTests(unittest.TestCase):
     def test_recovery_before_baseline_is_rejected(self):
         windows = self.document["observations"]["phase_windows"]
         windows["recovery"] = copy.deepcopy(windows["baseline"])
+        with self.assertRaises(evaluator.ModelError):
+            self.evaluate()
+
+    def test_recovery_reusing_earlier_window_and_matching_probes_is_rejected(self) -> None:
+        observations = self.document['observations']
+        observations['phase_order_valid'] = False
+        for source in ('baseline', 'fault'):
+            with self.subTest(source=source):
+                observations['phase_windows']['recovery'] = copy.deepcopy(
+                    observations['phase_windows'][source])
+                observations['recovery_probes'] = [dict(probe, status=200)
+                                                  for probe in observations[f'{source}_probes']]
+                integrity = observations['phase_capture_integrity']
+                integrity['recovery']['probe_count'] = len(observations['recovery_probes'])
+                provenance_path = self.directory / 'provenance.json'
+                provenance = json.loads(provenance_path.read_text())
+                provenance['phase_capture_integrity'] = integrity
+                provenance_path.write_text(json.dumps(provenance))
+                with self.assertRaises(evaluator.ModelError):
+                    self.evaluate()
+
+    def test_capture_time_mismatch_inside_valid_window_is_rejected(self) -> None:
+        self.document['captured_at'] = '2026-10-16T07:51:48Z'
         with self.assertRaises(evaluator.ModelError):
             self.evaluate()
 
