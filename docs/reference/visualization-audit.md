@@ -79,7 +79,7 @@ All rows are **Documented**.
 | Gestures | Four mouse wheel steps over the graph changed its zoom from 0.67 to 0.20 and scrolled the page by 0 px. A synthetic vertical touch swipe on the graph at 390 px panned the graph and scrolled the page by 0 px. |
 | Layout at 390 px | No horizontal overflow. The four controls stack and fit the viewport. |
 | Committed data | **Documented**: `assets/graph/troubleshooting-map.json` holds 24 nodes and 57 edges. The generator now produces more (section 6). |
-| Producer name | **Documented**: lines 301 and 310 of the page and line 81 of `troubleshooting-map.js` name `tools/build_troubleshooting_map.py`. No such file exists. |
+| Producer name | **Documented** at `3e6d950`: [page lines 301 and 310](https://github.com/yeongseon/azure-app-service-practical-guide/blob/3e6d950/docs/visualization/troubleshooting-map.md#L301-L310) and [script line 81](https://github.com/yeongseon/azure-app-service-practical-guide/blob/3e6d950/docs/javascripts/troubleshooting-map.js#L81) name a map-specific producer script that does not exist at that commit. The pinned lines preserve the exact erroneous filename. |
 
 **Disposition: retain as working interactive navigation**, for the reasons given for the core graph. The map has the same defects and the same producer. The nonexistent producer name, on the page and in the script's empty-state message, is a documentation error and is a proposal in section 7.
 
@@ -108,7 +108,7 @@ All rows are **Documented**.
 | What the pages promise | **Documented**: the front matter of the core page calls the graph an interactive visualization of "the entire documentation structure", and its text a "bird's-eye view of the entire Azure App Service Practical Guide". |
 | MkDocs wiring | **Documented**: `mkdocs.yml` loads `document-graph.css`, and on every page Mermaid 10.9.1 and Cytoscape 3.30.4 from unpkg, `mermaid-zoom.js`, `document-graph.js` and `troubleshooting-map.js`. The three pages are in the navigation. `navigation.instant` is not enabled, so the inline initialisers run on each page load. |
 | Style values | **Documented**: `document-graph.js` lines 104 and 105 and `troubleshooting-map.js` lines 105 and 106 pass CSS variables (`var(--md-text-font-family, ...)` and `var(--md-default-fg-color, #333)`) as Cytoscape style values. The wheel sensitivity is set to 0.3 and 0.25 (lines 218 and 279). |
-| Producer name | **Documented**: the troubleshooting-map page and the script's empty-state message (line 81 of `troubleshooting-map.js`) name `tools/build_troubleshooting_map.py`, which does not exist; `tools/build_doc_graph.py` writes the map. |
+| Producer name | **Documented** at `3e6d950`: the troubleshooting-map page and the script's empty-state message name the nonexistent map-specific script identified by the pinned lines in section 4; `tools/build_doc_graph.py` writes the map. |
 
 **Inferred.** Two explanations for the gap between the committed and the regenerated graphs are in evidence: the committed files predate other documents (their dates are in the History row), and the generator drops 94 of 253 files by key collision. The audit did not reconstruct how the committed files were produced, so it does not say how much of the gap each explains. The generator runs, but its output is not a complete map of the documents, and nothing keeps it current. The CSS-variable style values explain the black labels, because the library reports them as invalid and falls back to black.
 
@@ -124,7 +124,7 @@ All rows are **Documented**.
 
 The corrections below are proposals for separate changes. None is made here, and no issue was filed.
 
-1. **Name the real producer.** In `troubleshooting-map.md` lines 301 and 310 and in `troubleshooting-map.js` line 81, replace `tools/build_troubleshooting_map.py` with `tools/build_doc_graph.py`. This is the smallest correction for the nonexistent reference.
+1. **Name the real producer.** Replace the nonexistent script reference in `troubleshooting-map.md` lines 301 and 310 and in `troubleshooting-map.js` line 81 at `3e6d950` (the pinned sources in section 4) with `tools/build_doc_graph.py`. This is the smallest correction for the nonexistent reference.
 2. **Decide the scope of the two graphs, then refresh them.** Either regenerate them with `python tools/build_doc_graph.py` after item 3 and check that the resulting graphs are legible (the current uncorrected generator produces 159 and 77 nodes; a corrected key may produce more, or refuse to run until the collisions are resolved), or word the pages as a snapshot of a chosen set. Decide also whether a freshness check should exist, because nothing runs the generator.
 3. **Stop the generator dropping documents.** It keeps one node for each slug, so 94 of 253 files are overwritten and the tutorial and recipe pages of four languages collapse into one node each. Decide the intended key (for example the page path) or make a collision an error, so that no document disappears without a message.
 4. **Remove the placeholders.** Remove the four empty containers and the `--learning-paths` instruction from the learning-paths page, and the unused flag from the generator.
