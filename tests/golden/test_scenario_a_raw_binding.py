@@ -61,6 +61,29 @@ class ScenarioARawBindingTests(unittest.TestCase):
         with self.assertRaises(evaluator.ModelError):
             self.evaluate()
 
+    def test_recovery_reusing_earlier_window_and_matching_probes_is_rejected(self) -> None:
+        observations = self.document['observations']
+        observations['phase_order_valid'] = False
+        for source in ('baseline', 'fault'):
+            with self.subTest(source=source):
+                observations['phase_windows']['recovery'] = copy.deepcopy(
+                    observations['phase_windows'][source])
+                observations['recovery_probes'] = [dict(probe, status=200)
+                                                  for probe in observations[f'{source}_probes']]
+                integrity = observations['phase_capture_integrity']
+                integrity['recovery']['probe_count'] = len(observations['recovery_probes'])
+                provenance_path = self.directory / 'provenance.json'
+                provenance = json.loads(provenance_path.read_text())
+                provenance['phase_capture_integrity'] = integrity
+                provenance_path.write_text(json.dumps(provenance))
+                with self.assertRaises(evaluator.ModelError):
+                    self.evaluate()
+
+    def test_capture_time_mismatch_inside_valid_window_is_rejected(self) -> None:
+        self.document['captured_at'] = '2026-10-16T07:51:48Z'
+        with self.assertRaises(evaluator.ModelError):
+            self.evaluate()
+
     def test_fault_row_outside_fault_window_is_rejected(self):
         rows = self.document["observations"]["fault_console_rows"]
         rows[0]["timestamp"] = "2026-10-16T08:01:30Z"
