@@ -81,9 +81,7 @@
 }
 
 #graph-reset:hover,
-#ts-reset:hover,
-.graph-gestures:hover,
-.graph-gestures[aria-pressed="true"] {
+#ts-reset:hover {
   background: var(--md-primary-fg-color, #1976d2);
   color: #fff;
 }
@@ -91,11 +89,37 @@
 .graph-gestures {
   min-height: 44px;
   min-width: 12rem;
+  color: var(--md-default-fg-color, #333);
+  border-color: var(--md-primary-fg-color--dark, #1976d2);
+}
+
+[data-md-color-scheme="slate"] .graph-gestures {
+  border-color: var(--md-primary-fg-color, #2094f3);
+}
+
+@media (hover: hover) {
+  .graph-gestures:hover {
+    background: var(--md-default-fg-color--lightest, #ddd);
+  }
+}
+
+.graph-gestures[aria-pressed="true"],
+.graph-gestures[aria-pressed="true"]:hover {
+  background: var(--md-primary-fg-color--dark, #1976d2);
+  color: #fff;
+}
+
+[data-md-color-scheme="slate"] .graph-gestures[aria-pressed="true"] {
+  border-color: var(--md-primary-fg-color, #2094f3);
 }
 
 .graph-gestures:focus-visible {
-  outline: 2px solid var(--md-primary-fg-color, #1976d2);
+  outline: 2px solid var(--md-primary-fg-color--dark, #1976d2);
   outline-offset: 2px;
+}
+
+[data-md-color-scheme="slate"] .graph-gestures:focus-visible {
+  outline-color: var(--md-primary-fg-color, #2094f3);
 }
 
 .graph-gesture-hint {

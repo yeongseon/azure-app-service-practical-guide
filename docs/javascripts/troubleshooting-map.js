@@ -385,8 +385,13 @@
     gestures.type = 'button';
     gestures.className = 'graph-gestures';
     gestures.setAttribute('aria-pressed', 'false');
-    gestures.textContent = 'Graph gestures: off';
+    gestures.setAttribute('aria-describedby', 'ts-gestures-hint');
+    const gestureState = document.createElement('span');
+    gestureState.setAttribute('aria-hidden', 'true');
+    gestureState.textContent = ': off';
+    gestures.append('Graph gestures', gestureState);
     const hint = document.createElement('span');
+    hint.id = 'ts-gestures-hint';
     hint.className = 'graph-gesture-hint';
     hint.textContent = 'Turn on to zoom with the wheel or pinch and pan by dragging the background with mouse or touch. Turn off to scroll the page. Tapping nodes still opens pages. Reset View turns gestures off.';
     document.getElementById('ts-controls').append(gestures, hint);
@@ -395,13 +400,18 @@
       cy.userPanningEnabled(enabled);
       cy.container().classList.toggle('graph-gestures-enabled', enabled);
       gestures.setAttribute('aria-pressed', String(enabled));
-      gestures.textContent = 'Graph gestures: ' + (enabled ? 'on' : 'off');
+      gestureState.textContent = enabled ? ': on' : ': off';
     }
     gestures.addEventListener('click', function() {
       setGestures(!cy.userPanningEnabled());
     });
     cy.container().addEventListener('touchstart', function(event) {
       if (!cy.userPanningEnabled()) {
+        event.stopImmediatePropagation();
+      }
+    }, { capture: true, passive: true });
+    document.addEventListener('gesturestart', function(event) {
+      if (!cy.userPanningEnabled() && cy.container().contains(event.target)) {
         event.stopImmediatePropagation();
       }
     }, { capture: true, passive: true });
