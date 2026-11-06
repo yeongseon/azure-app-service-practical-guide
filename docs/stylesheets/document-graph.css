@@ -66,7 +66,8 @@
 
 /* Reset button */
 #graph-reset,
-#ts-reset {
+#ts-reset,
+.graph-gestures {
   padding: 0.5rem 1rem;
   font-size: 0.875rem;
   font-family: var(--md-text-font-family, Roboto, sans-serif);
@@ -80,9 +81,36 @@
 }
 
 #graph-reset:hover,
-#ts-reset:hover {
+#ts-reset:hover,
+.graph-gestures:hover,
+.graph-gestures[aria-pressed="true"] {
   background: var(--md-primary-fg-color, #1976d2);
   color: #fff;
+}
+
+.graph-gestures {
+  min-height: 44px;
+  min-width: 12rem;
+}
+
+.graph-gestures:focus-visible {
+  outline: 2px solid var(--md-primary-fg-color, #1976d2);
+  outline-offset: 2px;
+}
+
+.graph-gesture-hint {
+  flex-basis: 100%;
+  font-size: 0.875rem;
+}
+
+#core-graph, #core-graph *,
+#troubleshooting-graph, #troubleshooting-graph * {
+  touch-action: pan-y !important;
+}
+
+#core-graph.graph-gestures-enabled, #core-graph.graph-gestures-enabled *,
+#troubleshooting-graph.graph-gestures-enabled, #troubleshooting-graph.graph-gestures-enabled * {
+  touch-action: none !important;
 }
 
 /* Graph canvas */
