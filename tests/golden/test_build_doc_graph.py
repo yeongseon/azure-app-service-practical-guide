@@ -152,7 +152,7 @@ class GraphGenerationTests(unittest.TestCase):
         for relative in ("_hidden/a.md", ".hidden/b.md", "nested/_skip/c.md",
                          "nested/.skip/d.md", "nested/_file.md", "nested/.file.md"):
             self.page(relative, "slug: shared")
-        (self.docs / "plain.md").write_text("# No frontmatter\n", encoding="utf-8")
+        (self.docs / "shared.md").write_text("# No frontmatter\n", encoding="utf-8")
 
         documents = graph.scan_documents()
 
