@@ -298,16 +298,17 @@ Use the category filter to focus on specific problem domains:
 
 ## Data Source
 
-The troubleshooting map is generated from document frontmatter by `tools/build_troubleshooting_map.py`. The JSON file is located at:
+**Documented:** `tools/build_doc_graph.py` generates the troubleshooting map from document frontmatter. Running it rewrites both graph JSON files:
 
 ```
 docs/assets/graph/troubleshooting-map.json
+docs/assets/graph/core-knowledge.json
 ```
 
-To regenerate:
+To regenerate both files, run from the repository root:
 
 ```bash
-python tools/build_troubleshooting_map.py
+python tools/build_doc_graph.py
 ```
 
 ## Integration with Other Tools

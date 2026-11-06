@@ -78,7 +78,8 @@
         container.innerHTML = `
           <p style="color: var(--md-default-fg-color--light); text-align: center; padding: 2rem;">
             Troubleshooting map data not yet generated.<br>
-            Run <code>python tools/build_troubleshooting_map.py</code> to generate.
+            Documented: run <code>python tools/build_doc_graph.py</code> from the repository root to rewrite both
+            <code>docs/assets/graph/troubleshooting-map.json</code> and <code>docs/assets/graph/core-knowledge.json</code>.
           </p>
         `;
       });
