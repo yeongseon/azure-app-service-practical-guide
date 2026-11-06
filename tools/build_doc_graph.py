@@ -132,7 +132,9 @@ def scan_documents() -> dict[str, dict[str, Any]]:
 
     collisions = tuple(
         (slug, tuple(sorted(paths)))
-        for slug, paths in sorted(slug_paths.items())
+        for slug, paths in sorted(slug_paths.items(), key=lambda item: (
+            str(item[0]), type(item[0]).__name__, repr(item[0]),
+        ))
         if len(paths) > 1
     )
     if collisions:

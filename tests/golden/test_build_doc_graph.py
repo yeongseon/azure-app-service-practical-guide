@@ -147,6 +147,48 @@ class GraphGenerationTests(unittest.TestCase):
             self.assertIn({"data": {"source": "alpha", "target": "beta",
                                     "type": "related"}}, elements)
 
+    def test_main_writes_both_graphs_when_slug_types_differ(self) -> None:
+        self.page("troubleshooting/a.md", "slug: 123")
+        self.page("troubleshooting/b.md", "slug: '123'")
+        self.page("troubleshooting/c.md", "slug: 1.5")
+
+        documents = graph.scan_documents()
+        status = graph.main()
+
+        self.assertEqual(set(documents), {123, "123", 1.5})
+        self.assertEqual(status, 0)
+        self.assertEqual(sorted(path.name for path in self.output.iterdir()),
+                         ["core-knowledge.json", "troubleshooting-map.json"])
+        for path in self.output.iterdir():
+            elements = json.loads(path.read_text(encoding="utf-8"))["elements"]
+            self.assertEqual({element["data"]["id"] for element in elements},
+                             {123, "123", 1.5})
+
+    def test_main_reports_collisions_when_slug_types_differ(self) -> None:
+        paths = [
+            self.page("z.md", "slug: '123'"),
+            self.page("b.md", "slug: 123"),
+            self.page("a.md", "slug: 123"),
+            self.page("c.md", "slug: '123'"),
+        ]
+        collisions = ((123, ("a.md", "b.md")), ("123", ("c.md", "z.md")))
+
+        for order in (paths, list(reversed(paths))):
+            with self.subTest(order=[path.name for path in order]):
+                with patch.object(Path, "rglob", return_value=iter(order)):
+                    with self.assertRaises(graph.SlugCollisionError) as raised:
+                        graph.scan_documents()
+                self.assertEqual(raised.exception.collisions, collisions)
+                self.stderr.seek(0)
+                self.stderr.truncate()
+                with patch.object(Path, "rglob", return_value=iter(order)):
+                    status = graph.main()
+                self.assertEqual(status, 1)
+                report = self.stderr.getvalue()
+                self.assertIn("  Slug 123:\n    a.md\n    b.md\n"
+                              "  Slug '123':\n    c.md\n    z.md\n", report)
+                self.assertIn("2 shared slugs, 4 files affected", report)
+
     def test_scan_skips_excluded_paths_and_missing_frontmatter(self) -> None:
         self.page("visible.md", "slug: shared")
         for relative in ("_hidden/a.md", ".hidden/b.md", "nested/_skip/c.md",
