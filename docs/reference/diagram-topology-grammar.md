@@ -139,6 +139,7 @@ This guide defines its own self-contained role palette; no other design system i
 - **Techniques required:** Holding those tiers in Dagre required identical base-node IDs, labels, and declaration order **plus** Mermaid link-length dash tuning (`-..->`, `-...->`) on the off-path edges of the extensions; an invisible anchor (`~~~`) was needed only in the Functions adapter.
 - **Known limit:** Absolute positions still moved noticeably between the variants as subgraphs and hops enlarged the canvas. Dagre provides no layout-stability guarantee; [#283](https://github.com/yeongseon/azure-app-service-practical-guide/issues/283) and [#289](https://github.com/yeongseon/azure-app-service-practical-guide/issues/289) must retain a reproducible measurement before any stability claim is relied on.
 
+See the [cross-guide private-dependency network topology contract](adr-diagram-composition.md#shared-private-dependency-network-topology-cross-guide) for the identical outbound Storage private endpoint network scene used by App Service, Functions and Container Apps, with explicit service-specific attachment differences.
 ## 8. Reference Fixtures (App Service)
 
 ### 8.1 Baseline: Multitenant App Service Default Topology
