@@ -285,6 +285,8 @@
       // Interaction options
       minZoom: 0.3,
       maxZoom: 3,
+      userZoomingEnabled: false,
+      userPanningEnabled: false,
       wheelSensitivity: 0.3
     });
 
@@ -317,6 +319,32 @@
    * Setup graph controls (search, filter, reset)
    */
   function setupControls(cy) {
+    const gestures = document.createElement('button');
+    gestures.type = 'button';
+    gestures.className = 'graph-gestures';
+    gestures.setAttribute('aria-pressed', 'false');
+    gestures.textContent = 'Graph gestures: off';
+    const hint = document.createElement('span');
+    hint.className = 'graph-gesture-hint';
+    hint.textContent = 'Turn on to zoom with the wheel or pinch and pan by dragging the background with mouse or touch. Turn off to scroll the page. Tapping nodes still opens pages. Reset View turns gestures off.';
+    document.getElementById('graph-controls').append(gestures, hint);
+    function setGestures(enabled) {
+      cy.userZoomingEnabled(enabled);
+      cy.userPanningEnabled(enabled);
+      cy.container().classList.toggle('graph-gestures-enabled', enabled);
+      gestures.setAttribute('aria-pressed', String(enabled));
+      gestures.textContent = 'Graph gestures: ' + (enabled ? 'on' : 'off');
+    }
+    gestures.addEventListener('click', function() {
+      setGestures(!cy.userPanningEnabled());
+    });
+    cy.container().addEventListener('touchmove', function(event) {
+      if (!cy.userPanningEnabled()) {
+        event.stopImmediatePropagation();
+        cy.container().dispatchEvent(new Event('touchcancel', { bubbles: true }));
+      }
+    }, { capture: true, passive: true });
+
     // Search
     const searchInput = document.getElementById('graph-search');
     if (searchInput) {
@@ -373,6 +401,7 @@
     const resetButton = document.getElementById('graph-reset');
     if (resetButton) {
       resetButton.addEventListener('click', function() {
+        setGestures(false);
         cy.elements().removeClass('highlighted dimmed');
         cy.fit();
         
