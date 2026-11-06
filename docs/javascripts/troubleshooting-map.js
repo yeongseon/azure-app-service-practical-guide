@@ -159,7 +159,6 @@
    * Render the troubleshooting map
    */
   function renderTroubleshootingMap(container, data) {
-    let pageSwipe = false;
     const cy = cytoscape({
       container: container,
       elements: data.elements || [],
@@ -355,7 +354,6 @@
 
     // Click to navigate
     cy.on('tap', 'node', function(evt) {
-      if (pageSwipe && evt.originalEvent && evt.originalEvent.type === 'touchend') return;
       var node = evt.target;
       var href = node.data('href') || node.data('link');
       var resolvedUrl = resolveSiteUrl(href);
@@ -375,14 +373,14 @@
     });
 
     // Setup controls
-    setupTsControls(cy, function(scrolling) { pageSwipe = scrolling; });
+    setupTsControls(cy);
     observePaletteChanges(container, cy);
   }
 
   /**
    * Setup troubleshooting map controls
    */
-  function setupTsControls(cy, setPageSwipe) {
+  function setupTsControls(cy) {
     const gestures = document.createElement('button');
     gestures.type = 'button';
     gestures.className = 'graph-gestures';
@@ -402,12 +400,8 @@
     gestures.addEventListener('click', function() {
       setGestures(!cy.userPanningEnabled());
     });
-    cy.container().addEventListener('touchstart', function() {
-      setPageSwipe(false);
-    }, { capture: true, passive: true });
-    cy.container().addEventListener('touchmove', function(event) {
+    cy.container().addEventListener('touchstart', function(event) {
       if (!cy.userPanningEnabled()) {
-        setPageSwipe(true);
         event.stopImmediatePropagation();
       }
     }, { capture: true, passive: true });
