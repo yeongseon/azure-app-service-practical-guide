@@ -373,7 +373,7 @@
     {
       "path": "tests/golden/",
       "decision": "KEEP",
-      "reason": "The Golden v1 suites, including the negative cases that prove each gate discriminates. Removing them would leave the evaluator unverified while it still looked tested.",
+      "reason": "The Golden v1 suites, including the negative cases that prove each gate discriminates and offline graph-generator fixtures that prevent silent slug loss. Removing them would leave the evaluator and generator unverified while they still looked tested.",
       "members": [
         "classification_integrity.py",
         "test_azure_cleanup.py",
@@ -381,6 +381,7 @@
         "test_azure_e2e_failure_record.py",
         "test_azure_e2e_guard.py",
         "test_azure_e2e_sanitize.py",
+        "test_build_doc_graph.py",
         "test_collect_scenario_a.py",
         "test_collect_scenario_b.py",
         "test_collect_scenario_c.py",
@@ -432,7 +433,7 @@
     {
       "path": "tools/build_doc_graph.py",
       "decision": "KEEP",
-      "reason": "Not invoked by CI, but referenced by three visualization pages it generates. A manual generator, not dead code."
+      "reason": "Manual offline producer for the core and troubleshooting graph JSON, with slug-collision behavior covered by fixtures. CI does not invoke it on the documentation tree; shared slugs stop generation before writing until unique slugs or a maintainer-owned node-key and scope decision resolve them."
     },
     {
       "path": "scripts/generate_validation_status.py",
