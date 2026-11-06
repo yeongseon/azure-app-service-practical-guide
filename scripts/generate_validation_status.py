@@ -292,7 +292,9 @@ def generate_dashboard(tutorials: list[dict[str, Any]], today: date) -> str:
     lines.append("    - `cli_version`: Azure CLI version used")
     lines.append("    - `run_id`: Retained package directory name")
     lines.append("    - `evidence`: Canonical repository-relative retained package path")
-    lines.append("    - The reference gate checks package existence only; it does not prove that the package executed this tutorial or method")
+    lines.append("    - A new or changed `pass` or `fail` requires a retained `tutorial-execution.json` agreeing with the tutorial, method, result, execution status, CLI version, and UTC date of the final required phase")
+    lines.append("    - Unchanged legacy methods remain accepted; no date is refreshed by offline validation")
+    lines.append("    - Record agreement does not prove execution or authenticity; retained-evidence rules, human review, and #179 remain separate")
     lines.append(
         f"    - Tutorials older than {STALENESS_DAYS} days are flagged as **stale**"
     )
@@ -325,6 +327,10 @@ def main() -> None:
         default=Path("docs/reference/validation-status.md"),
         help="Output file path (default: docs/reference/validation-status.md)",
     )
+    parser.add_argument(
+        "--as-of", type=date.fromisoformat,
+        help="Render an existing snapshot date without refreshing it (YYYY-MM-DD)",
+    )
     args = parser.parse_args()
 
     # Resolve relative to project root
@@ -344,7 +350,7 @@ def main() -> None:
 
     tutorials = [extract_tutorial_info(f, docs_dir) for f in tutorial_files]
 
-    today = date.today()
+    today = args.as_of or date.today()
     dashboard = generate_dashboard(tutorials, today)
 
     output_path.parent.mkdir(parents=True, exist_ok=True)

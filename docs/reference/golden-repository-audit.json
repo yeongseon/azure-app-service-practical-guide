@@ -341,7 +341,8 @@
         "manifest.schema.json",
         "reproduction.schema.json",
         "result.schema.json",
-        "run-declarations.schema.json"
+        "run-declarations.schema.json",
+        "tutorial-execution.schema.json"
       ]
     },
     {
@@ -364,6 +365,7 @@
         "run_scenario_b.py",
         "run_scenario_c.py",
         "scenario-a-recipe.json",
+        "tutorial_execution.py",
         "validate_schemas.py",
         "validate_tutorial_validation.py"
       ]

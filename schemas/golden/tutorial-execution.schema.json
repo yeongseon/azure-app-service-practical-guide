@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yeongseon.github.io/azure-app-service-practical-guide/schemas/golden/tutorial-execution.schema.json",
+  "title": "Tutorial execution agreement record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "run_id", "tutorial", "method", "execution_status", "tutorial_result", "phases", "final_required_phase", "final_required_phase_completed_at", "source_commit", "environment", "raw_evidence"],
+  "properties": {
+    "schema_version": {"type": "integer", "const": 1},
+    "run_id": {"type": "string", "minLength": 1},
+    "tutorial": {"type": "string", "minLength": 1},
+    "method": {"enum": ["az_cli", "bicep"]},
+    "execution_status": {"enum": ["COMPLETE", "PARTIAL", "BLOCKED", "FAILED", "NOT_RUN"]},
+    "tutorial_result": {"enum": ["pass", "fail"]},
+    "cli_version": {"$ref": "#/$defs/text"},
+    "source_commit": {"type": "string", "minLength": 40, "maxLength": 40, "pattern": "^[0-9a-f]{40}$"},
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["region", "sku", "runtime", "hosting_model"],
+      "properties": {
+        "region": {"$ref": "#/$defs/text"},
+        "sku": {"$ref": "#/$defs/text"},
+        "runtime": {"$ref": "#/$defs/text"},
+        "hosting_model": {"$ref": "#/$defs/text"}
+      }
+    },
+    "phases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "completed_at", "outcome"],
+        "properties": {
+          "name": {"$ref": "#/$defs/text"},
+          "completed_at": {"$ref": "#/$defs/timestamp"},
+          "outcome": {"enum": ["pass", "fail"]}
+        }
+      }
+    },
+    "final_required_phase": {"$ref": "#/$defs/text"},
+    "final_required_phase_completed_at": {"$ref": "#/$defs/timestamp"},
+    "raw_evidence": {
+      "description": "Package-relative paths mapped to bare lowercase SHA-256 digests, as in retained provenance digests.",
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": {"minLength": 1},
+      "additionalProperties": {"type": "string", "minLength": 64, "maxLength": 64, "pattern": "^[0-9a-f]{64}$"}
+    }
+  },
+  "allOf": [
+    {"if": {"properties": {"method": {"const": "az_cli"}}}, "then": {"required": ["cli_version"]}}
+  ],
+  "$defs": {
+    "text": {"type": "string", "minLength": 1, "pattern": "\\S"},
+    "timestamp": {"type": "string", "format": "date-time", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](\\.[0-9]+)?(Z|[+-]([01][0-9]|2[0-3]):[0-5][0-9])$"}
+  }
+}

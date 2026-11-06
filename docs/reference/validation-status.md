@@ -112,7 +112,9 @@ python3 scripts/generate_validation_status.py
     - `cli_version`: Azure CLI version used
     - `run_id`: Retained package directory name
     - `evidence`: Canonical repository-relative retained package path
-    - The reference gate checks package existence only; it does not prove that the package executed this tutorial or method
+    - A new or changed `pass` or `fail` requires a retained `tutorial-execution.json` agreeing with the tutorial, method, result, execution status, CLI version, and UTC date of the final required phase
+    - Unchanged legacy methods remain accepted; no date is refreshed by offline validation
+    - Record agreement does not prove execution or authenticity; retained-evidence rules, human review, and #179 remain separate
     - Tutorials older than 90 days are flagged as **stale**
 
 ## See Also
