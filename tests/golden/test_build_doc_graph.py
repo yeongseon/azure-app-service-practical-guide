@@ -1,5 +1,6 @@
 import argparse
 import contextlib
+import importlib.util
 import io
 import json
 import logging
@@ -233,6 +234,7 @@ class GraphGenerationTests(unittest.TestCase):
             ("--no-such-option",),
             ("--no-such-option", "--learning-paths"),
             ("--learning-paths", "--no-such-option"),
+            ("--learning-paths", "@no-such-argument-file.txt"),
         ):
             with self.subTest(args=args):
                 self.clear_output()
@@ -257,6 +259,7 @@ class GraphGenerationTests(unittest.TestCase):
             ("--learning-paths=yes", "--help"),
             ("--no-such-option", "-h"),
             ("-h", "--no-such-option"),
+            ("@no-such-argument-file.txt", "--help"),
         ):
             with self.subTest(argv=argv):
                 self.clear_output()
@@ -267,6 +270,23 @@ class GraphGenerationTests(unittest.TestCase):
                 self.assertEqual(self.stdout.getvalue(), help_text)
                 self.assertEqual(self.stderr.getvalue(), "")
                 self.assertEqual([mock.mock_calls for mock in untouched], [[], [], [], []])
+
+    def test_importing_the_module_reads_no_documents_and_no_input(self) -> None:
+        spec = importlib.util.spec_from_file_location("build_doc_graph_fresh", graph.__file__)
+        assert spec is not None and spec.loader is not None
+        module = importlib.util.module_from_spec(spec)
+        guarded = ("rglob", "glob", "iterdir", "read_text", "read_bytes", "open", "mkdir", "write_text")
+        mocks = {name: MagicMock() for name in guarded}
+        stdin = MagicMock(spec=io.TextIOBase)
+        with contextlib.ExitStack() as stack:
+            for name, mock in mocks.items():
+                stack.enter_context(patch.object(Path, name, mock))
+            stack.enter_context(patch.object(sys, "stdin", stdin))
+            spec.loader.exec_module(module)
+
+        self.assertEqual({name: mock.mock_calls for name, mock in mocks.items()}, {name: [] for name in guarded})
+        self.assertEqual(stdin.mock_calls, [])
+        self.assertEqual((self.stdout.getvalue(), self.stderr.getvalue()), ("", ""))
 
 
 if __name__ == "__main__":
