@@ -173,30 +173,6 @@
   }
 }
 
-/* Learning path containers */
-#python-path-container,
-#nodejs-path-container,
-#java-path-container,
-#dotnet-path-container {
-  margin: 1.5rem 0;
-}
-
-#python-graph,
-#nodejs-graph,
-#java-graph,
-#dotnet-graph {
-  background: var(--md-default-bg-color, #fff);
-  border: 1px solid var(--md-default-fg-color--lightest, #ddd);
-  border-radius: 4px;
-}
-
-[data-md-color-scheme="slate"] #python-graph,
-[data-md-color-scheme="slate"] #nodejs-graph,
-[data-md-color-scheme="slate"] #java-graph,
-[data-md-color-scheme="slate"] #dotnet-graph {
-  background: var(--md-code-bg-color, #1e1e1e);
-}
-
 /* Cytoscape canvas cursor */
 .cytoscape-container {
   cursor: grab;
