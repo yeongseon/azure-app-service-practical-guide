@@ -201,6 +201,18 @@ class GraphGenerationTests(unittest.TestCase):
         self.assertEqual({slug: doc["file"] for slug, doc in documents.items()},
                          {"shared": "visible.md"})
 
+    def test_main_rejects_retired_flag_before_scanning(self) -> None:
+        self.page("a.md", "slug: shared")
+        self.page("b.md", "slug: shared")
+
+        with patch.object(sys, "argv", ["build_doc_graph.py", "--learning-paths"]):
+            with self.assertRaises(SystemExit) as raised:
+                graph.main()
+
+        self.assertEqual(raised.exception.code, 2)
+        self.assertEqual(self.stdout.getvalue(), "")
+        self.assertFalse(self.output.exists())
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
