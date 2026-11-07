@@ -335,11 +335,13 @@ All criteria below must be met:
 Any one condition disproves the hypothesis:
 
 - Startup command is already correct during failure window.
-- No module import errors exist in console logs.
 - Runtime remains unhealthy even after command fixed to `app:app`.
 - Failure is explained by unrelated root cause (for example platform outage,
   auth failures,
   or networking ACL blocks) with supporting evidence.
+
+[Unknown] Missing or delayed module import logs are an evidence gap, not
+disproof; absence does not establish that the faulty command ran.
 
 ### 2.5 Alternate hypotheses considered
 
@@ -408,6 +410,20 @@ SUPPORTED, `1` CONTRADICTED, `2` INCONCLUSIVE, `3` NOT_TESTED, and `4`
 evidence-invalid. Evidence validity, hypothesis, cleanup, and independent
 reproduction remain separate. Do not edit a deficient run; preserve it and make
 a new run after correcting the procedure.
+
+[Documented] The [Golden evidence model](../../reference/golden-evidence-model.md#absence-is-not-refutation)
+classifies configuration writes and read-back as control evidence, not proof
+that the running worker has the fault. The structured runner therefore reports
+`INCONCLUSIVE` (exit `2`) when the fault phase remains healthy, even with BAD
+read-back and all 24 successful healthy probes. Those observations show that
+the control plane accepted the change and the app stayed healthy, not that the
+serving worker was recycled. Its legacy `intervention_activated` flag is not an
+evaluation input. [Not Proven] The current capture has no worker-bound activation
+signal; even fault-window import rows do not bind a healthy response to the same
+worker. The runner cannot derive `CONTRADICTED` from a non-5xx fault response;
+exit `1` remains reserved in the shared mapping. This does not change the Golden
+evaluator's independent control/recovery contradictions or its declared
+discriminating assertions.
 
 Run `20261016T075147Z-6d019de6e2f2` exercised this path in Korea Central on B1
 Linux with Python 3.11. Its capture window was
@@ -1109,7 +1125,7 @@ graph TD
 
 ### Evidence interpretation and falsification
 
-For the checked-in fault-first procedure, deployment success while `wrong_module:app` is configured, a failed first probe, same-resource import-failure evidence within the verifier's rolling two-hour window, and recovery after the trigger sets `app:app` support the scoped hypothesis. A healthy app under the wrong-module configuration contradicts the predicted fault. A missing log match, a transport-only error, or a post-repair non-200 leaves the cause unresolved and requires additional collection rather than a pass. Platform restart, dependency problems, and concurrent changes remain competing explanations; a 503 or screenshot alone does not establish the module as the cause.
+For the checked-in fault-first procedure, deployment success while `wrong_module:app` is configured, a failed first probe, same-resource import-failure evidence within the verifier's rolling two-hour window, and recovery after the trigger sets `app:app` support the scoped hypothesis. [Not Proven] A healthy app with the wrong-module configuration does not show that the fault reached the serving worker and is not a refutation. A missing log match, a transport-only error, or a post-repair non-200 leaves the cause unresolved and requires additional collection rather than a pass. Platform restart, dependency problems, and concurrent changes remain competing explanations; a 503 or screenshot alone does not establish the module as the cause.
 
 ## Clean Up
 

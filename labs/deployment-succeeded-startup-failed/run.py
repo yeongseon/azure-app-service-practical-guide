@@ -45,7 +45,7 @@ def write_json(path, value):
 
 def evaluate(run, phases, logs):
     """Recompute from phase probes and resource/time-scoped raw console rows."""
-    errors, gaps, refutations = [], [], []
+    errors, gaps = [], []
     fault_showed_predicted_symptom = False
     try:
         if run['fingerprints'] != fingerprints():
@@ -68,39 +68,16 @@ def evaluate(run, phases, logs):
                 continue
             final = probes[-1]
             if name == 'fault':
-                # A response other than the predicted 5xx only refutes the
-                # hypothesis if the intervention actually reached the running
-                # worker. `az webapp config set` returning the requested
-                # command proves the control plane accepted it, not that the
-                # worker was recycled inside the probe window, so without
-                # activation evidence a healthy app is ambiguous between "the
-                # entrypoint does not matter" and "the change had not taken
-                # effect yet". Only the first is a refutation.
-                # Recomputed from raw, never read from the phase's own
-                # summary flag: a phase that can assert its own activation
-                # would be the same summary-over-raw inversion this evaluator
-                # exists to reject.
-                activated = (
-                    phase.get('config_readback') == BAD
-                    and phase.get('probe_budget_exhausted') is True
-                    and len(probes) >= 24
-                    and all(probe.get('exit_code') == 0 for probe in probes)
-                    and not any(500 <= probe.get('status', 0) <= 599 for probe in probes)
-                )
                 if final['exit_code'] != 0 or final['status'] == 0:
                     gaps.append('Fault only produced a transport error, not an HTTP failure')
                 elif 500 <= final['status'] <= 599:
                     fault_showed_predicted_symptom = True
-                elif not activated:
+                else:
                     gaps.append(
                         f'Fault returned HTTP {final["status"]} but the configuration was not '
                         'shown to take effect on the running worker, so this cannot be read '
                         'as a refutation'
                     )
-                elif final['status'] == 200:
-                    refutations.append('Fault configuration took effect but the app stayed healthy at HTTP 200')
-                else:
-                    refutations.append(f'Fault produced HTTP {final["status"]}, not the predicted 5xx')
             elif final['status'] != 200 or final['exit_code'] != 0:
                 errors.append(f'{name}: health not verified')
         if not isinstance(logs, list):
@@ -115,32 +92,24 @@ def evaluate(run, phases, logs):
             message = row['ResultDescription']
             if 'ModuleNotFoundError' in message and 'wrong_module' in message:
                 hits += 1
-        # Absence of an import error is only a data gap when the app actually
-        # failed. If the intervention never produced the predicted symptom,
-        # having no import error is consistent with the refutation.
         if not hits and fault_showed_predicted_symptom:
             gaps.append('No matching runtime import error arrived within the collection deadline')
     except (KeyError, TypeError, ValueError, AttributeError) as exc:
         errors.append(f'Missing or invalid required evidence: {exc}')
         hits = 0
     verdict = 'FAIL' if errors else ('INCONCLUSIVE' if gaps else 'PASS')
-    if errors:
-        hypothesis = 'INCONCLUSIVE'
-    elif refutations:
-        hypothesis = 'CONTRADICTED'
-    elif gaps:
-        hypothesis = 'INCONCLUSIVE'
-    else:
-        hypothesis = 'SUPPORTED'
+    hypothesis = 'INCONCLUSIVE' if errors or gaps else 'SUPPORTED'
     return {'run_id': run.get('run_id'), 'evaluated_at': now(),
             'evidence_validation': verdict,
             'hypothesis_evaluation': hypothesis,
             'independent_reproduction': 'NOT_RUN', 'matching_import_errors': hits,
-            'errors': errors, 'refutations': refutations, 'limitations': gaps + [
+            'errors': errors, 'refutations': [], 'limitations': gaps + [
                 'Hashes detect content changes; they do not attest that Azure execution occurred.',
                 'HTTP and import errors support this scoped intervention; other concurrent changes remain a limitation.',
-                'Activation is recomputed from the configuration readback and the full probe series; '
-                'it does not positively prove the serving worker was recycled.']}
+                ('Configuration readback and a full healthy probe budget show that the control plane '
+                'accepted the change and the app stayed healthy, not that the serving worker was recycled. '
+                'The capture has no worker-bound activation evidence, so a non-5xx fault response '
+                'cannot contradict the hypothesis.')]}
 
 
 #: Shell exit codes, shared with scripts/golden/evaluate_run.py.
@@ -216,12 +185,8 @@ def phase(folder, run, name, startup, hostname):
             if attempt < 23:
                 time.sleep(10)
         record['status'] = record['probes'][-1]['status']
-        # Read the configuration back after probing. Combined with an
-        # exhausted probe budget this is the strongest activation evidence
-        # available without a worker-identity signal: the intended command is
-        # still in place and the app was observed for the full window rather
-        # than only across the first seconds of a rollout. It still does not
-        # positively prove a worker recycle, which stays a stated limitation.
+        # Preserve the legacy proxy fields as control evidence, not proof
+        # that the serving worker was recycled. Evaluation ignores the flag.
         readback = json.loads(azure(target, 'config-readback',
                                     ['webapp', 'config', 'show', '--ids', run['resource_id']]))
         record['config_readback'] = readback.get('appCommandLine')
