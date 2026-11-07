@@ -37,7 +37,7 @@ class WorkflowYamlTests(unittest.TestCase):
             fetch_step["run"],
             re.DOTALL,
         )
-        self.assertIsNotNone(script_match)
+        assert script_match is not None
         script = script_match.group("script")
 
         valid_lowercase = "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"
@@ -84,11 +84,39 @@ class WorkflowYamlTests(unittest.TestCase):
         workflow_path = ROOT / ".github/workflows/validate-content-sources.yml"
         with workflow_path.open(encoding="utf-8") as stream:
             workflow = yaml.load(stream)
-        required = {"evidence/**", "schemas/**", "tests/**", "scripts/**"}
+        required = {"docs/**", "evidence/**", "schemas/**", "tests/**", "scripts/**"}
 
         for event in ("pull_request", "push"):
             with self.subTest(event=event):
                 self.assertTrue(required <= set(workflow["on"][event]["paths"]))
+
+        self.assertIn("main", workflow["on"]["push"]["branches"])
+
+    def test_diagram_gates_are_unconditional_and_blocking_when_workflow_runs(self) -> None:
+        # Given: the parsed content-validation job and its required diagram commands.
+        yaml = YAML(typ="safe")
+        workflow_path = ROOT / ".github/workflows/validate-content-sources.yml"
+        with workflow_path.open(encoding="utf-8") as stream:
+            workflow = yaml.load(stream)
+        job = workflow["jobs"]["validate-content-sources"]
+        commands = (
+            "python scripts/test_diagram_inventory.py",
+            "python scripts/diagram_inventory.py --check",
+            "python scripts/diagram_inventory.py --verify-tree --strict",
+            "python scripts/test_check_diagram_manifest_coverage.py",
+            "python scripts/check_diagram_manifest_coverage.py",
+        )
+
+        # When: each command is resolved to the step that executes it exactly.
+        for command in commands:
+            with self.subTest(command=command):
+                steps = [step for step in job["steps"] if step.get("run", "").strip() == command]
+
+                # Then: neither a missing step nor a skip/fail-open policy is allowed.
+                self.assertEqual(len(steps), 1, command)
+                for scope in (job, steps[0]):
+                    self.assertNotIn("continue-on-error", scope, command)
+                    self.assertNotIn("if", scope, command)
 
 
 if __name__ == "__main__":

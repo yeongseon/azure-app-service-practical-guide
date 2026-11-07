@@ -207,9 +207,10 @@ Known limitations:
 ```bash
 python scripts/test_diagram_inventory.py
 python scripts/diagram_inventory.py --check
+python scripts/diagram_inventory.py --verify-tree --strict
 ```
 
-`--check` validates schema, keys, owning batches, reconciliation, pinned hashes and generated blocks. It does not compare current source to the committed snapshot, render diagrams, or verify provenance. Deterministic fixture reproduction remains blocking; current-tree baseline reproduction is opt-in with `DIAGRAM_INVENTORY_REPRODUCE=1` when the tree is unchanged. The comparison of the tree with the snapshot that `--check` does not make is made by the guard in the next section.
+`--check` validates schema, keys, owning batches, reconciliation, pinned hashes and generated blocks. It does not compare current source to the committed snapshot, render diagrams, or verify provenance. Deterministic fixture reproduction remains blocking; current-tree baseline reproduction is opt-in with `DIAGRAM_INVENTORY_REPRODUCE=1` when the tree is unchanged. The separate `--verify-tree --strict` step rejects any reported tree drift; the coverage guard below adds migration-specific checks.
 
 ### Guarding Manifest Coverage (Blocking CI)
 
@@ -234,7 +235,7 @@ python scripts/check_diagram_manifest_coverage.py
 | `composition output is not in the manifest` | A diagram enrolled in `scripts/diagram_composition.json` has no manifest record. The `page` of the diagram is compared after pathlib-style normalization, so `docs/./x.md` is `docs/x.md`. | Every enrolled diagram |
 | `unreadable composition spec` | The spec path exists (a dangling symlink counts as existing) but cannot be read as JSON of the shape that the guard reads: the file cannot be opened or decoded, an object of the file repeats a key, or it is not an object whose `base.id` is text, whose `extensions` and `overlays` are objects and whose `diagrams` is a list of objects with text `page`, `id` and `base`, a list of text `extensions` and a text or null `overlay`; or the `page` of a diagram leaves the repository. The guard checks no other part of the spec: the composer and its tests validate the rest. When Git lists the spec as a symlink that leaves the repository, or, before Python 3.13, as a symlink that loops, the scanner's file walk fails first and the guard prints that one-line error instead of this finding. | The spec file |
 
-Edits to the body or provenance of a `not-started` or `exception` entry, line moves and changed classifications are not reported; `--verify-tree` still lists them as advisory drift. The guard therefore requires no diagram to be migrated. At the baseline every entry is `not-started`, so only the tree-coverage findings (including the unrecognized-fence finding), the enrolled-diagram finding and the unreadable-spec finding can occur until an owner starts a migration.
+Edits to the body or provenance of a `not-started` or `exception` entry, line moves and changed classifications are not reported by this coverage guard; the separate strict tree-drift step rejects them until the manifest is regenerated. Neither check requires a diagram to be migrated. At the baseline every entry is `not-started`, so only the tree-coverage findings (including the unrecognized-fence finding), the enrolled-diagram finding and the unreadable-spec finding can occur in the coverage guard until an owner starts a migration.
 
 After a pull request adds or removes a Mermaid fence, moves one to another page, or renames its page or its `diagram-id`, regenerate and commit the manifest with `python scripts/diagram_inventory.py --write` (see Regenerating the Manifest). The manifest is the authority for which occurrences are in scope. Two pull requests that each change fences can therefore conflict in it, or merge without a conflict into a manifest that matches neither tree (for example when both raise a total to the same value); the checks can then fail on `main` after the second merge until the manifest is regenerated and committed. Resolve it by regenerating the manifest, not by merging it by hand.
 
@@ -250,6 +251,8 @@ python scripts/diagram_inventory.py --write --base-commit "$(git rev-parse HEAD)
 
 Use an explicitly reviewed baseline commit when rebasing the inventory. Without an override, subsequent writes preserve the existing base commit. Do not edit the manifest or generated blocks by hand.
 
+When a change moves a Mermaid fence, even by one line, regenerate with `python scripts/diagram_inventory.py --write` and commit the generated changes; never edit manifest locations by hand. Disclose the affected keys and their old and new lines in the pull request. CI now runs `--verify-tree --strict` on matching pull requests and pushes to `main`, so unregenerated location drift fails even when the diagram body is unchanged.
+
 ### Migration Progress States
 
 Batch owners edit `target`, `context.reader_intent`, and `migration` by key; these planning fields survive body changes and regeneration.
@@ -263,7 +266,7 @@ Batch owners edit `target`, `context.reader_intent`, and `migration` by key; the
 
 These are owner-maintained progress states, not proof of rendering, source verification, or review approval. The [coverage guard](#guarding-manifest-coverage-blocking-ci) checks an `in-progress` or `completed` entry against the tree and the composition spec; it checks a `not-started` or `exception` entry only for the coverage of its occurrence.
 
-### Checking Tree Drift (Advisory)
+### Checking Tree Drift
 
 ```bash
 python scripts/diagram_inventory.py --verify-tree
@@ -271,7 +274,7 @@ python scripts/diagram_inventory.py --verify-tree
 
 This compares extracted diagram records with the baseline; it does not report extraction completeness. Consult `unrecognized_mermaid_fences` through `--check` for blocking extraction findings. A drift-free result alone does not establish a complete inventory.
 
-The JSON categories are `added` and `removed` keys; `moved` key changes with identical bodies; `changed` body hashes; `reclassified` genre, syntax type, or assignment changes; `provenance` changes to the complete provenance record; and `relocated` changes to the same key's line, end line, or heading path. `assets` lists changed exclusion-group path sets as `{group, added, removed}` records, with `group: null` for the unclassified-asset set; `visuals` lists keys added, removed, or changed in non-Mermaid visual records. Paths are compared as sets, not list order. Drift remains advisory (exit zero); adding `--strict` makes any non-empty category fail. The [coverage guard](#guarding-manifest-coverage-blocking-ci) makes `added`, `removed` and `moved` blocking, and `changed` and `provenance` blocking for started migrations only; `reclassified`, `relocated`, `assets` and `visuals` stay advisory. This does not refresh Azure capture or validation dates.
+The JSON categories are `added` and `removed` keys; `moved` key changes with identical bodies; `changed` body hashes; `reclassified` genre, syntax type, or assignment changes; `provenance` changes to the complete provenance record; and `relocated` changes to the same key's line, end line, or heading path. `assets` lists changed exclusion-group path sets as `{group, added, removed}` records, with `group: null` for the unclassified-asset set; `visuals` lists keys added, removed, or changed in non-Mermaid visual records. Paths are compared as sets, not list order. Without `--strict`, drift is advisory (exit zero); CI adds `--strict`, making any non-empty category fail. The [coverage guard](#guarding-manifest-coverage-blocking-ci) separately makes `added`, `removed` and `moved` blocking, and `changed` and `provenance` blocking for started migrations only. This does not refresh Azure capture or validation dates.
 
 ### Displaying Summary Metrics
 
