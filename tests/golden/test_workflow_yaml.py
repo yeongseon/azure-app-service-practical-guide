@@ -147,6 +147,23 @@ class WorkflowYamlTests(unittest.TestCase):
         ):
             self.assertIn(path, staged)
 
+    def test_documentation_deployment_filter_covers_build_inputs(self):
+        yaml = YAML(typ="safe")
+        workflow_path = ROOT / ".github/workflows/docs.yml"
+        with workflow_path.open(encoding="utf-8") as stream:
+            workflow = yaml.load(stream)
+        push = workflow["on"]["push"]
+        required = {
+            "docs/**",
+            "mkdocs.yml",
+            "requirements-docs.txt",
+            ".github/workflows/docs.yml",
+        }
+
+        self.assertTrue(required <= set(push["paths"]))
+        self.assertEqual([path for path in push["paths"] if path.startswith("!")], [])
+        self.assertIn("main", push["branches"])
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
