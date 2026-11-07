@@ -1,11 +1,14 @@
+import argparse
 import contextlib
+import importlib.util
 import io
 import json
+import logging
 import sys
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from tools import build_doc_graph as graph
@@ -200,6 +203,90 @@ class GraphGenerationTests(unittest.TestCase):
 
         self.assertEqual({slug: doc["file"] for slug, doc in documents.items()},
                          {"shared": "visible.md"})
+
+    def reference_parser(self) -> argparse.ArgumentParser:
+        return argparse.ArgumentParser(prog="build_doc_graph.py", description="Build documentation graphs")
+
+    def clear_output(self) -> None:
+        for stream in (self.stdout, self.stderr):
+            stream.seek(0)
+            stream.truncate()
+
+    def run_main_untouched(self, *argv: str) -> tuple[object, list[MagicMock]]:
+        docs, output = MagicMock(spec=Path), MagicMock(spec=Path)
+        stdin = MagicMock(spec=io.TextIOBase)
+        with contextlib.ExitStack() as stack:
+            stack.enter_context(patch.object(sys, "argv", ["build_doc_graph.py", *argv]))
+            stack.enter_context(patch.object(sys, "stdin", stdin))
+            stack.enter_context(patch.object(logging.root, "handlers", []))
+            stack.enter_context(patch.object(logging.root, "level", logging.WARNING))
+            stack.enter_context(patch.object(graph, "DOCS_DIR", docs))
+            stack.enter_context(patch.object(graph, "OUTPUT_DIR", output))
+            scan = stack.enter_context(patch.object(graph, "scan_documents"))
+            with self.assertRaises(SystemExit) as raised:
+                graph.main()
+        return raised.exception.code, [docs, output, stdin, scan]
+
+    def test_main_rejects_unrecognized_arguments_before_any_scan(self) -> None:
+        usage = self.reference_parser().format_usage()
+        for args in (
+            ("--learning-paths",),
+            ("--no-such-option",),
+            ("--no-such-option", "--learning-paths"),
+            ("--learning-paths", "--no-such-option"),
+            ("--learning-paths", "@no-such-argument-file.txt"),
+        ):
+            with self.subTest(args=args):
+                self.clear_output()
+
+                code, untouched = self.run_main_untouched(*args)
+
+                self.assertEqual(code, 2)
+                self.assertEqual(
+                    self.stderr.getvalue(),
+                    f"{usage}build_doc_graph.py: error: unrecognized arguments: {' '.join(args)}\n",
+                )
+                self.assertEqual(self.stdout.getvalue(), "")
+                self.assertEqual([mock.mock_calls for mock in untouched], [[], [], [], []])
+
+    def test_main_help_exits_without_scanning_and_prints_only_the_help_text(self) -> None:
+        help_text = self.reference_parser().format_help()
+        for argv in (
+            ("--help",),
+            ("-h",),
+            ("--help", "--learning-paths"),
+            ("--learning-paths", "--help"),
+            ("--learning-paths=yes", "--help"),
+            ("--no-such-option", "-h"),
+            ("-h", "--no-such-option"),
+            ("@no-such-argument-file.txt", "--help"),
+        ):
+            with self.subTest(argv=argv):
+                self.clear_output()
+
+                code, untouched = self.run_main_untouched(*argv)
+
+                self.assertEqual(code, 0)
+                self.assertEqual(self.stdout.getvalue(), help_text)
+                self.assertEqual(self.stderr.getvalue(), "")
+                self.assertEqual([mock.mock_calls for mock in untouched], [[], [], [], []])
+
+    def test_importing_the_module_reads_no_documents_and_no_input(self) -> None:
+        spec = importlib.util.spec_from_file_location("build_doc_graph_fresh", graph.__file__)
+        assert spec is not None and spec.loader is not None
+        module = importlib.util.module_from_spec(spec)
+        guarded = ("rglob", "glob", "iterdir", "read_text", "read_bytes", "open", "mkdir", "write_text")
+        mocks = {name: MagicMock() for name in guarded}
+        stdin = MagicMock(spec=io.TextIOBase)
+        with contextlib.ExitStack() as stack:
+            for name, mock in mocks.items():
+                stack.enter_context(patch.object(Path, name, mock))
+            stack.enter_context(patch.object(sys, "stdin", stdin))
+            spec.loader.exec_module(module)
+
+        self.assertEqual({name: mock.mock_calls for name, mock in mocks.items()}, {name: [] for name in guarded})
+        self.assertEqual(stdin.mock_calls, [])
+        self.assertEqual((self.stdout.getvalue(), self.stderr.getvalue()), ("", ""))
 
 
 if __name__ == "__main__":
