@@ -155,7 +155,7 @@ The visualizations use [Cytoscape.js](https://js.cytoscape.org/) for interactive
 
 - **Click to Navigate**: Click any node to open the corresponding documentation page
 - **Search/Filter**: Use the search box to highlight matching nodes
-- **Zoom/Pan**: Mouse wheel to zoom, drag to pan
+- **Zoom/Pan**: Off by default so the page scrolls normally; turn on **Graph gestures** in the controls above each graph to zoom with the mouse wheel or a pinch and to pan by dragging the background
 - **Layout**: Automatic force-directed layout with manual adjustment support
 
 ## Contributing to Visualizations

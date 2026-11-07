@@ -347,6 +347,8 @@
       // Interaction options
       minZoom: 0.2,
       maxZoom: 4,
+      userZoomingEnabled: false,
+      userPanningEnabled: false,
       wheelSensitivity: 0.25
     });
 
@@ -379,6 +381,41 @@
    * Setup troubleshooting map controls
    */
   function setupTsControls(cy) {
+    const gestures = document.createElement('button');
+    gestures.type = 'button';
+    gestures.className = 'graph-gestures';
+    gestures.setAttribute('aria-pressed', 'false');
+    gestures.setAttribute('aria-describedby', 'ts-gestures-hint');
+    const gestureState = document.createElement('span');
+    gestureState.setAttribute('aria-hidden', 'true');
+    gestureState.textContent = ': off';
+    gestures.append('Graph gestures', gestureState);
+    const hint = document.createElement('span');
+    hint.id = 'ts-gestures-hint';
+    hint.className = 'graph-gesture-hint';
+    hint.textContent = 'Turn on to zoom with the wheel or pinch and pan by dragging the background with mouse or touch. Turn off to scroll the page. Tapping nodes still opens pages. Reset View turns gestures off.';
+    document.getElementById('ts-controls').append(gestures, hint);
+    function setGestures(enabled) {
+      cy.userZoomingEnabled(enabled);
+      cy.userPanningEnabled(enabled);
+      cy.container().classList.toggle('graph-gestures-enabled', enabled);
+      gestures.setAttribute('aria-pressed', String(enabled));
+      gestureState.textContent = enabled ? ': on' : ': off';
+    }
+    gestures.addEventListener('click', function() {
+      setGestures(!cy.userPanningEnabled());
+    });
+    cy.container().addEventListener('touchstart', function(event) {
+      if (!cy.userPanningEnabled()) {
+        event.stopImmediatePropagation();
+      }
+    }, { capture: true, passive: true });
+    document.addEventListener('gesturestart', function(event) {
+      if (!cy.userPanningEnabled() && cy.container().contains(event.target)) {
+        event.stopImmediatePropagation();
+      }
+    }, { capture: true, passive: true });
+
     // Search
     const searchInput = document.getElementById('ts-search');
     if (searchInput) {
@@ -430,6 +467,7 @@
     const resetButton = document.getElementById('ts-reset');
     if (resetButton) {
       resetButton.addEventListener('click', function() {
+        setGestures(false);
         cy.elements().removeClass('highlighted dimmed');
         cy.fit();
         
