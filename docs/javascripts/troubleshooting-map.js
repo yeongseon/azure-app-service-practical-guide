@@ -138,7 +138,15 @@
         links.append(list);
         if (typeof cytoscape === 'undefined') {
           console.warn('Cytoscape.js not loaded');
-          container.innerHTML = '<p style="color: var(--md-default-fg-color--light); text-align: center; padding: 2rem;">Loading visualization library...</p>';
+          const message = document.createElement('p');
+          message.style.cssText = 'color: var(--md-default-fg-color); text-align: center; padding: 2rem;';
+          message.textContent = 'The interactive graph could not be loaded because the visualization library did not load. The same destinations are listed below. ';
+          const link = document.createElement('a');
+          link.href = '#troubleshooting-graph-links';
+          link.textContent = 'Go to Troubleshooting graph destinations';
+          link.style.cssText = 'color: inherit; text-decoration: underline;';
+          message.append(link);
+          container.replaceChildren(message);
           return;
         }
         renderTroubleshootingMap(container, data);
