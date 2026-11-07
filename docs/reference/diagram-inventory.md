@@ -251,7 +251,7 @@ python scripts/diagram_inventory.py --write --base-commit "$(git rev-parse HEAD)
 
 Use an explicitly reviewed baseline commit when rebasing the inventory. Without an override, subsequent writes preserve the existing base commit. Do not edit the manifest or generated blocks by hand.
 
-When a change moves a Mermaid fence, even by one line, regenerate with `python scripts/diagram_inventory.py --write` and commit the generated changes; never edit manifest locations by hand. Disclose the affected keys and their old and new lines in the pull request. CI now runs `--verify-tree --strict` on matching pull requests and pushes to `main`, so unregenerated location drift fails even when the diagram body is unchanged.
+When a change adds, removes, moves (even by one line) or edits the body of a Mermaid fence, regenerate with `python scripts/diagram_inventory.py --write` and commit the generated changes; never edit manifest locations by hand. Disclose the affected keys and their old and new lines in the pull request. CI runs `--verify-tree --strict` on matching pull requests and pushes to `main`, so unregenerated drift of any reported category fails the build, even when only a line moved or only a body changed. The pie chart of the [Golden status dashboard](../meta/golden-status.md) is generated from the gate counts, so a change that alters those counts must regenerate the manifest as well; the scheduled `Refresh Golden Status` workflow commits only the dashboard, so its pull request fails this step until the manifest is regenerated on its branch.
 
 ### Migration Progress States
 

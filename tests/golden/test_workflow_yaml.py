@@ -114,6 +114,7 @@ class WorkflowYamlTests(unittest.TestCase):
 
                 # Then: neither a missing step nor a skip/fail-open policy is allowed.
                 self.assertEqual(len(steps), 1, command)
+                self.assertNotIn("needs", job, command)
                 for scope in (job, steps[0]):
                     self.assertNotIn("continue-on-error", scope, command)
                     self.assertNotIn("if", scope, command)
