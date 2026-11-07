@@ -5,7 +5,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from tools import build_doc_graph as graph
@@ -201,32 +201,45 @@ class GraphGenerationTests(unittest.TestCase):
         self.assertEqual({slug: doc["file"] for slug, doc in documents.items()},
                          {"shared": "visible.md"})
 
-    def test_main_rejects_retired_flag_before_scanning(self) -> None:
-        self.page("a.md", "slug: shared")
-        self.page("b.md", "slug: shared")
+    def run_main_untouched(self, *argv: str) -> tuple[object, MagicMock, MagicMock, MagicMock]:
+        docs, output = MagicMock(spec=Path), MagicMock(spec=Path)
+        with contextlib.ExitStack() as stack:
+            stack.enter_context(patch.object(sys, "argv", ["build_doc_graph.py", *argv]))
+            stack.enter_context(patch.object(graph, "DOCS_DIR", docs))
+            stack.enter_context(patch.object(graph, "OUTPUT_DIR", output))
+            scan = stack.enter_context(patch.object(graph, "scan_documents"))
+            with self.assertRaises(SystemExit) as raised:
+                graph.main()
+        return raised.exception.code, docs, output, scan
 
-        with patch.object(sys, "argv", ["build_doc_graph.py", "--learning-paths"]):
-            with patch.object(graph, "scan_documents") as scan:
-                with self.assertRaises(SystemExit) as raised:
-                    graph.main()
+    def test_main_rejects_unrecognized_arguments_before_any_scan(self) -> None:
+        for flag in ("--learning-paths", "--no-such-option"):
+            with self.subTest(flag=flag):
+                self.stdout.seek(0)
+                self.stdout.truncate()
+                self.stderr.seek(0)
+                self.stderr.truncate()
 
-        self.assertEqual(raised.exception.code, 2)
-        self.assertIn("unrecognized arguments: --learning-paths", self.stderr.getvalue())
-        scan.assert_not_called()
-        self.assertEqual(self.stdout.getvalue(), "")
-        self.assertFalse(self.output.exists())
+                code, docs, output, scan = self.run_main_untouched(flag)
+
+                self.assertEqual(code, 2)
+                self.assertTrue(self.stderr.getvalue().startswith("usage:"))
+                self.assertTrue(
+                    self.stderr.getvalue().endswith(f"error: unrecognized arguments: {flag}\n")
+                )
+                self.assertEqual(self.stdout.getvalue(), "")
+                scan.assert_not_called()
+                self.assertEqual((docs.mock_calls, output.mock_calls), ([], []))
 
     def test_main_help_exits_without_scanning_or_listing_the_retired_flag(self) -> None:
-        with patch.object(sys, "argv", ["build_doc_graph.py", "--help"]):
-            with patch.object(graph, "scan_documents") as scan:
-                with self.assertRaises(SystemExit) as raised:
-                    graph.main()
+        code, docs, output, scan = self.run_main_untouched("--help")
 
-        self.assertEqual(raised.exception.code, 0)
-        self.assertIn("usage:", self.stdout.getvalue())
+        self.assertEqual(code, 0)
+        self.assertTrue(self.stdout.getvalue().startswith("usage:"))
         self.assertNotIn("--learning-paths", self.stdout.getvalue())
+        self.assertEqual(self.stderr.getvalue(), "")
         scan.assert_not_called()
-        self.assertFalse(self.output.exists())
+        self.assertEqual((docs.mock_calls, output.mock_calls), ([], []))
 
 
 if __name__ == "__main__":
