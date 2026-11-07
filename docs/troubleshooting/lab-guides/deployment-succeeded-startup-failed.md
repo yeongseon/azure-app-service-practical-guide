@@ -984,7 +984,7 @@ Look for:
 - The **quiescence from 3:36 PM to 3:48 PM**: the platform's cold-start safety block engages and stops retrying.
 - The **second wave at 3:50-3:52 PM**: external HTTP probes to the front-door woke the container up, and it failed again identically.
 
-Expected result: One tiny orange bar (count = 1) against 35+ runtime failure bars. If your capture shows any other pattern (for example, no runtime bars at all, or the orange bar appearing after the runtime bars), the hypothesis is falsified — treat the container as healthy or investigate a different failure mode.
+Expected result: One tiny orange bar (count = 1) against 35+ runtime failure bars. If your capture shows any other pattern (for example, no runtime bars at all, or the orange bar appearing after the runtime bars), treat the result as inconclusive, not as a refutation: the runtime bars come from a query over the last 120 minutes that matches three message phrases, the orange bar is a synthesized row, and log ingestion can lag, so an absent or shifted bar does not show that the container is healthy. Check the time window, the phrases and the ingestion state, and collect independent health evidence (probes, process stats) before you conclude that the container is healthy or look for a different failure mode.
 Next step: In your own investigations, save this query into a Log Analytics workbook so any incident responder can render the same control-plane vs data-plane split for any deployment ID in under 60 seconds.
 
 ### 4.5 Postfix observations
