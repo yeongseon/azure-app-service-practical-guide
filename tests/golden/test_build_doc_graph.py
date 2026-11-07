@@ -206,11 +206,26 @@ class GraphGenerationTests(unittest.TestCase):
         self.page("b.md", "slug: shared")
 
         with patch.object(sys, "argv", ["build_doc_graph.py", "--learning-paths"]):
-            with self.assertRaises(SystemExit) as raised:
-                graph.main()
+            with patch.object(graph, "scan_documents") as scan:
+                with self.assertRaises(SystemExit) as raised:
+                    graph.main()
 
         self.assertEqual(raised.exception.code, 2)
+        self.assertIn("unrecognized arguments: --learning-paths", self.stderr.getvalue())
+        scan.assert_not_called()
         self.assertEqual(self.stdout.getvalue(), "")
+        self.assertFalse(self.output.exists())
+
+    def test_main_help_exits_without_scanning_or_listing_the_retired_flag(self) -> None:
+        with patch.object(sys, "argv", ["build_doc_graph.py", "--help"]):
+            with patch.object(graph, "scan_documents") as scan:
+                with self.assertRaises(SystemExit) as raised:
+                    graph.main()
+
+        self.assertEqual(raised.exception.code, 0)
+        self.assertIn("usage:", self.stdout.getvalue())
+        self.assertNotIn("--learning-paths", self.stdout.getvalue())
+        scan.assert_not_called()
         self.assertFalse(self.output.exists())
 
 
