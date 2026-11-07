@@ -25,14 +25,14 @@ Every quality gate in this repository, its most recently recorded result, and th
 
 ## Summary
 
-*Snapshot of `4b6806f plus uncommitted working-tree changes`, generated 2026-11-03.*
+*Snapshot of `14b575b plus uncommitted working-tree changes`, generated 2026-11-07.*
 
-*Only the rows of `Diagram manifest coverage tests` and `Diagram manifest coverage` ran on that date; every other row is carried over unchanged from the previous snapshot (`6bca0d6`, 2026-10-30; its `Diagram inventory tests` and `Diagram inventory consistency` rows ran that day, its `Repository audit coverage` row ran in `036376d` the same day, and its other rows come from `1327bae`, 2026-10-19) and was not re-run in this change. The `Validate Golden Status` job re-verifies the CI-verifiable statuses.*
+*Only the row of `Diagram inventory tree drift` ran on that date; every other row is carried over unchanged from the previous snapshot (`4b6806f`, 2026-11-03; its `Diagram manifest coverage tests` and `Diagram manifest coverage` rows ran that day, its `Diagram inventory tests` and `Diagram inventory consistency` rows ran on 2026-10-30 in `6bca0d6`, its `Repository audit coverage` row ran in `036376d` the same day, and its other rows come from `1327bae`, 2026-10-19) and was not re-run in this change. The `Validate Golden Status` job re-verifies the CI-verifiable statuses.*
 
 | Metric | Count |
 |---|---:|
-| Registered gates | 45 |
-| ✅ Pass | 38 |
+| Registered gates | 46 |
+| ✅ Pass | 39 |
 | ❌ Fail | 0 |
 | ⚠️ Warn | 0 |
 | ➖ Skipped | 7 |
@@ -43,13 +43,13 @@ Every quality gate in this repository, its most recently recorded result, and th
 <!-- diagram-id: golden-status-gate-outcomes-pie -->
 ```mermaid
 pie title Quality Gate Outcomes
-    "Pass" : 38
+    "Pass" : 39
     "Skipped" : 7
 ```
 
 ## Gate Results
 
-These are locally executed results, not GitHub Actions statuses. **Skipped** means the machine that generated this page lacked the toolchain the gate needs. **Warn** means the gate reported findings its CI job would not fail on, either because the job is advisory or because the dashboard runs a wider scope than CI does. 26 of 45 gates are re-run and compared by the `Validate Golden Status` job, so a flip to **Fail** cannot sit here unnoticed.
+These are locally executed results, not GitHub Actions statuses. **Skipped** means the machine that generated this page lacked the toolchain the gate needs. **Warn** means the gate reported findings its CI job would not fail on, either because the job is advisory or because the dashboard runs a wider scope than CI does. 27 of 46 gates are re-run and compared by the `Validate Golden Status` job, so a flip to **Fail** cannot sit here unnoticed.
 
 <!-- golden-status:results:start -->
 | Gate | Severity | Status | Detail | Time |
@@ -60,6 +60,7 @@ These are locally executed results, not GitHub Actions statuses. **Skipped** mea
 | Mermaid syntax | Blocking | ✅ Pass | Diagrams checked: 395 · Errors found: 0 | < 10s |
 | Diagram inventory tests | Blocking | ✅ Pass | Ran 117 tests in 9.024s · OK (skipped=1) | < 10s |
 | Diagram inventory consistency | Blocking | ✅ Pass | diagram inventory: check passed | < 10s |
+| Diagram inventory tree drift | Blocking | ✅ Pass | "added": [], · "assets": [], · "changed": [], · "moved": [], · "provenance": [], · "reclassified": [], · "relocated": [], · "removed": [], · "visuals": [] | < 10s |
 | Diagram manifest coverage tests | Blocking | ✅ Pass | Ran 28 tests in 1.984s · OK | < 10s |
 | Diagram manifest coverage | Blocking | ✅ Pass | diagram manifest coverage: check passed (405 occurrences, 0 with a started migration) | < 10s |
 | Content sources | Blocking | ✅ Pass | Files with mermaid: 241 · Validation errors: 0 | < 10s |
@@ -115,6 +116,7 @@ Generated from the `GATES` registry in `scripts/generate_golden_status.py`. CI f
 | Mermaid syntax | Every diagram parses as valid Mermaid. | Blocking | `python3 scripts/validate_mermaid_syntax.py` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
 | Diagram inventory tests | Inventory parsing, classification, ownership, schema parity and deterministic baseline reproduction pass their fixture tests. | Blocking | `python3 scripts/test_diagram_inventory.py` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
 | Diagram inventory consistency | Frozen inventory schema, assignment totals, pinned hashes and generated tables reconcile; does not render diagrams or verify provenance. | Blocking | `python3 scripts/diagram_inventory.py --check` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
+| Diagram inventory tree drift | The committed manifest and the tree agree on every Mermaid occurrence and on the line range and heading path of every fence; any added, removed, moved, changed, reclassified, provenance, relocated, asset or visual difference, including a fence that moves by one line, fails until the manifest is regenerated with `--write`; it does not render diagrams or verify provenance. | Blocking | `python3 scripts/diagram_inventory.py --verify-tree --strict` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
 | Diagram manifest coverage tests | Fixture tests show that the coverage guard rejects uncovered, stale, renamed and unrecognizable occurrences, duplicate manifest keys, bad composition references and incomplete started migrations, and accepts edits to entries whose migration has not started; one test checks that the content-sources workflow names the guard and these tests in a run step. | Blocking | `python3 scripts/test_check_diagram_manifest_coverage.py` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
 | Diagram manifest coverage | The committed manifest and the tree list the same Mermaid occurrences, no unrecognized-fence finding of the scanner has a blocking reason (`blockquote`, `list-marker` or `indented`), and entries whose migration has started keep their diagram ID, declared provenance, body and composition references; the informational findings (`html-comment`, `indented-code`) do not fail it, and it does not render diagrams, verify provenance or require any migration. | Blocking | `python3 scripts/check_diagram_manifest_coverage.py` | `Validate Content Source Metadata` — `validate-content-sources.yml` |
 | Content sources | Pages with Mermaid carry content_sources metadata with a valid source type. | Blocking | `python3 scripts/validate_content_sources.py` | `Validate Content Source Metadata` — `validate-content-sources.yml` |

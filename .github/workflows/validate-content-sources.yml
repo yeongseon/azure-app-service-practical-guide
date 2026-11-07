@@ -105,6 +105,9 @@ jobs:
         run: |
           python scripts/diagram_inventory.py --check
 
+      - name: Reject diagram inventory tree drift
+        run: python scripts/diagram_inventory.py --verify-tree --strict
+
       - name: Run diagram manifest coverage tests
         run: |
           python scripts/test_check_diagram_manifest_coverage.py
