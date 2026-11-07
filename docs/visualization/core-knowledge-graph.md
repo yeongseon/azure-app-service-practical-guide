@@ -44,7 +44,7 @@ content_sources:
 The Core Knowledge Graph provides a bird's-eye view of the entire Azure App Service Practical Guide. It shows how platform concepts, best practices, troubleshooting playbooks, and reference materials interconnect. <span id="core-graph-description">The visual graph cannot be operated by keyboard; use the same destinations in the <a href="#core-graph-links">Core graph destinations</a> list immediately below it.</span>
 
 <div id="core-graph-container">
-  <div id="graph-controls">
+  <p class="graph-narrow-notice">Graph labels are too small at this width; use the same destinations in the <a href="#core-graph-links">text list</a>.</p><div id="graph-controls">
     <input type="text" id="graph-search" aria-label="Search nodes" placeholder="Search nodes..." />
     <select id="graph-filter" aria-label="Filter nodes by type">
       <option value="all">All Types</option>

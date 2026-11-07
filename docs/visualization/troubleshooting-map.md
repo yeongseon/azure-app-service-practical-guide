@@ -62,7 +62,7 @@ content_sources:
 Navigate the troubleshooting documentation visually. This map shows how symptoms lead to playbooks, how playbooks connect to labs and KQL queries, and how evidence patterns validate hypotheses. <span id="troubleshooting-graph-description">The visual graph cannot be operated by keyboard; use the same destinations in the <a href="#troubleshooting-graph-links">Troubleshooting graph destinations</a> list immediately below it.</span>
 
 <div id="troubleshooting-map-container">
-  <div id="ts-controls">
+  <p class="graph-narrow-notice">Graph labels are too small at this width; use the same destinations in the <a href="#troubleshooting-graph-links">text list</a>.</p><div id="ts-controls">
     <input type="text" id="ts-search" aria-label="Search by symptom or topic" placeholder="Search by symptom or topic..." />
     <select id="ts-category" aria-label="Filter by category">
       <option value="all">All Categories</option>
