@@ -44,13 +44,13 @@ class EvaluationTests(unittest.TestCase):
     def test_valid_run_supports_the_hypothesis(self):
         self.assertEqual(self.hypothesis(), 'SUPPORTED')
 
-    def test_forged_activation_flag_is_not_trusted(self):
-        """The derived flag must be recomputed, never believed.
+    def test_self_asserted_activation_flag_cannot_decide_a_healthy_fault(self):
+        """The runner's own flag is control evidence, never a verdict.
 
-        `intervention_activated` is written by the runner. If the evaluator
-        trusts it, a phase can assert its own activation without the
-        readback or probe evidence that defines it - the same summary-over-raw
-        inversion these gates exist to prevent.
+        `intervention_activated` is written by the runner. A phase that
+        asserts its own activation, without the readback or probe-budget
+        fields behind it, must leave a healthy fault phase undecided: no
+        refutation and no support.
         """
         for probe in self.phases['fault']['probes']:
             probe['status'] = 200
@@ -61,13 +61,17 @@ class EvaluationTests(unittest.TestCase):
         self.logs = []
 
         outcome = pilot.evaluate(self.capture, self.phases, self.logs)
-        self.assertNotEqual(
-            outcome['hypothesis_evaluation'],
-            'CONTRADICTED',
-            msg='a self-asserted activation flag must not license a refutation',
-        )
+        self.assertEqual(outcome['evidence_validation'], 'INCONCLUSIVE')
+        self.assertEqual(outcome['hypothesis_evaluation'], 'INCONCLUSIVE')
+        self.assertEqual(outcome['refutations'], [])
+        self.assertEqual(pilot.exit_code_for(outcome), 2)
 
-    def test_activation_requires_the_configuration_to_read_back_unchanged(self):
+    def test_good_readback_with_activation_claims_cannot_decide_a_healthy_fault(self):
+        """Whatever the readback and budget fields claim, a healthy fault is undecided.
+
+        The evaluator does not read them: a readback that shows the healthy
+        command, an exhausted budget and a true flag change nothing.
+        """
         for probe in self.phases['fault']['probes']:
             probe['status'] = 200
         self.phases['fault']['status'] = 200
@@ -80,7 +84,10 @@ class EvaluationTests(unittest.TestCase):
         self.logs = []
 
         outcome = pilot.evaluate(self.capture, self.phases, self.logs)
-        self.assertNotEqual(outcome['hypothesis_evaluation'], 'CONTRADICTED')
+        self.assertEqual(outcome['evidence_validation'], 'INCONCLUSIVE')
+        self.assertEqual(outcome['hypothesis_evaluation'], 'INCONCLUSIVE')
+        self.assertEqual(outcome['refutations'], [])
+        self.assertEqual(pilot.exit_code_for(outcome), 2)
 
     def test_healthy_fault_without_activation_proof_is_inconclusive(self):
         """A control-plane write is not proof the workload picked it up.
@@ -141,7 +148,7 @@ class EvaluationTests(unittest.TestCase):
         self.assertEqual(outcome['hypothesis_evaluation'], 'INCONCLUSIVE')
         self.assertEqual(outcome['refutations'], [])
 
-    def test_healthy_proxy_with_import_rows_still_lacks_worker_activation(self) -> None:
+    def test_healthy_proxy_with_import_rows_lacks_worker_bound_activation_evidence(self) -> None:
         self.phases['fault'].update(
             status=200, config_readback=pilot.BAD, probe_budget_exhausted=True,
             intervention_activated=True,
