@@ -38,6 +38,7 @@ APP_JOBS: Final = {
     "apps/dotnet-aspnetcore/": Job.DOTNET,
     "apps/java-springboot/": Job.JAVA,
 }
+LAB_ROOT_PYTHON_RE: Final = re.compile(r"labs/[^/]+/[^/]+\.py")
 SHELL_COMMAND_RE: Final = re.compile(
     r"^\s*(?:\$\s*)?(?:(?:az|bash|cd|chmod|curl|docker|dotnet|flask|gradle|gunicorn|kubectl|mkdocs|mvn|node|npm|nslookup|pip3?|python3?|sh|sleep|uvicorn|zip)(?:\s|$)|/usr/sbin/sshd(?:\s|$)|\./|(?:apps|labs|scripts)/\S+\.sh\b)"
 )
@@ -222,6 +223,8 @@ def _jobs_for_path(path: str) -> set[Job]:
         return set(ALL_JOBS)
     if path == "labs/golden-classification.json" or "/golden/" in path:
         return set(ALL_JOBS)
+    if LAB_ROOT_PYTHON_RE.fullmatch(path):
+        return {Job.SCRIPTS, Job.BICEP, Job.GOLDEN}
     if path.startswith("labs/"):
         return {Job.SCRIPTS, Job.BICEP}
     for prefix, job in APP_JOBS.items():

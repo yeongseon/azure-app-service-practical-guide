@@ -213,6 +213,30 @@ class ImpactClassifierTests(unittest.TestCase):
 
         self.assertEqual(selected, frozenset({Job.SCRIPTS, Job.BICEP}))
 
+    def test_lab_runner_python_files_also_select_the_lab_verifiers(self) -> None:
+        for path in (
+            "labs/deployment-succeeded-startup-failed/run.py",
+            "labs/deployment-succeeded-startup-failed/test_run.py",
+        ):
+            with self.subTest(path=path):
+                selected = classify_changes((Change.modified(path),))
+
+                self.assertEqual(selected, frozenset({Job.SCRIPTS, Job.BICEP, Job.GOLDEN}))
+
+    def test_lab_app_python_file_keeps_the_default_lab_selection(self) -> None:
+        selected = classify_changes(
+            (Change.modified("labs/deployment-succeeded-startup-failed/app/app.py"),)
+        )
+
+        self.assertEqual(selected, frozenset({Job.SCRIPTS, Job.BICEP}))
+
+    def test_renaming_a_lab_runner_selects_the_lab_verifiers(self) -> None:
+        selected = classify_changes(
+            (Change.renamed("labs/old-lab/run.py", "labs/new-lab/run.py"),)
+        )
+
+        self.assertEqual(selected, frozenset({Job.SCRIPTS, Job.BICEP, Job.GOLDEN}))
+
     def test_shared_lab_helper_expands_all_jobs(self) -> None:
         selected = classify_changes(
             (Change.modified("labs/_shared/scripts/deploy-lab.sh"),)
