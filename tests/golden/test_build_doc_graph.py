@@ -1,3 +1,4 @@
+import argparse
 import contextlib
 import io
 import json
@@ -201,6 +202,14 @@ class GraphGenerationTests(unittest.TestCase):
         self.assertEqual({slug: doc["file"] for slug, doc in documents.items()},
                          {"shared": "visible.md"})
 
+    def reference_parser(self) -> argparse.ArgumentParser:
+        return argparse.ArgumentParser(prog="build_doc_graph.py", description="Build documentation graphs")
+
+    def clear_output(self) -> None:
+        for stream in (self.stdout, self.stderr):
+            stream.seek(0)
+            stream.truncate()
+
     def run_main_untouched(self, *argv: str) -> tuple[object, MagicMock, MagicMock, MagicMock]:
         docs, output = MagicMock(spec=Path), MagicMock(spec=Path)
         with contextlib.ExitStack() as stack:
@@ -213,33 +222,35 @@ class GraphGenerationTests(unittest.TestCase):
         return raised.exception.code, docs, output, scan
 
     def test_main_rejects_unrecognized_arguments_before_any_scan(self) -> None:
+        usage = self.reference_parser().format_usage()
         for flag in ("--learning-paths", "--no-such-option"):
             with self.subTest(flag=flag):
-                self.stdout.seek(0)
-                self.stdout.truncate()
-                self.stderr.seek(0)
-                self.stderr.truncate()
+                self.clear_output()
 
                 code, docs, output, scan = self.run_main_untouched(flag)
 
                 self.assertEqual(code, 2)
-                self.assertTrue(self.stderr.getvalue().startswith("usage:"))
-                self.assertTrue(
-                    self.stderr.getvalue().endswith(f"error: unrecognized arguments: {flag}\n")
+                self.assertEqual(
+                    self.stderr.getvalue(),
+                    f"{usage}build_doc_graph.py: error: unrecognized arguments: {flag}\n",
                 )
                 self.assertEqual(self.stdout.getvalue(), "")
                 scan.assert_not_called()
                 self.assertEqual((docs.mock_calls, output.mock_calls), ([], []))
 
-    def test_main_help_exits_without_scanning_or_listing_the_retired_flag(self) -> None:
-        code, docs, output, scan = self.run_main_untouched("--help")
+    def test_main_help_exits_without_scanning_and_prints_only_the_help_text(self) -> None:
+        help_text = self.reference_parser().format_help()
+        for argv in (("--help",), ("-h",), ("--help", "--learning-paths")):
+            with self.subTest(argv=argv):
+                self.clear_output()
 
-        self.assertEqual(code, 0)
-        self.assertTrue(self.stdout.getvalue().startswith("usage:"))
-        self.assertNotIn("--learning-paths", self.stdout.getvalue())
-        self.assertEqual(self.stderr.getvalue(), "")
-        scan.assert_not_called()
-        self.assertEqual((docs.mock_calls, output.mock_calls), ([], []))
+                code, docs, output, scan = self.run_main_untouched(*argv)
+
+                self.assertEqual(code, 0)
+                self.assertEqual(self.stdout.getvalue(), help_text)
+                self.assertEqual(self.stderr.getvalue(), "")
+                scan.assert_not_called()
+                self.assertEqual((docs.mock_calls, output.mock_calls), ([], []))
 
 
 if __name__ == "__main__":
