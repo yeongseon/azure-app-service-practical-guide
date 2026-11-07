@@ -2,6 +2,7 @@ import argparse
 import contextlib
 import io
 import json
+import logging
 import sys
 import tempfile
 import unittest
@@ -210,47 +211,62 @@ class GraphGenerationTests(unittest.TestCase):
             stream.seek(0)
             stream.truncate()
 
-    def run_main_untouched(self, *argv: str) -> tuple[object, MagicMock, MagicMock, MagicMock]:
+    def run_main_untouched(self, *argv: str) -> tuple[object, list[MagicMock]]:
         docs, output = MagicMock(spec=Path), MagicMock(spec=Path)
+        stdin = MagicMock(spec=io.TextIOBase)
         with contextlib.ExitStack() as stack:
             stack.enter_context(patch.object(sys, "argv", ["build_doc_graph.py", *argv]))
+            stack.enter_context(patch.object(sys, "stdin", stdin))
+            stack.enter_context(patch.object(logging.root, "handlers", []))
+            stack.enter_context(patch.object(logging.root, "level", logging.WARNING))
             stack.enter_context(patch.object(graph, "DOCS_DIR", docs))
             stack.enter_context(patch.object(graph, "OUTPUT_DIR", output))
             scan = stack.enter_context(patch.object(graph, "scan_documents"))
             with self.assertRaises(SystemExit) as raised:
                 graph.main()
-        return raised.exception.code, docs, output, scan
+        return raised.exception.code, [docs, output, stdin, scan]
 
     def test_main_rejects_unrecognized_arguments_before_any_scan(self) -> None:
         usage = self.reference_parser().format_usage()
-        for flag in ("--learning-paths", "--no-such-option"):
-            with self.subTest(flag=flag):
+        for args in (
+            ("--learning-paths",),
+            ("--no-such-option",),
+            ("--no-such-option", "--learning-paths"),
+            ("--learning-paths", "--no-such-option"),
+        ):
+            with self.subTest(args=args):
                 self.clear_output()
 
-                code, docs, output, scan = self.run_main_untouched(flag)
+                code, untouched = self.run_main_untouched(*args)
 
                 self.assertEqual(code, 2)
                 self.assertEqual(
                     self.stderr.getvalue(),
-                    f"{usage}build_doc_graph.py: error: unrecognized arguments: {flag}\n",
+                    f"{usage}build_doc_graph.py: error: unrecognized arguments: {' '.join(args)}\n",
                 )
                 self.assertEqual(self.stdout.getvalue(), "")
-                scan.assert_not_called()
-                self.assertEqual((docs.mock_calls, output.mock_calls), ([], []))
+                self.assertEqual([mock.mock_calls for mock in untouched], [[], [], [], []])
 
     def test_main_help_exits_without_scanning_and_prints_only_the_help_text(self) -> None:
         help_text = self.reference_parser().format_help()
-        for argv in (("--help",), ("-h",), ("--help", "--learning-paths")):
+        for argv in (
+            ("--help",),
+            ("-h",),
+            ("--help", "--learning-paths"),
+            ("--learning-paths", "--help"),
+            ("--learning-paths=yes", "--help"),
+            ("--no-such-option", "-h"),
+            ("-h", "--no-such-option"),
+        ):
             with self.subTest(argv=argv):
                 self.clear_output()
 
-                code, docs, output, scan = self.run_main_untouched(*argv)
+                code, untouched = self.run_main_untouched(*argv)
 
                 self.assertEqual(code, 0)
                 self.assertEqual(self.stdout.getvalue(), help_text)
                 self.assertEqual(self.stderr.getvalue(), "")
-                scan.assert_not_called()
-                self.assertEqual((docs.mock_calls, output.mock_calls), ([], []))
+                self.assertEqual([mock.mock_calls for mock in untouched], [[], [], [], []])
 
 
 if __name__ == "__main__":
