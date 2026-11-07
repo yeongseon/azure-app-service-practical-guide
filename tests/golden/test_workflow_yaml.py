@@ -119,6 +119,34 @@ class WorkflowYamlTests(unittest.TestCase):
                     self.assertNotIn("continue-on-error", scope, command)
                     self.assertNotIn("if", scope, command)
 
+    def test_refresh_workflow_regenerates_the_manifest_after_the_dashboard(self) -> None:
+        # Given: the parsed scheduled refresh job and the commands of its steps.
+        yaml = YAML(typ="safe")
+        workflow_path = ROOT / ".github/workflows/refresh-golden-status.yml"
+        with workflow_path.open(encoding="utf-8") as stream:
+            workflow = yaml.load(stream)
+        steps = workflow["jobs"]["refresh"]["steps"]
+        runs = [step.get("run", "") for step in steps]
+
+        # When: the dashboard, manifest and publication steps are located.
+        dashboard = [i for i, run in enumerate(runs) if "python scripts/generate_golden_status.py" in run]
+        manifest = [i for i, run in enumerate(runs) if run.strip() == "python scripts/diagram_inventory.py --write"]
+        publication = [i for i, run in enumerate(runs) if "git commit" in run]
+
+        # Then: the manifest is regenerated once, between them, unconditionally, and committed with the dashboard.
+        self.assertEqual((len(dashboard), len(manifest), len(publication)), (1, 1, 1))
+        self.assertLess(dashboard[0], manifest[0])
+        self.assertLess(manifest[0], publication[0])
+        self.assertNotIn("continue-on-error", steps[manifest[0]])
+        self.assertNotIn("if", steps[manifest[0]])
+        staged = " ".join(line for line in runs[publication[0]].splitlines() if line.strip().startswith("git add"))
+        for path in (
+            "docs/meta/golden-status.md",
+            "docs/reference/diagram-manifest.json",
+            "docs/reference/diagram-inventory.md",
+        ):
+            self.assertIn(path, staged)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
