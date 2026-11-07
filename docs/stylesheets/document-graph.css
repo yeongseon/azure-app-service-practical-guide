@@ -127,6 +127,29 @@
   font-size: 0.875rem;
 }
 
+.graph-narrow-notice {
+  display: none;
+}
+
+.graph-narrow-notice a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 0.25rem;
+  color: var(--md-default-fg-color);
+  text-decoration: underline;
+}
+
+.graph-narrow-notice a:hover,
+.graph-narrow-notice a:focus {
+  color: var(--md-default-fg-color);
+}
+
+.graph-narrow-notice a:focus-visible {
+  outline: 2px solid var(--md-default-fg-color);
+  outline-offset: 2px;
+}
+
 #core-graph, #core-graph *,
 #troubleshooting-graph, #troubleshooting-graph * {
   touch-action: manipulation !important;
@@ -209,6 +232,11 @@
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
+  .graph-narrow-notice {
+    display: block;
+    font-size: 0.875rem;
+  }
+
   #graph-controls,
   #ts-controls {
     flex-direction: column;
