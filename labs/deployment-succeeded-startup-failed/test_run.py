@@ -44,13 +44,13 @@ class EvaluationTests(unittest.TestCase):
     def test_valid_run_supports_the_hypothesis(self):
         self.assertEqual(self.hypothesis(), 'SUPPORTED')
 
-    def test_forged_activation_flag_is_not_trusted(self):
-        """The derived flag must be recomputed, never believed.
+    def test_self_asserted_activation_flag_cannot_decide_a_healthy_fault(self):
+        """The runner's own flag is control evidence, never a verdict.
 
-        `intervention_activated` is written by the runner. If the evaluator
-        trusts it, a phase can assert its own activation without the
-        readback or probe evidence that defines it - the same summary-over-raw
-        inversion these gates exist to prevent.
+        `intervention_activated` is written by the runner. A phase that
+        asserts its own activation, without the readback or probe-budget
+        fields behind it, must leave a healthy fault phase undecided: no
+        refutation and no support.
         """
         for probe in self.phases['fault']['probes']:
             probe['status'] = 200
@@ -61,13 +61,17 @@ class EvaluationTests(unittest.TestCase):
         self.logs = []
 
         outcome = pilot.evaluate(self.capture, self.phases, self.logs)
-        self.assertNotEqual(
-            outcome['hypothesis_evaluation'],
-            'CONTRADICTED',
-            msg='a self-asserted activation flag must not license a refutation',
-        )
+        self.assertEqual(outcome['evidence_validation'], 'INCONCLUSIVE')
+        self.assertEqual(outcome['hypothesis_evaluation'], 'INCONCLUSIVE')
+        self.assertEqual(outcome['refutations'], [])
+        self.assertEqual(pilot.exit_code_for(outcome), 2)
 
-    def test_activation_requires_the_configuration_to_read_back_unchanged(self):
+    def test_good_readback_with_activation_claims_cannot_decide_a_healthy_fault(self):
+        """Whatever the readback and budget fields claim, a healthy fault is undecided.
+
+        The evaluator does not read them: a readback that shows the healthy
+        command, an exhausted budget and a true flag change nothing.
+        """
         for probe in self.phases['fault']['probes']:
             probe['status'] = 200
         self.phases['fault']['status'] = 200
@@ -80,7 +84,10 @@ class EvaluationTests(unittest.TestCase):
         self.logs = []
 
         outcome = pilot.evaluate(self.capture, self.phases, self.logs)
-        self.assertNotEqual(outcome['hypothesis_evaluation'], 'CONTRADICTED')
+        self.assertEqual(outcome['evidence_validation'], 'INCONCLUSIVE')
+        self.assertEqual(outcome['hypothesis_evaluation'], 'INCONCLUSIVE')
+        self.assertEqual(outcome['refutations'], [])
+        self.assertEqual(pilot.exit_code_for(outcome), 2)
 
     def test_healthy_fault_without_activation_proof_is_inconclusive(self):
         """A control-plane write is not proof the workload picked it up.
@@ -105,17 +112,7 @@ class EvaluationTests(unittest.TestCase):
             msg='the run must say why a healthy fault was not treated as a refutation',
         )
 
-    def test_clean_fault_that_stays_healthy_refutes_the_hypothesis(self):
-        """A correctly applied fault that never breaks the app is a refutation.
-
-        The contract predicts HTTP 5xx plus a matching import error. If the
-        bad entrypoint is genuinely configured, every probe still answers
-        200, and nothing about the capture is malformed, the prediction is
-        contradicted. That is a valid experimental result, so the evidence
-        axis stays PASS and only the hypothesis axis records CONTRADICTED.
-        Collapsing it into FAIL/INCONCLUSIVE would report a real refutation
-        as a broken experiment.
-        """
+    def test_healthy_full_budget_with_bad_readback_is_inconclusive(self) -> None:
         for probe in self.phases['fault']['probes']:
             probe['status'] = 200
         self.phases['fault']['status'] = 200
@@ -124,10 +121,11 @@ class EvaluationTests(unittest.TestCase):
         self.logs = []
 
         outcome = pilot.evaluate(self.capture, self.phases, self.logs)
-        self.assertEqual(outcome['evidence_validation'], 'PASS')
-        self.assertEqual(outcome['hypothesis_evaluation'], 'CONTRADICTED')
+        self.assertEqual(outcome['evidence_validation'], 'INCONCLUSIVE')
+        self.assertEqual(outcome['hypothesis_evaluation'], 'INCONCLUSIVE')
+        self.assertEqual(outcome['refutations'], [])
 
-    def test_refutation_is_not_reported_as_success(self):
+    def test_healthy_activation_proxy_exits_inconclusive(self) -> None:
         for probe in self.phases['fault']['probes']:
             probe['status'] = 200
         self.phases['fault']['status'] = 200
@@ -135,13 +133,9 @@ class EvaluationTests(unittest.TestCase):
         self.phases['fault']['probes'] = [{'status': self.phases['fault']['status'], 'exit_code': 0} for _ in range(24)]
         self.logs = []
         outcome = pilot.evaluate(self.capture, self.phases, self.logs)
-        self.assertNotEqual(
-            pilot.exit_code_for(outcome),
-            0,
-            msg='a refuted hypothesis must not exit 0 and look like a confirmed reproduction',
-        )
+        self.assertEqual(pilot.exit_code_for(outcome), 2)
 
-    def test_non_5xx_fault_response_refutes_rather_than_breaks_the_run(self):
+    def test_non_5xx_fault_with_bad_readback_is_inconclusive(self) -> None:
         for probe in self.phases['fault']['probes']:
             probe['status'] = 404
         self.phases['fault']['status'] = 404
@@ -150,9 +144,32 @@ class EvaluationTests(unittest.TestCase):
         self.logs = []
 
         outcome = pilot.evaluate(self.capture, self.phases, self.logs)
-        self.assertEqual(outcome['evidence_validation'], 'PASS')
-        self.assertEqual(outcome['hypothesis_evaluation'], 'CONTRADICTED')
-        self.assertTrue(any('404' in item for item in outcome['refutations']))
+        self.assertEqual(outcome['evidence_validation'], 'INCONCLUSIVE')
+        self.assertEqual(outcome['hypothesis_evaluation'], 'INCONCLUSIVE')
+        self.assertEqual(outcome['refutations'], [])
+
+    def test_healthy_proxy_with_import_rows_lacks_worker_bound_activation_evidence(self) -> None:
+        self.phases['fault'].update(
+            status=200, config_readback=pilot.BAD, probe_budget_exhausted=True,
+            intervention_activated=True,
+            probes=[{'status': 200, 'exit_code': 0} for _ in range(24)])
+
+        outcome = pilot.evaluate(self.capture, self.phases, self.logs)
+
+        self.assertEqual(outcome['hypothesis_evaluation'], 'INCONCLUSIVE')
+        self.assertEqual(outcome['evidence_validation'], 'INCONCLUSIVE')
+
+    def test_healthy_proxy_reports_control_plane_and_worker_limitations(self) -> None:
+        self.phases['fault'].update(
+            status=200, config_readback=pilot.BAD, probe_budget_exhausted=True,
+            probes=[{'status': 200, 'exit_code': 0} for _ in range(24)])
+
+        outcome = pilot.evaluate(self.capture, self.phases, [])
+
+        self.assertTrue(any(
+            'control plane' in item and 'stayed healthy' in item
+            and 'not that the serving worker was recycled' in item
+            for item in outcome['limitations']))
 
     def test_integrity_failure_outranks_refutation(self):
         for probe in self.phases['fault']['probes']:
@@ -185,9 +202,11 @@ class EvaluationTests(unittest.TestCase):
         self.phases['fault']['status'] = 200
         self.phases['fault'].update(intervention_activated=True, config_readback=pilot.BAD, probe_budget_exhausted=True)
         self.phases['fault']['probes'] = [{'status': self.phases['fault']['status'], 'exit_code': 0} for _ in range(24)]
-        refuted = pilot.evaluate(self.capture, self.phases, self.logs)
-        self.assertEqual(refuted['hypothesis_evaluation'], 'CONTRADICTED')
-        self.assertEqual(pilot.exit_code_for(refuted), 1)  # CONTRADICTED, matching evaluate_run.py
+        healthy = pilot.evaluate(self.capture, self.phases, self.logs)
+        self.assertEqual(healthy['hypothesis_evaluation'], 'INCONCLUSIVE')
+        self.assertEqual(pilot.exit_code_for(healthy), 2)
+        self.assertEqual(pilot.exit_code_for({
+            'evidence_validation': 'PASS', 'hypothesis_evaluation': 'CONTRADICTED'}), 1)
 
         self.phases['fault']['run_id'] = 'other'
         failed = pilot.evaluate(self.capture, self.phases, self.logs)
