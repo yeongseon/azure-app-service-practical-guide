@@ -152,6 +152,7 @@ class WorkflowYamlTests(unittest.TestCase):
         workflow_path = ROOT / ".github/workflows/docs.yml"
         with workflow_path.open(encoding="utf-8") as stream:
             workflow = yaml.load(stream)
+        push = workflow["on"]["push"]
         required = {
             "docs/**",
             "mkdocs.yml",
@@ -159,7 +160,9 @@ class WorkflowYamlTests(unittest.TestCase):
             ".github/workflows/docs.yml",
         }
 
-        self.assertTrue(required <= set(workflow["on"]["push"]["paths"]))
+        self.assertTrue(required <= set(push["paths"]))
+        self.assertEqual([path for path in push["paths"] if path.startswith("!")], [])
+        self.assertIn("main", push["branches"])
 
 
 if __name__ == "__main__":
