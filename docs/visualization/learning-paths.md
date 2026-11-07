@@ -76,10 +76,6 @@ graph TD
 
 ## Python Learning Path
 
-<div id="python-path-container">
-  <div id="python-graph" style="width: 100%; height: 400px; border: 1px solid var(--md-default-fg-color--lightest); border-radius: 4px;"></div>
-</div>
-
 ### Core Progression
 
 | Step | Document | Prerequisites | Time |
@@ -121,10 +117,6 @@ graph TD
 
 ## Node.js Learning Path
 
-<div id="nodejs-path-container">
-  <div id="nodejs-graph" style="width: 100%; height: 400px; border: 1px solid var(--md-default-fg-color--lightest); border-radius: 4px;"></div>
-</div>
-
 ### Core Progression
 
 | Step | Document | Prerequisites | Time |
@@ -145,10 +137,6 @@ graph TD
 ---
 
 ## Java Learning Path
-
-<div id="java-path-container">
-  <div id="java-graph" style="width: 100%; height: 400px; border: 1px solid var(--md-default-fg-color--lightest); border-radius: 4px;"></div>
-</div>
 
 ### Core Progression
 
@@ -171,10 +159,6 @@ graph TD
 ---
 
 ## .NET Learning Path
-
-<div id="dotnet-path-container">
-  <div id="dotnet-graph" style="width: 100%; height: 400px; border: 1px solid var(--md-default-fg-color--lightest); border-radius: 4px;"></div>
-</div>
 
 ### Core Progression
 
@@ -261,14 +245,6 @@ graph TD
 2. **Best Practices**: All best practices
 3. **Operations**: All operations guides
 4. **Troubleshooting**: Mental Model → Decision Tree → Playbooks
-
-## Data Source
-
-Learning path data is extracted from language guide frontmatter. To regenerate:
-
-```bash
-python tools/build_doc_graph.py --learning-paths
-```
 
 ## See Also
 
