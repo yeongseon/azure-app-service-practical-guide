@@ -1,12 +1,12 @@
 {
   "review": "Golden Repository v1",
   "epic": 173,
-  "document_updated_at": "2026-10-16",
+  "document_updated_at": "2026-11-08",
   "verdict": "NOT_COMPLETE",
-  "verdict_basis": "One Definition-of-Done item is partial and one is unmet. Scenario B has not completed a live run. The three committed replay records were produced by AI-agent sessions, so they demonstrate repeatability and documentation refinement but do not satisfy independent human reproduction.",
+  "verdict_basis": "Two Definition-of-Done items are partial and one is unmet at the reviewed base 75949cfa81a27c3b15d2b9aa72b82bc9305c1679: Scenario B has no main retained completed run, revised cleanup has not been live-verified, and no genuinely different human operator has independently reproduced a scenario. Static passing checks and agent repeatability cannot satisfy these execution and independence gates.",
   "counts": {
-    "MET": 13,
-    "PARTIAL": 1,
+    "MET": 12,
+    "PARTIAL": 2,
     "NOT_MET": 1,
     "total": 15
   },
@@ -22,21 +22,21 @@
       "id": 2,
       "requirement": "Repository-wide KEEP / REWRITE / MOVE / DELETE / ARCHIVE audit completed",
       "status": "MET",
-      "evidence": "19 paths decided in docs/reference/golden-repository-audit.json: 16 KEEP, 3 ARCHIVE, 0 DELETE. The single REWRITE was resolved during the epic and became KEEP.",
+      "evidence": "126 path records in docs/reference/golden-repository-audit.json: 124 KEEP, 2 ARCHIVE, 0 DELETE. Exact tracked-tree membership is checked by 29 repository-audit tests. Membership and conservative KEEP do not certify leaf semantics or authorize evidence deletion.",
       "verify": "python3 tests/golden/test_repository_audit.py"
     },
     {
       "id": 3,
       "requirement": "AGENTS.md rewritten around agent judgment; machine-enforceable rules moved to validators/CI where possible",
       "status": "MET",
-      "evidence": "AGENTS.md is organised around this repository's mission across eight sections, opening on Mission and reaching the evidence rules by line 35, down from 1275 lines to 1070 with the series contract moved to docs/meta/series-contract.md rather than deleted. The documented-but-unenforced rules are now enforced: the frontmatter scope rule, the deployment-method sub-template, and the Golden suites all run in a pull-request-scoped job. Auditing the remaining prose found three checks that disagreed with the policy they implemented rather than documentation debt, and the quality gate now passes across all 234 files with --all wired into CI so it stays there.",
+      "evidence": "AGENTS.md has 156 lines and retains mission, evidence judgment, date/provenance and merge boundaries by linking DOCUMENTATION_CONTRACT.md and CONTRIBUTING.md. Frontmatter validation checks 260 files with zero errors and 28 relationship warnings; document quality --all passes. This is static verification, not Azure execution or semantic completeness of every retained paragraph.",
       "verify": "python3 tools/validate_frontmatter.py"
     },
     {
       "id": 4,
       "requirement": "Common Evidence / Assertion / Hypothesis representations exist",
       "status": "MET",
-      "evidence": "Five schemas under schemas/golden/ cover evidence, assertion, manifest, result and reproduction. evidence.schema.json declares the identity and capture time of raw observations, which is what lets the evaluator reject evidence from another run.",
+      "evidence": "Seven schemas under schemas/golden/ cover assertion, evidence, manifest, result, reproduction, run declarations and tutorial execution. Schema validation checks 16 Golden documents against seven schemas; evaluate_run tests pass nine cases. Evidence identity/capture remain distinct from derived results.",
       "verify": "python3 tests/golden/test_evaluate_run.py"
     },
     {
@@ -71,8 +71,8 @@
       "id": 9,
       "requirement": "Golden scenarios A (deterministic), B (comparative), C (configuration/state) completed",
       "status": "PARTIAL",
-      "evidence": "Two of three scenarios have been executed against a live subscription. Scenario A has two retained SUPPORTED runs: historical run 20260927T104304Z and current run 20261016T075147Z, whose cleanup was verified separately. Scenario C's run 20260927T114621Z evaluates to INCONCLUSIVE: five assertions held and two could not be observed, so the model declined a verdict rather than supplying one. All three manifests are satisfiable and every collector is held by a suite proving its evidence can refuse the hypothesis.",
-      "gap": "Scenario B has not been executed; nothing yet persists its per-phase probe records or probes the destination's own health. Scenario C's run could not observe slot stickiness because the destination worker still predated the swap, and nothing queries deployment error rows. Both gaps are recorded against the runs rather than implied.",
+      "evidence": "The main execution registry retains two Scenario A runs, 20260927T104304Z-aba0d3a9daa7 and 20261016T075147Z-6d019de6e2f2, and Scenario C run 20260927T114621Z-04c6c02c9ae1; no completed Scenario B run is registered. Scenario A's stored results are SUPPORTED, with historical cleanup recorded separately for the October run. Scenario C's historical result is COMPLETE / INCONCLUSIVE: five assertions are SUPPORTED, while stickiness and deployment-error observations are undecidable. Seven contract/collector alignment tests pass; offline agreement does not establish live execution or authenticity.",
+      "gap": "Scenario B has no retained completed run at reviewed main base 75949cfa81a27c3b15d2b9aa72b82bc9305c1679. run_scenario_b.py now writes per-phase probes and destination health; collect_scenario_b.py consumes them, so the old missing-instrumentation statement no longer applies. Scenario C retains a historical COMPLETE / INCONCLUSIVE run with missing stickiness (discriminating) and deployment-error (control) observations. Newer B/C evidence in unmerged PRs #249/#250 requires an explicit archival/compatibility decision, final-head reconciliation and verification; PR-description claims do not qualify as main evidence.",
       "verify": "python3 tests/golden/test_contract_collector_alignment.py"
     },
     {
@@ -86,8 +86,9 @@
     {
       "id": 11,
       "requirement": "Cleanup procedure exists and is verified",
-      "status": "MET",
-      "evidence": "cleanup.sh was executed against the live deployment. It refused to run without an explicit target, exiting 2, then deleted the resource group; az group exists reported false 90 seconds later. Deleting the group rather than enumerating resources is what keeps the procedure complete as the template changes.",
+      "status": "PARTIAL",
+      "evidence": "Cleanup procedures exist; the immutable Scenario A run 20261016T075147Z-6d019de6e2f2/cleanup.json records historical verified deletion with final_group_exists false. PR #421 revised the standalone ownership guard in run.py, not cleanup.sh. The current guide states that no deletion or residual-resource check has been executed for the revised procedure; historical cleanup cannot verify current procedure behavior. The literal RG=<group> verify command parses as shell redirection and exits 1 because the file group is absent, before script execution.",
+      "gap": "The revised procedure is not live-verified. Run it only with explicit approved ownership and independently retain deletion/absence readbacks; this prose update performs no Azure cleanup. Scenario B/C required live cleanup remains outside reviewed-main evidence.",
       "verify": "RG=<group> bash labs/deployment-succeeded-startup-failed/cleanup.sh"
     },
     {
@@ -121,9 +122,10 @@
   ],
   "blocking_for_v1": [
     "Item 9: Scenario B has not completed a live run.",
-    "Item 10: no genuinely different human operator has independently reproduced a scenario."
+    "Item 10: no genuinely different human operator has independently reproduced a scenario.",
+    "Item 11: the revised cleanup procedure has not been live-verified with run-bound ownership and deletion/absence evidence."
   ],
-  "notes": "Item 10 needs a genuinely different human operator; AI-agent repeat runs cannot satisfy it. Item 9 needs Scenario B instrumented to persist per-phase probe records and probe the destination's own health, after which it can run. Scenario C's run left two observations absent and returned INCONCLUSIVE, which is the model working rather than failing.",
+  "notes": "Item 10 still requires a genuinely different human operator and independently collected raw evidence. Scenario B instrumentation now writes probes and destination-health observations for the collector, but required main evidence remains absent; unmerged PRs #249/#250 need archival/compatibility decisions and reconciliation. Historical Scenario C remains COMPLETE / INCONCLUSIVE. Revised cleanup needs live verification; document_updated_at records only this prose update, and offline checks refresh no capture, last_tested or evaluation date.",
   "review_history": [
     {
       "reviewer": "oracle",
