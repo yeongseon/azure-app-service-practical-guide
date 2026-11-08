@@ -62,6 +62,8 @@ Do not collapse this symptom into “the app recycled.” Investigate three inde
 <!-- diagram-id: windows-slot-swap-first-request-latency-flow -->
 ```mermaid
 flowchart TD
+    accTitle: Windows Slot-Swap First-Request Latency Decision Flow
+    accDescr: Top-down diagnostic decision flow checking whether PID, process start time, or instance changed, whether effective configuration or deployment changed, and whether a safe representative route and dependency state were warmed before concluding only with discriminating evidence.
     A[First business request is slow after successful swap] --> B[Build one timestamped swap and request timeline]
     B --> C{PID, process start time, or instance changed?}
     C -->|Yes| D[Evaluate recycle or instance replacement evidence]
@@ -76,7 +78,13 @@ flowchart TD
     I -->|Yes| K[Inspect request traces and competing causes]
     J --> L[Conclude only with discriminating evidence]
     K --> L
+    classDef baseNeutral fill:#f2f4f8,stroke:#707e93,stroke-width:1.5px,color:#14202e;
+    classDef focusActive fill:#e6f0fd,stroke:#287ce4,stroke-width:2.5px,color:#14202e;
+    class A,B,D,E,G,H,J,K,L baseNeutral;
+    class C,F,I focusActive;
 ```
+
+- **Legend & Takeaway:** Diamonds (`focusActive`, `2.5px` stroke) mark the three independent diagnostic questions; rectangles (`baseNeutral`, `1.5px` stroke) mark the entry symptom, investigation actions, and final conclusion rule; solid arrows (`-->`) follow sequential evaluation and `Yes` / `No` branches. A slow first business request after a successful Windows slot swap does not by itself prove a worker recycle, so evaluate process or instance change, effective configuration change, and route or dependency warm-up coverage before concluding.
 
 ### Scope and conclusion rule
 
