@@ -89,6 +89,7 @@ class WorkflowYamlTests(unittest.TestCase):
         for event in ("pull_request", "push"):
             with self.subTest(event=event):
                 self.assertTrue(required <= set(workflow["on"][event]["paths"]))
+                self.assertNotIn("paths-ignore", workflow["on"][event])
 
         self.assertIn("main", workflow["on"]["push"]["branches"])
         pull_request_paths = workflow["on"]["pull_request"]["paths"]
@@ -103,18 +104,29 @@ class WorkflowYamlTests(unittest.TestCase):
             workflow = yaml.load(stream)
         job = workflow["jobs"]["build-docs"]
         commands = ("pip install -r requirements-docs.txt", "mkdocs build --strict")
+        for defaults in (workflow.get("defaults"), job.get("defaults")):
+            run_defaults = (defaults or {}).get("run", {})
+            self.assertNotIn("working-directory", run_defaults)
+            self.assertEqual(run_defaults.get("shell", "bash"), "bash")
 
         # When: each command is resolved to the step that runs it exactly.
         for command in commands:
             with self.subTest(command=command):
                 steps = [step for step in job["steps"] if step.get("run", "").strip() == command]
 
-                # Then: neither a missing step nor a skip, dependency or fail-open policy is allowed.
+                # Then: neither a missing step nor a skip, dependency, fail-open policy or other
+                # working directory or shell is allowed.
                 self.assertEqual(len(steps), 1, command)
                 self.assertNotIn("needs", job, command)
                 for scope in (job, steps[0]):
                     self.assertNotIn("continue-on-error", scope, command)
                     self.assertNotIn("if", scope, command)
+                self.assertNotIn("working-directory", steps[0], command)
+                self.assertEqual(steps[0].get("shell", "bash"), "bash", command)
+
+        # And: the dependencies are installed before the site is built.
+        runs = [step.get("run", "").strip() for step in job["steps"]]
+        self.assertLess(runs.index(commands[0]), runs.index(commands[1]))
 
     def test_diagram_gates_are_unconditional_and_blocking_when_workflow_runs(self) -> None:
         # Given: the parsed content-validation job and its required diagram commands.
@@ -187,6 +199,7 @@ class WorkflowYamlTests(unittest.TestCase):
 
         self.assertTrue(required <= set(push["paths"]))
         self.assertEqual([path for path in push["paths"] if path.startswith("!")], [])
+        self.assertNotIn("paths-ignore", push)
         self.assertIn("main", push["branches"])
 
 
