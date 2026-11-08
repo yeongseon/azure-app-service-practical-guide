@@ -840,7 +840,7 @@ graph TD
 !!! success "Falsification Logic"
     If you observe deployment success, console logs showing Gunicorn listening on `127.0.0.1:8000`, and platform startup timeout/cancellation signals, the hypothesis is CONFIRMED because the app process is running but unreachable to the App Service forwarding/warmup path.
     
-    If you do NOT observe localhost-only bind evidence (for example bind is already `0.0.0.0`), the hypothesis is FALSIFIED — consider alternatives such as wrong startup module, port mismatch, or image/runtime startup failure.
+    If the worker-pinned Runtime log stream shows bind is already `0.0.0.0` on the affected worker before failures in the matched test window, the hypothesis is FALSIFIED — consider alternatives such as wrong startup module, port mismatch, or image/runtime startup failure. Missing localhost-only bind evidence instead leaves the result inconclusive: first check section 3.9's two-hour window and listen-message filters, then the worker-pinned Runtime log stream; section 3.5's startup-command read-back alone does not establish the runtime listener.
 
 ## Clean Up
 

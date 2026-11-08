@@ -1005,7 +1005,7 @@ graph TD
 !!! success "Falsification Logic"
     If you observe rising `/home` and `/tmp` usage during fill operations, slower write endpoints, and persistence differences after restart (`/tmp` clears, `/home` persists), the hypothesis is CONFIRMED because the incident is storage-surface behavior, not generic app unavailability.
     
-    If you do NOT observe usage growth or persistence differences across restart boundaries, the hypothesis is FALSIFIED — consider non-storage latency sources or incorrect write-path targeting.
+    If you do NOT observe usage growth or persistence differences across restart boundaries, treat the result as inconclusive, not as a refutation: first compare the paths and usage in sections 3.6–3.9's disk snapshots with completed fill responses, and check capture ordering relative to cleanup or restart; the runbook does not collect a before/after restart persistence comparison. Consider non-storage latency sources or incorrect write-path targeting once those evidence gaps are resolved.
 
 ---
 
