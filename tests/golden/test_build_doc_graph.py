@@ -4,6 +4,7 @@ import importlib.util
 import io
 import json
 import logging
+import os
 import sys
 import tempfile
 import unittest
@@ -12,6 +13,23 @@ from unittest.mock import MagicMock, patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from tools import build_doc_graph as graph
+
+FILESYSTEM_PRIMITIVES = {
+    "pathlib.Path": (
+        "rglob", "glob", "iterdir", "exists", "is_dir", "is_file", "is_symlink", "stat", "open", "read_text",
+        "read_bytes", "mkdir", "touch", "write_text", "write_bytes", "unlink", "rmdir", "rename", "replace", "chmod",
+        "symlink_to",
+    ),
+    "os": (
+        "listdir", "scandir", "walk", "stat", "access", "mkdir", "makedirs", "remove", "unlink", "rmdir", "removedirs",
+        "rename", "renames", "replace", "chmod", "utime", "symlink", "link", "truncate", "open",
+    ),
+    "shutil": ("copy", "copy2", "copyfile", "copytree", "move", "rmtree"),
+    "tempfile": ("TemporaryDirectory", "mkdtemp", "mkstemp", "NamedTemporaryFile"),
+    "glob": ("glob", "iglob"),
+    "io": ("open",),
+    "builtins": ("open",),
+}
 
 
 class GraphGenerationTests(unittest.TestCase):
@@ -36,6 +54,8 @@ class GraphGenerationTests(unittest.TestCase):
             patch.object(graph, "DOCS_DIR", self.docs),
             patch.object(graph, "OUTPUT_DIR", self.output),
             patch.object(sys, "argv", ["build_doc_graph.py"]),
+            # argparse looks for translation catalogs with os.stat; a fixed locale keeps that lookup out of the mocks
+            patch.dict(os.environ, {"LANGUAGE": "", "LC_ALL": "C"}),
             contextlib.redirect_stdout(self.stdout),
             contextlib.redirect_stderr(self.stderr),
         ):
@@ -212,20 +232,39 @@ class GraphGenerationTests(unittest.TestCase):
             stream.seek(0)
             stream.truncate()
 
-    def run_main_untouched(self, *argv: str) -> tuple[object, list[MagicMock]]:
-        docs, output = MagicMock(spec=Path), MagicMock(spec=Path)
-        stdin = MagicMock(spec=io.TextIOBase)
+    def forbid_filesystem(self, stack: contextlib.ExitStack) -> dict[str, MagicMock]:
+        mocks = {
+            f"{module}.{name}": MagicMock(side_effect=AssertionError(f"{module}.{name} was called"))
+            for module, names in FILESYSTEM_PRIMITIVES.items()
+            for name in names
+        }
+        for target, mock in mocks.items():
+            stack.enter_context(patch(target, mock))
+        # resolve() only normalises a path but calls stat() on Python 3.11 and 3.12
+        stack.enter_context(patch.object(Path, "resolve", lambda path, strict=False: path))
+        return mocks
+
+    def assert_untouched(self, mocks: dict[str, MagicMock]) -> None:
+        self.assertEqual({name: mock.mock_calls for name, mock in mocks.items()}, {name: [] for name in mocks})
+
+    def run_main_untouched(self, *argv: str) -> tuple[object, dict[str, MagicMock]]:
+        mocks = {
+            "DOCS_DIR": MagicMock(spec=Path),
+            "OUTPUT_DIR": MagicMock(spec=Path),
+            "sys.stdin": MagicMock(spec=io.TextIOBase),
+        }
         with contextlib.ExitStack() as stack:
             stack.enter_context(patch.object(sys, "argv", ["build_doc_graph.py", *argv]))
-            stack.enter_context(patch.object(sys, "stdin", stdin))
+            stack.enter_context(patch.object(sys, "stdin", mocks["sys.stdin"]))
             stack.enter_context(patch.object(logging.root, "handlers", []))
             stack.enter_context(patch.object(logging.root, "level", logging.WARNING))
-            stack.enter_context(patch.object(graph, "DOCS_DIR", docs))
-            stack.enter_context(patch.object(graph, "OUTPUT_DIR", output))
-            scan = stack.enter_context(patch.object(graph, "scan_documents"))
+            stack.enter_context(patch.object(graph, "DOCS_DIR", mocks["DOCS_DIR"]))
+            stack.enter_context(patch.object(graph, "OUTPUT_DIR", mocks["OUTPUT_DIR"]))
+            mocks["scan_documents"] = stack.enter_context(patch.object(graph, "scan_documents"))
+            mocks.update(self.forbid_filesystem(stack))
             with self.assertRaises(SystemExit) as raised:
                 graph.main()
-        return raised.exception.code, [docs, output, stdin, scan]
+        return raised.exception.code, mocks
 
     def test_main_rejects_unrecognized_arguments_before_any_scan(self) -> None:
         usage = self.reference_parser().format_usage()
@@ -247,7 +286,7 @@ class GraphGenerationTests(unittest.TestCase):
                     f"{usage}build_doc_graph.py: error: unrecognized arguments: {' '.join(args)}\n",
                 )
                 self.assertEqual(self.stdout.getvalue(), "")
-                self.assertEqual([mock.mock_calls for mock in untouched], [[], [], [], []])
+                self.assert_untouched(untouched)
 
     def test_main_help_exits_without_scanning_and_prints_only_the_help_text(self) -> None:
         help_text = self.reference_parser().format_help()
@@ -269,31 +308,19 @@ class GraphGenerationTests(unittest.TestCase):
                 self.assertEqual(code, 0)
                 self.assertEqual(self.stdout.getvalue(), help_text)
                 self.assertEqual(self.stderr.getvalue(), "")
-                self.assertEqual([mock.mock_calls for mock in untouched], [[], [], [], []])
+                self.assert_untouched(untouched)
 
     def test_importing_the_module_reads_no_documents_and_no_input(self) -> None:
         spec = importlib.util.spec_from_file_location("build_doc_graph_fresh", graph.__file__)
         assert spec is not None and spec.loader is not None
         module = importlib.util.module_from_spec(spec)
-        guarded = (
-            *(f"pathlib.Path.{name}" for name in (
-                "rglob", "glob", "iterdir", "exists", "is_dir", "is_file", "stat", "open", "read_text", "read_bytes",
-                "mkdir", "touch", "write_text", "write_bytes", "unlink", "rmdir",
-            )),
-            "builtins.open", "io.open", "os.listdir", "os.scandir", "os.walk", "os.stat", "os.makedirs",
-            "glob.glob", "glob.iglob",
-        )
-        mocks = {target: MagicMock() for target in guarded}
         stdin = MagicMock(spec=io.TextIOBase)
         with contextlib.ExitStack() as stack:
-            for target, mock in mocks.items():
-                stack.enter_context(patch(target, mock))
+            mocks = {"sys.stdin": stdin, **self.forbid_filesystem(stack)}
             stack.enter_context(patch.object(sys, "stdin", stdin))
             spec.loader.exec_module(module)
 
-        self.assertEqual({target: mock.mock_calls for target, mock in mocks.items()},
-                         {target: [] for target in guarded})
-        self.assertEqual(stdin.mock_calls, [])
+        self.assert_untouched(mocks)
         self.assertEqual((self.stdout.getvalue(), self.stderr.getvalue()), ("", ""))
 
 
