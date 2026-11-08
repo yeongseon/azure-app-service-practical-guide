@@ -36,7 +36,7 @@ graph TD
 
 ## How Labs Work
 
-Each lab includes:
+[Observed] Most scenario directories in `labs/` include the assets below, but the CD reconnect, Container HTTP Pings, and staged Windows Java labs have different layouts; use each linked walkthrough for its actual files and steps:
 
 1. **main.bicep** — Infrastructure template (App Service Plan, App Service instance for the lab's target runtime, Log Analytics, Diagnostic Settings)
 2. **app/** — Application code (Python/Flask, Node.js, Java, or .NET depending on the lab) designed to reproduce a specific symptom
@@ -71,7 +71,7 @@ Each lab includes:
 
 | Lab | Symptom | Related Playbook |
 |-----|---------|-----------------|
-| [SNAT Exhaustion](snat-exhaustion.md) | Outbound connection failures from SNAT port exhaustion | [SNAT or Application Issue?](../playbooks/outbound-network/snat-or-application-issue.md) |
+| [SNAT Exhaustion](snat-exhaustion.md) | [Observed] Connection timeouts, HTTP 499/503, and worker churn in the retained run | [SNAT or Application Issue?](../playbooks/outbound-network/snat-or-application-issue.md) |
 | [DNS Resolution (VNet)](dns-vnet-resolution.md) | DNS resolution failure for private endpoints in VNet-integrated apps | [DNS Resolution (VNet)](../playbooks/outbound-network/dns-resolution-vnet-integrated-app-service.md) |
 | [Private Endpoint Route Fault](private-endpoint-route-fault.md) | Private endpoint calls time out while DNS resolves correctly | [Private Endpoint / Custom DNS / Route Confusion](../playbooks/outbound-network/private-endpoint-custom-dns-route-confusion.md) |
 
