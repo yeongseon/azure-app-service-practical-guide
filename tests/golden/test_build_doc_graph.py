@@ -275,16 +275,24 @@ class GraphGenerationTests(unittest.TestCase):
         spec = importlib.util.spec_from_file_location("build_doc_graph_fresh", graph.__file__)
         assert spec is not None and spec.loader is not None
         module = importlib.util.module_from_spec(spec)
-        guarded = ("rglob", "glob", "iterdir", "read_text", "read_bytes", "open", "mkdir", "write_text")
-        mocks = {name: MagicMock() for name in guarded}
+        guarded = (
+            *(f"pathlib.Path.{name}" for name in (
+                "rglob", "glob", "iterdir", "exists", "is_dir", "is_file", "stat", "open", "read_text", "read_bytes",
+                "mkdir", "touch", "write_text", "write_bytes", "unlink", "rmdir",
+            )),
+            "builtins.open", "io.open", "os.listdir", "os.scandir", "os.walk", "os.stat", "os.makedirs",
+            "glob.glob", "glob.iglob",
+        )
+        mocks = {target: MagicMock() for target in guarded}
         stdin = MagicMock(spec=io.TextIOBase)
         with contextlib.ExitStack() as stack:
-            for name, mock in mocks.items():
-                stack.enter_context(patch.object(Path, name, mock))
+            for target, mock in mocks.items():
+                stack.enter_context(patch(target, mock))
             stack.enter_context(patch.object(sys, "stdin", stdin))
             spec.loader.exec_module(module)
 
-        self.assertEqual({name: mock.mock_calls for name, mock in mocks.items()}, {name: [] for name in guarded})
+        self.assertEqual({target: mock.mock_calls for target, mock in mocks.items()},
+                         {target: [] for target in guarded})
         self.assertEqual(stdin.mock_calls, [])
         self.assertEqual((self.stdout.getvalue(), self.stderr.getvalue()), ("", ""))
 
