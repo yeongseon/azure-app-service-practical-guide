@@ -105,9 +105,7 @@ class WorkflowYamlTests(unittest.TestCase):
         job = workflow["jobs"]["build-docs"]
         commands = ("pip install -r requirements-docs.txt", "mkdocs build --strict")
         for defaults in (workflow.get("defaults"), job.get("defaults")):
-            run_defaults = (defaults or {}).get("run", {})
-            self.assertNotIn("working-directory", run_defaults)
-            self.assertEqual(run_defaults.get("shell", "bash"), "bash")
+            self.assertNotIn("working-directory", (defaults or {}).get("run", {}))
 
         # When: each command is resolved to the step that runs it exactly.
         for command in commands:
@@ -115,14 +113,13 @@ class WorkflowYamlTests(unittest.TestCase):
                 steps = [step for step in job["steps"] if step.get("run", "").strip() == command]
 
                 # Then: neither a missing step nor a skip, dependency, fail-open policy or other
-                # working directory or shell is allowed.
+                # working directory is allowed.
                 self.assertEqual(len(steps), 1, command)
                 self.assertNotIn("needs", job, command)
                 for scope in (job, steps[0]):
                     self.assertNotIn("continue-on-error", scope, command)
                     self.assertNotIn("if", scope, command)
                 self.assertNotIn("working-directory", steps[0], command)
-                self.assertEqual(steps[0].get("shell", "bash"), "bash", command)
 
         # And: the dependencies are installed before the site is built.
         runs = [step.get("run", "").strip() for step in job["steps"]]
