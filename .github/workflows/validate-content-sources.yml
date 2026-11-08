@@ -23,6 +23,9 @@ on:
       - 'SECURITY.md'
       - 'CODE_OF_CONDUCT.md'
       - 'mkdocs.yml'
+      # Build input: Build Documentation installs it. After a merge, Deploy
+      # Documentation installs it and builds again, so push.paths needs no entry.
+      - 'requirements-docs.txt'
       - '.github/workflows/**'
   push:
     branches:
