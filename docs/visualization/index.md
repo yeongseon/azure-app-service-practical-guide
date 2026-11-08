@@ -66,7 +66,7 @@ Traditional documentation navigation relies on hierarchical menus and search. Vi
 
     ---
 
-    The complete site structure showing how Platform concepts, Best Practices, and Troubleshooting documents interconnect.
+    A fixed snapshot of the documents in the core graph data file, not the whole guide. See the graph page for its destination list and data-file change date.
 
     [:octicons-arrow-right-24: Explore the Knowledge Graph](core-knowledge-graph.md)
 
@@ -74,7 +74,7 @@ Traditional documentation navigation relies on hierarchical menus and search. Vi
 
     ---
 
-    Navigate troubleshooting workflows visually. See how playbooks connect to labs, KQL queries, and evidence patterns.
+    A fixed snapshot of troubleshooting and navigation documents. See the map page for its destination list and data-file change date.
 
     [:octicons-arrow-right-24: Open Troubleshooting Map](troubleshooting-map.md)
 
@@ -118,7 +118,9 @@ Understanding the node types and edge relationships used across all visualizatio
 
 ## How Graphs Are Built
 
-The knowledge graphs are automatically generated from document frontmatter:
+The two knowledge graphs use fixed snapshots in `docs/assets/graph/core-knowledge.json` and `docs/assets/graph/troubleshooting-map.json`, not the whole guide. Each graph page lists the documents in its data file and the date of the file's last change. The destination lists are built from the same JSON and need JavaScript.
+
+The generator reads document frontmatter such as this example:
 
 ```yaml
 ---
@@ -147,7 +149,7 @@ evidence:
 ---
 ```
 
-The build pipeline (`tools/build_doc_graph.py`) extracts these relationships to generate the graph JSON.
+On the current documentation tree, `tools/build_doc_graph.py` stops with an error because documents share a slug and writes no graph files. No repository workflow runs it or compares its output with the committed files. The snapshots are retained without a generated-data freshness check.
 
 ## Technical Implementation
 
@@ -160,14 +162,9 @@ The visualizations use [Cytoscape.js](https://js.cytoscape.org/) for interactive
 
 ## Contributing to Visualizations
 
-To add a document to the knowledge graph:
+Adding a document or changing its frontmatter does not update either snapshot. Graph coverage changes need an explicit change to the corresponding data file; they are not part of the site build.
 
-1. Add standardized frontmatter to your markdown file
-2. Include `related`, `prerequisites`, or `used_in` fields as appropriate
-3. Run `python tools/build_doc_graph.py` to regenerate the graph
-4. Run `python tools/validate_frontmatter.py` to check for broken links
-
-See the [Taxonomy](../meta/taxonomy.md) for complete frontmatter schema documentation.
+Keep document metadata consistent with the [Taxonomy](../meta/taxonomy.md). Frontmatter relationships are inputs the generator reads, not a promise that a document appears in these snapshots.
 
 ## See Also
 

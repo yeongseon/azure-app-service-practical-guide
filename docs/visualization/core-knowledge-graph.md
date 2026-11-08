@@ -12,7 +12,7 @@ products:
 related:
   - troubleshooting-map
   - learning-paths
-summary: Interactive visualization of the entire documentation structure showing relationships between concepts, best practices, and troubleshooting resources.
+summary: Interactive snapshot of a fixed set of documents and their relationships, not the whole guide.
 status: stable
 last_reviewed: 2026-04-08
 content_sources:
@@ -41,7 +41,7 @@ content_sources:
 ---
 # Core Knowledge Graph
 
-The Core Knowledge Graph provides a bird's-eye view of the entire Azure App Service Practical Guide. It shows how platform concepts, best practices, troubleshooting playbooks, and reference materials interconnect. <span id="core-graph-description">The visual graph cannot be operated by keyboard; use the same destinations in the <a href="#core-graph-links">Core graph destinations</a> list immediately below it.</span>
+The Core Knowledge Graph shows a fixed snapshot of the 30 documents in `docs/assets/graph/core-knowledge.json`, not the whole guide. <span id="core-graph-description">The visual graph cannot be operated by keyboard; use the same destinations in the <a href="#core-graph-links">Core graph destinations</a> list immediately below it. The list is built from the same data file and needs JavaScript.</span>
 
 <div id="core-graph-container">
   <p class="graph-narrow-notice">Graph labels are too small at this width; use the same destinations in the <a href="#core-graph-links">text list</a>.</p><div id="graph-controls">
@@ -211,17 +211,13 @@ Documents frequently reference across sections:
 
 ## Data Source
 
-The graph data is generated from document frontmatter by `tools/build_doc_graph.py`. The JSON file is located at:
+The scope of this snapshot is the documents in `docs/assets/graph/core-knowledge.json`: 30 nodes and 69 edges. The Core graph destinations list above names those documents; it needs JavaScript.
 
-```
-docs/assets/graph/core-knowledge.json
-```
+The data file was last changed on 2026-04-27. This is the date of the file's last change, not a verified production date for the snapshot.
 
-To regenerate after adding new documents or updating relationships:
+No repository workflow runs `tools/build_doc_graph.py` or compares its output with this file. This snapshot is retained without a generated-data freshness check.
 
-```bash
-python tools/build_doc_graph.py
-```
+On the current documentation tree, the generator stops with an error because documents share a slug and writes no graph files. A new document does not appear in this graph on its own.
 
 ## See Also
 

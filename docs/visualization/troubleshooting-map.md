@@ -16,7 +16,7 @@ related:
   - mental-model
 prerequisites:
   - troubleshooting-architecture-overview
-summary: Visual navigation map for troubleshooting workflows, showing connections between playbooks, labs, KQL queries, and evidence patterns.
+summary: Visual navigation snapshot of a fixed set of troubleshooting and navigation documents, not the whole guide.
 status: stable
 last_reviewed: 2026-04-08
 content_sources:
@@ -59,7 +59,7 @@ content_sources:
 ---
 # Troubleshooting Map
 
-Navigate the troubleshooting documentation visually. This map shows how symptoms lead to playbooks, how playbooks connect to labs and KQL queries, and how evidence patterns validate hypotheses. <span id="troubleshooting-graph-description">The visual graph cannot be operated by keyboard; use the same destinations in the <a href="#troubleshooting-graph-links">Troubleshooting graph destinations</a> list immediately below it.</span>
+This map shows a fixed snapshot of the 24 documents in `docs/assets/graph/troubleshooting-map.json`, not the whole guide. <span id="troubleshooting-graph-description">The visual graph cannot be operated by keyboard; use the same destinations in the <a href="#troubleshooting-graph-links">Troubleshooting graph destinations</a> list immediately below it. The list is built from the same data file and needs JavaScript.</span>
 
 <div id="troubleshooting-map-container">
   <p class="graph-narrow-notice">Graph labels are too small at this width; use the same destinations in the <a href="#troubleshooting-graph-links">text list</a>.</p><div id="ts-controls">
@@ -298,18 +298,13 @@ Use the category filter to focus on specific problem domains:
 
 ## Data Source
 
-**Documented:** `tools/build_doc_graph.py` generates the troubleshooting map from document frontmatter. Running it rewrites both graph JSON files:
+The scope of this snapshot is the documents in `docs/assets/graph/troubleshooting-map.json`: 24 nodes and 57 edges. The Troubleshooting graph destinations list above names those documents; it needs JavaScript.
 
-```
-docs/assets/graph/troubleshooting-map.json
-docs/assets/graph/core-knowledge.json
-```
+The data file was last changed on 2026-04-08. This is the date of the file's last change, not a verified production date for the snapshot.
 
-To regenerate both files, run from the repository root:
+No repository workflow runs `tools/build_doc_graph.py` or compares its output with this file. This snapshot is retained without a generated-data freshness check.
 
-```bash
-python tools/build_doc_graph.py
-```
+On the current documentation tree, the generator stops with an error because documents share a slug and writes no graph files. A new document does not appear in this map on its own.
 
 ## Integration with Other Tools
 
