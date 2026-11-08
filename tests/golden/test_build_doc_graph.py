@@ -1,9 +1,12 @@
+import argparse
 import contextlib
 import io
 import json
+import logging
 import sys
 import tempfile
 import unittest
+import warnings
 from pathlib import Path
 from unittest.mock import patch
 
@@ -200,6 +203,61 @@ class GraphGenerationTests(unittest.TestCase):
 
         self.assertEqual({slug: doc["file"] for slug, doc in documents.items()},
                          {"shared": "visible.md"})
+
+    def reference_parser(self) -> argparse.ArgumentParser:
+        return argparse.ArgumentParser(prog="build_doc_graph.py", description="Build documentation graphs")
+
+    def run_main(self, *argv: str) -> object:
+        for stream in (self.stdout, self.stderr):
+            stream.seek(0)
+            stream.truncate()
+        with contextlib.ExitStack() as stack:
+            stack.enter_context(patch.object(sys, "argv", ["build_doc_graph.py", *argv]))
+            stack.enter_context(patch.object(logging.root, "handlers", []))
+            stack.enter_context(patch.object(logging.root, "level", logging.WARNING))
+            stack.enter_context(warnings.catch_warnings())
+            warnings.simplefilter("always")
+            with self.assertRaises(SystemExit) as raised:
+                graph.main()
+        return raised.exception.code
+
+    def test_main_rejects_unrecognized_arguments_with_the_argparse_diagnostic(self) -> None:
+        usage = self.reference_parser().format_usage()
+        for args in (
+            ("--learning-paths",),
+            ("--no-such-option",),
+            ("--no-such-option", "--learning-paths"),
+            ("--learning-paths", "--no-such-option"),
+            ("--learning-paths", "@no-such-argument-file.txt"),
+        ):
+            with self.subTest(args=args):
+                code = self.run_main(*args)
+
+                self.assertEqual(code, 2)
+                self.assertEqual(
+                    self.stderr.getvalue(),
+                    f"{usage}build_doc_graph.py: error: unrecognized arguments: {' '.join(args)}\n",
+                )
+                self.assertEqual(self.stdout.getvalue(), "")
+
+    def test_main_help_prints_only_the_help_text(self) -> None:
+        help_text = self.reference_parser().format_help()
+        for argv in (
+            ("--help",),
+            ("-h",),
+            ("--help", "--learning-paths"),
+            ("--learning-paths", "--help"),
+            ("--learning-paths=yes", "--help"),
+            ("--no-such-option", "-h"),
+            ("-h", "--no-such-option"),
+            ("@no-such-argument-file.txt", "--help"),
+        ):
+            with self.subTest(argv=argv):
+                code = self.run_main(*argv)
+
+                self.assertEqual(code, 0)
+                self.assertEqual(self.stdout.getvalue(), help_text)
+                self.assertEqual(self.stderr.getvalue(), "")
 
 
 if __name__ == "__main__":
