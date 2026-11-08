@@ -68,6 +68,31 @@ unrelated labels. An umbrella tracks only local issues; sibling links are
 references. Do not introduce milestones, WIP labels or release grouping labels.
 Use blocker only for an actual publication blocker.
 
+### Executable issue readiness and manual readback
+
+Keep a tracking-only parent open to manage coverage, blockers, dependencies and
+linked execution units until its local children are done; do not assign it wholesale
+to one implementation session. Prefer XS/S executable units; keep M narrowly scoped
+and follow the documented L/XL split under “After triage” before implementation.
+
+1. In Context, name one bounded lab, scenario, tutorial step, diagram-ID set or
+   page set, the intended output and who has any required manual Azure/Portal access.
+2. In Acceptance Checklist, state observable acceptance and the actual verification
+   method; mark Azure/Portal work `not applicable` for offline tasks, and access or
+   execution `BLOCKED` or `NOT_RUN` when absent. For screenshots, name the manifest,
+   provenance, PII and final-image review; for labs, separate static implementation
+   from real Azure evidence.
+3. In Out of scope, state explicit exclusions and cost/cleanup ownership where
+   resources are created. In References, link the parent, dependencies and evidence.
+4. Before creating through Issue Forms, the API or agents, search repository-local
+   issues for duplicates and dependencies. After saving, read the issue back and
+   confirm the title type, the four sections in order, links and applicable labels;
+   retain `needs-triage` until the maintainer triage steps above are satisfied.
+
+This is contributor and agent procedure, not automated GitHub enforcement.
+An agent needing to go beyond the unit must stop and record a linked follow-up
+issue with handoff artifacts instead of expanding the task during a long run.
+
 ### After triage: develop the smallest useful change
 
 1. Reproduce or locate the issue and read the relevant implementation, docs and
