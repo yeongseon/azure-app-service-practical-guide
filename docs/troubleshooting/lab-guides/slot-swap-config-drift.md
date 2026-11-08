@@ -795,17 +795,17 @@ These lines validate that the swap involved observable start/stop/warm-up transi
 | Sticky metadata explicit | Pass | `app-settings-prod`, `app-settings-staging` |
 | Lifecycle around swap observed | Pass | `kql-console`, `kql-platform` |
 
-Final hypothesis verdict: **Supported**.
+[Inferred] The illustrative artifacts above are consistent with the expected setting behavior in this run, not a Golden hypothesis verdict. [Observed] The separate historical Golden run remains **INCONCLUSIVE**, with two evidence gaps recorded in its [evidence classification](https://github.com/yeongseon/azure-app-service-practical-guide/blob/main/labs/slot-swap-config-drift/golden/evidence-classification.json).
 
 ### 4.14 Key finding (required conclusion)
 
-!!! success "Perfect config drift demo"
-    The experiment precisely matches documented swap behavior:
+!!! note "Illustrative setting comparison"
+    [Observed] The [pre/post snapshots](#43-trigger-pre-swap-captures) show:
     
-    - `FEATURE_FLAG` (non-sticky) swapped with code.
-    - `DB_CONNECTION_STRING` (sticky/slot-setting) stayed with the slot.
+    - [Observed] `FEATURE_FLAG` values exchanged between the two endpoints.
+    - [Observed] `DB_CONNECTION_STRING` values remained unchanged per endpoint.
     
-    This proves the sticky setting mechanism works exactly as documented.
+    [Inferred] With the [sticky metadata](#422-baseline-app-setting-metadata), this is consistent with the documented swap behavior in this run, not proof of a unique cause or behavior in other setups.
 
 ### 4.15 Practical lessons for release engineering
 
@@ -887,7 +887,7 @@ This section defines what you SHOULD observe at each phase of the lab. Use it to
 |---|---|---|
 | Post-swap config comparison | Non-sticky moved, sticky remained slot-bound | `FEATURE_FLAG` exchanged, `DB_CONNECTION_STRING` stayed with each slot |
 | Slot behavior interpretation | Swap operation itself is healthy | Endpoints remain 200 while data-plane config differs by slot policy |
-| Operational conclusion | Root cause is config governance, not swap failure | Missing/incorrect sticky setting design explains perceived drift |
+| Operational conclusion | [Inferred] Slot-setting semantics explain the illustrative config comparison | [Unknown] The comparison alone does not exclude manual mutation or incomplete swap execution in an incident |
 
 ### Evidence Timeline
 

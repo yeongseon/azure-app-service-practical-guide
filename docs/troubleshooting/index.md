@@ -100,7 +100,7 @@ graph TD
     C --> C1[Startup Probe Failed?]
     C1 -->|Yes, logs unavailable or empty| C2[Telemetry inconclusive → verify logging and process state]
     C1 -->|Yes, app listening on 127.0.0.1| C3[Wrong bind address → Failed to Forward Request]
-    C1 -->|Yes, timeout on port| C4[Port mismatch → Container HTTP Pings]
+    C1 -->|Yes, timeout on port| C4[Inferred: check listener → Container HTTP Pings]
     
     D --> D1{Outbound connections involved?}
     D1 -->|Yes, connection timeouts| D2[Measure SNAT, dependency, and worker pressure]
@@ -175,10 +175,10 @@ Quick reference for recognizing common failure signatures:
 | Console: `Listening at: http://127.0.0.1:8000` | Wrong bind address | [Failed to Forward Request](playbooks/startup-availability/failed-to-forward-request.md) |
 | `499` + `TimeTaken` near five seconds on `/slow` endpoints | Deadline-bound request termination. Compare client and proxy timestamps with configured deadlines; distinguish that path from worker blocking by checking per-worker concurrency, queue delay, and request-start evidence. | [Intermittent 5xx Under Load](playbooks/performance/intermittent-5xx-under-load.md) |
 | `499` or `503` near a repeated time boundary on `/outbound` | A request ended near a timeout boundary; SNAT exhaustion is only one hypothesis. Compare client cancellation, worker queueing, and dependency failures; raise SNAT confidence only when the detector shows port pressure for the same instance and window. | [SNAT or Application Issue](playbooks/outbound-network/snat-or-application-issue.md) |
-| `/resolve` returns public IP for privatelink FQDN | DNS misconfiguration (Private DNS Zone not linked) | [DNS Resolution VNet](playbooks/outbound-network/dns-resolution-vnet-integrated-app-service.md) |
+| `/resolve` returns public IP for privatelink FQDN | [Inferred] Check resolver path, zone links/records, custom DNS forwarding and app overrides before attributing the answer. | [DNS Resolution VNet](playbooks/outbound-network/dns-resolution-vnet-integrated-app-service.md) |
 | `startup_duration` > 30s in platform logs | Cold start / slow start | [Slow Start / Cold Start](playbooks/performance/slow-start-cold-start.md) |
 | `/disk-status` shows /tmp > 50% | Disk pressure | [No Space Left on Device](playbooks/performance/no-space-left-on-device.md) |
-| `/config` returns wrong environment values after swap | Slot swap config drift (sticky settings missing) | [Slot Swap Config Drift](playbooks/startup-availability/slot-swap-config-drift.md) |
+| `/config` returns wrong environment values after swap | [Inferred] Compare both slots' runtime values and sticky flags with the swap/readiness timeline before attributing drift. | [Slot Swap Config Drift](playbooks/startup-availability/slot-swap-config-drift.md) |
 
 ## Topics
 
