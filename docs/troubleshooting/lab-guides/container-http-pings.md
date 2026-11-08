@@ -923,7 +923,7 @@ graph TD
 !!! success "Falsification Logic"
     If you observe sustained 200 responses with low `TimeTaken` (`10-32 ms`) before, during, and after the test window, the hypothesis is CONFIRMED because this run demonstrates a healthy startup/ping baseline rather than a port-mismatch failure.
     
-    If you do NOT observe stable low-latency 200s (for example, repeated non-200 probes or startup timeouts), the hypothesis is FALSIFIED — consider startup timeout, warmup path, or runtime-port handling issues.
+    Recorded repeated non-200 probes or startup timeouts falsify this healthy-baseline pattern — consider startup timeout, warmup path, or runtime-port handling issues. Missing response or log captures instead leave the result inconclusive: first check the six-hour windows and path/message filters in sections 3.9–3.11, the query/export timing noted in section 4.12, and the independent probe CSV from section 3.8.
 
 ---
 
