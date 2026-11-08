@@ -2170,7 +2170,7 @@
     {
       "path": "docs/assets/graph/",
       "decision": "KEEP",
-      "reason": "Generated documentation and learning-path graph JSON is consumed by visualization pages and rebuilt by tools/build_doc_graph.py; retain as intentional published navigation, not raw Azure evidence.",
+      "reason": "Core knowledge and troubleshooting graph JSON is consumed by visualization pages; tools/build_doc_graph.py is their producer. Retain the committed snapshots as intentional published navigation, not raw Azure evidence.",
       "members": [
         "core-knowledge.json",
         "troubleshooting-map.json"

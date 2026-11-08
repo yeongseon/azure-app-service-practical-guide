@@ -7,7 +7,7 @@ and generates Cytoscape.js-compatible JSON graph data.
 Exits 1 without writing output when document slugs collide.
 
 Usage:
-    python tools/build_doc_graph.py [--learning-paths]
+    python tools/build_doc_graph.py
 """
 
 import argparse
@@ -270,10 +270,7 @@ def build_troubleshooting_map(documents: dict[str, dict[str, Any]]) -> dict[str,
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Build documentation graphs")
-    parser.add_argument(
-        "--learning-paths", action="store_true", help="Include learning path graphs"
-    )
-    args = parser.parse_args()
+    parser.parse_args()
 
     print("Scanning documents...")
     try:
