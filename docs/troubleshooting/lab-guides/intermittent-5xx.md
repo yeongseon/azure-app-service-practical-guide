@@ -966,7 +966,7 @@ graph TD
 !!! success "Falsification Logic"
     If you observe `/slow` requests clustering near timeout with `499`, plus concurrent degradation of `/fast` while sync workers are occupied, the hypothesis is CONFIRMED because queueing and worker starvation explain the intermittent failures.
     
-    If you do NOT observe timeout clustering during slow-request bursts, the hypothesis is FALSIFIED — consider dependency failures, platform restarts, or non-worker bottlenecks.
+    If you do NOT observe timeout clustering during slow-request bursts, treat the result as inconclusive, not as a refutation: first align section 3.7's slow/fast CSV timings with section 3.10's two-hour window and endpoint filter, and check the app URL and diagnostic linkage noted in section 3.12. Consider dependency failures, platform restarts, or non-worker bottlenecks once the collection path is checked.
 
 ---
 
