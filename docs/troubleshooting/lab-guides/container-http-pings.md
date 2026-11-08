@@ -923,7 +923,7 @@ graph TD
 !!! success "Falsification Logic"
     If you observe sustained 200 responses with low `TimeTaken` (`10-32 ms`) before, during, and after the test window, the hypothesis is CONFIRMED because this run demonstrates a healthy startup/ping baseline rather than a port-mismatch failure.
     
-    Recorded repeated non-200 probes or startup timeouts falsify this healthy-baseline pattern — consider startup timeout, warmup path, or runtime-port handling issues. Missing response or log captures instead leave the result inconclusive: first check the six-hour windows and path/message filters in sections 3.9–3.11, the query/export timing noted in section 4.12, and the independent probe CSV from section 3.8.
+    Repeated non-200 responses or probe timeouts recorded by section 3.8's independent probe series, or failed HTTP responses in section 3.9's log rows for the same test window, falsify this healthy-baseline pattern — consider startup timeout, warmup path, or runtime-port handling issues. A platform startup-timeout message alone does not: lifecycle events can overlap successful probes (sections 2.7, 4.9 and 4.15), so corroborate it with failed probes or failed HTTP responses of the tested worker in the same window. Missing response or log captures instead leave the result inconclusive: first check the six-hour windows and path/message filters in sections 3.9–3.11, the query/export timing noted in section 4.12, and the independent probe CSV from section 3.8.
 
 ---
 
