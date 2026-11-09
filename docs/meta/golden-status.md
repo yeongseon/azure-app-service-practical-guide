@@ -25,26 +25,25 @@ Every quality gate in this repository, its most recently recorded result, and th
 
 ## Summary
 
-*Snapshot of `14b575b plus uncommitted working-tree changes`, generated 2026-11-07.*
-
-*Only the row of `Diagram inventory tree drift` ran on that date; every other row is carried over unchanged from the previous snapshot (`4b6806f`, 2026-11-03; its `Diagram manifest coverage tests` and `Diagram manifest coverage` rows ran that day, its `Diagram inventory tests` and `Diagram inventory consistency` rows ran on 2026-10-30 in `6bca0d6`, its `Repository audit coverage` row ran in `036376d` the same day, and its other rows come from `1327bae`, 2026-10-19) and was not re-run in this change. The `Validate Golden Status` job re-verifies the CI-verifiable statuses.*
+*Snapshot of `c9c523b`, generated 2026-11-09.*
 
 | Metric | Count |
 |---|---:|
 | Registered gates | 46 |
-| ✅ Pass | 39 |
-| ❌ Fail | 0 |
+| ✅ Pass | 42 |
+| ❌ Fail | 3 |
 | ⚠️ Warn | 0 |
-| ➖ Skipped | 7 |
+| ➖ Skipped | 1 |
 
-!!! warning "Blocking gates pass, with gaps"
-    No blocking gate failed in this snapshot, but 7 gate(s) reported findings, are unwired from CI, or could not run on the machine that generated this page. See Known Gaps.
+!!! failure "Not golden"
+    3 blocking gate(s) failed in this snapshot. Review the Gate Results table before merging anything.
 
 <!-- diagram-id: golden-status-gate-outcomes-pie -->
 ```mermaid
 pie title Quality Gate Outcomes
-    "Pass" : 39
-    "Skipped" : 7
+    "Pass" : 42
+    "Fail" : 3
+    "Skipped" : 1
 ```
 
 ## Gate Results
@@ -56,50 +55,50 @@ These are locally executed results, not GitHub Actions statuses. **Skipped** mea
 | --- | --- | --- | --- | --- |
 | Validator doctests | Blocking | ✅ Pass | 11 modules checked, every doctest passed. | < 10s |
 | Capture asset geometry | Blocking | ✅ Pass | Capture assets conform to the capture profile. | < 10s |
-| Mermaid format | Blocking | ✅ Pass | Files checked: 246 · Files with errors: 0 | < 10s |
-| Mermaid syntax | Blocking | ✅ Pass | Diagrams checked: 395 · Errors found: 0 | < 10s |
-| Diagram inventory tests | Blocking | ✅ Pass | Ran 117 tests in 9.024s · OK (skipped=1) | < 10s |
+| Mermaid format | Blocking | ✅ Pass | Files checked: 260 · Files with errors: 0 | < 10s |
+| Mermaid syntax | Blocking | ✅ Pass | Diagrams checked: 404 · Errors found: 0 | < 10s |
+| Diagram inventory tests | Blocking | ➖ Skipped | Python module `jsonschema` is not importable. | < 10s |
 | Diagram inventory consistency | Blocking | ✅ Pass | diagram inventory: check passed | < 10s |
 | Diagram inventory tree drift | Blocking | ✅ Pass | "added": [], · "assets": [], · "changed": [], · "moved": [], · "provenance": [], · "reclassified": [], · "relocated": [], · "removed": [], · "visuals": [] | < 10s |
-| Diagram manifest coverage tests | Blocking | ✅ Pass | Ran 28 tests in 1.984s · OK | < 10s |
+| Diagram manifest coverage tests | Blocking | ✅ Pass | Ran 28 tests in 1.753s · OK | < 10s |
 | Diagram manifest coverage | Blocking | ✅ Pass | diagram manifest coverage: check passed (405 occurrences, 0 with a started migration) | < 10s |
-| Content sources | Blocking | ✅ Pass | Files with mermaid: 241 · Validation errors: 0 | < 10s |
+| Content sources | Blocking | ✅ Pass | Files with mermaid: 245 · Validation errors: 0 | < 10s |
 | Content sources schema | Blocking | ✅ Pass | Files with content_sources schema drift: 0 · Parse errors: 0 | < 10s |
-| Diagram ID parity | Blocking | ✅ Pass | mermaid blocks: 395 · diagram-id comments: 395 | < 10s |
+| Diagram ID parity | Blocking | ✅ Pass | mermaid blocks: 404 · diagram-id comments: 404 | < 10s |
 | CLI explanation tables | Blocking | ✅ Pass | All Azure CLI code fences and Markdown tables are correctly terminated. | < 10s |
 | Documented repository paths | Blocking | ✅ Pass | Documented repository path errors: 0 | < 10s |
-| Document quality | Blocking | ✅ Pass | Documentation quality gate passed for 246 file(s). | < 10s |
+| Document quality | Blocking | ✅ Pass | Documentation quality gate passed for 260 file(s). | < 10s |
 | Frontmatter YAML style | Blocking | ✅ Pass | Files with style drift: 0 · Parse errors: 0 | < 10s |
 | Microsoft Learn locale | Blocking | ✅ Pass | Files with locale drift: 0 | < 10s |
-| Microsoft Learn URL reachability | Advisory | ➖ Skipped | Network gate; re-run with --include-network. | < 10s |
+| Microsoft Learn URL reachability | Advisory | ✅ Pass | Redirected URLs should be updated to canonical versions. | 10-120s |
 | Lab artifact PII | Blocking | ✅ Pass | [scan_lab_pii] scanned=618 skipped_binary=0 skipped_decode=0 findings=0 | < 10s |
 | Documentation PII | Blocking | ✅ Pass | No blocking PII patterns detected! | < 10s |
-| Documentation repetition | Blocking | ✅ Pass | Scanned 246 file(s): 0 error(s), 6 warning(s). | < 10s |
+| Documentation repetition | Blocking | ✅ Pass | Scanned 260 file(s): 0 error(s), 6 warning(s). | < 10s |
 | Quick-triage causal claims | Blocking | ✅ Pass | Quick-triage causal-claim contract passed (7 files). · Scope is a phrase denylist only; technical review remains required. | < 10s |
-| Visual content coverage | Advisory | ✅ Pass | full repo: 83/83 in-scope pages carry a visual aid (100.0%). Advisory gate — exit 0 regardless (see issue #388). | < 10s |
+| Visual content coverage | Advisory | ✅ Pass | full repo: 86/86 in-scope pages carry a visual aid (100.0%). Advisory gate — exit 0 regardless (see issue #388). | < 10s |
 | Windows troubleshooting navigation | Blocking | ✅ Pass | Windows troubleshooting navigation: 2 entry points link all 5 required playbooks. | < 10s |
-| Frontmatter schema | Blocking | ✅ Pass | Checked 246 files · Found 0 errors, 28 warnings: | < 10s |
-| MkDocs strict build | Blocking | ✅ Pass | Site built with no strict-mode warnings. | 10-120s |
+| Frontmatter schema | Blocking | ✅ Pass | Checked 260 files · Found 0 errors, 28 warnings: | < 10s |
+| MkDocs strict build | Blocking | ✅ Pass | [90m To disable this warning, set NO_MKDOCS_2_WARNING=1.[0m | 10-120s |
 | Repository audit coverage | Blocking | ✅ Pass | OK | < 10s |
 | App and Infra impact classifier tests | Blocking | ✅ Pass | OK | < 10s |
 | Workflow YAML duplicate keys | Blocking | ✅ Pass | OK | < 10s |
 | Guarded Azure E2E contracts | Blocking | ✅ Pass | OK | < 10s |
 | Validation freshness calculation | Blocking | ✅ Pass | OK | < 10s |
-| Tutorial validation contract | Blocking | ✅ Pass | Tutorial validation contract: PASS | < 10s |
-| Retained Golden package immutability | Blocking | ✅ Pass | Retained Golden package immutability: PASS | < 10s |
-| Golden evidence contracts | Blocking | ✅ Pass | OK | 10-120s |
+| Tutorial validation contract | Blocking | ❌ Fail | Exit code 0, no output. | < 10s |
+| Retained Golden package immutability | Blocking | ❌ Fail | Exit code 0, no output. | < 10s |
+| Golden evidence contracts | Blocking | ❌ Fail | FAILED (failures=2, errors=106) | 10-120s |
 | Absorbed evidence predicates | Blocking | ✅ Pass | undeclared absorbed predicates: 0 (declared: 0, stale: 0) | < 10s |
 | Shell script syntax | Blocking | ✅ Pass | All shell scripts parse. | < 10s |
-| ShellCheck | Blocking | ➖ Skipped | Executable `shellcheck` is not on PATH. | < 10s |
+| ShellCheck | Blocking | ✅ Pass | ShellCheck reported no findings. | < 10s |
 | Node.js dependency audit | Blocking | ✅ Pass | found 0 vulnerabilities | < 10s |
-| Node.js app tests | Blocking | ➖ Skipped | `apps/nodejs/node_modules` does not exist. | < 10s |
+| Node.js app tests | Blocking | ✅ Pass | ℹ tests 3 · ℹ pass 3 · ℹ fail 0 | < 10s |
 | Node.js production install | Blocking | ✅ Pass | Production tree resolved from the lockfile. | < 10s |
-| Node.js container smoke | Blocking | ➖ Skipped | Network gate; re-run with --include-network. | < 10s |
+| Node.js container smoke | Blocking | ✅ Pass | Container smoke passed: /health returned 200 and sshd is running. | 10-120s |
 | Python app compile | Blocking | ✅ Pass | All modules compiled. | < 10s |
-| Python app tests | Blocking | ➖ Skipped | Python module `pytest` is not importable; Python module `flask` is not importable. | < 10s |
-| .NET app build | Blocking | ➖ Skipped | Executable `dotnet` is not on PATH. | < 10s |
-| Java app tests | Blocking | ➖ Skipped | Executable `mvn` is not on PATH. | < 10s |
-| Bicep template build | Blocking | ✅ Pass | Bicep templates built: 40 · Bicep parameter files built: 9 | > 120s |
+| Python app tests | Blocking | ✅ Pass | collected 4 items | < 10s |
+| .NET app build | Blocking | ✅ Pass | Time Elapsed 00:00:10.58 | 10-120s |
+| Java app tests | Blocking | ✅ Pass | OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended | 10-120s |
+| Bicep template build | Blocking | ✅ Pass | Bicep templates built: 40 · Bicep parameter files built: 9 | 10-120s |
 
 <!-- golden-status:results:end -->
 
@@ -186,13 +185,10 @@ Generated from the `GATES` registry in `scripts/generate_golden_status.py`. CI f
 
 ## Known Gaps
 
-- **Microsoft Learn URL reachability** did not run here: Network gate; re-run with --include-network.
-- **ShellCheck** did not run here: Executable `shellcheck` is not on PATH.
-- **Node.js app tests** did not run here: `apps/nodejs/node_modules` does not exist.
-- **Node.js container smoke** did not run here: Network gate; re-run with --include-network.
-- **Python app tests** did not run here: Python module `pytest` is not importable; Python module `flask` is not importable.
-- **.NET app build** did not run here: Executable `dotnet` is not on PATH.
-- **Java app tests** did not run here: Executable `mvn` is not on PATH.
+- **Diagram inventory tests** did not run here: Python module `jsonschema` is not importable.
+- **Tutorial validation contract** is blocking and failed in this snapshot: Exit code 0, no output.
+- **Retained Golden package immutability** is blocking and failed in this snapshot: Exit code 0, no output.
+- **Golden evidence contracts** is blocking and failed in this snapshot: FAILED (failures=2, errors=106)
 
 ## How to Regenerate
 
